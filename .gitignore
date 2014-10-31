@@ -1,2 +1,7 @@
 *.txt
 user_guide
+./
+.DS_Store
+.buildpath
+.project
+.settings/
