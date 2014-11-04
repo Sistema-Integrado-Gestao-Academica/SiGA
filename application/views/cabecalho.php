@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>SisFE</title>
+	<title>SiGA</title>
 	<link rel="stylesheet" href=<?=base_url("css/bootstrap.css")?>>
 	<link rel="stylesheet" href=<?=base_url("css/estilo.css")?>>
 	<script src=<?=base_url("js/funcoes.js")?>></script>
@@ -16,16 +16,16 @@
 </div>
 	<div>
 	<ul class="nav navbar-nav">
-			<li><?=anchor("cadastro", "Cadastrar")?></li>
+		<li><?=anchor("cadastro", "Cadastrar")?></li>
 	<?php if ($this->session->userdata("usuario_logado")) : ?>
-			<li><?=anchor("funcionarios", "Funcionários")?></li>
-			<li><?=anchor("setores", "Setores")?></li>
-			<li><?=anchor("funcoes", "Funções")?></li>
-			<li><?=anchor("departamentos", "Departamentos")?></li>
-			<li><?=anchor("conta", "Conta")?></li>
-			<li><?=anchor("logout", "Sair")?></li>
-	</ul>
+		<li><?=anchor("funcionarios", "Funcionários")?></li>
+		<li><?=anchor("setores", "Setores")?></li>
+		<li><?=anchor("funcoes", "Funções")?></li>
+		<li><?=anchor("departamentos", "Departamentos")?></li>
+		<li><?=anchor("conta", "Conta")?></li>
+		<li><?=anchor("logout", "Sair")?></li>
 	<?php endif ?>
+	</ul>
 	</div>
 </div>
 </div>
