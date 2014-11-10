@@ -1,6 +1,20 @@
 <h2 class="text-center">Cadastro de um novo usuário</h2>
 
 <?php 
+
+$user = new Usuario();
+
+$user_types = $user->getUserTypes();
+
+for($cont = 0 ; $cont<sizeof($user_types); $cont++){
+	
+	$keys[$cont] = $user_types[$cont]['id_type'];
+	$values[$cont] = $user_types[$cont]['type_name'];
+	
+}
+
+$form_user_types = array_combine($keys, $values);
+
 echo form_open("usuario/novo");
 
 echo form_label("Nome", "nome");
@@ -9,7 +23,7 @@ echo form_input(array(
 	"id" => "nome",
 	"type" => "text",
 	"class" => "form-campo",
-	"maxlength" => "255",
+	"maxlength" => "70",
 	"value" => set_value("nome", "")
 ));
 echo form_error("nome");
@@ -20,10 +34,19 @@ echo form_input(array(
 	"id" => "email",
 	"type" => "text",
 	"class" => "form-campo",
-	"maxlength" => "255",
+	"maxlength" => "50",
 	"value" => set_value("email", "")
 ));
 echo form_error("email");
+
+echo form_label("Tipo de Usuário", "userType");
+
+echo "<br>";
+echo form_dropdown("userType",$form_user_types);
+
+echo form_error("userType");
+
+echo "<br>";
 
 echo form_label("Login", "login");
 echo form_input(array(
@@ -31,7 +54,7 @@ echo form_input(array(
 	"id" => "login",
 	"type" => "text",
 	"class" => "form-campo",
-	"maxlength" => "255",
+	"maxlength" => "20",
 	"value" => set_value("login", "")
 ));
 echo form_error("login");
@@ -43,7 +66,7 @@ echo form_password(array(
 	"class" => "form-campo",
 	"maxlength" => "255"
 ));
-echo form_error("password");
+echo form_error("senha");
 
 echo "<br>";
 
