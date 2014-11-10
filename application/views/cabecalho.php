@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>SisFE</title>
+	<title>SIP</title>
 	<link rel="stylesheet" href=<?=base_url("css/bootstrap.css")?>>
 	<link rel="stylesheet" href=<?=base_url("css/estilo.css")?>>
 	<script src=<?=base_url("js/funcoes.js")?>></script>
