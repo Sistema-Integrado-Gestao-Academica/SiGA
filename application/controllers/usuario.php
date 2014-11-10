@@ -32,14 +32,16 @@ class Usuario extends CI_Controller {
 		if ($success) {
 			$nome = $this->input->post("nome");
 			$email = $this->input->post("email");
+			$tipo = $this->input->post("userType");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
 			$usuario = array(
-				'nome' => $nome,
+				'name' => $nome,
 				'email' => $email,
+				'user_type' => $tipo,
 				'login' => $login,
-				'senha' => $senha
+				'password' => $senha
 			);
 
 			$this->load->model("usuarios_model");
@@ -123,5 +125,13 @@ class Usuario extends CI_Controller {
 			redirect("usuario/conta");
 		}
 		
+	}
+	
+	public function getUserTypes(){
+		$usuarioLogado = autoriza();
+		$this->load->model("usuarios_model");
+	
+		$user_types = $this->usuarios_model->getUserTypes();
+		return $user_types;
 	}
 }
