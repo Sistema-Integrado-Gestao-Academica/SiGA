@@ -20,9 +20,13 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/conta", $dados);
 	}
 
+	function alpha_dash_space($str){
+	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+	}
+	 
 	public function novo() {
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "required|alpha");
+		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
 		$this->form_validation->set_rules("senha", "Senha", "required");
