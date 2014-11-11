@@ -42,7 +42,7 @@ class Usuarios_model extends CI_Model {
 	public function getUserTypes(){
 		$this->db->select('id_type, type_name');
 		$this->db->from('user_type');
-		$types = $this->db->get()->result_array();
-		return $types;
+		$userTypes = $this->db->get()->result_array();
+		return $userTypes;
 	}
 }

@@ -135,7 +135,7 @@ class Usuario extends CI_Controller {
 		$usuarioLogado = autoriza();
 		$this->load->model("usuarios_model");
 	
-		$user_types = $this->usuarios_model->getUserTypes();
-		return $user_types;
+		$userTypes = $this->usuarios_model->getUserTypes();
+		return $userTypes;
 	}
 }
