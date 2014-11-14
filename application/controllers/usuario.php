@@ -43,7 +43,6 @@ class Usuario extends CI_Controller {
 			$usuario = array(
 				'name' => $nome,
 				'email' => $email,
-				'user_type' => $tipo,
 				'login' => $login,
 				'password' => $senha
 			);
@@ -56,6 +55,7 @@ class Usuario extends CI_Controller {
 				redirect("usuario/formulario");
 			} else {
 				$this->usuarios_model->salva($usuario);
+				$this->usuarios_model->saveType($usuario, $tipo);
 				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}

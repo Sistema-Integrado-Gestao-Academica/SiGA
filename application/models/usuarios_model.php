@@ -3,7 +3,16 @@ class Usuarios_model extends CI_Model {
 	public function salva($usuario) {
 		$this->db->insert("users", $usuario);
 	}
-
+	
+	public function saveType($user, $type){
+		$rowUser = $this->buscaPorLoginESenha($user['login']);
+		$user_id = $rowUser['id'];
+		
+		$user_user_type = array("id_user"=>$user_id,"id_user_type"=>$type);
+		
+		$this->db->insert("user_user_type",$user_user_type);
+	}
+	
 	public function buscaPorLoginESenha($login, $senha = "0") {
 		$this->db->where("login", $login);
 		if ($senha) {
