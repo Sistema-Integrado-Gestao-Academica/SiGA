@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php  $session = $this->session->userdata("usuario_logado"); ?>
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -17,7 +18,7 @@
 	<div>
 	<ul class="nav navbar-nav">
 			<li><?=anchor("cadastro", "Cadastrar")?></li>
-	<?php if ($this->session->userdata("usuario_logado")) : ?>
+	<?php if ($session) { ?>
 			<li><?=anchor("funcionarios", "Funcionários")?></li>
 			<li><?=anchor("setores", "Setores")?></li>
 			<li><?=anchor("funcoes", "Funções")?></li>
@@ -25,7 +26,7 @@
 			<li><?=anchor("conta", "Conta")?></li>
 			<li><?=anchor("logout", "Sair")?></li>
 	</ul>
-	<?php endif ?>
+	<?php } ?>
 	</div>
 </div>
 </div>
