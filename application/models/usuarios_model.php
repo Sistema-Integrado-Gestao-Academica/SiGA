@@ -22,6 +22,14 @@ class Usuarios_model extends CI_Model {
 		return $usuario;
 	}
 
+	public function getUserType($user_id){
+		
+		$this->db->select('id_user_type');
+		$type = $this->db->get_where("user_user_type",array('id_user'=>$user_id))->result_array();
+		
+		return $type;
+	}
+	
 	public function buscaTodos() {
 		return $this->db->get('users')->result_array();
 	}
