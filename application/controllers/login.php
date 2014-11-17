@@ -15,9 +15,9 @@ class Login extends CI_Controller {
 		
 		// Load the Module model
 		$this->load->model("module_model");
-		$registered_modules = $this->module_model->getUserModuleNames($usuario['id']);
+		$registered_permissions = $this->module_model->getUserPermissionNames($usuario['id']);
 
-		$userData = array('user'=>$usuario,'user_type'=>$tipo_usuario,'user_modules'=>$registered_modules);
+		$userData = array('user'=>$usuario,'user_type'=>$tipo_usuario,'user_permissions'=>$registered_permissions);
 
 		if ($usuario) {
 			$this->session->set_userdata("usuario_logado", $userData);

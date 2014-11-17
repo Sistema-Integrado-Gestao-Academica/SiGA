@@ -17,6 +17,35 @@ class Module_model extends CI_Model {
 		return $modules_for_user;
 	}
 
+	public function getUserPermissionNames($user_id){
+
+		$this->load->model("permission_model");
+
+		$modules_ids = $this->getUserModules($user_id);
+
+		for($i = 0; $i < sizeof($modules_ids); $i++){
+			
+			$module_id_to_get = $modules_ids[$i]['id_module'];
+
+			$module_permissions_ids = $this->permission_model->getPermissionIdsOfModule($module_id_to_get);
+
+			$permission_names[$i] = $this->permission_model->getPermissionNamesOfModule($module_permissions_ids);
+
+		}
+
+		$permission_names_array = array();
+
+		for($i = 0; $i < sizeof($permission_names); $i++){
+			$permission_names_array = array_merge($permission_names_array, $permission_names[$i]);
+		}
+
+		$permissions_names = array_unique($permission_names_array);
+
+		return $permissions_names;
+	}
+
+
+
 	public function getUserModuleNames($user_id){
 
 		$modules_ids = $this->getUserModules($user_id);
@@ -29,6 +58,7 @@ class Module_model extends CI_Model {
 			$module_name_array = $this->db->get_where('module', array('id_module' => $module_id_to_get))->result_array();
 			
 			$module_names[$i] = $module_name_array[0]['module_name'];
+
 		}
 
 		return $module_names;
