@@ -2,6 +2,11 @@
 
 class Permission_model extends CI_Model {
 
+	/**
+	  * Search on database for the permissions id's of a module
+	  * @param $module_id - Module id to look for permissions id's
+	  * @return an array with the permissions of the given module
+	  */
 	public function getPermissionIdsOfModule($module_id){
 
 		$this->db->select('id_permission');
@@ -10,7 +15,12 @@ class Permission_model extends CI_Model {
 		return $module_permissions;
 	}
 
-	public function getPermissionNamesOfModule($module_permissions){
+	/**
+	  * Search on database for the permissions names of a set of permissions id's from a module
+	  * @param $module_permissions - Array with all permissions id's of a module
+	  * @return an array with all the permissions names of the the given permissions id's
+	  */
+	public function getPermissionNamesOfModules($module_permissions){
 		
 		for($i = 0; $i < sizeof($module_permissions); $i++){
 
