@@ -54,6 +54,19 @@ $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
 
+/*
+ * Test report routes
+ * To display the tests results of a class type in the url: ../class_test
+ */
+$route['user_test'] = 'user_test';
+$route['department_test'] = 'department_test';
+$route['employee_test'] = 'employee_test';
+$route['function_test'] = 'function_test';
+$route['login_test'] = 'login_test';
+$route['module_test'] = 'module_test';
+$route['permission_test'] = 'permission_test';
+$route['sector_test'] = 'sector_test';
+// $route['test'] = 'test_report';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
