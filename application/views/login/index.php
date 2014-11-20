@@ -1,7 +1,7 @@
 <?php 
 $sessao = $this->session->userdata("usuario_logado");
 if ($sessao != NULL) { ?>
-	<p class="alert alert-success text-center">Logado como "<?=$sessao['login']?>"</p>
+	<p class="alert alert-success text-center">Logado como "<?=$sessao['user']['login']?>"</p>
 	<h1 class="bemvindo">Bem vindo!</h1>
 <?php } else { ?>
 	<h1 class="bemvindo">Bem vindo ao SIP</h1>

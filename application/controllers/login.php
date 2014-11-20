@@ -13,9 +13,14 @@ class Login extends CI_Controller {
 		$usuario = $this->usuarios_model->buscaPorLoginESenha($login, $senha);
 		$tipo_usuario = $this->usuarios_model->getUserType($usuario['id']);
 		
-		$userData = array('user'=>$usuario,'user_type'=>$tipo_usuario);
-		
-		if ($userData) {
+		// Load the Module model
+		$this->load->model("module_model");
+		$registered_permissions = $this->module_model->getUserPermissionNames($usuario['id']);
+
+		$userData = array('user'=>$usuario,'user_type'=>$tipo_usuario,'user_permissions'=>$registered_permissions);
+
+		if ($usuario) {
+
 			$this->session->set_userdata("usuario_logado", $userData);
 		} else {
 			$this->session->set_flashdata("danger", "Usuário ou senha inválida");

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php  $session = $this->session->userdata("usuario_logado"); ?>
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -16,16 +17,15 @@
 </div>
 	<div>
 	<ul class="nav navbar-nav">
-			<li><?=anchor("cadastro", "Cadastrar")?></li>
-	<?php if ($this->session->userdata("usuario_logado")) : ?>
-			<li><?=anchor("funcionarios", "Funcionários")?></li>
-			<li><?=anchor("setores", "Setores")?></li>
-			<li><?=anchor("funcoes", "Funções")?></li>
-			<li><?=anchor("departamentos", "Departamentos")?></li>
+		<?php if ($session) { 
+			foreach($session["user_permissions"] as $id => $permission_name){
+				echo "<li>" . anchor($permission_name, ucfirst($permission_name)) . " </li>";
+			}
+			?>
 			<li><?=anchor("conta", "Conta")?></li>
 			<li><?=anchor("logout", "Sair")?></li>
 	</ul>
-	<?php endif ?>
+	<?php } ?>
 	</div>
 </div>
 </div>
