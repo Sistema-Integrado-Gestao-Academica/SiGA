@@ -26,6 +26,16 @@ $name_array_to_form = array(
 	"value" => set_value("nome", "")
 );
 
+$cpf_array_to_form = array(
+		"name" => "cpf",
+		"id" => "cpf",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "11",
+		"value" => set_value("cpf", ""),
+		"placeholder" => "Somente Números"
+);
+
 $email_array_to_form = array(
 	"name" => "email",
 	"id" => "email",
@@ -63,6 +73,11 @@ echo form_open("usuario/novo");
 	echo form_label("Nome", "nome");
 	echo form_input($name_array_to_form);
 	echo form_error("nome");
+	
+	// CPF field
+	echo form_label("CPF", "cpf");
+	echo form_input($cpf_array_to_form);
+	echo form_error("cpf");
 
 	// E-mail field
 	echo form_label("E-mail", "email");

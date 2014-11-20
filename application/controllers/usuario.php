@@ -27,6 +27,7 @@ class Usuario extends CI_Controller {
 	public function novo() {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
 		$this->form_validation->set_rules("senha", "Senha", "required");
@@ -34,16 +35,18 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		if ($success) {
-			$nome = $this->input->post("nome");
+			$nome  = $this->input->post("nome");
+			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
-			$tipo = $this->input->post("userType");
+			$tipo  = $this->input->post("userType");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
 			$usuario = array(
-				'name' => $nome,
-				'email' => $email,
-				'login' => $login,
+				'name'     => $nome,
+				'cpf'      => $cpf,
+				'email'    => $email,
+				'login'    => $login,
 				'password' => $senha
 			);
 
