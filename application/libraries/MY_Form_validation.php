@@ -18,7 +18,7 @@ class MY_Form_validation extends CI_Form_validation {
      *
      * valid_cpf
      *
-     * Verifica CPF é válido
+     * Verify if the inserted CPF is valid
      * @access	public
      * @param	string
      * @return	bool
@@ -54,4 +54,6 @@ class MY_Form_validation extends CI_Form_validation {
         
         return $digit[9] == ((int)$cpf[9]) && $digit[10] == ((int)$cpf[10]);
     }
+    
+     
 }

@@ -13,6 +13,13 @@ class Usuario extends CI_Controller {
 			$this->load->template("usuario/formulario");
 		}
 	}
+	
+	public function formulario_entrada() {
+	
+		$this->load->template("usuario/formulario_entrada");
+		
+	}
+	
 
 	public function conta() {
 		$usuarioLogado = autoriza();
