@@ -13,6 +13,13 @@ class Usuario extends CI_Controller {
 			$this->load->template("usuario/formulario");
 		}
 	}
+	
+	public function formulario_entrada() {
+	
+		$this->load->template("usuario/formulario_entrada");
+		
+	}
+	
 
 	public function conta() {
 		$usuarioLogado = autoriza();
@@ -20,9 +27,14 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/conta", $dados);
 	}
 
+	function alpha_dash_space($str){
+	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+	}
+	 
 	public function novo() {
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "required|alpha");
+		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
 		$this->form_validation->set_rules("senha", "Senha", "required");
@@ -30,16 +42,19 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		if ($success) {
-			$nome = $this->input->post("nome");
+			$nome  = $this->input->post("nome");
+			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
+			$tipo  = $this->input->post("userType");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
 			$usuario = array(
-				'nome' => $nome,
-				'email' => $email,
-				'login' => $login,
-				'senha' => $senha
+				'name'     => $nome,
+				'cpf'      => $cpf,
+				'email'    => $email,
+				'login'    => $login,
+				'password' => $senha
 			);
 
 			$this->load->model("usuarios_model");
@@ -50,6 +65,7 @@ class Usuario extends CI_Controller {
 				redirect("usuario/formulario");
 			} else {
 				$this->usuarios_model->salva($usuario);
+				$this->usuarios_model->saveType($usuario, $tipo);
 				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
@@ -124,4 +140,37 @@ class Usuario extends CI_Controller {
 		}
 		
 	}
+
+
+	public function getUserTypes(){
+		
+		// $usuarioLogado = autoriza();
+		$this->load->model("usuarios_model");
+		$user_types = $this->usuarios_model->getUserTypes();
+		
+		$user_types_to_array = $this->turnUserTypesToArray($user_types);
+
+		return $user_types_to_array;
+	}
+	
+	/**
+	  * Join the id's and names of user types into an array as key => value.
+	  * Used to the user type form
+	  * @param $user_types - The array that contains the tuples of user_type
+	  * @return An array with the id's and user types names as key => value
+	  */
+	private function turnUserTypesToArray($user_types){
+		// Quantity of user types registered
+		$quantity_of_user_types = sizeof($user_types);
+
+		for($cont = 0; $cont < $quantity_of_user_types; $cont++){
+			$keys[$cont] = $user_types[$cont]['id_type'];
+			$values[$cont] = $user_types[$cont]['type_name'];
+		}
+
+		$form_user_types = array_combine($keys, $values);
+
+		return $form_user_types;
+	}
+	
 }

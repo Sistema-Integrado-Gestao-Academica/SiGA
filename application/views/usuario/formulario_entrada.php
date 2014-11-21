@@ -2,10 +2,7 @@
 
 <?php 
 
-$user = new Usuario();
-
-// All user types registered on DB
-$form_user_types = $user->getUserTypes();
+$form_user_types = array(2=>"aluno",5=>"convidado");
 
 $name_array_to_form = array(
 	"name" => "nome",

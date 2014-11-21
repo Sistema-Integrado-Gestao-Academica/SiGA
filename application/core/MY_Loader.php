@@ -2,9 +2,15 @@
 
 class MY_Loader extends CI_Loader {
 
+	/**
+	 * Loads the header + content of page + footer at once to display
+	 * @param
+	 * @param
+	 * @return
+	 */
 	public function template($nome, $dados = array()) {
-		$this->view("cabecalho.php");
+		$this->view("header.php");
 		$this->view($nome, $dados);
-		$this->view("rodape.php");
+		$this->view("footer.php");
 	}
 }

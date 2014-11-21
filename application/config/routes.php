@@ -38,13 +38,14 @@
 |
 */
 
+// Default for all users
 $route['default_controller'] = "login";
 $route['404_override'] = '';
-
-$route['cadastro'] = 'usuario/formulario';
 $route['conta'] = 'usuario/conta';
 $route['logout'] = 'login/logout';
 
+$route['cadastro'] = 'usuario/formulario';
+$route['guest_register'] = 'usuario/formulario_entrada';
 $route['funcionarios'] = 'funcionario/formulario';
 $route['funcionarios/(:num)'] = 'funcionario/formulario_altera/$1';
 $route['setores'] = 'setor/formulario';
@@ -53,6 +54,7 @@ $route['funcoes'] = 'funcao/formulario';
 $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
+$route['courses'] = 'course/formToRegisterNewCourse';
 
 
 /* End of file routes.php */
