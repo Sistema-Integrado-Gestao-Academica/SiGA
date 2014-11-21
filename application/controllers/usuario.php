@@ -140,12 +140,37 @@ class Usuario extends CI_Controller {
 		}
 		
 	}
-	
+
+
 	public function getUserTypes(){
-		$usuarioLogado = autoriza();
+		
+		// $usuarioLogado = autoriza();
 		$this->load->model("usuarios_model");
-	
-		$userTypes = $this->usuarios_model->getUserTypes();
-		return $userTypes;
+		$user_types = $this->usuarios_model->getUserTypes();
+		
+		$user_types_to_array = $this->turnUserTypesToArray($user_types);
+
+		return $user_types_to_array;
 	}
+	
+	/**
+	  * Join the id's and names of user types into an array as key => value.
+	  * Used to the user type form
+	  * @param $user_types - The array that contains the tuples of user_type
+	  * @return An array with the id's and user types names as key => value
+	  */
+	private function turnUserTypesToArray($user_types){
+		// Quantity of user types registered
+		$quantity_of_user_types = sizeof($user_types);
+
+		for($cont = 0; $cont < $quantity_of_user_types; $cont++){
+			$keys[$cont] = $user_types[$cont]['id_type'];
+			$values[$cont] = $user_types[$cont]['type_name'];
+		}
+
+		$form_user_types = array_combine($keys, $values);
+
+		return $form_user_types;
+	}
+	
 }

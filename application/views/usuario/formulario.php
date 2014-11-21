@@ -5,17 +5,7 @@
 $user = new Usuario();
 
 // All user types registered on DB
-$user_types = $user->getUserTypes();
-
-// Quantity of user types registered
-$quantity_of_user_types = sizeof($user_types);
-
-for($cont = 0; $cont < $quantity_of_user_types; $cont++){
-	$keys[$cont] = $user_types[$cont]['id_type'];
-	$values[$cont] = $user_types[$cont]['type_name'];
-}
-
-$form_user_types = array_combine($keys, $values);
+$form_user_types = $user->getUserTypes();
 
 $name_array_to_form = array(
 	"name" => "nome",
