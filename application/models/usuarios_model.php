@@ -88,7 +88,7 @@ class Usuarios_model extends CI_Model {
 	public function checkIfIdIsOfAdmin($id_to_check){
 		
 		// The administer name on database
-		define("ADMINISTER", "admininstrador");
+		define("ADMINISTER", "administrador");
 
 		$this->db->select('type_name');
 		$this->db->from('user_type');
