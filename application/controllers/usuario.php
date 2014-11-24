@@ -23,6 +23,8 @@ class Usuario extends CI_Controller {
 
 	public function conta() {
 		$usuarioLogado = autoriza();
+		$this->load->model('usuarios_model');
+		$usuarioLogado = $this->usuarios_model->busca('id', $usuarioLogado['user']['id']);
 		$dados = array("usuario" => $usuarioLogado);
 		$this->load->template("usuario/conta", $dados);
 	}
@@ -62,7 +64,7 @@ class Usuario extends CI_Controller {
 
 			if ($usuarioExiste) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema");
-				redirect("usuario/formulario");
+				redirect("usuario/formulario_entrada");
 			} else {
 				$this->usuarios_model->salva($usuario);
 				$this->usuarios_model->saveType($usuario, $tipo);
@@ -70,17 +72,22 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$this->load->template("usuario/formulario");
+			$this->load->template("usuario/formulario_entrada");
 		}
 	}
 
 	public function altera() {
 		$usuarioLogado = autoriza();
+		$this->load->model('usuarios_model');
+		$usuarioLogado = $this->usuarios_model->busca('id', $usuarioLogado['user']['id']);
+
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome", "alpha");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
+
+		$dados = array("usuario" => $usuarioLogado);
 
 		if ($success) {
 			$nome = $this->input->post("nome");
@@ -91,15 +98,15 @@ class Usuario extends CI_Controller {
 
 			$senha_em_branco = 'd41d8cd98f00b204e9800998ecf8427e';
 
-			if ($nova_senha != $senha_em_branco && $senha != $usuarioLogado['senha']) {
+			if ($nova_senha != $senha_em_branco && $senha != $usuarioLogado['password']) {
 				$this->session->set_flashdata("danger", "Senha atual incorreta");
 				redirect("usuario/conta");
 			} else if ($nova_senha == $senha_em_branco) {
-				$nova_senha = $usuarioLogado['senha'];
+				$nova_senha = $usuarioLogado['password'];
 			}
 
 			if ($nome == "") {
-				$nome = $usuarioLogado['nome'];
+				$nome = $usuarioLogado['name'];
 			}
 
 			if ($email == "") {
@@ -107,13 +114,12 @@ class Usuario extends CI_Controller {
 			}
 
 			$usuario = array(
-				'nome' => $nome,
+				'name' => $nome,
 				'email' => $email,
 				'login' => $login,
-				'senha' => $nova_senha
+				'password' => $nova_senha
 			);
 
-			$this->load->model("usuarios_model");
 			$alterado = $this->usuarios_model->altera($usuario);
 			if ($alterado && $usuarioLogado != $usuario) {
 				$this->session->set_userdata('usuario_logado', $usuario);
@@ -122,9 +128,9 @@ class Usuario extends CI_Controller {
 				$this->session->set_flashdata("danger", "Os dados não foram alterados");
 			}
 
-			redirect("usuario/conta");
+			$this->load->template("usuario/conta", $dados);
 		} else {
-			$this->load->template("usuario/conta");
+			$this->load->template("usuario/conta", $dados);
 		}
 	}
 
