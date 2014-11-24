@@ -62,7 +62,7 @@ class Usuario extends CI_Controller {
 
 			if ($usuarioExiste) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema");
-				redirect("usuario/formulario");
+				redirect("usuario/formulario_entrada");
 			} else {
 				$this->usuarios_model->salva($usuario);
 				$this->usuarios_model->saveType($usuario, $tipo);
@@ -70,7 +70,7 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$this->load->template("usuario/formulario");
+			$this->load->template("usuario/formulario_entrada");
 		}
 	}
 
