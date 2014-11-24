@@ -141,12 +141,15 @@ class Usuario extends CI_Controller {
 		
 	}
 
-
+	/**
+	 * Get all the user types from database into an array.
+	 * @return An array with all user types on database as id => type_name
+	 */
 	public function getUserTypes(){
 		
 		// $usuarioLogado = autoriza();
 		$this->load->model("usuarios_model");
-		$user_types = $this->usuarios_model->getUserTypes();
+		$user_types = $this->usuarios_model->getAllUserTypes();
 		
 		$user_types_to_array = $this->turnUserTypesToArray($user_types);
 
