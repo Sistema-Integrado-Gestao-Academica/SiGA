@@ -74,8 +74,7 @@ echo form_open("usuario/novo");
 	// User type field
 	echo form_label("Tipo de Usuário", "userType"); 
 	echo "<br>";
-	echo form_dropdown("userType",$form_user_types);
-	echo "* Para adicionar mais de um tipo, acesse o menu para editar usuário";
+	echo form_dropdown("userType",$form_user_types);	
 	echo form_error("userType");
 
 	// Login field

@@ -65,5 +65,37 @@ class Course extends CI_Controller {
 
 		return $isAdminId;
 	}
-
+	
+	public function getCourseTypes(){
+		
+		$this->load->model('course_model');
+		
+		$course_types = $this->course_model->getAllCourseTypes();
+		
+		$course_types_form = $this->turnCourseTypesToArray($course_types);
+		
+		return $course_types_form;
+		
+	}
+	
+	/**
+	 * Join the id's and names of course types into an array as key => value.
+	 * Used to the course type form
+	 * @param $course_types - The array that contains the tuples of course_type
+	 * @return An array with the id's and user types names as key => value
+	 */
+	private function turnCourseTypesToArray($course_types){
+		// Quantity of course types registered
+		$quantity_of_course_types = sizeof($course_types);
+	
+		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
+			$keys[$cont] = $course_types[$cont]['id_course_type'];
+			$values[$cont] = ucfirst($course_types[$cont]['name_course_type']);
+		}
+	
+		$form_course_types = array_combine($keys, $values);
+	
+		return $form_course_types;
+	}
+	
 }
