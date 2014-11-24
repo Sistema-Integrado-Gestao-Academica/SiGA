@@ -3,7 +3,7 @@ class Usuarios_model extends CI_Model {
 	public function salva($usuario) {
 		$this->db->insert("users", $usuario);
 	}
-	
+
 	public function saveType($user, $type){
 		$rowUser = $this->buscaPorLoginESenha($user['login']);
 		$user_id = $rowUser['id'];
@@ -12,7 +12,7 @@ class Usuarios_model extends CI_Model {
 		
 		$this->db->insert("user_user_type",$user_user_type);
 	}
-	
+
 	public function buscaPorLoginESenha($login, $senha = "0") {
 		$this->db->where("login", $login);
 		if ($senha) {
@@ -20,7 +20,7 @@ class Usuarios_model extends CI_Model {
 		}
 
 		// Select here the data from user to put on the session
-		$this->db->select('id, name, login');
+		$this->db->select('id, name, email, login');
 		$usuario = $this->db->get("users")->row_array();
 		
 		return $usuario;
@@ -56,11 +56,11 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function altera($usuario) {
-		$this->db->where('login', $usuario['login']);
+		$this->db->where('login', $usuario['user']['login']);
 		$res = $this->db->update("users", array(
-			'name' => $usuario['name'],
-			'email' => $usuario['email'],
-			'password' => $usuario['password']
+			'name' => $usuario['user']['name'],
+			'email' => $usuario['user']['email'],
+			'password' => $usuario['user']['password']
 		));
 
 		return $res;

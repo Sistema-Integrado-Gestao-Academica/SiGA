@@ -1,9 +1,11 @@
 <h2 class="text-center">Conta</h2>
 
-<?php 
+<?php
 echo form_open("usuario/altera");
 
-$value = $usuario['name'];
+$usuario = autoriza();
+
+$value = $usuario['user']['name'];
 echo form_label("Nome", "nome");
 echo form_input(array(
 	"name" => "nome",
@@ -15,7 +17,7 @@ echo form_input(array(
 ));
 echo form_error("nome");
 
-$value = $usuario['email'];
+$value = $usuario['user']['email'];
 echo form_label("E-mail", "email");
 echo form_input(array(
 	"name" => "email",
@@ -27,7 +29,7 @@ echo form_input(array(
 ));
 echo form_error("email");
 
-$value = $usuario['login'];
+$value = $usuario['user']['login'];
 echo form_label("Login", "login");
 echo form_input(array(
 	"disabled" => "disabled",
