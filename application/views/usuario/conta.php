@@ -3,9 +3,7 @@
 <?php 
 echo form_open("usuario/altera");
 
-$usuario = autoriza();
-
-$value = $usuario['nome'];
+$value = $usuario['name'];
 echo form_label("Nome", "nome");
 echo form_input(array(
 	"name" => "nome",
