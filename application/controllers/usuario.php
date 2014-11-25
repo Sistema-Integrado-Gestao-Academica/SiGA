@@ -35,7 +35,7 @@ class Usuario extends CI_Controller {
 	 
 	public function novo() {
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("nome", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
@@ -166,7 +166,7 @@ class Usuario extends CI_Controller {
 	  * Join the id's and names of user types into an array as key => value.
 	  * Used to the user type form
 	  * @param $user_types - The array that contains the tuples of user_type
-	  * @return An array with the id's and user types names as key => value
+	  * @return An array with the id's and user types names as id => user_type_name
 	  */
 	private function turnUserTypesToArray($user_types){
 		// Quantity of user types registered

@@ -24,6 +24,68 @@ class Course extends CI_Controller {
 		}
 	}
 
+	function alpha_dash_space($str){
+	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+	}
+
+	/**
+	 * Check if the course is finantiated by the checkbox value 
+	 * @param $valueToCheck - Checkbox value (Expected TRUE OR FALSE)
+	 * @return 1 if is finantiated or 0 if does not
+	 */
+	private function checkIfIsFinantiated($valueToCheck){
+		
+		$isFinantiated = 0;
+
+		if($valueToCheck){
+			$isFinantiated = 1;
+		}else{
+			$isFinantiated = 0;
+		}
+
+		return $isFinantiated;
+	}
+
+	/**
+	 * Register a new course
+	 */
+	public function newCourse(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_rules("isFinantiated", "Finantiated");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$courseDataIsOk = $this->form_validation->run();
+
+		if($courseDataIsOk){
+			$courseName = $this->input->post('courseName');
+			$courseType = $this->input->post('courseType');
+			$courseIsFinantiated = $this->input->post('isFinantiated');
+			$courseIsFinantiated = $this->checkIfIsFinantiated($courseIsFinantiated);
+
+			// Course to be saved on database. Put the columns names on the keys
+			$courseToRegister = array(
+				'course_name' => $courseName,
+				'course_type' => $courseType,
+				'is_finantiated' => $courseIsFinantiated
+			);
+
+			$this->load->model("course_model");
+			$insertionWasMade = $this->course_model->saveCourse($courseToRegister);
+
+			if($insertionWasMade){
+				$this->session->set_flashdata("success", "Curso \"{$courseName}\" cadastrado com sucesso");
+			}else{
+				$this->session->set_flashdata("danger", "Curso \"{$courseName}\" já existe.");
+			}
+
+		}else{
+			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
+		}
+		
+		redirect('/cursos');
+	}
+
 	/**
 	 * Evaluates if in a given array of permissions the courses one is on it
 	 * @param permissions_array - Array with the permission names
@@ -66,6 +128,10 @@ class Course extends CI_Controller {
 		return $isAdminId;
 	}
 	
+	/**
+	 * Get all the course types from database into an array.
+	 * @return An array with all course types on database as id => course_type_name
+	 */
 	public function getCourseTypes(){
 		
 		$this->load->model('course_model');
@@ -82,7 +148,7 @@ class Course extends CI_Controller {
 	 * Join the id's and names of course types into an array as key => value.
 	 * Used to the course type form
 	 * @param $course_types - The array that contains the tuples of course_type
-	 * @return An array with the id's and user types names as key => value
+	 * @return An array with the id's and course types names as id => course_type_name
 	 */
 	private function turnCourseTypesToArray($course_types){
 		// Quantity of course types registered
