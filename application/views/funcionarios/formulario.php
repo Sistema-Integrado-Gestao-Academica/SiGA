@@ -15,7 +15,7 @@
 		<td>
 		<?=anchor("funcionarios/{$funcionario['id']}", "Editar", array(
 			"class" => "btn btn-primary btn-editar",
-			"type" => "sumbit",
+			"type" => "submit",
 			"content" => "Editar"
 		))?>
 
@@ -24,7 +24,7 @@
 		echo form_hidden("funcionario_id", $funcionario['id']);
 		echo form_button(array(
 			"class" => "btn btn-danger btn-remover",
-			"type" => "sumbit",
+			"type" => "submit",
 			"content" => "Remover"
 		));
 		echo form_close();

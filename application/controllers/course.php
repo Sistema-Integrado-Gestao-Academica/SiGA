@@ -4,6 +4,10 @@ require_once('login.php');
 
 class Course extends CI_Controller {
 
+	public function index(){
+		$this->load->template('course/course_index');
+	}
+
 	/**
 	 * Check if the logged user is the admin.
 	 * If so, load the page of Courses.
@@ -22,6 +26,22 @@ class Course extends CI_Controller {
 			$login->logout("Você deve ter permissão para acessar essa página.
 					      Você foi deslogado por motivos de segurança.", "danger", '/');
 		}
+	}
+
+	public function formToEditCourse(){
+		$this->listAllCourses();
+	}
+
+	public function formToDeleteCourse(){
+		echo "<h2>Fazer pagina do delete course</h2>";
+	}
+
+	private function listAllCourses(){
+		$this->load->model('course_model');
+		$registeredCourses = $this->course_model->getAllCourses();
+
+		echo "<h2> Fazer pagina do edit course</h2>";
+		//var_dump($registeredCourses);
 	}
 
 	function alpha_dash_space($str){
@@ -66,8 +86,8 @@ class Course extends CI_Controller {
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToRegister = array(
 				'course_name' => $courseName,
-				'course_type' => $courseType,
-				'is_finantiated' => $courseIsFinantiated
+				// 'course_type' => $courseType,
+				// 'is_finantiated' => $courseIsFinantiated
 			);
 
 			$this->load->model("course_model");
@@ -83,7 +103,7 @@ class Course extends CI_Controller {
 			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
 		}
 		
-		redirect('/cursos');
+		redirect('/course/formToRegisterNewCourse');
 	}
 
 	/**
@@ -156,7 +176,7 @@ class Course extends CI_Controller {
 	
 		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
 			$keys[$cont] = $course_types[$cont]['id_course_type'];
-			$values[$cont] = ucfirst($course_types[$cont]['name_course_type']);
+			$values[$cont] = ucfirst($course_types[$cont]['course_type_name']);
 		}
 	
 		$form_course_types = array_combine($keys, $values);

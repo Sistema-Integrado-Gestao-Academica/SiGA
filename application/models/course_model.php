@@ -3,11 +3,11 @@
 class Course_model extends CI_Model {
 	
 	/**
-	 * Get all courses registered on database
-	 * @return An array with the courses. Each position is a tuple of the relation.
+	 * Get all course types registered on database
+	 * @return An array with the course types. Each position is a tuple of the relation.
 	 */
 	public function getAllCourseTypes(){
-		$this->db->select('id_course_type, name_course_type');
+		$this->db->select('id_course_type, course_type_name');
 		$this->db->from('course_type');
 		$courseTypes = $this->db->get()->result_array();
 		
@@ -35,6 +35,19 @@ class Course_model extends CI_Model {
 
 		return $insertionStatus;
 	}
+
+	/**
+	 * Get all courses registered on database
+	 * @return An array with the courses. Each position is a tuple of the relation.
+	 */
+	public function getAllCourses(){
+		$this->db->select('*');
+		$this->db->from('course');
+		$registeredCourses = $this->db->get()->result_array();
+
+		return $registeredCourses;
+	}
+
 
 	/**
 	 * Check if the given course name already exists on database
