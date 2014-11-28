@@ -19,21 +19,16 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/formulario_entrada");
 		
 	}
-	
 
 	public function conta() {
 		$usuarioLogado = autoriza();
 		$dados = array("usuario" => $usuarioLogado);
 		$this->load->template("usuario/conta", $dados);
 	}
-
-	function alpha_dash_space($str){
-	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
-	}
 	 
 	public function novo() {
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("nome", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
@@ -62,7 +57,7 @@ class Usuario extends CI_Controller {
 
 			if ($usuarioExiste) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema");
-				redirect("usuario/formulario");
+				redirect("usuario/formulario_entrada");
 			} else {
 				$this->usuarios_model->salva($usuario);
 				$this->usuarios_model->saveType($usuario, $tipo);
@@ -70,12 +65,13 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$this->load->template("usuario/formulario");
+			$this->load->template("usuario/formulario_entrada");
 		}
 	}
 
 	public function altera() {
 		$usuarioLogado = autoriza();
+
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome", "alpha");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
@@ -83,38 +79,11 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		if ($success) {
-			$nome = $this->input->post("nome");
-			$email = $this->input->post("email");
-			$login = $usuarioLogado['login'];
-			$senha = md5($this->input->post("senha"));
-			$nova_senha = md5($this->input->post("nova_senha"));
+			$usuario = $this->getAccountForm($usuarioLogado);
 
-			$senha_em_branco = 'd41d8cd98f00b204e9800998ecf8427e';
-
-			if ($nova_senha != $senha_em_branco && $senha != $usuarioLogado['senha']) {
-				$this->session->set_flashdata("danger", "Senha atual incorreta");
-				redirect("usuario/conta");
-			} else if ($nova_senha == $senha_em_branco) {
-				$nova_senha = $usuarioLogado['senha'];
-			}
-
-			if ($nome == "") {
-				$nome = $usuarioLogado['nome'];
-			}
-
-			if ($email == "") {
-				$email = $usuarioLogado['email'];
-			}
-
-			$usuario = array(
-				'nome' => $nome,
-				'email' => $email,
-				'login' => $login,
-				'senha' => $nova_senha
-			);
-
-			$this->load->model("usuarios_model");
+			$this->load->model('usuarios_model');
 			$alterado = $this->usuarios_model->altera($usuario);
+
 			if ($alterado && $usuarioLogado != $usuario) {
 				$this->session->set_userdata('usuario_logado', $usuario);
 				$this->session->set_flashdata("success", "Os dados foram alterados");
@@ -122,7 +91,7 @@ class Usuario extends CI_Controller {
 				$this->session->set_flashdata("danger", "Os dados não foram alterados");
 			}
 
-			redirect("usuario/conta");
+			redirect('usuario/conta');
 		} else {
 			$this->load->template("usuario/conta");
 		}
@@ -133,20 +102,24 @@ class Usuario extends CI_Controller {
 		$this->load->model("usuarios_model");
 		if ($this->usuarios_model->remove($usuarioLogado)) {
 			$this->session->unset_userdata('usuario_logado');
-			$this->session->set_flashdata("success", "Usuário \"{$usuarioLogado['login']}\" removido");
+			$this->session->set_flashdata("success", "Usuário \"{$usuarioLogado['user']['login']}\" removido");
 			redirect("login");
 		} else {
-			redirect("usuario/conta");
+			$dados = array('usuario' => autoriza());
+			$this->load->template("usuario/conta", $dados);
 		}
 		
 	}
 
-
+	/**
+	 * Get all the user types from database into an array.
+	 * @return An array with all user types on database as id => type_name
+	 */
 	public function getUserTypes(){
 		
 		// $usuarioLogado = autoriza();
 		$this->load->model("usuarios_model");
-		$user_types = $this->usuarios_model->getUserTypes();
+		$user_types = $this->usuarios_model->getAllUserTypes();
 		
 		$user_types_to_array = $this->turnUserTypesToArray($user_types);
 
@@ -157,7 +130,7 @@ class Usuario extends CI_Controller {
 	  * Join the id's and names of user types into an array as key => value.
 	  * Used to the user type form
 	  * @param $user_types - The array that contains the tuples of user_type
-	  * @return An array with the id's and user types names as key => value
+	  * @return An array with the id's and user types names as id => user_type_name
 	  */
 	private function turnUserTypesToArray($user_types){
 		// Quantity of user types registered
@@ -172,5 +145,43 @@ class Usuario extends CI_Controller {
 
 		return $form_user_types;
 	}
+
+	private function getAccountForm($usuarioLogado) {
+		$name = $this->input->post("nome");
+		$email = $this->input->post("email");
+		$login = $usuarioLogado['user']['login'];
+		$password = md5($this->input->post("senha"));
+		$new_password = md5($this->input->post("nova_senha"));
+		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
+
+		$this->load->model('usuarios_model');
+		$user = $this->usuarios_model->busca('login', $login);
+
+		if ($new_password != $blank_password && $password != $user['password']) {
+			$this->session->set_flashdata("danger", "Senha atual incorreta");
+			redirect("usuario/conta");
+		} else if ($new_password == $blank_password) {
+			$new_password = $user['password'];
+		}
+
+		if ($name == "") {
+			$name = $user['name'];
+		}
+
+		if ($email == "") {
+			$email = $user['email'];
+		}
+
+		$user = $usuarioLogado;
+		$user['user']['name'] = $name;
+		$user['user']['email'] = $email;
+		$user['user']['password'] = $new_password;
+
+		return $user;
+	}
 	
+}
+
+function alpha_dash_space($str) {
+	return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 }

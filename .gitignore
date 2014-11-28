@@ -5,3 +5,4 @@ user_guide
 .buildpath
 .project
 .settings/
+application/config/*.php
