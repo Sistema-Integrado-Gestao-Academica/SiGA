@@ -27,7 +27,7 @@
 				<li><?=anchor("conta", "Conta")?></li>
 				<li><?=anchor("logout", "Sair")?></li>
 			<?php } else { ?>
-				<li><?=anchor("guest_register", "Cadastro")?></li>
+				<li><?=anchor("usuario/novo", "Cadastro")?></li>
 			<?php }?>
 		</ul>
 	</div>
