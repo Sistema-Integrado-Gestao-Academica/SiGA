@@ -36,10 +36,11 @@ class Course extends CI_Controller {
 		echo "<h2>Fazer pagina do delete course</h2>";
 	}
 
-	private function listAllCourses(){
+	public function listAllCourses(){
 		$this->load->model('course_model');
 		$registeredCourses = $this->course_model->getAllCourses();
 
+		return $registeredCourses;
 		echo "<h2> Fazer pagina do edit course</h2>";
 		//var_dump($registeredCourses);
 	}

@@ -47,6 +47,7 @@ $route['logout'] = 'login/logout';
 $route['cadastro'] = 'usuario/formulario';
 $route['funcionarios'] = 'funcionario/formulario';
 $route['funcionarios/(:num)'] = 'funcionario/formulario_altera/$1';
+$route['course/(:num)'] = 'course/formToEditCourse/$1';
 $route['setores'] = 'setor/formulario';
 $route['setores/(:num)'] = 'setor/formulario_altera/$1';
 $route['funcoes'] = 'funcao/formulario';

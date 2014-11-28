@@ -6,20 +6,58 @@
 	"content" => "newCourse"
 ))?>
 
-<?php echo "<br>";?>
-<?php echo "<br>";?>
+<?php
+	$course = new Course();
 
-<?=anchor("course/formToEditCourse", "Editar Curso", array(
-	"class" => "btn btn-primary",
-	"type" => "submit",
-	"content" => "editCourse"
-))?>
+	$registered = $course->listAllCourses();
+?>
 
-<?php echo "<br>";?>
-<?php echo "<br>";?>
+<br>
+<br>
+<table class="table">
+	
+	<tr>
+		<th>
+			Cursos Cadastrados
+		</th>
+	</tr>
+	<tr>
+		<th class="text-center">
+			Nome do Curso 
+		</th>
+		<th class="text-center">
+			Ações
+		</th>
+	</tr>
+	<?php
+		foreach($registered as $course => $indexes){
+			
+			echo "<tr>";
 
-<?=anchor("course/formToDeleteCourse", "Remover Curso", array(
-	"class" => "btn btn-primary",
-	"type" => "submit",
-	"content" => "deleteCourse"
-))?>
+				echo "<td>";
+				echo $indexes['course_name'];
+				echo "</td>";
+
+				echo "<td>";
+					
+					echo anchor("course/{$indexes['id_course']}", "Editar", array(
+					"class" => "btn btn-primary btn-editar",
+					"type" => "submit",
+					"content" => "Editar"
+					));
+
+					echo form_open("course/deleteCourse");
+					echo form_hidden("id_course", $indexes['id_course']);
+					echo form_button(array(
+						"class" => "btn btn-danger btn-remover",
+						"type" => "submit",
+						"content" => "Remover"
+					));
+					echo form_close();
+				echo "</td>";
+
+			echo "</tr>";
+		}
+	?>
+</table>
+
