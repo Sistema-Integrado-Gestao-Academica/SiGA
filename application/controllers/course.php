@@ -81,47 +81,6 @@ class Course extends CI_Controller {
 	}
 
 	/**
-	 * Delete a registered course
-	 * @return boolean $deletedCourse
-	 */
-	public function deleteCourse(){
-		$course_id = $this->input->post('id_course');
-		$this->load->model('course_model');
-		
-		$deletedCourse = $this->course_model->deleteCourseById($course_id);
-		redirect('/course/index');
-		return $deletedCourse;
-	}
-	
-	/**
-	 * Function to get the list of all registered courses
-	 * @return array $registeredCourses
-	 */
-	public function listAllCourses(){
-		$this->load->model('course_model');
-		$registeredCourses = $this->course_model->getAllCourses();
-
-		return $registeredCourses;
-	}
-
-
-	/**
-	 * Get all the course types from database into an array.
-	 * @return An array with all course types on database as id => course_type_name
-	 */
-	public function getCourseTypes(){
-		
-		$this->load->model('course_model');
-		
-		$course_types = $this->course_model->getAllCourseTypes();
-		
-		$course_types_form = $this->turnCourseTypesToArray($course_types);
-		
-		return $course_types_form;
-		
-	}
-	
-	/**
 	 * Function to update a registered course data
 	 */
 	public function updateCourse(){
@@ -164,6 +123,46 @@ class Course extends CI_Controller {
 		
 	}
 
+	/**
+	 * Delete a registered course
+	 * @return boolean $deletedCourse
+	 */
+	public function deleteCourse(){
+		$course_id = $this->input->post('id_course');
+		$this->load->model('course_model');
+		
+		$deletedCourse = $this->course_model->deleteCourseById($course_id);
+		redirect('/course/index');
+		return $deletedCourse;
+	}
+	
+	/**
+	 * Function to get the list of all registered courses
+	 * @return array $registeredCourses
+	 */
+	public function listAllCourses(){
+		$this->load->model('course_model');
+		$registeredCourses = $this->course_model->getAllCourses();
+
+		return $registeredCourses;
+	}
+
+	/**
+	 * Get all the course types from database into an array.
+	 * @return An array with all course types on database as id => course_type_name
+	 */
+	public function getCourseTypes(){
+		
+		$this->load->model('course_model');
+		
+		$course_types = $this->course_model->getAllCourseTypes();
+		
+		$course_types_form = $this->turnCourseTypesToArray($course_types);
+		
+		return $course_types_form;
+		
+	}
+	
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}

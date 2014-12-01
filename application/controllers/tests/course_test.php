@@ -18,11 +18,15 @@ class Course_Test extends CI_Controller{
 		$this->unit->use_strict(TRUE);
 	}
 
+// Start of tests for listAllCourses() method
+
 	public function listAllCoursesShouldReturnAnArray(){
 
 		$result = $this->callListAllCourses();
 
-		$this->unit->run($result, 'is_array', "Test if listAllCourses() return an array");
+		$test_name = "Test if listAllCourses() return an array";
+
+		$this->unit->run($result, 'is_array', $test_name);
 	}
 
 	public function listAllCoursesFirstRowIdShouldBeEqualsToTwo(){
@@ -102,9 +106,84 @@ class Course_Test extends CI_Controller{
 		return $result;
 	}
 
+// End of tests for listAllCourses() method
+
+// Start of tests for getCourseTypes() method
+
+	public function getCourseTypesShouldReturnAnArray(){
+		
+		$course_controller = new Course();
+
+		$result = $course_controller->getCourseTypes();
+
+		$test_name = "Test if getCourseTypes() return an array";
+
+		$this->unit->run($result, 'is_array', $test_name);
+	}
+
+	public function getCouseTypesShouldHaveTheKey3(){
+		$course_controller = new Course();
+
+		$result = $course_controller->getCourseTypes();
+
+		$test_name = "Test if 'Educação a distancia' is associated to the key '3' on the array";
+
+		$expected = 3;
+
+		$this->unit->run(array_search("Educação a distancia", $result), $expected, $test_name);
+	}
+
+	public function getCouseTypesShouldHaveTheKey1(){
+		$course_controller = new Course();
+
+		$result = $course_controller->getCourseTypes();
+
+		$test_name = "Test if 'Graduacao' is associated to the key '1' on the array";
+
+		$expected = 1;
+
+		$this->unit->run(array_search("Graduacao", $result), $expected, $test_name);
+	}
+
+	public function getCouseTypesShouldHaveTheKey2(){
+		$course_controller = new Course();
+
+		$result = $course_controller->getCourseTypes();
+
+		$test_name = "Test if 'Pos graduacao' is associated to the key '2' on the array";
+
+		$expected = 2;
+
+		$this->unit->run(array_search("Pos graduacao", $result), $expected, $test_name);
+	}
+
+	public function getCouseTypesShouldNotHaveThisValue(){
+		$course_controller = new Course();
+
+		$result = $course_controller->getCourseTypes();
+
+		$test_name = "Test if 'Engenharia de Software' does not match any key on the array";
+
+		$this->unit->run(array_search("Engenharia de Software", $result), 'is_false', $test_name);
+	}
+
+	public function getCouseTypesShouldNotHaveAnIntegerValue(){
+		$course_controller = new Course();
+
+		$result = $course_controller->getCourseTypes();
+
+		$test_name = "Test if '15' does not match any key on the array";
+
+		$this->unit->run(array_search(15, $result), 'is_false', $test_name);
+	}
+
+// End of tests for getCourseTypes() method
+
 	public function index(){
 
-		// Call your test functions here
+		/* Call your test functions here */
+
+		// listAllCourses() tests
 		$this->listAllCoursesShouldReturnAnArray();
 		$this->listAllCoursesFirstRowIdShouldBeEqualsToTwo();
 		$this->listAllCoursesFirstRowCourseTypeIdShouldBeEqualsToOne();
@@ -112,6 +191,15 @@ class Course_Test extends CI_Controller{
 		$this->listAllCoursesSecondRowIdShouldBeEqualsToThree();
 		$this->listAllCoursesSecondRowCourseTypeIdShouldBeEqualsToOne();
 		$this->listAllCoursesSecondRowCourseNameShouldBeEqualsToExpected();
+
+		// getCourseTypes() tests
+		$this->getCourseTypesShouldReturnAnArray();
+		$this->getCouseTypesShouldHaveTheKey3();
+		$this->getCouseTypesShouldHaveTheKey1();
+		$this->getCouseTypesShouldHaveTheKey2();
+		$this->getCouseTypesShouldNotHaveAnIntegerValue();
+		$this->getCouseTypesShouldNotHaveThisValue();
+
 
 		$test_report = array('unit_report' => $this->unit->report());
 
