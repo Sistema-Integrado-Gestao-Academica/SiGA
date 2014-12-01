@@ -19,17 +19,15 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function listAllCoursesShouldReturnAnArray(){
-		$course_controller = new Course();
 
-		$result = $course_controller->listAllCourses();
+		$result = $this->callListAllCourses();
 
 		$this->unit->run($result, 'is_array', "Test if listAllCourses() return an array");
 	}
 
 	public function listAllCoursesFirstRowIdShouldBeEqualsToTwo(){
-		$course_controller = new Course();
 
-		$result = $course_controller->listAllCourses();
+		$result = $this->callListAllCourses();
 
 		$expected = "2";
 
@@ -39,9 +37,8 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function listAllCoursesFirstRowCourseTypeIdShouldBeEqualsToOne(){
-		$course_controller = new Course();
 
-		$result = $course_controller->listAllCourses();
+		$result = $this->callListAllCourses();
 
 		$expected = "1";
 
@@ -51,15 +48,58 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function listAllCoursesFirstRowCourseNameShouldBeEqualsToExpected(){
-		$course_controller = new Course();
 
-		$result = $course_controller->listAllCourses();
+		$result = $this->callListAllCourses();
 
 		$expected = "Engenharia de Energia";
 
 		$test_name = "Test course name from the first row returned from test database";
 		
 		$this->unit->run($result[0]['course_name'], $expected, $test_name);
+	}
+
+	public function listAllCoursesSecondRowIdShouldBeEqualsToThree(){
+
+		$result = $this->callListAllCourses();
+
+		$expected = "3";
+
+		$test_name = "Test the course id from the second row returned from test database";
+		
+		$this->unit->run($result[1]['id_course'], $expected, $test_name);
+	}
+
+	public function listAllCoursesSecondRowCourseTypeIdShouldBeEqualsToOne(){
+
+		$result = $this->callListAllCourses();
+
+		$expected = "1";
+
+		$test_name = "Test the course type id from the first row returned from test database";
+		
+		$this->unit->run($result[1]['course_type_id'], $expected, $test_name);
+	}
+
+	public function listAllCoursesSecondRowCourseNameShouldBeEqualsToExpected(){
+
+		$result = $this->callListAllCourses();
+
+		$expected = "Engenharia Eletrônica";
+
+		$test_name = "Test course name from the second row returned from test database";
+		
+		$this->unit->run($result[1]['course_name'], $expected, $test_name);
+	}
+
+	/**
+	 * Instantiate the Course controller and call the listAllCourses() method to test
+	 * @return the result of the listAllCourses() method
+	 */
+	private function callListAllCourses(){
+		$course_controller = new Course();
+		$result = $course_controller->listAllCourses();
+
+		return $result;
 	}
 
 	public function index(){
@@ -69,6 +109,9 @@ class Course_Test extends CI_Controller{
 		$this->listAllCoursesFirstRowIdShouldBeEqualsToTwo();
 		$this->listAllCoursesFirstRowCourseTypeIdShouldBeEqualsToOne();
 		$this->listAllCoursesFirstRowCourseNameShouldBeEqualsToExpected();
+		$this->listAllCoursesSecondRowIdShouldBeEqualsToThree();
+		$this->listAllCoursesSecondRowCourseTypeIdShouldBeEqualsToOne();
+		$this->listAllCoursesSecondRowCourseNameShouldBeEqualsToExpected();
 
 		$test_report = array('unit_report' => $this->unit->report());
 
