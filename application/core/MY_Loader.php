@@ -4,13 +4,13 @@ class MY_Loader extends CI_Loader {
 
 	/**
 	 * Loads the header + content of page + footer at once to display
-	 * @param
-	 * @param
-	 * @return
+	 * @param $pageContent - The page content to load between header and footer
+	 * @param $data - Data to sent to the requested view
+	 * @return void
 	 */
-	public function template($nome, $dados = array()) {
+	public function template($pageContent, $data = array()) {
 		$this->view("header.php");
-		$this->view($nome, $dados);
+		$this->view($pageContent, $data);
 		$this->view("footer.php");
 	}
 

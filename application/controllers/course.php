@@ -41,52 +41,6 @@ class Course extends CI_Controller {
 	}
 	
 	/**
-	 * Function to delete a registered course
-	 * @return boolean $deletedCourse
-	 */
-	public function deleteCourse(){
-		$course_id = $this->input->post('id_course');
-		$this->load->model('course_model');
-		
-		$deletedCourse = $this->course_model->deleteCourseById($course_id);
-		redirect('/course/index');
-		return $deletedCourse;
-	}
-	
-	/**
-	 * Function to get the list of all registered courses
-	 * @return array $registeredCourses
-	 */
-	public function listAllCourses(){
-		$this->load->model('course_model');
-		$registeredCourses = $this->course_model->getAllCourses();
-
-		return $registeredCourses;
-	}
-
-	function alpha_dash_space($str){
-	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
-	}
-
-	/**
-	 * Check if the course is finantiated by the checkbox value 
-	 * @param $valueToCheck - Checkbox value (Expected TRUE OR FALSE)
-	 * @return 1 if is finantiated or 0 if does not
-	 */
-	private function checkIfIsFinantiated($valueToCheck){
-		
-		$isFinantiated = 0;
-
-		if($valueToCheck){
-			$isFinantiated = 1;
-		}else{
-			$isFinantiated = 0;
-		}
-
-		return $isFinantiated;
-	}
-
-	/**
 	 * Register a new course
 	 */
 	public function newCourse(){
@@ -124,6 +78,47 @@ class Course extends CI_Controller {
 		}
 		
 		redirect('/course/index');
+	}
+
+	/**
+	 * Delete a registered course
+	 * @return boolean $deletedCourse
+	 */
+	public function deleteCourse(){
+		$course_id = $this->input->post('id_course');
+		$this->load->model('course_model');
+		
+		$deletedCourse = $this->course_model->deleteCourseById($course_id);
+		redirect('/course/index');
+		return $deletedCourse;
+	}
+	
+	/**
+	 * Function to get the list of all registered courses
+	 * @return array $registeredCourses
+	 */
+	public function listAllCourses(){
+		$this->load->model('course_model');
+		$registeredCourses = $this->course_model->getAllCourses();
+
+		return $registeredCourses;
+	}
+
+
+	/**
+	 * Get all the course types from database into an array.
+	 * @return An array with all course types on database as id => course_type_name
+	 */
+	public function getCourseTypes(){
+		
+		$this->load->model('course_model');
+		
+		$course_types = $this->course_model->getAllCourseTypes();
+		
+		$course_types_form = $this->turnCourseTypesToArray($course_types);
+		
+		return $course_types_form;
+		
 	}
 	
 	/**
@@ -169,6 +164,10 @@ class Course extends CI_Controller {
 		
 	}
 
+	function alpha_dash_space($str){
+	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+	}
+
 	/**
 	 * Evaluates if in a given array of permissions the courses one is on it
 	 * @param permissions_array - Array with the permission names
@@ -212,21 +211,23 @@ class Course extends CI_Controller {
 	}
 	
 	/**
-	 * Get all the course types from database into an array.
-	 * @return An array with all course types on database as id => course_type_name
+	 * Check if the course is finantiated by the checkbox value 
+	 * @param $valueToCheck - Checkbox value (Expected TRUE OR FALSE)
+	 * @return 1 if is finantiated or 0 if does not
 	 */
-	public function getCourseTypes(){
+	private function checkIfIsFinantiated($valueToCheck){
 		
-		$this->load->model('course_model');
-		
-		$course_types = $this->course_model->getAllCourseTypes();
-		
-		$course_types_form = $this->turnCourseTypesToArray($course_types);
-		
-		return $course_types_form;
-		
+		$isFinantiated = 0;
+
+		if($valueToCheck){
+			$isFinantiated = 1;
+		}else{
+			$isFinantiated = 0;
+		}
+
+		return $isFinantiated;
 	}
-	
+
 	/**
 	 * Join the id's and names of course types into an array as key => value.
 	 * Used to the course type form
