@@ -124,15 +124,32 @@ class Course extends CI_Controller {
 	}
 
 	/**
-	 * Delete a registered course
-	 * @return boolean $deletedCourse
+	 * Function to delete a registered course
 	 */
 	public function deleteCourse(){
 		$course_id = $this->input->post('id_course');
-		$this->load->model('course_model');
-		
-		$deletedCourse = $this->course_model->deleteCourseById($course_id);
+		$courseWasDeleted = $this->deleteCourseFromDb($course_id);
+
+		if($courseWasDeleted){
+			$this->session->set_flashdata("success", "Curso excluído com sucesso.");
+		}else{
+			$this->session->set_flashdata("danger", "Não foi possível excluir este curso.");
+		}
+
 		redirect('/course/index');
+	}
+
+	/**
+	 * Delete a registered course on DB
+	 * @param $course_id - The id from the course to be deleted
+	 * @return true if the exclusion was made right and false if does not
+	 */
+	public function deleteCourseFromDb($course_id){
+		
+		$this->load->model('course_model');
+
+		$deletedCourse = $this->course_model->deleteCourseById($course_id);
+		
 		return $deletedCourse;
 	}
 	
