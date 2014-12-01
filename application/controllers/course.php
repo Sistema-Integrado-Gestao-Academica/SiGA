@@ -27,13 +27,24 @@ class Course extends CI_Controller {
 					      Você foi deslogado por motivos de segurança.", "danger", '/');
 		}
 	}
-
-	public function formToEditCourse(){
-		$this->listAllCourses();
+	
+	/**
+	 * Function to load the page of a course that will be updated
+	 * @param int $id
+	 */
+	public function formToEditCourse($id){
+		autoriza();
+		$this->load->model('course_model');
+		$course_searched = $this->course_model->getCourseById($id);
+		$data = array('course' => $course_searched);
+		$this->load->template('course/update_course', $data);
 	}
-
+	
+	/**
+	 * Function to delete a registered course
+	 * @return boolean $deletedCourse
+	 */
 	public function deleteCourse(){
-		echo "<h2>Fazer pagina do delete course</h2>";
 		$course_id = $this->input->post('id_course');
 		$this->load->model('course_model');
 		
@@ -41,14 +52,16 @@ class Course extends CI_Controller {
 		redirect('/course/index');
 		return $deletedCourse;
 	}
-
+	
+	/**
+	 * Function to get the list of all registered courses
+	 * @return array $registeredCourses
+	 */
 	public function listAllCourses(){
 		$this->load->model('course_model');
 		$registeredCourses = $this->course_model->getAllCourses();
 
 		return $registeredCourses;
-		echo "<h2> Fazer pagina do edit course</h2>";
-		//var_dump($registeredCourses);
 	}
 
 	function alpha_dash_space($str){
@@ -110,7 +123,50 @@ class Course extends CI_Controller {
 			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
 		}
 		
-		redirect('/course/formToRegisterNewCourse');
+		redirect('/course/index');
+	}
+	
+	/**
+	 * Function to update a registered course data
+	 */
+	public function updateCourse(){
+		autoriza();
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_rules("isFinantiated", "Finantiated");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$courseDataIsOk = $this->form_validation->run();
+		
+		if($courseDataIsOk){
+			$courseName = $this->input->post('courseName');
+			$courseType = $this->input->post('courseType');
+			$courseIsFinantiated = $this->input->post('isFinantiated');
+			$courseIsFinantiated = $this->checkIfIsFinantiated($courseIsFinantiated);
+			$idCourse = $this->input->post('id_course');
+			
+			// Course to be saved on database. Put the columns names on the keys
+			$courseToUpdate = array(
+					'course_name' => $courseName,
+					'course_type_id' => $courseType,
+					//'is_finantiated' => $courseIsFinantiated
+			);
+		
+			$this->load->model("course_model");
+			$updateWasMade = $this->course_model->updateCourse($idCourse,$courseToUpdate);
+		
+			if($updateWasMade){
+				$this->session->set_flashdata("success", "Curso \"{$courseName}\" alterado com sucesso");
+			}else{
+				$this->session->set_flashdata("danger", "Curso de nome \"{$courseName}\" já existe.");
+			}
+		
+		}else{
+			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
+		}
+		
+		redirect('/course/index');
+		
 	}
 
 	/**

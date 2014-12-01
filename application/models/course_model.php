@@ -35,7 +35,51 @@ class Course_model extends CI_Model {
 
 		return $insertionStatus;
 	}
-
+	
+	/**
+	 * Function to delete onde course checked by its id
+	 * @param int $id_course
+	 * @return boolean $deletedCourse
+	 */
+	public function deleteCourseById($id_course){
+		$deletedCourse = $this->db->delete('course', array('id_course' => $id_course));
+		return $deletedCourse;
+	}
+	
+	/**
+	 * Function to select one course by its unique id
+	 * @param int $id
+	 * @return object $courseAsked if it exists, boolean $courseAsked if not exists
+	 */
+	public function getCourseById($id){
+		$this->db->where('id_course',$id);
+		$this->db->from('course');
+		$courseAsked = $this->db->get()->row();
+		return $courseAsked;
+	}
+	
+	/**
+	 * Function to update some course atributes
+	 * @param array $courseToUpdate
+	 * @return boolean $updateStatus
+	 */
+	public function updateCourse($id_course,$courseToUpdate){
+		$courseNameToUpdate = $courseToUpdate['course_name'];
+		$courseNameAlreadyExists = $this->courseNameAlreadyExists($courseNameToUpdate);
+	
+		$updateStatus = FALSE;
+	
+		if($courseNameAlreadyExists === FALSE){
+			$this->db->where('id_course',$id_course);
+			$this->db->update("course", $courseToUpdate);
+			$updateStatus = TRUE;
+		}else{
+			$updateStatus = FALSE;
+		}
+	
+		return $updateStatus;
+	}
+	
 	/**
 	 * Get all courses registered on database
 	 * @return An array with the courses. Each position is a tuple of the relation.
@@ -72,10 +116,4 @@ class Course_model extends CI_Model {
 		return $courseNameAlreadyExists;
 	}
 	
-	public function deleteCourseById($id_course){
-		$deletedCourse = $this->db->delete('course', array('id_course' => $id_course));
-		return $deletedCourse;
-	}
-	
-
 }
