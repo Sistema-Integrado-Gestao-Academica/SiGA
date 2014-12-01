@@ -13,4 +13,5 @@ class MY_Loader extends CI_Loader {
 		$this->view($nome, $dados);
 		$this->view("footer.php");
 	}
+
 }
