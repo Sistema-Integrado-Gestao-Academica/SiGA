@@ -4,13 +4,6 @@ class Module extends CI_Controller {
 
 	// CRUD
 
-	public function testThisShit(){
-
-		$t = array(1,2,3);
-
-		return $t;
-	}
-
 	/**
 	  * Check the modules registered to an user
 	  * @param $user_id - User id to check the modules

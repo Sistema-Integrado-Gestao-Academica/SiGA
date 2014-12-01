@@ -60,14 +60,15 @@ $route['cursos'] = 'course/index';
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test
  */
-$route['user_test'] = 'user_test';
-$route['department_test'] = 'department_test';
-$route['employee_test'] = 'employee_test';
-$route['function_test'] = 'function_test';
-$route['login_test'] = 'login_test';
-$route['module_test'] = 'module_test';
-$route['permission_test'] = 'permission_test';
-$route['sector_test'] = 'sector_test';
+$route['user_test'] = 'tests/user_test';
+$route['department_test'] = 'tests/department_test';
+$route['employee_test'] = 'tests/employee_test';
+$route['function_test'] = 'tests/function_test';
+$route['login_test'] = 'tests/login_test';
+$route['module_test'] = 'tests/module_test';
+$route['permission_test'] = 'tests/permission_test';
+$route['sector_test'] = 'tests/sector_test';
+$route['course_test'] = 'tests/course_test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */
