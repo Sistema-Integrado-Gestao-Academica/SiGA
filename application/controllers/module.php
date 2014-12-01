@@ -4,6 +4,13 @@ class Module extends CI_Controller {
 
 	// CRUD
 
+	public function testThisShit(){
+
+		$t = array(1,2,3);
+
+		return $t;
+	}
+
 	/**
 	  * Check the modules registered to an user
 	  * @param $user_id - User id to check the modules
@@ -13,6 +20,8 @@ class Module extends CI_Controller {
 
 		$this->load('module_model');
 		$registered_modules = $this->module_model->getUserModulesNames($user_id);
+
+		var_dump($registered_modules);
 
 		return $registered_modules;
 	}
