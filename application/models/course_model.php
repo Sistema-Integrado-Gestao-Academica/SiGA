@@ -71,6 +71,11 @@ class Course_model extends CI_Model {
 
 		return $courseNameAlreadyExists;
 	}
-
+	
+	public function deleteCourseById($id_course){
+		$deletedCourse = $this->db->delete('course', array('id_course' => $id_course));
+		return $deletedCourse;
+	}
+	
 
 }

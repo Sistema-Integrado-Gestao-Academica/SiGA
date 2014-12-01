@@ -32,8 +32,14 @@ class Course extends CI_Controller {
 		$this->listAllCourses();
 	}
 
-	public function formToDeleteCourse(){
+	public function deleteCourse(){
 		echo "<h2>Fazer pagina do delete course</h2>";
+		$course_id = $this->input->post('id_course');
+		$this->load->model('course_model');
+		
+		$deletedCourse = $this->course_model->deleteCourseById($course_id);
+		redirect('/course/index');
+		return $deletedCourse;
 	}
 
 	public function listAllCourses(){
@@ -87,8 +93,8 @@ class Course extends CI_Controller {
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToRegister = array(
 				'course_name' => $courseName,
-				// 'course_type' => $courseType,
-				// 'is_finantiated' => $courseIsFinantiated
+				'course_type_id' => $courseType,
+				//'is_finantiated' => $courseIsFinantiated
 			);
 
 			$this->load->model("course_model");
