@@ -37,13 +37,40 @@ class Course_model extends CI_Model {
 	}
 	
 	/**
-	 * Function to delete onde course checked by its id
-	 * @param int $id_course
-	 * @return boolean $deletedCourse
+	 * Delete a course by its id
+	 * @param int $id_course - The course id to be deleted
+	 * @return TRUE if the exclusion was made right or FALSE if it does not
 	 */
 	public function deleteCourseById($id_course){
-		$deletedCourse = $this->db->delete('course', array('id_course' => $id_course));
-		return $deletedCourse;
+		$idExists = $this->checkExistingId($id_course);
+		
+		$courseWasDeleted = FALSE;
+		if($idExists){
+			$this->db->delete('course', array('id_course' => $id_course));
+			$courseWasDeleted = TRUE;
+		}else{
+			$courseWasDeleted = FALSE;
+		}
+
+		return $courseWasDeleted;
+	}
+
+	/**
+	 * Check if a given course id exists on the database
+	 * @param $course_id
+	 * @return TRUE if the id exists or FALSE if does not
+	 */
+	public function checkExistingId($course_id){
+		$foundCourse = $this->getCourseById($course_id);
+
+		$idExistis = FALSE;
+		if(sizeof($foundCourse) === 0){
+			$idExistis = FALSE;
+		}else{
+			$idExistis = TRUE;
+		}
+
+		return $idExistis;
 	}
 	
 	/**
