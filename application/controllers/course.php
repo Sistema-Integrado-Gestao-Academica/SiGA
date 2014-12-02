@@ -2,21 +2,17 @@
 
 require_once('login.php');
 require_once(APPPATH."/exception/CourseNameException.php");
+
 class Course extends CI_Controller {
 
 	public function index(){
 
-		$logged_user_data = $this->session->userdata('usuario_logado');	
-		$permissions_for_logged_user = $logged_user_data['user_permissions'];
-
-		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
+		$user_has_the_permission = $this->checkUserPermission();
 
 		if($user_has_the_permission){
 			$this->load->template('course/course_index');
 		}else{
-			$login = new Login();
-			$login->logout("Você deve ter permissão para acessar essa página.
-					      Você foi deslogado por motivos de segurança.", "danger", '/');
+			$this->logoutUser();
 		}
 	}
 
@@ -26,17 +22,13 @@ class Course extends CI_Controller {
 	 * If doesn't, is made the logout and redirected to home.
 	 */	 
 	public function formToRegisterNewCourse(){
-		$logged_user_data = $this->session->userdata('usuario_logado');	
-		$permissions_for_logged_user = $logged_user_data['user_permissions'];
 
-		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
+		$user_has_the_permission = $this->checkUserPermission();
 
 		if($user_has_the_permission){
 			$this->load->template('course/register_course');
 		}else{
-			$login = new Login();
-			$login->logout("Você deve ter permissão para acessar essa página.
-					      Você foi deslogado por motivos de segurança.", "danger", '/');
+			$this->logoutUser();
 		}
 	}
 	
@@ -45,22 +37,25 @@ class Course extends CI_Controller {
 	 * @param int $id
 	 */
 	public function formToEditCourse($id){
-		autoriza();
-		$this->load->model('course_model');
-		$course_searched = $this->course_model->getCourseById($id);
-		$data = array('course' => $course_searched);
-		$this->load->template('course/update_course', $data);
+
+		$user_has_the_permission = $this->checkUserPermission();
+
+		if($user_has_the_permission){
+			$this->load->model('course_model');
+			$course_searched = $this->course_model->getCourseById($id);
+			$data = array('course' => $course_searched);
+			$this->load->template('course/update_course', $data);
+		}else{
+			$this->logoutUser();
+		}
 	}
 	
 	/**
 	 * Register a new course
 	 */
 	public function newCourse(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$courseDataIsOk = $this->form_validation->run();
+
+		$courseDataIsOk = $this->validatesNewCourseData();
 
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
@@ -89,15 +84,24 @@ class Course extends CI_Controller {
 	}
 
 	/**
-	 * Function to update a registered course data
+	 * Validates the data submitted on the new course form
 	 */
-	public function updateCourse(){
-		autoriza();
+	private function validatesNewCourseData(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$courseDataIsOk = $this->form_validation->run();
+		$courseDataStatus = $this->form_validation->run();
+
+		return $courseDataStatus;
+	}
+
+	/**
+	 * Function to update a registered course data
+	 */
+	public function updateCourse(){
+
+		$courseDataIsOk = $this->validatesUpdateCourseData();
 		
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
@@ -127,6 +131,19 @@ class Course extends CI_Controller {
 		
 		redirect('/course/index');
 		
+	}
+
+	/**
+	 * Validates the data submitted on the update course form
+	 */
+	private function validatesUpdateCourseData(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$courseDataStatus = $this->form_validation->run();
+
+		return $courseDataStatus;
 	}
 
 	/**
@@ -191,6 +208,19 @@ class Course extends CI_Controller {
 	}
 
 	/**
+	 * Check if the logged user have the permission to this page
+	 * @return TRUE if the user have the permission or FALSE if does not
+	 */
+	private function checkUserPermission(){
+		$logged_user_data = $this->session->userdata('usuario_logado');	
+		$permissions_for_logged_user = $logged_user_data['user_permissions'];
+
+		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
+
+		return $user_has_the_permission;
+	}
+
+	/**
 	 * Evaluates if in a given array of permissions the courses one is on it
 	 * @param permissions_array - Array with the permission names
 	 * @return True if there is the courses permission on this array, or false if does not.
@@ -250,6 +280,15 @@ class Course extends CI_Controller {
 		$form_course_types = array_combine($keys, $values);
 	
 		return $form_course_types;
+	}
+
+	/**
+	 * Logout the current user for unauthorized access to the page
+	 */
+	private function logoutUser(){
+		$login = new Login();
+		$login->logout("Você deve ter permissão para acessar essa página.
+				      Você foi deslogado por motivos de segurança.", "danger", '/');
 	}
 	
 }
