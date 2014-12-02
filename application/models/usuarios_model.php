@@ -36,13 +36,20 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('id_user_type');
 		$types_found = $this->db->get_where("user_user_type", array('id_user'=>$user_id));
 		$types_found_to_array = $types_found->result_array();
-
+		
 		// Filter the array returned from result_array() into a single array
 		for($i = 0; $i < sizeof($types_found_to_array); $i++){
 			$user_types_found[$i] = $types_found_to_array[$i]['id_user_type'];
-		}
 
-		return $user_types_found;
+			$this->db->select('type_name');
+			$type_name = $this->db->get_where("user_type",array('id_type'=>$user_types_found[$i]))->result_array();
+			if($type_name){
+				$user_type_name[$i] = $type_name[0]['type_name'];
+			}
+		}
+		
+		$user_type_return = array_merge($user_types_found,$user_type_name);
+		return $user_type_return;
 	}
 	
 	public function buscaTodos() {
