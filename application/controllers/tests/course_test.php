@@ -184,6 +184,97 @@ class Course_Test extends CI_Controller{
 
 // End of tests for getCourseTypes() method
 
+// Start of tests for deleteCourseFromDb() method
+
+	public function shouldDeleteTheCourseId2(){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb(2);
+
+		if($result){
+			$this->insertDeletedCourseAgain(2, 1, "Engenharia de Energia");
+		}
+
+		$test_name = "Test if the deleteCourseFromDb() method works with a valid id=2";
+
+		$this->unit->run($result, 'is_true', $test_name);
+	}
+
+	public function shouldDeleteTheCourseId3(){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb(3);
+
+		if($result){
+			$this->insertDeletedCourseAgain(3, 1, "Engenharia Eletrônica");
+		}
+
+		$test_name = "Test if the deleteCourseFromDb() method works with a valid id=3";
+
+		$this->unit->run($result, 'is_true', $test_name);
+	}
+
+	public function shouldDeleteTheCourseId5(){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb(5);
+
+		if($result){
+			$this->insertDeletedCourseAgain(5, 1, "Engenharia de Software");
+		}
+
+		$test_name = "Test if the deleteCourseFromDb() method works with a valid id=5";
+
+		$this->unit->run($result, 'is_true', $test_name);
+	}
+
+	public function shouldNotDeleteTheCourseWithId0(){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb(0);
+
+		$test_name = "Test if the deleteCourseFromDb() method works with a invalid id=0";
+
+		$this->unit->run($result, 'is_false', $test_name);
+	}
+
+	public function shouldNotDeleteTheCourseWithId10(){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb(10);
+
+		$test_name = "Test if the deleteCourseFromDb() method works with a invalid id=10";
+
+		$this->unit->run($result, 'is_false', $test_name);
+	}
+
+	public function shouldNotDeleteTheCourseWithId100(){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb(100);
+
+		$test_name = "Test if the deleteCourseFromDb() method works with a invalid id=100";
+
+		$this->unit->run($result, 'is_false', $test_name);
+	}
+
+	/**
+	 * Insert the deleted course again to maintain the test database integrity to the tests
+	 * @param $courseId - The deleted course id 
+	 * @param  $courseTypeId - The deleted course type id
+	 * @param $courseName - The deleted course name
+	 */
+	private function insertDeletedCourseAgain($courseId, $courseTypeId, $courseName){
+		$dataToInsert = array(
+			'id_course' => $courseId,
+			'course_type_id' => $courseTypeId,
+			'course_name' => $courseName
+		);
+
+		$this->db->insert('course', $dataToInsert);
+	}
+// End of tests for deleteCourseFromDb() method
+
 	public function index(){
 
 		/* Call your test functions here */
@@ -204,6 +295,14 @@ class Course_Test extends CI_Controller{
 		$this->getCourseTypesShouldHaveTheKey2();
 		$this->getCourseTypesShouldNotHaveThisValue();
 		$this->getCourseTypesShouldNotHaveAnIntegerValue();
+		
+		// deleteCourseFromDb() tests
+		$this->shouldDeleteTheCourseId2();
+		$this->shouldDeleteTheCourseId3();
+		$this->shouldDeleteTheCourseId5();
+		$this->shouldNotDeleteTheCourseWithId0();
+		$this->shouldNotDeleteTheCourseWithId10();
+		$this->shouldNotDeleteTheCourseWithId100();
 
 
 		$test_report = array('unit_report' => $this->unit->report());
