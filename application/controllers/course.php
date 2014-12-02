@@ -1,11 +1,23 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('login.php');
-
+require_once(APPPATH."/exception/CourseNameException.php");
 class Course extends CI_Controller {
 
 	public function index(){
-		$this->load->template('course/course_index');
+
+		$logged_user_data = $this->session->userdata('usuario_logado');	
+		$permissions_for_logged_user = $logged_user_data['user_permissions'];
+
+		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
+
+		if($user_has_the_permission){
+			$this->load->template('course/course_index');
+		}else{
+			$login = new Login();
+			$login->logout("Você deve ter permissão para acessar essa página.
+					      Você foi deslogado por motivos de segurança.", "danger", '/');
+		}
 	}
 
 	/**
@@ -106,14 +118,16 @@ class Course extends CI_Controller {
 					//'is_finantiated' => $courseIsFinantiated
 			);
 		
-			$this->load->model("course_model");
-			$updateWasMade = $this->course_model->updateCourse($idCourse,$courseToUpdate);
-		
-			if($updateWasMade){
+			try{
+				$this->load->model("course_model");
+				$this->course_model->updateCourse($idCourse, $courseToUpdate);
 				$this->session->set_flashdata("success", "Curso \"{$courseName}\" alterado com sucesso");
-			}else{
-				$this->session->set_flashdata("danger", "Curso de nome \"{$courseName}\" já existe.");
+
+			}catch(CourseNameException $e){
+
+				$this->session->set_flashdata("danger", $e->getMessage());
 			}
+		
 		
 		}else{
 			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
