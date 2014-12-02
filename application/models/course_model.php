@@ -1,5 +1,5 @@
 <?php 
-
+require_once(APPPATH."/exception/CourseNameException.php");
 class Course_model extends CI_Model {
 	
 	/**
@@ -86,25 +86,135 @@ class Course_model extends CI_Model {
 	}
 	
 	/**
-	 * Function to update some course atributes
-	 * @param array $courseToUpdate
-	 * @return boolean $updateStatus
+	 * Update course attributes
+	 * @param String $id_course - The course id to be updated
+	 * @param array $courseToUpdate - The new course data to replace the old one
+	 * @return void
 	 */
-	public function updateCourse($id_course,$courseToUpdate){
+	public function updateCourse($id_course, $courseToUpdate){
+
 		$courseNameToUpdate = $courseToUpdate['course_name'];
-		$courseNameAlreadyExists = $this->courseNameAlreadyExists($courseNameToUpdate);
-	
-		$updateStatus = FALSE;
-	
-		if($courseNameAlreadyExists === FALSE){
-			$this->db->where('id_course',$id_course);
-			$this->db->update("course", $courseToUpdate);
-			$updateStatus = TRUE;
+		$courseTypeIdToUpdate = $courseToUpdate['course_type_id'];
+		
+		$courseNameHasChanged = $this->checkIfCourseNameHasChanged($id_course, $courseNameToUpdate);
+		$courseTypeHasChanged = $this->checkIfCourseTypeHasChanged($id_course, $courseTypeIdToUpdate);
+
+		$newCourseDataIsOk = $courseNameHasChanged || $courseTypeHasChanged;
+
+		// Check if at least one of the attributes has changed 
+		if($newCourseDataIsOk){
+
+			// Check what attribute has changed
+			if($courseNameHasChanged){
+
+				$courseNameNotAlreadyExists = !($this->courseNameAlreadyExists($courseNameToUpdate));
+
+				// Check if the new course name does not exists yet on DB
+				if($courseNameNotAlreadyExists){
+
+					$this->updateCourseOnDb($id_course, $courseToUpdate);
+
+				}else{
+					$errorMessage = "O nome do curso '".$courseNameToUpdate."' já existe.";
+					throw new CourseNameException($errorMessage);
+				}
+			}else{
+				
+				$this->updateCourseOnDb($id_course, $courseToUpdate);
+			}
+
 		}else{
-			$updateStatus = FALSE;
+			$errorMessage = "Nenhum alteração foi feita no curso '".$courseNameToUpdate."'";
+			throw new CourseNameException($errorMessage);		
 		}
-	
-		return $updateStatus;
+
+	}
+
+	/**
+	 * Update a course on DB
+	 * @param String $id_course - The course id to be updated
+	 * @param array $courseToUpdate - The new course data to replace the old one
+	 * @return void
+	 */
+	private function updateCourseOnDb($id_course, $newCourseData){
+		$this->db->where('id_course',$id_course);
+		$this->db->update("course", $newCourseData);
+	}
+
+	/**
+	 * Check if the course name from a given course id has changed in comparison with the new course name
+	 * @param $course_id - The course id to get the old course name
+	 * @param $newCourseName - The new course name that will replace the old one
+	 * @return TRUE if the course name has changed or FALSE if does not
+	 */
+	private function checkIfCourseNameHasChanged($course_id, $newCourseName){
+		$oldCourseName = $this->getCourseNameForThisCourseId($course_id);
+
+		if($oldCourseName == $newCourseName){
+			$hasChanged = FALSE;
+		}else{
+			$hasChanged = TRUE;
+		}
+
+		return $hasChanged;
+	}
+
+	/**
+	 * Get the course name registered for a given course id
+	 * @param $id_course - The course id to look for the course name 
+	 * @return a String with the registered course name for the given course id if found, or FALSE if does not
+	 */
+	private function getCourseNameForThisCourseId($id_course){
+		$this->db->select('course_name');
+		$searchResult = $this->db->get_where('course', array('id_course' => $id_course));
+
+		$foundCourseName = $searchResult->row_array();
+
+		if(sizeof($foundCourseName) > 0){
+			$foundCourseName = $foundCourseName['course_name'];
+		}else{
+			$foundCourseName = FALSE;
+		}
+
+		return $foundCourseName;
+	}
+
+	/**
+	 * Check if the course type from a given course id has changed in comparison with the new course type id
+	 * @param $course_id - The course id to get the old course type id
+	 * @param $newCourseTypeId - The new course type id that will replace the old one
+	 * @return TRUE if the course type has changed or FALSE if does not
+	 */
+	private function checkIfCourseTypeHasChanged($course_id, $newCourseTypeId){
+		$oldCourseTypeId = $this->getCourseTypeForThisCourseId($course_id);
+
+		if($oldCourseTypeId == $newCourseTypeId){
+			$hasChanged = FALSE;
+		}else{
+			$hasChanged = TRUE;
+		}
+
+		return $hasChanged;
+	}
+
+	/**
+	 * Get the course type id registered for a given course id
+	 * @param $id_course - The course id to look for the course type 
+	 * @return a String with the registered course type for the given course id if found, or FALSE if does not
+	 */
+	private function getCourseTypeForThisCourseId($id_course){
+		$this->db->select('course_type_id');
+		$searchResult = $this->db->get_where('course', array('id_course' => $id_course));
+
+		$foundCourseType = $searchResult->row_array();
+
+		if(sizeof($foundCourseType) > 0){
+			$foundCourseType = $foundCourseType['course_type_id'];
+		}else{
+			$foundCourseType = FALSE;
+		}
+
+		return $foundCourseType;
 	}
 	
 	/**
@@ -118,7 +228,6 @@ class Course_model extends CI_Model {
 
 		return $registeredCourses;
 	}
-
 
 	/**
 	 * Check if the given course name already exists on database
