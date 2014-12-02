@@ -59,21 +59,17 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("isFinantiated", "Finantiated");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataIsOk = $this->form_validation->run();
 
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			$courseIsFinantiated = $this->input->post('isFinantiated');
-			$courseIsFinantiated = $this->checkIfIsFinantiated($courseIsFinantiated);
 
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToRegister = array(
 				'course_name' => $courseName,
 				'course_type_id' => $courseType,
-				//'is_finantiated' => $courseIsFinantiated
 			);
 
 			$this->load->model("course_model");
@@ -100,22 +96,18 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("isFinantiated", "Finantiated");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataIsOk = $this->form_validation->run();
 		
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			$courseIsFinantiated = $this->input->post('isFinantiated');
-			$courseIsFinantiated = $this->checkIfIsFinantiated($courseIsFinantiated);
 			$idCourse = $this->input->post('id_course');
 			
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToUpdate = array(
 					'course_name' => $courseName,
 					'course_type_id' => $courseType,
-					//'is_finantiated' => $courseIsFinantiated
 			);
 		
 			try{
@@ -240,24 +232,6 @@ class Course extends CI_Controller {
 		return $isAdminId;
 	}
 	
-	/**
-	 * Check if the course is finantiated by the checkbox value 
-	 * @param $valueToCheck - Checkbox value (Expected TRUE OR FALSE)
-	 * @return 1 if is finantiated or 0 if does not
-	 */
-	private function checkIfIsFinantiated($valueToCheck){
-		
-		$isFinantiated = 0;
-
-		if($valueToCheck){
-			$isFinantiated = 1;
-		}else{
-			$isFinantiated = 0;
-		}
-
-		return $isFinantiated;
-	}
-
 	/**
 	 * Join the id's and names of course types into an array as key => value.
 	 * Used to the course type form

@@ -15,6 +15,18 @@ class Course_model extends CI_Model {
 	}
 
 	/**
+	 * Get all courses registered on database
+	 * @return An array with the courses. Each position is a tuple of the relation.
+	 */
+	public function getAllCourses(){
+		$this->db->select('*');
+		$this->db->from('course');
+		$registeredCourses = $this->db->get()->result_array();
+
+		return $registeredCourses;
+	}
+
+	/**
 	 * Save a course on the database
 	 * @param $courseToSave - Array with the attributes of the course
 	 * @return TRUE if the insertion was made or FALSE if it does not
@@ -90,6 +102,7 @@ class Course_model extends CI_Model {
 	 * @param String $id_course - The course id to be updated
 	 * @param array $courseToUpdate - The new course data to replace the old one
 	 * @return void
+	 * @throws CourseNameException
 	 */
 	public function updateCourse($id_course, $courseToUpdate){
 
@@ -217,18 +230,6 @@ class Course_model extends CI_Model {
 		return $foundCourseType;
 	}
 	
-	/**
-	 * Get all courses registered on database
-	 * @return An array with the courses. Each position is a tuple of the relation.
-	 */
-	public function getAllCourses(){
-		$this->db->select('*');
-		$this->db->from('course');
-		$registeredCourses = $this->db->get()->result_array();
-
-		return $registeredCourses;
-	}
-
 	/**
 	 * Check if the given course name already exists on database
 	 * @param $courseName - The course name to check
