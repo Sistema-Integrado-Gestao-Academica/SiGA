@@ -187,13 +187,10 @@ class Course_Test extends CI_Controller{
 // Start of tests for deleteCourseFromDb() method
 
 	public function shouldDeleteTheCourseId2(){
-		$course_controller = new Course();
 		
-		$result = $course_controller->deleteCourseFromDb(2);
+		$result = $this->callDeleteCourseFromDb(2);
 
-		if($result){
-			$this->insertDeletedCourseAgain(2, 1, "Engenharia de Energia");
-		}
+		$this->checkExclusion($result, 2, 1, "Engenharia de Energia");
 
 		$test_name = "Test if the deleteCourseFromDb() method works with a valid id=2";
 
@@ -201,13 +198,10 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function shouldDeleteTheCourseId3(){
-		$course_controller = new Course();
 		
-		$result = $course_controller->deleteCourseFromDb(3);
+		$result = $this->callDeleteCourseFromDb(3);
 
-		if($result){
-			$this->insertDeletedCourseAgain(3, 1, "Engenharia Eletrônica");
-		}
+		$this->checkExclusion($result, 3, 1, "Engenharia Eletrônica");
 
 		$test_name = "Test if the deleteCourseFromDb() method works with a valid id=3";
 
@@ -215,13 +209,10 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function shouldDeleteTheCourseId5(){
-		$course_controller = new Course();
 		
-		$result = $course_controller->deleteCourseFromDb(5);
+		$result = $this->callDeleteCourseFromDb(5);
 
-		if($result){
-			$this->insertDeletedCourseAgain(5, 1, "Engenharia de Software");
-		}
+		$this->checkExclusion($result, 5, 1, "Engenharia de Software");
 
 		$test_name = "Test if the deleteCourseFromDb() method works with a valid id=5";
 
@@ -229,9 +220,8 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function shouldNotDeleteTheCourseWithId0(){
-		$course_controller = new Course();
 		
-		$result = $course_controller->deleteCourseFromDb(0);
+		$result = $this->callDeleteCourseFromDb(0);
 
 		$test_name = "Test if the deleteCourseFromDb() method works with a invalid id=0";
 
@@ -239,9 +229,8 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function shouldNotDeleteTheCourseWithId10(){
-		$course_controller = new Course();
 		
-		$result = $course_controller->deleteCourseFromDb(10);
+		$result = $this->callDeleteCourseFromDb(10);
 
 		$test_name = "Test if the deleteCourseFromDb() method works with a invalid id=10";
 
@@ -249,13 +238,39 @@ class Course_Test extends CI_Controller{
 	}
 
 	public function shouldNotDeleteTheCourseWithId100(){
-		$course_controller = new Course();
-		
-		$result = $course_controller->deleteCourseFromDb(100);
+	
+		$result = $this->callDeleteCourseFromDb(100);
 
 		$test_name = "Test if the deleteCourseFromDb() method works with a invalid id=100";
 
 		$this->unit->run($result, 'is_false', $test_name);
+	}
+
+	/**
+	 * Instantiate the Course controller and calls the deleteCourseFromDb() method to test
+	 * @param $idToPass - The course id to pass to deleteCourseFromDb() method
+	 * @return the result of deleteCourseFromDb() method
+	 */
+	private function callDeleteCourseFromDb($idToPass){
+		$course_controller = new Course();
+		
+		$result = $course_controller->deleteCourseFromDb($idToPass);
+
+		return $result;
+	}
+
+	/**
+	 * Check the test database consistence after an exclusion
+	 * @param $exclusionResult - The result from a course exclusion by deleteCourseFromDb method
+	 * @param $courseId - The deleted course id 
+	 * @param  $courseTypeId - The deleted course type id
+	 * @param $courseName - The deleted course name
+	 *
+	 */
+	private function checkExclusion($exclusionResult, $courseId, $courseTypeId, $courseName){
+		if($exclusionResult){
+			$this->insertDeletedCourseAgain($courseId, $courseTypeId, $courseName);
+		}
 	}
 
 	/**
@@ -276,6 +291,9 @@ class Course_Test extends CI_Controller{
 // End of tests for deleteCourseFromDb() method
 
 	public function index(){
+
+		// Set this to TRUE to run the tests
+		$this->unit->active(FALSE);
 
 		/* Call your test functions here */
 
