@@ -11,4 +11,8 @@ class Utils extends CI_Controller {
 			show_error($this->migration->error_string());
 		}
 	}
+	
+	public function loadSecretaria(){
+		$this->load->template('secretary/index_secretary');
+	}
 }

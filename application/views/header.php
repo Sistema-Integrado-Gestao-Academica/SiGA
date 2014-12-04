@@ -43,7 +43,9 @@
 				<li><?=anchor("logout", "Sair")?></li>
 			</ul>
 		<?php } else { ?>
-			<li><?=anchor("usuario/novo", "Cadastro")?></li>
+			<ul class="nav navbar-nav ">
+				<li><?=anchor("usuario/novo", "Cadastro")?></li>
+		    </ul>
 		<?php }?>
 			
 		</div>
