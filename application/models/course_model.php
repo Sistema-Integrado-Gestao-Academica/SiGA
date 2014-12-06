@@ -112,29 +112,27 @@ class Course_model extends CI_Model {
 		$courseNameHasChanged = $this->checkIfCourseNameHasChanged($id_course, $courseNameToUpdate);
 		$courseTypeHasChanged = $this->checkIfCourseTypeHasChanged($id_course, $courseTypeIdToUpdate);
 
-		$newCourseDataIsOk = $courseNameHasChanged || $courseTypeHasChanged;
+		// Check what attribute has changed
+		if($courseNameHasChanged){
 
-		// Check if at least one of the attributes has changed 
-		if($newCourseDataIsOk){
+			$courseNameNotAlreadyExists = !($this->courseNameAlreadyExists($courseNameToUpdate));
 
-			// Check what attribute has changed
-			if($courseNameHasChanged){
+			// Check if the new course name does not exists yet on DB
+			if($courseNameNotAlreadyExists){
 
-				$courseNameNotAlreadyExists = !($this->courseNameAlreadyExists($courseNameToUpdate));
-
-				// Check if the new course name does not exists yet on DB
-				if($courseNameNotAlreadyExists){
-
-					$this->updateCourseOnDb($id_course, $courseToUpdate);
-
-				}else{
-					$errorMessage = "O nome do curso '".$courseNameToUpdate."' já existe.";
-					throw new CourseNameException($errorMessage);
-				}
-			}else{
-				
 				$this->updateCourseOnDb($id_course, $courseToUpdate);
+
+			}else{
+				$errorMessage = "O nome do curso '".$courseNameToUpdate."' já existe.";
+				throw new CourseNameException($errorMessage);
 			}
+			
+		}else if($courseTypeHasChanged){
+
+			// Take out of the array the course name once it has not changed, to update only the course type
+			unset($courseToUpdate['course_name']);
+
+			$this->updateCourseOnDb($id_course, $courseToUpdate);
 
 		}else{
 			$errorMessage = "Nenhum alteração foi feita no curso '".$courseNameToUpdate."'";

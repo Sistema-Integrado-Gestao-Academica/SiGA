@@ -7,29 +7,12 @@ class Course extends CI_Controller {
 
 	public function index(){
 
-		$user_has_the_permission = $this->checkUserPermission();
-
-		if($user_has_the_permission){
-			$this->load->template('course/course_index');
-		}else{
-			$this->logoutUser();
-		}
+		$this->loadTemplateSafely('course/course_index');
 	}
 
-	/**
-	 * Check if the logged user is the admin.
-	 * If so, load the page of Courses.
-	 * If doesn't, is made the logout and redirected to home.
-	 */	 
 	public function formToRegisterNewCourse(){
 
-		$user_has_the_permission = $this->checkUserPermission();
-
-		if($user_has_the_permission){
-			$this->load->template('course/register_course');
-		}else{
-			$this->logoutUser();
-		}
+		$this->loadTemplateSafely('course/register_course');
 	}
 	
 	/**
@@ -38,16 +21,12 @@ class Course extends CI_Controller {
 	 */
 	public function formToEditCourse($id){
 
-		$user_has_the_permission = $this->checkUserPermission();
+		$this->load->model('course_model');
+		$course_searched = $this->course_model->getCourseById($id);
+		$data = array('course' => $course_searched);
 
-		if($user_has_the_permission){
-			$this->load->model('course_model');
-			$course_searched = $this->course_model->getCourseById($id);
-			$data = array('course' => $course_searched);
-			$this->load->template('course/update_course', $data);
-		}else{
-			$this->logoutUser();
-		}
+		$this->loadTemplateSafely('course/update_course', $data);
+
 	}
 	
 	/**
@@ -71,15 +50,20 @@ class Course extends CI_Controller {
 			$insertionWasMade = $this->course_model->saveCourse($courseToRegister);
 
 			if($insertionWasMade){
-				$this->session->set_flashdata("success", "Curso \"{$courseName}\" cadastrado com sucesso");
+				$insertStatus = "success";
+				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
 			}else{
-				$this->session->set_flashdata("danger", "Curso \"{$courseName}\" já existe.");
+				$insertStatus = "danger";
+				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
 
 		}else{
-			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
+			$insertStatus = "danger";
+			$insertMessage = "Dados na forma incorreta.";
 		}
 		
+		$this->session->set_flashdata($insertStatus, $insertMessage);
+
 		redirect('/course/index');
 	}
 
@@ -117,20 +101,25 @@ class Course extends CI_Controller {
 			try{
 				$this->load->model("course_model");
 				$this->course_model->updateCourse($idCourse, $courseToUpdate);
-				$this->session->set_flashdata("success", "Curso \"{$courseName}\" alterado com sucesso");
+				
+				$updateStatus = "success";
+				$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
 
 			}catch(CourseNameException $e){
 
-				$this->session->set_flashdata("danger", $e->getMessage());
+				$updateStatus = "danger";
+				$updateMessage = $e->getMessage();
 			}
 		
 		
 		}else{
-			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
+			$updateStatus = "danger";
+			$updateMessage = "Dados na forma incorreta.";
 		}
 		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+
 		redirect('/course/index');
-		
 	}
 
 	/**
@@ -154,10 +143,14 @@ class Course extends CI_Controller {
 		$courseWasDeleted = $this->deleteCourseFromDb($course_id);
 
 		if($courseWasDeleted){
-			$this->session->set_flashdata("success", "Curso excluído com sucesso.");
+			$deleteStatus = "success";
+			$deleteMessage = "Curso excluído com sucesso.";
 		}else{
-			$this->session->set_flashdata("danger", "Não foi possível excluir este curso.");
+			$deleteStatus = "danger";
+			$deleteMessage = "Não foi possível excluir este curso.";
 		}
+
+		$this->session->set_flashdata($deleteStatus, $deleteMessage);
 
 		redirect('/course/index');
 	}
@@ -205,6 +198,24 @@ class Course extends CI_Controller {
 	
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+	}
+
+	/**
+	 * Checks if the user has the permission to the course pages before loading it
+	 * ONLY applicable to the course pages
+	 * @param $template - The page to be loaded
+	 * @param $data - The data to send along the view
+	 * @return void - Load the template if the user has the permission or logout the user if does not
+	 */
+	private function loadTemplateSafely($template, $data = array()){
+
+		$user_has_the_permission = $this->checkUserPermission();
+
+		if($user_has_the_permission){
+			$this->load->template($template, $data);
+		}else{
+			$this->logoutUser();
+		}
 	}
 
 	/**
