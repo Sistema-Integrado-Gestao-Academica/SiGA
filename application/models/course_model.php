@@ -5,17 +5,49 @@ class Course_model extends CI_Model {
 	/**
 	 * Get the course type name for a given course type id
 	 * @param $course_type_id - The course type id to look for a name
-	 * @return The found course type name
+	 * @return The found course type name if it exists or FALSE if does not
 	 */
 	public function getCourseTypeNameForThisId($course_type_id){
-		$this->db->select('course_type_name');
-		$this->db->from('course_type');
-		$this->db->where('id_course_type', $course_type_id);
-		$searchResult = $this->db->get()->row_array();
+		
+		$idExists = $this->checkExistingCourseTypeId($course_type_id);
 
-		$foundCourseTypeName = $searchResult['course_type_name'];
+		if($idExists){
+
+			$this->db->select('course_type_name');
+			$this->db->from('course_type');
+			$this->db->where('id_course_type', $course_type_id);
+			$searchResult = $this->db->get()->row_array();
+
+			$foundCourseTypeName = $searchResult['course_type_name'];
+
+		}else{
+			$foundCourseTypeName = FALSE;
+		}
 
 		return $foundCourseTypeName;
+	}
+
+	public function getCourseTypeById($course_type_id){
+
+		$this->db->where('id_course_type', $course_type_id);
+		$this->db->from('course_type');
+		$searchResult = $this->db->get()->row();
+		
+		return $searchResult;
+	}
+
+	public function checkExistingCourseTypeId($course_type_id){
+
+		$foundType = $this->getCourseTypeById($course_type_id);
+
+		$idExists = FALSE;
+		if(sizeof($foundType) === 0){
+			$idExists = FALSE;
+		}else{
+			$idExists = TRUE;
+		}
+
+		return $idExists;
 	}
 
 	/**
