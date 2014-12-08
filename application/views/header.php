@@ -8,7 +8,8 @@
 
 	<link rel="stylesheet" href=<?=base_url("css/bootstrap.css")?>>
 	<link rel="stylesheet" href=<?=base_url("css/estilo.css")?>>
-	<script src=<?=base_url("js/funcoes.js")?>></script>
+	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
+	<script src=<?=base_url("js/functions.js")?>></script>
 </head>
 
 <body>

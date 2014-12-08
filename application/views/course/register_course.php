@@ -1,4 +1,6 @@
 <h2 class="text-center">Cadastro de um novo curso</h2>
+<input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>"></input>
+
 <?php
 $course = new Course();
 
@@ -28,10 +30,14 @@ echo form_open("course/newCourse");
 	echo "<br>";
 	
 	// User type field
-	echo form_label("Tipo de Curso", "courseType");
-	echo form_dropdown("courseType",$form_course_type);
+	echo form_label("Tipo de Curso", "courseTypeLabel");
+	echo form_dropdown("courseType", $form_course_type, '', "id='courseType'");
 	echo form_error("courseType");
 	echo "<br>";
+	
+	?>
+	<div id="post_grad_types"></div>
+	<?php
 	
 	// Submit button
 	echo "<br>";

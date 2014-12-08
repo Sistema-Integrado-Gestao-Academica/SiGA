@@ -10,9 +10,43 @@ class Course extends CI_Controller {
 		$this->loadTemplateSafely('course/course_index');
 	}
 
-	public function formToRegisterNewCourse(){
+	public function checkChoosenCourseType(){
 
-		$this->loadTemplateSafely('course/register_course');
+		// Put this course type name as it is on DB
+		define('POST_GRADUATION', 'pos graduacao');
+
+		// Id of the course type choosen
+		$choosenCourseType = $this->input->post('courseType');
+
+		$this->load->model('course_model');
+		$courseTypeName = $this->course_model->getCourseTypeNameForThisId($choosenCourseType);
+
+		if($courseTypeName === POST_GRADUATION){
+			$post_graduation_types = 
+			"<br><label>Escolha o tipo da Pós-graduação</label>
+			<select name='post_graduation_type' id='post_graduation_type'>
+			<option value='mestrado' >Programa Acadêmico - Mestrado</option>
+			<option value='doutorado' >Programa Acadêmico - Doutorado</option>
+			<option value='mestrado_pro' >Programa Profissional</option>
+			</select>
+			<br>Duração mínima - 18 meses<br>
+			Regular - 24 meses<br>
+			Máxima - 30 meses<br>";
+		}else{
+			$post_graduation_types = "";
+		}
+
+		echo $post_graduation_types;
+	}
+
+	public function formToRegisterNewCourse(){
+		$this->load->helper('url');
+		$site_url = site_url();
+		$data = array(
+			'url' => $site_url
+		);
+
+		$this->loadTemplateSafely('course/register_course', $data);
 	}
 	
 	/**
@@ -39,6 +73,14 @@ class Course extends CI_Controller {
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
+
+			/* Arrumar o banco pra receber o tipo de pós-graduação
+				$post_graduation_type = "";
+				// Checar se o curso e de pos graduação
+				if($courseType == 2){
+					$post_graduation_type = $this->input->post('post_graduation_type');
+				}
+			*/
 
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToRegister = array(

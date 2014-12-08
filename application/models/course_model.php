@@ -3,6 +3,22 @@ require_once(APPPATH."/exception/CourseNameException.php");
 class Course_model extends CI_Model {
 	
 	/**
+	 * Get the course type name for a given course type id
+	 * @param $course_type_id - The course type id to look for a name
+	 * @return The found course type name
+	 */
+	public function getCourseTypeNameForThisId($course_type_id){
+		$this->db->select('course_type_name');
+		$this->db->from('course_type');
+		$this->db->where('id_course_type', $course_type_id);
+		$searchResult = $this->db->get()->row_array();
+
+		$foundCourseTypeName = $searchResult['course_type_name'];
+
+		return $foundCourseTypeName;
+	}
+
+	/**
 	 * Get all course types registered on database
 	 * @return An array with the course types. Each position is a tuple of the relation.
 	 */
