@@ -1,4 +1,5 @@
 <h2 class="principal">Cursos</h2>
+<input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>"></input>
 
 <?php  
 $course_name = $course->course_name;
@@ -37,9 +38,13 @@ echo form_open("course/updateCourse",'',$hidden);
 
 	// User type field
 	echo form_label("Tipo de Curso", "courseType");
-	echo form_dropdown("courseType",$form_course_type,$course_type);
+	echo form_dropdown("courseType", $form_course_type, $course_type, "id='courseType'");
 	echo form_error("courseType");
 	echo "<br>";
+
+	?>
+	<div id="post_grad_types"></div>
+	<?php
 
 	// Submit button
 	echo "<br>";

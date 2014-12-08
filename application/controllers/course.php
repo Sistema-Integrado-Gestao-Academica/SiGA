@@ -54,10 +54,15 @@ class Course extends CI_Controller {
 	 * @param int $id
 	 */
 	public function formToEditCourse($id){
-
+		$this->load->helper('url');
+		$site_url = site_url();
+		
 		$this->load->model('course_model');
 		$course_searched = $this->course_model->getCourseById($id);
-		$data = array('course' => $course_searched);
+		$data = array(
+			'course' => $course_searched,
+			'url' => $site_url
+		);
 
 		$this->loadTemplateSafely('course/update_course', $data);
 
