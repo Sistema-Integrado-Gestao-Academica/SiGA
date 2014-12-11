@@ -14,6 +14,8 @@ class Course extends CI_Controller {
 
 		// Put this course type name as it is on DB
 		define('POST_GRADUATION', 'pos graduacao');
+		define('GRADUATION', 'graduacao');
+		define('DISTANCE_EDUCATION', 'educação a distancia');
 
 		// Id of the course type choosen
 		$choosenCourseType = $this->input->post('courseType');
@@ -21,21 +23,21 @@ class Course extends CI_Controller {
 		$this->load->model('course_model');
 		$courseTypeName = $this->course_model->getCourseTypeNameForThisId($choosenCourseType);
 
-		if($courseTypeName === POST_GRADUATION){
-			$post_graduation_types = 
-			"<label>Escolha o tipo da Pós-graduação</label>
-			<select name='post_graduation_type' id='post_graduation_type'>
-			<option value='academic_program'>Programa Acadêmico</option>
-			<option value='professional_program'>Programa Profissional</option>
-			</select>
-			<br>Duração mínima - 18 meses<br>
-			Regular - 24 meses<br>
-			Máxima - 30 meses<br>";
-		}else{
-			$post_graduation_types = "";
+		switch($courseTypeName){
+			case POST_GRADUATION:
+				// Function located on the helper 'forms' - Loaded by autoload
+				postGraduationTypesSelect();
+				break;
+			case GRADUATION:
+				// Code to the graduation specificities
+				break;
+			case DISTANCE_EDUCATION:
+				// Code to the EAD specificities 
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
 		}
-
-		echo $post_graduation_types;
 	}
 
 	public function checkChoosenPostGraduationType(){
