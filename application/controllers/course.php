@@ -23,11 +23,10 @@ class Course extends CI_Controller {
 
 		if($courseTypeName === POST_GRADUATION){
 			$post_graduation_types = 
-			"<br><label>Escolha o tipo da Pós-graduação</label>
+			"<label>Escolha o tipo da Pós-graduação</label>
 			<select name='post_graduation_type' id='post_graduation_type'>
-			<option value='mestrado' >Programa Acadêmico - Mestrado</option>
-			<option value='doutorado' >Programa Acadêmico - Doutorado</option>
-			<option value='mestrado_pro' >Programa Profissional</option>
+			<option value='academic_program'>Programa Acadêmico</option>
+			<option value='professional_program'>Programa Profissional</option>
 			</select>
 			<br>Duração mínima - 18 meses<br>
 			Regular - 24 meses<br>
@@ -37,6 +36,29 @@ class Course extends CI_Controller {
 		}
 
 		echo $post_graduation_types;
+	}
+
+	public function checkChoosenPostGraduationType(){
+
+		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
+		define('ACADEMIC_PROGRAM', 'academic_program');
+		define('PROFESSIONAL_PROGRAM', 'professional_program');
+
+		$choosenPostGraduationType = $this->input->post('postGradType');
+
+		switch($choosenPostGraduationType){
+			case ACADEMIC_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				academicProgramForm();
+				break;
+			case PROFESSIONAL_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				professionalProgramForm();
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
+		}
 	}
 
 	public function formToRegisterNewCourse(){
