@@ -50,6 +50,11 @@ function evaluatesPostGraduationType(){
 		{postGradType: choosenPostGraduationType.postGradType},
 		function(data){
 			$("#chosen_post_grad_type").html(data);
+
+			evaluatesProgram();
+			$("#post_graduation_type").change(function(){
+				evaluatesProgram();
+			});
 		}
 	);
 }
@@ -64,6 +69,52 @@ function getChoosenPostGradType(){
 	};
 
 	return choosenType;
+}
+
+function evaluatesProgram(){
+	var choosenProgram = getChoosenPostGradType();
+	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenProgram";
+
+	$.post(
+		urlToPost,
+		{program: choosenProgram.postGradType},
+		function(data){
+
+			$("#chosen_post_grad_type_update").html(data);
+
+			evaluatesAcademicProgram();
+			$("#academic_program_types").change(function(){
+				evaluatesAcademicProgram();
+			});
+		}
+
+	);
+}
+
+function evaluatesAcademicProgram(){
+	var choosenProgram = getChoosenAcademicProgram();
+	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenAcademicProgram";
+
+	$.post(
+		urlToPost,
+		{academicProgram: choosenProgram.academicProgram},
+		function(data){
+			$("#choosen_program").html(data);
+		}
+
+	);
+}
+
+function getChoosenAcademicProgram(){
+	var siteUrl = $("#site_url").val();
+	var choosenAcademicProgram = $("#academic_program_types").val();
+
+	var choosenProgram = {
+		siteUrl: siteUrl,
+		academicProgram: choosenAcademicProgram
+	};
+
+	return choosenProgram;
 }
 
 function apagar_conta() {

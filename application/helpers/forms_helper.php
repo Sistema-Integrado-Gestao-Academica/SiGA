@@ -14,13 +14,124 @@ function postGraduationTypesSelect(){
 }
 
 function academicProgramForm(){
-	echo form_label('Programa Acadêmico');
-	echo "<h2>Fazer o resto do form aqui (Acadêmico)</h2>";
+
+	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
+	
+	echo "<br>";
+	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
+	echo "<small> Para cadastrar um Doutorado acesse a página para editar um curso.</small>";
+	
+	commonAttrForPostGraduationCourses();
 }
 
 function professionalProgramForm(){
-	echo form_label('Programa Profissional');
-	echo "<h2>Fazer o resto do form aqui (Profissional)</h2>";
+	
+	echo "<h3><span class='label label-primary'>Programa Profissional</span></h3>";
+	
+	echo "<br>";
+	echo "<h4><span class='label label-default'>Mestrado Profissional</span></h4>";
+
+	commonAttrForPostGraduationCourses();
+}
+
+function chooseAcademicProgramForm(){
+	
+	$academicProgramOptions = array(
+		'master_degree' => 'Mestrado Acadêmico',
+		'doctorate' => 'Doutorado Acadêmico'
+	);
+
+	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
+	echo form_label('Escolha um tipo de programa acadêmico:');
+	echo form_dropdown('academic_program_types', $academicProgramOptions,
+				       'master_degree', 'id=academic_program_types');
+}
+
+function masterDegreeProgramForm(){
+
+	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
+
+	commonAttrForPostGraduationCourses();
+}
+
+function doctorateProgramForm(){
+
+	echo "<h4><span class='label label-default'>Doutorado Acadêmico</span></h4>";
+
+	commonAttrForPostGraduationCourses();
+}
+
+function commonAttrForPostGraduationCourses(){
+	
+	$course_duration = array(
+		'2' => '2 anos',
+		'4' => '4 anos'
+	);
+
+	$total_credits = array(
+		'name' => 'course_total_credits',
+		'id' => 'course_total_credits',
+		'maxlength' => '10',
+		'style' => 'width: 10%;',
+		'required' => true
+	);
+
+	$course_hours = array(
+		'name' => 'course_hours',
+		'id' => 'course_hours',
+		'maxlength' => '10',
+		'style' => 'width: 10%;',
+		'required' => true
+	);
+
+	$course_class = array(
+		'name' => 'course_class',
+		'id' => 'course_class',
+		'placeholder' => 'Informe o semestre de início.',
+		'maxlength' => '6',
+		'style' => 'width: 20%;',
+		'required' => true
+	);
+
+	$description = array(
+		'name' => 'course_description',
+		'id' => 'course_description',
+		'placeholder' => 'Informe a descrição do curso.',
+		'rows' => '500',
+		'style' => 'width: 30%; height: 100px;',
+		'required' => true
+	);
+
+	// Course duration field
+	echo "<br><br>";
+	echo form_label('Duração do curso ', 'course_duration');
+	echo form_dropdown('course_duration', $course_duration, '2', 'id=course_duration');
+	echo "<br><br>";
+
+	// Course total credits field
+	echo form_label('Créditos totais', 'total_credits');
+	echo "<br>";
+	echo form_input($total_credits);
+	echo "<br>";
+
+	// Course hours field
+	echo "<br>";
+	echo form_label('Carga-horária total', 'course_hours');
+	echo "<br>";
+	echo form_input($course_hours);
+	echo "<br>";
+
+	// Course class field
+	echo "<br>";
+	echo form_label('Turma', 'course_class');
+	echo form_input($course_class);
+	echo "<br>";
+
+	// Course description field
+	echo "<br>";
+	echo form_label('Descrição ', 'course_description');
+	echo "<br>";
+	echo form_textarea($description);
 }
 
 function emptyDiv(){

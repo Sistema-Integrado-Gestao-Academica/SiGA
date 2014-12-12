@@ -63,6 +63,54 @@ class Course extends CI_Controller {
 		}
 	}
 
+	// Used for the update course page
+	public function checkChoosenProgram(){
+		
+		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
+		define('ACADEMIC_PROGRAM', 'academic_program');
+		define('PROFESSIONAL_PROGRAM', 'professional_program');
+
+		$choosenProgram = $this->input->post('program');
+
+		switch($choosenProgram){
+			case ACADEMIC_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				chooseAcademicProgramForm();
+				break;
+			case PROFESSIONAL_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				professionalProgramForm();
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
+				break;
+		}
+	}
+
+	public function checkChoosenAcademicProgram(){
+		
+		define('MASTER_DEGREE', 'master_degree');
+		define('DOCTORATE', 'doctorate');
+
+		$choosenAcademicProgram = $this->input->post('academicProgram');
+
+		switch($choosenAcademicProgram){
+			case MASTER_DEGREE:
+				// Function located on the helper 'forms' - Loaded by autoload
+				masterDegreeProgramForm();
+				break;
+			case DOCTORATE:
+				// Function located on the helper 'forms' - Loaded by autoload
+				doctorateProgramForm();
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
+				break;
+		}
+	}
+
 	public function formToRegisterNewCourse(){
 		$this->load->helper('url');
 		$site_url = site_url();
@@ -102,13 +150,15 @@ class Course extends CI_Controller {
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-
-			/* Arrumar o banco pra receber o tipo de pós-graduação
-				$post_graduation_type = "";
-				// Checar se o curso e de pos graduação
-				if($courseType == 2){
-					$post_graduation_type = $this->input->post('post_graduation_type');
-				}
+			
+			/*
+			// ARRUMAR O BANCO PARA SALVAR O TIPO DE POS-GRADUACAO
+			// If the course type is not of post-graduation, this is FALSE
+			$post_graduation_type = $this->input->post('post_graduation_type');
+			$post_graduation_duration = $this->input->post('course_duration');
+			$post_graduation_total_credits = $this->input->post('course_total_credits');
+			$post_graduation_hours= $this->input->post('course_hours');
+			$post_graduation_description = $this->input->post('course_description');
 			*/
 
 			// Course to be saved on database. Put the columns names on the keys
@@ -145,6 +195,11 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 
@@ -200,6 +255,11 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 

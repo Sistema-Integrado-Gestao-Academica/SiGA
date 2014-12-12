@@ -44,7 +44,8 @@ echo form_open("course/updateCourse",'',$hidden);
 
 	?>
 	<br><div id="post_grad_types"></div>
-	<br><div id="chosen_post_grad_type"></div>
+	<br><div id="chosen_post_grad_type_update"></div>
+	<br><div id="choosen_program"></div>
 	<?php
 
 	// Submit button
