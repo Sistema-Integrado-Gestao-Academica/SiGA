@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<?php  $session = $this->session->userdata("usuario_logado"); ?>
+<?php  $session = $this->session->userdata("usuario_logado");
+?>
 <html>
 <head>
 	<meta charset="UTF-8">
