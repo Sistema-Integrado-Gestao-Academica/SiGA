@@ -52,6 +52,31 @@ class Usuarios_model extends CI_Model {
 		return $user_type_return;
 	}
 	
+	/**
+	 * Function to look if an user is or not a course secretary
+	 */
+	public function get_user_secretary($user_id){
+		
+		$this->db->select('id_course');
+		$user_is_secretary = $this->db->get_where("user_is_secretary",array('id_user'=>$user_id))->row_array();
+		
+		
+		if($user_is_secretary){
+			$this->db->select('secretary_type');
+			$secretary_type = $this->db->get_where("course_has_secretary",$user_is_secretary)->row_array();
+			
+			$this->db->select('course_name');
+			$course_name = $this->db->get_where("course",$user_is_secretary)->row_array();
+			
+			
+			$return_secretary = array_merge($user_is_secretary,$course_name,$secretary_type);
+			
+		}else{
+			$return_secretary = FALSE;
+		}
+		return $return_secretary;
+	}
+	
 	public function buscaTodos() {
 		return $this->db->get('users')->result_array();
 	}
