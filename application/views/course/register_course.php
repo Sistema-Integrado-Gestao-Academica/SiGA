@@ -9,13 +9,16 @@ $group = new Module();
 
 $form_groups = $group->getExistingModules();
 
-$course = new Course();
-
-$form_course_type = $course->getCourseTypes();
-
 $user = new Usuario();
 
 $form_user_secretary = $user->getAllSecretaryUsers();
+
+$form_course_type = array(
+
+	'graduation' => 'Graduação',
+	'ead' => 'Educação a distância',
+	'post_graduation' => 'Pós-Graduação'
+);
 
 $course_name_array_to_form = array(
 		"name" => "courseName",
@@ -48,7 +51,7 @@ echo form_open("course/newCourse");
 	echo "<br>";
 	echo "<br>";
 	
-	//secretary field
+	// Secretary field
 	echo form_label("Tipo de Secretaria", "secreteary_type");
 	echo form_dropdown("secretary_type", $form_groups);
 	echo form_error("secretary_type");

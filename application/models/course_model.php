@@ -2,30 +2,30 @@
 require_once(APPPATH."/exception/CourseNameException.php");
 class Course_model extends CI_Model {
 	
-	/**
-	 * Get the course type name for a given course type id
-	 * @param $course_type_id - The course type id to look for a name
-	 * @return The found course type name if it exists or FALSE if does not
-	 */
-	public function getCourseTypeNameForThisId($course_type_id){
+	// /**
+	//  * Get the course type name for a given course type id
+	//  * @param $course_type_id - The course type id to look for a name
+	//  * @return The found course type name if it exists or FALSE if does not
+	//  */
+	// public function getCourseTypeNameForThisId($course_type_id){
 		
-		$idExists = $this->checkExistingCourseTypeId($course_type_id);
+	// 	$idExists = $this->checkExistingCourseTypeId($course_type_id);
 
-		if($idExists){
+	// 	if($idExists){
 
-			$this->db->select('course_type_name');
-			$this->db->from('course_type');
-			$this->db->where('id_course_type', $course_type_id);
-			$searchResult = $this->db->get()->row_array();
+	// 		$this->db->select('course_type_name');
+	// 		$this->db->from('course_type');
+	// 		$this->db->where('id_course_type', $course_type_id);
+	// 		$searchResult = $this->db->get()->row_array();
 
-			$foundCourseTypeName = $searchResult['course_type_name'];
+	// 		$foundCourseTypeName = $searchResult['course_type_name'];
 
-		}else{
-			$foundCourseTypeName = FALSE;
-		}
+	// 	}else{
+	// 		$foundCourseTypeName = FALSE;
+	// 	}
 
-		return $foundCourseTypeName;
-	}
+	// 	return $foundCourseTypeName;
+	// }
 
 	public function getCourseTypeById($course_type_id){
 
@@ -50,17 +50,17 @@ class Course_model extends CI_Model {
 		return $idExists;
 	}
 
-	/**
-	 * Get all course types registered on database
-	 * @return An array with the course types. Each position is a tuple of the relation.
-	 */
-	public function getAllCourseTypes(){
-		$this->db->select('id_course_type, course_type_name');
-		$this->db->from('course_type');
-		$courseTypes = $this->db->get()->result_array();
+	// /**
+	//  * Get all course types registered on database
+	//  * @return An array with the course types. Each position is a tuple of the relation.
+	//  */
+	// public function getAllCourseTypes(){
+	// 	$this->db->select('id_course_type, course_type_name');
+	// 	$this->db->from('course_type');
+	// 	$courseTypes = $this->db->get()->result_array();
 		
-		return $courseTypes;
-	}
+	// 	return $courseTypes;
+	// }
 
 	/**
 	 * Get all courses registered on database
@@ -208,7 +208,7 @@ class Course_model extends CI_Model {
 	
 	public function getSecretaryByCourseId($id_course){
 		
-		$this->db->select('id_secretary,id_group , id_user');
+		$this->db->select('id_secretary, id_group, id_user');
 		$secretary_return = $this->db->get_where('secretary_course', array('id_course'=>$id_course))->row_array();
 		
 		return $secretary_return;

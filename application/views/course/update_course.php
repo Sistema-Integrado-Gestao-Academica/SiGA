@@ -7,15 +7,12 @@ require_once APPPATH.'controllers/usuario.php';
 
 $course_name = $course->course_name;
 $course_id = $course->id_course;
-$course_type = $course->course_type_id;
 
 $group = new Module();
 
 $form_groups = $group->getExistingModules();
 
 $course_controller = new Course();
-
-$form_course_type = $course_controller->getCourseTypes();
 
 $secretary_registered = $course_controller->getCourseSecrecretary($course_id);
 
@@ -24,6 +21,14 @@ $hidden = array("id_course" => $course_id,'id_secretary'=>$secretary_registered[
 $user = new Usuario();
 
 $form_user_secretary = $user->getAllSecretaryUsers();
+
+
+$form_course_type = array(
+
+	'graduation' => 'Graduação',
+	'ead' => 'Educação a distância',
+	'post_graduation' => 'Pós-Graduação'
+);
 
 $course_name_array_to_form = array(
 		"name" => "courseName",
@@ -79,7 +84,7 @@ echo form_open("course/updateCourse",'',$hidden);
 	<?php 
 	// User type field
 	echo form_label("Tipo de Curso", "courseType");
-	echo form_dropdown("courseType", $form_course_type, $course_type, "id='courseType'");
+	echo form_dropdown("courseType", $form_course_type, '', "id='courseType'");
 	echo form_error("courseType");
 	echo "<br>";
 

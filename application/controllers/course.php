@@ -12,18 +12,13 @@ class Course extends CI_Controller {
 
 	public function checkChoosenCourseType(){
 
-		// Put this course type name as it is on DB
-		define('POST_GRADUATION', 'pos graduacao');
-		define('GRADUATION', 'graduacao');
-		define('DISTANCE_EDUCATION', 'educação a distancia');
+		define('POST_GRADUATION', 'post_graduation');
+		define('GRADUATION', 'graduation');
+		define('DISTANCE_EDUCATION', 'ead');
 
-		// Id of the course type choosen
 		$choosenCourseType = $this->input->post('courseType');
 
-		$this->load->model('course_model');
-		$courseTypeName = $this->course_model->getCourseTypeNameForThisId($choosenCourseType);
-
-		switch($courseTypeName){
+		switch($choosenCourseType){
 			case POST_GRADUATION:
 				// Function located on the helper 'forms' - Loaded by autoload
 				postGraduationTypesSelect();
@@ -154,41 +149,71 @@ class Course extends CI_Controller {
 	 */
 	public function newCourse(){
 
+		define("GRADUATION", "graduation");
+		define("EAD", "ead");
+		define("POST_GRADUATION", "post_graduation");
+
 		$courseDataIsOk = $this->validatesNewCourseData();
 
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			
+
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
 			
-			/*
-			// ARRUMAR O BANCO PARA SALVAR O TIPO DE POS-GRADUACAO
-			// If the course type is not of post-graduation, this is FALSE
-			$post_graduation_type = $this->input->post('post_graduation_type');
-			$post_graduation_duration = $this->input->post('course_duration');
-			$post_graduation_total_credits = $this->input->post('course_total_credits');
-			$post_graduation_hours= $this->input->post('course_hours');
-			$post_graduation_class= $this->input->post('course_class');
-			$post_graduation_description = $this->input->post('course_description');
-			*/
+			switch ($courseType){
+				case GRADUATION:
+					
+					break;
+
+				case POST_GRADUATION:
+
+					$post_graduation_type = $this->input->post('post_graduation_type');
+					$post_graduation_duration = $this->input->post('course_duration');
+					$post_graduation_total_credits = $this->input->post('course_total_credits');
+					$post_graduation_hours= $this->input->post('course_hours');
+					$post_graduation_class= $this->input->post('course_class');
+					$post_graduation_description = $this->input->post('course_description');
+
+					$commonAttr = array(
+						'course_name' => $courseName
+					);
+
+					$courseToRegister = array(
+						'duration' => $post_graduation_duration,
+						'total_credits' => $post_graduation_total_credits,
+						'workload' =>$post_graduation_hours,
+						'start_class' => $post_graduation_class,
+						'description' => $post_graduation_description
+					);
+
+					$this->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister);
+					break;
+
+				case EAD:
+					
+					break;
+
+				default:
+					
+					break;
+			}
 
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToRegister = array(
-				'course_name' => $courseName,
-				'course_type_id' => $courseType,
+				'course_name' => $courseName
 			);
 			
-			//Secretary to be saved on database. Array with column names and its values
+			// Secretary to be saved on database. Array with column names and its values
 			$secretaryToRegister = array(
-					'id_user'   => $userSecretary,
-					'id_group' => $secretaryType
+				'id_user'   => $userSecretary,
+				'id_group' => $secretaryType
 			);
 
 			$this->load->model("course_model");
 			$insertionCourseWasMade = $this->course_model->saveCourse($courseToRegister);
-			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister,$courseName);
+			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
 			
 			if($insertionCourseWasMadeWasMade){
 				$insertStatus = "success";
@@ -208,6 +233,10 @@ class Course extends CI_Controller {
 		redirect('/course/index');
 	}
 
+	private function savePostGraduationCourse($post_graduation_type, $commonAttrs, $specificsAttrs){
+		// FAZER DEPOIS.
+	}
+
 	/**
 	 * Validates the data submitted on the new course form
 	 */
@@ -215,11 +244,11 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("course_duration", "Course duration", "required");
-		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
-		$this->form_validation->set_rules("course_hours", "Course hours", "required");
-		$this->form_validation->set_rules("course_class", "Course class", "required");
-		$this->form_validation->set_rules("course_description", "Course description", "required");
+		// $this->form_validation->set_rules("course_duration", "Course duration", "required");
+		// $this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		// $this->form_validation->set_rules("course_hours", "Course hours", "required");
+		// $this->form_validation->set_rules("course_class", "Course class", "required");
+		// $this->form_validation->set_rules("course_description", "Course description", "required");
 		$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
 		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
@@ -288,11 +317,11 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("course_duration", "Course duration", "required");
-		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
-		$this->form_validation->set_rules("course_hours", "Course hours", "required");
-		$this->form_validation->set_rules("course_class", "Course class", "required");
-		$this->form_validation->set_rules("course_description", "Course description", "required");
+		// $this->form_validation->set_rules("course_duration", "Course duration", "required");
+		// $this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		// $this->form_validation->set_rules("course_hours", "Course hours", "required");
+		// $this->form_validation->set_rules("course_class", "Course class", "required");
+		// $this->form_validation->set_rules("course_description", "Course description", "required");
 		$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
 		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
@@ -354,21 +383,21 @@ class Course extends CI_Controller {
 		return $registeredCourses;
 	}
 
-	/**
-	 * Get all the course types from database into an array.
-	 * @return An array with all course types on database as id => course_type_name
-	 */
-	public function getCourseTypes(){
+	// /**
+	//  * Get all the course types from database into an array.
+	//  * @return An array with all course types on database as id => course_type_name
+	//  */
+	// public function getCourseTypes(){
 		
-		$this->load->model('course_model');
+	// 	$this->load->model('course_model');
 		
-		$course_types = $this->course_model->getAllCourseTypes();
+	// 	$course_types = $this->course_model->getAllCourseTypes();
 		
-		$course_types_form = $this->turnCourseTypesToArray($course_types);
+	// 	$course_types_form = $this->turnCourseTypesToArray($course_types);
 		
-		return $course_types_form;
+	// 	return $course_types_form;
 		
-	}
+	// }
 	
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
