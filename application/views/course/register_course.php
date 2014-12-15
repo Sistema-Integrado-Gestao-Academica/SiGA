@@ -1,15 +1,10 @@
 <h2 class="text-center">Cadastro de um novo curso</h2>
+<input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>"></input>
+
 <?php
 $course = new Course();
 
 $form_course_type = $course->getCourseTypes();
-
-$form_array_finatiated = array(
-		"name" => "isFinantiated",
-		"id"   => "isFinantiated",
-		"value"=> TRUE,
-		"checked"=> FALSE
-);
 
 $course_name_array_to_form = array(
 		"name" => "courseName",
@@ -35,13 +30,15 @@ echo form_open("course/newCourse");
 	echo "<br>";
 	
 	// User type field
-	echo form_label("Tipo de Curso", "courseType");
-	echo form_dropdown("courseType",$form_course_type);
+	echo form_label("Tipo de Curso", "courseTypeLabel");
+	echo form_dropdown("courseType", $form_course_type, '', "id='courseType'");
 	echo form_error("courseType");
 	echo "<br>";
 	
-	echo form_label("Financiado", "isFinantiated");
-	echo form_checkbox($form_array_finatiated);
+	?>
+	<br><div id="post_grad_types"></div>
+	<br><div id="chosen_post_grad_type"></div>
+	<?php
 	
 	// Submit button
 	echo "<br>";

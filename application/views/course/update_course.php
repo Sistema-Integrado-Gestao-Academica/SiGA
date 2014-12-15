@@ -1,4 +1,5 @@
 <h2 class="principal">Cursos</h2>
+<input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>"></input>
 
 <?php  
 $course_name = $course->course_name;
@@ -11,13 +12,6 @@ $course_controller = new Course();
 $hidden = array("id_course" => $course_id);
 
 $form_course_type = $course_controller->getCourseTypes();
-
-$form_array_finatiated = array(
-		"name" => "isFinantiated",
-		"id"   => "isFinantiated",
-		"value"=> TRUE,
-		"checked"=> FALSE
-);
 
 $course_name_array_to_form = array(
 		"name" => "courseName",
@@ -36,24 +30,27 @@ $submit_button_array_to_form = array(
 
 echo form_open("course/updateCourse",'',$hidden);
 
-// Name field
-echo form_label("Nome do Curso", "courseName");
-echo form_input($course_name_array_to_form);
-echo form_error("courseName");
-echo "<br>";
+	// Name field
+	echo form_label("Nome do Curso", "courseName");
+	echo form_input($course_name_array_to_form);
+	echo form_error("courseName");
+	echo "<br>";
 
-// User type field
-echo form_label("Tipo de Curso", "courseType");
-echo form_dropdown("courseType",$form_course_type,$course_type);
-echo form_error("courseType");
-echo "<br>";
+	// User type field
+	echo form_label("Tipo de Curso", "courseType");
+	echo form_dropdown("courseType", $form_course_type, $course_type, "id='courseType'");
+	echo form_error("courseType");
+	echo "<br>";
 
-echo form_label("Financiado", "isFinantiated");
-echo form_checkbox($form_array_finatiated);
+	?>
+	<br><div id="post_grad_types"></div>
+	<br><div id="chosen_post_grad_type_update"></div>
+	<br><div id="choosen_program"></div>
+	<?php
 
-// Submit button
-echo "<br>";
-echo form_button($submit_button_array_to_form);
+	// Submit button
+	echo "<br>";
+	echo form_button($submit_button_array_to_form);
 
 echo form_close();
 

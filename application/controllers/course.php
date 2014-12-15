@@ -1,31 +1,124 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('login.php');
+require_once(APPPATH."/exception/CourseNameException.php");
 
 class Course extends CI_Controller {
 
 	public function index(){
-		$this->load->template('course/course_index');
+
+		$this->loadTemplateSafely('course/course_index');
 	}
 
-	/**
-	 * Check if the logged user is the admin.
-	 * If so, load the page of Courses.
-	 * If doesn't, is made the logout and redirected to home.
-	 */	 
-	public function formToRegisterNewCourse(){
-		$logged_user_data = $this->session->userdata('usuario_logado');	
-		$permissions_for_logged_user = $logged_user_data['user_permissions'];
+	public function checkChoosenCourseType(){
 
-		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
+		// Put this course type name as it is on DB
+		define('POST_GRADUATION', 'pos graduacao');
+		define('GRADUATION', 'graduacao');
+		define('DISTANCE_EDUCATION', 'educação a distancia');
 
-		if($user_has_the_permission){
-			$this->load->template('course/register_course');
-		}else{
-			$login = new Login();
-			$login->logout("Você deve ter permissão para acessar essa página.
-					      Você foi deslogado por motivos de segurança.", "danger", '/');
+		// Id of the course type choosen
+		$choosenCourseType = $this->input->post('courseType');
+
+		$this->load->model('course_model');
+		$courseTypeName = $this->course_model->getCourseTypeNameForThisId($choosenCourseType);
+
+		switch($courseTypeName){
+			case POST_GRADUATION:
+				// Function located on the helper 'forms' - Loaded by autoload
+				postGraduationTypesSelect();
+				break;
+			case GRADUATION:
+				// Code to the graduation specificities
+				break;
+			case DISTANCE_EDUCATION:
+				// Code to the EAD specificities 
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
 		}
+	}
+
+	public function checkChoosenPostGraduationType(){
+
+		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
+		define('ACADEMIC_PROGRAM', 'academic_program');
+		define('PROFESSIONAL_PROGRAM', 'professional_program');
+
+		$choosenPostGraduationType = $this->input->post('postGradType');
+
+		switch($choosenPostGraduationType){
+			case ACADEMIC_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				academicProgramForm();
+				break;
+			case PROFESSIONAL_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				professionalProgramForm();
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
+		}
+	}
+
+	// Used for the update course page
+	public function checkChoosenProgram(){
+		
+		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
+		define('ACADEMIC_PROGRAM', 'academic_program');
+		define('PROFESSIONAL_PROGRAM', 'professional_program');
+
+		$choosenProgram = $this->input->post('program');
+
+		switch($choosenProgram){
+			case ACADEMIC_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				chooseAcademicProgramForm();
+				break;
+			case PROFESSIONAL_PROGRAM:
+				// Function located on the helper 'forms' - Loaded by autoload
+				professionalProgramForm();
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
+				break;
+		}
+	}
+
+	public function checkChoosenAcademicProgram(){
+		
+		define('MASTER_DEGREE', 'master_degree');
+		define('DOCTORATE', 'doctorate');
+
+		$choosenAcademicProgram = $this->input->post('academicProgram');
+
+		switch($choosenAcademicProgram){
+			case MASTER_DEGREE:
+				// Function located on the helper 'forms' - Loaded by autoload
+				masterDegreeProgramForm();
+				break;
+			case DOCTORATE:
+				// Function located on the helper 'forms' - Loaded by autoload
+				doctorateProgramForm();
+				break;
+			default:
+				// Function located on the helper 'forms' - Loaded by autoload
+				emptyDiv();
+				break;
+		}
+	}
+
+	public function formToRegisterNewCourse(){
+		$this->load->helper('url');
+		$site_url = site_url();
+		$data = array(
+			'url' => $site_url
+		);
+
+		$this->loadTemplateSafely('course/register_course', $data);
 	}
 	
 	/**
@@ -33,94 +126,144 @@ class Course extends CI_Controller {
 	 * @param int $id
 	 */
 	public function formToEditCourse($id){
-		autoriza();
+		$this->load->helper('url');
+		$site_url = site_url();
+		
 		$this->load->model('course_model');
 		$course_searched = $this->course_model->getCourseById($id);
-		$data = array('course' => $course_searched);
-		$this->load->template('course/update_course', $data);
+		$data = array(
+			'course' => $course_searched,
+			'url' => $site_url
+		);
+
+		$this->loadTemplateSafely('course/update_course', $data);
+
 	}
 	
 	/**
 	 * Register a new course
 	 */
 	public function newCourse(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("isFinantiated", "Finantiated");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$courseDataIsOk = $this->form_validation->run();
+
+		$courseDataIsOk = $this->validatesNewCourseData();
 
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			$courseIsFinantiated = $this->input->post('isFinantiated');
-			$courseIsFinantiated = $this->checkIfIsFinantiated($courseIsFinantiated);
+			
+			/*
+			// ARRUMAR O BANCO PARA SALVAR O TIPO DE POS-GRADUACAO
+			// If the course type is not of post-graduation, this is FALSE
+			$post_graduation_type = $this->input->post('post_graduation_type');
+			$post_graduation_duration = $this->input->post('course_duration');
+			$post_graduation_total_credits = $this->input->post('course_total_credits');
+			$post_graduation_hours= $this->input->post('course_hours');
+			$post_graduation_description = $this->input->post('course_description');
+			*/
 
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToRegister = array(
 				'course_name' => $courseName,
 				'course_type_id' => $courseType,
-				//'is_finantiated' => $courseIsFinantiated
 			);
 
 			$this->load->model("course_model");
 			$insertionWasMade = $this->course_model->saveCourse($courseToRegister);
 
 			if($insertionWasMade){
-				$this->session->set_flashdata("success", "Curso \"{$courseName}\" cadastrado com sucesso");
+				$insertStatus = "success";
+				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
 			}else{
-				$this->session->set_flashdata("danger", "Curso \"{$courseName}\" já existe.");
+				$insertStatus = "danger";
+				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
 
 		}else{
-			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
+			$insertStatus = "danger";
+			$insertMessage = "Dados na forma incorreta.";
 		}
 		
+		$this->session->set_flashdata($insertStatus, $insertMessage);
+
 		redirect('/course/index');
+	}
+
+	/**
+	 * Validates the data submitted on the new course form
+	 */
+	private function validatesNewCourseData(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$courseDataStatus = $this->form_validation->run();
+
+		return $courseDataStatus;
 	}
 
 	/**
 	 * Function to update a registered course data
 	 */
 	public function updateCourse(){
-		autoriza();
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("isFinantiated", "Finantiated");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$courseDataIsOk = $this->form_validation->run();
+
+		$courseDataIsOk = $this->validatesUpdateCourseData();
 		
 		if($courseDataIsOk){
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			$courseIsFinantiated = $this->input->post('isFinantiated');
-			$courseIsFinantiated = $this->checkIfIsFinantiated($courseIsFinantiated);
 			$idCourse = $this->input->post('id_course');
 			
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToUpdate = array(
 					'course_name' => $courseName,
 					'course_type_id' => $courseType,
-					//'is_finantiated' => $courseIsFinantiated
 			);
 		
-			$this->load->model("course_model");
-			$updateWasMade = $this->course_model->updateCourse($idCourse,$courseToUpdate);
-		
-			if($updateWasMade){
-				$this->session->set_flashdata("success", "Curso \"{$courseName}\" alterado com sucesso");
-			}else{
-				$this->session->set_flashdata("danger", "Curso de nome \"{$courseName}\" já existe.");
+			try{
+				$this->load->model("course_model");
+				$this->course_model->updateCourse($idCourse, $courseToUpdate);
+				
+				$updateStatus = "success";
+				$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+
+			}catch(CourseNameException $e){
+
+				$updateStatus = "danger";
+				$updateMessage = $e->getMessage();
 			}
 		
+		
 		}else{
-			$this->session->set_flashdata("danger", "Dados na forma incorreta.");
+			$updateStatus = "danger";
+			$updateMessage = "Dados na forma incorreta.";
 		}
 		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+
 		redirect('/course/index');
-		
+	}
+
+	/**
+	 * Validates the data submitted on the update course form
+	 */
+	private function validatesUpdateCourseData(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseType", "Course Type", "required");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$courseDataStatus = $this->form_validation->run();
+
+		return $courseDataStatus;
 	}
 
 	/**
@@ -131,10 +274,14 @@ class Course extends CI_Controller {
 		$courseWasDeleted = $this->deleteCourseFromDb($course_id);
 
 		if($courseWasDeleted){
-			$this->session->set_flashdata("success", "Curso excluído com sucesso.");
+			$deleteStatus = "success";
+			$deleteMessage = "Curso excluído com sucesso.";
 		}else{
-			$this->session->set_flashdata("danger", "Não foi possível excluir este curso.");
+			$deleteStatus = "danger";
+			$deleteMessage = "Não foi possível excluir este curso.";
 		}
+
+		$this->session->set_flashdata($deleteStatus, $deleteMessage);
 
 		redirect('/course/index');
 	}
@@ -185,6 +332,37 @@ class Course extends CI_Controller {
 	}
 
 	/**
+	 * Checks if the user has the permission to the course pages before loading it
+	 * ONLY applicable to the course pages
+	 * @param $template - The page to be loaded
+	 * @param $data - The data to send along the view
+	 * @return void - Load the template if the user has the permission or logout the user if does not
+	 */
+	private function loadTemplateSafely($template, $data = array()){
+
+		$user_has_the_permission = $this->checkUserPermission();
+
+		if($user_has_the_permission){
+			$this->load->template($template, $data);
+		}else{
+			$this->logoutUser();
+		}
+	}
+
+	/**
+	 * Check if the logged user have the permission to this page
+	 * @return TRUE if the user have the permission or FALSE if does not
+	 */
+	private function checkUserPermission(){
+		$logged_user_data = $this->session->userdata('usuario_logado');	
+		$permissions_for_logged_user = $logged_user_data['user_permissions'];
+
+		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
+
+		return $user_has_the_permission;
+	}
+
+	/**
 	 * Evaluates if in a given array of permissions the courses one is on it
 	 * @param permissions_array - Array with the permission names
 	 * @return True if there is the courses permission on this array, or false if does not.
@@ -227,24 +405,6 @@ class Course extends CI_Controller {
 	}
 	
 	/**
-	 * Check if the course is finantiated by the checkbox value 
-	 * @param $valueToCheck - Checkbox value (Expected TRUE OR FALSE)
-	 * @return 1 if is finantiated or 0 if does not
-	 */
-	private function checkIfIsFinantiated($valueToCheck){
-		
-		$isFinantiated = 0;
-
-		if($valueToCheck){
-			$isFinantiated = 1;
-		}else{
-			$isFinantiated = 0;
-		}
-
-		return $isFinantiated;
-	}
-
-	/**
 	 * Join the id's and names of course types into an array as key => value.
 	 * Used to the course type form
 	 * @param $course_types - The array that contains the tuples of course_type
@@ -262,6 +422,15 @@ class Course extends CI_Controller {
 		$form_course_types = array_combine($keys, $values);
 	
 		return $form_course_types;
+	}
+
+	/**
+	 * Logout the current user for unauthorized access to the page
+	 */
+	private function logoutUser(){
+		$login = new Login();
+		$login->logout("Você deve ter permissão para acessar essa página.
+				      Você foi deslogado por motivos de segurança.", "danger", '/');
 	}
 	
 }
