@@ -126,6 +126,14 @@ class Usuario extends CI_Controller {
 		return $user_types_to_array;
 	}
 	
+	public function getAllSecretaryUsers(){
+		
+		$this->load->model('usuarios_model');
+		$users = $this->usuarios_model->getAllSecretaries();
+		
+		return $users;
+	}
+	
 	/**
 	  * Join the id's and names of user types into an array as key => value.
 	  * Used to the user type form
@@ -178,6 +186,26 @@ class Usuario extends CI_Controller {
 		$user['user']['password'] = $new_password;
 
 		return $user;
+	}
+	
+	/**
+	 * Join the id's and names of users into an array as key => value.
+	 * Used to the update course form
+	 * @param $useres - The array that contains the tuples of users
+	 * @return An array with the id's and users names as id => name
+	 */
+	private function turnUsersToArray($users){
+		// Quantity of course types registered
+		$quantity_of_course_types = sizeof($users);
+	
+		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
+			$keys[$cont] = $users[$cont]['id'];
+			$values[$cont] = ucfirst($users[$cont]['name']);
+		}
+	
+		$form_users = array_combine($keys, $values);
+	
+		return $form_users;
 	}
 	
 }

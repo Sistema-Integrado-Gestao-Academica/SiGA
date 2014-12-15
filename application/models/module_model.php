@@ -71,4 +71,15 @@ class Module_model extends CI_Model {
 
 		return $modules_for_user;
 	}
+	
+	/**
+	 * Get all modules registered in the database
+	 * @return an array with the registered modules
+	 */
+	public function getAllModules(){
+		
+		$modules = $this->db->get('module')->result_array();
+		return $modules;
+		
+	}
 }

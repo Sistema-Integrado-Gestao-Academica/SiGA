@@ -96,6 +96,23 @@ class Course_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
+	public function saveSecretary($secretary, $courseName){
+		$this->db->select('id_course');
+		$courseId = $this->db->get_where('course',array('course_name'=> $courseName))->row_array();
+		
+		$saveSecretary = array_merge($secretary,$courseId);
+		$save = $this->db->insert("secretary_course", $saveSecretary);
+		
+		if($save){
+			$insertionStatus = TRUE;
+		}else{
+			$insertionStatus = FALSE;
+		}
+
+		return $insertionStatus;
+		
+	}
+	
 	/**
 	 * Delete a course by its id
 	 * @param int $id_course - The course id to be deleted
@@ -187,6 +204,24 @@ class Course_model extends CI_Model {
 			throw new CourseNameException($errorMessage);		
 		}
 
+	}
+	
+	public function getSecretaryByCourseId($id_course){
+		
+		$this->db->select('id_secretary,id_group , id_user');
+		$secretary_return = $this->db->get_where('secretary_course', array('id_course'=>$id_course))->row_array();
+		
+		return $secretary_return;
+		
+	}
+	
+	/**
+	 * Update secretary atributes of one course
+	 * @param array $secretary 
+	 * @param int $id_secretary
+	 */
+	public function updateSecretary(){
+		
 	}
 
 	/**

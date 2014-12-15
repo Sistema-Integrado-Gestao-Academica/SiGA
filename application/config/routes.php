@@ -56,6 +56,7 @@ $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
 $route['cursos'] = 'course/index';
 $route['registerDoctorateCourse'] = 'course/formToCreateDoctorateCourse';
+$route['secretaria'] = 'utils/loadSecretaria';
 
 /*
  * Test report routes

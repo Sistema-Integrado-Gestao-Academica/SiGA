@@ -36,19 +36,67 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('id_user_type');
 		$types_found = $this->db->get_where("user_user_type", array('id_user'=>$user_id));
 		$types_found_to_array = $types_found->result_array();
-
+		
 		// Filter the array returned from result_array() into a single array
 		for($i = 0; $i < sizeof($types_found_to_array); $i++){
 			$user_types_found[$i] = $types_found_to_array[$i]['id_user_type'];
-		}
 
-		return $user_types_found;
+			$this->db->select('type_name');
+			$type_name = $this->db->get_where("user_type",array('id_type'=>$user_types_found[$i]))->result_array();
+			if($type_name){
+				$user_type_name[$i] = $type_name[0]['type_name'];
+			}
+		}
+		
+		$user_type_return = array_merge($user_types_found,$user_type_name);
+		return $user_type_return;
+	}
+	
+	/**
+	 * Function to look if an user is or not a course secretary
+	 */
+	public function get_user_secretary($user_id){
+		
+		$this->db->select('id_course');
+		$user_is_secretary = $this->db->get_where("secretary_course",array('id_user'=>$user_id))->row_array();
+		
+		
+		if($user_is_secretary){
+			
+			$this->db->select('course_name');
+			$course_name = $this->db->get_where("course",$user_is_secretary)->row_array();
+			
+			$return_secretary = array_merge($user_is_secretary,$course_name);
+			
+		}else{
+			$return_secretary = FALSE;
+		}
+		return $return_secretary;
 	}
 	
 	public function buscaTodos() {
+		$this->db->select('id, name');
 		return $this->db->get('users')->result_array();
 	}
-
+	
+	public function getAllSecretaries() {
+		define('SECRETARY', 4);
+		$this->db->select('id_user');
+		$id_users = $this->db->get_where('user_user_type',array('id_user_type'=>SECRETARY))->result_array();
+		
+		for ($i=0 ; $i < sizeof($id_users); $i++){
+			$users[$i] = $this->getUserById($id_users[$i]['id_user']);
+			$return_users = array($id_users[$i]['id_user']=>$users[$i]['name']);
+		}
+		
+		return $return_users;
+	}
+	
+	public  function getUserById($id_user){
+		$this->db->select('name');
+		return $this->db->get_where('users',array('id'=>$id_user))->row_array();
+	}
+	
 	public function busca($str, $atributo) {
 		$this->db->where($str, $atributo);
 		$usuario = $this->db->get("users")->row_array();
