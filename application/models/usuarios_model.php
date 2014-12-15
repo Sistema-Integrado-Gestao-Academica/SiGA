@@ -58,18 +58,15 @@ class Usuarios_model extends CI_Model {
 	public function get_user_secretary($user_id){
 		
 		$this->db->select('id_course');
-		$user_is_secretary = $this->db->get_where("user_is_secretary",array('id_user'=>$user_id))->row_array();
+		$user_is_secretary = $this->db->get_where("secretary_course",array('id_user'=>$user_id))->row_array();
 		
 		
 		if($user_is_secretary){
-			$this->db->select('secretary_type');
-			$secretary_type = $this->db->get_where("course_has_secretary",$user_is_secretary)->row_array();
 			
 			$this->db->select('course_name');
 			$course_name = $this->db->get_where("course",$user_is_secretary)->row_array();
 			
-			
-			$return_secretary = array_merge($user_is_secretary,$course_name,$secretary_type);
+			$return_secretary = array_merge($user_is_secretary,$course_name);
 			
 		}else{
 			$return_secretary = FALSE;
