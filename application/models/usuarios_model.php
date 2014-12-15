@@ -75,6 +75,7 @@ class Usuarios_model extends CI_Model {
 	}
 	
 	public function buscaTodos() {
+		$this->db->select('id, name');
 		return $this->db->get('users')->result_array();
 	}
 
