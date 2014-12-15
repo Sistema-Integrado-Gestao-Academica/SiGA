@@ -86,6 +86,7 @@ function evaluatesProgram(){
 			$("#academic_program_types").change(function(){
 				evaluatesAcademicProgram();
 			});
+
 		}
 
 	);

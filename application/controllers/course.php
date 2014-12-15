@@ -111,6 +111,15 @@ class Course extends CI_Controller {
 		}
 	}
 
+	public function formToCreateDoctorateCourse(){
+		
+		$this->loadTemplateSafely('course/register_doctorate_course');
+	}
+
+	public function registerDoctorateCourse(){
+		// Do the register doctorate course here
+	}
+
 	public function formToRegisterNewCourse(){
 		$this->load->helper('url');
 		$site_url = site_url();
@@ -158,6 +167,7 @@ class Course extends CI_Controller {
 			$post_graduation_duration = $this->input->post('course_duration');
 			$post_graduation_total_credits = $this->input->post('course_total_credits');
 			$post_graduation_hours= $this->input->post('course_hours');
+			$post_graduation_class= $this->input->post('course_class');
 			$post_graduation_description = $this->input->post('course_description');
 			*/
 

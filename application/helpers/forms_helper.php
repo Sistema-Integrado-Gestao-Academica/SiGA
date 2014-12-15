@@ -41,10 +41,13 @@ function chooseAcademicProgramForm(){
 		'doctorate' => 'Doutorado Acadêmico'
 	);
 
+
 	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
 	echo form_label('Escolha um tipo de programa acadêmico:');
 	echo form_dropdown('academic_program_types', $academicProgramOptions,
 				       'master_degree', 'id=academic_program_types');
+	echo "<br><br>";
+	echo anchor("registerDoctorateCourse","Cadastrar Doutorado");
 }
 
 function masterDegreeProgramForm(){
@@ -61,6 +64,35 @@ function doctorateProgramForm(){
 	commonAttrForPostGraduationCourses();
 }
 
+function formToCreateDoctorateCourse(){
+
+	$doctorate_course_name = array(
+		"name" => "doctorate_course_name",
+		"id" => "doctorate_course_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "50",
+		"style" => "width: 80%;"
+	);
+
+	$submit_button = array(
+		"class" => "btn btn-primary",
+		"content" => "Cadastrar Doutorado",
+		"type" => "submit"
+	);
+
+	echo "<h4><span class='label label-default'>Doutorado Acadêmico</span></h4>";
+
+	echo "<br>";
+	echo form_label('Nome do curso', 'doctorate_course_name');
+	echo form_input($doctorate_course_name);
+	
+	commonAttrForPostGraduationCourses();
+	
+	echo "<br><br>";
+	echo form_button($submit_button);
+}
+
 function commonAttrForPostGraduationCourses(){
 	
 	$course_duration = array(
@@ -72,7 +104,7 @@ function commonAttrForPostGraduationCourses(){
 		'name' => 'course_total_credits',
 		'id' => 'course_total_credits',
 		'maxlength' => '10',
-		'style' => 'width: 10%;',
+		'style' => 'width: 30%;',
 		'required' => true
 	);
 
@@ -80,7 +112,7 @@ function commonAttrForPostGraduationCourses(){
 		'name' => 'course_hours',
 		'id' => 'course_hours',
 		'maxlength' => '10',
-		'style' => 'width: 10%;',
+		'style' => 'width: 30%;',
 		'required' => true
 	);
 
@@ -89,7 +121,7 @@ function commonAttrForPostGraduationCourses(){
 		'id' => 'course_class',
 		'placeholder' => 'Informe o semestre de início.',
 		'maxlength' => '6',
-		'style' => 'width: 20%;',
+		'style' => 'width: 40%;',
 		'required' => true
 	);
 
@@ -98,7 +130,7 @@ function commonAttrForPostGraduationCourses(){
 		'id' => 'course_description',
 		'placeholder' => 'Informe a descrição do curso.',
 		'rows' => '500',
-		'style' => 'width: 30%; height: 100px;',
+		'style' => 'width: 85%; height: 100px;',
 		'required' => true
 	);
 

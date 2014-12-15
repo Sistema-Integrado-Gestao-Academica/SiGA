@@ -12,7 +12,7 @@ $course_name_array_to_form = array(
 		"type" => "text",
 		"class" => "form-campo",
 		"maxlength" => "50",
-		"value" => set_value("nome", "")
+		"value" => set_value("nome", ""),
 );
 
 $submit_button_array_to_form = array(

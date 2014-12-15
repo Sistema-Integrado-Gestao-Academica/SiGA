@@ -19,7 +19,8 @@ $course_name_array_to_form = array(
 		"type" => "text",
 		"class" => "form-campo",
 		"maxlength" => "50",
-		"value" => set_value("nome", $course_name)
+		"value" => set_value("nome", $course_name),
+		"style" => "width: 80%;"
 );
 
 $submit_button_array_to_form = array(
@@ -27,7 +28,11 @@ $submit_button_array_to_form = array(
 		"content" => "Alterar",
 		"type" => "submit"
 );
+?>
+<div class="row">
 
+<div class="col-lg-6">
+<?php
 echo form_open("course/updateCourse",'',$hidden);
 
 	// Name field
@@ -53,5 +58,8 @@ echo form_open("course/updateCourse",'',$hidden);
 	echo form_button($submit_button_array_to_form);
 
 echo form_close();
-
 ?>
+</div>
+
+
+</div>
