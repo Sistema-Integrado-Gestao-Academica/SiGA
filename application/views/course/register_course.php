@@ -15,8 +15,7 @@ $form_course_type = $course->getCourseTypes();
 
 $user = new Usuario();
 
-$user_secretary = $user->getAllUsers();
-$form_user_secretary = array_slice($user_secretary, 1);
+$form_user_secretary = $user->getAllSecretaryUsers();
 
 $course_name_array_to_form = array(
 		"name" => "courseName",

@@ -15,14 +15,15 @@ $form_groups = $group->getExistingModules();
 
 $course_controller = new Course();
 
-$hidden = array("id_course" => $course_id);
-
 $form_course_type = $course_controller->getCourseTypes();
+
+$secretary_registered = $course_controller->getCourseSecrecretary($course_id);
+
+$hidden = array("id_course" => $course_id,'id_secretary'=>$secretary_registered['id_secretary']);
 
 $user = new Usuario();
 
-$user_secretary = $user->getAllUsers();
-$form_user_secretary = array_slice($user_secretary, 1);
+$form_user_secretary = $user->getAllSecretaryUsers();
 
 $course_name_array_to_form = array(
 		"name" => "courseName",
@@ -55,13 +56,13 @@ echo form_open("course/updateCourse",'',$hidden);
 	<?php 
 	//secretary field
 	echo form_label("Tipo de Secretaria", "secreteary_type");
-	echo form_dropdown("secretary_type", $form_groups);
+	echo form_dropdown("secretary_type", $form_groups, $secretary_registered['id_group']);
 	echo form_error("secretary_type");
 	echo "<br>";
 	echo "<br>";
 	
 	echo form_label("Escolher secretário", "user_secreteary");
-	echo form_dropdown("user_secreteary", $form_user_secretary);
+	echo form_dropdown("user_secreteary", $form_user_secretary,$secretary_registered['id_user']);
 	echo form_error("user_secreteary");
 	echo "<br>";
 	echo "<br>";

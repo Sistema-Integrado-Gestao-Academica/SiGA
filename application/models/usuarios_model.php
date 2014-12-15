@@ -78,7 +78,25 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('id, name');
 		return $this->db->get('users')->result_array();
 	}
-
+	
+	public function getAllSecretaries() {
+		define('SECRETARY', 4);
+		$this->db->select('id_user');
+		$id_users = $this->db->get_where('user_user_type',array('id_user_type'=>SECRETARY))->result_array();
+		
+		for ($i=0 ; $i < sizeof($id_users); $i++){
+			$users[$i] = $this->getUserById($id_users[$i]['id_user']);
+			$return_users = array($id_users[$i]['id_user']=>$users[$i]['name']);
+		}
+		
+		return $return_users;
+	}
+	
+	public  function getUserById($id_user){
+		$this->db->select('name');
+		return $this->db->get_where('users',array('id'=>$id_user))->row_array();
+	}
+	
 	public function busca($str, $atributo) {
 		$this->db->where($str, $atributo);
 		$usuario = $this->db->get("users")->row_array();

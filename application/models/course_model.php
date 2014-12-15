@@ -205,6 +205,24 @@ class Course_model extends CI_Model {
 		}
 
 	}
+	
+	public function getSecretaryByCourseId($id_course){
+		
+		$this->db->select('id_secretary,id_group , id_user');
+		$secretary_return = $this->db->get_where('secretary_course', array('id_course'=>$id_course))->row_array();
+		
+		return $secretary_return;
+		
+	}
+	
+	/**
+	 * Update secretary atributes of one course
+	 * @param array $secretary 
+	 * @param int $id_secretary
+	 */
+	public function updateSecretary(){
+		
+	}
 
 	/**
 	 * Update a course on DB

@@ -126,13 +126,12 @@ class Usuario extends CI_Controller {
 		return $user_types_to_array;
 	}
 	
-	public function getAllUsers(){
+	public function getAllSecretaryUsers(){
 		
 		$this->load->model('usuarios_model');
-		$users = $this->usuarios_model->buscaTodos();
-		$form_users = $this->turnUsersToArray($users);
+		$users = $this->usuarios_model->getAllSecretaries();
 		
-		return $form_users;
+		return $users;
 	}
 	
 	/**
