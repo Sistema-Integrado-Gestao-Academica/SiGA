@@ -151,6 +151,9 @@ class Course extends CI_Controller {
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
 			
+			$secretaryType = $this->input->post('secretary_type');
+			$userSecretary = $this->input->post('user_secretary');
+			
 			/*
 			// ARRUMAR O BANCO PARA SALVAR O TIPO DE POS-GRADUACAO
 			// If the course type is not of post-graduation, this is FALSE
@@ -166,11 +169,18 @@ class Course extends CI_Controller {
 				'course_name' => $courseName,
 				'course_type_id' => $courseType,
 			);
+			
+			//Secretary to be saved on database. Array with column names and its values
+			$secretaryToRegister = array(
+					'id_user'   => $userSecretary,
+					'id_group' => $secretaryType
+			);
 
 			$this->load->model("course_model");
-			$insertionWasMade = $this->course_model->saveCourse($courseToRegister);
-
-			if($insertionWasMade){
+			$insertionCourseWasMade = $this->course_model->saveCourse($courseToRegister);
+			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister,$courseName);
+			
+			if($insertionCourseWasMadeWasMade){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
 			}else{
@@ -200,6 +210,8 @@ class Course extends CI_Controller {
 		$this->form_validation->set_rules("course_hours", "Course hours", "required");
 		$this->form_validation->set_rules("course_class", "Course class", "required");
 		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_rules("secreteary_type", "Secretary Type", "required");
+		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 
@@ -218,12 +230,22 @@ class Course extends CI_Controller {
 			$courseType = $this->input->post('courseType');
 			$idCourse = $this->input->post('id_course');
 			
+			$secretaryType = $this->input->post('secretary_type');
+			$userSecretary = $this->input->post('user_secretary');
+			
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToUpdate = array(
 					'course_name' => $courseName,
 					'course_type_id' => $courseType,
 			);
-		
+			
+			//Secretary to be saved on database. Array with column names and its values
+			$secretaryToUpdate = array(
+					'id_course' => $idCourse,
+					'id_user'   => $userSecretary,
+					'id_module' => $secretaryType
+			);
+			
 			try{
 				$this->load->model("course_model");
 				$this->course_model->updateCourse($idCourse, $courseToUpdate);
@@ -260,6 +282,8 @@ class Course extends CI_Controller {
 		$this->form_validation->set_rules("course_hours", "Course hours", "required");
 		$this->form_validation->set_rules("course_class", "Course class", "required");
 		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_rules("secreteary_type", "Secretary Type", "required");
+		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 

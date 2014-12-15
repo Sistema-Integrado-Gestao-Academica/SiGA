@@ -96,6 +96,23 @@ class Course_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
+	public function saveSecretary($secretary, $courseName){
+		$this->db->select('id_course');
+		$courseId = $this->db->get_where('course',array('course_name'=> $courseName))->row_array();
+		
+		$saveSecretary = array_merge($secretary,$courseId);
+		$save = $this->db->insert("secretary_course", $saveSecretary);
+		
+		if($save){
+			$insertionStatus = TRUE;
+		}else{
+			$insertionStatus = FALSE;
+		}
+
+		return $insertionStatus;
+		
+	}
+	
 	/**
 	 * Delete a course by its id
 	 * @param int $id_course - The course id to be deleted
