@@ -6,5 +6,4 @@
 	echo "<br>";
 	echo"<h4 align='center'> As secretarias designadas a você são: </h4>";
 	
-	echo "Secretaria : " . ucfirst($session['secretary']['secretary_type']) . " do curso " . $session['secretary']['course_name'];
 	?>
