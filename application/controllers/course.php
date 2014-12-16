@@ -165,11 +165,13 @@ class Course extends CI_Controller {
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
 			
+			// Secretary to be saved on database. Array with column names and its values
 			$secretaryToRegister = array(
-					'id_user'   => $userSecretary,
-					'id_group' => $secretaryType
+				'id_user'   => $userSecretary,
+				'id_group' => $secretaryType
 			);
-			
+
+
 			switch ($courseType){
 				case GRADUATION:
 					// Course to be saved on database. Put the columns names on the keys
@@ -204,7 +206,7 @@ class Course extends CI_Controller {
 					);
 
 					$post_graduation = new PostGraduation();
-					$post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister);
+					$post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
 
 					break;
 
@@ -217,12 +219,6 @@ class Course extends CI_Controller {
 					break;
 			}
 
-			// Secretary to be saved on database. Array with column names and its values
-			
-	
-// 			$this->load->model('course_model');	
-// 			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
-			
 			if($insertionWasMade){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
@@ -230,6 +226,7 @@ class Course extends CI_Controller {
 				$insertStatus = "danger";
 				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
+
 
 		}else{
 			$insertStatus = "danger";
