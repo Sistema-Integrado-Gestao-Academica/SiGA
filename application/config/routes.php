@@ -55,6 +55,7 @@ $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
 $route['cursos'] = 'course/index';
+$route['plano%20orcamentario'] = 'budgetplan';
 
 /*
  * Test report routes
