@@ -165,8 +165,20 @@ class Course extends CI_Controller {
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
 			
+			$secretaryToRegister = array(
+					'id_user'   => $userSecretary,
+					'id_group' => $secretaryType
+			);
+			
 			switch ($courseType){
 				case GRADUATION:
+					// Course to be saved on database. Put the columns names on the keys
+					$courseToRegister = array(
+							'course_name' => $courseName
+					);
+
+					$graduation = new Graduation();
+					$insertionWasMade = $graduation->saveGraduationCourse($courseToRegister,$secretaryToRegister);
 					
 					break;
 
@@ -205,22 +217,13 @@ class Course extends CI_Controller {
 					break;
 			}
 
-			// Course to be saved on database. Put the columns names on the keys
-			$courseToRegister = array(
-				'course_name' => $courseName
-			);
-			
 			// Secretary to be saved on database. Array with column names and its values
-			$secretaryToRegister = array(
-				'id_user'   => $userSecretary,
-				'id_group' => $secretaryType
-			);
-
-			$this->load->model("course_model");
-			$insertionCourseWasMade = $this->course_model->saveCourse($courseToRegister);
-			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
 			
-			if($insertionCourseWasMadeWasMade){
+	
+// 			$this->load->model('course_model');	
+// 			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
+			
+			if($insertionWasMade){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
 			}else{

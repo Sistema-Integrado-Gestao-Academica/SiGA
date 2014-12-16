@@ -55,12 +55,8 @@ h1.bemvindo {
         border-radius: 0;
         overflow-y: auto;
         background-color: #222;
+        overflow-x: hidden;
     }
-
-    .side-nav>li>a {
-        width: 225px;
-    }
-
     .side-nav li a:hover,
     .side-nav li a:focus {
         outline: none;
