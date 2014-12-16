@@ -1,7 +1,25 @@
 <?php 
 require_once(APPPATH."/exception/CourseNameException.php");
 class Course_model extends CI_Model {
-	
+
+
+	public function getCourseIdByCourseName($courseName){
+
+		$courseId =$this->getCourseIdForThisCourseName($courseName);
+
+		return $courseId;
+	}
+
+	private function getCourseIdForThisCourseName($courseName){
+		$this->db->select('id_course');
+		$searchResult = $this->db->get_where('course', array('course_name' => $courseName));
+		$searchResult = $searchResult->row_array();
+
+		$courseId = $searchResult['id_course'];
+
+		return $courseId;
+	}
+
 	// /**
 	//  * Get the course type name for a given course type id
 	//  * @param $course_type_id - The course type id to look for a name

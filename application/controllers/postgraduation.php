@@ -4,7 +4,7 @@ require_once('masterdegree.php');
 
 class PostGraduation extends CI_Controller {
 
-	public function savePostGraduationCourse($post_graduation_type, $commonAttrs, $specificsAttrs){
+	public function savePostGraduationCourse($post_graduation_type, $commonAttrs, $specificsAttrs, $secretary){
 		
 		define("ACADEMIC_PROGRAM", "academic_program");
 		define("PROFESSIONAL_PROGRAM", "professional_program");
@@ -13,7 +13,7 @@ class PostGraduation extends CI_Controller {
 			// In this case, if it is an academic program, it is a master_degree.
 			case ACADEMIC_PROGRAM:
 				$master_degree = new MasterDegree();
-				$master_degree->saveMasterDegreeCourse($commonAttrs, $specificsAttrs);
+				$master_degree->saveMasterDegreeCourse($commonAttrs, $specificsAttrs, $secretary);
 				break;
 
 			case PROFESSIONAL_PROGRAM:

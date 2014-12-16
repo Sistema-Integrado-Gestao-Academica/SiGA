@@ -165,6 +165,12 @@ class Course extends CI_Controller {
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
 			
+			// Secretary to be saved on database. Array with column names and its values
+			$secretaryToRegister = array(
+				'id_user'   => $userSecretary,
+				'id_group' => $secretaryType
+			);
+
 			switch ($courseType){
 				case GRADUATION:
 					
@@ -192,7 +198,7 @@ class Course extends CI_Controller {
 					);
 
 					$post_graduation = new PostGraduation();
-					$post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister);
+					$post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
 
 					break;
 
@@ -205,28 +211,17 @@ class Course extends CI_Controller {
 					break;
 			}
 
-			// Course to be saved on database. Put the columns names on the keys
-			$courseToRegister = array(
-				'course_name' => $courseName
-			);
+			// $this->load->model("course_model");
+			// $insertionCourseWasMade = $this->course_model->saveCourse($courseToRegister);
+			// $insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
 			
-			// Secretary to be saved on database. Array with column names and its values
-			$secretaryToRegister = array(
-				'id_user'   => $userSecretary,
-				'id_group' => $secretaryType
-			);
-
-			$this->load->model("course_model");
-			$insertionCourseWasMade = $this->course_model->saveCourse($courseToRegister);
-			$insertionSecretaryWasMade = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
-			
-			if($insertionCourseWasMadeWasMade){
-				$insertStatus = "success";
-				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
-			}else{
-				$insertStatus = "danger";
-				$insertMessage = "Curso \"{$courseName}\" já existe.";
-			}
+			// if($insertionCourseWasMadeWasMade){
+			// 	$insertStatus = "success";
+			// 	$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
+			// }else{
+			// 	$insertStatus = "danger";
+			// 	$insertMessage = "Curso \"{$courseName}\" já existe.";
+			// }
 
 		}else{
 			$insertStatus = "danger";
