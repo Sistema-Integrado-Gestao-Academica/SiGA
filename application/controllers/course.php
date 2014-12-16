@@ -1,6 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('login.php');
+require_once('postgraduation.php');
+require_once('graduation.php');
+require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
 
 class Course extends CI_Controller {
@@ -188,7 +191,9 @@ class Course extends CI_Controller {
 						'description' => $post_graduation_description
 					);
 
-					$this->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister);
+					$post_graduation = new PostGraduation();
+					$post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister);
+
 					break;
 
 				case EAD:
@@ -231,10 +236,6 @@ class Course extends CI_Controller {
 		$this->session->set_flashdata($insertStatus, $insertMessage);
 
 		redirect('/course/index');
-	}
-
-	private function savePostGraduationCourse($post_graduation_type, $commonAttrs, $specificsAttrs){
-		// FAZER DEPOIS.
 	}
 
 	/**
