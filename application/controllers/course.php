@@ -176,7 +176,7 @@ class Course extends CI_Controller {
 				case GRADUATION:
 					// Course to be saved on database. Put the columns names on the keys
 					$courseToRegister = array(
-							'course_name' => $courseName
+						'course_name' => $courseName
 					);
 
 					$graduation = new Graduation();
@@ -206,7 +206,7 @@ class Course extends CI_Controller {
 					);
 
 					$post_graduation = new PostGraduation();
-					$post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
+					$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
 
 					break;
 
