@@ -174,7 +174,6 @@ class Course extends CI_Controller {
 
 			switch ($courseType){
 				case GRADUATION:
-					// Course to be saved on database. Put the columns names on the keys
 					$courseToRegister = array(
 						'course_name' => $courseName
 					);
@@ -211,6 +210,12 @@ class Course extends CI_Controller {
 					break;
 
 				case EAD:
+					$courseToRegister = array(
+							'course_name' => $courseName
+					);
+					
+					$ead = new Ead();
+					$insertionWasMade = $ead->saveEadCourse($courseToRegister, $secretaryToRegister);	
 					
 					break;
 
