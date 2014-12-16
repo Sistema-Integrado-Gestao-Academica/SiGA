@@ -1,4 +1,4 @@
-SIP
+SIGA
 =====
 
-Sistema Integrado de Pós-Graduação
+Sistema Integrado de Gestão Acadêmica
