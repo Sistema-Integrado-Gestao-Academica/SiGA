@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="Tests/bootstrap.php" colors="true">
+<php>
+<var name="db_dsn" value="mysql:dbname=siga_test;host=localhost"/>
+<var name="db_username" value="siga_test"/>
+<var name="db_password" value="siga_test"/>
+</php>
+<testsuites>
+<testsuite name="Bateria de Testes do Curso">
+<directory>./Tests/</directory>
+</testsuite>
+</testsuites>
+<filter>
+<whitelist>
+<directory>./</directory>
+<exclude>
+<directory>./Tests</directory>
+</exclude>
+</whitelist>
+</filter>
+</phpunit>

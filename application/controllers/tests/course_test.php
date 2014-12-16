@@ -293,7 +293,7 @@ class Course_Test extends CI_Controller{
 	public function index(){
 
 		// Set this to TRUE to run the tests
-		$this->unit->active(FALSE);
+		$this->unit->active(TRUE);
 
 		/* Call your test functions here */
 
