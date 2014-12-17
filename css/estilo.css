@@ -23,6 +23,10 @@ h1.bemvindo {
 	text-align: center;
 }
 
+td {
+	text-align: center;
+}
+
 .form-campo {
 	display: block;
 	width: 30%;

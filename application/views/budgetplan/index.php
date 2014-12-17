@@ -22,16 +22,10 @@
 			<td class="text-center"><?=$budgetplan['status']?></td>
 
 			<td>
-				<?=anchor("funcoes/{$budgetplan['id']}", "Vincular curso", array(
+				<?=anchor("plano%20orcamentario/{$budgetplan['id']}", "Vincular curso", array(
 					"class" => "btn btn-primary btn-editar",
 					"type" => "sumbit",
 					"content" => "Vincular"
-				))?>
-
-				<?=anchor("funcoes/{$budgetplan['id']}", "Editar", array(
-					"class" => "btn btn-primary btn-editar",
-					"type" => "sumbit",
-					"content" => "Editar"
 				))?>
 				
 				<?php 
@@ -51,21 +45,22 @@
 
 <br><br>
 
-<?php 
-echo form_open("budgetplan/save");
+<?= form_open("budgetplan/save") ?>
 
-echo form_label("Cadastrar um novo P.O.", "amount");
+<h3>Cadastrar um novo P.O.</h3>
+
+<?php
+echo form_label('Montante inicial', 'amount');
 echo form_input(array(
 	"name" => "amount",
 	"id" => "amount",
 	"type" => "number",
-	"class" => "form-campo",
-	"placeholder" => "Montante inicial"
+	"class" => "form-campo"
 ));
 
 echo form_label("Status", "status");
 echo "<br>";
-echo form_dropdown('status', $options);
+echo form_dropdown('status', $status);
 
 echo "<br><br>";
 
