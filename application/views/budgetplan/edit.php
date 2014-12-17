@@ -17,7 +17,8 @@ echo form_input(array(
 	"id" => "amount",
 	"type" => "number",
 	"class" => "form-campo",
-	"value" => $budgetplan['amount']
+	"value" => $budgetplan['amount'],
+	"disabled" => $disable
 ));
 
 echo form_label("Gasto", "spending");

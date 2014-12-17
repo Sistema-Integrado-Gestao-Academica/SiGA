@@ -12,7 +12,7 @@
 	</tr>
 
 	<?php $i=0; ?>
-	<?php foreach ($budgetplans as $budgetplan) { ?>
+	<?php foreach ($budgetplans as $budgetplan) : ?>
 		<tr>
 			<td class="text-center"><?=$i+=1?></td>
 			<td class="text-center"><?=$budgetplan['course']?></td>
@@ -22,10 +22,10 @@
 			<td class="text-center"><?=$budgetplan['status']?></td>
 
 			<td>
-				<?=anchor("plano%20orcamentario/{$budgetplan['id']}", "Vincular curso", array(
+				<?=anchor("plano%20orcamentario/{$budgetplan['id']}", "Editar", array(
 					"class" => "btn btn-primary btn-editar",
 					"type" => "sumbit",
-					"content" => "Vincular"
+					"content" => "Editar"
 				))?>
 				
 				<?php 
@@ -40,7 +40,7 @@
 				?>
 			</td>
 		</tr>
-	<?php } ?>
+	<?php endforeach ?>
 </table>
 
 <br><br>

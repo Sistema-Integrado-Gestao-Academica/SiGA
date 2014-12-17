@@ -60,7 +60,14 @@ class Budgetplan extends CI_Controller {
 			array_push($courses, $c['course_name']);
 		}
 
-		$data = array('budgetplan' => $budgetplan, "status" => $status, "courses" => $courses);
+		$disable = $budgetplan['status'] == 3 ? "disabled" : "";
+
+		$data = array(
+			'budgetplan' => $budgetplan,
+			'status' => $status,
+			'courses' => $courses,
+			'disable' => $disable
+		);
 		$this->load->template("budgetplan/edit", $data);
 	}
 
