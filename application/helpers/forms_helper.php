@@ -52,7 +52,7 @@ function professionalProgramForm(){
 
 function masterDegreeProgramForm(){
 
-	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
+	echo "<h4><span class='label label-default'>Mestrado Acadêmico - Alterar</span></h4>";
 
 	commonAttrForPostGraduationCourses();
 }
@@ -104,16 +104,14 @@ function commonAttrForPostGraduationCourses(){
 		'name' => 'course_total_credits',
 		'id' => 'course_total_credits',
 		'maxlength' => '10',
-		'style' => 'width: 30%;',
-		'required' => true
+		'style' => 'width: 40%;',
 	);
 
 	$course_hours = array(
 		'name' => 'course_hours',
 		'id' => 'course_hours',
 		'maxlength' => '10',
-		'style' => 'width: 30%;',
-		'required' => true
+		'style' => 'width: 40%;',
 	);
 
 	$course_class = array(
@@ -122,7 +120,6 @@ function commonAttrForPostGraduationCourses(){
 		'placeholder' => 'Informe o semestre de início.',
 		'maxlength' => '6',
 		'style' => 'width: 40%;',
-		'required' => true
 	);
 
 	$description = array(
@@ -131,7 +128,6 @@ function commonAttrForPostGraduationCourses(){
 		'placeholder' => 'Informe a descrição do curso.',
 		'rows' => '500',
 		'style' => 'width: 85%; height: 100px;',
-		'required' => true
 	);
 
 	// Course duration field
@@ -172,30 +168,36 @@ function commonAttrForPostGraduationCourses(){
  */
 function displayMasterDegreeData($masterDegreeData){
 	$thereIsMasterDegree = $masterDegreeData != FALSE;
+
+	echo "<br><h4><span class='label label-default'>Mestrado Acadêmico cadastrado</span></h4>";
+	echo "<table class = 'table table-hover'>";
+		echo "<tr>";
+			echo "<th class='text-center'>Nome</th>";
+			echo "<th class='text-center'>Duração</th>";
+			echo "<th class='text-center'>Créditos totais</th>";
+			echo "<th class='text-center'>Carga-horária</th>";
+			echo "<th class='text-center'>Turma</th>";
+			echo "<th class='text-center'>Descrição</th>";
+		echo "</tr>";
+
 	if($thereIsMasterDegree){
-		echo "<h4><span class='label label-default'>Mestrado Acadêmico cadastrado</span></h4>";
-		echo "<table class = 'table table-hover'>";
-			echo "<tr>";
-				echo "<th class='text-center'>Nome</th>";
-				echo "<th class='text-center'>Duração</th>";
-				echo "<th class='text-center'>Créditos totais</th>";
-				echo "<th class='text-center'>Carga-horária</th>";
-				echo "<th class='text-center'>Turma</th>";
-				echo "<th class='text-center'>Descrição</th>";
-			echo "</tr>";
-			echo "<tr>";
-				echo "<td class='text-center'>".$masterDegreeData['course_name']."</td>";
-				echo "<td class='text-center'>".$masterDegreeData['duration']." anos</td>";
-				echo "<td class='text-center'>".$masterDegreeData['total_credits']."</td>";
-				echo "<td class='text-center'>".$masterDegreeData['workload']."h</td>";
-				echo "<td class='text-center'>".$masterDegreeData['start_class']."</td>";
-				echo "<td class='text-center'>".$masterDegreeData['description']."</td>";
-			echo "</tr>";
+
+		echo "<tr>";
+			echo "<td class='text-center'>".$masterDegreeData['course_name']."</td>";
+			echo "<td class='text-center'>".$masterDegreeData['duration']." anos</td>";
+			echo "<td class='text-center'>".$masterDegreeData['total_credits']."</td>";
+			echo "<td class='text-center'>".$masterDegreeData['workload']."h</td>";
+			echo "<td class='text-center'>".$masterDegreeData['start_class']."</td>";
+			echo "<td class='text-center'>".$masterDegreeData['description']."</td>";
+		echo "</tr>";
 		echo "</table>";
 
+		echo anchor('registerDoctorateCourse', 'Cadastrar Doutorado');
 	}else{
-		echo "<span class='label label-danger'>Nenhum mestrado cadastrado para esse Programa Acadêmico.</span>";
+		echo "</table>";
+		echo "<h4><span class='label label-danger'>Nenhum mestrado cadastrado para esse Programa Acadêmico.</span></h4>";
 	}
+	
 }
 
 function emptyDiv(){

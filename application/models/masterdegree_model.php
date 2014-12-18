@@ -1,5 +1,8 @@
 <?php
 
+require_once(APPPATH."/exception/CourseNameException.php");
+require_once(APPPATH."/exception/CourseException.php");
+
 class MasterDegree_model extends CI_Model {
 
 	public function saveCourseCommonAttributes($commonAttributes, $secretary){
@@ -30,6 +33,53 @@ class MasterDegree_model extends CI_Model {
 		$masterDegreeWasSaved = $programWasSaved && $courseWasSaved;
 
 		return $masterDegreeWasSaved;
+	}
+
+	/**
+	 * Update the common attributes of a course on the course table
+	 * @param $courseId - The course id to be updated
+	 * @param $commonAttributes - The new common attributes 
+	 * @throws CourseNameException, CourseException
+	 */
+	public function updateCourseCommonAttributes($courseId, $commonAttributes){
+
+		try{	
+			// Save on the course table the common attributes
+			$this->load->model('course_model');
+			$this->course_model->updateCourse($courseId, $commonAttributes);
+
+		}catch(CourseNameException $caughtException){
+			throw $caughtException;
+		}catch(CourseException $caughtException){
+			throw $caughtException;
+		}
+	}
+
+	/**
+	 * Update the specifics attributes of a master degree course
+	 * @param $courseId - The course id to be updated
+	 * @param $specificsAttributes - The new specifics attributes
+	 * @throws CourseExceptions
+	 */
+	public function updateCourseSpecificsAttributes($courseId, $specificsAttributes){
+		$this->load->model('course_model');
+		$idExists = $this->course_model->checkExistingId($courseId);
+
+		if($idExists){
+			$this->updateMasterDegreeCourse($courseId, $specificsAttributes);
+		}else{
+			throw new CourseException("Cannot update this course. The informed ID does not exists.");
+		}
+	}
+
+	/**
+	 * Update the specifics attributes of a master degree on DB
+	 * @param $courseId - The course id to be updated
+	 * @param $newMasterDegree - The new master degree attributes
+	 */
+	private function updateMasterDegreeCourse($courseId, $newMasterDegree){
+		$this->db->where('id_course', $courseId);
+		$this->db->update('academic_program', $newMasterDegree);
 	}
 
 	public function getRegisteredMasterDegreeForThisCourseId($courseId){

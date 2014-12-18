@@ -62,6 +62,23 @@ class Course extends CI_Controller {
 		}
 	}
 
+	public function displayMasterDegreeUpdateForm(){
+
+		define('ACADEMIC_PROGRAM', 'academic_program');
+
+		$choosenProgram = $this->input->post('program');
+
+		switch($choosenProgram){
+			// This form is only aplicable to the academic program
+			case ACADEMIC_PROGRAM:
+				masterDegreeProgramForm();
+				break;
+			default:
+				emptyDiv();
+				break;
+		}
+	}
+
 	// Used for the update course page
 	public function checkChoosenProgram(){
 		
@@ -75,7 +92,6 @@ class Course extends CI_Controller {
 		switch($choosenProgram){
 			case ACADEMIC_PROGRAM:
 				// Function located on the helper 'forms' - Loaded by autoload
-				// chooseAcademicProgramForm();
 
 				$this->displayRegisteredMasterDegree($course);
 
@@ -337,7 +353,6 @@ class Course extends CI_Controller {
 				case POST_GRADUATION:
 					
 					$post_graduation_type = $this->input->post('post_graduation_type');
-					$program_type = $this->input->post('academic_program_types');
 
 					$post_graduation_duration = $this->input->post('course_duration');
 					$post_graduation_total_credits = $this->input->post('course_total_credits');
@@ -357,9 +372,21 @@ class Course extends CI_Controller {
 						'description' => $post_graduation_description
 					);
 
+					try{
 
-					$post_graduation = new PostGraduation();
-					// $post_graduation->updatePostGraduation
+						$post_graduation = new PostGraduation();
+						$post_graduation->updatePostGraduationCourse(
+							$idCourse, $post_graduation_type, $commonAttributes,
+							$courseToUpdate, $secretaryToUpdate
+						);
+						$updateStatus = "success";
+						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+					}catch(CourseNameException $caughtException){
+						$updateStatus = "danger";
+						$updateMessage = $caughtException->getMessage();
+					}catch(CourseException $caughtException){
+						// Do treatment here
+					}
 
 					break;
 				
@@ -371,13 +398,7 @@ class Course extends CI_Controller {
 					# code...
 					break;
 			}
-
-			// Course to be saved on database. Put the columns names on the keys
-			$courseToUpdate = array(
-					'course_name' => $courseName,
-					'course_type_id' => $courseType,
-			);
-			
+		
 			// try{
 			// 	$this->load->model("course_model");
 			// 	$this->course_model->updateCourse($idCourse, $courseToUpdate);

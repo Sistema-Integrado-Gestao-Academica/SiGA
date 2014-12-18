@@ -89,6 +89,8 @@ function evaluatesProgram(){
 
 			$("#registered_master_degree").html(data);
 
+			displayMasterDegreeForm();
+
 			// evaluatesAcademicProgram();
 			// $("#academic_program_types").change(function(){
 			// 	evaluatesAcademicProgram();
@@ -96,6 +98,21 @@ function evaluatesProgram(){
 
 		}
 
+	);
+}
+
+function displayMasterDegreeForm(){
+
+	var choosenProgram = getChoosenPostGradType();
+	var urlToPost = choosenProgram.siteUrl + "/course/displayMasterDegreeUpdateForm";
+
+	$.post(
+		urlToPost,
+		{program: choosenProgram.postGradType},
+		function(data){
+
+			$("#update_master_degree").html(data);
+		}
 	);
 }
 

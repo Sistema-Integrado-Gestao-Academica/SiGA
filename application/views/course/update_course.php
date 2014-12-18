@@ -91,14 +91,18 @@ echo form_open("course/updateCourse",'',$hidden);
 
 	?>
 	<br><div id="post_grad_types"></div>
-	<br><div id="chosen_post_grad_type_update"></div>
 	
 	<div class="row">
 		<div class="col-lg-6">
-			<div id="registered_master_degree"></div>
+			<div class="row">
+				<div id="registered_master_degree"></div>
+			</div>
+			<div class="row">
+				<div id="registered_doctorate"></div>
+			</div>
 		</div>
 		<div class="col-lg-6">
-			<br><div id="choosen_program"></div>
+			<br><div id="update_master_degree"></div>
 		</div>
 	</div>
 	<?php

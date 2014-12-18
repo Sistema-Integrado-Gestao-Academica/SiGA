@@ -1,5 +1,6 @@
 <?php 
 require_once(APPPATH."/exception/CourseNameException.php");
+require_once(APPPATH."/exception/CourseException.php");
 class Course_model extends CI_Model {
 
 	public function getCommonAttributesForThisCourse($courseId){
@@ -198,43 +199,27 @@ class Course_model extends CI_Model {
 	 * @param String $id_course - The course id to be updated
 	 * @param array $courseToUpdate - The new course data to replace the old one
 	 * @return void
-	 * @throws CourseNameException
 	 */
 	public function updateCourse($id_course, $courseToUpdate){
 
-		$courseNameToUpdate = $courseToUpdate['course_name'];
-		$courseTypeIdToUpdate = $courseToUpdate['course_type_id'];
-		
-		$courseNameHasChanged = $this->checkIfCourseNameHasChanged($id_course, $courseNameToUpdate);
-		$courseTypeHasChanged = $this->checkIfCourseTypeHasChanged($id_course, $courseTypeIdToUpdate);
+		$idExists = $this->checkExistingId($id_course);
 
-		// Check what attribute has changed
-		if($courseNameHasChanged){
+		if($idExists){
+			$newCourseName = $courseToUpdate['course_name'];			
+			$courseNameHasChange = $this->checkIfCourseNameHasChanged($id_course, $newCourseName);
+			$courseNameAlreadyExists = $this->courseNameAlreadyExists($newCourseName);
 
-			$courseNameNotAlreadyExists = !($this->courseNameAlreadyExists($courseNameToUpdate));
+			// The course name has to change and do not exists or already exists and do not change
+			$courseNameIsOk = ($courseNameAlreadyExists && !$courseNameHasChange) || (!$courseNameAlreadyExists && $courseNameHasChange);
 
-			// Check if the new course name does not exists yet on DB
-			if($courseNameNotAlreadyExists){
-
+			if($courseNameIsOk){
 				$this->updateCourseOnDb($id_course, $courseToUpdate);
-
 			}else{
-				$errorMessage = "O nome do curso '".$courseNameToUpdate."' já existe.";
-				throw new CourseNameException($errorMessage);
+				throw new CourseNameException("O curso '".$newCourseName."' já existe.");
 			}
-			
-		}else if($courseTypeHasChanged){
-
-			// Take out of the array the course name once it has not changed, to update only the course type
-			unset($courseToUpdate['course_name']);
-
-			$this->updateCourseOnDb($id_course, $courseToUpdate);
-
 		}else{
-			$errorMessage = "Nenhum alteração foi feita no curso '".$courseNameToUpdate."'";
-			throw new CourseNameException($errorMessage);		
+			throw new CourseException("Cannot update this course. The informed ID does not exists.");
 		}
-
 	}
 	
 	public function getSecretaryByCourseId($id_course){
