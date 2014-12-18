@@ -35,6 +35,9 @@ class MasterDegree extends CI_Controller {
 	
 			$this->masterdegree_model->updateCourseSpecificsAttributes($idCourseToUpdate, $specificsAttributes);
 
+			$this->load->model('course_model');
+			$this->course_model->updateCourseSecretary($idCourseToUpdate, $secretary);
+
 		}catch(CourseNameException $caughtException){
 			throw $caughtException;
 		}catch(CourseException $caughtException){
@@ -43,7 +46,7 @@ class MasterDegree extends CI_Controller {
 	}
 
 	private function filterNullAttributes($attributesArray){
-		
+
 		foreach ($attributesArray as $attributeName => $attribute){
 			if(empty($attribute)){
 				unset($attributesArray[$attributeName]);

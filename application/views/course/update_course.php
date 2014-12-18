@@ -72,9 +72,9 @@ echo form_open("course/updateCourse",'',$hidden);
 	echo "<br>";
 	echo "<br>";
 	
-	echo form_label("Escolher secretário", "user_secreteary");
-	echo form_dropdown("user_secreteary", $form_user_secretary,$secretary_registered['id_user']);
-	echo form_error("user_secreteary");
+	echo form_label("Escolher secretário", "user_secretary");
+	echo form_dropdown("user_secretary", $form_user_secretary, $secretary_registered['id_user'], "id='user_secretary'");
+	echo form_error("user_secretary");
 	echo "<br>";
 	echo "<br>";
 	

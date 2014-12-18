@@ -337,7 +337,7 @@ class Course extends CI_Controller {
 			$idCourse = $this->input->post('id_course');
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
-		
+
 			// Secretary to be saved on database. Array with column names and its values
 			$secretaryToUpdate = array(
 					'id_course' => $idCourse,
@@ -395,24 +395,9 @@ class Course extends CI_Controller {
 					break;
 				
 				default:
-					# code...
+					
 					break;
-			}
-		
-			// try{
-			// 	$this->load->model("course_model");
-			// 	$this->course_model->updateCourse($idCourse, $courseToUpdate);
-			// 	$this->course_model->updateSecretary($secretaryToUpdate);
-				
-			// 	$updateStatus = "success";
-			// 	$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
-
-			// }catch(CourseNameException $e){
-
-			// 	$updateStatus = "danger";
-			// 	$updateMessage = $e->getMessage();
-			// }
-		
+			}		
 		
 		}else{
 			$updateStatus = "danger";

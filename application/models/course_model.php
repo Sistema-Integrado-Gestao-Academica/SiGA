@@ -230,16 +230,34 @@ class Course_model extends CI_Model {
 		return $secretary_return;
 		
 	}
-	
+
 	/**
-	 * Update secretary atributes of one course
-	 * @param array $secretary 
-	 * @param int $id_secretary
+	 * Update secretary atributes of a master degree course
+	 * @param int $idCourseToUpdate - The course to update the secretary
+	 * @param array $newSecretary - The new secretary to replace the old one
 	 */
-	public function updateSecretary(){
-		
+	public function updateCourseSecretary($idCourseToUpdate, $newSecretary){
+		// Validate attributes
+		$secretaryId = $this->getSecretaryIdByCourseId($idCourseToUpdate);
+		$this->updateSecretary($secretaryId, $newSecretary);
 	}
 
+	private function getSecretaryIdByCourseId($courseId){
+		$this->db->select('id_secretary');
+		$searchResult = $this->db->get_where('secretary_course', array('id_course' => $courseId));
+
+		$searchResult = $searchResult->row_array();
+
+		$foundSecretary = $searchResult['id_secretary'];
+
+		return $foundSecretary;
+	}
+
+	private function updateSecretary($secretaryId, $newSecretary){
+		$this->db->where('id_secretary', $secretaryId);
+		$this->db->update('secretary_course', $newSecretary);
+	}
+	
 	/**
 	 * Update a course on DB
 	 * @param String $id_course - The course id to be updated
