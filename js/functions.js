@@ -71,52 +71,59 @@ function getChoosenPostGradType(){
 	return choosenType;
 }
 
+function getCurrentCourse(){
+	var currentCourse = $("#current_course").val();
+
+	return currentCourse;
+}
+
 function evaluatesProgram(){
 	var choosenProgram = getChoosenPostGradType();
 	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenProgram";
+	var currentCourse = getCurrentCourse();
 
 	$.post(
 		urlToPost,
-		{program: choosenProgram.postGradType},
+		{program: choosenProgram.postGradType, course: currentCourse},
 		function(data){
 
-			$("#chosen_post_grad_type_update").html(data);
+			$("#registered_master_degree").html(data);
 
-			evaluatesAcademicProgram();
-			$("#academic_program_types").change(function(){
-				evaluatesAcademicProgram();
-			});
+			// evaluatesAcademicProgram();
+			// $("#academic_program_types").change(function(){
+			// 	evaluatesAcademicProgram();
+			// });
 
 		}
 
 	);
 }
 
-function evaluatesAcademicProgram(){
-	var choosenProgram = getChoosenAcademicProgram();
-	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenAcademicProgram";
+// function evaluatesAcademicProgram(){
+// 	var choosenProgram = getChoosenAcademicProgram();
+// 	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenAcademicProgram";
 
-	$.post(
-		urlToPost,
-		{academicProgram: choosenProgram.academicProgram},
-		function(data){
-			$("#choosen_program").html(data);
-		}
+// 	$.post(
+// 		urlToPost,
+// 		{academicProgram: choosenProgram.academicProgram},
+// 		function(data){
+// 			$("#choosen_program").html(data);
+// 		}
 
-	);
-}
+// 	);
+// }
 
-function getChoosenAcademicProgram(){
-	var siteUrl = $("#site_url").val();
-	var choosenAcademicProgram = $("#academic_program_types").val();
+// function getChoosenAcademicProgram(){
+// 	var siteUrl = $("#site_url").val();
+// 	var choosenAcademicProgram = $("#academic_program_types").val();
 
-	var choosenProgram = {
-		siteUrl: siteUrl,
-		academicProgram: choosenAcademicProgram
-	};
+// 	var choosenProgram = {
+// 		siteUrl: siteUrl,
+// 		academicProgram: choosenAcademicProgram
+// 	};
 
-	return choosenProgram;
-}
+// 	return choosenProgram;
+// }
 
 function apagar_conta() {
 	if (!confirm("Tem certeza que deseja apagar sua conta?"))

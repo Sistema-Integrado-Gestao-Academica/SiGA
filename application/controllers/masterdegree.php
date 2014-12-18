@@ -12,4 +12,20 @@ class MasterDegree extends CI_Controller {
 		return $attributesWasSaved;
 	}
 
+	public function getMasterDegreeByCourseId($courseId){
+		
+		// Validate $courseId
+		
+		$masterDegree = $this->getMasterDegreeForThisCourseId($courseId);
+
+		return $masterDegree;
+	}
+
+	private function getMasterDegreeForThisCourseId($courseId){
+		$this->load->model('masterdegree_model');
+		$foundMasterDegree = $this->masterdegree_model->getRegisteredMasterDegreeForThisCourseId($courseId);
+
+		return $foundMasterDegree;
+	}
+
 }

@@ -2,6 +2,19 @@
 require_once(APPPATH."/exception/CourseNameException.php");
 class Course_model extends CI_Model {
 
+	public function getCommonAttributesForThisCourse($courseId){
+		
+		$idExists = $this->checkExistingId($courseId);
+
+		if($idExists){
+			$searchResult = $this->db->get_where('course', array('id_course' => $courseId));
+			$foundCourse = $searchResult->row_array();
+		}else{
+			$foundCourse = FALSE;
+		}
+	
+		return $foundCourse;		
+	}
 
 	public function getCourseIdByCourseName($courseName){
 

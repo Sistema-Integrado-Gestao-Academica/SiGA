@@ -34,21 +34,21 @@ function professionalProgramForm(){
 	commonAttrForPostGraduationCourses();
 }
 
-function chooseAcademicProgramForm(){
+// function chooseAcademicProgramForm(){
 	
-	$academicProgramOptions = array(
-		'master_degree' => 'Mestrado Acadêmico',
-		'doctorate' => 'Doutorado Acadêmico'
-	);
+// 	$academicProgramOptions = array(
+// 		'master_degree' => 'Mestrado Acadêmico',
+// 		'doctorate' => 'Doutorado Acadêmico'
+// 	);
 
 
-	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
-	echo form_label('Escolha um tipo de programa acadêmico:');
-	echo form_dropdown('academic_program_types', $academicProgramOptions,
-				       'master_degree', 'id=academic_program_types');
-	echo "<br><br>";
-	echo anchor("registerDoctorateCourse","Cadastrar Doutorado");
-}
+// 	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
+// 	echo form_label('Escolha um tipo de programa acadêmico:');
+// 	echo form_dropdown('academic_program_types', $academicProgramOptions,
+// 				       'master_degree', 'id=academic_program_types');
+// 	echo "<br><br>";
+// 	echo anchor("registerDoctorateCourse","Cadastrar Doutorado");
+// }
 
 function masterDegreeProgramForm(){
 
@@ -164,6 +164,38 @@ function commonAttrForPostGraduationCourses(){
 	echo form_label('Descrição ', 'course_description');
 	echo "<br>";
 	echo form_textarea($description);
+}
+
+/**
+ * 
+ * @param $masterDegreeData - Array with the data of the registered master degree
+ */
+function displayMasterDegreeData($masterDegreeData){
+	$thereIsMasterDegree = $masterDegreeData != FALSE;
+	if($thereIsMasterDegree){
+		echo "<h4><span class='label label-default'>Mestrado Acadêmico cadastrado</span></h4>";
+		echo "<table class = 'table table-hover'>";
+			echo "<tr>";
+				echo "<th class='text-center'>Nome</th>";
+				echo "<th class='text-center'>Duração</th>";
+				echo "<th class='text-center'>Créditos totais</th>";
+				echo "<th class='text-center'>Carga-horária</th>";
+				echo "<th class='text-center'>Turma</th>";
+				echo "<th class='text-center'>Descrição</th>";
+			echo "</tr>";
+			echo "<tr>";
+				echo "<td class='text-center'>".$masterDegreeData['course_name']."</td>";
+				echo "<td class='text-center'>".$masterDegreeData['duration']." anos</td>";
+				echo "<td class='text-center'>".$masterDegreeData['total_credits']."</td>";
+				echo "<td class='text-center'>".$masterDegreeData['workload']."h</td>";
+				echo "<td class='text-center'>".$masterDegreeData['start_class']."</td>";
+				echo "<td class='text-center'>".$masterDegreeData['description']."</td>";
+			echo "</tr>";
+		echo "</table>";
+
+	}else{
+		echo "<span class='label label-danger'>Nenhum mestrado cadastrado para esse Programa Acadêmico.</span>";
+	}
 }
 
 function emptyDiv(){

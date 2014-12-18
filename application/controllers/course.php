@@ -2,6 +2,7 @@
 
 require_once('login.php');
 require_once('postgraduation.php');
+// require_once('masterdegree.php');
 require_once('graduation.php');
 require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
@@ -69,11 +70,15 @@ class Course extends CI_Controller {
 		define('PROFESSIONAL_PROGRAM', 'professional_program');
 
 		$choosenProgram = $this->input->post('program');
+		$course = $this->input->post('course');
 
 		switch($choosenProgram){
 			case ACADEMIC_PROGRAM:
 				// Function located on the helper 'forms' - Loaded by autoload
-				chooseAcademicProgramForm();
+				// chooseAcademicProgramForm();
+
+				$this->displayRegisteredMasterDegree($course);
+
 				break;
 			case PROFESSIONAL_PROGRAM:
 				// Function located on the helper 'forms' - Loaded by autoload
@@ -84,6 +89,38 @@ class Course extends CI_Controller {
 				emptyDiv();
 				break;
 		}
+	}
+
+	private function displayRegisteredMasterDegree($courseId){
+		
+		$courseCommonAttributes = $this->getMasterDegreeCommonAttributes($courseId);
+		$registeredMasterDegree = $this->getRegisteredMasterDegreeForThisCourse($courseId);
+		
+		$commonAttributesIsOk = $courseCommonAttributes != FALSE;
+		$specificsAttributesIsOk = $registeredMasterDegree != FALSE;
+		$attributesIsOk = $commonAttributesIsOk && $specificsAttributesIsOk;		
+
+		if($attributesIsOk){
+			$masterDegreeData = array_merge($courseCommonAttributes, $registeredMasterDegree);
+		}else{
+			$masterDegreeData = FALSE;
+		}
+
+		displayMasterDegreeData($masterDegreeData);	
+	}
+
+	private function getRegisteredMasterDegreeForThisCourse($courseId){
+		$masterDegree = new MasterDegree();
+		$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
+
+		return $foundMasterDegree;
+	}
+
+	private function getMasterDegreeCommonAttributes($courseId){
+		$this->load->model('course_model');
+		$commonAttributes = $this->course_model->getCommonAttributesForThisCourse($courseId);
+
+		return $commonAttributes;
 	}
 
 	public function checkChoosenAcademicProgram(){
@@ -152,13 +189,14 @@ class Course extends CI_Controller {
 	 */
 	public function newCourse(){
 
-		define("GRADUATION", "graduation");
-		define("EAD", "ead");
-		define("POST_GRADUATION", "post_graduation");
-
 		$courseDataIsOk = $this->validatesNewCourseData();
 
 		if($courseDataIsOk){
+
+			define("GRADUATION", "graduation");
+			define("EAD", "ead");
+			define("POST_GRADUATION", "post_graduation");
+
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
 
@@ -268,42 +306,91 @@ class Course extends CI_Controller {
 	 */
 	public function updateCourse(){
 
-		$courseDataIsOk = $this->validatesUpdateCourseData();
+		// $courseDataIsOk = $this->validatesUpdateCourseData();
+		$courseDataIsOk = TRUE;
 		
 		if($courseDataIsOk){
+
+			define("GRADUATION", "graduation");
+			define("EAD", "ead");
+			define("POST_GRADUATION", "post_graduation");
+
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			$idCourse = $this->input->post('id_course');
 			
+			$idCourse = $this->input->post('id_course');
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
-			
+		
+			// Secretary to be saved on database. Array with column names and its values
+			$secretaryToUpdate = array(
+					'id_course' => $idCourse,
+					'id_user'   => $userSecretary,
+					'id_group' => $secretaryType
+			);
+
+			switch($courseType){
+				case GRADUATION:
+					# code...
+					break;
+
+				case POST_GRADUATION:
+					
+					$post_graduation_type = $this->input->post('post_graduation_type');
+					$program_type = $this->input->post('academic_program_types');
+
+					$post_graduation_duration = $this->input->post('course_duration');
+					$post_graduation_total_credits = $this->input->post('course_total_credits');
+					$post_graduation_hours= $this->input->post('course_hours');
+					$post_graduation_class= $this->input->post('course_class');
+					$post_graduation_description = $this->input->post('course_description');
+					
+					$commonAttributes = array(
+						'course_name' => $courseName
+					);
+
+					$courseToUpdate = array(
+						'duration' => $post_graduation_duration,
+						'total_credits' => $post_graduation_total_credits,
+						'workload' =>$post_graduation_hours,
+						'start_class' => $post_graduation_class,
+						'description' => $post_graduation_description
+					);
+
+
+					$post_graduation = new PostGraduation();
+					// $post_graduation->updatePostGraduation
+
+					break;
+				
+				case EAD:
+
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+
 			// Course to be saved on database. Put the columns names on the keys
 			$courseToUpdate = array(
 					'course_name' => $courseName,
 					'course_type_id' => $courseType,
 			);
 			
-			//Secretary to be saved on database. Array with column names and its values
-			$secretaryToUpdate = array(
-					'id_course' => $idCourse,
-					'id_user'   => $userSecretary,
-					'id_group' => $secretaryType
-			);
-			
-			try{
-				$this->load->model("course_model");
-				$this->course_model->updateCourse($idCourse, $courseToUpdate);
-				$this->course_model->updateSecretary($secretaryToUpdate);
+			// try{
+			// 	$this->load->model("course_model");
+			// 	$this->course_model->updateCourse($idCourse, $courseToUpdate);
+			// 	$this->course_model->updateSecretary($secretaryToUpdate);
 				
-				$updateStatus = "success";
-				$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+			// 	$updateStatus = "success";
+			// 	$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
 
-			}catch(CourseNameException $e){
+			// }catch(CourseNameException $e){
 
-				$updateStatus = "danger";
-				$updateMessage = $e->getMessage();
-			}
+			// 	$updateStatus = "danger";
+			// 	$updateMessage = $e->getMessage();
+			// }
 		
 		
 		}else{

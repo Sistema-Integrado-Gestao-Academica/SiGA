@@ -1,7 +1,8 @@
 <h2 class="principal">Cursos</h2>
-<input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>"></input>
+<input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>" />
+<input id="current_course" type="hidden" value="<?php echo $course->id_course; ?>" />
 
-<?php  
+<?php 
 require_once APPPATH.'controllers/module.php';
 require_once APPPATH.'controllers/usuario.php';
 
@@ -16,7 +17,7 @@ $course_controller = new Course();
 
 $secretary_registered = $course_controller->getCourseSecrecretary($course_id);
 
-$hidden = array("id_course" => $course_id,'id_secretary'=>$secretary_registered['id_secretary']);
+$hidden = array("id_course" => $course_id, 'id_secretary'=>$secretary_registered['id_secretary']);
 
 $user = new Usuario();
 
@@ -37,7 +38,7 @@ $course_name_array_to_form = array(
 		"class" => "form-campo",
 		"maxlength" => "50",
 		"value" => set_value("nome", $course_name),
-		"style" => "width: 80%;"
+		"style" => "width: 40%;"
 );
 
 $submit_button_array_to_form = array(
@@ -48,7 +49,7 @@ $submit_button_array_to_form = array(
 ?>
 <div class="row">
 
-<div class="col-lg-6">
+<div class="col-lg-12">
 <?php
 echo form_open("course/updateCourse",'',$hidden);
 
@@ -91,7 +92,15 @@ echo form_open("course/updateCourse",'',$hidden);
 	?>
 	<br><div id="post_grad_types"></div>
 	<br><div id="chosen_post_grad_type_update"></div>
-	<br><div id="choosen_program"></div>
+	
+	<div class="row">
+		<div class="col-lg-6">
+			<div id="registered_master_degree"></div>
+		</div>
+		<div class="col-lg-6">
+			<br><div id="choosen_program"></div>
+		</div>
+	</div>
 	<?php
 
 	// Submit button
