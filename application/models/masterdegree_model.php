@@ -66,10 +66,25 @@ class MasterDegree_model extends CI_Model {
 		$idExists = $this->course_model->checkExistingId($courseId);
 
 		if($idExists){
-			$this->updateMasterDegreeCourse($courseId, $specificsAttributes);
+			// If the course were not an academic program, it will be created as one
+			$isAnAcademicProgram = $this->checkIfIsAcademicProgram($courseId);
+			if($isAnAcademicProgram){
+				$this->updateMasterDegreeCourse($courseId, $specificsAttributes);
+			}else{
+				$this->saveCourseSpecificAttributes($courseId, $specificsAttributes);
+			}
 		}else{
 			throw new CourseException("Cannot update this course. The informed ID does not exists.");
 		}
+	}
+
+	private function checkIfIsAcademicProgram($courseId){
+		$foundProgram = $this->db->get_where('academic_program', array('id_course' => $courseId));
+		$foundProgram = $foundProgram->row_array();
+
+		$programExists = sizeof($foundProgram) > 0;
+
+		return $programExists;
 	}
 
 	/**
