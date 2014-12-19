@@ -385,6 +385,7 @@ class Course extends CI_Controller {
 						$insertionWasMade = $graduation->updateGraduationCourse($idCourse, $courseToUpdate,$secretaryToUpdate);
 						$updateStatus = "success";
 						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+						
 					}catch(CourseNameException $caughtException){
 						$updateStatus = "danger";
 						$updateMessage = $caughtException->getMessage();
@@ -433,7 +434,21 @@ class Course extends CI_Controller {
 					break;
 				
 				case EAD:
-
+					$courseToUpdate = array(
+							'course_name' => $courseName
+					);
+						
+					try{
+							
+						$ead = new Ead();
+						$insertionWasMade = $ead->updateEadCourse($idCourse, $courseToUpdate,$secretaryToUpdate);
+						$updateStatus = "success";
+						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+					
+					}catch(CourseNameException $caughtException){
+						$updateStatus = "danger";
+						$updateMessage = $caughtException->getMessage();
+					}
 					break;
 				
 				default:

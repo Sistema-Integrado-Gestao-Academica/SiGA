@@ -8,7 +8,7 @@ class Ead extends CI_Controller {
 		$savedCourse = $this->course_model->saveCourse($eadCourse);
 		$savedSecretary = $this->course_model->saveSecretary($eadSecretary,$eadCourse['course_name']);
 		$this->load->model('ead_model');
-		$savedEad = $this->ead_model->saveead($eadCourse['course_name']);
+		$savedEad = $this->ead_model->saveEad($eadCourse['course_name']);
 	
 		if($savedCourse && $savedSecretary && $savedEad){
 			$insertionStatus = TRUE;
@@ -19,5 +19,15 @@ class Ead extends CI_Controller {
 		return $insertionStatus;
 	
 	}
-	
+
+	public function updateEadCourse($idCourse, $courseToUpdate,$secretaryToUpdate){
+		try{
+			$this->load->model('ead_model');
+			$this->ead_model->updateEadCourse($idCourse, $courseToUpdate);
+			$this->ead_model->updateEadCourseSecretary($idCourse, $secretaryToUpdate);
+				
+		}catch(CourseNameException $caughtException){
+			throw $caughtException;
+		}
+	}
 }

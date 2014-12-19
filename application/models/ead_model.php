@@ -18,4 +18,31 @@ class Ead_model extends CI_Model {
 		return $insertionStatus;
 
 	}
+	
+	public function updateEadCourse($idCourse, $courseToUpdate){
+		
+		try{
+			$this->load->model('course_model');
+			$this->course_model->updateCourse($idCourse, $courseToUpdate);
+		
+		}catch(CourseNameException $caughtException){
+			throw $caughtException;
+		}
+		
+	}
+	
+	public function updateEadCourseSecretary($idCourse, $secretaryToUpdate){
+		
+		$this->load->model('course_model');
+		$updatedSecretary = $this->course_model->updateCourseSecretary($idCourse, $secretaryToUpdate);
+			
+		if($updatedSecretary){
+			$returnUpdate = TRUE;
+		}else{
+			$returnUpdate = FALSE;
+		}
+			
+		return $returnUpdate;
+		
+	}
 }
