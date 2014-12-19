@@ -19,4 +19,16 @@ class Graduation extends CI_Controller {
 		return $insertionStatus;
 		
 	}
+	
+	public function updateGraduationCourse($idCourse, $courseToUpdate,$secretaryToUpdate){
+		
+		try{
+			$this->load->model('graduation_model');
+			$this->graduation_model->updateGraduationCourse($idCourse, $courseToUpdate);
+			$this->graduation_model->updateGraduationCourseSecretary($idCourse, $secretaryToUpdate);
+			
+		}catch(CourseNameException $caughtException){
+			throw $caughtException;
+		}
+	}
 }

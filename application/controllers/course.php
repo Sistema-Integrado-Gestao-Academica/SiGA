@@ -374,7 +374,22 @@ class Course extends CI_Controller {
 
 			switch($courseType){
 				case GRADUATION:
-					# code...
+					
+					$courseToUpdate = array(
+							'course_name' => $courseName
+					);
+					
+					try{
+					
+						$graduation = new Graduation();
+						$insertionWasMade = $graduation->updateGraduationCourse($idCourse, $courseToUpdate,$secretaryToUpdate);
+						$updateStatus = "success";
+						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+					}catch(CourseNameException $caughtException){
+						$updateStatus = "danger";
+						$updateMessage = $caughtException->getMessage();
+					}
+						
 					break;
 
 				case POST_GRADUATION:
