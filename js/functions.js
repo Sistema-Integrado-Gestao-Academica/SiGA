@@ -112,6 +112,22 @@ function displayMasterDegreeForm(){
 		function(data){
 
 			$("#update_master_degree").html(data);
+
+			displayRegisteredDoctorate();
+		}
+	);
+}
+
+function displayRegisteredDoctorate(){
+	var choosenProgram = getChoosenPostGradType();
+	var urlToPost = choosenProgram.siteUrl + "/course/displayRegisteredDoctorate";
+	var currentCourse = getCurrentCourse();
+
+	$.post(
+		urlToPost,
+		{program: choosenProgram.postGradType, course: currentCourse},
+		function(data){
+			$("#registered_doctorate").html(data);
 		}
 	);
 }

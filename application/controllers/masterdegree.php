@@ -45,6 +45,12 @@ class MasterDegree extends CI_Controller {
 		}
 	}
 
+	public function checkIfExistsMasterDegreeForThisCourse($courseId){
+		$this->load->model('masterdegree_model');
+		$thereIsMasterDegree = $this->masterdegree_model->checkIfExistsMasterDegreForThisCourse($courseId);
+		return $thereIsMasterDegree;
+	}
+
 	private function filterNullAttributes($attributesArray){
 
 		foreach ($attributesArray as $attributeName => $attribute){

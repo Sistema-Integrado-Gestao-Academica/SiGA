@@ -34,22 +34,6 @@ function professionalProgramForm(){
 	commonAttrForPostGraduationCourses();
 }
 
-// function chooseAcademicProgramForm(){
-	
-// 	$academicProgramOptions = array(
-// 		'master_degree' => 'Mestrado Acadêmico',
-// 		'doctorate' => 'Doutorado Acadêmico'
-// 	);
-
-
-// 	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
-// 	echo form_label('Escolha um tipo de programa acadêmico:');
-// 	echo form_dropdown('academic_program_types', $academicProgramOptions,
-// 				       'master_degree', 'id=academic_program_types');
-// 	echo "<br><br>";
-// 	echo anchor("registerDoctorateCourse","Cadastrar Doutorado");
-// }
-
 function masterDegreeProgramForm(){
 
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico - Alterar</span></h4>";
@@ -192,12 +176,45 @@ function displayMasterDegreeData($masterDegreeData){
 		echo "</tr>";
 		echo "</table>";
 
-		echo anchor('registerDoctorateCourse', 'Cadastrar Doutorado');
 	}else{
 		echo "</table>";
 		echo "<h4><span class='label label-danger'>Nenhum mestrado cadastrado para esse Programa Acadêmico.</span></h4>";
 	}
-	
+}
+
+function displayRegisteredDoctorateData($haveMasterDegree, $doctorateData){
+	$thereIsDoctorateDegree = $doctorateData != FALSE;
+
+	echo "<br><h4><span class='label label-default'>Doutorado Acadêmico cadastrado</span></h4>";
+	echo "<table class = 'table table-hover'>";
+		echo "<tr>";
+			echo "<th class='text-center'>Nome</th>";
+			echo "<th class='text-center'>Duração</th>";
+			echo "<th class='text-center'>Créditos totais</th>";
+			echo "<th class='text-center'>Carga-horária</th>";
+			echo "<th class='text-center'>Turma</th>";
+			echo "<th class='text-center'>Descrição</th>";
+		echo "</tr>";
+
+	if($thereIsDoctorateDegree){
+
+		echo "<tr>";
+			// echo "<td class='text-center'>".$doctorateData['course_name']."</td>";
+			echo "<td class='text-center'>".$doctorateData['duration']." anos</td>";
+			echo "<td class='text-center'>".$doctorateData['total_credits']."</td>";
+			echo "<td class='text-center'>".$doctorateData['workload']."h</td>";
+			echo "<td class='text-center'>".$doctorateData['start_class']."</td>";
+			echo "<td class='text-center'>".$doctorateData['description']."</td>";
+		echo "</tr>";
+		echo "</table>";
+
+	}else{
+		echo "</table>";
+		echo "<h4><span class='label label-danger'>Nenhum doutorado cadastrado para esse Programa Acadêmico.</span></h4><br>";
+		if($haveMasterDegree){
+			echo anchor('registerDoctorateCourse', 'Cadastrar Doutorado');
+		}
+	}
 }
 
 function emptyDiv(){

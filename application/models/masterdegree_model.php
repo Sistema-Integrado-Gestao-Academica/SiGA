@@ -128,7 +128,7 @@ class MasterDegree_model extends CI_Model {
 	 * @param $courseId - The course to look for master degree courses
 	 * @return TRUE if there is a master degree course associated to this course id or FALSE if does not
 	 */
-	private function checkIfExistsMasterDegreForThisCourse($courseId){
+	public function checkIfExistsMasterDegreForThisCourse($courseId){
 		$this->db->select('id_master_degree');
 		$searchResult = $this->db->get_where('master_degree', array('id_academic_program' => $courseId));
 		$searchResult = $searchResult->row_array();

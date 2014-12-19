@@ -2,7 +2,8 @@
 
 require_once('login.php');
 require_once('postgraduation.php');
-// require_once('masterdegree.php');
+require_once('masterdegree.php');
+require_once('doctorate.php');
 require_once('graduation.php');
 require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
@@ -79,6 +80,32 @@ class Course extends CI_Controller {
 		}
 	}
 
+	public function displayRegisteredDoctorate(){
+		
+		define('ACADEMIC_PROGRAM', 'academic_program');
+		
+		$choosenProgram = $this->input->post('program');
+		$course = $this->input->post('course');
+
+		switch($choosenProgram){
+			// This form is only aplicable to the academic program
+			case ACADEMIC_PROGRAM:
+				$this->getRegisteredDoctorateForThisCourse($course);
+				break;
+			default:
+				emptyDiv();
+				break;
+		}
+	}
+
+	private function getRegisteredDoctorateForThisCourse($courseId){
+		$doctorate = new Doctorate();
+		$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
+		$haveMasterDegree = $doctorate->checkIfHaveMasterDegree($courseId);
+		
+		displayRegisteredDoctorateData($haveMasterDegree, $registeredDoctorate);
+	}
+
 	// Used for the update course page
 	public function checkChoosenProgram(){
 		
@@ -109,7 +136,7 @@ class Course extends CI_Controller {
 
 	private function displayRegisteredMasterDegree($courseId){
 		
-		$courseCommonAttributes = $this->getMasterDegreeCommonAttributes($courseId);
+		$courseCommonAttributes = $this->getCourseCommonAttributes($courseId);
 		$registeredMasterDegree = $this->getRegisteredMasterDegreeForThisCourse($courseId);
 		
 		$commonAttributesIsOk = $courseCommonAttributes != FALSE;
@@ -132,7 +159,7 @@ class Course extends CI_Controller {
 		return $foundMasterDegree;
 	}
 
-	private function getMasterDegreeCommonAttributes($courseId){
+	private function getCourseCommonAttributes($courseId){
 		$this->load->model('course_model');
 		$commonAttributes = $this->course_model->getCommonAttributesForThisCourse($courseId);
 
