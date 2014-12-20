@@ -15,10 +15,12 @@ class PostGraduation extends CI_Controller {
 			// In this case, if it is an academic program, it is a master_degree.
 			case ACADEMIC_PROGRAM:
 				$master_degree = new MasterDegree();
-				$insertionStatus = $master_degree->saveMasterDegreeCourse($commonAttributes, $specificsAttributes, $secretary);
+				$insertionStatus = $master_degree->saveMasterDegreeAcademicCourse($commonAttributes, $specificsAttributes, $secretary);
 				break;
 
 			case PROFESSIONAL_PROGRAM:
+				$master_degree = new MasterDegree();
+				$insertionStatus = $master_degree->saveMasterDegreeProfessionalCourse($commonAttributes, $specificsAttributes, $secretary);
 				break;
 
 			default:

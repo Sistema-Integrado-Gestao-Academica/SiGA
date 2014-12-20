@@ -5,16 +5,26 @@ require_once(APPPATH."/exception/CourseException.php");
 
 class MasterDegree extends CI_Controller {
 
-	public function saveMasterDegreeCourse($commonAttributes, $specificAttributes, $secretary){
+	public function saveMasterDegreeAcademicCourse($commonAttributes, $specificAttributes, $secretary){
 
 		$this->load->model('masterdegree_model');
 		$courseId = $this->masterdegree_model->saveCourseCommonAttributes($commonAttributes, $secretary);
 
-		$attributesWasSaved = $this->masterdegree_model->saveCourseSpecificAttributes($courseId, $specificAttributes);
+		$attributesWasSaved = $this->masterdegree_model->saveAcademicCourseSpecificAttributes($courseId, $specificAttributes);
 
 		return $attributesWasSaved;
 	}
-
+	
+	public function saveMasterDegreeProfessionalCourse($commonAttributes, $specificAttributes, $secretary){
+	
+		$this->load->model('masterdegree_model');
+		$courseId = $this->masterdegree_model->saveCourseCommonAttributes($commonAttributes, $secretary);
+	
+		$attributesWasSaved = $this->masterdegree_model->saveCourseSpecificAttributes($courseId, $specificAttributes);
+	
+		return $attributesWasSaved;
+	}
+	
 	public function getMasterDegreeByCourseId($courseId){
 		
 		// Validate $courseId

@@ -20,7 +20,7 @@ class MasterDegree_model extends CI_Model {
 		return $insertedCourseId;
 	}
 
-	public function saveCourseSpecificAttributes($courseId, $specificAttributes){
+	public function saveAcademicCourseSpecificAttributes($courseId, $specificAttributes){
 
 		$course_id = array('id_course' => $courseId);
 
@@ -28,7 +28,7 @@ class MasterDegree_model extends CI_Model {
 
 		$programWasSaved = $this->saveMasterDegreeAcademicProgram($attributes);
 
-		$courseWasSaved = $this->associateMasterDegreeCourseToProgram($courseId);
+		$courseWasSaved = $this->associateMasterDegreeCourseToAcademicProgram($courseId);
 
 		$masterDegreeWasSaved = $programWasSaved && $courseWasSaved;
 
@@ -143,7 +143,7 @@ class MasterDegree_model extends CI_Model {
 		$this->course_model->saveSecretary($courseSecretary, $courseName);
 	}
 
-	private function associateMasterDegreeCourseToProgram($courseId){
+	private function associateMasterDegreeCourseToAcademicProgram($courseId){
 
 		$masterDegreeAttributes = array(
 			'id_academic_program' => $courseId

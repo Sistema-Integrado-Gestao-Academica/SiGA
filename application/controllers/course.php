@@ -434,6 +434,7 @@ class Course extends CI_Controller {
 					break;
 				
 				case EAD:
+					
 					$courseToUpdate = array(
 							'course_name' => $courseName
 					);
@@ -449,6 +450,7 @@ class Course extends CI_Controller {
 						$updateStatus = "danger";
 						$updateMessage = $caughtException->getMessage();
 					}
+					
 					break;
 				
 				default:
