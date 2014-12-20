@@ -20,7 +20,7 @@ class MasterDegree extends CI_Controller {
 		$this->load->model('masterdegree_model');
 		$courseId = $this->masterdegree_model->saveCourseCommonAttributes($commonAttributes, $secretary);
 	
-		$attributesWasSaved = $this->masterdegree_model->saveCourseSpecificAttributes($courseId, $specificAttributes);
+		$attributesWasSaved = $this->masterdegree_model->saveProfessionalCourseSpecificAttributes($courseId, $specificAttributes);
 	
 		return $attributesWasSaved;
 	}

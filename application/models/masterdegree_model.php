@@ -34,7 +34,22 @@ class MasterDegree_model extends CI_Model {
 
 		return $masterDegreeWasSaved;
 	}
-
+	
+	public function saveProfessionalCourseSpecificAttributes($courseId, $specificAttributes){
+	
+		$course_id = array('id_course' => $courseId);
+	
+		$attributes = array_merge($course_id, $specificAttributes);
+	
+		$programWasSaved = $this->saveMasterDegreeProfessionalProgram($attributes);
+	
+		$courseWasSaved = $this->associateMasterDegreeCourseToProfessionalProgram($courseId);
+	
+		$masterDegreeWasSaved = $programWasSaved && $courseWasSaved;
+	
+		return $masterDegreeWasSaved;
+	}
+	
 	/**
 	 * Update the common attributes of a course on the course table
 	 * @param $courseId - The course id to be updated
@@ -153,12 +168,29 @@ class MasterDegree_model extends CI_Model {
 
 		return $insertionWasMade;
 	}
+	
+	private function associateMasterDegreeCourseToProfessionalProgram($courseId){
+	
+		$masterDegreeAttributes = array(
+				'id_professional_program' => $courseId
+		);
+	
+		$insertionWasMade = $this->db->insert('master_degree', $masterDegreeAttributes);
+	
+		return $insertionWasMade;
+	}
 
 	private function saveMasterDegreeAcademicProgram($courseAttributes){
 		$insertionWasMade = $this->db->insert('academic_program', $courseAttributes);
 
 		return $insertionWasMade;
 	}
-
+	
+	private function saveMasterDegreeProfessionalProgram($courseAttributes){
+		$insertionWasMade = $this->db->insert('professional_program', $courseAttributes);
+	
+		return $insertionWasMade;
+	}
+	
 }
 	
