@@ -76,7 +76,7 @@ class MasterDegree_model extends CI_Model {
 	 * @param $specificsAttributes - The new specifics attributes
 	 * @throws CourseExceptions
 	 */
-	public function updateCourseSpecificsAttributes($courseId, $specificsAttributes){
+	public function updateAcademicCourseSpecificsAttributes($courseId, $specificsAttributes){
 		$this->load->model('course_model');
 		$idExists = $this->course_model->checkExistingId($courseId);
 
@@ -84,15 +84,32 @@ class MasterDegree_model extends CI_Model {
 			// If the course were not an academic program, it will be created as one
 			$isAnAcademicProgram = $this->checkIfIsAcademicProgram($courseId);
 			if($isAnAcademicProgram){
-				$this->updateMasterDegreeCourse($courseId, $specificsAttributes);
+				$this->updateMasterDegreeAcademicCourse($courseId, $specificsAttributes);
 			}else{
-				$this->saveCourseSpecificAttributes($courseId, $specificsAttributes);
+				$this->saveAcademicCourseSpecificAttributes($courseId, $specificsAttributes);
 			}
 		}else{
 			throw new CourseException("Cannot update this course. The informed ID does not exists.");
 		}
 	}
-
+	
+	public function updateProfessionalCourseSpecificsAttributes($courseId, $specificsAttributes){
+		$this->load->model('course_model');
+		$idExists = $this->course_model->checkExistingId($courseId);
+	
+		if($idExists){
+			// If the course were not an academic program, it will be created as one
+			$isAnProfessionalProgram = $this->checkIfIsProfessionalProgram($courseId);
+			if($isAnProfessionalProgram){
+				$this->updateMasterDegreeProfessionalCourse($courseId, $specificsAttributes);
+			}else{
+				$this->saveProfessionalCourseSpecificAttributes($courseId, $specificsAttributes);
+			}
+		}else{
+			throw new CourseException("Cannot update this course. The informed ID does not exists.");
+		}
+	}
+	
 	private function checkIfIsAcademicProgram($courseId){
 		$foundProgram = $this->db->get_where('academic_program', array('id_course' => $courseId));
 		$foundProgram = $foundProgram->row_array();
@@ -101,15 +118,29 @@ class MasterDegree_model extends CI_Model {
 
 		return $programExists;
 	}
-
+	
+	private function checkIfIsProfessionalProgram($courseId){
+		$foundProgram = $this->db->get_where('professional_program', array('id_course' => $courseId));
+		$foundProgram = $foundProgram->row_array();
+	
+		$programExists = sizeof($foundProgram) > 0;
+	
+		return $programExists;
+	}
+	
 	/**
 	 * Update the specifics attributes of a master degree on DB
 	 * @param $courseId - The course id to be updated
 	 * @param $newMasterDegree - The new master degree attributes
 	 */
-	private function updateMasterDegreeCourse($courseId, $newMasterDegree){
+	private function updateMasterDegreeAcademicCourse($courseId, $newMasterDegree){
 		$this->db->where('id_course', $courseId);
 		$this->db->update('academic_program', $newMasterDegree);
+	}
+	
+	private function updateMasterDegreeProfessionalCourse($courseId, $newMasterDegree){
+		$this->db->where('id_course', $courseId);
+		$this->db->update('professional_program', $newMasterDegree);
 	}
 
 	public function getRegisteredMasterDegreeForThisCourseId($courseId){
