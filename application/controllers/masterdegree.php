@@ -34,7 +34,7 @@ class MasterDegree extends CI_Controller {
 		return $masterDegree;
 	}
 
-	public function updateMasterDegreeCourse($idCourseToUpdate, $commonAttributes,
+	public function updateMasterDegreeAcademicCourse($idCourseToUpdate, $commonAttributes,
 								      $specificsAttributes, $secretary){
 		try{
 
@@ -43,7 +43,7 @@ class MasterDegree extends CI_Controller {
 
 			$specificsAttributes = $this->filterNullAttributes($specificsAttributes);
 	
-			$this->masterdegree_model->updateCourseSpecificsAttributes($idCourseToUpdate, $specificsAttributes);
+			$this->masterdegree_model->updateAcademicCourseSpecificsAttributes($idCourseToUpdate, $specificsAttributes);
 
 			$this->load->model('course_model');
 			$this->course_model->updateCourseSecretary($idCourseToUpdate, $secretary);
@@ -54,7 +54,28 @@ class MasterDegree extends CI_Controller {
 			throw $caughtException;
 		}
 	}
-
+	
+	public function updateMasterDegreeProfessionalCourse($idCourseToUpdate, $commonAttributes,
+			$specificsAttributes, $secretary){
+		try{
+	
+			$this->load->model('masterdegree_model');
+			$this->masterdegree_model->updateCourseCommonAttributes($idCourseToUpdate, $commonAttributes);
+	
+			$specificsAttributes = $this->filterNullAttributes($specificsAttributes);
+	
+			$this->masterdegree_model->updateProfessionalCourseSpecificsAttributes($idCourseToUpdate, $specificsAttributes);
+	
+			$this->load->model('course_model');
+			$this->course_model->updateCourseSecretary($idCourseToUpdate, $secretary);
+	
+		}catch(CourseNameException $caughtException){
+			throw $caughtException;
+		}catch(CourseException $caughtException){
+			throw $caughtException;
+		}
+	}
+	
 	public function checkIfExistsMasterDegreeForThisCourse($courseId){
 		$this->load->model('masterdegree_model');
 		$thereIsMasterDegree = $this->masterdegree_model->checkIfExistsMasterDegreForThisCourse($courseId);
