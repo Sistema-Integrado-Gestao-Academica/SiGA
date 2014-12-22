@@ -376,6 +376,7 @@ class Course extends CI_Controller {
 			);
 	
 			if($courseType == $original_course_type){
+				//Switch to normal flow of updating a course data without changing course type
 				switch($courseType){
 					case GRADUATION:
 							
@@ -465,6 +466,7 @@ class Course extends CI_Controller {
 						break;
 				}
 			}else{
+				//Switch to alternative flow of updating a course data. In this way course type is changed
 				switch($courseType){
 					case GRADUATION:
 							
@@ -530,6 +532,15 @@ class Course extends CI_Controller {
 		redirect('/course/index');
 	}
 	
+	/**
+	 * Function to update courses that had their course types changed
+	 * @param int $id_course
+	 * @param array $secretaryToRegister
+	 * @param array $courseType
+	 * @param array $courseToUpdate
+	 * @param array $commonAttributes
+	 * @param string $post_graduation_type
+	 */
 	private function updateCourseToOtherCourseType($id_course,$secretaryToRegister,$courseType,$courseToUpdate,$commonAttributes=NULL,$post_graduation_type=NULL){
 		
 		$this->load->model('course_model');

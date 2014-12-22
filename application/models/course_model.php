@@ -34,16 +34,7 @@ class Course_model extends CI_Model {
 		return $courseId;
 	}
 
-	// public function getCourseTypeById($course_type_id){
-
-	// 	$this->db->where('id_course_type', $course_type_id);
-	// 	$this->db->from('course_type');
-	// 	$searchResult = $this->db->get()->row();
-		
-	// 	return $searchResult;
-	// }
-
-	public function checkExistingCourseTypeId($course_type_id){
+		public function checkExistingCourseTypeId($course_type_id){
 
 		$foundType = $this->getCourseTypeById($course_type_id);
 
