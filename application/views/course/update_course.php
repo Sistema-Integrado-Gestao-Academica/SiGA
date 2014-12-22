@@ -8,6 +8,7 @@ require_once APPPATH.'controllers/usuario.php';
 
 $course_name = $course->course_name;
 $course_id = $course->id_course;
+$original_course_type = $course->course_type;
 
 $group = new Module();
 
@@ -17,7 +18,9 @@ $course_controller = new Course();
 
 $secretary_registered = $course_controller->getCourseSecrecretary($course_id);
 
-$hidden = array("id_course" => $course_id, 'id_secretary'=>$secretary_registered['id_secretary']);
+$hidden = array('id_course' => $course_id, 
+				'id_secretary'=>$secretary_registered['id_secretary'], 
+				'original_course_type'=> $original_course_type);
 
 $user = new Usuario();
 

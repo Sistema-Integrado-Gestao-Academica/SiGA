@@ -362,7 +362,8 @@ class Course extends CI_Controller {
 
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-
+			$original_course_type = $this->input->post('original_course_type');
+			
 			$idCourse = $this->input->post('id_course');
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
@@ -373,104 +374,207 @@ class Course extends CI_Controller {
 					'id_user'   => $userSecretary,
 					'id_group' => $secretaryType
 			);
-
-			switch($courseType){
-				case GRADUATION:
-					
-					$courseToUpdate = array(
-						'course_name' => $courseName,
-						'course_type' => $courseType
-					);
-					
-					try{
-					
-						$graduation = new Graduation();
-						$insertionWasMade = $graduation->updateGraduationCourse($idCourse, $courseToUpdate, $secretaryToUpdate);
-						$updateStatus = "success";
-						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
-						
-					}catch(CourseNameException $caughtException){
-						$updateStatus = "danger";
-						$updateMessage = $caughtException->getMessage();
-					}
-						
-					break;
-
-				case POST_GRADUATION:
-					
-					$post_graduation_type = $this->input->post('post_graduation_type');
-
-					$post_graduation_duration = $this->input->post('course_duration');
-					$post_graduation_total_credits = $this->input->post('course_total_credits');
-					$post_graduation_hours= $this->input->post('course_hours');
-					$post_graduation_class= $this->input->post('course_class');
-					$post_graduation_description = $this->input->post('course_description');
-					
-					$commonAttributes = array(
-						'course_name' => $courseName,
-						'course_type' => $post_graduation_type
-					);
-
-					$courseToUpdate = array(
-						'duration' => $post_graduation_duration,
-						'total_credits' => $post_graduation_total_credits,
-						'workload' =>$post_graduation_hours,
-						'start_class' => $post_graduation_class,
-						'description' => $post_graduation_description
-					);
-
-					try{
-
-						$post_graduation = new PostGraduation();
-						$post_graduation->updatePostGraduationCourse(
-							$idCourse, $post_graduation_type, $commonAttributes,
-							$courseToUpdate, $secretaryToUpdate
-						);
-						$updateStatus = "success";
-						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
-					}catch(CourseNameException $caughtException){
-						$updateStatus = "danger";
-						$updateMessage = $caughtException->getMessage();
-					}catch(CourseException $caughtException){
-						// Do treatment here
-					}
-
-					break;
-				
-				case EAD:
-					
-					$courseToUpdate = array(
-						'course_name' => $courseName,
-						'course_type' => $courseType
-					);
-						
-					try{
+	
+			if($courseType == $original_course_type){
+				switch($courseType){
+					case GRADUATION:
 							
-						$ead = new Ead();
-						$insertionWasMade = $ead->updateEadCourse($idCourse, $courseToUpdate,$secretaryToUpdate);
-						$updateStatus = "success";
-						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
-					
-					}catch(CourseNameException $caughtException){
-						$updateStatus = "danger";
-						$updateMessage = $caughtException->getMessage();
-					}
-					
-					break;
+						$courseToUpdate = array(
+						'course_name' => $courseName,
+						'course_type' => $courseType
+						);
+							
+						try{
+								
+							$graduation = new Graduation();
+							$insertionWasMade = $graduation->updateGraduationCourse($idCourse, $courseToUpdate, $secretaryToUpdate, $original_course_type);
+							$updateStatus = "success";
+							$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
 				
-				default:
+						}catch(CourseNameException $caughtException){
+							$updateStatus = "danger";
+							$updateMessage = $caughtException->getMessage();
+						}
+				
+						break;
+				
+					case POST_GRADUATION:
+							
+						$post_graduation_type = $this->input->post('post_graduation_type');
+				
+						$post_graduation_duration = $this->input->post('course_duration');
+						$post_graduation_total_credits = $this->input->post('course_total_credits');
+						$post_graduation_hours= $this->input->post('course_hours');
+						$post_graduation_class= $this->input->post('course_class');
+						$post_graduation_description = $this->input->post('course_description');
+							
+						$commonAttributes = array(
+								'course_name' => $courseName,
+								'course_type' => $post_graduation_type
+						);
+				
+						$courseToUpdate = array(
+								'duration' => $post_graduation_duration,
+								'total_credits' => $post_graduation_total_credits,
+								'workload' =>$post_graduation_hours,
+								'start_class' => $post_graduation_class,
+								'description' => $post_graduation_description
+						);
+				
+						try{
+				
+							$post_graduation = new PostGraduation();
+							$post_graduation->updatePostGraduationCourse(
+									$idCourse, $post_graduation_type, $commonAttributes,
+									$courseToUpdate, $secretaryToUpdate
+							);
+							$updateStatus = "success";
+							$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+						}catch(CourseNameException $caughtException){
+							$updateStatus = "danger";
+							$updateMessage = $caughtException->getMessage();
+						}catch(CourseException $caughtException){
+							// Do treatment here
+						}
+				
+						break;
+				
+					case EAD:
+							
+						$courseToUpdate = array(
+						'course_name' => $courseName,
+						'course_type' => $courseType
+						);
+				
+						try{
+								
+							$ead = new Ead();
+							$insertionWasMade = $ead->updateEadCourse($idCourse, $courseToUpdate,$secretaryToUpdate);
+							$updateStatus = "success";
+							$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
+								
+						}catch(CourseNameException $caughtException){
+							$updateStatus = "danger";
+							$updateMessage = $caughtException->getMessage();
+						}
+							
+						break;
+				
+					default:
+							
+						break;
+				}
+			}else{
+				switch($courseType){
+					case GRADUATION:
+							
+						$courseToUpdate = array(
+						'course_name' => $courseName,
+						'course_type' => $courseType
+						);
+
+						$this->updateCourseToOtherCourseType($idCourse,$secretaryToUpdate,$courseType,$courseToUpdate);
+						
+						break;
+				
+					case POST_GRADUATION:
+							
+						$post_graduation_type = $this->input->post('post_graduation_type');
+				
+						$post_graduation_duration = $this->input->post('course_duration');
+						$post_graduation_total_credits = $this->input->post('course_total_credits');
+						$post_graduation_hours= $this->input->post('course_hours');
+						$post_graduation_class= $this->input->post('course_class');
+						$post_graduation_description = $this->input->post('course_description');
+							
+						$commonAttributes = array(
+								'course_name' => $courseName,
+								'course_type' => $post_graduation_type
+						);
+				
+						$courseToUpdate = array(
+								'duration' => $post_graduation_duration,
+								'total_credits' => $post_graduation_total_credits,
+								'workload' =>$post_graduation_hours,
+								'start_class' => $post_graduation_class,
+								'description' => $post_graduation_description
+						);
+
+						$this->updateCourseToOtherCourseType($idCourse,$secretaryToUpdate,$courseType,$courseToUpdate,$commonAttributes);
+						break;
+				
+					case EAD:
+							
+						$courseToUpdate = array(
+						'course_name' => $courseName,
+						'course_type' => $courseType
+						);
+						
+
+						$this->updateCourseToOtherCourseType($idCourse,$secretaryToUpdate,$courseType,$courseToUpdate);
+						break;
+				
+					default:
+							
+						break;
+				}
+				
+			}
 					
-					break;
-			}		
 		
 		}else{
 			$updateStatus = "danger";
 			$updateMessage = "Dados na forma incorreta.";
 		}
 		
-		$this->session->set_flashdata($updateStatus, $updateMessage);
-
 		redirect('/course/index');
+	}
+	
+	private function updateCourseToOtherCourseType($id_course,$secretaryToRegister,$courseType,$courseToUpdate,$commonAttributes=NULL){
+		
+		$this->load->model('course_model');
+		$isDeleted = $this->course_model->deleteCourseById($id_course);
+		if ($isDeleted){
+				switch ($courseType){
+					case GRADUATION: 
+						try{
+							$graduation = new Graduation();
+							$insertionWasMade = $graduation->saveGraduationCourse($courseToUpdate,$secretaryToRegister);
+							$updateStatus = "success";
+							$updateMessage = "Curso \"{$courseToUpdate['course_name']}\" alterado com sucesso";
+							
+						}catch(CourseNameException $caughtException){
+							$updateStatus = "danger";
+							$updateMessage = $caughtException->getMessage();
+						}
+						$this->session->set_flashdata($updateStatus, $updateMessage);
+						
+						break;
+					
+					case EAD:
+						try{
+							$ead = new Ead();
+							$insertionWasMade = $ead->saveEadCourse($courseToUpdate, $secretaryToRegister);
+							$updateStatus = "success";
+							$updateMessage = "Curso \"{$courseToUpdate['course_name']}\" alterado com sucesso";
+							
+						}catch(CourseNameException $caughtException){
+							$updateStatus = "danger";
+							$updateMessage = $caughtException->getMessage();
+						}
+						$this->session->set_flashdata($updateStatus, $updateMessage);
+						
+						break;
+					
+					case POST_GRADUATION:
+						//TO DO
+						
+						break;
+					
+					default: 
+						break;
+				}
+		}
 	}
 
 	/**
