@@ -2,6 +2,7 @@
 
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
+require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class MasterDegree_model extends CI_Model {
 
@@ -109,6 +110,24 @@ class MasterDegree_model extends CI_Model {
 			throw new CourseException("Cannot update this course. The informed ID does not exists.");
 		}
 	}
+
+	public function deleteAcademicMasterDegreeByCourseId($courseId){
+		$thereIsMasterDegree = $this->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
+
+		if($thereIsMasterDegree){
+
+			$this->deleteAcademicMasterDegree($courseId);
+
+		}else{
+
+			throw new MasterDegreeException("Não há mestrados registrados para esse curso.");
+		}
+	}
+
+	private function deleteAcademicMasterDegree($courseId){
+		$this->db->where('id_academic_program', $courseId);
+		$this->db->delete('master_degree');
+	}
 	
 	private function checkIfIsAcademicProgram($courseId){
 		$foundProgram = $this->db->get_where('academic_program', array('id_course' => $courseId));
@@ -157,7 +176,7 @@ class MasterDegree_model extends CI_Model {
 	 * @return FALSE if there is no master degree course for this course id
 	 */
 	private function getRegisteredMasterDegree($courseId){
-		$thereIsMasterDegree = $this->checkIfExistsMasterDegreForThisCourse($courseId);
+		$thereIsMasterDegree = $this->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
 
 		if($thereIsMasterDegree){	
 			$searchResult = $this->db->get_where('academic_program', array('id_course' => $courseId));
@@ -174,7 +193,7 @@ class MasterDegree_model extends CI_Model {
 	 * @param $courseId - The course to look for master degree courses
 	 * @return TRUE if there is a master degree course associated to this course id or FALSE if does not
 	 */
-	public function checkIfExistsMasterDegreForThisCourse($courseId){
+	public function checkIfExistsAcademicMasterDegreeForThisCourse($courseId){
 		$this->db->select('id_master_degree');
 		$searchResult = $this->db->get_where('master_degree', array('id_academic_program' => $courseId));
 		$searchResult = $searchResult->row_array();

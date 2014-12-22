@@ -34,39 +34,14 @@ class Course_model extends CI_Model {
 		return $courseId;
 	}
 
-	// /**
-	//  * Get the course type name for a given course type id
-	//  * @param $course_type_id - The course type id to look for a name
-	//  * @return The found course type name if it exists or FALSE if does not
-	//  */
-	// public function getCourseTypeNameForThisId($course_type_id){
+	// public function getCourseTypeById($course_type_id){
+
+	// 	$this->db->where('id_course_type', $course_type_id);
+	// 	$this->db->from('course_type');
+	// 	$searchResult = $this->db->get()->row();
 		
-	// 	$idExists = $this->checkExistingCourseTypeId($course_type_id);
-
-	// 	if($idExists){
-
-	// 		$this->db->select('course_type_name');
-	// 		$this->db->from('course_type');
-	// 		$this->db->where('id_course_type', $course_type_id);
-	// 		$searchResult = $this->db->get()->row_array();
-
-	// 		$foundCourseTypeName = $searchResult['course_type_name'];
-
-	// 	}else{
-	// 		$foundCourseTypeName = FALSE;
-	// 	}
-
-	// 	return $foundCourseTypeName;
+	// 	return $searchResult;
 	// }
-
-	public function getCourseTypeById($course_type_id){
-
-		$this->db->where('id_course_type', $course_type_id);
-		$this->db->from('course_type');
-		$searchResult = $this->db->get()->row();
-		
-		return $searchResult;
-	}
 
 	public function checkExistingCourseTypeId($course_type_id){
 
@@ -82,17 +57,15 @@ class Course_model extends CI_Model {
 		return $idExists;
 	}
 
-	// /**
-	//  * Get all course types registered on database
-	//  * @return An array with the course types. Each position is a tuple of the relation.
-	//  */
-	// public function getAllCourseTypes(){
-	// 	$this->db->select('id_course_type, course_type_name');
-	// 	$this->db->from('course_type');
-	// 	$courseTypes = $this->db->get()->result_array();
-		
-	// 	return $courseTypes;
-	// }
+	public function getCourseTypeById($courseId){
+		$this->db->select('course_type');
+		$searchResult = $this->db->get_where('course', array('id_course' => $courseId));
+		$searchResult = $searchResult->row_array();
+
+		$foundCourseType = $searchResult['course_type'];
+
+		return $foundCourseType;
+	}
 
 	/**
 	 * Get all courses registered on database

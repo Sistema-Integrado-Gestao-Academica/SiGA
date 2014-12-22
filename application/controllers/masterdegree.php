@@ -2,6 +2,7 @@
 
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
+require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class MasterDegree extends CI_Controller {
 
@@ -75,10 +76,32 @@ class MasterDegree extends CI_Controller {
 			throw $caughtException;
 		}
 	}
+
+	public function deleteAcademicMasterDegree($courseId){
+		
+		try{
+			$this->deleteAcademicMasterDegreeFromDb($courseId);
+
+		}catch(MasterDegreeException $caughtException){
+			throw $caughtException;
+		}
+
+	}
+
+	private function deleteAcademicMasterDegreeFromDb($courseId){
+
+		try{
+			$this->load->model('masterdegree_model');
+			$this->masterdegree_model->deleteAcademicMasterDegreeByCourseId($courseId);
+
+		}catch(MasterDegreeException $caughtException){
+			throw $caughtException;
+		}
+	}
 	
-	public function checkIfExistsMasterDegreeForThisCourse($courseId){
+	public function checkIfExistsAcademicMasterDegreeForThisCourse($courseId){
 		$this->load->model('masterdegree_model');
-		$thereIsMasterDegree = $this->masterdegree_model->checkIfExistsMasterDegreForThisCourse($courseId);
+		$thereIsMasterDegree = $this->masterdegree_model->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
 		return $thereIsMasterDegree;
 	}
 

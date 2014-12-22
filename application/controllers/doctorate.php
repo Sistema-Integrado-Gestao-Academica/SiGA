@@ -17,7 +17,7 @@ class Doctorate extends CI_Controller {
 
 	public function checkIfHaveMasterDegree($courseId){
 		$masterDegree = new MasterDegree();
-		$thereIsMasterDegree = $masterDegree->checkIfExistsMasterDegreeForThisCourse($courseId);
+		$thereIsMasterDegree = $masterDegree->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
 
 		return $thereIsMasterDegree;
 	}
