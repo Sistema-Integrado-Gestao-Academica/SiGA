@@ -108,7 +108,7 @@ class Course extends CI_Controller {
 
 	// Used for the update course page
 	public function checkChoosenProgram(){
-		
+
 		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
 		define('ACADEMIC_PROGRAM', 'academic_program');
 		define('PROFESSIONAL_PROGRAM', 'professional_program');
@@ -119,7 +119,6 @@ class Course extends CI_Controller {
 		switch($choosenProgram){
 			case ACADEMIC_PROGRAM:
 				// Function located on the helper 'forms' - Loaded by autoload
-
 				$this->displayRegisteredMasterDegree($course);
 
 				break;
@@ -256,7 +255,8 @@ class Course extends CI_Controller {
 			switch ($courseType){
 				case GRADUATION:
 					$courseToRegister = array(
-						'course_name' => $courseName
+						'course_name' => $courseName,
+						'course_type' => $courseType
 					);
 
 					$graduation = new Graduation();
@@ -274,7 +274,8 @@ class Course extends CI_Controller {
 					$post_graduation_description = $this->input->post('course_description');
 
 					$commonAttr = array(
-						'course_name' => $courseName
+						'course_name' => $courseName,
+						'course_type' => $post_graduation_type
 					);
 
 					$courseToRegister = array(
@@ -292,7 +293,8 @@ class Course extends CI_Controller {
 
 				case EAD:
 					$courseToRegister = array(
-							'course_name' => $courseName
+						'course_name' => $courseName,
+						'course_type' => $courseType
 					);
 					
 					$ead = new Ead();
@@ -360,7 +362,7 @@ class Course extends CI_Controller {
 
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
-			
+
 			$idCourse = $this->input->post('id_course');
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
@@ -376,13 +378,14 @@ class Course extends CI_Controller {
 				case GRADUATION:
 					
 					$courseToUpdate = array(
-							'course_name' => $courseName
+						'course_name' => $courseName,
+						'course_type' => $courseType
 					);
 					
 					try{
 					
 						$graduation = new Graduation();
-						$insertionWasMade = $graduation->updateGraduationCourse($idCourse, $courseToUpdate,$secretaryToUpdate);
+						$insertionWasMade = $graduation->updateGraduationCourse($idCourse, $courseToUpdate, $secretaryToUpdate);
 						$updateStatus = "success";
 						$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
 						
@@ -404,7 +407,8 @@ class Course extends CI_Controller {
 					$post_graduation_description = $this->input->post('course_description');
 					
 					$commonAttributes = array(
-						'course_name' => $courseName
+						'course_name' => $courseName,
+						'course_type' => $post_graduation_type
 					);
 
 					$courseToUpdate = array(
@@ -436,7 +440,8 @@ class Course extends CI_Controller {
 				case EAD:
 					
 					$courseToUpdate = array(
-							'course_name' => $courseName
+						'course_name' => $courseName,
+						'course_type' => $courseType
 					);
 						
 					try{
