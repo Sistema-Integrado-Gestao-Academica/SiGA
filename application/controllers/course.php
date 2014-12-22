@@ -500,7 +500,7 @@ class Course extends CI_Controller {
 								'description' => $post_graduation_description
 						);
 
-						$this->updateCourseToOtherCourseType($idCourse,$secretaryToUpdate,$courseType,$courseToUpdate,$commonAttributes);
+						$this->updateCourseToOtherCourseType($idCourse,$secretaryToUpdate,$courseType,$courseToUpdate,$commonAttributes,$post_graduation_type);
 						break;
 				
 					case EAD:
@@ -530,7 +530,7 @@ class Course extends CI_Controller {
 		redirect('/course/index');
 	}
 	
-	private function updateCourseToOtherCourseType($id_course,$secretaryToRegister,$courseType,$courseToUpdate,$commonAttributes=NULL){
+	private function updateCourseToOtherCourseType($id_course,$secretaryToRegister,$courseType,$courseToUpdate,$commonAttributes=NULL,$post_graduation_type=NULL){
 		
 		$this->load->model('course_model');
 		$isDeleted = $this->course_model->deleteCourseById($id_course);
@@ -567,7 +567,17 @@ class Course extends CI_Controller {
 						break;
 					
 					case POST_GRADUATION:
-						//TO DO
+						try{ 
+							$post_graduation = new PostGraduation();
+							$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttributes, $courseToUpdate, $secretaryToRegister);
+							$updateStatus = "success";
+							$updateMessage = "Curso \"{$commonAttributes['course_name']}\" alterado com sucesso";
+								
+						}catch(CourseNameException $caughtException){
+							$updateStatus = "danger";
+							$updateMessage = $caughtException->getMessage();
+						}
+						$this->session->set_flashdata($updateStatus, $updateMessage);
 						
 						break;
 					
