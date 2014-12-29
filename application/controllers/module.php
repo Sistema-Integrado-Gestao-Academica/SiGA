@@ -41,8 +41,8 @@ class Module extends CI_Controller {
 		$quantity_of_course_types = sizeof($modules);
 	
 		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
-			$keys[$cont] = $modules[$cont]['id_module'];
-			$values[$cont] = ucfirst($modules[$cont]['module_name']);
+			$keys[$cont] = $modules[$cont]['id_group'];
+			$values[$cont] = ucfirst($modules[$cont]['group_name']);
 		}
 	
 		$form_modules = array_combine($keys, $values);

@@ -10,7 +10,7 @@ class Permission_model extends CI_Model {
 	public function getPermissionIdsOfModule($module_id){
 
 		$this->db->select('id_permission');
-		$module_permissions = $this->db->get_where('module_permission', array('id_module' => $module_id))->result_array();
+		$module_permissions = $this->db->get_where('group_permission', array('id_group' => $module_id))->result_array();
 
 		return $module_permissions;
 	}
