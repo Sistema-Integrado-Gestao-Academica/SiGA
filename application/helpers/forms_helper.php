@@ -224,7 +224,7 @@ function displayRegisteredDoctorateData($courseId, $haveMasterDegree, $doctorate
 	if($thereIsDoctorateDegree){
 
 		echo "<tr>";
-			// echo "<td class='text-center'>".$doctorateData['course_name']."</td>";
+			echo "<td class='text-center'>".$doctorateData['doctorate_name']."</td>";
 			echo "<td class='text-center'>".$doctorateData['duration']." anos</td>";
 			echo "<td class='text-center'>".$doctorateData['total_credits']."</td>";
 			echo "<td class='text-center'>".$doctorateData['workload']."h</td>";

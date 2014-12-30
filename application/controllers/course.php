@@ -102,7 +102,10 @@ class Course extends CI_Controller {
 		$doctorate = new Doctorate();
 		$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
 		$haveMasterDegree = $doctorate->checkIfHaveMasterDegree($courseId);
-		
+		/**
+
+
+		*/
 		displayRegisteredDoctorateData($courseId, $haveMasterDegree, $registeredDoctorate);
 	}
 

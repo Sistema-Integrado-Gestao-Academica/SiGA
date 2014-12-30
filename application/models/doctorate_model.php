@@ -59,7 +59,12 @@ class Doctorate_model extends CI_Model {
 		$thereIsDoctorate = $this->checkIfExistsDoctorateForThisCourse($courseId);
 
 		if($thereIsDoctorate){
-			$foundDoctorate = $this->db->get_where('academic_program', array('id_course' => $courseId));
+			$this->db->select('doctorate.*');
+			$this->db->from('academic_program');
+			$this->db->join('doctorate', 'academic_program.id_doctorate = doctorate.id_doctorate');
+			$this->db->where('academic_program.id_course', $courseId);
+			
+			$foundDoctorate = $this->db->get();
 			$foundDoctorate = $foundDoctorate->row_array();
 		}else{
 			$foundDoctorate = FALSE;
@@ -69,10 +74,16 @@ class Doctorate_model extends CI_Model {
 	}
 
 	private function checkIfExistsDoctorateForThisCourse($courseId){
-		$searchResult = $this->db->get_where('doctorate', array('id_academic_program' => $courseId));
+		$this->db->select('id_doctorate');
+		$searchResult = $this->db->get_where('academic_program', array('id_course' => $courseId));
 		$searchResult = $searchResult->row_array();
 
-		$doctorateExists = sizeof($searchResult) > 0;
+		if(sizeof($searchResult) > 0){
+			$foundDoctorate = $searchResult['id_doctorate'];
+			$doctorateExists = $foundDoctorate != NULL;
+		}else{
+			$doctorateExists = FALSE;
+		}
 
 		return $doctorateExists;
 	}
