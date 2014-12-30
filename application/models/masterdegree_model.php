@@ -23,7 +23,7 @@ class MasterDegree_model extends CI_Model {
 
 	public function saveAcademicCourseSpecificAttributes($courseId, $specificAttributes){
 
-		$masterDegreeId = $this->saveMasterDegreeAcademicProgram($specificAttributes);
+		$masterDegreeId = $this->saveMasterDegree($specificAttributes);
 
 		$courseWasSaved = $this->associateMasterDegreeCourseToAcademicProgram($courseId, $masterDegreeId);
 
@@ -32,17 +32,11 @@ class MasterDegree_model extends CI_Model {
 	
 	public function saveProfessionalCourseSpecificAttributes($courseId, $specificAttributes){
 	
-		$course_id = array('id_course' => $courseId);
+		$masterDegreeId = $this->saveMasterDegree($specificAttributes);
 	
-		$attributes = array_merge($course_id, $specificAttributes);
+		$courseWasSaved = $this->associateMasterDegreeCourseToProfessionalProgram($courseId, $masterDegreeId);
 	
-		$programWasSaved = $this->saveMasterDegreeProfessionalProgram($attributes);
-	
-		$courseWasSaved = $this->associateMasterDegreeCourseToProfessionalProgram($courseId);
-	
-		$masterDegreeWasSaved = $programWasSaved && $courseWasSaved;
-	
-		return $masterDegreeWasSaved;
+		return $courseWasSaved;
 	}
 	
 	/**
@@ -214,13 +208,14 @@ class MasterDegree_model extends CI_Model {
 		return $insertionWasMade;
 	}
 	
-	private function associateMasterDegreeCourseToProfessionalProgram($courseId){
+	private function associateMasterDegreeCourseToProfessionalProgram($courseId, $masterDegreeId){
 	
-		$masterDegreeAttributes = array(
-				'id_professional_program' => $courseId
+		$professionalProgramAttributes = array(
+			'id_course' => $courseId,
+			'id_master_degree' => $masterDegreeId
 		);
 	
-		$insertionWasMade = $this->db->insert('master_degree', $masterDegreeAttributes);
+		$insertionWasMade = $this->db->insert('professional_program', $professionalProgramAttributes);
 	
 		return $insertionWasMade;
 	}
@@ -230,7 +225,7 @@ class MasterDegree_model extends CI_Model {
 	 * @param $masterDegreeAttibutes - Array with the master degree attributes to be saved
 	 * @return the master degree id that was saved
 	 */
-	private function saveMasterDegreeAcademicProgram($masterDegreeAttributes){
+	private function saveMasterDegree($masterDegreeAttributes){
 		$this->db->insert('master_degree', $masterDegreeAttributes);
 
 		$masterDegreeName = $masterDegreeAttributes['master_degree_name'];
@@ -251,12 +246,6 @@ class MasterDegree_model extends CI_Model {
 		$foundMasterDegree = $searchResult->row_array();
 
 		return $foundMasterDegree;
-	}
-	
-	private function saveMasterDegreeProfessionalProgram($courseAttributes){
-		$insertionWasMade = $this->db->insert('professional_program', $courseAttributes);
-	
-		return $insertionWasMade;
 	}
 	
 }
