@@ -199,23 +199,35 @@ class Course extends CI_Controller {
 		
 		$doctorateDataIsOk = $this->validatesNewDoctorateData();
 
-		$courseId = $this->input->post('course_id');
+		$programId = $this->input->post('course_id');
 
 		if($doctorateDataIsOk){
 
-			$courseName = $this->input->post('doctorate_course_name');
+			$doctorateName = $this->input->post('doctorate_course_name');
 			$doctorateDuration = $this->input->post('course_duration');
 			$doctorateTotalCredits = $this->input->post('course_total_credits');
 			$doctorateHours= $this->input->post('course_hours');
 			$doctorateClass= $this->input->post('course_class');
 			$doctorateDescription = $this->input->post('course_description');
 
+			$doctorateToRegister = array(
+				'doctorate_name' => $doctorateName,
+				'duration' => $doctorateDuration,
+				'total_credits' => $doctorateTotalCredits,
+				'workload' =>$doctorateHours,
+				'start_class' => $doctorateClass,
+				'description' => $doctorateDescription
+			);
+
 			$doctorate = new Doctorate();
-			/**
+			$doctorate->saveDoctorate($programId, $doctorateToRegister);
 
-
-
-			*/
+			$insertStatus = "success";
+			$insertMessage = "Doutorado cadastrado com sucesso.";
+			
+			$this->session->set_flashdata($insertStatus, $insertMessage);
+			redirect('/course/index');
+			
 		}else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
