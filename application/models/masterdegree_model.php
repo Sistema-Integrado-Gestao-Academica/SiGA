@@ -23,17 +23,11 @@ class MasterDegree_model extends CI_Model {
 
 	public function saveAcademicCourseSpecificAttributes($courseId, $specificAttributes){
 
-		$course_id = array('id_course' => $courseId);
+		$masterDegreeId = $this->saveMasterDegreeAcademicProgram($specificAttributes);
 
-		$attributes = array_merge($course_id, $specificAttributes);
+		$courseWasSaved = $this->associateMasterDegreeCourseToAcademicProgram($courseId, $masterDegreeId);
 
-		$programWasSaved = $this->saveMasterDegreeAcademicProgram($attributes);
-
-		$courseWasSaved = $this->associateMasterDegreeCourseToAcademicProgram($courseId);
-
-		$masterDegreeWasSaved = $programWasSaved && $courseWasSaved;
-
-		return $masterDegreeWasSaved;
+		return $courseWasSaved;
 	}
 	
 	public function saveProfessionalCourseSpecificAttributes($courseId, $specificAttributes){
@@ -208,13 +202,14 @@ class MasterDegree_model extends CI_Model {
 		$this->course_model->saveSecretary($courseSecretary, $courseName);
 	}
 
-	private function associateMasterDegreeCourseToAcademicProgram($courseId){
+	private function associateMasterDegreeCourseToAcademicProgram($courseId, $masterDegreeId){
 
-		$masterDegreeAttributes = array(
-			'id_academic_program' => $courseId
+		$academicProgramAttributes = array(
+			'id_course' => $courseId,
+			'id_master_degree' => $masterDegreeId
 		);
 
-		$insertionWasMade = $this->db->insert('master_degree', $masterDegreeAttributes);
+		$insertionWasMade = $this->db->insert('academic_program', $academicProgramAttributes);
 
 		return $insertionWasMade;
 	}
@@ -230,10 +225,32 @@ class MasterDegree_model extends CI_Model {
 		return $insertionWasMade;
 	}
 
-	private function saveMasterDegreeAcademicProgram($courseAttributes){
-		$insertionWasMade = $this->db->insert('academic_program', $courseAttributes);
+	/**
+	 * Save a master degree course
+	 * @param $masterDegreeAttibutes - Array with the master degree attributes to be saved
+	 * @return the master degree id that was saved
+	 */
+	private function saveMasterDegreeAcademicProgram($masterDegreeAttributes){
+		$this->db->insert('master_degree', $masterDegreeAttributes);
 
-		return $insertionWasMade;
+		$masterDegreeName = $masterDegreeAttributes['master_degree_name'];
+		$masterDegree = $this->getMasterDegreeByName($masterDegreeName);
+		$masterDegreeId = $masterDegree['id_master_degree'];
+
+		return $masterDegreeId;
+	}
+
+	/**
+	 * Search for a master degree by its name
+	 * @param $masterDegreeName - String with the master degree name to seach for
+	 * @return an Array with all attributes of the found master degree
+	 */
+	private function getMasterDegreeByName($masterDegreeName){
+		$searchResult = $this->db->get_where('master_degree', array('master_degree_name' => $masterDegreeName));
+
+		$foundMasterDegree = $searchResult->row_array();
+
+		return $foundMasterDegree;
 	}
 	
 	private function saveMasterDegreeProfessionalProgram($courseAttributes){
