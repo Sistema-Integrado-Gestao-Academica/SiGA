@@ -136,8 +136,9 @@ class Course extends CI_Controller {
 	private function displayRegisteredMasterDegree($courseId){
 		
 		$courseCommonAttributes = $this->getCourseCommonAttributes($courseId);
+
 		$registeredMasterDegree = $this->getRegisteredMasterDegreeForThisCourse($courseId);
-		
+
 		$commonAttributesIsOk = $courseCommonAttributes != FALSE;
 		$specificsAttributesIsOk = $registeredMasterDegree != FALSE;
 		$attributesIsOk = $commonAttributesIsOk && $specificsAttributesIsOk;		
@@ -227,7 +228,7 @@ class Course extends CI_Controller {
 			
 			$this->session->set_flashdata($insertStatus, $insertMessage);
 			redirect('/course/index');
-			
+
 		}else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";

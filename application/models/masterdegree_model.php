@@ -167,7 +167,12 @@ class MasterDegree_model extends CI_Model {
 		$thereIsMasterDegree = $this->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
 
 		if($thereIsMasterDegree){	
-			$searchResult = $this->db->get_where('academic_program', array('id_course' => $courseId));
+			$this->db->select('master_degree.*');
+			$this->db->from('academic_program');
+			$this->db->join('master_degree', 'academic_program.id_master_degree = master_degree.id_master_degree');
+			$this->db->where('academic_program.id_course', $courseId);
+
+			$searchResult = $this->db->get();
 			$foundMasterDegree = $searchResult->row_array();
 		}else{
 			$foundMasterDegree = FALSE;
@@ -183,10 +188,15 @@ class MasterDegree_model extends CI_Model {
 	 */
 	public function checkIfExistsAcademicMasterDegreeForThisCourse($courseId){
 		$this->db->select('id_master_degree');
-		$searchResult = $this->db->get_where('master_degree', array('id_academic_program' => $courseId));
+		$searchResult = $this->db->get_where('academic_program', array('id_course' => $courseId));
 		$searchResult = $searchResult->row_array();
 
-		$existsMasterDegree = sizeof($searchResult) > 0;
+		if(sizeof($searchResult) > 0){
+			$foundMasterDegree = $searchResult['id_master_degree'];
+			$existsMasterDegree = $foundMasterDegree != NULL;
+		}else{
+			$existsMasterDegree = FALSE;
+		}
 
 		return $existsMasterDegree;
 	}

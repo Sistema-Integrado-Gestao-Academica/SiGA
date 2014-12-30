@@ -192,7 +192,7 @@ function displayMasterDegreeData($masterDegreeData){
 	if($thereIsMasterDegree){
 
 		echo "<tr>";
-			echo "<td class='text-center'>".$masterDegreeData['course_name']."</td>";
+			echo "<td class='text-center'>".$masterDegreeData['master_degree_name']."</td>";
 			echo "<td class='text-center'>".$masterDegreeData['duration']." anos</td>";
 			echo "<td class='text-center'>".$masterDegreeData['total_credits']."</td>";
 			echo "<td class='text-center'>".$masterDegreeData['workload']."h</td>";
