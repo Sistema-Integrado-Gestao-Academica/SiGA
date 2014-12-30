@@ -103,7 +103,7 @@ class Course extends CI_Controller {
 		$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
 		$haveMasterDegree = $doctorate->checkIfHaveMasterDegree($courseId);
 		
-		displayRegisteredDoctorateData($haveMasterDegree, $registeredDoctorate);
+		displayRegisteredDoctorateData($courseId, $haveMasterDegree, $registeredDoctorate);
 	}
 
 	// Used for the update course page
@@ -188,13 +188,55 @@ class Course extends CI_Controller {
 		}
 	}
 
-	public function formToCreateDoctorateCourse(){
+	public function formToCreateDoctorateCourse($courseId){
 		
-		$this->loadTemplateSafely('course/register_doctorate_course');
+		$course = array('course_id' => $courseId);
+
+		$this->loadTemplateSafely('course/register_doctorate_course', $course);
 	}
 
 	public function registerDoctorateCourse(){
-		// Do the register doctorate course here
+		
+		$doctorateDataIsOk = $this->validatesNewDoctorateData();
+
+		$courseId = $this->input->post('course_id');
+
+		if($doctorateDataIsOk){
+
+			$courseName = $this->input->post('doctorate_course_name');
+			$doctorateDuration = $this->input->post('course_duration');
+			$doctorateTotalCredits = $this->input->post('course_total_credits');
+			$doctorateHours= $this->input->post('course_hours');
+			$doctorateClass= $this->input->post('course_class');
+			$doctorateDescription = $this->input->post('course_description');
+
+			$doctorate = new Doctorate();
+
+		}else{
+			$insertStatus = "danger";
+			$insertMessage = "Dados na forma incorreta.";
+			
+			$this->session->set_flashdata($insertStatus, $insertMessage);
+			redirect('registerDoctorateCourse/'.$courseId);
+		}
+		
+	}
+
+	/**
+	 * Validates the data submitted on the register doctorate form
+	 */
+	private function validatesNewDoctorateData(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("doctorate_course_name", "Doctorate Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$courseDataStatus = $this->form_validation->run();
+
+		return $courseDataStatus;
 	}
 
 	public function formToRegisterNewCourse(){

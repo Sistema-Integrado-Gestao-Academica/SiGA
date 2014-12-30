@@ -182,7 +182,7 @@ function displayMasterDegreeData($masterDegreeData){
 	}
 }
 
-function displayRegisteredDoctorateData($haveMasterDegree, $doctorateData){
+function displayRegisteredDoctorateData($courseId, $haveMasterDegree, $doctorateData){
 	$thereIsDoctorateDegree = $doctorateData != FALSE;
 
 	echo "<br><h4><span class='label label-default'>Doutorado Acadêmico cadastrado</span></h4>";
@@ -212,7 +212,8 @@ function displayRegisteredDoctorateData($haveMasterDegree, $doctorateData){
 		echo "</table>";
 		echo "<h4><span class='label label-danger'>Nenhum doutorado cadastrado para esse Programa Acadêmico.</span></h4><br>";
 		if($haveMasterDegree){
-			echo anchor('registerDoctorateCourse', 'Cadastrar Doutorado');
+			echo anchor("registerDoctorateCourse/{$courseId}", 'Cadastrar Doutorado', array(
+			"class" => "btn btn-primary"));
 		}
 	}
 }
