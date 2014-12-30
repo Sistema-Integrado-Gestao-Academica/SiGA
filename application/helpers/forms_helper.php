@@ -15,9 +15,22 @@ function postGraduationTypesSelect(){
 
 function academicProgramForm(){
 
+	$academic_program_name = array(
+		"name" => "program_name",
+		"id" => "program_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "40",
+		"style" => "width: 40%;"
+	);
+
 	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
 	
 	echo "<br>";
+	echo form_label('Nome do Programa Acadêmico', 'program_name');
+	echo form_input($academic_program_name);
+	echo "<br>";
+
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
 	echo "<small> Para cadastrar um Doutorado acesse a página para editar um curso.</small>";
 	
@@ -26,9 +39,21 @@ function academicProgramForm(){
 
 function professionalProgramForm(){
 	
+	$professional_program_name = array(
+		"name" => "program_name",
+		"id" => "program_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "40",
+		"style" => "width: 40%;"
+	);
 	echo "<h3><span class='label label-primary'>Programa Profissional</span></h3>";
 	
 	echo "<br>";
+	echo form_label('Nome do Programa Professional', 'program_name');
+	echo form_input($professional_program_name);
+	echo "<br>";
+
 	echo "<h4><span class='label label-default'>Mestrado Profissional</span></h4>";
 
 	commonAttrForPostGraduationCourses();

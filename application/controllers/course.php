@@ -211,7 +211,11 @@ class Course extends CI_Controller {
 			$doctorateDescription = $this->input->post('course_description');
 
 			$doctorate = new Doctorate();
+			/**
 
+
+
+			*/
 		}else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
@@ -309,6 +313,7 @@ class Course extends CI_Controller {
 				case POST_GRADUATION:
 
 					$post_graduation_type = $this->input->post('post_graduation_type');
+					$program_name = $this->input->post('program_name');
 					$post_graduation_duration = $this->input->post('course_duration');
 					$post_graduation_total_credits = $this->input->post('course_total_credits');
 					$post_graduation_hours= $this->input->post('course_hours');
@@ -316,11 +321,12 @@ class Course extends CI_Controller {
 					$post_graduation_description = $this->input->post('course_description');
 
 					$commonAttr = array(
-						'course_name' => $courseName,
+						'course_name' => $program_name,
 						'course_type' => $post_graduation_type
 					);
 
 					$courseToRegister = array(
+						'master_degree_name' => $courseName,
 						'duration' => $post_graduation_duration,
 						'total_credits' => $post_graduation_total_credits,
 						'workload' =>$post_graduation_hours,
