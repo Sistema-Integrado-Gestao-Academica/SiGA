@@ -40,7 +40,7 @@ class Usuario extends CI_Controller {
 			$nome  = $this->input->post("nome");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
-			$tipo  = $this->input->post("userType");
+			$tipo  = (int) $this->input->post("userType") + 1;
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
@@ -65,7 +65,16 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$this->load->template("usuario/formulario_entrada");
+			$this->load->model("usuarios_model");
+			$user_type_options = $this->usuarios_model->getAllUserTypes();
+			$user_types = array();
+
+			foreach ($user_type_options as $ut) {
+				array_push($user_types, $ut['type_name']);
+			}
+
+			$data = array('user_types' => $user_types);
+			$this->load->template("usuario/formulario_entrada", $data);
 		}
 	}
 

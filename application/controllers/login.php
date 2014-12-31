@@ -12,13 +12,18 @@ class Login extends CI_Controller {
 		$senha = $this->input->post("senha");
 		$usuario = $this->usuarios_model->buscaPorLoginESenha($login, $senha);
 		$user_type = $this->usuarios_model->getUserType($usuario['id']);
-		$is_secretary = $this->usuarios_model->get_user_secretary($usuario['id']);
+		// $is_secretary = $this->usuarios_model->get_user_secretary($usuario['id']);
 		
 		// Load the Module model
 		$this->load->model("module_model");
 		$registered_permissions = $this->module_model->getUserPermissionNames($usuario['id']);
 
-		$userData = array('user' => $usuario,'user_type' => $user_type, 'user_permissions' => $registered_permissions,'secretary'=>$is_secretary);
+		$userData = array(
+			'user' => $usuario,
+			'user_type' => $user_type,
+			'user_permissions' => $registered_permissions
+			// 'secretary' => $is_secretary
+		);
 
 		if ($usuario) {
 			$this->session->set_userdata("usuario_logado", $userData);

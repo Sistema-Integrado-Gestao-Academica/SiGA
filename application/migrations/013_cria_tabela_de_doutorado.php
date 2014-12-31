@@ -6,8 +6,8 @@ class Migration_Cria_tabela_de_doutorado extends CI_migration {
 				'id_course' => array('type' => 'INT'),
 				'id_academic_program' => array('type' => 'INT')
 		));
-		$this->dbforge->add_key('id_course', true);
-		$this->dbforge->add_key('id_academic_program', true);
+		$this->dbforge->add_key('id_course');
+		$this->dbforge->add_key('id_academic_program');
 		$this->dbforge->create_table('graduation');
 	}
 
