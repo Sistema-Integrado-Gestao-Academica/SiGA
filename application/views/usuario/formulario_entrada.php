@@ -2,8 +2,6 @@
 
 <?php 
 
-$form_user_types = array(2=>"aluno",5=>"convidado");
-
 $name_array_to_form = array(
 	"name" => "nome",
 	"id" => "nome",
@@ -74,7 +72,7 @@ echo form_open("usuario/novo");
 	// User type field
 	echo form_label("Tipo de Usuário", "userType"); 
 	echo "<br>";
-	echo form_dropdown("userType",$form_user_types);	
+	echo form_dropdown("userType", $user_types);	
 	echo form_error("userType");
 
 	// Login field

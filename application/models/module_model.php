@@ -11,11 +11,11 @@ class Module_model extends CI_Model {
 
 		$this->load->model("permission_model");
 
-		$modules_ids = $this->getUserModules($user_id);
+		$group_ids = $this->getUserModules($user_id);
 
-		for($i = 0; $i < sizeof($modules_ids); $i++){
+		for($i = 0; $i < sizeof($group_ids); $i++){
 			
-			$module_id_to_get = $modules_ids[$i]['id_module'];
+			$module_id_to_get = $group_ids[$i]['id_group'];
 
 			$module_permissions_ids = $this->permission_model->getPermissionIdsOfModule($module_id_to_get);
 
@@ -45,12 +45,12 @@ class Module_model extends CI_Model {
 
 		for($i = 0; $i < sizeof($modules_ids); $i++){
 
-			$this->db->select('module_name');
-			$module_id_to_get = $modules_ids[$i]['id_module'];
+			$this->db->select('group_name');
+			$module_id_to_get = $modules_ids[$i]['id_group'];
 			
-			$module_name_array = $this->db->get_where('module', array('id_module' => $module_id_to_get))->result_array();
+			$module_name_array = $this->db->get_where('group', array('id_module' => $module_id_to_get))->result_array();
 			
-			$module_names[$i] = $module_name_array[0]['module_name'];
+			$module_names[$i] = $module_name_array[0]['group_name'];
 
 		}
 
@@ -58,18 +58,18 @@ class Module_model extends CI_Model {
 	}
 
 	/**
-	  * Search on database for the modules of an user
+	  * Search on database for the groups of an user
 	  * @param $user_id - User id to look for modules
-	  * @return an array with the modules of the given user
+	  * @return an array with the groups of the given user
 	  */
 	private function getUserModules($user_id){
 
-		$this->db->select('id_module');
-		$search_result = $this->db->get_where('user_module', array('id_user'=>$user_id));
+		$this->db->select('id_group');
+		$search_result = $this->db->get_where('user_group', array('id_user'=>$user_id));
 		
-		$modules_for_user = $search_result->result_array();
+		$groups_for_user = $search_result->result_array();
 
-		return $modules_for_user;
+		return $groups_for_user;
 	}
 	
 	/**
@@ -78,7 +78,7 @@ class Module_model extends CI_Model {
 	 */
 	public function getAllModules(){
 		
-		$modules = $this->db->get('module')->result_array();
+		$modules = $this->db->get('group')->result_array();
 		return $modules;
 		
 	}
