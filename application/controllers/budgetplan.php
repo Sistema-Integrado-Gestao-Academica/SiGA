@@ -3,7 +3,7 @@
 class Budgetplan extends CI_Controller {
 
 	public function index() {
-		autoriza();
+		session();
 		$this->load->model("budgetplan_model");
 		$this->load->model("course_model");
 		$budgetplans = $this->budgetplan_model->all();
@@ -25,7 +25,7 @@ class Budgetplan extends CI_Controller {
 	}
 
 	public function save() {
-		autoriza();
+		session();
 		$amount = $this->input->post("amount");
 		$status = (int) $this->input->post("status") + 1;
 
@@ -42,7 +42,7 @@ class Budgetplan extends CI_Controller {
 	}
 
 	public function edit($id) {
-		autoriza();
+		session();
 		$this->load->model('budgetplan_model');
 		$budgetplan = array('id' => $id);
 		$budgetplan = $this->budgetplan_model->get('id', $budgetplan);
@@ -72,7 +72,7 @@ class Budgetplan extends CI_Controller {
 	}
 
 	public function update() {
-		autoriza();
+		session();
 		$id = $this->input->post("budgetplan_id");
 		$course = $this->input->post("course") + 1;
 		$amount = $this->input->post("amount");

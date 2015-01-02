@@ -1,10 +1,10 @@
 <?php 
-function autoriza() {
+function session() {
 	$ci = get_instance();
-	$usuario = $ci->session->userdata("usuario_logado");
-	if (!$usuario) {
+	$user = $ci->session->userdata("current_user");
+	if (!$user) {
 		$ci->session->set_flashdata("danger", "Você não está logado!");
 		redirect("/");
 	}
-	return $usuario;
+	return $user;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?php  $session = $this->session->userdata("usuario_logado");
+<?php  $session = $this->session->userdata("current_user");
 ?>
 <html>
 <head>

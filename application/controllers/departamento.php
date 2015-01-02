@@ -10,7 +10,7 @@ class Departamento extends CI_Controller {
 	}
 
 	public function formulario_altera($id) {
-		autoriza();
+		session();
 		$this->load->model("departamentos_model");
 		$departamento = array('id' => $id);
 		$departamento = $this->departamentos_model->busca('id', $departamento);
@@ -19,7 +19,7 @@ class Departamento extends CI_Controller {
 	}
 
 	public function novo() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome do departamento", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert alert-danger'>", "</p>");
@@ -27,7 +27,7 @@ class Departamento extends CI_Controller {
 
 
 		if ($sucesso) {
-			$usuarioLogado = autoriza();
+			$usuarioLogado = session();
 			$nome = $this->input->post("nome");
 			$departamento = array('nome' => $nome);
 
@@ -45,7 +45,7 @@ class Departamento extends CI_Controller {
 	}
 
 	public function altera() {
-		autoriza();
+		session();
 		$id = $this->input->post("departamento_id");
 		$nome = $this->input->post("nome");
 		$this->load->model("departamentos_model");
@@ -60,7 +60,7 @@ class Departamento extends CI_Controller {
 	}
 
 	public function remove() {
-		autoriza();
+		session();
 		$id = $this->input->post("departamento_id");
 		$this->load->model("departamentos_model");
 		$departamento = array("id" => $id);

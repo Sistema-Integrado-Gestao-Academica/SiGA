@@ -10,7 +10,7 @@ class Funcao extends CI_Controller {
 	}
 
 	public function formulario_altera($id) {
-		autoriza();
+		session();
 		$this->load->model("funcoes_model");
 		$funcao = array('id' => $id);
 		$funcao = $this->funcoes_model->busca('id', $funcao);
@@ -19,7 +19,7 @@ class Funcao extends CI_Controller {
 	}
 
 	public function novo() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome da função", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert alert-danger'>", "</p>");
@@ -27,7 +27,7 @@ class Funcao extends CI_Controller {
 
 
 		if ($sucesso) {
-			$usuarioLogado = autoriza();
+			$usuarioLogado = session();
 			$nome = $this->input->post("nome");
 			$funcao = array('nome' => $nome);
 
@@ -45,7 +45,7 @@ class Funcao extends CI_Controller {
 	}
 
 	public function altera() {
-		autoriza();
+		session();
 		$id = $this->input->post("funcao_id");
 		$nome = $this->input->post("nome");
 		$this->load->model("funcoes_model");
@@ -60,7 +60,7 @@ class Funcao extends CI_Controller {
 	}
 
 	public function remove() {
-		autoriza();
+		session();
 		$id = $this->input->post("funcao_id");
 		$this->load->model("funcoes_model");
 		$funcao = array("id" => $id);
