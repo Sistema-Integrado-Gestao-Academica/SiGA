@@ -75,7 +75,7 @@ class MasterDegree_model extends CI_Model {
 
 			if($registeredMasterDegree != FALSE){
 				$masterDegreeId = $registeredMasterDegree['id_master_degree'];
-				$this->updateMasterDegreeAcademicCourse($masterDegreeId, $specificsAttributes);
+				$this->updateMasterDegree($masterDegreeId, $specificsAttributes);
 			}else{
 				throw new CourseException("Não há mestrado registrado para esse curso.");
 			}
@@ -90,13 +90,16 @@ class MasterDegree_model extends CI_Model {
 		$idExists = $this->course_model->checkExistingId($courseId);
 	
 		if($idExists){
-			// If the course were not an academic program, it will be created as one
-			$isAnProfessionalProgram = $this->checkIfIsProfessionalProgram($courseId);
-			if($isAnProfessionalProgram){
-				$this->updateMasterDegreeProfessionalCourse($courseId, $specificsAttributes);
+			
+			$registeredMasterDegree = $this->getRegisteredMasterDegree($courseId);
+
+			if($registeredMasterDegree != FALSE){
+				$masterDegreeId = $registeredMasterDegree['id_master_degree'];
+				$this->updateMasterDegree($masterDegreeId, $specificsAttributes);
 			}else{
-				$this->saveProfessionalCourseSpecificAttributes($courseId, $specificsAttributes);
+				throw new CourseException("Não há mestrado registrado para esse curso.");
 			}
+
 		}else{
 			throw new CourseException("Cannot update this course. The informed ID does not exists.");
 		}
@@ -143,14 +146,9 @@ class MasterDegree_model extends CI_Model {
 	 * @param $courseId - The course id to be updated
 	 * @param $newMasterDegree - The new master degree attributes
 	 */
-	private function updateMasterDegreeAcademicCourse($masterDegreeId, $newMasterDegree){
+	private function updateMasterDegree($masterDegreeId, $newMasterDegree){
 		$this->db->where('id_master_degree', $masterDegreeId);
 		$this->db->update('master_degree', $newMasterDegree);
-	}
-	
-	private function updateMasterDegreeProfessionalCourse($courseId, $newMasterDegree){
-		$this->db->where('id_course', $courseId);
-		$this->db->update('professional_program', $newMasterDegree);
 	}
 
 	public function getRegisteredMasterDegreeForThisCourseId($courseId){
@@ -167,9 +165,10 @@ class MasterDegree_model extends CI_Model {
 	 * @return FALSE if there is no master degree course for this course id
 	 */
 	private function getRegisteredMasterDegree($courseId){
-		$thereIsMasterDegree = $this->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
-
-		if($thereIsMasterDegree){	
+		$thereIsAcademicMasterDegree = $this->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
+		$thereIsProfessionalMasterDegree = $this->checkIfExistsProfessionalMasterDegreeForThisCourse($courseId);
+		
+		if($thereIsAcademicMasterDegree){	
 			$this->db->select('master_degree.*');
 			$this->db->from('academic_program');
 			$this->db->join('master_degree', 'academic_program.id_master_degree = master_degree.id_master_degree');
@@ -177,6 +176,16 @@ class MasterDegree_model extends CI_Model {
 
 			$searchResult = $this->db->get();
 			$foundMasterDegree = $searchResult->row_array();
+		
+		}elseif($thereIsProfessionalMasterDegree){
+			$this->db->select('master_degree.*');
+			$this->db->from('professional_program');
+			$this->db->join('master_degree', 'professional_program.id_master_degree = master_degree.id_master_degree');
+			$this->db->where('professional_program.id_course', $courseId);
+
+			$searchResult = $this->db->get();
+			$foundMasterDegree = $searchResult->row_array();
+		
 		}else{
 			$foundMasterDegree = FALSE;
 		}
@@ -203,6 +212,26 @@ class MasterDegree_model extends CI_Model {
 
 		return $existsMasterDegree;
 	}
+
+	/**
+	 * Check if there is a master degree associated to the given course id
+	 * @param $courseId - The course to look for master degree courses
+	 * @return TRUE if there is a master degree course associated to this course id or FALSE if does not
+	 */
+	public function checkIfExistsProfessionalMasterDegreeForThisCourse($courseId){
+		$this->db->select('id_master_degree');
+		$searchResult = $this->db->get_where('professional_program', array('id_course' => $courseId));
+		$searchResult = $searchResult->row_array();
+
+		if(sizeof($searchResult) > 0){
+			$foundMasterDegree = $searchResult['id_master_degree'];
+			$existsMasterDegree = $foundMasterDegree != NULL;
+		}else{
+			$existsMasterDegree = FALSE;
+		}
+
+		return $existsMasterDegree;
+	}	
 
 	private function saveCourseSecretary($courseName, $courseSecretary){
 		$this->load->model('course_model');

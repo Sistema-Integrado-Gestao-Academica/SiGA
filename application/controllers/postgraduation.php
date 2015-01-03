@@ -45,10 +45,11 @@ class PostGraduation extends CI_Controller {
 			case ACADEMIC_PROGRAM:
 
 				try{
-					$this->updateMasterDegreeAcademicCourse(
+					$master_degree = new MasterDegree();
+					$master_degree->updateMasterDegreeAcademicCourse(
 						$idCourseToUpdate, $commonAttributes,
 						$specificsAttributes, $secretary
-					);
+				);
 					
 				}catch(CourseNameException $caughtException){
 					throw $caughtException;
@@ -63,7 +64,7 @@ class PostGraduation extends CI_Controller {
 				try{
 				
 					$master_degree = new MasterDegree();
-					$insertionStatus = $master_degree->updateMasterDegreeProfessionalCourse(
+					$master_degree->updateMasterDegreeProfessionalCourse(
 						$idCourseToUpdate, $commonAttributes,
 						$specificsAttributes, $secretary
 					);
@@ -81,19 +82,4 @@ class PostGraduation extends CI_Controller {
 		}
 	}
 
-	private function updateMasterDegreeAcademicCourse($idCourseToUpdate, $commonAttributes, $specificsAttributes, $secretary){
-		
-		try{
-			$master_degree = new MasterDegree();
-			$master_degree->updateMasterDegreeAcademicCourse(
-				$idCourseToUpdate, $commonAttributes,
-				$specificsAttributes, $secretary
-		);
-			
-		}catch(CourseNameException $caughtException){
-			throw $caughtException;
-		}catch(CourseException $caughtException){
-			throw $caughtException;
-		}
-	}
 }
