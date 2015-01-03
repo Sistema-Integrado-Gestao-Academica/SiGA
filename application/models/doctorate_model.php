@@ -1,5 +1,7 @@
 <?php 
 
+require_once(APPPATH."/exception/DoctorateException.php");
+
 class Doctorate_model extends CI_Model {
 
 	public function saveDoctorate($programId, $doctorateAttributes){
@@ -86,5 +88,22 @@ class Doctorate_model extends CI_Model {
 		}
 
 		return $doctorateExists;
+	}
+
+	public function deleteDoctorateByCourseId($courseId){
+		$registeredDoctorate = $this->getDoctorateForCourse($courseId);
+
+		if($registeredDoctorate != FALSE){
+			$idDoctorate = $registeredDoctorate['id_doctorate'];
+			$this->deleteDoctorate($idDoctorate);
+		}else{
+
+			throw new DoctorateException("Não há doutorados registrados para esse curso.");
+		}
+	}
+
+	private function deleteDoctorate($idDoctorate){
+		$this->db->where('id_doctorate', $idDoctorate);
+		$this->db->delete('doctorate');
 	}
 }

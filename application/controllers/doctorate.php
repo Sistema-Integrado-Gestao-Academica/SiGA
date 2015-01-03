@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once("masterdegree.php");
+require_once(APPPATH."/exception/DoctorateException.php");
 
 class Doctorate extends CI_Controller {
 
@@ -16,6 +17,17 @@ class Doctorate extends CI_Controller {
 
 		$this->load->model('doctorate_model');
 		$this->doctorate_model->saveDoctorate($programId, $doctorateAttributes);
+	}
+
+	public function deleteDoctorate($courseId){
+		
+		try{
+
+			$this->load->model('doctorate_model');
+			$this->doctorate_model->deleteDoctorateByCourseId($courseId);
+		}catch(DoctorateException $caughtException){
+			throw $caughtException;
+		}
 	}
 
 	public function getRegisteredDoctorateForCourse($courseId){
@@ -35,5 +47,7 @@ class Doctorate extends CI_Controller {
 
 		return $thereIsMasterDegree;
 	}
+
+
 
 }

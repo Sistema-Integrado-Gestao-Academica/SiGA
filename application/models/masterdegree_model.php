@@ -109,17 +109,19 @@ class MasterDegree_model extends CI_Model {
 		$thereIsMasterDegree = $this->checkIfExistsAcademicMasterDegreeForThisCourse($courseId);
 
 		if($thereIsMasterDegree){
+			$registeredMasterDegree = $this->getRegisteredMasterDegree($courseId);
 
-			$this->deleteAcademicMasterDegree($courseId);
+			$masterDegreeId = $registeredMasterDegree['id_master_degree'];
+			$this->deleteAcademicMasterDegree($masterDegreeId);
 
 		}else{
 
-			throw new MasterDegreeException("Não há mestrados registrados para esse curso.");
+			throw new MasterDegreeException("Não há mestrados acadêmicos registrados para esse curso.");
 		}
 	}
 
-	private function deleteAcademicMasterDegree($courseId){
-		$this->db->where('id_academic_program', $courseId);
+	private function deleteAcademicMasterDegree($masterDegreeId){
+		$this->db->where('id_master_degree', $masterDegreeId);
 		$this->db->delete('master_degree');
 	}
 	

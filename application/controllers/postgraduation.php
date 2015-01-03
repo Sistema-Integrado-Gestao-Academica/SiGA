@@ -6,6 +6,7 @@ require_once('graduation.php');
 require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
+require_once(APPPATH."/exception/DoctorateException.php");
 require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class PostGraduation extends CI_Controller {
@@ -82,4 +83,73 @@ class PostGraduation extends CI_Controller {
 		}
 	}
 
+	public function cleanPostGraduationData($idCourse, $postGraduationType){
+		
+		define("ACADEMIC_PROGRAM", "academic_program");
+		define("PROFESSIONAL_PROGRAM", "professional_program");
+
+		switch($postGraduationType){
+			case ACADEMIC_PROGRAM:
+				try{
+
+					$this->cleanAcademicProgramData($idCourse);
+				}catch(MasterDegreeException $caughtException){
+					throw $caughtException;
+				}catch(DoctorateException $caughtException){
+					throw $caughtException;
+				}
+				break;
+			
+			case PROFESSIONAL_PROGRAM:
+				$this->cleanProfessionalProgramData($idCourse);
+				break;
+
+			default:
+				
+				break;
+		}
+	}
+	private function cleanAcademicProgramData($idCourse){
+		
+		try{
+
+			$this->deleteAcademicMasterDegree($idCourse);
+			$this->deleteAcademicDoctorate($idCourse);
+			$this->deleteAcademicProgram($idCourse);
+		}catch(MasterDegreeException $caughtException){
+			throw $caughtException;
+		}catch(DoctorateException $caughtException){
+			throw $caughtException;
+		}
+	}
+
+	private function deleteAcademicMasterDegree($idCourse){
+		
+		try{
+
+			$masterDegree = new MasterDegree();
+			$masterDegree->deleteAcademicMasterDegree($idCourse);
+		}catch(MasterDegreeException $caughtException){
+			throw $caughtException;
+		}
+	}
+
+	private function deleteAcademicDoctorate($idCourse){
+		try{
+
+			$doctorate = new Doctorate();
+			$doctorate->deleteDoctorate($idCourse);
+		}catch(DoctorateException $caughtException){
+			throw $caughtException;
+		}
+	}
+
+	private function deleteAcademicProgram($idCourse){
+		
+	}
+
+	private function cleanProfessionalProgramData($idCourse){
+		$this->deleteProfessionalMasterDegree($idCourse);
+		$this->deleteProfessionalProgram($idCourse);
+	}
 }
