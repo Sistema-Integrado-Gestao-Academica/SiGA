@@ -70,13 +70,16 @@ class MasterDegree_model extends CI_Model {
 		$idExists = $this->course_model->checkExistingId($courseId);
 
 		if($idExists){
-			// If the course were not an academic program, it will be created as one
-			$isAnAcademicProgram = $this->checkIfIsAcademicProgram($courseId);
-			if($isAnAcademicProgram){
-				$this->updateMasterDegreeAcademicCourse($courseId, $specificsAttributes);
+			
+			$registeredMasterDegree = $this->getRegisteredMasterDegree($courseId);
+
+			if($registeredMasterDegree != FALSE){
+				$masterDegreeId = $registeredMasterDegree['id_master_degree'];
+				$this->updateMasterDegreeAcademicCourse($masterDegreeId, $specificsAttributes);
 			}else{
-				$this->saveAcademicCourseSpecificAttributes($courseId, $specificsAttributes);
+				throw new CourseException("Não há mestrado registrado para esse curso.");
 			}
+
 		}else{
 			throw new CourseException("Cannot update this course. The informed ID does not exists.");
 		}
@@ -140,9 +143,9 @@ class MasterDegree_model extends CI_Model {
 	 * @param $courseId - The course id to be updated
 	 * @param $newMasterDegree - The new master degree attributes
 	 */
-	private function updateMasterDegreeAcademicCourse($courseId, $newMasterDegree){
-		$this->db->where('id_course', $courseId);
-		$this->db->update('academic_program', $newMasterDegree);
+	private function updateMasterDegreeAcademicCourse($masterDegreeId, $newMasterDegree){
+		$this->db->where('id_master_degree', $masterDegreeId);
+		$this->db->update('master_degree', $newMasterDegree);
 	}
 	
 	private function updateMasterDegreeProfessionalCourse($courseId, $newMasterDegree){
@@ -158,7 +161,7 @@ class MasterDegree_model extends CI_Model {
 	}
 
 	/**
-	 * Get the registered master degree course, if it exists
+	 * Get the registered master degree course, if it exists, by the course id
 	 * @param $courseId - The course to look for master degree program
 	 * @return  an array with the attributes of the found master degree course if it exists
 	 * @return FALSE if there is no master degree course for this course id

@@ -61,8 +61,20 @@ function professionalProgramForm(){
 
 function masterDegreeProgramForm(){
 
+	$masterDegreeName = array(
+		"name" => "master_degree_name_update",
+		"id" => "master_degree_name_update",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "40",
+		"style" => "width: 40%;"
+	);
+
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico - Alterar</span></h4>";
 
+	echo form_label('Nome do mestrado', 'master_degree_name_update');
+	echo form_input($masterDegreeName);
+	
 	commonAttrForPostGraduationCourses();
 }
 

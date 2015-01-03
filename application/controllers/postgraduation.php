@@ -83,14 +83,12 @@ class PostGraduation extends CI_Controller {
 
 	private function updateMasterDegreeAcademicCourse($idCourseToUpdate, $commonAttributes, $specificsAttributes, $secretary){
 		
-		$this->checkExistingCourseType($idCourseToUpdate);
-
 		try{
 			$master_degree = new MasterDegree();
 			$master_degree->updateMasterDegreeAcademicCourse(
 				$idCourseToUpdate, $commonAttributes,
 				$specificsAttributes, $secretary
-			);
+		);
 			
 		}catch(CourseNameException $caughtException){
 			throw $caughtException;
