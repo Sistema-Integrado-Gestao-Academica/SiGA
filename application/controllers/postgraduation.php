@@ -127,7 +127,14 @@ class PostGraduation extends CI_Controller {
 	}
 
 	private function cleanProfessionalProgramData($idCourse){
+		$this->load->model('course_model');
+		
 		$this->deleteProfessionalMasterDegree($idCourse);
-		$this->deleteProfessionalProgram($idCourse);
+		$this->course_model->deleteCourseById($idCourse);
+	}
+
+	private function deleteProfessionalMasterDegree($idCourse){
+		$masterDegree = new MasterDegree();
+		$masterDegree->deleteProfessionalMasterDegree($idCourse);
 	}
 }

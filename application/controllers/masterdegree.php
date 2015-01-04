@@ -78,6 +78,7 @@ class MasterDegree extends CI_Controller {
 	}
 
 	public function deleteAcademicMasterDegree($courseId){
+		// Validates $courseId
 		
 		$this->deleteAcademicMasterDegreeFromDb($courseId);
 	}
@@ -86,6 +87,17 @@ class MasterDegree extends CI_Controller {
 
 		$this->load->model('masterdegree_model');
 		$this->masterdegree_model->deleteAcademicMasterDegreeByCourseId($courseId);
+	}
+
+	public function deleteProfessionalMasterDegree($courseId){
+		// Validates $courseId
+
+		$this->deleteProfessionalMasterDegreeFromDb($courseId);
+	}
+
+	private function deleteProfessionalMasterDegreeFromDb($courseId){
+		$this->load->model('masterdegree_model');
+		$this->masterdegree_model->deleteProfessionalMasterDegreeByCourseId($courseId);
 	}
 	
 	public function checkIfExistsAcademicMasterDegreeForThisCourse($courseId){
