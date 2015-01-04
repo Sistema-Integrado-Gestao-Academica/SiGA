@@ -115,8 +115,7 @@ class MasterDegree_model extends CI_Model {
 			$this->deleteAcademicMasterDegree($masterDegreeId);
 
 		}else{
-
-			throw new MasterDegreeException("Não há mestrados acadêmicos registrados para esse curso.");
+			// throw new MasterDegreeException("Não há mestrados acadêmicos registrados para esse curso.");
 		}
 	}
 

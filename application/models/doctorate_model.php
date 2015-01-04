@@ -91,14 +91,16 @@ class Doctorate_model extends CI_Model {
 	}
 
 	public function deleteDoctorateByCourseId($courseId){
+		
+
 		$registeredDoctorate = $this->getDoctorateForCourse($courseId);
+
 
 		if($registeredDoctorate != FALSE){
 			$idDoctorate = $registeredDoctorate['id_doctorate'];
 			$this->deleteDoctorate($idDoctorate);
 		}else{
-
-			throw new DoctorateException("Não há doutorados registrados para esse curso.");
+			// throw new DoctorateException("Não há doutorados registrados para esse curso.");
 		}
 	}
 

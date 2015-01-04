@@ -21,13 +21,8 @@ class Doctorate extends CI_Controller {
 
 	public function deleteDoctorate($courseId){
 		
-		try{
-
-			$this->load->model('doctorate_model');
-			$this->doctorate_model->deleteDoctorateByCourseId($courseId);
-		}catch(DoctorateException $caughtException){
-			throw $caughtException;
-		}
+		$this->load->model('doctorate_model');
+		$this->doctorate_model->deleteDoctorateByCourseId($courseId);
 	}
 
 	public function getRegisteredDoctorateForCourse($courseId){

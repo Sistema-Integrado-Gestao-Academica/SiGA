@@ -541,8 +541,12 @@ class Course extends CI_Controller {
 				}
 			}else{
 
-				$this->cleanUpOldCourseData($idCourse, $original_course_type);
+				if($courseType == "academic_program" || $courseType == "professional_program" ){
+					$courseType = POST_GRADUATION;
+				}
 
+				$this->cleanUpOldCourseData($idCourse, $original_course_type);
+				
 				// Switch to alternative flow of updating a course data. In this way course type has changed
 				switch($courseType){
 					case GRADUATION:
@@ -573,6 +577,7 @@ class Course extends CI_Controller {
 						);
 				
 						$courseToUpdate = array(
+								'master_degree_name' => $master_degree_name,
 								'duration' => $post_graduation_duration,
 								'total_credits' => $post_graduation_total_credits,
 								'workload' =>$post_graduation_hours,
@@ -613,11 +618,11 @@ class Course extends CI_Controller {
 	
 	private function cleanUpOldCourseData($idCourse, $oldCourseType){
 
-		define("GRADUATION", "graduation");
-		define("EAD", "ead");
+		// define("GRADUATION", "graduation");
+		// define("EAD", "ead");
 		define("ACADEMIC_PROGRAM", "academic_program");
 		define("PROFESSIONAL_PROGRAM", "professional_program");
-		
+
 		switch($oldCourseType){
 			case GRADUATION:
 				$this->load->model('course_model');
@@ -632,23 +637,16 @@ class Course extends CI_Controller {
 			case ACADEMIC_PROGRAM:
 			case PROFESSIONAL_PROGRAM:
 				
-				try{
-
-					$post_graduation = new PostGraduation();
-					$post_graduation->cleanPostGraduationData($idCourse, $oldCourseType);
-				}catch(MasterDegreeException $caughtException){
-					// In this case there is no problem because does not exists 
-					//  a master degree to the course to be updated
-				}catch(DoctorateException $caughtException){
-					// In this case there is no problem because does not exists 
-					//  a doctorate to the course to be updated
-				}
+				$post_graduation = new PostGraduation();
+				$post_graduation->cleanPostGraduationData($idCourse, $oldCourseType);
+	
 				break;
 
 			default:
 				
 				break;
 		}
+
 	}
 
 	/**

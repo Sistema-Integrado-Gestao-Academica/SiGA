@@ -85,21 +85,16 @@ class PostGraduation extends CI_Controller {
 
 	public function cleanPostGraduationData($idCourse, $postGraduationType){
 		
-		define("ACADEMIC_PROGRAM", "academic_program");
-		define("PROFESSIONAL_PROGRAM", "professional_program");
+		
+		// define("ACADEMIC_PROGRAM", "academic_program");
+		// define("PROFESSIONAL_PROGRAM", "professional_program");
 
 		switch($postGraduationType){
 			case ACADEMIC_PROGRAM:
-				try{
 
-					$this->cleanAcademicProgramData($idCourse);
-				}catch(MasterDegreeException $caughtException){
-					throw $caughtException;
-				}catch(DoctorateException $caughtException){
-					throw $caughtException;
-				}
+				$this->cleanAcademicProgramData($idCourse);
 				break;
-			
+		
 			case PROFESSIONAL_PROGRAM:
 				$this->cleanProfessionalProgramData($idCourse);
 				break;
@@ -109,43 +104,26 @@ class PostGraduation extends CI_Controller {
 				break;
 		}
 	}
-	private function cleanAcademicProgramData($idCourse){
-		
-		try{
 
-			$this->deleteAcademicMasterDegree($idCourse);
-			$this->deleteAcademicDoctorate($idCourse);
-			$this->deleteAcademicProgram($idCourse);
-		}catch(MasterDegreeException $caughtException){
-			throw $caughtException;
-		}catch(DoctorateException $caughtException){
-			throw $caughtException;
-		}
+	private function cleanAcademicProgramData($idCourse){
+				
+		$this->load->model('course_model');
+
+		$this->deleteAcademicMasterDegree($idCourse);
+		$this->deleteAcademicDoctorate($idCourse);
+		$this->course_model->deleteCourseById($idCourse);
 	}
 
 	private function deleteAcademicMasterDegree($idCourse){
 		
-		try{
-
-			$masterDegree = new MasterDegree();
-			$masterDegree->deleteAcademicMasterDegree($idCourse);
-		}catch(MasterDegreeException $caughtException){
-			throw $caughtException;
-		}
+		$masterDegree = new MasterDegree();
+		$masterDegree->deleteAcademicMasterDegree($idCourse);
 	}
 
 	private function deleteAcademicDoctorate($idCourse){
-		try{
-
-			$doctorate = new Doctorate();
-			$doctorate->deleteDoctorate($idCourse);
-		}catch(DoctorateException $caughtException){
-			throw $caughtException;
-		}
-	}
-
-	private function deleteAcademicProgram($idCourse){
 		
+		$doctorate = new Doctorate();
+		$doctorate->deleteDoctorate($idCourse);
 	}
 
 	private function cleanProfessionalProgramData($idCourse){
