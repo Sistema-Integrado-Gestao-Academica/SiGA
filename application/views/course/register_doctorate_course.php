@@ -5,7 +5,15 @@
 		<br>
 		<?php
 		echo form_open("course/registerDoctorateCourse");
+		
+			/*
+			 * Course id passed through the loadTemplate on 
+			 *  formToCreateDoctorateCourse() method on course controller.
+			*/
+			echo form_hidden('course_id', $course_id);
+			
 			formToCreateDoctorateCourse();
+
 		echo form_close();
 		?>
 	</div>
