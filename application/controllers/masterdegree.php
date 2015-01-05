@@ -78,25 +78,26 @@ class MasterDegree extends CI_Controller {
 	}
 
 	public function deleteAcademicMasterDegree($courseId){
+		// Validates $courseId
 		
-		try{
-			$this->deleteAcademicMasterDegreeFromDb($courseId);
-
-		}catch(MasterDegreeException $caughtException){
-			throw $caughtException;
-		}
-
+		$this->deleteAcademicMasterDegreeFromDb($courseId);
 	}
 
 	private function deleteAcademicMasterDegreeFromDb($courseId){
 
-		try{
-			$this->load->model('masterdegree_model');
-			$this->masterdegree_model->deleteAcademicMasterDegreeByCourseId($courseId);
+		$this->load->model('masterdegree_model');
+		$this->masterdegree_model->deleteAcademicMasterDegreeByCourseId($courseId);
+	}
 
-		}catch(MasterDegreeException $caughtException){
-			throw $caughtException;
-		}
+	public function deleteProfessionalMasterDegree($courseId){
+		// Validates $courseId
+
+		$this->deleteProfessionalMasterDegreeFromDb($courseId);
+	}
+
+	private function deleteProfessionalMasterDegreeFromDb($courseId){
+		$this->load->model('masterdegree_model');
+		$this->masterdegree_model->deleteProfessionalMasterDegreeByCourseId($courseId);
 	}
 	
 	public function checkIfExistsAcademicMasterDegreeForThisCourse($courseId){

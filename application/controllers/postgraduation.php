@@ -6,6 +6,7 @@ require_once('graduation.php');
 require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
+require_once(APPPATH."/exception/DoctorateException.php");
 require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class PostGraduation extends CI_Controller {
@@ -45,10 +46,11 @@ class PostGraduation extends CI_Controller {
 			case ACADEMIC_PROGRAM:
 
 				try{
-					$this->updateMasterDegreeAcademicCourse(
+					$master_degree = new MasterDegree();
+					$master_degree->updateMasterDegreeAcademicCourse(
 						$idCourseToUpdate, $commonAttributes,
 						$specificsAttributes, $secretary
-					);
+				);
 					
 				}catch(CourseNameException $caughtException){
 					throw $caughtException;
@@ -63,7 +65,7 @@ class PostGraduation extends CI_Controller {
 				try{
 				
 					$master_degree = new MasterDegree();
-					$insertionStatus = $master_degree->updateMasterDegreeProfessionalCourse(
+					$master_degree->updateMasterDegreeProfessionalCourse(
 						$idCourseToUpdate, $commonAttributes,
 						$specificsAttributes, $secretary
 					);
@@ -81,21 +83,58 @@ class PostGraduation extends CI_Controller {
 		}
 	}
 
-	private function updateMasterDegreeAcademicCourse($idCourseToUpdate, $commonAttributes, $specificsAttributes, $secretary){
+	public function cleanPostGraduationData($idCourse, $postGraduationType){
 		
-		$this->checkExistingCourseType($idCourseToUpdate);
+		
+		// define("ACADEMIC_PROGRAM", "academic_program");
+		// define("PROFESSIONAL_PROGRAM", "professional_program");
 
-		try{
-			$master_degree = new MasterDegree();
-			$master_degree->updateMasterDegreeAcademicCourse(
-				$idCourseToUpdate, $commonAttributes,
-				$specificsAttributes, $secretary
-			);
-			
-		}catch(CourseNameException $caughtException){
-			throw $caughtException;
-		}catch(CourseException $caughtException){
-			throw $caughtException;
+		switch($postGraduationType){
+			case ACADEMIC_PROGRAM:
+
+				$this->cleanAcademicProgramData($idCourse);
+				break;
+		
+			case PROFESSIONAL_PROGRAM:
+				$this->cleanProfessionalProgramData($idCourse);
+				break;
+
+			default:
+				
+				break;
 		}
+	}
+
+	private function cleanAcademicProgramData($idCourse){
+				
+		$this->load->model('course_model');
+
+		$this->deleteAcademicMasterDegree($idCourse);
+		$this->deleteAcademicDoctorate($idCourse);
+		$this->course_model->deleteCourseById($idCourse);
+	}
+
+	private function deleteAcademicMasterDegree($idCourse){
+		
+		$masterDegree = new MasterDegree();
+		$masterDegree->deleteAcademicMasterDegree($idCourse);
+	}
+
+	private function deleteAcademicDoctorate($idCourse){
+		
+		$doctorate = new Doctorate();
+		$doctorate->deleteDoctorate($idCourse);
+	}
+
+	private function cleanProfessionalProgramData($idCourse){
+		$this->load->model('course_model');
+		
+		$this->deleteProfessionalMasterDegree($idCourse);
+		$this->course_model->deleteCourseById($idCourse);
+	}
+
+	private function deleteProfessionalMasterDegree($idCourse){
+		$masterDegree = new MasterDegree();
+		$masterDegree->deleteProfessionalMasterDegree($idCourse);
 	}
 }

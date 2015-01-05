@@ -115,8 +115,9 @@ class Course_model extends CI_Model {
 	 * @return TRUE if the exclusion was made right or FALSE if it does not
 	 */
 	public function deleteCourseById($id_course){
+
 		$idExists = $this->checkExistingId($id_course);
-		
+
 		$courseWasDeleted = FALSE;
 		if($idExists){
 			$this->db->delete('course', array('id_course' => $id_course));

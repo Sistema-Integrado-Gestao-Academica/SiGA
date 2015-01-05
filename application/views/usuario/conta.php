@@ -3,7 +3,7 @@
 <?php
 echo form_open("usuario/altera");
 
-$usuario = autoriza();
+$usuario = session();
 
 $value = $usuario['user']['name'];
 echo form_label("Nome", "nome");

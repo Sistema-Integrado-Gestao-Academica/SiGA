@@ -3,7 +3,7 @@
 class Funcionario extends CI_Controller {
 
 	public function formulario() {
-		autoriza();
+		session();
 		$this->load->model('funcionarios_model');
 		$funcionarios = $this->funcionarios_model->buscaTodos();
 		$dados = array('funcionarios' => $funcionarios);
@@ -11,7 +11,7 @@ class Funcionario extends CI_Controller {
 	}
 
 	public function formulario_altera($id) {
-		autoriza();
+		session();
 		$this->load->model('funcionarios_model');
 		$funcionario = array('id' => $id);
 		$funcionario = $this->funcionarios_model->busca('id', $funcionario);
@@ -20,14 +20,14 @@ class Funcionario extends CI_Controller {
 	}
 
 	public function novo() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('nome', 'Nome do funcionário', 'required');
 		$this->form_validation->set_error_delimiters("<p class='alert alert-danger'>", "</p>");
 		$sucesso = $this->form_validation->run();
 
 		if ($sucesso) {
-			$usuarioLogado = autoriza();
+			$usuarioLogado = session();
 			$nome = $this->input->post('nome');
 			$funcionario = array('nome' => $nome);
 
@@ -45,7 +45,7 @@ class Funcionario extends CI_Controller {
 	}
 
 	public function altera() {
-		autoriza();
+		session();
 		$id = $this->input->post("funcionario_id");
 		$nome = $this->input->post("nome");
 		$this->load->model("funcionarios_model");
@@ -60,7 +60,7 @@ class Funcionario extends CI_Controller {
 	}
 
 	public function remove() {
-		autoriza();
+		session();
 		$id = $this->input->post("funcionario_id");
 		$this->load->model("funcionarios_model");
 		$funcionario = array("id" => $id);
