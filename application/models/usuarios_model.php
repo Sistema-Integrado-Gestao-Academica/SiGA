@@ -83,6 +83,8 @@ class Usuarios_model extends CI_Model {
 		define('SECRETARY', 4);
 		$this->db->select('id_user');
 		$id_users = $this->db->get_where('user_user_type',array('id_user_type'=>SECRETARY))->result_array();
+		$users = array();
+		$return_users = array();
 		
 		for ($i=0 ; $i < sizeof($id_users); $i++){
 			$users[$i] = $this->getUserById($id_users[$i]['id_user']);

@@ -55,8 +55,11 @@ $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
 $route['cursos'] = 'course/index';
-$route['registerDoctorateCourse'] = 'course/formToCreateDoctorateCourse';
+$route['registerDoctorateCourse/(:num)'] = 'course/formToCreateDoctorateCourse/$1';
+$route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
 $route['secretaria'] = 'utils/loadSecretaria';
+$route['plano%20orcamentario'] = 'budgetplan';
+$route['plano%20orcamentario/(:num)'] = 'budgetplan/edit/$1';
 
 /*
  * Test report routes

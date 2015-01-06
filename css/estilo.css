@@ -17,13 +17,13 @@ body {
 
 button#delete {
 	margin: -57px auto 0px 230px;
-}	
-
-td {
-	text-align: center;
 }
 
 h1.bemvindo {
+	text-align: center;
+}
+
+td {
 	text-align: center;
 }
 
@@ -77,4 +77,8 @@ h1.bemvindo {
 
 .side-nav>li>ul>li>a:hover {
     color: #fff;
+}
+
+#update_doctorate_btn{
+    margin-right: 10px;
 }

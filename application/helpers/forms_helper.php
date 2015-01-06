@@ -15,9 +15,22 @@ function postGraduationTypesSelect(){
 
 function academicProgramForm(){
 
+	$academic_program_name = array(
+		"name" => "program_name",
+		"id" => "program_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "40",
+		"style" => "width: 40%;"
+	);
+
 	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
 	
 	echo "<br>";
+	echo form_label('Nome do Programa Acadêmico', 'program_name');
+	echo form_input($academic_program_name);
+	echo "<br>";
+
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
 	echo "<small> Para cadastrar um Doutorado acesse a página para editar um curso.</small>";
 	
@@ -26,9 +39,21 @@ function academicProgramForm(){
 
 function professionalProgramForm(){
 	
+	$professional_program_name = array(
+		"name" => "program_name",
+		"id" => "program_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "40",
+		"style" => "width: 40%;"
+	);
 	echo "<h3><span class='label label-primary'>Programa Profissional</span></h3>";
 	
 	echo "<br>";
+	echo form_label('Nome do Programa Professional', 'program_name');
+	echo form_input($professional_program_name);
+	echo "<br>";
+
 	echo "<h4><span class='label label-default'>Mestrado Profissional</span></h4>";
 
 	commonAttrForPostGraduationCourses();
@@ -36,8 +61,20 @@ function professionalProgramForm(){
 
 function masterDegreeProgramForm(){
 
+	$masterDegreeName = array(
+		"name" => "master_degree_name_update",
+		"id" => "master_degree_name_update",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "40",
+		"style" => "width: 40%;"
+	);
+
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico - Alterar</span></h4>";
 
+	echo form_label('Nome do mestrado', 'master_degree_name_update');
+	echo form_input($masterDegreeName);
+	
 	commonAttrForPostGraduationCourses();
 }
 
@@ -75,6 +112,35 @@ function formToCreateDoctorateCourse(){
 	
 	echo "<br><br>";
 	echo form_button($submit_button);
+}
+
+function formToUpdateDoctorateCourse(){
+	
+	$doctorate_course_name = array(
+		"name" => "doctorate_course_name",
+		"id" => "doctorate_course_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"maxlength" => "50",
+		"style" => "width: 80%;"
+	);
+
+	$submit_button = array(
+		"class" => "btn btn-primary",
+		"content" => "Alterar Doutorado",
+		"type" => "submit"
+	);
+
+	echo "<h4><span class='label label-default'>Doutorado Acadêmico - Alterar</span></h4>";
+
+	echo "<br>";
+	echo form_label('Nome do curso', 'doctorate_course_name');
+	echo form_input($doctorate_course_name);
+	
+	commonAttrForPostGraduationCourses();
+	
+	echo "<br><br>";
+	echo form_button($submit_button);	
 }
 
 function commonAttrForPostGraduationCourses(){
@@ -167,7 +233,7 @@ function displayMasterDegreeData($masterDegreeData){
 	if($thereIsMasterDegree){
 
 		echo "<tr>";
-			echo "<td class='text-center'>".$masterDegreeData['course_name']."</td>";
+			echo "<td class='text-center'>".$masterDegreeData['master_degree_name']."</td>";
 			echo "<td class='text-center'>".$masterDegreeData['duration']." anos</td>";
 			echo "<td class='text-center'>".$masterDegreeData['total_credits']."</td>";
 			echo "<td class='text-center'>".$masterDegreeData['workload']."h</td>";
@@ -182,7 +248,7 @@ function displayMasterDegreeData($masterDegreeData){
 	}
 }
 
-function displayRegisteredDoctorateData($haveMasterDegree, $doctorateData){
+function displayRegisteredDoctorateData($courseId, $haveMasterDegree, $haveDoctorate, $doctorateData){
 	$thereIsDoctorateDegree = $doctorateData != FALSE;
 
 	echo "<br><h4><span class='label label-default'>Doutorado Acadêmico cadastrado</span></h4>";
@@ -199,7 +265,7 @@ function displayRegisteredDoctorateData($haveMasterDegree, $doctorateData){
 	if($thereIsDoctorateDegree){
 
 		echo "<tr>";
-			// echo "<td class='text-center'>".$doctorateData['course_name']."</td>";
+			echo "<td class='text-center'>".$doctorateData['doctorate_name']."</td>";
 			echo "<td class='text-center'>".$doctorateData['duration']." anos</td>";
 			echo "<td class='text-center'>".$doctorateData['total_credits']."</td>";
 			echo "<td class='text-center'>".$doctorateData['workload']."h</td>";
@@ -208,11 +274,32 @@ function displayRegisteredDoctorateData($haveMasterDegree, $doctorateData){
 		echo "</tr>";
 		echo "</table>";
 
+		if($haveDoctorate){
+			echo anchor(
+				"updateDoctorateCourse/{$courseId}",
+				'Alterar Doutorado',
+				array(
+					"class" => "btn btn-primary",
+					"id" => "update_doctorate_btn"
+				)
+			);
+
+			echo anchor(
+				"/course/removeDoctorateCourse/{$courseId}",
+				'Remover Doutorado',
+				array(
+					"class" => "btn btn-danger",
+					"id" => "remove_doctorate_btn"
+				)
+			);
+		}
+
 	}else{
 		echo "</table>";
 		echo "<h4><span class='label label-danger'>Nenhum doutorado cadastrado para esse Programa Acadêmico.</span></h4><br>";
 		if($haveMasterDegree){
-			echo anchor('registerDoctorateCourse', 'Cadastrar Doutorado');
+			echo anchor("registerDoctorateCourse/{$courseId}", 'Cadastrar Doutorado', array(
+			"class" => "btn btn-primary"));
 		}
 	}
 }

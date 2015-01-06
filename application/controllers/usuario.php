@@ -6,7 +6,7 @@ class Usuario extends CI_Controller {
 		$this->load->model('usuarios_model');
 		$usuarios = $this->usuarios_model->buscaTodos();
 
-		if ($usuarios && !$this->session->userdata('usuario_logado')) {
+		if ($usuarios && !$this->session->userdata('current_user')) {
 			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
 		} else {
@@ -21,7 +21,7 @@ class Usuario extends CI_Controller {
 	}
 
 	public function conta() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 		$dados = array("usuario" => $usuarioLogado);
 		$this->load->template("usuario/conta", $dados);
 	}
@@ -79,7 +79,7 @@ class Usuario extends CI_Controller {
 	}
 
 	public function altera() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome", "alpha");
@@ -94,7 +94,7 @@ class Usuario extends CI_Controller {
 			$alterado = $this->usuarios_model->altera($usuario);
 
 			if ($alterado && $usuarioLogado != $usuario) {
-				$this->session->set_userdata('usuario_logado', $usuario);
+				$this->session->set_userdata('current_user', $usuario);
 				$this->session->set_flashdata("success", "Os dados foram alterados");
 			} else if (!$alterado){
 				$this->session->set_flashdata("danger", "Os dados não foram alterados");
@@ -107,14 +107,14 @@ class Usuario extends CI_Controller {
 	}
 
 	public function remove() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 		$this->load->model("usuarios_model");
 		if ($this->usuarios_model->remove($usuarioLogado)) {
-			$this->session->unset_userdata('usuario_logado');
+			$this->session->unset_userdata('current_user');
 			$this->session->set_flashdata("success", "Usuário \"{$usuarioLogado['user']['login']}\" removido");
 			redirect("login");
 		} else {
-			$dados = array('usuario' => autoriza());
+			$dados = array('usuario' => session());
 			$this->load->template("usuario/conta", $dados);
 		}
 		
@@ -126,7 +126,6 @@ class Usuario extends CI_Controller {
 	 */
 	public function getUserTypes(){
 		
-		// $usuarioLogado = autoriza();
 		$this->load->model("usuarios_model");
 		$user_types = $this->usuarios_model->getAllUserTypes();
 		

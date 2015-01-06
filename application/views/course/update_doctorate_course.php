@@ -1,10 +1,9 @@
-
 <div class="row">
 
 	<div class="col-lg-6">	
 		<br>
 		<?php
-		echo form_open("course/registerDoctorateCourse");
+		echo form_open("course/updateDoctorateCourse");
 		
 			/*
 			 * Course id passed through the loadTemplate on 
@@ -12,7 +11,7 @@
 			*/
 			echo form_hidden('course_id', $course_id);
 			
-			formToCreateDoctorateCourse();
+			formToUpdateDoctorateCourse();
 
 		echo form_close();
 		?>

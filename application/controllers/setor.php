@@ -3,7 +3,7 @@
 class Setor extends CI_Controller {
 
 	public function formulario() {
-		autoriza();
+		session();
 		$this->load->model("setores_model");
 		$setores = $this->setores_model->buscaTodos();
 		$dados = array("setores" => $setores);
@@ -11,7 +11,7 @@ class Setor extends CI_Controller {
 	}
 
 	public function formulario_altera($id) {
-		autoriza();
+		session();
 		$this->load->model("setores_model");
 		$setor = array('id' => $id);
 		$setor = $this->setores_model->busca('id', $setor);
@@ -20,14 +20,14 @@ class Setor extends CI_Controller {
 	}
 
 	public function novo() {
-		$usuarioLogado = autoriza();
+		$usuarioLogado = session();
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome do setor", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert alert-danger'>", "</p>");
 		$sucesso = $this->form_validation->run();
 
 		if ($sucesso) {
-			$usuarioLogado = autoriza();
+			$usuarioLogado = session();
 			$nome = $this->input->post("nome");
 			$setor = array('nome' => $nome);
 
@@ -45,7 +45,7 @@ class Setor extends CI_Controller {
 	}
 
 	public function altera() {
-		autoriza();
+		session();
 		$id = $this->input->post("setor_id");
 		$nome = $this->input->post("nome");
 		$this->load->model("setores_model");
@@ -60,7 +60,7 @@ class Setor extends CI_Controller {
 	}
 
 	public function remove() {
-		autoriza();
+		session();
 		$id = $this->input->post("setor_id");
 		$this->load->model("setores_model");
 		$setor = array("id" => $id);

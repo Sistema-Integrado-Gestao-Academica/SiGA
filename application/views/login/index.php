@@ -1,5 +1,5 @@
 <?php 
-$sessao = $this->session->userdata("usuario_logado");
+$sessao = $this->session->userdata("current_user");
 if ($sessao != NULL) { ?>
 	<p class="alert alert-success text-center">Logado como "<?=$sessao['user']['login']?>"</p>
 	<h1 class="bemvindo">Bem vindo!</h1>

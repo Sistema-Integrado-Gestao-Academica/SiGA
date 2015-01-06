@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?php  $session = $this->session->userdata("usuario_logado");
+<?php  $session = $this->session->userdata("current_user");
 ?>
 <html>
 <head>
@@ -13,7 +13,9 @@
 	
 	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
 	<script src=<?=base_url("js/functions.js")?>></script>
-	
+	<script src=<?=base_url("js/jquery.inputmask.js")?>></script>
+	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
+	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
 </head>
 
 <body>
@@ -41,8 +43,7 @@
 			<?php  
 				foreach($session["user_permissions"] as $id => $permission_name){
 					echo "<li>" . anchor($permission_name, ucfirst($permission_name)) . " </li>";
-				}
-				?>
+				} ?>
 				<li><?=anchor("conta", "Conta")?></li>
 				<li><?=anchor("logout", "Sair")?></li>
 			</ul>
