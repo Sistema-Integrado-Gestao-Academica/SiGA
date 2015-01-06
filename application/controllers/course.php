@@ -295,6 +295,14 @@ class Course extends CI_Controller {
 		redirect('/course/index');
 	}
 
+	public function removeDoctorateCourse($courseId){
+		$doctorate = new Doctorate();
+		$doctorate->deleteDoctorate($courseId);
+
+		$this->session->set_flashdata('success', 'Doutorado apagado com sucesso!');
+		redirect('/course/index');
+	}
+
 	/**
 	 * Validates the data submitted on the register doctorate form
 	 */

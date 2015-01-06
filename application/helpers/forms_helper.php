@@ -275,8 +275,23 @@ function displayRegisteredDoctorateData($courseId, $haveMasterDegree, $haveDocto
 		echo "</table>";
 
 		if($haveDoctorate){
-			echo anchor("updateDoctorateCourse/{$courseId}", 'Alterar Doutorado', array(
-			"class" => "btn btn-primary"));	
+			echo anchor(
+				"updateDoctorateCourse/{$courseId}",
+				'Alterar Doutorado',
+				array(
+					"class" => "btn btn-primary",
+					"id" => "update_doctorate_btn"
+				)
+			);
+
+			echo anchor(
+				"/course/removeDoctorateCourse/{$courseId}",
+				'Remover Doutorado',
+				array(
+					"class" => "btn btn-danger",
+					"id" => "remove_doctorate_btn"
+				)
+			);
 		}
 
 	}else{
