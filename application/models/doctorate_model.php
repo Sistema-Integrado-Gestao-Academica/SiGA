@@ -11,6 +11,27 @@ class Doctorate_model extends CI_Model {
 		$this->associateDoctorateToAcademicProgram($doctorateId, $programId);
 	}
 
+	public function updateDoctorate($programId, $newDoctorate){
+		
+		$registeredDoctorate = $this->getDoctorateForCourse($programId);
+
+		if($registeredDoctorate != FALSE){
+			$doctorateId = $registeredDoctorate['id_doctorate'];
+
+			$this->updateDoctorateAttributes($doctorateId, $newDoctorate);
+		}else{
+
+			throw new DoctorateException("Não há doutorados para esse curso.");
+		}
+	}
+
+	private function updateDoctorateAttributes($doctorateId, $newDoctorate){
+		
+
+		$this->db->where('id_doctorate', $doctorateId);
+		$this->db->update('doctorate', $newDoctorate);
+	}
+
 	/**
 	 * Associate a doctorate to an academic program
 	 * @param $doctorateId - Doctorate id to associate
@@ -55,6 +76,12 @@ class Doctorate_model extends CI_Model {
 		$foundDoctorate = $this->getDoctorateForCourse($courseId);
 
 		return $foundDoctorate;
+	}
+
+	public function existsDoctorateForThisCourse($courseId){
+		$existsDoctorate = $this->checkIfExistsDoctorateForThisCourse($courseId);
+
+		return $existsDoctorate;
 	}
 
 	private function getDoctorateForCourse($courseId){

@@ -78,3 +78,7 @@ td {
 .side-nav>li>ul>li>a:hover {
     color: #fff;
 }
+
+#update_doctorate_btn{
+    margin-right: 10px;
+}
