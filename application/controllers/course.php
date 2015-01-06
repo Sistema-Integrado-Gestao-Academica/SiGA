@@ -913,8 +913,8 @@ class Course extends CI_Controller {
 		$arrarIsNotEmpty = is_array($permissions_array) && !is_null($permissions_array);
 		if($arrarIsNotEmpty){
 			$existsThisPermission = FALSE;
-			foreach($permissions_array as $permission_name){
-				if($permission_name === COURSE_PERMISSION_NAME){
+			foreach($permissions_array as $route => $permission_name){
+				if($route === COURSE_PERMISSION_NAME){
 					$existsThisPermission = TRUE;
 				}
 			}

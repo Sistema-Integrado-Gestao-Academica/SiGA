@@ -41,8 +41,8 @@
             </ul>
             <ul class="nav navbar-nav">
 			<?php  
-				foreach($session["user_permissions"] as $id => $permission_name){
-					echo "<li>" . anchor($permission_name, ucfirst($permission_name)) . " </li>";
+				foreach($session["user_permissions"] as $route => $permission_name){
+					echo "<li>" . anchor($route, $permission_name) . " </li>";
 				} ?>
 				<li><?=anchor("conta", "Conta")?></li>
 				<li><?=anchor("logout", "Sair")?></li>
