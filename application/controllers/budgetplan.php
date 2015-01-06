@@ -60,13 +60,15 @@ class Budgetplan extends CI_Controller {
 			array_push($courses, $c['course_name']);
 		}
 
-		$disable = $budgetplan['status'] == 3 ? "readonly" : "";
+		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
+		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
 
 		$data = array(
 			'budgetplan' => $budgetplan,
 			'status' => $status,
 			'courses' => $courses,
-			'disable' => $disable
+			'disable_amount' => $disable_amount,
+			'disable_spending' => $disable_spending
 		);
 		$this->load->template("budgetplan/edit", $data);
 	}
@@ -78,6 +80,11 @@ class Budgetplan extends CI_Controller {
 		$amount = $this->input->post("amount");
 		$status = (int) $this->input->post("status") + 1;
 		$spending = $this->input->post("spending");
+		$confirm = $this->input->post("confirm");
+
+		if (!$confirm) {
+			redirect("plano%20orcamentario/{$id}");
+		}
 
 		$budgetplan = array(
 			'id' => $id,

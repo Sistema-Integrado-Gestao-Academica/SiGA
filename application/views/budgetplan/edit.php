@@ -3,6 +3,7 @@
 <?php  
 echo form_open("budgetplan/update");
 echo form_hidden("budgetplan_id", $budgetplan['id']);
+echo form_hidden("confirm");
 
 
 echo form_label("Curso", "course");
@@ -18,7 +19,7 @@ echo form_input(array(
 	"type" => "number",
 	"class" => "form-campo",
 	"value" => $budgetplan['amount'],
-	$disable => $disable
+	$disable_amount => $disable_amount
 ));
 
 echo form_label("Gasto", "spending");
@@ -27,20 +28,41 @@ echo form_input(array(
 	"id" => "spending",
 	"type" => "number",
 	"class" => "form-campo",
-	"value" => $budgetplan['spending']
+	"value" => $budgetplan['spending'],
+	$disable_spending => $disable_spending
 ));
 
-echo form_label("Status", "status");
-echo "<br>";
-echo form_dropdown('status', $status, $budgetplan['status']-1);
+if ($budgetplan['status'] != 4) {
+	echo form_label("Status", "status");
+	echo "<br>";
+	echo form_dropdown('status', $status, $budgetplan['status']-1, 'id="status"');
 
-echo "<br><br>";
+	echo "<br><br>";
 
-echo form_button(array(
-	"class" => "btn btn-primary",
-	"type" => "sumbit",
-	"content" => "Salvar"
-));
+	echo form_button(array(
+		"class" => "btn btn-primary",
+		"type" => "sumbit",
+		"content" => "Salvar",
+		"onclick" => "confirmation()"
+	));
+} else {
+	echo "<br><a href='".base_url('plano%20orcamentario')."' class='btn btn-primary'>Voltar</a>";
+}
 
 echo form_close();
 ?>
+
+<script>
+	function confirmation() {
+		var status = document.getElementById("status").value;
+		if (status == 2) {
+			if (confirm("ATENÇÃO! Com status \"Em execução\", não será mais possível alterar o valor do montante.")) {
+				document.getElementsByName("confirm")[0].value = false;
+			}
+		} else if (status == 3) {
+			if (confirm("ATENÇÃO! Com status \"Finalizado\", não será mais possível fazer alterações.")) {
+				document.getElementsByName("confirm")[0].value = false;
+			}
+		}
+	}
+</script>
