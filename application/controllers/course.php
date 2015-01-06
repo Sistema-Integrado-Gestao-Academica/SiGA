@@ -830,7 +830,7 @@ class Course extends CI_Controller {
 	 * @return TRUE if the user have the permission or FALSE if does not
 	 */
 	private function checkUserPermission(){
-		$logged_user_data = $this->session->userdata('usuario_logado');	
+		$logged_user_data = $this->session->userdata('current_user');
 		$permissions_for_logged_user = $logged_user_data['user_permissions'];
 
 		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
