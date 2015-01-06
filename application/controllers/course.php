@@ -8,6 +8,7 @@ require_once('graduation.php');
 require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/MasterDegreeException.php");
+require_once(APPPATH."/exception/DoctorateException.php");
 
 class Course extends CI_Controller {
 
@@ -103,8 +104,9 @@ class Course extends CI_Controller {
 		$doctorate = new Doctorate();
 		$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
 		$haveMasterDegree = $doctorate->checkIfHaveMasterDegree($courseId);
+		$haveDoctorate = $doctorate->checkIfHaveDoctorate($courseId);
 
-		displayRegisteredDoctorateData($courseId, $haveMasterDegree, $registeredDoctorate);
+		displayRegisteredDoctorateData($courseId, $haveMasterDegree, $haveDoctorate, $registeredDoctorate);
 	}
 
 	// Used for the update course page
@@ -197,6 +199,13 @@ class Course extends CI_Controller {
 		$this->loadTemplateSafely('course/register_doctorate_course', $course);
 	}
 
+	public function formToUpdateDoctorateCourse($courseId){
+
+		$course = array('course_id' => $courseId);
+
+		$this->loadTemplateSafely('course/update_doctorate_course', $course);	
+	}
+
 	public function registerDoctorateCourse(){
 		
 		$doctorateDataIsOk = $this->validatesNewDoctorateData();
@@ -238,6 +247,60 @@ class Course extends CI_Controller {
 			redirect('registerDoctorateCourse/'.$courseId);
 		}
 		
+	}
+
+	public function updateDoctorateCourse(){
+
+		// $doctorateDataIsOk = $this->validatesNewDoctorateData();
+		$doctorateDataIsOk = TRUE;
+
+		$programId = $this->input->post('course_id');
+
+		if($doctorateDataIsOk){
+
+			$doctorateName = $this->input->post('doctorate_course_name');
+			$doctorateDuration = $this->input->post('course_duration');
+			$doctorateTotalCredits = $this->input->post('course_total_credits');
+			$doctorateHours= $this->input->post('course_hours');
+			$doctorateClass= $this->input->post('course_class');
+			$doctorateDescription = $this->input->post('course_description');
+
+			$doctorateToUpdate = array(
+				'doctorate_name' => $doctorateName,
+				'duration' => $doctorateDuration,
+				'total_credits' => $doctorateTotalCredits,
+				'workload' =>$doctorateHours,
+				'start_class' => $doctorateClass,
+				'description' => $doctorateDescription
+			);
+
+			try{
+
+				$doctorate = new Doctorate();
+				$doctorate->updateDoctorate($programId ,$doctorateToUpdate);
+
+				$updateStatus = "success";
+				$updateMessage =  "Doutorado alterado com sucesso!";
+			}catch(DoctorateException $caughtException){
+				$updateStatus = "danger";
+				$updateMessage =  $caughtException->getMessage();
+			}
+
+		}else{
+			$updateStatus = "danger";
+			$updateMessage =  "Dados na forma incorreta.";
+		}
+		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+		redirect('/course/index');
+	}
+
+	public function removeDoctorateCourse($courseId){
+		$doctorate = new Doctorate();
+		$doctorate->deleteDoctorate($courseId);
+
+		$this->session->set_flashdata('success', 'Doutorado apagado com sucesso!');
+		redirect('/course/index');
 	}
 
 	/**
@@ -850,8 +913,8 @@ class Course extends CI_Controller {
 		$arrarIsNotEmpty = is_array($permissions_array) && !is_null($permissions_array);
 		if($arrarIsNotEmpty){
 			$existsThisPermission = FALSE;
-			foreach($permissions_array as $permission_name){
-				if($permission_name === COURSE_PERMISSION_NAME){
+			foreach($permissions_array as $route => $permission_name){
+				if($route === COURSE_PERMISSION_NAME){
 					$existsThisPermission = TRUE;
 				}
 			}

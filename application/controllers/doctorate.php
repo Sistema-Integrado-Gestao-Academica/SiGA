@@ -19,6 +19,20 @@ class Doctorate extends CI_Controller {
 		$this->doctorate_model->saveDoctorate($programId, $doctorateAttributes);
 	}
 
+	public function updateDoctorate($programId, $doctorateToUpdate){
+		
+		$doctorateToUpdate = $this->filterNullAttributes($doctorateToUpdate);
+
+		// Validates params
+		try{
+
+			$this->load->model('doctorate_model');
+			$this->doctorate_model->updateDoctorate($programId, $doctorateToUpdate);
+		}catch(DoctorateException $caughtException){
+			throw $caughtException;
+		}
+	}
+
 	public function deleteDoctorate($courseId){
 		
 		$this->load->model('doctorate_model');
@@ -43,6 +57,21 @@ class Doctorate extends CI_Controller {
 		return $thereIsMasterDegree;
 	}
 
+	public function checkIfHaveDoctorate($courseId){
+		$this->load->model('doctorate_model');
+		$haveDoctorate = $this->doctorate_model->existsDoctorateForThisCourse($courseId);
 
+		return $haveDoctorate;
+	}
 
+	private function filterNullAttributes($attributesArray){
+
+		foreach ($attributesArray as $attributeName => $attribute){
+			if(empty($attribute)){
+				unset($attributesArray[$attributeName]);
+			}
+		}
+
+		return $attributesArray;
+	}
 }

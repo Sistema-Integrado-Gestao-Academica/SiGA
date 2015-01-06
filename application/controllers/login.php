@@ -16,7 +16,9 @@ class Login extends CI_Controller {
 		
 		// Load the Module model
 		$this->load->model("module_model");
-		$registered_permissions = $this->module_model->getUserPermissionNames($usuario['id']);
+		$registered_permissions = $this->module_model->getUserPermissions($usuario['id']);
+		
+		$registered_permissions = array_combine($registered_permissions['route'], $registered_permissions['name']);
 
 		$userData = array(
 			'user' => $usuario,

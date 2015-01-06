@@ -35,9 +35,6 @@ class Migration_Cria_tabela_de_plano_orcamentario extends CI_Migration {
 		$object = array('id' => 4, 'description' => 'Finalizado');
 		$this->db->insert('budgetplan_status', $object);
 
-		// Adding 'plano orçamentário' permission
-		$object = array('id_permission' => 7, 'permission_name' => 'plano orcamentario');
-		$this->db->insert('permission', $object);
 
 		$object = array('id_group' => 1, 'id_permission' => 7);
 		$this->db->insert('group_permission', $object);
@@ -53,9 +50,6 @@ class Migration_Cria_tabela_de_plano_orcamentario extends CI_Migration {
 		$this->db->delete('group_permission', $object);
 		$object = array('id_group' => 3, 'id_permission' => 7);
 		$this->db->delete('group_permission', $object);
-
-		$object = array('permission_name' => 'plano orcamentario');
-		$this->db->delete('permission', $object);
 	}
 }
 
