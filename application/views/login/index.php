@@ -4,7 +4,7 @@ if ($sessao != NULL) { ?>
 	<p class="alert alert-success text-center">Logado como "<?=$sessao['user']['login']?>"</p>
 	<h1 class="bemvindo">Bem vindo!</h1>
 <?php } else { ?>
-	<h1 class="bemvindo">Bem vindo ao SiGA</h1>
+	<h1 class="bemvindoLogin">Bem vindo ao SiGA</h1>
 	
 	<div class="form-box" id="login-box">
         <div class="header">Login</div>
