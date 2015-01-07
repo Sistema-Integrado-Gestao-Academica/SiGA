@@ -1,4 +1,4 @@
-<h2 class="text-center">Cadastro de um novo usuário</h2>
+<h2 class="principal">Cadastro de um novo usuário</h2>
 
 <?php 
 

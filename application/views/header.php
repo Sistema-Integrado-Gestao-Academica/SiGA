@@ -86,7 +86,7 @@
 		                    	echo "</li>";
 							}  
 							?>
-	                  
+	                  	</ul>
 	                <!-- /.sidebar -->
 	            </aside>
             <?php }?>

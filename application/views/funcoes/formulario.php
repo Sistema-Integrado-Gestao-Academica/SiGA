@@ -3,35 +3,45 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Funções cadastradas</h3></td>
-		<td></td>
 	</tr>
 
-<?php foreach ($funcoes as $funcao) { ?>
-	<tr>
-		<td>
-		<?=$funcao['nome']?>
-		</td>
-
-		<td>
-		<?=anchor("funcoes/{$funcao['id']}", "Editar", array(
-			"class" => "btn btn-primary btn-editar",
-			"type" => "sumbit",
-			"content" => "Editar"
-		))?>
+<?php 
+	if($funcoes){
+		foreach ($funcoes as $funcao) { ?>
+			<tr>
+				<td>
+				<?=$funcao['nome']?>
+				</td>
 		
-		<?php 
-		echo form_open("funcao/remove");
-		echo form_hidden("funcao_id", $funcao['id']);
-		echo form_button(array(
-			"class" => "btn btn-danger btn-remover",
-			"type" => "sumbit",
-			"content" => "Remover"
-		));
-		echo form_close();
-		?>
-		</td>
-	</tr>
-<?php } ?>
+				<td>
+				<?=anchor("funcoes/{$funcao['id']}", "Editar", array(
+					"class" => "btn btn-primary btn-editar",
+					"type" => "sumbit",
+					"content" => "Editar"
+				))?>
+				
+				<?php 
+				echo form_open("funcao/remove");
+				echo form_hidden("funcao_id", $funcao['id']);
+				echo form_button(array(
+					"class" => "btn btn-danger btn-remover",
+					"type" => "sumbit",
+					"content" => "Remover"
+				));
+				echo form_close();
+				?>
+				</td>
+			</tr>
+<?php } 
+	}else{ ?>
+		<tr>
+			<td>
+				<h3>
+					<label class="label label-default"> Não existem funções cadastrados</label>
+				</h3>
+			</td>
+		</tr>
+	<?php }?>
 </table>
 
 <br><br>

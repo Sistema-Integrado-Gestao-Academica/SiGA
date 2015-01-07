@@ -3,35 +3,45 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Departamentos cadastrados</h3></td>
-		<td></td>
 	</tr>
 
-<?php foreach ($departamentos as $departamento) { ?>
-	<tr>
-		<td>
-		<?=$departamento['nome']?>
-		</td>
-
-		<td>
-		<?=anchor("departamentos/{$departamento['id']}", "Editar", array(
-			"class" => "btn btn-primary btn-editar",
-			"type" => "sumbit",
-			"content" => "Editar"
-		))?>
+<?php 
+	if($departamentos){
+		foreach ($departamentos as $departamento) { ?>
+			<tr>
+				<td>
+				<?=$departamento['nome']?>
+				</td>
 		
-		<?php 
-		echo form_open("departamento/remove");
-		echo form_hidden("departamento_id", $departamento['id']);
-		echo form_button(array(
-			"class" => "btn btn-danger btn-remover",
-			"type" => "sumbit",
-			"content" => "Remover"
-		));
-		echo form_close();
-		?>
-		</td>
-	</tr>
-<?php } ?>
+				<td>
+				<?=anchor("departamentos/{$departamento['id']}", "Editar", array(
+					"class" => "btn btn-primary btn-editar",
+					"type" => "sumbit",
+					"content" => "Editar"
+				))?>
+				
+				<?php 
+				echo form_open("departamento/remove");
+				echo form_hidden("departamento_id", $departamento['id']);
+				echo form_button(array(
+					"class" => "btn btn-danger btn-remover",
+					"type" => "sumbit",
+					"content" => "Remover"
+				));
+				echo form_close();
+				?>
+				</td>
+			</tr>
+<?php }
+	}else{ ?>
+		<tr>
+			<td>
+				<h3>
+					<label class="label label-default"> Não existem departamentos cadastrados</label>
+				</h3>
+			</td>
+		</tr>
+	<?php }?>
 </table>
 
 <br><br>

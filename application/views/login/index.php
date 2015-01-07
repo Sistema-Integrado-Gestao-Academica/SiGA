@@ -22,7 +22,8 @@ if ($sessao != NULL) { ?>
 						"class" => "form-campo",
 						"maxlength" => "255",
 						"value" => set_value("login", ""),
-						"class" => "form-control"
+						"class" => "form-control",
+						"placeholder" => "Nome de Usuário"
 					)); 
 				?>
 			</div>
@@ -35,7 +36,8 @@ if ($sessao != NULL) { ?>
 						"type" => "password",
 						"class" => "form-campo",
 						"maxlength" => "255",
-						"class" => "form-control"
+						"class" => "form-control",
+						"placeholder" => "Senha"
 					));
 				?>
 			</div>

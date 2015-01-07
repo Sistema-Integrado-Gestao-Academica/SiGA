@@ -3,35 +3,45 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Setores cadastrados</h3></td>
-		<td></td>
 	</tr>
 
-<?php foreach ($setores as $setor) { ?>
-	<tr>
-		<td>
-		<?=$setor['nome']?>
-		</td>
-
-		<td>
-		<?=anchor("setores/{$setor['id']}", "Editar", array(
-			"class" => "btn btn-primary btn-editar",
-			"type" => "sumbit",
-			"content" => "Editar"
-		))?>
-
-		<?php 
-		echo form_open("setor/remove");
-		echo form_hidden("setor_id", $setor['id']);
-		echo form_button(array(
-			"class" => "btn btn-danger btn-remover",
-			"type" => "sumbit",
-			"content" => "Remover"
-		));
-		echo form_close();
-		?>
-		</td>
-	</tr>
-<?php } ?>
+<?php 
+	if($setores){
+		foreach ($setores as $setor) { ?>
+			<tr>
+				<td>
+				<?=$setor['nome']?>
+				</td>
+		
+				<td>
+				<?=anchor("setores/{$setor['id']}", "Editar", array(
+					"class" => "btn btn-primary btn-editar",
+					"type" => "sumbit",
+					"content" => "Editar"
+				))?>
+		
+				<?php 
+				echo form_open("setor/remove");
+				echo form_hidden("setor_id", $setor['id']);
+				echo form_button(array(
+					"class" => "btn btn-danger btn-remover",
+					"type" => "sumbit",
+					"content" => "Remover"
+				));
+				echo form_close();
+				?>
+				</td>
+			</tr>
+<?php 	} 
+	}else{ ?>
+		<tr>
+			<td>
+				<h3>
+					<label class="label label-default"> Não existem setores cadastrados</label>
+				</h3>
+			</td>
+		</tr>
+	<?php }?>
 </table>
 
 <br><br>
