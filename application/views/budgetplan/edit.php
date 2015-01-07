@@ -2,7 +2,8 @@
 
 <div class="form-box-logged" id="login-box">
 <div class="header">Cadastrar um novo P.O.</div>
-		<?php form_open("budgetplan/update");
+		<?php 
+			  echo form_open("budgetplan/update");
 			  echo form_hidden("budgetplan_id", $budgetplan['id']);
 			  echo form_hidden("confirm"); 
 		?>

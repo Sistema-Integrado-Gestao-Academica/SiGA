@@ -1,7 +1,7 @@
 <div class="form-box" id="login-box"> 
 	<div class="header">Alterar Departamento</div>
 		<?php 
-			form_open("departamento/altera");
+			echo form_open("departamento/altera");
 			echo form_hidden("departamento_id", $departamento['id']);
 		 ?>
 	<div class="body bg-gray">
