@@ -16,7 +16,9 @@ class Login extends CI_Controller {
 		
 		// Load the Module model
 		$this->load->model("module_model");
-		$registered_permissions = $this->module_model->getUserPermissionNames($usuario['id']);
+		$registered_permissions = $this->module_model->getUserPermissions($usuario['id']);
+		
+		$registered_permissions = array_combine($registered_permissions['route'], $registered_permissions['name']);
 
 		$userData = array(
 			'user' => $usuario,
@@ -26,7 +28,7 @@ class Login extends CI_Controller {
 		);
 
 		if ($usuario) {
-			$this->session->set_userdata("usuario_logado", $userData);
+			$this->session->set_userdata("current_user", $userData);
 		} else {
 			$this->session->set_flashdata("danger", "Usuário ou senha inválida");
 		}
@@ -79,7 +81,7 @@ class Login extends CI_Controller {
 	 * @return void
 	 */
 	private function unsetLoggedUserAndRedirectTo($pathToRedirect){
-		$this->session->unset_userdata("usuario_logado", $usuario);
+		$this->session->unset_userdata("current_user", $usuario);
 		redirect($pathToRedirect);
 	}
 }

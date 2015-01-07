@@ -10,7 +10,7 @@ class Admin extends CI_Controller {
 			'senha' => 'random'
 		);
 
-		$this->session->set_userdata("usuario_logado", $usuario);
+		$this->session->set_userdata("current_user", $usuario);
 		redirect('/');
 	}
 
