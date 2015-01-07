@@ -14,9 +14,10 @@
 			"type" => "text",
 			"class" => "form-campo",
 			"class" => "form-control",
-			"maxlength" => "255"
+			"maxlength" => "255",
+			"value" => set_value($departamento['nome'])
 		));
-		echo form_error("nome", $departamento['nome']);
+		echo form_error("nome");
 		?>
 		</div>
 	</div>
