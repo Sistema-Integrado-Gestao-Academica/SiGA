@@ -23,7 +23,7 @@ if ($sessao != NULL) { ?>
 						"maxlength" => "255",
 						"value" => set_value("login", ""),
 						"class" => "form-control",
-						"placeholder" => "Nome de Usuário"
+						"placeholder" => "Login de Usuário"
 					)); 
 				?>
 			</div>

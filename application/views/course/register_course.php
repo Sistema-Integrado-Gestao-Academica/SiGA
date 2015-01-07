@@ -25,53 +25,66 @@ $course_name_array_to_form = array(
 		"id" => "courseName",
 		"type" => "text",
 		"class" => "form-campo",
+		"class" => "form-control",
 		"maxlength" => "50",
 		"value" => set_value("nome", ""),
 );
 
 $submit_button_array_to_form = array(
-		"class" => "btn btn-primary",
-		"content" => "Cadastrar",
-		"type" => "submit"
+		"class" => "btn bg-olive btn-block",
+		"type" => "sumbit",
+		"content" => "Cadastrar"
 );
+?>
 
-echo form_open("course/newCourse");
-
-	// Name field
-	echo form_label("Nome do Curso", "courseName");
-	echo form_input($course_name_array_to_form);
-	echo form_error("courseName");
-	echo "<br>";
-	echo "<br>";
-	
-	// User type field
-	echo form_label("Tipo de Curso", "courseTypeLabel");
-	echo form_dropdown("courseType", $form_course_type, '', "id='courseType'");
-	echo form_error("courseType");
-	echo "<br>";
-	echo "<br>";
-	
-	// Secretary field
-	echo form_label("Tipo de Secretaria", "secreteary_type");
-	echo form_dropdown("secretary_type", $form_groups);
-	echo form_error("secretary_type");
-	echo "<br>";
-	echo "<br>";
-	
-	echo form_label("Escolher secretário", "user_secretary");
-	echo form_dropdown("user_secretary", $form_user_secretary);
-	echo form_error("user_secretary");
-	echo "<br>";
-	echo "<br>";
-	
-	
-	?>
-	<br><div id="post_grad_types"></div>
-	<br><div id="chosen_post_grad_type"></div>
-	<?php
-	
-	// Submit button
-	echo "<br>";
-	echo form_button($submit_button_array_to_form);
-
-echo form_close();
+<div class="form-box" id="login-box">
+<div class="header">Cadastrar uma nova função</div>
+		<?= form_open("course/newCourse") ?>
+	<div class="body bg-gray">
+		<div class="form-group">	
+		<?php
+			// Name field
+			echo form_label("Nome do Curso", "courseName");
+			echo form_input($course_name_array_to_form);
+			echo form_error("courseName");
+		?>
+		</div>
+		<div class="form-group">	
+		<?php
+			// User type field
+			echo form_label("Tipo de Curso", "courseTypeLabel");
+			echo form_dropdown("courseType", $form_course_type, '', "id='courseType'");
+			echo form_error("courseType");
+		?>
+		</div>
+		<div class="form-group">	
+		<?php
+			// Secretary field
+			echo form_label("Tipo de Secretaria", "secreteary_type");
+			echo form_dropdown("secretary_type", $form_groups);
+			echo form_error("secretary_type");
+		?>
+		</div>
+		<div class="form-group">	
+		<?php
+			echo form_label("Escolher secretário", "user_secretary");
+			echo form_dropdown("user_secretary", $form_user_secretary);
+			echo form_error("user_secretary");
+		?>
+		</div>
+		<div class="form-group">	
+			<div id="post_grad_types"></div>
+		</div>
+		<div class="form-group">	
+			<div id="chosen_post_grad_type"></div>
+		</div>
+	</div>
+		<div class="footer">
+			<?php 
+			echo form_button($submit_button_array_to_form);
+			
+			echo form_close();
+			?>
+		</div>
+		
+</div>

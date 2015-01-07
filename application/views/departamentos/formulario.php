@@ -44,28 +44,35 @@
 	<?php }?>
 </table>
 
-<br><br>
-
-<?php 
-echo form_open("departamento/novo");
-
-echo form_label("Cadastrar um novo departamento", "nome");
-echo form_input(array(
-	"name" => "nome",
-	"id" => "nome",
-	"type" => "text",
-	"class" => "form-campo",
-	"maxlength" => "255"
-));
-echo form_error("nome");
-
-echo "<br>";
-
-echo form_button(array(
-	"class" => "btn btn-primary",
-	"type" => "sumbit",
-	"content" => "Cadastrar"
-));
-
-echo form_close();
-?>
+<div class="form-box-logged" id="login-box"> 
+	<div class="header">Cadastrar uma nova função</div>
+		<?= form_open("departamento/novo") ?>
+	<div class="body bg-gray">
+		<div class="form-group">	
+		<?php
+		echo form_label("Cadastrar um novo departamento", "nome");
+		echo form_input(array(
+			"name" => "nome",
+			"id" => "nome",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "255"
+		));
+		echo form_error("nome");
+		?>
+		</div>
+	</div>
+		<div class="footer">
+			<?php 
+			echo form_button(array(
+				"class" => "btn bg-olive btn-block",
+				"type" => "sumbit",
+				"content" => "Cadastrar"
+			));
+			
+			echo form_close();
+			?>
+		</div>
+		
+</div>

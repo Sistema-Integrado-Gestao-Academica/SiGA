@@ -55,36 +55,42 @@
 	<?php }?>
 </table>
 
-<br><br>
-
-<?= form_open("budgetplan/save") ?>
-
-<h3>Cadastrar um novo P.O.</h3>
-
-<?php
-echo form_label('Montante inicial', 'amount');
-echo form_input(array(
-	"name" => "amount",
-	"id" => "amount",
-	"type" => "number",
-	"class" => "form-campo"
-));
-
-echo form_label("Status", "status");
-echo "<br>";
-echo form_dropdown('status', $status);
-
-echo "<br><br>";
-
-echo form_button(array(
-	"class" => "btn btn-primary",
-	"type" => "sumbit",
-	"content" => "Cadastrar"
-));
-
-echo form_close();
-?>
-
+<div class="form-box-logged" id="login-box"> 
+	<div class="header">Cadastrar um novo P.O.</div>
+		<?= form_open("budgetplan/save") ?>
+	<div class="body bg-gray">
+		<div class="form-group">	
+		<?php
+		echo form_label('Montante inicial', 'amount');
+		echo form_input(array(
+			"name" => "amount",
+			"id" => "amount",
+			"type" => "number",
+			"class" => "form-campo",
+			"class" =>  "form-control"
+		));
+		?>
+		</div>
+		<div class="form-group">	
+		<?php
+		echo form_label("Status", "status");
+		echo "<br>";
+		echo form_dropdown('status', $status);
+		?>
+		</div>
+		<div class="footer">	
+		<?php	
+		echo form_button(array(
+			"class" => "btn bg-olive btn-block",
+			"type" => "sumbit",
+			"content" => "Cadastrar"
+		));
+		
+		echo form_close();
+		?>
+		</div>
+	</div>
+</div>
 <script>
 	$(document).ready(function() {
 		$("#amount").inputmask("decimal", {

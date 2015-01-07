@@ -20,17 +20,19 @@ function academicProgramForm(){
 		"id" => "program_name",
 		"type" => "text",
 		"class" => "form-campo",
-		"maxlength" => "40",
-		"style" => "width: 40%;"
+		"class" => "form-control",
+		"maxlength" => "40"
 	);
 
 	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
-	
-	echo "<br>";
-	echo form_label('Nome do Programa Acadêmico', 'program_name');
-	echo form_input($academic_program_name);
-	echo "<br>";
-
+	?>
+	<div class='form-group'>
+	<?php 
+		echo form_label('Nome do Programa Acadêmico', 'program_name');
+		echo form_input($academic_program_name);
+	?>
+	</div>	
+	<?php 
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
 	echo "<small> Para cadastrar um Doutorado acesse a página para editar um curso.</small>";
 	
@@ -44,16 +46,18 @@ function professionalProgramForm(){
 		"id" => "program_name",
 		"type" => "text",
 		"class" => "form-campo",
-		"maxlength" => "40",
-		"style" => "width: 40%;"
+		"class" => "form-control",
+		"maxlength" => "40"
 	);
 	echo "<h3><span class='label label-primary'>Programa Profissional</span></h3>";
-	
-	echo "<br>";
-	echo form_label('Nome do Programa Professional', 'program_name');
-	echo form_input($professional_program_name);
-	echo "<br>";
-
+	?>
+	<div class='form-group'>
+		<?php
+			echo form_label('Nome do Programa Professional', 'program_name');
+			echo form_input($professional_program_name);
+		?>
+	</div>
+	<?php
 	echo "<h4><span class='label label-default'>Mestrado Profissional</span></h4>";
 
 	commonAttrForPostGraduationCourses();
@@ -66,15 +70,19 @@ function masterDegreeProgramForm(){
 		"id" => "master_degree_name_update",
 		"type" => "text",
 		"class" => "form-campo",
-		"maxlength" => "40",
-		"style" => "width: 40%;"
+		"class" => "form-control",
+		"maxlength" => "40"
 	);
 
 	echo "<h4><span class='label label-default'>Mestrado Acadêmico - Alterar</span></h4>";
-
-	echo form_label('Nome do mestrado', 'master_degree_name_update');
-	echo form_input($masterDegreeName);
-	
+	?>
+	<div class='form-group'>
+		<?php
+			echo form_label('Nome do mestrado', 'master_degree_name_update');
+			echo form_input($masterDegreeName);
+		?>
+	</div>
+		<?php
 	commonAttrForPostGraduationCourses();
 }
 
@@ -92,21 +100,25 @@ function formToCreateDoctorateCourse(){
 		"id" => "doctorate_course_name",
 		"type" => "text",
 		"class" => "form-campo",
-		"maxlength" => "50",
-		"style" => "width: 80%;"
+		"class" => "form-control",
+		"maxlength" => "50"
 	);
 
 	$submit_button = array(
-		"class" => "btn btn-primary",
+		"class" => "btn bg-olive btn-block",
 		"content" => "Cadastrar Doutorado",
 		"type" => "submit"
 	);
 
 	echo "<h4><span class='label label-default'>Doutorado Acadêmico</span></h4>";
-
-	echo "<br>";
-	echo form_label('Nome do curso', 'doctorate_course_name');
-	echo form_input($doctorate_course_name);
+	?>
+	<div class='form-group'>
+		<?php
+			echo form_label('Nome do curso', 'doctorate_course_name');
+			echo form_input($doctorate_course_name);
+		?>
+	</div>
+	<?php
 	
 	commonAttrForPostGraduationCourses();
 	
@@ -121,22 +133,26 @@ function formToUpdateDoctorateCourse(){
 		"id" => "doctorate_course_name",
 		"type" => "text",
 		"class" => "form-campo",
-		"maxlength" => "50",
-		"style" => "width: 80%;"
+		"class" => "form-control",
+		"maxlength" => "50"
 	);
 
 	$submit_button = array(
-		"class" => "btn btn-primary",
+		"class" => "btn bg-olive btn-block",
 		"content" => "Alterar Doutorado",
 		"type" => "submit"
 	);
 
 	echo "<h4><span class='label label-default'>Doutorado Acadêmico - Alterar</span></h4>";
 
-	echo "<br>";
-	echo form_label('Nome do curso', 'doctorate_course_name');
-	echo form_input($doctorate_course_name);
-	
+	?>
+	<div class='form-group'>
+		<?php
+			echo form_label('Nome do curso', 'doctorate_course_name');
+			echo form_input($doctorate_course_name);
+		?>
+	</div>
+	<?php
 	commonAttrForPostGraduationCourses();
 	
 	echo "<br><br>";
@@ -154,14 +170,14 @@ function commonAttrForPostGraduationCourses(){
 		'name' => 'course_total_credits',
 		'id' => 'course_total_credits',
 		'maxlength' => '10',
-		'style' => 'width: 40%;',
+		"class" => "form-control"
 	);
 
 	$course_hours = array(
 		'name' => 'course_hours',
 		'id' => 'course_hours',
 		'maxlength' => '10',
-		'style' => 'width: 40%;',
+		"class" => "form-control",
 	);
 
 	$course_class = array(
@@ -169,7 +185,7 @@ function commonAttrForPostGraduationCourses(){
 		'id' => 'course_class',
 		'placeholder' => 'Informe o semestre de início.',
 		'maxlength' => '6',
-		'style' => 'width: 40%;',
+		"class" => "form-control",
 	);
 
 	$description = array(
@@ -177,39 +193,46 @@ function commonAttrForPostGraduationCourses(){
 		'id' => 'course_description',
 		'placeholder' => 'Informe a descrição do curso.',
 		'rows' => '500',
-		'style' => 'width: 85%; height: 100px;',
+		"class" => "form-control",
+		'style' => 'height: 100px;',
 	);
-
-	// Course duration field
-	echo "<br><br>";
-	echo form_label('Duração do curso ', 'course_duration');
-	echo form_dropdown('course_duration', $course_duration, '2', 'id=course_duration');
-	echo "<br><br>";
-
-	// Course total credits field
-	echo form_label('Créditos totais', 'total_credits');
-	echo "<br>";
-	echo form_input($total_credits);
-	echo "<br>";
-
-	// Course hours field
-	echo "<br>";
-	echo form_label('Carga-horária total', 'course_hours');
-	echo "<br>";
-	echo form_input($course_hours);
-	echo "<br>";
-
-	// Course class field
-	echo "<br>";
-	echo form_label('Turma', 'course_class');
-	echo form_input($course_class);
-	echo "<br>";
-
-	// Course description field
-	echo "<br>";
-	echo form_label('Descrição ', 'course_description');
-	echo "<br>";
-	echo form_textarea($description);
+?>
+	<div class="form-group">
+		<?php 
+		// Course duration field
+		echo form_label('Duração do curso ', 'course_duration');
+		echo form_dropdown('course_duration', $course_duration, '2', 'id=course_duration');
+		?>
+	</div>
+	<div class="form-group">
+		<?php
+		// Course total credits field
+		echo form_label('Créditos totais', 'total_credits');
+		echo form_input($total_credits);
+		?>
+	</div>
+	<div class="form-group">
+		<?php
+		// Course hours field
+		echo form_label('Carga-horária total', 'course_hours');
+		echo form_input($course_hours);
+		?>
+	</div>
+	<div class="form-group">
+		<?php
+		// Course class field
+		echo form_label('Turma', 'course_class');
+		echo form_input($course_class);
+		?>
+	</div>
+	<div class="form-group">
+		<?php
+		// Course description field
+		echo form_label('Descrição ', 'course_description');
+		echo form_textarea($description);
+		?>
+	</div>
+	<?php 	
 }
 
 /**
