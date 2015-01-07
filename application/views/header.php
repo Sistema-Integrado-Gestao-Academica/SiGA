@@ -52,7 +52,7 @@
 	                    <div class="user-panel">
 	                        <div class="pull-left info">
 	                            <br>
-	                            <p>Hello, <?=ucfirst($session['user']['name'])?></p>
+	                            <p>Olá, <?=ucfirst($session['user']['name'])?></p>
 	
 	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 	                        </div>
@@ -87,6 +87,7 @@
 							}  
 							?>
 	                  	</ul>
+	                  	</section>
 	                <!-- /.sidebar -->
 	            </aside>
             <?php }?>
