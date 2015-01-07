@@ -25,18 +25,15 @@
 	<header>
 		<div class="navbar navbar-fixed-top" role="navigation">
 			<div class="navbar-btn sidebar-toggle" role="button">
-				<div class="">
-					<?=anchor("/", "Home", "class='navbar-brand'")?>
-				</div>
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+				<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
 				<?php if ($session) { ?>
-		            <ul class="nav navbar-nav">
-						<li><?=anchor("conta", "Conta")?></li>
-						<li><?=anchor("logout", "Sair")?></li>
+						<li><?=anchor("conta", "Conta", "class='navbar-brand'")?></li>
+						<li><?=anchor("logout", "Sair", "class='navbar-brand'")?></li>
 					</ul>
 				<?php } else { ?>
-					<ul class="nav navbar-nav ">
-						<li><?=anchor("usuario/novo", "Cadastro")?></li>
+						<li><?=anchor("usuario/novo", "Cadastro", "class='navbar-brand'")?></li>
 				    </ul>
 				<?php }?>
 					
