@@ -45,7 +45,7 @@
 </table>
 
 <div class="form-box-logged" id="login-box"> 
-	<div class="header">Cadastrar uma nova função</div>
+	<div class="header">Cadastrar um novo departamento</div>
 		<?= form_open("departamento/novo") ?>
 	<div class="body bg-gray">
 		<div class="form-group">	
