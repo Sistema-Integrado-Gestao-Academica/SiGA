@@ -1,4 +1,3 @@
-<h2 class="text-center">Cadastro de um novo curso</h2>
 <input id="site_url" name="site_url" type="hidden" value="<?php echo $url; ?>"></input>
 
 <?php
@@ -38,7 +37,7 @@ $submit_button_array_to_form = array(
 ?>
 
 <div class="form-box" id="login-box">
-<div class="header">Cadastrar uma nova função</div>
+<div class="header">Cadastrar um novo Curso</div>
 		<?= form_open("course/newCourse") ?>
 	<div class="body bg-gray">
 		<div class="form-group">	
