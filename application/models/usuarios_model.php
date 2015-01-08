@@ -30,6 +30,13 @@ class Usuarios_model extends CI_Model {
 		return $usuario;
 	}
 
+	/**
+	 * Validate the given user login and password
+	 * @param $login - String with the user login
+	 * @param $password - String with the user password to check
+	 * @return An array with the user data if the login was succeeded
+	 * @throws LoginException in case of empty login or password and invalid login or password
+	 */
 	public function validateUser($login, $password){
 		$thereIsLoginAndPassword = !empty($password) && !empty($login);
 
@@ -55,6 +62,11 @@ class Usuarios_model extends CI_Model {
 		}
 	}
 
+	/**
+	 * Get the user data by its login
+	 * @param $login - String with the user login
+	 * @return An array with the user data if exists or FALSE if does not
+	 */
 	private function getUserDataByLogin($login){
 		$this->db->select('id, name, email, login');
 		$this->db->where("login", $login);
@@ -63,6 +75,12 @@ class Usuarios_model extends CI_Model {
 		return $foundUser;
 	}
 
+	/**
+	 * Check if the registered password for the given login match the given password
+	 * @param $password - String with the password NOT encrypted
+	 * @param $login - String with the login
+	 * @return TRUE if the passwords match or FALSE if does not
+	 */
 	private function checkPasswordForThisLogin($password, $login){
 		
 		$this->db->select('password');
@@ -78,6 +96,11 @@ class Usuarios_model extends CI_Model {
 		return $passwordsMatch;
 	}
 
+	/**
+	 * Check if a given login exists
+	 * @param $loginToCheck - $String with the login to check
+	 * @return TRUE if exists in the database or FALSE if does not
+	 */
 	private function existsThisLogin($loginToCheck){
 		
 		$this->db->select('login');
