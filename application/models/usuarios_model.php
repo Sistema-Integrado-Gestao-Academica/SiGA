@@ -1,5 +1,9 @@
 <?php 
+
+require_once(APPPATH."/exception/LoginException.php");
+
 class Usuarios_model extends CI_Model {
+
 	public function salva($usuario) {
 		$this->db->insert("users", $usuario);
 	}
@@ -24,6 +28,66 @@ class Usuarios_model extends CI_Model {
 		$usuario = $this->db->get("users")->row_array();
 		
 		return $usuario;
+	}
+
+	public function validateUser($login, $password){
+		$thereIsLoginAndPassword = !empty($password) && !empty($login);
+
+		if($thereIsLoginAndPassword){
+
+			$loginExists = $this->existsThisLogin($login);
+			$passwordIsRight = $this->checkPasswordForThisLogin($password, $login);
+
+			$accessGranted = $loginExists && $passwordIsRight;
+
+			if($accessGranted){
+
+				$userData = $this->getUserDataByLogin($login);
+
+				return $userData;
+
+			}else{
+				throw new LoginException("Login ou senha inválidos.");
+			}
+
+		}else{
+			throw new LoginException("É necessário um login e uma senha para acessar o sistema.");
+		}
+	}
+
+	private function getUserDataByLogin($login){
+		$this->db->select('id, name, email, login');
+		$this->db->where("login", $login);
+		$foundUser = $this->db->get("users")->row_array();
+
+		return $foundUser;
+	}
+
+	private function checkPasswordForThisLogin($password, $login){
+		
+		$this->db->select('password');
+		$searchResult = $this->db->get_where('users', array('login' => $login));
+
+		$foundPassword = $searchResult->row_array();
+
+		$foundPassword = $foundPassword['password'];
+		$encryptedGivenPassword = md5($password);
+
+		$passwordsMatch = $encryptedGivenPassword === $foundPassword;
+		
+		return $passwordsMatch;
+	}
+
+	private function existsThisLogin($loginToCheck){
+		
+		$this->db->select('login');
+		$searchResult = $this->db->get_where('users', array('login' => $loginToCheck));
+		
+		$foundLogin = $searchResult->row_array();
+
+		$wasFound = sizeof($foundLogin) > 0;
+
+		return $wasFound;
 	}
 
 	/**
