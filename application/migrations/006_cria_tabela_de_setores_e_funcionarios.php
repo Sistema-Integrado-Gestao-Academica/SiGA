@@ -6,7 +6,7 @@ class Migration_Cria_tabela_de_setores_e_funcionarios extends CI_migration {
 			'setor_id' => array('type' => 'INT'),
 			'funcionarios_id' => array('type' => 'INT')
 		));
-		$this->dbforge->create_table('setores_funcionarios');
+		$this->dbforge->create_table('setores_funcionarios', true);
 
 		// Adding the foreign keys constraints
 		$add_foreign_key = "ALTER TABLE setores_funcionarios ADD CONSTRAINT IDSECTOR_SECTOREMPLOYEE FOREIGN KEY (setor_id) REFERENCES setores(id)";

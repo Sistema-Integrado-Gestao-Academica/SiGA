@@ -12,7 +12,7 @@ class Migration_Cria_tabela_de_usuarios extends CI_migration {
 			'password' => array('type' => 'varchar(255)')
 		));
 		$this->dbforge->add_key('id', true);
-		$this->dbforge->create_table('users');
+		$this->dbforge->create_table('users', true);
 
 	// Inserting user values
 		$user_password = md5("admin");
@@ -38,7 +38,7 @@ class Migration_Cria_tabela_de_usuarios extends CI_migration {
 			'type_name' => array('type' => 'varchar(15)')
 		));
 		$this->dbforge->add_key('id_type', true);
-		$this->dbforge->create_table('user_type');
+		$this->dbforge->create_table('user_type', true);
 
 		// User type values
 		$object = array('id_type' => 1, 'type_name' => 'administrador');
@@ -58,7 +58,7 @@ class Migration_Cria_tabela_de_usuarios extends CI_migration {
 			'id_user_type' => array('type' => 'INT')
 		));
 
-		$this->dbforge->create_table('user_user_type');
+		$this->dbforge->create_table('user_user_type', true);
 
 		// Adding the foreign keys constraints
 		$add_foreign_key = "ALTER TABLE user_user_type ADD CONSTRAINT IDUSER_USER_TYPE FOREIGN KEY (id_user) REFERENCES users(id)";

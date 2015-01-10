@@ -7,7 +7,7 @@ class Migration_Cria_tabela_de_funcoes extends CI_migration {
 			'nome' => array('type' => 'varchar(255)')
 		));
 		$this->dbforge->add_key('id', true);
-		$this->dbforge->create_table('funcoes');
+		$this->dbforge->create_table('funcoes', true);
 	}
 
 	public function down() {

@@ -1,5 +1,5 @@
 <?php
-class Migration_Cria_tabela_de_grupos_de_usuarios extends CI_migration {
+class Migration_Cria_tabela_de_grupos extends CI_migration {
 
 	public function up() {
 
@@ -9,7 +9,7 @@ class Migration_Cria_tabela_de_grupos_de_usuarios extends CI_migration {
 			'group_name' => array('type' => 'varchar(20)')
 		));
 		$this->dbforge->add_key('id_group', true);
-		$this->dbforge->create_table('group');
+		$this->dbforge->create_table('group', true);
 
 		// Group values
 		$object = array('id_group' => 1, 'group_name' => 'financeiro');
