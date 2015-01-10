@@ -70,21 +70,16 @@
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
 	                    <ul class="sidebar-menu">
 	                        <?php
-		               		/** 
-		               		 * Variable to start the for counter in the exact middle of array user_type
-		               		 * It would be in the middle because its where starts the names of user_types
-		               		 */
-		               		$counter = sizeof($session['user_type'])/2; 
-		               		for ($i= $counter; $i < sizeof($session['user_type']) ; $i++) {
+					foreach($session['user_type'] as $userTypeId => $userTypeName){
 		                    	echo "<li class='treeview'>";
-		                    		echo anchor($session['user_type'][$i],ucfirst($session['user_type'][$i]),"class='fa fa-folder-open-o'");
+		                    		echo anchor($userTypeName, ucfirst($userTypeName),"class='fa fa-folder-open-o'");
 		                    		echo "<ul class='treeview-menu'>";
 		                    		foreach($session["user_permissions"] as $route => $permission_name){
 		                    			echo "<li>" . anchor($route, $permission_name) . " </li>";
 		                    		}
 		                    		echo "</ul>";
 		                    	echo "</li>";
-							}  
+							} 
 							?>
 	                  	</ul>
 	                  	</section>

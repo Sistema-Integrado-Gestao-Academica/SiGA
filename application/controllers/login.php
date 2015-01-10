@@ -35,18 +35,57 @@ class Login extends CI_Controller {
 				);
 
 				$this->session->set_userdata("current_user", $userData);
+				// redirect('/');
+				$this->loadUserPage($user_type);
+
 			}else{
 				$authenticationStatus = "danger";
 				$authenticationMessage = "Ocorreu um erro ao carregar os dados. Tente Novamente.";
+				$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+				redirect('/');
 			}
 
 		}catch(LoginException $caughtException){
 			$authenticationStatus = "danger";
 			$authenticationMessage = $caughtException->getMessage();
+			$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+			redirect('/');
 		}
 		
-		$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
-		redirect('/');
+	}
+
+	private function loadUserPage($userType){
+		
+		// Tentar fazer com profiles
+		define('STUDENT', "discente");
+		define('ADMIN', "administrador");
+
+		// TEMPORÁRIO -  Feito so pra pegar o tipo estudante.
+		$userProfile = "";
+		foreach ($userType as $type) {
+			if($type == STUDENT){
+				$userProfile = $type;
+				break;
+			}else{
+				$userProfile = $type;
+			}
+		}
+		// // // 
+
+
+		switch($userProfile){
+			case STUDENT:
+				$this->load->template('usuario/student_home');
+				break;
+
+			case ADMIN:
+				
+				break;
+
+			default:
+				
+				break;
+		}
 	}
 	
 

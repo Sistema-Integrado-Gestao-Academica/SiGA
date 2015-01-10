@@ -134,8 +134,8 @@ class Usuarios_model extends CI_Model {
 				$user_type_name[$i] = $type_name[0]['type_name'];
 			}
 		}
-		
-		$user_type_return = array_merge($user_types_found,$user_type_name);
+
+		$user_type_return = array_combine($user_types_found,$user_type_name);
 		return $user_type_return;
 	}
 	
