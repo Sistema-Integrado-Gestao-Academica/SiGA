@@ -16,6 +16,10 @@ class Migration_Cria_permissao_estudante extends CI_Migration {
 		$student_group_permission = array('id_group' => 4, 'id_permission' => 8);
 		$this->db->insert('group_permission', $student_group_permission);
 
+		// Add the student permission to the admin
+		$student_permission_to_admin = array('id_user' => 1, 'id_group' => 4);
+		$this->db->insert('user_group', $student_permission_to_admin);
+
 	}
 
 	public function down() {
@@ -31,5 +35,4 @@ class Migration_Cria_permissao_estudante extends CI_Migration {
 	}
 }
 
-/* End of file 014_cria_tabela_de_plano_orcamentario.php */
-/* Location: ./application/migrations/014_cria_tabela_de_plano_orcamentario.php */ ?>
+?>

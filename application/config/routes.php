@@ -60,6 +60,7 @@ $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1'
 $route['secretaria'] = 'utils/loadSecretaria';
 $route['plano%20orcamentario'] = 'budgetplan';
 $route['plano%20orcamentario/(:num)'] = 'budgetplan/edit/$1';
+$route['student'] = 'usuario/student_index';
 
 /*
  * Test report routes
