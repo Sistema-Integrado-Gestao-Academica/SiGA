@@ -23,6 +23,12 @@
 
 <body class="skin-blue">
 	<header>
+		<?php 
+			$this->load->helper('url');
+			$site_url = site_url();
+
+			echo "<input id='site_url' name='site_url' type='hidden' value=\"$site_url\"></input>";
+		?>
 		<div class="navbar navbar-fixed-top" role="navigation">
 			<div class="navbar-btn sidebar-toggle" role="button">
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -77,6 +83,22 @@
 	                            <p>Olá, <?=ucfirst($session['user']['name'])?></p>
 	
 	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+
+	                            <br><br>
+	                            <div class="input-group-btn">
+		                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+		                            Perfil <span class="fa fa-caret-down"></span></button>
+
+		                            <ul class="dropdown-menu">
+		                            	<?php 
+		                            		foreach ($session['user_groups'] as $group_name => $profile_route) {
+		                            			echo "<li>";
+		                            			echo "<a href=\"{$profile_route}\">".ucfirst($group_name)."</a>";
+		                            			echo "</li>";
+		                            		}
+		                            	?>
+		                            </ul>
+	                            </div>
 	                        </div>
 	                    </div>
 	                    <!-- search form -->

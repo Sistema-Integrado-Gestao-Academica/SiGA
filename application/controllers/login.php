@@ -24,19 +24,21 @@ class Login extends CI_Controller {
 				
 				$this->load->model("module_model");
 				$registered_permissions = $this->module_model->getUserPermissions($user['id']);
-				
 				$registered_permissions = array_combine($registered_permissions['route'], $registered_permissions['name']);
+
+				$registered_groups = $this->module_model->getUserGroups($user['id']);
 
 				$userData = array(
 					'user' => $user,
 					'user_type' => $user_type,
-					'user_permissions' => $registered_permissions
+					'user_permissions' => $registered_permissions,
+					'user_groups' => $registered_groups
 					// 'secretary' => $is_secretary
 				);
 
 				$this->session->set_userdata("current_user", $userData);
-				// redirect('/');
-				$this->loadUserPage($user_type);
+				redirect('/');
+				// $this->loadUserPage($registered_groups);
 
 			}else{
 				$authenticationStatus = "danger";
@@ -54,40 +56,6 @@ class Login extends CI_Controller {
 		
 	}
 
-	private function loadUserPage($userType){
-		
-		// Tentar fazer com profiles
-		define('STUDENT', "discente");
-		define('ADMIN', "administrador");
-
-		// TEMPORÁRIO -  Feito so pra pegar o tipo estudante.
-		$userProfile = "";
-		foreach ($userType as $type) {
-			if($type == STUDENT){
-				$userProfile = $type;
-				break;
-			}else{
-				$userProfile = $type;
-			}
-		}
-		// // // 
-
-
-		switch($userProfile){
-			case STUDENT:
-				$this->load->template('usuario/student_home');
-				break;
-
-			case ADMIN:
-				
-				break;
-
-			default:
-				
-				break;
-		}
-	}
-	
 
 	/**
 	 * Log out the current user on the session and redirect to a given path

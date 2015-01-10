@@ -46,6 +46,7 @@ if ($sessao != NULL) { ?>
 		<div class="footer">
 			<?php 
 				echo form_button(array(
+					"id" => "login_btn",
 					"class" => "btn bg-olive btn-block",
 					"content" => "Entrar",
 					"type" => "submit"
