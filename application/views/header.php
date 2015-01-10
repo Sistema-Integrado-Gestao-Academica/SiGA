@@ -29,8 +29,30 @@
 				<ul class="nav navbar-nav">
 				<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
 				<?php if ($session) { ?>
-						<li><?=anchor("conta", "Conta", "class='navbar-brand'")?></li>
-						<li><?=anchor("logout", "Sair", "class='navbar-brand'")?></li>
+						<li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span><?=ucfirst($session['user']['name'])?><i class="caret"></i></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header ">
+                                    <p>
+                                        <?php echo ucfirst($session['user']['name']) . " - " . ucfirst($session['user_type'][1])?>
+                                        <small><?php echo $session['user']['email']?></small>
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <?=anchor("conta", "Conta", "class='btn btn-default btn-flat'")?>
+                                    </div>
+                                    <div class="pull-right">
+                                        <?=anchor("logout", "Sair", "class='btn btn-default btn-flat'")?>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
 					</ul>
 				<?php } else { ?>
 						<li><?=anchor("usuario/novo", "Cadastro", "class='navbar-brand'")?></li>

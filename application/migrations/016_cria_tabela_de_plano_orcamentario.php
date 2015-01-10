@@ -13,9 +13,10 @@ class Migration_Cria_tabela_de_plano_orcamentario extends CI_Migration {
 			'course_id' => array('type' => 'INT', 'NULL' => true)
 		));
 		$this->dbforge->add_key('id', true);
-		$this->dbforge->add_key('status');
-		$this->dbforge->add_key('course_id');
 		$this->dbforge->create_table('budgetplan', true);
+
+		$add_courseid_fk = "ALTER TABLE budgetplan ADD CONSTRAINT IDCOURSE_BUDGETPLAN_FK FOREIGN KEY (course_id) REFERENCES course(id_course)";
+		$this->db->query($add_courseid_fk);
 
 		// Budget plan status table
 		$this->dbforge->add_field(array(
@@ -24,6 +25,10 @@ class Migration_Cria_tabela_de_plano_orcamentario extends CI_Migration {
 		));
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('budgetplan_status', true);
+
+		// Adding the status as foreign key on the budgetplan table
+		$add_courseid_fk = "ALTER TABLE budgetplan ADD CONSTRAINT IDSTATUS_BUDGETPLAN_FK FOREIGN KEY (status) REFERENCES budgetplan_status(id)";
+		$this->db->query($add_courseid_fk);
 
 		// Adding values of status of budget plan
 		$object = array('id' => 1, 'description' => 'Proposta');
@@ -35,7 +40,7 @@ class Migration_Cria_tabela_de_plano_orcamentario extends CI_Migration {
 		$object = array('id' => 4, 'description' => 'Finalizado');
 		$this->db->insert('budgetplan_status', $object);
 
-
+		// Creating permission for the budgetplan
 		$object = array('id_group' => 1, 'id_permission' => 7);
 		$this->db->insert('group_permission', $object);
 		$object = array('id_group' => 3, 'id_permission' => 7);

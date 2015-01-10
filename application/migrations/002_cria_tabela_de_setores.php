@@ -7,7 +7,7 @@ class Migration_Cria_tabela_de_setores extends CI_migration {
 			'nome' => array('type' => 'varchar(255)')
 		));
 		$this->dbforge->add_key('id', true);
-		$this->dbforge->create_table('setores');
+		$this->dbforge->create_table('setores', true);
 	}
 
 	public function down() {
