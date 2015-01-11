@@ -3,8 +3,17 @@
 class Usuario extends CI_Controller {
 	
 	public function student_index(){
+		$logged_user_data = $this->session->userdata("current_user");
+		$userId = $logged_user_data['user']['id'];
 
-		$this->loadStudentTemplateSafely('usuario/student_home');
+		$this->load->model('usuarios_model');
+		$userStatus = $this->usuarios_model->getUserStatus($userId);
+
+		$userStatus = array(
+			'status' => $userStatus
+		);
+
+		$this->loadStudentTemplateSafely('usuario/student_home', $userStatus);
 	}
 
 	public function formulario() {

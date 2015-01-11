@@ -38,8 +38,7 @@ class Login extends CI_Controller {
 
 				$this->session->set_userdata("current_user", $userData);
 				redirect('/');
-				// $this->loadUserPage($registered_groups);
-
+				
 			}else{
 				$authenticationStatus = "danger";
 				$authenticationMessage = "Ocorreu um erro ao carregar os dados. Tente Novamente.";

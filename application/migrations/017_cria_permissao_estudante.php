@@ -20,6 +20,9 @@ class Migration_Cria_permissao_estudante extends CI_Migration {
 		$student_permission_to_admin = array('id_user' => 1, 'id_group' => 4);
 		$this->db->insert('user_group', $student_permission_to_admin);
 
+		// Add the student permission to the user 2
+		$student_permission = array('id_user' => 2, 'id_group' => 4);
+		$this->db->insert('user_group', $student_permission);
 	}
 
 	public function down() {
@@ -36,3 +39,4 @@ class Migration_Cria_permissao_estudante extends CI_Migration {
 }
 
 ?>
+

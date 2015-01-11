@@ -114,6 +114,63 @@ class Usuarios_model extends CI_Model {
 	}
 
 	/**
+	 * Get the registered status for a given user
+	 * @param $userId - The user id to search for a status
+	 * @return the user status if it exists or "-" if does not
+	 */
+	public function getUserStatus($userId){
+
+		$userStatusId = $this->getUserStatusId($userId);
+
+		if($userStatusId !== FALSE){
+			$userStatus = $this->getUserStatusName($userStatusId);
+		}else{
+			$userStatus = "-";
+		}
+
+		return $userStatus;
+	}
+
+	/**
+	 * Get the status by its id
+	 * @param $statusId - The status id
+	 * @return a string with the status
+	 */
+	private function getUserStatusName($statusId){
+		$this->db->select('status');
+		$searchResult = $this->db->get_where('user_status', array('id_status' => $statusId));
+
+		$foundStatus = $searchResult->row_array();
+
+		$foundStatus = $foundStatus['status'];
+
+		return $foundStatus;
+	}
+
+	/**
+	 * Get the user registered status
+	 * @param $userId - The user id to search for the status
+	 * @return A string with the user status if found, or FALSE if not
+	 */
+	private function getUserStatusId($userId){
+		$this->db->select('status');
+		$searchResult = $this->db->get_where('users', array('id' => $userId));
+
+		$foundStatus = $searchResult->row_array();
+
+		if(sizeof($foundStatus) > 0){
+			$foundStatus = $foundStatus['status'];
+			if($foundStatus === NULL){
+				$foundStatus = FALSE;
+			}
+		}else{
+			$foundStatus = FALSE;
+		}
+
+		return $foundStatus;
+	}
+
+	/**
 	 * Get the registered user types for an given user id
 	 * @param $user_id - The user id to look for types
 	 * @return An array with the user types id's in each position of the array
