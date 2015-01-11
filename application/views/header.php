@@ -44,7 +44,14 @@
                                 <!-- User image -->
                                 <li class="user-header ">
                                     <p>
-                                        <?php echo ucfirst($session['user']['name']) . " - " . ucfirst($session['user_type'][1])?>
+                                        <?php
+                                        	echo ucfirst($session['user']['name']);
+
+                                        	foreach($session['user_type'] as $key => $type) {
+                                        		echo "<br>";
+                                        		echo ucfirst($type);
+                                        	}
+                                        ?>
                                         <small><?php echo $session['user']['email']?></small>
                                     </p>
                                 </li>
