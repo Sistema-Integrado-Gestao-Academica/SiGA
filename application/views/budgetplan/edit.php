@@ -11,7 +11,7 @@
 		<div class="form-group">
 			<?= form_label("Curso", "course") ?>
 			<br>
-			<?= form_dropdown('courses', $courses, $budgetplan['course_id']-1) ?>
+			<?= form_dropdown('course', $courses, $budgetplan['course_id']-1) ?>
 		</div>
 		<div class="form-group">
 			<?= form_label("Montante", "amount") ?>
@@ -25,7 +25,7 @@
 			)) ?>
 		</div>
 		<div class="form-group">
-			<?= form_label("Gasto", "spending") ?>
+			<?= form_label("Despesa", "spending") ?>
 			<?= form_input(array(
 				"name" => "spending",
 				"id" => "spending",

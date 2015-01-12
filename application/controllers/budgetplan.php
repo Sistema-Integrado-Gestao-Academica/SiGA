@@ -82,18 +82,21 @@ class Budgetplan extends CI_Controller {
 		$spending = $this->input->post("spending");
 		$confirm = $this->input->post("confirm");
 
-		if (!$confirm) {
+		if ($confirm) {
 			redirect("plano%20orcamentario/{$id}");
 		}
 
 		$budgetplan = array(
 			'id' => $id,
-			'course_id' => $course,
 			'amount' => $amount,
 			'status' => $status,
 			'spending' => $spending,
 			'balance' => $amount - $spending
 		);
+
+		if ($course) {
+			$budgetplan['course_id'] = $course;
+		}
 
 		$this->load->model('budgetplan_model');
 		if ($this->budgetplan_model->update($id, $budgetplan)) {
