@@ -7,9 +7,13 @@ class Migration_Cria_tabela_de_relacao_entre_grupos_e_permissoes extends CI_migr
 				'id_group' => array('type' => 'INT'),
 				'id_permission' => array('type' => 'INT')
 		));
-		$this->dbforge->add_key('id_group');
-		$this->dbforge->add_key('id_permission');
 		$this->dbforge->create_table('group_permission');
+
+		// $add_foreign_key = "ALTER TABLE group_permission ADD CONSTRAINT IDGROUP_GROUPPERMIS_FK FOREIGN KEY (id_group) REFERENCES group (id_group)";
+		// $this->db->query($add_foreign_key);
+		
+		$add_foreign_key = "ALTER TABLE group_permission ADD CONSTRAINT IDPERMIS_GROUPPERMIS_FK FOREIGN KEY (id_permission) REFERENCES permission (id_permission)";
+		$this->db->query($add_foreign_key);
 
 		// Group permission values
 		$object = array('id_group' => 1, 'id_permission' => 2);

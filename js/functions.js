@@ -1,5 +1,6 @@
 
 $(document).ready(function(){
+	
 	evaluatesCourseType();
 
 	$("#courseType").change(function(){
@@ -8,6 +9,7 @@ $(document).ready(function(){
 
 });
 
+// Course functions
 function evaluatesCourseType(){
 	
 	var choosenCourseType = getChoosenCourseType();

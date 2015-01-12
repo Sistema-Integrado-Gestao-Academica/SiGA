@@ -19,6 +19,10 @@ button#delete {
 	margin: -57px auto 0px 230px;
 }
 
+h1.bemvindoLogin {
+	margin: 90px auto 0 25%;
+}
+
 h1.bemvindo {
 	text-align: center;
 }

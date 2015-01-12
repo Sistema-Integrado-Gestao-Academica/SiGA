@@ -879,12 +879,12 @@ class Course extends CI_Controller {
 	 */
 	private function loadTemplateSafely($template, $data = array()){
 
-		$user_has_the_permission = $this->checkUserPermission();
+		$user_has_the_permission = $this->checkUserCoursePermission();
 
 		if($user_has_the_permission){
 			$this->load->template($template, $data);
 		}else{
-			$this->logoutUser();
+			logoutUser();
 		}
 	}
 
@@ -892,7 +892,7 @@ class Course extends CI_Controller {
 	 * Check if the logged user have the permission to this page
 	 * @return TRUE if the user have the permission or FALSE if does not
 	 */
-	private function checkUserPermission(){
+	private function checkUserCoursePermission(){
 		$logged_user_data = $this->session->userdata('current_user');
 		$permissions_for_logged_user = $logged_user_data['user_permissions'];
 
@@ -961,15 +961,6 @@ class Course extends CI_Controller {
 		$form_course_types = array_combine($keys, $values);
 	
 		return $form_course_types;
-	}
-
-	/**
-	 * Logout the current user for unauthorized access to the page
-	 */
-	private function logoutUser(){
-		$login = new Login();
-		$login->logout("Você deve ter permissão para acessar essa página.
-				      Você foi deslogado por motivos de segurança.", "danger", '/');
 	}
 	
 }

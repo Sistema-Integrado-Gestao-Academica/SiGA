@@ -49,6 +49,33 @@ class Module_model extends CI_Model {
 		return $permissions;
 	}
 
+	public function getUserGroups($user_id){
+		$this->db->select('group.*');
+		$this->db->from('group');
+		$this->db->join('user_group', 'group.id_group = user_group.id_group');
+		$this->db->where('user_group.id_user', $user_id);
+
+		$foundGroups = $this->db->get()->result_array();
+
+		$foundGroups = $this->turnGroupArrayIntoSingleArray($foundGroups);
+
+		return $foundGroups;
+	}
+
+	private function turnGroupArrayIntoSingleArray($array){
+
+		$groupIdsArray = array();
+		$groupNamesArray = array();
+		for($i = 0; $i < sizeof($array); $i++){
+			$groupIdsArray[$i] = $array[$i]['group_name'];
+			$groupNamesArray[$i] = $array[$i]['profile_route'];
+		}
+
+		$groups = array_combine($groupIdsArray, $groupNamesArray);
+
+		return $groups;
+	}
+
 	/**
 	  * Search on database for the modules names of an user
 	  * @param $user_id - User id to look for modules names
@@ -58,6 +85,7 @@ class Module_model extends CI_Model {
 
 		$modules_ids = $this->getUserModules($user_id);
 
+		$module_names = array();
 		for($i = 0; $i < sizeof($modules_ids); $i++){
 
 			$this->db->select('group_name');

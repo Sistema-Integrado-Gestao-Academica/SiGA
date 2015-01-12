@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/exception/LoginException.php");
+
 class Login extends CI_Controller {
 
 	public function index() {
@@ -7,35 +9,52 @@ class Login extends CI_Controller {
 	}
 
 	public function autenticar() {
-		$this->load->model("usuarios_model");
+		
 		$login = $this->input->post("login");
-		$senha = $this->input->post("senha");
-		$usuario = $this->usuarios_model->buscaPorLoginESenha($login, $senha);
-		$user_type = $this->usuarios_model->getUserType($usuario['id']);
-		// $is_secretary = $this->usuarios_model->get_user_secretary($usuario['id']);
-		
-		// Load the Module model
-		$this->load->model("module_model");
-		$registered_permissions = $this->module_model->getUserPermissions($usuario['id']);
-		
-		$registered_permissions = array_combine($registered_permissions['route'], $registered_permissions['name']);
+		$password = $this->input->post("senha");
 
-		$userData = array(
-			'user' => $usuario,
-			'user_type' => $user_type,
-			'user_permissions' => $registered_permissions
-			// 'secretary' => $is_secretary
-		);
+		try{
 
-		if ($usuario) {
-			$this->session->set_userdata("current_user", $userData);
-		} else {
-			$this->session->set_flashdata("danger", "Usuário ou senha inválida");
+			$this->load->model("usuarios_model");
+			$user = $this->usuarios_model->validateUser($login, $password);
+			
+			if(sizeof($user) > 0){
+				$user_type = $this->usuarios_model->getUserType($user['id']);
+				// $is_secretary = $this->usuarios_model->get_user_secretary($user['id']);
+				
+				$this->load->model("module_model");
+				$registered_permissions = $this->module_model->getUserPermissions($user['id']);
+				$registered_permissions = array_combine($registered_permissions['route'], $registered_permissions['name']);
+
+				$registered_groups = $this->module_model->getUserGroups($user['id']);
+
+				$userData = array(
+					'user' => $user,
+					'user_type' => $user_type,
+					'user_permissions' => $registered_permissions,
+					'user_groups' => $registered_groups
+					// 'secretary' => $is_secretary
+				);
+
+				$this->session->set_userdata("current_user", $userData);
+				redirect('/');
+				
+			}else{
+				$authenticationStatus = "danger";
+				$authenticationMessage = "Ocorreu um erro ao carregar os dados. Tente Novamente.";
+				$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+				redirect('/');
+			}
+
+		}catch(LoginException $caughtException){
+			$authenticationStatus = "danger";
+			$authenticationMessage = $caughtException->getMessage();
+			$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+			redirect('/');
 		}
-
-		redirect('/');
+		
 	}
-	
+
 
 	/**
 	 * Log out the current user on the session and redirect to a given path

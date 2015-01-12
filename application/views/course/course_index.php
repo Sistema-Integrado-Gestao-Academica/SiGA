@@ -30,6 +30,7 @@
 		</th>
 	</tr>
 	<?php
+	if($registered){
 		foreach($registered as $course => $indexes){
 			
 			echo "<tr>";
@@ -58,6 +59,14 @@
 
 			echo "</tr>";
 		}
-	?>
+	}else{ ?>
+		<tr>
+			<td>
+				<h3>
+					<label class="label label-default"> Não existem cursos cadastrados</label>
+				</h3>
+			</td>
+		</tr>
+	<?php }?>
 </table>
 

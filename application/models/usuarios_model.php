@@ -1,5 +1,9 @@
 <?php 
+
+require_once(APPPATH."/exception/LoginException.php");
+
 class Usuarios_model extends CI_Model {
+
 	public function salva($usuario) {
 		$this->db->insert("users", $usuario);
 	}
@@ -27,6 +31,146 @@ class Usuarios_model extends CI_Model {
 	}
 
 	/**
+	 * Validate the given user login and password
+	 * @param $login - String with the user login
+	 * @param $password - String with the user password to check
+	 * @return An array with the user data if the login was succeeded
+	 * @throws LoginException in case of empty login or password and invalid login or password
+	 */
+	public function validateUser($login, $password){
+		$thereIsLoginAndPassword = !empty($password) && !empty($login);
+
+		if($thereIsLoginAndPassword){
+
+			$loginExists = $this->existsThisLogin($login);
+			$passwordIsRight = $this->checkPasswordForThisLogin($password, $login);
+
+			$accessGranted = $loginExists && $passwordIsRight;
+
+			if($accessGranted){
+
+				$userData = $this->getUserDataByLogin($login);
+
+				return $userData;
+
+			}else{
+				throw new LoginException("Login ou senha inválidos.");
+			}
+
+		}else{
+			throw new LoginException("É necessário um login e uma senha para acessar o sistema.");
+		}
+	}
+
+	/**
+	 * Get the user data by its login
+	 * @param $login - String with the user login
+	 * @return An array with the user data if exists or FALSE if does not
+	 */
+	private function getUserDataByLogin($login){
+		$this->db->select('id, name, email, login');
+		$this->db->where("login", $login);
+		$foundUser = $this->db->get("users")->row_array();
+
+		return $foundUser;
+	}
+
+	/**
+	 * Check if the registered password for the given login match the given password
+	 * @param $password - String with the password NOT encrypted
+	 * @param $login - String with the login
+	 * @return TRUE if the passwords match or FALSE if does not
+	 */
+	private function checkPasswordForThisLogin($password, $login){
+		
+		$this->db->select('password');
+		$searchResult = $this->db->get_where('users', array('login' => $login));
+
+		$foundPassword = $searchResult->row_array();
+
+		$foundPassword = $foundPassword['password'];
+		$encryptedGivenPassword = md5($password);
+
+		$passwordsMatch = $encryptedGivenPassword === $foundPassword;
+		
+		return $passwordsMatch;
+	}
+
+	/**
+	 * Check if a given login exists
+	 * @param $loginToCheck - $String with the login to check
+	 * @return TRUE if exists in the database or FALSE if does not
+	 */
+	private function existsThisLogin($loginToCheck){
+		
+		$this->db->select('login');
+		$searchResult = $this->db->get_where('users', array('login' => $loginToCheck));
+		
+		$foundLogin = $searchResult->row_array();
+
+		$wasFound = sizeof($foundLogin) > 0;
+
+		return $wasFound;
+	}
+
+	/**
+	 * Get the registered status for a given user
+	 * @param $userId - The user id to search for a status
+	 * @return the user status if it exists or "-" if does not
+	 */
+	public function getUserStatus($userId){
+
+		$userStatusId = $this->getUserStatusId($userId);
+
+		if($userStatusId !== FALSE){
+			$userStatus = $this->getUserStatusName($userStatusId);
+		}else{
+			$userStatus = "-";
+		}
+
+		return $userStatus;
+	}
+
+	/**
+	 * Get the status by its id
+	 * @param $statusId - The status id
+	 * @return a string with the status
+	 */
+	private function getUserStatusName($statusId){
+		$this->db->select('status');
+		$searchResult = $this->db->get_where('user_status', array('id_status' => $statusId));
+
+		$foundStatus = $searchResult->row_array();
+
+		$foundStatus = $foundStatus['status'];
+
+		return $foundStatus;
+	}
+
+	/**
+	 * Get the user registered status
+	 * @param $userId - The user id to search for the status
+	 * @return A string with the user status if found, or FALSE if not
+	 */
+	private function getUserStatusId($userId){
+		$this->db->select('status');
+		$searchResult = $this->db->get_where('users', array('id' => $userId));
+
+		$foundStatus = $searchResult->row_array();
+
+		if(sizeof($foundStatus) > 0){
+			$foundStatus = $foundStatus['status'];
+			if($foundStatus === NULL){
+				$foundStatus = FALSE;
+			}
+		}else{
+			$foundStatus = FALSE;
+		}
+
+		return $foundStatus;
+	}
+
+	/**
 	 * Get the registered user types for an given user id
 	 * @param $user_id - The user id to look for types
 	 * @return An array with the user types id's in each position of the array
@@ -47,8 +191,8 @@ class Usuarios_model extends CI_Model {
 				$user_type_name[$i] = $type_name[0]['type_name'];
 			}
 		}
-		
-		$user_type_return = array_merge($user_types_found,$user_type_name);
+
+		$user_type_return = array_combine($user_types_found,$user_type_name);
 		return $user_type_return;
 	}
 	

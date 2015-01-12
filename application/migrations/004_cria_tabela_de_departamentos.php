@@ -7,7 +7,7 @@ class Migration_Cria_tabela_de_departamentos extends CI_migration {
 			'nome' => array('type' => 'varchar(255)')
 		));
 		$this->dbforge->add_key('id', true);
-		$this->dbforge->create_table('departamentos');
+		$this->dbforge->create_table('departamentos', true);
 	}
 
 	public function down() {
