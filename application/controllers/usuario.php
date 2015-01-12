@@ -80,14 +80,14 @@ class Usuario extends CI_Controller {
 			}
 		} else {
 			$this->load->model("usuarios_model");
-			$user_type_options = $this->usuarios_model->getAllUserTypes();
-			$user_types = array();
+			$user_group_options = $this->usuarios_model->getAllUserGroups();
+			$user_groups = array();
 
-			foreach ($user_type_options as $ut) {
-				array_push($user_types, $ut['type_name']);
+			foreach ($user_group_options as $ug) {
+				array_push($user_groups, $ug['group_name']);
 			}
 
-			$data = array('user_types' => $user_types);
+			$data = array('user_groups' => $user_groups);
 			$this->load->template("usuario/formulario_entrada", $data);
 		}
 	}
@@ -138,13 +138,23 @@ class Usuario extends CI_Controller {
 	 * Get all the user types from database into an array.
 	 * @return An array with all user types on database as id => type_name
 	 */
-	public function getUserTypes(){
+	public function getUserGroups(){
 		
 		$this->load->model("usuarios_model");
 		$user_groups = $this->usuarios_model->getAllUserGroups();
 		
 		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
 
+		return $user_groups_to_array;
+	}
+	
+	public function getAllowedUserGroupsForNotLoggedRegistration(){
+
+		$this->load->model("usuarios_model");
+		$user_groups = $this->usuarios_model->getAllAllowedUserGroupsForNotLoggedRegistration();
+		
+		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
+		
 		return $user_groups_to_array;
 	}
 	

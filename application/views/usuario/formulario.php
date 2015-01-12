@@ -4,7 +4,7 @@
 $user = new Usuario();
 
 // All user types registered on DB
-$form_user_group = $user->getUserTypes();
+$form_user_group = $user->getUserGroups();
 
 $name_array_to_form = array(
 	"name" => "nome",

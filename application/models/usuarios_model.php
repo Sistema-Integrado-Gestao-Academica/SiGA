@@ -274,6 +274,18 @@ class Usuarios_model extends CI_Model {
 		
 		return $userGroups;
 	}
+	
+	public function getAllAllowedUserGroupsForNotLoggedRegistration(){
+		
+		$this->db->select('id_group, group_name');
+		$where= "group_name = 'discente' OR group_name='convidado'";
+		$this->db->where($where);
+		
+		$this->db->from('group');
+		$userGroups = $this->db->get()->result_array();
+		
+		return $userGroups;
+	}
 
 	/**
 	  * Check if a given user type id is the admin id.
