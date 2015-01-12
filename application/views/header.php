@@ -37,7 +37,7 @@
 					<?php if ($session) { ?>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown user user-menu navbar-right">
+						<li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
                                 <span><?=ucfirst($session['user']['name'])?><i class="caret"></i></span>
