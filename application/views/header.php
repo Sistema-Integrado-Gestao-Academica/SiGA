@@ -33,9 +33,11 @@
 			<div class="navbar-btn sidebar-toggle" role="button">
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-				<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
-				<?php if ($session) { ?>
-						<li class="dropdown user user-menu">
+					<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
+					<?php if ($session) { ?>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown user user-menu navbar-right">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
                                 <span><?=ucfirst($session['user']['name'])?><i class="caret"></i></span>
