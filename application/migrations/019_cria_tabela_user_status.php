@@ -39,6 +39,7 @@ class Migration_Cria_tabela_user_status extends CI_Migration {
 	}
 
 	public function down() {
+		$this->db->query("ALTER TABLE users DROP FOREIGN KEY USER_STATUS_FK");
 		$this->dbforge->drop_table('user_status');
 		$this->dbforge->drop_column('users', 'status');
 	}

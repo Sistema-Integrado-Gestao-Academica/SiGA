@@ -27,14 +27,14 @@ class Migration_Cria_permissao_estudante extends CI_Migration {
 
 	public function down() {
 
-		$object = array('id_permission' => 8, 'permission_name' => "Estudante", 'route' => "student");
-		$this->db->delete('permission', $object);
+		$object = array('id_group' => 4, 'id_permission' => 8);
+		$this->db->delete('group_permission', $object);
 
 		$object = array('id_group' => 4, 'group_name' => "estudante");
 		$this->db->delete('group', $object);
 		
-		$object = array('id_group' => 4, 'id_permission' => 8);
-		$this->db->delete('group_permission', $object);
+		$object = array('id_permission' => 8, 'permission_name' => "Estudante", 'route' => "student");
+		$this->db->delete('permission', $object);
 	}
 }
 
