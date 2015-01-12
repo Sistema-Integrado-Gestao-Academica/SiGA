@@ -56,9 +56,9 @@ class Module_model extends CI_Model {
 		$this->db->where('user_group.id_user', $user_id);
 
 		$foundGroups = $this->db->get()->result_array();
-
+		
 		$foundGroups = $this->turnGroupArrayIntoSingleArray($foundGroups);
-
+	
 		return $foundGroups;
 	}
 
@@ -67,12 +67,12 @@ class Module_model extends CI_Model {
 		$groupIdsArray = array();
 		$groupNamesArray = array();
 		for($i = 0; $i < sizeof($array); $i++){
-			$groupIdsArray[$i] = $array[$i]['group_name'];
-			$groupNamesArray[$i] = $array[$i]['profile_route'];
+			$groupIdsArray[$i] = $array[$i]['id_group'];
+			$groupNamesArray[$i] = $array[$i]['group_name'];
 		}
-
+		
 		$groups = array_combine($groupIdsArray, $groupNamesArray);
-
+		
 		return $groups;
 	}
 

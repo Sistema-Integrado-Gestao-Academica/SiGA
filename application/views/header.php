@@ -49,7 +49,7 @@
                                         <?php
                                         	echo ucfirst($session['user']['name']);
 
-                                        	foreach($session['user_type'] as $key => $type) {
+                                        	foreach($session['user_groups'] as $key => $type) {
                                         		echo "<br>";
                                         		echo ucfirst($type);
                                         	}
@@ -123,9 +123,9 @@
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
 	                    <ul class="sidebar-menu">
 	                        <?php
-					foreach($session['user_type'] as $userTypeId => $userTypeName){
+					foreach($session['user_groups'] as $userGroupId => $userGroupName){
 		                    	echo "<li class='treeview'>";
-		                    		echo anchor($userTypeName, ucfirst($userTypeName),"class='fa fa-folder-open-o'");
+		                    		echo anchor($userGroupName, ucfirst($userGroupName),"class='fa fa-folder-open-o'");
 		                    		echo "<ul class='treeview-menu'>";
 		                    		foreach($session["user_permissions"] as $route => $permission_name){
 		                    			echo "<li>" . anchor($route, $permission_name) . " </li>";
