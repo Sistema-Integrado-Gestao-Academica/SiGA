@@ -55,7 +55,7 @@ class Budgetplan extends CI_Controller {
 
 		$this->load->model('course_model');
 		$courses_options = $this->course_model->getAllCourses();
-		$courses = array('courses_name' => "Nenhum");
+		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
 			array_push($courses, $c['course_name']);
 		}
@@ -76,13 +76,13 @@ class Budgetplan extends CI_Controller {
 	public function update() {
 		session();
 		$id = $this->input->post("budgetplan_id");
-		$course = $this->input->post("course") + 1;
+		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
-		$status = (int) $this->input->post("status") + 1;
+		$status = $this->input->post("status") + 1;
 		$spending = $this->input->post("spending");
-		$confirm = $this->input->post("confirm");
+		$continue = $this->input->post("continue");
 
-		if ($confirm) {
+		if (!$continue) {
 			redirect("plano%20orcamentario/{$id}");
 		}
 
