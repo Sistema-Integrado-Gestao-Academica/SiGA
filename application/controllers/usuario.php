@@ -54,7 +54,7 @@ class Usuario extends CI_Controller {
 			$nome  = $this->input->post("nome");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
-			$tipo  = (int) $this->input->post("userType") + 1;
+			$grupo = $this->input->post("userGroup");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
@@ -74,7 +74,7 @@ class Usuario extends CI_Controller {
 				redirect("usuario/formulario_entrada");
 			} else {
 				$this->usuarios_model->salva($usuario);
-				$this->usuarios_model->saveType($usuario, $tipo);
+				$this->usuarios_model->saveGroup($usuario, $grupo);
 				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
@@ -141,11 +141,11 @@ class Usuario extends CI_Controller {
 	public function getUserTypes(){
 		
 		$this->load->model("usuarios_model");
-		$user_types = $this->usuarios_model->getAllUserTypes();
+		$user_groups = $this->usuarios_model->getAllUserGroups();
 		
-		$user_types_to_array = $this->turnUserTypesToArray($user_types);
+		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
 
-		return $user_types_to_array;
+		return $user_groups_to_array;
 	}
 	
 	public function getAllSecretaryUsers(){
@@ -162,18 +162,18 @@ class Usuario extends CI_Controller {
 	  * @param $user_types - The array that contains the tuples of user_type
 	  * @return An array with the id's and user types names as id => user_type_name
 	  */
-	private function turnUserTypesToArray($user_types){
+	private function turnUserGroupsToArray($user_groups){
 		// Quantity of user types registered
-		$quantity_of_user_types = sizeof($user_types);
+		$quantity_of_user_groups = sizeof($user_groups);
 
-		for($cont = 0; $cont < $quantity_of_user_types; $cont++){
-			$keys[$cont] = $user_types[$cont]['id_type'];
-			$values[$cont] = $user_types[$cont]['type_name'];
+		for($cont = 0; $cont < $quantity_of_user_groups; $cont++){
+			$keys[$cont] = $user_groups[$cont]['id_group'];
+			$values[$cont] = $user_groups[$cont]['group_name'];
 		}
 
-		$form_user_types = array_combine($keys, $values);
+		$form_user_groups = array_combine($keys, $values);
 
-		return $form_user_types;
+		return $form_user_groups;
 	}
 
 	private function getAccountForm($usuarioLogado) {

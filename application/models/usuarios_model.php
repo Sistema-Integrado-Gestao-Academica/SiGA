@@ -8,13 +8,13 @@ class Usuarios_model extends CI_Model {
 		$this->db->insert("users", $usuario);
 	}
 
-	public function saveType($user, $type){
+	public function saveGroup($user, $group){
 		$rowUser = $this->buscaPorLoginESenha($user['login']);
 		$user_id = $rowUser['id'];
 		
-		$user_user_type = array("id_user"=>$user_id,"id_user_type"=>$type);
+		$user_group = array("id_user"=>$user_id,"id_group"=>$group);
 		
-		$this->db->insert("user_user_type",$user_user_type);
+		$this->db->insert("user_group",$user_group);
 	}
 
 	public function buscaPorLoginESenha($login, $senha = "0") {
@@ -265,13 +265,14 @@ class Usuarios_model extends CI_Model {
 		return $res;
 	}
 	
-	public function getAllUserTypes(){
+	public function getAllUserGroups(){
 
-		$this->db->select('id_type, type_name');
-		$this->db->from('user_type');
-		$userTypes = $this->db->get()->result_array();
+		$this->db->select('id_group, group_name');
+		$this->db->order_by('group_name','ASC');
+		$this->db->from('group');
+		$userGroups = $this->db->get()->result_array();
 		
-		return $userTypes;
+		return $userGroups;
 	}
 
 	/**

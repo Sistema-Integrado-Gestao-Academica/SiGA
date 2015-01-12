@@ -4,7 +4,7 @@
 $user = new Usuario();
 
 // All user types registered on DB
-$form_user_types = $user->getUserTypes();
+$form_user_group = $user->getUserTypes();
 
 $name_array_to_form = array(
 	"name" => "nome",
@@ -97,11 +97,11 @@ $submit_button_array_to_form = array(
 		<div class="form-group">
 			<?php
 			// User type field
-			echo form_label("Tipo de Usuário", "userType"); 
+			echo form_label("Tipo de Usuário", "userGroup"); 
 			echo "<br>";
-			echo form_dropdown("userType", $form_user_types);
+			echo form_dropdown("userGroup", $form_user_group);
 			echo "* Para adicionar mais de um tipo, acesse o menu para editar usuário";
-			echo form_error("userType");
+			echo form_error("userGroup");
 			?>
 		</div>	
 				
