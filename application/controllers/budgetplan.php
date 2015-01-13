@@ -38,7 +38,7 @@ class Budgetplan extends CI_Controller {
 			$this->session->set_flashdata("danger", "Houve algum erro. Plano orçamentário não cadastrado");
 		}
 
-		redirect("plano%20orcamentario");
+		redirect("planoorcamentario");
 	}
 
 	public function edit($id) {
@@ -83,7 +83,7 @@ class Budgetplan extends CI_Controller {
 		$continue = $this->input->post("continue");
 
 		if (!$continue) {
-			redirect("plano%20orcamentario/{$id}");
+			redirect("planoorcamentario/{$id}");
 		}
 
 		$budgetplan = array(
@@ -101,10 +101,10 @@ class Budgetplan extends CI_Controller {
 		$this->load->model('budgetplan_model');
 		if ($this->budgetplan_model->update($id, $budgetplan)) {
 			$this->session->set_flashdata("success", "Plano orçamentário alterado");
-			redirect("plano%20orcamentario");
+			redirect("planoorcamentario");
 		} else {
 			$this->session->set_flashdata("danger", "Houve algum erro tente novamente");
-			redirect("plano%20orcamentario/{$id}");
+			redirect("planoorcamentario/{$id}");
 		}
 	}
 

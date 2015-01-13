@@ -24,7 +24,7 @@
 				<td class="text-center"><?=$budgetplan['status']?></td>
 	
 				<td>
-					<?=anchor("plano%20orcamentario/{$budgetplan['id']}", "Editar", array(
+					<?=anchor("planoorcamentario/{$budgetplan['id']}", "Editar", array(
 						"class" => "btn btn-primary btn-editar",
 						"type" => "sumbit",
 						"content" => "Editar"
