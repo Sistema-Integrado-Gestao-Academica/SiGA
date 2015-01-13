@@ -897,7 +897,7 @@ class Course extends CI_Controller {
 		$permissions_for_logged_user = $logged_user_data['user_permissions'];
 
 		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
-
+		
 		return $user_has_the_permission;
 	}
 
@@ -907,24 +907,42 @@ class Course extends CI_Controller {
 	 * @return True if there is the courses permission on this array, or false if does not.
 	 */
 	private function haveCoursesPermission($permissions_array){
-		
-		define("COURSE_PERMISSION_NAME","cursos");
 
 		$arrarIsNotEmpty = is_array($permissions_array) && !is_null($permissions_array);
+		
 		if($arrarIsNotEmpty){
-			$existsThisPermission = FALSE;
+			$permision_exists = FALSE;
 			foreach($permissions_array as $route => $permission_name){
-				if($route === COURSE_PERMISSION_NAME){
-					$existsThisPermission = TRUE;
+
+				switch ($route){
+					case 'name': break;
+					case 'route':
+								$permision_exists = $this->getRoutesFromPermissionsArray($permission_name);
+								 break;
 				}
 			}
 		}else{
-			$existsThisPermission = FALSE;
+			$permision_exists = FALSE;
 		}
-
-		return $existsThisPermission;
+		
+		return $permision_exists;
 	}
-
+	
+	public function getRoutesFromPermissionsArray($permissions_array){
+		define("COURSE_PERMISSION_NAME","cursos");
+		$existsThisPermission = FALSE;
+		
+		foreach ($permissions_array as $groupId => $route_permited){
+			foreach ($route_permited as $keys => $route){
+				if($route === COURSE_PERMISSION_NAME){
+					$existsThisPermission = TRUE;
+				}
+			}	
+		}
+		return $existsThisPermission;
+		
+	}
+	
 	/**
 	 * Check if an user has admin permissions
 	 * @param $user_type_ids - An array with the user types of an user
