@@ -44,8 +44,7 @@ class Budgetplan extends CI_Controller {
 	public function edit($id) {
 		session();
 		$this->load->model('budgetplan_model');
-		$budgetplan = array('id' => $id);
-		$budgetplan = $this->budgetplan_model->get('id', $budgetplan);
+		$budgetplan = $this->budgetplan_model->get('id', $id);
 
 		$status_options = $this->db->get("budgetplan_status")->result_array();
 		$status = array();
@@ -99,12 +98,50 @@ class Budgetplan extends CI_Controller {
 		}
 
 		$this->load->model('budgetplan_model');
-		if ($this->budgetplan_model->update($id, $budgetplan)) {
+		if ($this->budgetplan_model->update($budgetplan)) {
 			$this->session->set_flashdata("success", "Plano orçamentário alterado");
 			redirect("planoorcamentario");
 		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro tente novamente");
+			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
 			redirect("planoorcamentario/{$id}");
+		}
+	}
+
+	public function newExpense($id) {
+		session();
+		$this->load->model('budgetplan_model');
+		$budgetplan = $this->budgetplan_model->get('id', $id);
+
+		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+						'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+
+		$data = array('budgetplan' => $budgetplan, 'months' => $months);
+		$this->load->template("budgetplan/expense", $data);
+	}
+
+	public function saveExpense() {
+		session();
+		$expense = array(
+			'year' => $this->input->post("year"),
+			'nature' => $this->input->post("nature"),
+			'month' => $this->input->post("month"),
+			'value' => $this->input->post("value"),
+			'budgetplan_id' => $this->input->post("budgetplan_id")
+		);
+
+		$id = $expense['budgetplan_id'];
+
+		$this->load->model('budgetplan_model');
+		$budgetplan = $this->budgetplan_model->get('id', $id);
+		$budgetplan['spending'] += $expense['value'];
+		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
+
+		if ($this->budgetplan_model->saveExpense($expense) && $this->budgetplan_model->update($budgetplan)) {
+			$this->session->set_flashdata("success", "Nova despesa adicionada com sucesso");
+			redirect("planoorcamentario/{$id}");
+		} else {
+			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
+			redirect("planoorcamentario/{$id}/novadespesa");
 		}
 	}
 

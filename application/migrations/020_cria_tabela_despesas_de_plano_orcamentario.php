@@ -17,6 +17,11 @@ class Migration_Cria_tabela_despesas_de_plano_orcamentario extends CI_Migration 
 		$this->dbforge->create_table('expense', true);
 
 		$this->db->query("ALTER TABLE expense ADD CONSTRAINT IDBUDGETPLAN_EXPENSE_FK FOREIGN KEY (budgetplan_id) REFERENCES budgetplan(id)");
+
+		// modify "plano orcamentario" route
+		$this->db->where('permission_name', 'Plano Orcamentário');
+		$object = array('permission_name' => 'Plano Orçamentário', 'route' => 'planoorcamentario');
+		$this->db->update('permission', $object);
 	}
 
 	public function down() {

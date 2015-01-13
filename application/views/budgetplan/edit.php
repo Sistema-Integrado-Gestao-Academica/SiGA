@@ -3,11 +3,12 @@
 <div class="form-box-logged" id="login-box">
 	<div class="header">Alterar um P.O.</div>
 
-	<?= form_open("budgetplan/update") ?>
-	<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
-	<?= form_hidden("continue", "ok") ?>
-
 	<div class="body bg-gray">
+		<a class='btn bg-light-blue' href="<?=base_url("planoorcamentario/{$budgetplan['id']}/novadespesa")?>">Adicionar uma despesa</a>
+		<?= form_open("budgetplan/update") ?>
+		<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
+		<?= form_hidden("continue", "ok") ?>
+
 		<div class="form-group">
 			<?= form_label("Curso", "course") ?>
 			<br>
@@ -25,14 +26,14 @@
 			)) ?>
 		</div>
 		<div class="form-group">
-			<?= form_label("Despesa", "spending") ?>
+			<?= form_label("Despesas", "spending") ?>
 			<?= form_input(array(
 				"name" => "spending",
 				"id" => "spending",
 				"type" => "number",
 				"class" => "form-campo",
 				"value" => $budgetplan['spending'],
-				$disable_spending => $disable_spending
+				"readonly" => "readonly"
 			)) ?>
 		</div>
 		<?php if ($budgetplan['status'] != 4): ?>
@@ -49,11 +50,10 @@
 					"onclick" => "confirmation()"
 				)) ?>
 			</div>
-		<?php else: ?>
-			<div class="footer">
-				<br><a href="<?=base_url('plano%20orcamentario')?>" class='btn bg-olive btn-block'>Voltar</a>
-			</div>
 		<?php endif ?>
+		<div class="footer">
+			<a href="<?=base_url('planoorcamentario')?>" class='btn bg-olive btn-block'>Voltar</a>
+		</div>
 
 		<?= form_close() ?>
 	</div>
