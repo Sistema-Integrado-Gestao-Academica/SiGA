@@ -207,9 +207,9 @@ class Usuarios_model extends CI_Model {
 	}
 	
 	public function getAllSecretaries() {
-		define('SECRETARY', 7);
+		define('SECRETARY', 6);
 		$this->db->select('id_user');
-		$id_users = $this->db->get_where('user_group',array('id_user_type'=>SECRETARY))->result_array();
+		$id_users = $this->db->get_where('user_group',array('id_group'=>SECRETARY))->result_array();
 		$users = array();
 		$return_users = array();
 		

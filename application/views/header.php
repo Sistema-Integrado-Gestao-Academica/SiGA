@@ -193,7 +193,7 @@
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-            	
+            	<?php  var_dump($session);?>
 	
 <?php
 if ($this->session->flashdata("success")) : ?>
