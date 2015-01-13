@@ -3,7 +3,7 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">P.O. cadastrados</h3></td>
-		<?php if($budgetplans){ ?>
+	<?php if($budgetplans): ?>
 		<td><h3 class="text-center">Curso</h3></td>
 		<td><h3 class="text-center">Montante</h3></td>
 		<td><h3 class="text-center">Gastos</h3></td>
@@ -13,46 +13,39 @@
 	</tr>
 
 	<?php $i=0; ?>
-	<?php 
-		foreach ($budgetplans as $budgetplan){ ?>
-			<tr>
-				<td class="text-center"><?=$i+=1?></td>
-				<td class="text-center"><?=$budgetplan['course']?></td>
-				<td class="text-center"><?=currencyBR($budgetplan['amount'])?></td>
-				<td class="text-center"><?=currencyBR($budgetplan['spending'])?></td>
-				<td class="text-center"><?=currencyBR($budgetplan['balance'])?></td>
-				<td class="text-center"><?=$budgetplan['status']?></td>
-	
-				<td>
-					<?=anchor("planoorcamentario/{$budgetplan['id']}", "Editar", array(
-						"class" => "btn btn-primary btn-editar",
-						"type" => "sumbit",
-						"content" => "Editar"
-					))?>
-					
-					<?php 
-					echo form_open("budgetplan/remove");
-					echo form_hidden("funcao_id", $budgetplan['id']);
-					echo form_button(array(
-						"class" => "btn btn-danger btn-remover",
-						"type" => "sumbit",
-						"content" => "Remover"
-					));
-					echo form_close();
-					?>
-				</td>
-			</tr>
-	<?php }
-		}else{ ?>
-		</tr>
+	<?php foreach ($budgetplans as $budgetplan): ?>
 		<tr>
+			<td class="text-center"><?=++$i?></td>
+			<td class="text-center"><?=$budgetplan['course']?></td>
+			<td class="text-center"><?=currencyBR($budgetplan['amount'])?></td>
+			<td class="text-center"><?=currencyBR($budgetplan['spending'])?></td>
+			<td class="text-center"><?=currencyBR($budgetplan['balance'])?></td>
+			<td class="text-center"><?=$budgetplan['status']?></td>
+
 			<td>
-				<h3>
-					<label class="label label-default"> Não existem planos orçmentários cadastrados</label>
-				</h3>
+				<?=anchor("planoorcamentario/{$budgetplan['id']}", "Editar", array(
+					"class" => "btn btn-primary btn-editar",
+					"type" => "sumbit",
+					"content" => "Editar"
+				)) ?>
+				
+				<?= form_open("budgetplan/remove") ?>
+				<?= form_hidden("funcao_id", $budgetplan['id']) ?>
+				<?= form_button(array(
+					"class" => "btn btn-danger btn-remover",
+					"type" => "sumbit",
+					"content" => "Remover"
+				)) ?>
+				<?= form_close() ?>
 			</td>
 		</tr>
-	<?php }?>
+	<?php endforeach ?>
+	<?php else: ?>
+		</tr>
+		<tr>
+			<td><h3><label class="label label-default"> Não existem planos orçamentários cadastrados</label></h3></td>
+		</tr>
+	<?php endif ?>
 </table>
 
 <div class="form-box-logged" id="login-box"> 
@@ -91,6 +84,7 @@
 		</div>
 	</div>
 </div>
+
 <script>
 	$(document).ready(function() {
 		$("#amount").inputmask("decimal", {
