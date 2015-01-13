@@ -30,16 +30,19 @@ class Migration_Cria_tabela_de_grupos_de_usuario extends CI_migration {
 
 
 	// Inserting user_group values
-		$user_group_value = array('id_user' => 1, 'id_group' => 1);
-		$this->db->insert('user_group', $user_group_value);
-
-		$user_group_value = array('id_user' => 1, 'id_group' => 2);
+		$user_group_value = array('id_user' => 1, 'id_group' => 3);
 		$this->db->insert('user_group', $user_group_value);
 
 		$user_group_value = array('id_user' => 2, 'id_group' => 1);
 		$this->db->insert('user_group', $user_group_value);
 
 		$user_group_value = array('id_user' => 3, 'id_group' => 2);
+		$this->db->insert('user_group', $user_group_value);
+		
+		$user_group_value = array('id_user' => 4, 'id_group' => 6);
+		$this->db->insert('user_group', $user_group_value);
+		
+		$user_group_value = array('id_user' => 4, 'id_group' => 1);
 		$this->db->insert('user_group', $user_group_value);
 	// End
 

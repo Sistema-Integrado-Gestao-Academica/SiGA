@@ -18,6 +18,13 @@ class Migration_Cria_tabela_de_grupos extends CI_migration {
 		$this->db->insert('group', $object);
 		$object = array('id_group' => 3, 'group_name' => 'administrador');
 		$this->db->insert('group', $object);
+		$object = array('id_group' => 4, 'group_name' => 'discente');
+		$this->db->insert('group', $object);
+		$object = array('id_group' => 5, 'group_name' => 'docente');
+		$this->db->insert('group', $object);
+		$object = array('id_group' => 6, 'group_name' => 'secretario');
+		$this->db->insert('group', $object);
+		$object = array('id_group' => 7, 'group_name' => 'convidado');
 
 	}
 
