@@ -945,14 +945,14 @@ class Course extends CI_Controller {
 	
 	/**
 	 * Check if an user has admin permissions
-	 * @param $user_type_ids - An array with the user types of an user
+	 * @param $user_group_ids - An array with the user types of an user
 	 * @return True if in the array passed has an id of admin
 	 */
-	private function isAdmin($user_type_ids){
+	private function isAdmin($user_group_ids){
 
 		$this->load->model('usuarios_model');
-		foreach($user_type_ids as $id_user_type){
-			$isAdminId = $this->usuarios_model->checkIfIdIsOfAdmin($id_user_type);
+		foreach($user_group_ids as $id_user_group){
+			$isAdminId = $this->usuarios_model->checkIfIdIsOfAdmin($id_user_group);
 			if($isAdminId){
 				break; // Try not to do this
 			}

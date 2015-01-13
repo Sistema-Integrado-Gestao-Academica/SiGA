@@ -19,7 +19,6 @@ class Login extends CI_Controller {
 			$user = $this->usuarios_model->validateUser($login, $password);
 			
 			if(sizeof($user) > 0){
-				//$user_type = $this->usuarios_model->getUserType($user['id']);
 				
 				$this->load->model("module_model");
 				$registered_permissions = $this->module_model->getUserPermissions($user['id']);
@@ -28,7 +27,6 @@ class Login extends CI_Controller {
 
 				$userData = array(
 					'user' => $user,
-					//'user_type' => $user_type,
 					'user_permissions' => $registered_permissions,
 					'user_groups' => $registered_groups
 				);

@@ -169,8 +169,8 @@ class Usuario extends CI_Controller {
 	/**
 	  * Join the id's and names of user types into an array as key => value.
 	  * Used to the user type form
-	  * @param $user_types - The array that contains the tuples of user_type
-	  * @return An array with the id's and user types names as id => user_type_name
+	  * @param $user_groups - The array that contains the tuples of user_groups
+	  * @return An array with the id's and user types names as id => user_group_name
 	  */
 	private function turnUserGroupsToArray($user_groups){
 		// Quantity of user types registered

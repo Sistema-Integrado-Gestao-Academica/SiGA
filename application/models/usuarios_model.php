@@ -178,32 +178,6 @@ class Usuarios_model extends CI_Model {
 
 		return $foundStatus;
 	}
-
-	/**
-	 * Get the registered user types for an given user id
-	 * @param $user_id - The user id to look for types
-	 * @return An array with the user types id's in each position of the array
-	 */
-	public function getUserType($user_id){
-		
-		$this->db->select('id_user_type');
-		$types_found = $this->db->get_where("user_user_type", array('id_user'=>$user_id));
-		$types_found_to_array = $types_found->result_array();
-		
-		// Filter the array returned from result_array() into a single array
-		for($i = 0; $i < sizeof($types_found_to_array); $i++){
-			$user_types_found[$i] = $types_found_to_array[$i]['id_user_type'];
-
-			$this->db->select('type_name');
-			$type_name = $this->db->get_where("user_type",array('id_type'=>$user_types_found[$i]))->result_array();
-			if($type_name){
-				$user_type_name[$i] = $type_name[0]['type_name'];
-			}
-		}
-
-		$user_type_return = array_combine($user_types_found,$user_type_name);
-		return $user_type_return;
-	}
 	
 	/**
 	 * Function to look if an user is or not a course secretary
@@ -233,9 +207,9 @@ class Usuarios_model extends CI_Model {
 	}
 	
 	public function getAllSecretaries() {
-		define('SECRETARY', 4);
+		define('SECRETARY', 7);
 		$this->db->select('id_user');
-		$id_users = $this->db->get_where('user_user_type',array('id_user_type'=>SECRETARY))->result_array();
+		$id_users = $this->db->get_where('user_group',array('id_user_type'=>SECRETARY))->result_array();
 		$users = array();
 		$return_users = array();
 		
@@ -306,9 +280,9 @@ class Usuarios_model extends CI_Model {
 		// The administer name on database
 		define("ADMINISTER", "administrador");
 
-		$this->db->select('type_name');
-		$this->db->from('user_type');
-		$this->db->where('id_type', $id_to_check);
+		$this->db->select('group_name');
+		$this->db->from('group');
+		$this->db->where('id_group', $id_to_check);
 		$tuple_found = $this->db->get()->row();
 
 		$type_name_found = $tuple_found->type_name;
