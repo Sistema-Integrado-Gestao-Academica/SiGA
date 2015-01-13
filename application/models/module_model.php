@@ -23,33 +23,29 @@ class Module_model extends CI_Model {
 			$permission_routes[$group_ids[$i]['id_group']] = $this->permission_model->getPermissionRoutesByModules($module_permissions_ids);
 			
 		}
-		
 		$permission_names_array = array();
 
 		for($i = 0; $i < sizeof($permission_names); $i++){
-			
 			$permission_names_array[$group_ids[$i]['id_group']] = array_merge($permission_names_array, $permission_names[$group_ids[$i]['id_group']]);
-			
 		}
 
 		
-		$permissions_names = array_unique($permission_names_array);
 		
-
+		$permissions_names = array_intersect($permission_names,$permission_names_array);
+		
 		$permission_routes_array = array();
 
 		for($i = 0; $i < sizeof($permission_routes); $i++){
 			$permission_routes_array[$group_ids[$i]['id_group']] = array_merge($permission_routes_array, $permission_routes[$group_ids[$i]['id_group']]);
 		}
-		
-		$permissions_routes = array_unique($permission_routes_array);
 
 		
+		$permissions_routes = array_intersect($permission_routes,$permission_routes_array);
 		$permissions = array(
 			'name' => $permissions_names,
 			'route' => $permissions_routes
 		);
-	
+
 		return $permissions;
 	}
 

@@ -123,7 +123,7 @@
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
 	                    <ul class="sidebar-menu">
 	                        <?php
-	                define('SECRETARIA', 7);
+	                define('SECRETARIA', 6);
 				 
 	                if(@$session['user_groups'][SECRETARIA]){
 						$secretario = $session['user_groups'][SECRETARIA];
@@ -145,10 +145,10 @@
 							            	foreach($permissions_names as $id_group => $permission_name){
 							            		foreach ($permissions_routes as $id_group2 => $permission_route){
 													switch($id_group2){
-														case 7:
+														case SECRETARIA:
 															break;
 														default: 
-															for($i=1;$i<sizeof($permission_name); $i++){
+															for($i=0;$i<sizeof($permission_name); $i++){
 																echo "<li>" . anchor($permission_route[$i], $permission_name[$i]) . " </li>";
 															} 
 							            			 }
@@ -163,26 +163,27 @@
 							echo "</ul>";
 						echo "</li>";
 					}else{
+							$permissions_names = $session['user_permissions']['name'];
+							$permissions_routes = $session['user_permissions']['route'];
 							foreach($session['user_groups'] as $userGroupId => $userGroupName){
-				                    	echo "<li class='treeview'>";
-				                    		echo anchor($userGroupName, ucfirst($userGroupName),"class='fa fa-folder-open-o'");
-				                    		echo "<ul class='treeview-menu'>";
-				                    		$permissions_names = $session['user_permissions']['name'];
-							            	$permissions_routes = $session['user_permissions']['route'];
-							            	foreach($permissions_names as $id_group => $permission_name){
-							            		foreach ($permissions_routes as $id_group2 => $permission_route){
-													switch($id_group2){
-														case 7:
-															break;
-														default: 
-															for($i=1;$i<sizeof($permission_name); $i++){
-																echo "<li>" . anchor($permission_route[$i], $permission_name[$i]) . " </li>";
-															} 
-							            			 }
-							            		}
-							            	}
-				                    		echo "</ul>";
-				                    	echo "</li>";
+		                    	echo "<li class='treeview'>";
+		                    		echo anchor($userGroupName, ucfirst($userGroupName),"class='fa fa-folder-o'");
+		                    		echo "<ul class='treeview-menu'>";
+					            	
+					            	foreach($permissions_names as $id_group => $permission_name){
+					            		foreach ($permissions_routes as $id_group2 => $permission_route){
+											if ($id_group == $id_group2){
+												if( $id_group == $userGroupId || $id_group2 == $userGroupId){
+													for($i=0;$i<sizeof($permission_name); $i++){
+														echo "<li>" . anchor($permission_route[$i], $permission_name[$i],"class='fa fa-folder-open-o'") . " </li>";
+													}
+												} 
+											}
+					            		}
+					            	}
+		                    		echo "</ul>";
+		                    	echo "</li>";
+		                    	
 							} 
 					}
 							?>
@@ -193,8 +194,7 @@
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-            	<?php  var_dump($session);?>
-	
+			
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>
