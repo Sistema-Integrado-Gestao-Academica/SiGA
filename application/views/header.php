@@ -167,9 +167,20 @@
 				                    	echo "<li class='treeview'>";
 				                    		echo anchor($userGroupName, ucfirst($userGroupName),"class='fa fa-folder-open-o'");
 				                    		echo "<ul class='treeview-menu'>";
-				                    		foreach($session["user_permissions"] as $route => $permission_name){
-				                    			echo "<li>" . anchor($route, $permission_name) . " </li>";
-				                    		}
+				                    		$permissions_names = $session['user_permissions']['name'];
+							            	$permissions_routes = $session['user_permissions']['route'];
+							            	foreach($permissions_names as $id_group => $permission_name){
+							            		foreach ($permissions_routes as $id_group2 => $permission_route){
+													switch($id_group2){
+														case 7:
+															break;
+														default: 
+															for($i=1;$i<sizeof($permission_name); $i++){
+																echo "<li>" . anchor($permission_route[$i], $permission_name[$i]) . " </li>";
+															} 
+							            			 }
+							            		}
+							            	}
 				                    		echo "</ul>";
 				                    	echo "</li>";
 							} 
