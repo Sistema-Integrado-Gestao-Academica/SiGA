@@ -102,7 +102,7 @@
 		                            	<?php 
 		                            		foreach ($session['user_groups'] as $group_name => $profile_route) {
 		                            			echo "<li>";
-		                            			echo "<a href=\"{$profile_route}\">".ucfirst($group_name)."</a>";
+		                            			echo "<a href=\"{$profile_route}\">".ucfirst($profile_route)."</a>";
 		                            			echo "</li>";
 		                            		}
 		                            	?>
@@ -125,7 +125,7 @@
 	                        <?php
 	                define('SECRETARIA', 7);
 				 
-	                if($session['user_groups'][SECRETARIA]){
+	                if(@$session['user_groups'][SECRETARIA]){
 						$secretario = $session['user_groups'][SECRETARIA];
 						echo "<li class='treeview'>";
 							echo anchor($secretario, ucfirst($secretario),"class='fa fa-folder-open-o'");
