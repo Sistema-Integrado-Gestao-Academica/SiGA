@@ -71,7 +71,7 @@ class Usuario extends CI_Controller {
 
 			if ($usuarioExiste) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema");
-				redirect("usuario/formulario_entrada");
+				redirect("usuario/formulario");
 			} else {
 				$this->usuarios_model->salva($usuario);
 				$this->usuarios_model->saveGroup($usuario, $grupo);

@@ -9,8 +9,17 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function saveGroup($user, $group){
+		define('FINANCEIRO', 1);
+		define('ADMINISTRATIVO', 2);
+		define('SECRETARIO', 7);
+		
 		$rowUser = $this->buscaPorLoginESenha($user['login']);
 		$user_id = $rowUser['id'];
+		
+		if($group == FINANCEIRO || $group == ADMINISTRATIVO){
+			$user_group = array("id_user"=>$user_id,"id_group"=>SECRETARIO);
+			$this->db->insert("user_group",$user_group);
+		}
 		
 		$user_group = array("id_user"=>$user_id,"id_group"=>$group);
 		

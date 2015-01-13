@@ -12,40 +12,44 @@ class Module_model extends CI_Model {
 		$this->load->model("permission_model");
 
 		$group_ids = $this->getUserModules($user_id);
-
+		
 		for($i = 0; $i < sizeof($group_ids); $i++){
 			
 			$module_id_to_get = $group_ids[$i]['id_group'];
-
+			
 			$module_permissions_ids = $this->permission_model->getPermissionIdsOfModule($module_id_to_get);
-
-			$permission_names[$i] = $this->permission_model->getPermissionNamesOfModules($module_permissions_ids);
-			$permission_routes[$i] = $this->permission_model->getPermissionRoutesByModules($module_permissions_ids);
-
+			
+			$permission_names[$group_ids[$i]['id_group']] = $this->permission_model->getPermissionNamesOfModules($module_permissions_ids);
+			$permission_routes[$group_ids[$i]['id_group']] = $this->permission_model->getPermissionRoutesByModules($module_permissions_ids);
+			
 		}
-
+		
 		$permission_names_array = array();
 
 		for($i = 0; $i < sizeof($permission_names); $i++){
-			$permission_names_array = array_merge($permission_names_array, $permission_names[$i]);
+			
+			$permission_names_array[$group_ids[$i]['id_group']] = array_merge($permission_names_array, $permission_names[$group_ids[$i]['id_group']]);
+			
 		}
 
+		
 		$permissions_names = array_unique($permission_names_array);
-
+		
 
 		$permission_routes_array = array();
 
 		for($i = 0; $i < sizeof($permission_routes); $i++){
-			$permission_routes_array = array_merge($permission_routes_array, $permission_routes[$i]);
+			$permission_routes_array[$group_ids[$i]['id_group']] = array_merge($permission_routes_array, $permission_routes[$group_ids[$i]['id_group']]);
 		}
-
+		
 		$permissions_routes = array_unique($permission_routes_array);
 
+		
 		$permissions = array(
 			'name' => $permissions_names,
 			'route' => $permissions_routes
 		);
-
+	
 		return $permissions;
 	}
 
