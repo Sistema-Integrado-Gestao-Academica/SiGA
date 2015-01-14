@@ -4,7 +4,6 @@
 	<div class="header">Alterar um P.O.</div>
 
 	<div class="body bg-gray">
-		<a class='btn bg-light-blue' href="<?=base_url("planoorcamentario/{$budgetplan['id']}/novadespesa")?>">Adicionar uma despesa</a>
 		<?= form_open("budgetplan/update") ?>
 		<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
 		<?= form_hidden("continue", "ok") ?>
@@ -12,7 +11,7 @@
 		<div class="form-group">
 			<?= form_label("Curso", "course") ?>
 			<br>
-			<?= form_dropdown('course', $courses, $budgetplan['course_id']-1) ?>
+			<?= form_dropdown('course', $courses, $budgetplan['course_id']) ?>
 		</div>
 		<div class="form-group">
 			<?= form_label("Montante", "amount") ?>
@@ -58,6 +57,10 @@
 		<?= form_close() ?>
 	</div>
 </div>
+
+<br><br>
+
+<?php include 'expenses_table.php'; ?>
 
 <script>
 	function confirmation() {

@@ -27,6 +27,10 @@ class Budgetplan_model extends CI_Model {
 	public function saveExpense($object) {
 		return $this->db->insert("expense", $object);
 	}
+
+	public function getExpenses($object) {
+		return $this->db->get_where("expense", array('budgetplan_id' => $object['id']))->result_array();
+	}
 }
 
 /* End of file budgetplan_model.php */

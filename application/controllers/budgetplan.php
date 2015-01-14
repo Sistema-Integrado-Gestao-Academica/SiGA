@@ -62,12 +62,16 @@ class Budgetplan extends CI_Controller {
 		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
 
+		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
+
+		$this->load->helper(array("currency"));
 		$data = array(
 			'budgetplan' => $budgetplan,
 			'status' => $status,
 			'courses' => $courses,
 			'disable_amount' => $disable_amount,
-			'disable_spending' => $disable_spending
+			'disable_spending' => $disable_spending,
+			'expenses' => $expenses
 		);
 		$this->load->template("budgetplan/edit", $data);
 	}
