@@ -179,7 +179,7 @@ img {
   color: #f9f9f9 !important;
 }
 .bg-gray {
-  background-color: #eaeaec !important;
+  background-color: #dad9dc!important;
 }
 .bg-black {
   background-color: #222222 !important;
@@ -2687,7 +2687,7 @@ Component: timeline
   background: #f9f9f9;
 }
 .skin-blue .left-side {
-  background: #f4f4f4;
+  background: #e8e8e8;
   -webkit-box-shadow: inset -3px 0px 8px -4px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: inset -3px 0px 8px -4px rgba(0, 0, 0, 0.1);
   box-shadow: inset -3px 0px 8px -4px rgba(0, 0, 0, 0.07);
