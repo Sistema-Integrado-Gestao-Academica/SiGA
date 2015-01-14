@@ -264,7 +264,7 @@ class Usuario extends CI_Controller {
 	 */
 	private function checkUserStudentPermission(){
 		$logged_user_data = $this->session->userdata('current_user');
-		$permissions_for_logged_user = $logged_user_data['user_permissions'];
+		$permissions_for_logged_user = $logged_user_data['user_permissions']['route'];
 
 		$user_has_the_permission = $this->haveStudentPermission($permissions_for_logged_user);
 
@@ -278,13 +278,15 @@ class Usuario extends CI_Controller {
 	 */
 	private function haveStudentPermission($permissions_array){
 		
-		define("STUDENT_PERMISSION_NAME","student");
-
+		define("STUDENT_GROUP", 7);
+		
 		$arrarIsNotEmpty = is_array($permissions_array) && !is_null($permissions_array);
+		
 		if($arrarIsNotEmpty){
 			$existsThisPermission = FALSE;
 			foreach($permissions_array as $route => $permission_name){
-				if($route === STUDENT_PERMISSION_NAME){
+				
+				if($route === STUDENT_GROUP){
 					$existsThisPermission = TRUE;
 				}
 			}
