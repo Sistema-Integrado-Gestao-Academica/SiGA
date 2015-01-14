@@ -19,6 +19,11 @@ class Budgetplan_model extends CI_Model {
 		return $this->db->update("budgetplan", $object);
 	}
 
+	public function delete($id) {
+		$this->db->where('id', $id);
+		return $this->db->delete('budgetplan');
+	}
+
 	public function getBudgetplanStatus($status) {
 		$res = $this->db->get_where('budgetplan_status', array('id' => $status))->row_array();
 		return $res ? $res['description'] : NULL;

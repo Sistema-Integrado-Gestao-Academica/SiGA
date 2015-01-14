@@ -23,20 +23,15 @@
 			<td class="text-center"><?=$budgetplan['status']?></td>
 
 			<td>
-				<?=anchor("planoorcamentario/{$budgetplan['id']}", "Editar", array(
-					"class" => "btn btn-primary btn-editar",
-					"type" => "sumbit",
-					"content" => "Editar"
-				)) ?>
-				
-				<?= form_open("budgetplan/remove") ?>
-				<?= form_hidden("funcao_id", $budgetplan['id']) ?>
-				<?= form_button(array(
-					"class" => "btn btn-danger btn-remover",
-					"type" => "sumbit",
-					"content" => "Remover"
-				)) ?>
-				<?= form_close() ?>
+				<a href="<?=base_url("planoorcamentario/{$budgetplan['id']}")?>" class="btn btn-primary btn-editar btn-sm">
+					<span class="glyphicon glyphicon-edit"></span>
+				</a>
+				<form action="<?=base_url("budgetplan/delete")?>" method="post">
+					<input type="hidden" name="budgetplan_id" value=<?=$budgetplan['id']?> />
+					<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</form>
 			</td>
 		</tr>
 	<?php endforeach ?>

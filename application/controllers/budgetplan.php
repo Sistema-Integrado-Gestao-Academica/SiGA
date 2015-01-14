@@ -111,6 +111,18 @@ class Budgetplan extends CI_Controller {
 		}
 	}
 
+	public function delete() {
+		session();
+		$id = $this->input->post("budgetplan_id");
+		$this->load->model('budgetplan_model');
+
+		if ($this->budgetplan_model->delete($id)) {
+			$this->session->set_flashdata("danger", "Plano orçamentário foi removido");
+		}
+
+		redirect("planoorcamentario");
+	}
+
 	public function newExpense($id) {
 		session();
 		$this->load->model('budgetplan_model');
