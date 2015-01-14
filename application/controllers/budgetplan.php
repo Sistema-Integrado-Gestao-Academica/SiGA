@@ -19,17 +19,34 @@ class Budgetplan extends CI_Controller {
 			array_push($status, $s['description']);
 		}
 
+		$this->load->model('course_model');
+		$courses_options = $this->course_model->getAllCourses();
+		$courses = array("Nenhum");
+		foreach ($courses_options as $c) {
+			array_push($courses, $c['course_name']);
+		}
+
 		$this->load->helper(array("currency"));
-		$data = array("budgetplans" => $budgetplans, "status" => $status);
+		$data = array(
+			"budgetplans" => $budgetplans,
+			"status" => $status,
+			"courses" => $courses
+		);
 		$this->load->template('budgetplan/index', $data);
 	}
 
 	public function save() {
 		session();
+		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
-		$status = (int) $this->input->post("status") + 1;
+		$status = $this->input->post("status") + 1;
 
 		$budgetplan = array('amount' => $amount, 'status' => $status, 'balance' => $amount);
+
+		if ($course) {
+			$budgetplan['course_id'] = $course;
+		}
+
 		$this->load->model('budgetplan_model');
 
 		if ($this->budgetplan_model->save($budgetplan)) {

@@ -47,5 +47,8 @@
 			)) ?>
 		</div>
 		<?= form_close() ?>
+		<div class="footer">
+			<a href="<?=base_url("planoorcamentario/{$budgetplan['id']}")?>" class='btn bg-olive btn-block'>Voltar</a>
+		</div>
 	</div>
 </div>

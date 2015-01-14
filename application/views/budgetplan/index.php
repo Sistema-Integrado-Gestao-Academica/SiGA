@@ -45,39 +45,39 @@
 
 <div class="form-box-logged" id="login-box"> 
 	<div class="header">Cadastrar um novo P.O.</div>
-		<?= form_open("budgetplan/save") ?>
+
+	<?= form_open("budgetplan/save") ?>
 	<div class="body bg-gray">
-		<div class="form-group">	
-		<?php
-		echo form_label('Montante inicial', 'amount');
-		echo form_input(array(
-			"name" => "amount",
-			"id" => "amount",
-			"type" => "number",
-			"class" => "form-campo",
-			"class" =>  "form-control"
-		));
-		?>
+		<div class="form-group">
+			<?= form_label("Curso", "course") ?><br>
+			<?= form_dropdown('course', $courses) ?>
 		</div>
-		<div class="form-group">	
-		<?php
-		echo form_label("Status", "status");
-		echo "<br>";
-		echo form_dropdown('status', $status);
-		?>
+
+		<div class="form-group">
+			<?= form_label('Montante inicial', 'amount') ?>
+			<?= form_input(array(
+				"name" => "amount",
+				"id" => "amount",
+				"type" => "number",
+				"class" => "form-campo",
+				"class" =>  "form-control"
+			)) ?>
 		</div>
-		<div class="footer">	
-		<?php	
-		echo form_button(array(
-			"class" => "btn bg-olive btn-block",
-			"type" => "sumbit",
-			"content" => "Cadastrar"
-		));
-		
-		echo form_close();
-		?>
+
+		<div class="form-group">	
+			<?= form_label("Status", "status") ?><br>
+			<?= form_dropdown('status', $status) ?>
+		</div>
+
+		<div class="footer">
+			<?= form_button(array(
+				"class" => "btn bg-olive btn-block",
+				"type" => "sumbit",
+				"content" => "Cadastrar"
+			)) ?>
 		</div>
 	</div>
+	<?= form_close() ?>
 </div>
 
 <script>
