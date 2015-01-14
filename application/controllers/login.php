@@ -28,7 +28,8 @@ class Login extends CI_Controller {
 				$userData = array(
 					'user' => $user,
 					'user_permissions' => $registered_permissions,
-					'user_groups' => $registered_groups
+					'user_groups' => $registered_groups['idAndName'],
+					'user_profiles' => $registered_groups['nameAndProfile']
 				);
 
 				$this->session->set_userdata("current_user", $userData);

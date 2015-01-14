@@ -57,22 +57,30 @@ class Module_model extends CI_Model {
 
 		$foundGroups = $this->db->get()->result_array();
 		
-		$foundGroups = $this->turnGroupArrayIntoSingleArray($foundGroups);
+		$foundGroups = $this->splitGroupData($foundGroups);
 	
 		return $foundGroups;
 	}
 
-	private function turnGroupArrayIntoSingleArray($array){
+	private function splitGroupData($array){
 
 		$groupIdsArray = array();
 		$groupNamesArray = array();
+		$groupProfileArray = array();
 		for($i = 0; $i < sizeof($array); $i++){
 			$groupIdsArray[$i] = $array[$i]['id_group'];
 			$groupNamesArray[$i] = $array[$i]['group_name'];
+			$groupProfileArray[$i] = $array[$i]['profile_route'];
 		}
 		
-		$groups = array_combine($groupIdsArray, $groupNamesArray);
-		
+		$groupsNameAndProfile = array_combine($groupNamesArray, $groupProfileArray);
+		$groupsIdAndName = array_combine($groupIdsArray, $groupNamesArray);
+
+		$groups = array(
+			'idAndName' => $groupsIdAndName,
+			'nameAndProfile' => $groupsNameAndProfile
+		);
+
 		return $groups;
 	}
 

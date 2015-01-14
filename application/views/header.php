@@ -100,9 +100,9 @@
 
 		                            <ul class="dropdown-menu">
 		                            	<?php 
-		                            		foreach ($session['user_groups'] as $group_name => $profile_route) {
+		                            		foreach ($session['user_profiles'] as $group_name => $profile_route) {
 		                            			echo "<li>";
-		                            			echo "<a href=\"{$profile_route}\">".ucfirst($profile_route)."</a>";
+		                            			echo "<a href=\"{$profile_route}\">".ucfirst($group_name)."</a>";
 		                            			echo "</li>";
 		                            		}
 		                            	?>
