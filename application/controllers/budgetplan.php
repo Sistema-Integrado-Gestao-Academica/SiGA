@@ -129,7 +129,7 @@ class Budgetplan extends CI_Controller {
 		$budgetplan = $this->budgetplan_model->get('id', $id);
 
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-						'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 
 		$data = array('budgetplan' => $budgetplan, 'months' => $months);
 		$this->load->template("budgetplan/expense", $data);
@@ -137,15 +137,18 @@ class Budgetplan extends CI_Controller {
 
 	public function saveExpense() {
 		session();
+		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+
 		$expense = array(
 			'year' => $this->input->post("year"),
 			'nature' => $this->input->post("nature"),
-			'month' => $this->input->post("month"),
 			'value' => $this->input->post("value"),
 			'budgetplan_id' => $this->input->post("budgetplan_id")
 		);
 
 		$id = $expense['budgetplan_id'];
+		$expense['month'] = $months[$this->input->post("month")];
 
 		$this->load->model('budgetplan_model');
 		$budgetplan = $this->budgetplan_model->get('id', $id);

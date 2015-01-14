@@ -19,7 +19,7 @@
 		</div>
 		<div class="form-group">
 			<?= form_label("Mês da liberação", "month") ?><br>
-			<?= form_dropdown('months', $months) ?>
+			<?= form_dropdown('month', $months) ?>
 		</div>
 		<div class="form-group">
 			<?= form_label("Natureza da despesa", "nature") ?>

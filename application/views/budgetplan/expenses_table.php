@@ -10,7 +10,7 @@
 		<td><h4 class="text-center">Natureza da despesa</h4></td>
 		<td><h4 class="text-center">Mês da liberação</h4></td>
 		<td><h4 class="text-center">Valor</h4></td>
-		<td></td>
+		<td><h4 class="text-center">Ações</h4></td>
 	</tr>
 
 
