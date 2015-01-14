@@ -36,6 +36,11 @@ class Budgetplan_model extends CI_Model {
 	public function getExpenses($object) {
 		return $this->db->get_where("expense", array('budgetplan_id' => $object['id']))->result_array();
 	}
+
+	public function deleteExpense($id) {
+		$this->db->where('id', $id);
+		$this->db->delete('expense');
+	}
 }
 
 /* End of file budgetplan_model.php */

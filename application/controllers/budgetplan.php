@@ -181,6 +181,19 @@ class Budgetplan extends CI_Controller {
 		}
 	}
 
+	public function deleteExpense() {
+		session();
+		$expense_id = $this->input->post('expense_id');
+		$budgetplan_id = $this->input->post('budgetplan_id');
+		$this->load->model('budgetplan_model');
+
+		if ($this->budgetplan_model->deleteExpense($expense_id)) {
+			$this->session->set_flashdata("danger", "Despesa foi removida");
+		}
+
+		redirect("planoorcamentario/{$budgetplan_id}");
+	}
+
 }
 
 /* End of file budgetplan.php */

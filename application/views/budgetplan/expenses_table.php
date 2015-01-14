@@ -10,7 +10,7 @@
 		<td><h4 class="text-center">Natureza da despesa</h4></td>
 		<td><h4 class="text-center">Mês da liberação</h4></td>
 		<td><h4 class="text-center">Valor</h4></td>
-		<td><h4 class="text-center">Ações</h4></td>
+		<td></td>
 	</tr>
 
 
@@ -22,12 +22,13 @@
 		<td><?=$expense['month']?></td>
 		<td><?=currencyBR($expense['value'])?></td>
 		<td>
-			<button type="button" class="btn btn-primary btn-sm">
-				<span class="glyphicon glyphicon-edit"></span>
-			</button>
-			<button type="button" class="btn btn-danger btn-sm">
-				<span class="glyphicon glyphicon-remove"></span>
-			</button>
+			<?= form_open('budgetplan/deleteExpense') ?>
+				<?= form_hidden('expense_id', $expense['id']) ?>
+				<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
+				<button type="submit" class="btn btn-danger btn-xs">
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+			<?= form_close() ?>
 		</td>
 	</tr>
 <?php endforeach ?>
