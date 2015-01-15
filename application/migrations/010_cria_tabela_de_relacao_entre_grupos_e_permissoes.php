@@ -42,6 +42,8 @@ class Migration_Cria_tabela_de_relacao_entre_grupos_e_permissoes extends CI_migr
 		$this->db->insert('group_permission', $object);
 		$object = array('id_group' => 3, 'id_permission' => 6);
 		$this->db->insert('group_permission', $object);
+		$object = array('id_group' => 6, 'id_permission' => 6);
+		$this->db->insert('group_permission', $object);
 	}
 
 	public function down() {

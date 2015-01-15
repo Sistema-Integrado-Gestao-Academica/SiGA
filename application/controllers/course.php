@@ -17,6 +17,15 @@ class Course extends CI_Controller {
 		$this->loadTemplateSafely('course/course_index');
 	}
 
+	public function enrolStudentToCourse($courseId){
+
+		$courseData = array(
+			'courseId' => $courseId
+		);
+
+		$this->loadTemplateSafely('course/enrol_student.php', $courseData);
+	}
+
 	public function checkChoosenCourseType(){
 
 		define('POST_GRADUATION', 'post_graduation');

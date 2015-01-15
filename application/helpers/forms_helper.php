@@ -1,5 +1,21 @@
 <?php
 
+function displayEnrolStudentForm(){
+	
+	$student_name = array(
+		"name" => "student_name",
+		"id" => "student_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "50",
+		'style' => "width:40%;"
+	);
+
+	echo form_label("Informe o nome do aluno para matricular nesse curso:");
+	echo form_input($student_name);
+}
+
 function postGraduationTypesSelect(){
 	$post_graduation_types = array(
 		'academic_program' => 'Programa Acadêmico',
