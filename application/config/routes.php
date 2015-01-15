@@ -63,6 +63,7 @@ $route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
 $route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
 $route['student'] = 'usuario/student_index';
 $route['guest_home'] = 'usuario/guest_index';
+$route['secretary_home'] = 'usuario/secretary_index';
 
 /*
  * Test report routes

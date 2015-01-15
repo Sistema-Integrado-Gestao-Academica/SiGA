@@ -16,6 +16,14 @@ class Usuario extends CI_Controller {
 		$this->loadStudentTemplateSafely('usuario/student_home', $userStatus);
 	}
 
+	public function guest_index(){
+		
+	}
+
+	public function secretary_index(){
+
+	}
+
 	public function formulario() {
 		$this->load->model('usuarios_model');
 		$usuarios = $this->usuarios_model->buscaTodos();
