@@ -19,17 +19,34 @@ class Budgetplan extends CI_Controller {
 			array_push($status, $s['description']);
 		}
 
+		$this->load->model('course_model');
+		$courses_options = $this->course_model->getAllCourses();
+		$courses = array("Nenhum");
+		foreach ($courses_options as $c) {
+			array_push($courses, $c['course_name']);
+		}
+
 		$this->load->helper(array("currency"));
-		$data = array("budgetplans" => $budgetplans, "status" => $status);
+		$data = array(
+			"budgetplans" => $budgetplans,
+			"status" => $status,
+			"courses" => $courses
+		);
 		$this->load->template('budgetplan/index', $data);
 	}
 
 	public function save() {
 		session();
+		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
-		$status = (int) $this->input->post("status") + 1;
+		$status = $this->input->post("status") + 1;
 
 		$budgetplan = array('amount' => $amount, 'status' => $status, 'balance' => $amount);
+
+		if ($course) {
+			$budgetplan['course_id'] = $course;
+		}
+
 		$this->load->model('budgetplan_model');
 
 		if ($this->budgetplan_model->save($budgetplan)) {
@@ -38,14 +55,13 @@ class Budgetplan extends CI_Controller {
 			$this->session->set_flashdata("danger", "Houve algum erro. Plano orçamentário não cadastrado");
 		}
 
-		redirect("plano%20orcamentario");
+		redirect("planoorcamentario");
 	}
 
 	public function edit($id) {
 		session();
 		$this->load->model('budgetplan_model');
-		$budgetplan = array('id' => $id);
-		$budgetplan = $this->budgetplan_model->get('id', $budgetplan);
+		$budgetplan = $this->budgetplan_model->get('id', $id);
 
 		$status_options = $this->db->get("budgetplan_status")->result_array();
 		$status = array();
@@ -55,7 +71,7 @@ class Budgetplan extends CI_Controller {
 
 		$this->load->model('course_model');
 		$courses_options = $this->course_model->getAllCourses();
-		$courses = array('courses_name' => "Nenhum");
+		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
 			array_push($courses, $c['course_name']);
 		}
@@ -63,12 +79,16 @@ class Budgetplan extends CI_Controller {
 		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
 
+		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
+
+		$this->load->helper(array("currency"));
 		$data = array(
 			'budgetplan' => $budgetplan,
 			'status' => $status,
 			'courses' => $courses,
 			'disable_amount' => $disable_amount,
-			'disable_spending' => $disable_spending
+			'disable_spending' => $disable_spending,
+			'expenses' => $expenses
 		);
 		$this->load->template("budgetplan/edit", $data);
 	}
@@ -76,33 +96,48 @@ class Budgetplan extends CI_Controller {
 	public function update() {
 		session();
 		$id = $this->input->post("budgetplan_id");
-		$course = $this->input->post("course") + 1;
+		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
-		$status = (int) $this->input->post("status") + 1;
+		$status = $this->input->post("status") + 1;
 		$spending = $this->input->post("spending");
-		$confirm = $this->input->post("confirm");
+		$continue = $this->input->post("continue");
 
-		if (!$confirm) {
-			redirect("plano%20orcamentario/{$id}");
+		if (!$continue) {
+			redirect("planoorcamentario/{$id}");
 		}
 
 		$budgetplan = array(
 			'id' => $id,
-			'course_id' => $course,
 			'amount' => $amount,
 			'status' => $status,
 			'spending' => $spending,
 			'balance' => $amount - $spending
 		);
 
-		$this->load->model('budgetplan_model');
-		if ($this->budgetplan_model->update($id, $budgetplan)) {
-			$this->session->set_flashdata("success", "Plano orçamentário alterado");
-			redirect("plano%20orcamentario");
-		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro tente novamente");
-			redirect("plano%20orcamentario/{$id}");
+		if ($course) {
+			$budgetplan['course_id'] = $course;
 		}
+
+		$this->load->model('budgetplan_model');
+		if ($this->budgetplan_model->update($budgetplan)) {
+			$this->session->set_flashdata("success", "Plano orçamentário alterado");
+			redirect("planoorcamentario");
+		} else {
+			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
+			redirect("planoorcamentario/{$id}");
+		}
+	}
+
+	public function delete() {
+		session();
+		$id = $this->input->post("budgetplan_id");
+		$this->load->model('budgetplan_model');
+
+		if ($this->budgetplan_model->delete($id)) {
+			$this->session->set_flashdata("danger", "Plano orçamentário foi removido");
+		}
+
+		redirect("planoorcamentario");
 	}
 
 }

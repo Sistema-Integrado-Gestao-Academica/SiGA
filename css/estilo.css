@@ -33,7 +33,6 @@ td {
 
 .form-campo {
 	display: block;
-	width: 30%;
 	height: 34px;
 	padding: 6px 12px;
 
@@ -42,7 +41,8 @@ td {
 	border-radius: 4px;
 }
 
-.form-campo[disabled] {
+.form-campo[disabled],
+.form-campo[readonly] {
 	cursor: not-allowed;
 	background-color: #eee;
 	opacity: 1;

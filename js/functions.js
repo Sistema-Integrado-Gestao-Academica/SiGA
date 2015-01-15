@@ -14,7 +14,7 @@ function evaluatesCourseType(){
 	
 	var choosenCourseType = getChoosenCourseType();
 
-	var urlToPost = choosenCourseType.siteUrl+"/course/checkChoosenCourseType";
+	var urlToPost = choosenCourseType.siteUrl + "course/checkChoosenCourseType";
 	$.post(
 		urlToPost,
 		{courseType: choosenCourseType.courseType}, 
@@ -45,7 +45,7 @@ function getChoosenCourseType(){
 function evaluatesPostGraduationType(){
 
 	var choosenPostGraduationType = getChoosenPostGradType();
-	var urlToPost = choosenPostGraduationType.siteUrl + "/course/checkChoosenPostGraduationType";
+	var urlToPost = choosenPostGraduationType.siteUrl + "course/checkChoosenPostGraduationType";
 	
 	$.post(
 		urlToPost,
@@ -81,7 +81,7 @@ function getCurrentCourse(){
 
 function evaluatesProgram(){
 	var choosenProgram = getChoosenPostGradType();
-	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenProgram";
+	var urlToPost = choosenProgram.siteUrl + "course/checkChoosenProgram";
 	var currentCourse = getCurrentCourse();
 
 	$.post(
@@ -106,7 +106,7 @@ function evaluatesProgram(){
 function displayMasterDegreeForm(){
 
 	var choosenProgram = getChoosenPostGradType();
-	var urlToPost = choosenProgram.siteUrl + "/course/displayMasterDegreeUpdateForm";
+	var urlToPost = choosenProgram.siteUrl + "course/displayMasterDegreeUpdateForm";
 
 	$.post(
 		urlToPost,
@@ -122,7 +122,7 @@ function displayMasterDegreeForm(){
 
 function displayRegisteredDoctorate(){
 	var choosenProgram = getChoosenPostGradType();
-	var urlToPost = choosenProgram.siteUrl + "/course/displayRegisteredDoctorate";
+	var urlToPost = choosenProgram.siteUrl + "course/displayRegisteredDoctorate";
 	var currentCourse = getCurrentCourse();
 
 	$.post(
@@ -136,7 +136,7 @@ function displayRegisteredDoctorate(){
 
 // function evaluatesAcademicProgram(){
 // 	var choosenProgram = getChoosenAcademicProgram();
-// 	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenAcademicProgram";
+// 	var urlToPost = choosenProgram.siteUrl + "course/checkChoosenAcademicProgram";
 
 // 	$.post(
 // 		urlToPost,
@@ -160,7 +160,6 @@ function displayRegisteredDoctorate(){
 // 	return choosenProgram;
 // }
 
-function apagar_conta() {
-	if (!confirm("Tem certeza que deseja apagar sua conta?"))
-		return false;
+function deleteAccount() {
+	return confirm("Tem certeza que deseja apagar sua conta?"));
 }

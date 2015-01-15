@@ -31,14 +31,10 @@ class Migration_Cria_tabela_de_plano_orcamentario extends CI_Migration {
 		$this->db->query($add_courseid_fk);
 
 		// Adding values of status of budget plan
-		$object = array('id' => 1, 'description' => 'Proposta');
-		$this->db->insert('budgetplan_status', $object);
-		$object = array('id' => 2, 'description' => 'Aprovado');
-		$this->db->insert('budgetplan_status', $object);
-		$object = array('id' => 3, 'description' => 'Em execução');
-		$this->db->insert('budgetplan_status', $object);
-		$object = array('id' => 4, 'description' => 'Finalizado');
-		$this->db->insert('budgetplan_status', $object);
+		$budgetplan_status = array('Proposta', 'Aprovado', 'Em execução', 'Finalizado');
+		foreach ($budgetplan_status as $value) {
+			$this->db->insert('budgetplan_status', array('description' => $value));
+		}
 
 		// Creating permission for the budgetplan
 		$object = array('id_group' => 1, 'id_permission' => 7);

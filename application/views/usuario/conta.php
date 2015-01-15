@@ -76,7 +76,7 @@ echo form_close();
 
 /* ------------------------------------------------------------------------ */
 
-echo form_open("usuario/remove", "onsubmit='return apagar_conta()'");
+echo form_open("usuario/remove", "onsubmit='return deleteAccount()'");
 
 echo form_button(array(
 	"id" => "delete",
