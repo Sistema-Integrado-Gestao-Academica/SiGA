@@ -140,60 +140,6 @@ class Budgetplan extends CI_Controller {
 		redirect("planoorcamentario");
 	}
 
-	public function newExpense($id) {
-		session();
-		$this->load->model('budgetplan_model');
-		$budgetplan = $this->budgetplan_model->get('id', $id);
-
-		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
-
-		$data = array('budgetplan' => $budgetplan, 'months' => $months);
-		$this->load->template("budgetplan/expense", $data);
-	}
-
-	public function saveExpense() {
-		session();
-		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
-
-		$expense = array(
-			'year' => $this->input->post("year"),
-			'nature' => $this->input->post("nature"),
-			'value' => $this->input->post("value"),
-			'budgetplan_id' => $this->input->post("budgetplan_id")
-		);
-
-		$id = $expense['budgetplan_id'];
-		$expense['month'] = $months[$this->input->post("month")];
-
-		$this->load->model('budgetplan_model');
-		$budgetplan = $this->budgetplan_model->get('id', $id);
-		$budgetplan['spending'] += $expense['value'];
-		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
-
-		if ($this->budgetplan_model->saveExpense($expense) && $this->budgetplan_model->update($budgetplan)) {
-			$this->session->set_flashdata("success", "Nova despesa adicionada com sucesso");
-			redirect("planoorcamentario/{$id}");
-		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
-			redirect("planoorcamentario/{$id}/novadespesa");
-		}
-	}
-
-	public function deleteExpense() {
-		session();
-		$expense_id = $this->input->post('expense_id');
-		$budgetplan_id = $this->input->post('budgetplan_id');
-		$this->load->model('budgetplan_model');
-
-		if ($this->budgetplan_model->deleteExpense($expense_id)) {
-			$this->session->set_flashdata("danger", "Despesa foi removida");
-		}
-
-		redirect("planoorcamentario/{$budgetplan_id}");
-	}
-
 }
 
 /* End of file budgetplan.php */

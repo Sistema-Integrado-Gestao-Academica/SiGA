@@ -22,7 +22,7 @@
 		<td><?=$expense['month']?></td>
 		<td><?=currencyBR($expense['value'])?></td>
 		<td>
-			<?= form_open('budgetplan/deleteExpense') ?>
+			<?= form_open('expense/delete') ?>
 				<?= form_hidden('expense_id', $expense['id']) ?>
 				<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
 				<button type="submit" class="btn btn-danger btn-xs">

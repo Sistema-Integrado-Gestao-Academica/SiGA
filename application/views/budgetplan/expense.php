@@ -4,7 +4,7 @@
 	<div class="header">Adicionar despesa</div>
 
 	<div class="body bg-gray">
-		<?= form_open("budgetplan/saveExpense") ?>
+		<?= form_open("expense/save") ?>
 		<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
 
 		<div class="form-group">

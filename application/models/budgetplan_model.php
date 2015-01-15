@@ -29,17 +29,8 @@ class Budgetplan_model extends CI_Model {
 		return $res ? $res['description'] : NULL;
 	}
 
-	public function saveExpense($object) {
-		return $this->db->insert("expense", $object);
-	}
-
 	public function getExpenses($object) {
 		return $this->db->get_where("expense", array('budgetplan_id' => $object['id']))->result_array();
-	}
-
-	public function deleteExpense($id) {
-		$this->db->where('id', $id);
-		$this->db->delete('expense');
 	}
 }
 
