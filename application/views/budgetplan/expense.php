@@ -1,7 +1,7 @@
 <h2 class="principal">Adicionar uma despesa</h2>
 
 <div class="form-box-logged" id="login-box">
-	<div class="header">Adicionar despesa</div>
+	<div class="header" style="background-color: #3c8dbc">Adicionar despesa</div>
 
 	<div class="body bg-gray">
 		<?= form_open("expense/save") ?>
@@ -41,14 +41,14 @@
 		</div>
 		<div class="footer">
 			<?= form_button(array(
-				"class" => "btn bg-olive btn-block",
+				"class" => "btn bg-light-blue btn-block",
 				"type" => "sumbit",
 				"content" => "Salvar"
 			)) ?>
 		</div>
 		<?= form_close() ?>
 		<div class="footer">
-			<a href="<?=base_url("planoorcamentario/{$budgetplan['id']}")?>" class='btn bg-olive btn-block'>Voltar</a>
+			<a href="<?=base_url("planoorcamentario/{$budgetplan['id']}")?>" class='btn bg-light-blue btn-block'>Voltar</a>
 		</div>
 	</div>
 </div>
