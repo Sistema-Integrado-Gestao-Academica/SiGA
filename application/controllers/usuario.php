@@ -1,5 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('course.php');
+require_once('masterdegree.php');
+require_once('doctorate.php');
+
 class Usuario extends CI_Controller {
 	
 	public function student_index(){
@@ -17,11 +21,118 @@ class Usuario extends CI_Controller {
 	}
 
 	public function guest_index(){
-		
+
 	}
 
 	public function secretary_index(){
 
+		define("ACADEMIC_PROGRAM", "academic_program");
+		define("PROFESSIONAL_PROGRAM", "professional_program");
+
+		$courses = $this->loadCourses();
+
+		$courseData = array(
+			'courses' => $courses['courses'],
+			'masterDegrees' => $courses['masterDegrees'],
+			'doctorates' => $courses['doctorates']
+		);
+
+		// Fazer o loadTemplateSafelly()
+		$this->load->template('usuario/secretary_home', $courseData);
+
+	}
+
+	private function loadCourses(){
+		
+		$logged_user_data = $this->session->userdata("current_user");
+		$currentUser = $logged_user_data['user']['id'];
+
+		$this->load->model('course_model');
+		$allCourses = $this->course_model->getAllCourses();
+
+		$masterDegrees = array();
+		$doctorates = array();
+		for($i = 0; $i < sizeof($allCourses); $i++){
+
+			$currentCourse = $allCourses[$i];
+			$currentCourseId = $currentCourse['id_course'];
+
+			$userHasSecretaryForThisCourse = $this->checkIfUserHasSecretaryOfThisCourse($currentCourseId, $currentUser);
+
+			if($userHasSecretaryForThisCourse){
+
+				$currentCourseType = $currentCourse['course_type'];
+
+				switch($currentCourseType){
+					case ACADEMIC_PROGRAM:
+
+						$masterDegree = new MasterDegree();
+						$registeredMasterDegree = $masterDegree->getMasterDegreeByCourseId($currentCourseId);
+
+						$doctorate = new Doctorate();
+						$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($currentCourseId);
+
+						if($registeredMasterDegree !== FALSE){
+							$masterDegrees[$currentCourseId] = $registeredMasterDegree;
+						}
+
+						if($registeredDoctorate !== FALSE){
+							$doctorates[$currentCourseId] = $registeredDoctorate;
+						}
+
+						break;
+
+					case PROFESSIONAL_PROGRAM:
+						
+						$masterDegree = new MasterDegree();
+						$registeredMasterDegree = $masterDegree->getMasterDegreeByCourseId($currentCourseId);
+
+						if($registeredMasterDegree !== FALSE){
+							$masterDegrees[$currentCourseId] = $registeredMasterDegree;
+						}
+
+						break;
+
+					default:
+						// Nothing to do
+						break;
+				}
+			}else{
+
+				// In this case this course does not belong to the current user secretary
+				unset($allCourses[$i]);
+			}
+		}
+
+		$courses = array(
+			'courses' => $allCourses,
+			'masterDegrees' =>$masterDegrees,
+			'doctorates' => $doctorates
+		);
+
+		return $courses;
+	}
+
+	private function checkIfUserHasSecretaryOfThisCourse($courseId, $userId){
+
+		$course = new Course();
+		$foundSecretary = $course->getCourseSecrecretary($courseId);
+
+		if($foundSecretary !== FALSE){
+			
+			$secretaryUser = $foundSecretary['id_user'];
+
+			if($secretaryUser == $userId){
+				$userHasSecretary = TRUE;
+			}else{
+				$userHasSecretary = FALSE;
+			}
+
+		}else{
+			$userHasSecretary = FALSE;
+		}
+
+		return $userHasSecretary;
 	}
 
 	public function formulario() {
