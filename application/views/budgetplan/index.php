@@ -60,6 +60,7 @@
 				"id" => "amount",
 				"type" => "number",
 				"class" => "form-campo form-control",
+				"required" => "required"
 			)) ?>
 		</div>
 

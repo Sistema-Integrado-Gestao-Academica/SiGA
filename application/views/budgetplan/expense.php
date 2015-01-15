@@ -38,7 +38,8 @@
 			<?= form_textarea(array(
 				"name" => "nature",
 				"id" => "nature",
-				"class" => "form-campo"
+				"class" => "form-campo",
+				"required" => "required"
 			)) ?>
 		</div>
 		<div class="form-group">
@@ -47,7 +48,8 @@
 				"name" => "value",
 				"id" => "value",
 				"type" => "number",
-				"class" => "form-campo"
+				"class" => "form-campo",
+				"required" => "required"
 			)) ?>
 		</div>
 		<div class="footer">
