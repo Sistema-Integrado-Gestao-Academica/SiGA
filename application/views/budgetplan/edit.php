@@ -13,6 +13,7 @@
 			<br>
 			<?= form_dropdown('course', $courses, $budgetplan['course_id']) ?>
 		</div>
+
 		<div class="form-group">
 			<?= form_label("Montante", "amount") ?>
 			<?= form_input(array(
@@ -24,6 +25,7 @@
 				$disable_amount => $disable_amount
 			)) ?>
 		</div>
+
 		<div class="form-group">
 			<?= form_label("Despesas", "spending") ?>
 			<?= form_input(array(
@@ -35,6 +37,20 @@
 				"readonly" => "readonly"
 			)) ?>
 		</div>
+
+
+		<div class="form-group">
+			<?= form_label("Saldo", "balance") ?>
+			<?= form_input(array(
+				"name" => "balance",
+				"id" => "balance",
+				"type" => "number",
+				"class" => "form-campo",
+				"value" => $budgetplan['balance'],
+				"readonly" => "readonly"
+			)) ?>
+		</div>
+
 		<?php if ($budgetplan['status'] != 4): ?>
 			<div class="form-group">
 				<?= form_label("Status", "status") ?>

@@ -26,6 +26,11 @@ class Expense extends CI_Controller {
 			'budgetplan_id' => $this->input->post("budgetplan_id")
 		);
 
+		$continue = $this->input->post("continue");
+		if (!$continue) {
+			redirect("planoorcamentario/{$expense['budgetplan_id']}/novadespesa");
+		}
+
 		$id = $expense['budgetplan_id'];
 		$expense['month'] = $months[$this->input->post("month")];
 
