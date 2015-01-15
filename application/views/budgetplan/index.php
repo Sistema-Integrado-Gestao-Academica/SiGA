@@ -59,8 +59,7 @@
 				"name" => "amount",
 				"id" => "amount",
 				"type" => "number",
-				"class" => "form-campo",
-				"class" =>  "form-control"
+				"class" => "form-campo form-control",
 			)) ?>
 		</div>
 

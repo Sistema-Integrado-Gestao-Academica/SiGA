@@ -8,13 +8,25 @@
 		<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
 
 		<div class="form-group">
+			<?= form_label("Saldo disponível", "balance") ?>
+			<?= form_input(array(
+				"name" => "balance",
+				"id" => "balance",
+				"type" => "number",
+				"class" => "form-campo",
+				"value" => $budgetplan['balance'],
+				"readonly" => "readonly"
+			)) ?>
+		</div>
+
+		<div class="form-group">
 			<?= form_label("Ano", "year") ?>
 			<?= form_input(array(
 				"name" => "year",
 				"id" => "year",
 				"type" => "number",
 				"class" => "form-campo",
-				"value" => "2000",
+				"value" => "2000"
 			)) ?>
 		</div>
 		<div class="form-group">
@@ -23,10 +35,9 @@
 		</div>
 		<div class="form-group">
 			<?= form_label("Natureza da despesa", "nature") ?>
-			<?= form_input(array(
+			<?= form_textarea(array(
 				"name" => "nature",
 				"id" => "nature",
-				"type" => "text",
 				"class" => "form-campo"
 			)) ?>
 		</div>
