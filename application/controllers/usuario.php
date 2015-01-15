@@ -26,11 +26,8 @@ class Usuario extends CI_Controller {
 
 	public function secretary_index(){
 
-		define("ACADEMIC_PROGRAM", "academic_program");
-		define("PROFESSIONAL_PROGRAM", "professional_program");
-
 		$courses = $this->loadCourses();
-
+		
 		$courseData = array(
 			'courses' => $courses['courses'],
 			'masterDegrees' => $courses['masterDegrees'],
@@ -44,6 +41,9 @@ class Usuario extends CI_Controller {
 
 	private function loadCourses(){
 		
+		define("ACADEMIC_PROGRAM", "academic_program");
+		define("PROFESSIONAL_PROGRAM", "professional_program");
+
 		$logged_user_data = $this->session->userdata("current_user");
 		$currentUser = $logged_user_data['user']['id'];
 
@@ -52,13 +52,14 @@ class Usuario extends CI_Controller {
 
 		$masterDegrees = array();
 		$doctorates = array();
+	
 		for($i = 0; $i < sizeof($allCourses); $i++){
 
 			$currentCourse = $allCourses[$i];
 			$currentCourseId = $currentCourse['id_course'];
 
 			$userHasSecretaryForThisCourse = $this->checkIfUserHasSecretaryOfThisCourse($currentCourseId, $currentUser);
-
+			
 			if($userHasSecretaryForThisCourse){
 
 				$currentCourseType = $currentCourse['course_type'];
@@ -94,7 +95,7 @@ class Usuario extends CI_Controller {
 						break;
 
 					default:
-						// Nothing to do
+
 						break;
 				}
 			}else{
@@ -117,12 +118,12 @@ class Usuario extends CI_Controller {
 
 		$course = new Course();
 		$foundSecretary = $course->getCourseSecrecretary($courseId);
-
+		
 		if($foundSecretary !== FALSE){
 			
 			$secretaryUser = $foundSecretary['id_user'];
 
-			if($secretaryUser == $userId){
+			if($secretaryUser === $userId){
 				$userHasSecretary = TRUE;
 			}else{
 				$userHasSecretary = FALSE;

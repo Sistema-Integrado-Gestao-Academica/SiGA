@@ -65,6 +65,7 @@ class Course_model extends CI_Model {
 	public function getAllCourses(){
 		$this->db->select('*');
 		$this->db->from('course');
+		$this->db->order_by("course_name", "asc"); 
 		$registeredCourses = $this->db->get()->result_array();
 
 		return $registeredCourses;
