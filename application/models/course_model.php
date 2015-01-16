@@ -17,6 +17,12 @@ class Course_model extends CI_Model {
 		return $foundCourse;		
 	}
 
+	public function getCourseName($courseId){
+		$courseName = $this->getCourseNameForThisCourseId($courseId);
+
+		return $courseName;
+	}
+
 	public function getCourseIdByCourseName($courseName){
 
 		$courseId =$this->getCourseIdForThisCourseName($courseName);

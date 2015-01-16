@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('course.php');
+require_once('module.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -252,6 +253,68 @@ class Usuario extends CI_Controller {
 			$this->load->template("usuario/conta", $dados);
 		}
 		
+	}
+
+	public function searchForStudent(){
+
+
+		$studentNameToSearch = $this->input->post('student_name');
+
+		$students = $this->getRegisteredStudentsByName($studentNameToSearch);
+
+		// On tables helper
+		displayRegisteredStudents($students, $studentNameToSearch);
+	}
+
+	private function getRegisteredStudentsByName($userName){
+
+		define("STUDENT", "estudante");
+
+		$foundUsers = $this->getUserByName($userName);
+
+		$students = array();
+
+		$usersWasFound = $foundUsers !== FALSE;
+		if($usersWasFound){
+				
+			$group = new Module();
+
+			$i = 0;
+			foreach($foundUsers as $user){
+				$userId = $user['id'];
+				$userGroups = $group->checkModules($userId);
+				
+				$userIsStudent = $this->checkIfIsStudent($userGroups);
+
+				if($userIsStudent){
+					$students[$i] = $user;
+					$i++;
+				}
+			}
+		}
+
+		return $students;
+	}
+
+	private function checkIfIsStudent($userGroups){
+		
+		$isStudent = FALSE;
+		foreach($userGroups as $group_name){
+			if($group_name == STUDENT){
+				$isStudent = TRUE;
+				break;
+			}
+		}
+
+		return $isStudent;
+	}
+
+	private function getUserByName($userName){
+
+		$this->load->model('usuarios_model');
+		$foundUser = $this->usuarios_model->getUserByName($userName);
+
+		return $foundUser;
 	}
 
 	/**

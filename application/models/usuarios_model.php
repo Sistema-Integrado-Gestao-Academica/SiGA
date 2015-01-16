@@ -71,6 +71,24 @@ class Usuarios_model extends CI_Model {
 		}
 	}
 
+	public function getUserByName($userName){
+		$foundUser = $this->getUserByPartialName($userName);
+
+		if(sizeof($foundUser) === 0){
+			$foundUser = FALSE;
+		}
+
+		return $foundUser;
+	}
+
+	private function getUserByPartialName($userName){
+		$this->db->select('id, name');
+		$this->db->like('name', $userName);
+		$foundUser = $this->db->get('users')->result_array();
+
+		return $foundUser;
+	}
+
 	/**
 	 * Get the user data by its login
 	 * @param $login - String with the user login
