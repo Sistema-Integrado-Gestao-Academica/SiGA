@@ -156,3 +156,4 @@ function displayRegisteredDoctorate(){
 function deleteAccount() {
 	return confirm("Tem certeza que deseja apagar sua conta?");
 }
+

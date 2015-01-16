@@ -20,14 +20,76 @@ class Course extends CI_Controller {
 	public function enrollStudentToCourse($courseId){
 
 		$this->load->model('course_model');
-		$courseName = $this->course_model->getCourseName($courseId);
+		$course = $this->course_model->getCourseById($courseId);
+
+		$courseName = $course->course_name;
+		$courseType = $course->course_type;
+
+		switch($courseType){
+			case "academic_program":
+					
+				$masterDegree = new MasterDegree();
+				$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
+				
+				$doctorate = new Doctorate();
+				$foundDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
+				
+				break;
+
+			case "professional_program":
+				
+				$masterDegree = new MasterDegree();
+				$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
+
+				$foundDoctorate = FALSE;
+				break;
+
+			default:
+				$foundMasterDegree = FALSE;
+				$foundDoctorate = FALSE;
+				break;
+		}
 
 		$courseData = array(
 			'courseId' => $courseId,
-			'courseName' => $courseName
+			'courseName' => $courseName,
+			'courseType' => $courseType,
+			'masterDegree'=> $foundMasterDegree,
+			'doctorate' => $foundDoctorate
 		);
 
 		$this->loadTemplateSafely('course/enroll_student.php', $courseData);
+	}
+
+	public function enrollStudent(){
+
+		define('ACADEMIC_PROGRAM', 'academic_program');
+		define('PROFESSIONAL_PROGRAM', 'professional_program');
+		define('GRADUATION', 'graduation');
+		define('EAD', 'ead');
+
+		$courseId = $this->input->post('courseId');
+		$courseType = $this->input->post('courseType');
+		$userToEnroll = $this->input->post('user_to_enroll');
+
+		switch($courseType){
+
+			case ACADEMIC_PROGRAM:
+			case PROFESSIONAL_PROGRAM:
+					
+				$academicProgramType = $this->input->post('program_dropdown');
+
+				break;
+
+			case GRADUATION:
+			case EAD:
+							
+				break;
+
+			default:
+				break;
+		}
+
 	}
 
 	public function checkChoosenCourseType(){

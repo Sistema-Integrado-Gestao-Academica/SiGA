@@ -262,13 +262,25 @@ class Usuario extends CI_Controller {
 
 		$students = $this->getRegisteredStudentsByName($studentNameToSearch);
 
+		$studentIds = array();
+		$studentNames = array();
+		$i = 0;
+		foreach($students as $student){
+			$studentIds[$i] = $student['id'];
+			$studentNames[$i] = $student['name'];
+			$i++;
+		}
+
+		$studentsToDropdown = array_combine($studentIds, $studentNames);
+
 		// On tables helper
-		displayRegisteredStudents($students, $studentNameToSearch);
+		displayRegisteredStudents($studentsToDropdown, $studentNameToSearch);
 	}
 
 	private function getRegisteredStudentsByName($userName){
 
 		define("STUDENT", "estudante");
+		define("GUEST", "convidado");
 
 		$foundUsers = $this->getUserByName($userName);
 
@@ -285,8 +297,9 @@ class Usuario extends CI_Controller {
 				$userGroups = $group->checkModules($userId);
 				
 				$userIsStudent = $this->checkIfIsStudent($userGroups);
+				$userIsGuest = $this->checkIfIsGuest($userGroups);
 
-				if($userIsStudent){
+				if($userIsStudent || $userIsGuest){
 					$students[$i] = $user;
 					$i++;
 				}
@@ -307,6 +320,19 @@ class Usuario extends CI_Controller {
 		}
 
 		return $isStudent;
+	}
+
+	private function checkIfIsGuest($userGroups){
+		
+		$isGuest = FALSE;
+		foreach($userGroups as $group_name){
+			if($group_name == GUEST){
+				$isGuest = TRUE;
+				break;
+			}
+		}
+
+		return $isGuest;
 	}
 
 	private function getUserByName($userName){

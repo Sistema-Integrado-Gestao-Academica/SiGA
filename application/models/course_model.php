@@ -3,6 +3,10 @@ require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
 class Course_model extends CI_Model {
 
+	public function enrollStudentIntoPostGraduationCourse(){
+		
+	}
+
 	public function getCommonAttributesForThisCourse($courseId){
 		
 		$idExists = $this->checkExistingId($courseId);

@@ -20,7 +20,7 @@ function displayEnrollStudentForm(){
 		'style' => "width:15%;"
 	);
 
-	echo form_label("Informe o nome do aluno para matricular nesse curso:");
+	echo form_label("Informe o nome do usuário para matricular nesse curso:");
 	echo form_input($studentName);
 
 	echo form_button($searchForStudentBtn);

@@ -181,36 +181,22 @@ function displayRegisteredStudents($students, $studentNameToSearch){
 	$thereIsStudents = sizeof($students) > 0;
 
 	if($thereIsStudents){
-		echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Matricula</th>";
-			        echo "<th class=\"text-center\">Nome</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
 
-				foreach ($students as $student) {
-					
-					echo "<tr>";
+		$enrollStudentBtn = array(
+			"id" => "enroll_student_btn",
+			"class" => "btn bg-olive btn-block",
+			"content" => "Matricular aluno",
+			"type" => "submit",
+			"style" => "width:35%"
+		);
+	
+		echo form_label("Usuários encontrados:","user_to_enroll");
+		echo "<h4><small>OBS.: Usuários pertencentes aos grupos estudante e convidado.</small></h4>";
+		echo form_dropdown('user_to_enroll', $students, "", "id = user_to_enroll class='form-control'");
 
-						echo "<td>";
-							echo $student['id'];
-						echo "</td>";
-
-						echo "<td>";
-							echo $student['name'];
-						echo "</td>";
-
-						echo "<td>";
-						echo "</td>";
-
-					echo "</tr>";
-				}		    
-			    
-			echo "</tbody>";
-		echo "</table>";
-		echo "</div>";
+		echo "<br>";
+		echo form_button($enrollStudentBtn);
+		
 	}else{
 		echo "<div class=\"callout callout-info\">";
 			echo "<h4>Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.</h4>";
