@@ -62,11 +62,15 @@ class Course extends CI_Controller {
 	}
 
 	public function enrollStudent(){
+		
+		$this->load->model('course_model');
 
 		define('ACADEMIC_PROGRAM', 'academic_program');
 		define('PROFESSIONAL_PROGRAM', 'professional_program');
 		define('GRADUATION', 'graduation');
 		define('EAD', 'ead');
+		define('MASTER_DEGREE', 'master_degree');
+		define('DOCTORATE', 'doctorate');
 
 		$courseId = $this->input->post('courseId');
 		$courseType = $this->input->post('courseType');
@@ -79,17 +83,66 @@ class Course extends CI_Controller {
 					
 				$academicProgramType = $this->input->post('program_dropdown');
 
+				switch($academicProgramType){
+					case MASTER_DEGREE:
+						$masterDegree = new MasterDegree();
+						$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
+						$masterDegreeId = $foundMasterDegree['id_master_degree'];
+
+						// $enrollment = array(
+						// 	'id_course' => $courseId,
+						// 	'id_user' => $userToEnroll,
+						// 	'id_master_degree' => $masterDegreeId,
+						// 	'enroll_date' => SYSDATE()
+						// );
+
+						$enrollment = "INSERT INTO course_student (id_course, id_user, id_master_degree, enroll_date) VALUES ({$courseId}, {$userToEnroll}, {$masterDegreeId}, NOW())";
+
+						break;
+					
+					case DOCTORATE:
+						$doctorate = new Doctorate();
+						$foundDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
+
+						$doctorateId = $foundDoctorate['id_doctorate'];
+
+						// $enrollment = array(
+						// 	'id_course' => $courseId,
+						// 	'id_user' => $userToEnroll,
+						// 	'id_doctorate' => $doctorateId,
+						// 	'enroll_date' => SYSDATE()
+						// );
+
+						$enrollment = "INSERT INTO course_student (id_course, id_user, id_doctorate, enroll_date) VALUES ({$courseId}, {$userToEnroll}, {$doctorateId}, NOW())";
+
+						break;
+					
+					default:
+						break;
+				}
+
 				break;
 
 			case GRADUATION:
 			case EAD:
-							
+				// $enrollment = array(
+				// 	'id_course' => $courseId,
+				// 	'id_user' => $userToEnroll,
+				// 	'enroll_date' => SYSDATE()
+				// );
+				
+				$enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date) VALUES ({$courseId}, {$userToEnroll}, NOW())";
+
 				break;
 
 			default:
 				break;
 		}
 
+		$this->course_model->enrollStudentIntoCourse($enrollment);
+
+		$this->session->set_flashdata("success", "Aluno matriculado com sucesso");
+		redirect("secretary_home");
 	}
 
 	public function checkChoosenCourseType(){
