@@ -50,7 +50,7 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "</td>";
 
 							    		echo "<td>";
-							    		echo anchor("enrolStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
 							    		echo "</td>";
 						    		echo "</tr>";
 
@@ -64,7 +64,7 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "</td>";
 
 							    		echo "<td>";
-							    		echo anchor("enrolStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
 							    		echo "</td>";
 						    		echo "</tr>";
 
@@ -95,7 +95,7 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "</td>";
 
 							    		echo "<td>";
-							    		echo anchor("enrolStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
 							    		echo "</td>";
 						    		echo "</tr>";
 
@@ -134,7 +134,7 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 						    		echo "</td>";
 
 						    		echo "<td>";
-						    		echo anchor("enrolStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+						    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
 						    		echo "</td>";
 					    		echo "</tr>";
 							}
@@ -162,7 +162,7 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor("enrolStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+				    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
 				    		echo "</td>";
 				    		
 				    		echo "</tr>";
@@ -174,4 +174,46 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 	echo "</table>";
 echo "</div>";
 
+}
+
+function displayRegisteredStudents($students, $studentNameToSearch){
+
+	$thereIsStudents = sizeof($students) > 0;
+
+	if($thereIsStudents){
+		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Matricula</th>";
+			        echo "<th class=\"text-center\">Nome</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+				foreach ($students as $student) {
+					
+					echo "<tr>";
+
+						echo "<td>";
+							echo $student['id'];
+						echo "</td>";
+
+						echo "<td>";
+							echo $student['name'];
+						echo "</td>";
+
+						echo "<td>";
+						echo "</td>";
+
+					echo "</tr>";
+				}		    
+			    
+			echo "</tbody>";
+		echo "</table>";
+		echo "</div>";
+	}else{
+		echo "<div class=\"callout callout-info\">";
+			echo "<h4>Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.</h4>";
+		echo "</div>";
+	}
 }

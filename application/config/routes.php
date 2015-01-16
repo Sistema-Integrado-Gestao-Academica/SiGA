@@ -64,7 +64,7 @@ $route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
 $route['student'] = 'usuario/student_index';
 $route['guest_home'] = 'usuario/guest_index';
 $route['secretary_home'] = 'usuario/secretary_index';
-$route['enrolStudent/(:num)'] = 'course/enrolStudentToCourse/$1';
+$route['enrollStudent/(:num)'] = 'course/enrollStudentToCourse/$1';
 
 
 /*

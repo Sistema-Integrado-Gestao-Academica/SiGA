@@ -1,8 +1,8 @@
 <?php
 
-function displayEnrolStudentForm(){
+function displayEnrollStudentForm(){
 	
-	$student_name = array(
+	$studentName = array(
 		"name" => "student_name",
 		"id" => "student_name",
 		"type" => "text",
@@ -12,8 +12,18 @@ function displayEnrolStudentForm(){
 		'style' => "width:40%;"
 	);
 
+	$searchForStudentBtn = array(
+		"id" => "search_student_btn",
+		"class" => "btn bg-olive btn-block",
+		"content" => "Procurar por aluno",
+		"type" => "submit",
+		'style' => "width:15%;"
+	);
+
 	echo form_label("Informe o nome do aluno para matricular nesse curso:");
-	echo form_input($student_name);
+	echo form_input($studentName);
+
+	echo form_button($searchForStudentBtn);
 }
 
 function postGraduationTypesSelect(){

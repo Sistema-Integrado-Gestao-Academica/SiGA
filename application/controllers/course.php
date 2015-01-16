@@ -17,13 +17,17 @@ class Course extends CI_Controller {
 		$this->loadTemplateSafely('course/course_index');
 	}
 
-	public function enrolStudentToCourse($courseId){
+	public function enrollStudentToCourse($courseId){
+
+		$this->load->model('course_model');
+		$courseName = $this->course_model->getCourseName($courseId);
 
 		$courseData = array(
-			'courseId' => $courseId
+			'courseId' => $courseId,
+			'courseName' => $courseName
 		);
 
-		$this->loadTemplateSafely('course/enrol_student.php', $courseData);
+		$this->loadTemplateSafely('course/enroll_student.php', $courseData);
 	}
 
 	public function checkChoosenCourseType(){

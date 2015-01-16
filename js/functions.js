@@ -7,7 +7,26 @@ $(document).ready(function(){
 		evaluatesCourseType();
 	});
 
+	$("#search_student_btn").click(function(){
+		searchForStudent();
+	});
+
 });
+
+// Student functions
+function searchForStudent(){
+	var studentName = $("#student_name").val();
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "usuario/searchForStudent";
+	$.post(
+		urlToPost,
+		{student_name: studentName},
+		function(data){
+			$("#search_student_result").html(data);
+		}
+	);
+}
 
 // Course functions
 function evaluatesCourseType(){
@@ -134,32 +153,6 @@ function displayRegisteredDoctorate(){
 	);
 }
 
-// function evaluatesAcademicProgram(){
-// 	var choosenProgram = getChoosenAcademicProgram();
-// 	var urlToPost = choosenProgram.siteUrl + "course/checkChoosenAcademicProgram";
-
-// 	$.post(
-// 		urlToPost,
-// 		{academicProgram: choosenProgram.academicProgram},
-// 		function(data){
-// 			$("#choosen_program").html(data);
-// 		}
-
-// 	);
-// }
-
-// function getChoosenAcademicProgram(){
-// 	var siteUrl = $("#site_url").val();
-// 	var choosenAcademicProgram = $("#academic_program_types").val();
-
-// 	var choosenProgram = {
-// 		siteUrl: siteUrl,
-// 		academicProgram: choosenAcademicProgram
-// 	};
-
-// 	return choosenProgram;
-// }
-
 function deleteAccount() {
-	return confirm("Tem certeza que deseja apagar sua conta?"));
+	return confirm("Tem certeza que deseja apagar sua conta?");
 }
