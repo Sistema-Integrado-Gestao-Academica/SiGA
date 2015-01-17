@@ -23,11 +23,13 @@ function session() {
 function loadTemplateSafelyByPermission($requiredPermission, $template, $data = array()){
 
 	$permission = new Permission();
+	
+	$ci = get_instance();
 
 	$userHasPermission = $permission->checkUserPermission($requiredPermission);
 
 	if($userHasPermission){
-		$this->load->template($template, $data);
+		$ci->load->template($template, $data);
 	}else{
 		logoutUser();
 	}
@@ -43,10 +45,12 @@ function loadTemplateSafelyByGroup($requiredGroup, $template, $data = array()){
 
 	$group = new Module();
 
+	$ci = get_instance();
+
 	$userHasGroup = $group->checkUserGroup($requiredGroup);
 
 	if($userHasGroup){
-		$this->load->template($template, $data);
+		$ci->load->template($template, $data);
 	}else{
 		logoutUser();
 	}

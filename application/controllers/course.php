@@ -15,7 +15,7 @@ class Course extends CI_Controller {
 
 	public function index(){
 
-		$this->loadTemplateSafely('course/course_index');
+		loadTemplateSafelyByPermission("cursos",'course/course_index');
 	}
 
 	public function enrollStudentToCourse($courseId){
@@ -59,7 +59,7 @@ class Course extends CI_Controller {
 			'doctorate' => $foundDoctorate
 		);
 
-		$this->loadTemplateSafely('course/enroll_student.php', $courseData);
+		loadTemplateSafelyByPermission("cursos",'course/enroll_student.php', $courseData);
 	}
 
 	public function enrollStudent(){
@@ -337,14 +337,14 @@ class Course extends CI_Controller {
 		
 		$course = array('course_id' => $courseId);
 
-		$this->loadTemplateSafely('course/register_doctorate_course', $course);
+		loadTemplateSafelyByPermission("cursos",'course/register_doctorate_course', $course);
 	}
 
 	public function formToUpdateDoctorateCourse($courseId){
 
 		$course = array('course_id' => $courseId);
 
-		$this->loadTemplateSafely('course/update_doctorate_course', $course);	
+		loadTemplateSafelyByPermission("cursos",'course/update_doctorate_course', $course);	
 	}
 
 	public function registerDoctorateCourse(){
@@ -468,7 +468,7 @@ class Course extends CI_Controller {
 			'url' => $site_url
 		);
 
-		$this->loadTemplateSafely('course/register_course', $data);
+		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
 	}
 	
 	/**
@@ -486,7 +486,7 @@ class Course extends CI_Controller {
 			'url' => $site_url
 		);
 
-		$this->loadTemplateSafely('course/update_course', $data);
+		loadTemplateSafelyByPermission("cursos",'course/update_course', $data);
 
 	}
 	
@@ -991,115 +991,8 @@ class Course extends CI_Controller {
 		return $registeredCourses;
 	}
 
-	// /**
-	//  * Get all the course types from database into an array.
-	//  * @return An array with all course types on database as id => course_type_name
-	//  */
-	// public function getCourseTypes(){
-		
-	// 	$this->load->model('course_model');
-		
-	// 	$course_types = $this->course_model->getAllCourseTypes();
-		
-	// 	$course_types_form = $this->turnCourseTypesToArray($course_types);
-		
-	// 	return $course_types_form;
-		
-	// }
-	
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
-	}
-
-	/**
-	 * Checks if the user has the permission to the course pages before loading it
-	 * ONLY applicable to the course pages
-	 * @param $template - The page to be loaded
-	 * @param $data - The data to send along the view
-	 * @return void - Load the template if the user has the permission or logout the user if does not
-	 */
-	private function loadTemplateSafely($template, $data = array()){
-
-		$user_has_the_permission = $this->checkUserCoursePermission();
-
-		if($user_has_the_permission){
-			$this->load->template($template, $data);
-		}else{
-			logoutUser();
-		}
-	}
-
-	/**
-	 * Check if the logged user have the permission to this page
-	 * @return TRUE if the user have the permission or FALSE if does not
-	 */
-	private function checkUserCoursePermission(){
-		$logged_user_data = $this->session->userdata('current_user');
-		$permissions_for_logged_user = $logged_user_data['user_permissions'];
-
-		$user_has_the_permission = $this->haveCoursesPermission($permissions_for_logged_user);
-		
-		return $user_has_the_permission;
-	}
-
-	/**
-	 * Evaluates if in a given array of permissions the courses one is on it
-	 * @param permissions_array - Array with the permission names
-	 * @return True if there is the courses permission on this array, or false if does not.
-	 */
-	private function haveCoursesPermission($permissions_array){
-
-		$arrarIsNotEmpty = is_array($permissions_array) && !is_null($permissions_array);
-		
-		if($arrarIsNotEmpty){
-			$permision_exists = FALSE;
-			foreach($permissions_array as $route => $permission_name){
-
-				switch ($route){
-					case 'name': break;
-					case 'route':
-								$permision_exists = $this->getRoutesFromPermissionsArray($permission_name);
-								 break;
-				}
-			}
-		}else{
-			$permision_exists = FALSE;
-		}
-		
-		return $permision_exists;
-	}
-	
-	public function getRoutesFromPermissionsArray($permissions_array){
-		define("COURSE_PERMISSION_NAME","cursos");
-		$existsThisPermission = FALSE;
-		
-		foreach ($permissions_array as $groupId => $route_permited){
-			foreach ($route_permited as $keys => $route){
-				if($route === COURSE_PERMISSION_NAME){
-					$existsThisPermission = TRUE;
-				}
-			}	
-		}
-		return $existsThisPermission;
-		
-	}
-	
-	/**
-	 * Check if an user has admin permissions
-	 * @param $user_group_ids - An array with the user types of an user
-	 * @return True if in the array passed has an id of admin
-	 */
-	private function isAdmin($user_group_ids){
-
-		$this->load->model('usuarios_model');
-		foreach($user_group_ids as $id_user_group){
-			$isAdminId = $this->usuarios_model->checkIfIdIsOfAdmin($id_user_group);
-			if($isAdminId){
-				break; // Try not to do this
-			}
-		}
-
-		return $isAdminId;
 	}
 	
 	/**
