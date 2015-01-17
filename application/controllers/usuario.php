@@ -13,12 +13,14 @@ class Usuario extends CI_Controller {
 
 		$this->load->model('usuarios_model');
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
+		$userCourse = $this->usuarios_model->getUserCourse($userId);
 
-		$userStatus = array(
-			'status' => $userStatus
+		$userData = array(
+			'status' => $userStatus,
+			'courses' => $userCourse
 		);
 
-		$this->loadStudentTemplateSafely('usuario/student_home', $userStatus);
+		$this->loadStudentTemplateSafely('usuario/student_home', $userData);
 	}
 
 	public function guest_index(){

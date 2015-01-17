@@ -140,6 +140,18 @@ class Usuarios_model extends CI_Model {
 		return $wasFound;
 	}
 
+	public function getUserCourse($userId){
+
+		$this->db->select("course.*, course_student.enroll_date");
+		$this->db->from('course');
+		$this->db->join('course_student', "course.id_course = course_student.id_course");
+		$this->db->where('course_student.id_user', $userId);
+
+		$foundCourse = $this->db->get()->result_array();
+
+		return $foundCourse;
+	}
+
 	/**
 	 * Get the registered status for a given user
 	 * @param $userId - The user id to search for a status
