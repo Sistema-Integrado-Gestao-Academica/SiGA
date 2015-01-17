@@ -20,7 +20,8 @@ class Usuario extends CI_Controller {
 			'courses' => $userCourse
 		);
 
-		$this->loadStudentTemplateSafely('usuario/student_home', $userData);
+		// On auth_helper
+		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 
 	public function guest_index(){
@@ -37,7 +38,8 @@ class Usuario extends CI_Controller {
 			'doctorates' => $courses['doctorates']
 		);
 
-		$this->load->template('usuario/secretary_home', $courseData);
+		// On auth_helper
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home', $courseData);
 	}
 
 	private function loadCourses(){
@@ -448,66 +450,7 @@ class Usuario extends CI_Controller {
 	
 		return $form_users;
 	}
-
-	/**
-	 * Checks if the user has the permission to the student pages before loading it
-	 * ONLY applicable to the student pages
-	 * @param $template - The page to be loaded
-	 * @param $data - The data to send along the view
-	 * @return void - Load the template if the user has the permission or logout the user if does not
-	 */
-	private function loadStudentTemplateSafely($template, $data = array()){
-
-		$user_has_the_permission = $this->checkUserStudentPermission();
-
-		if($user_has_the_permission){
-			$this->load->template($template, $data);
-		}else{
-			logoutUser();
-		}
-	}
-
-	/**
-	 * Check if the logged user have the permission to the student page
-	 * @return TRUE if the user have the permission or FALSE if does not
-	 */
-	private function checkUserStudentPermission(){
-		$logged_user_data = $this->session->userdata('current_user');
-		$permissions_for_logged_user = $logged_user_data['user_permissions']['route'];
-
-		$user_has_the_permission = $this->haveStudentPermission($permissions_for_logged_user);
-
-		return $user_has_the_permission;
-	}
-
-	/**
-	 * Evaluates if in a given array of permissions the student one is on it
-	 * @param permissions_array - Array with the permission names
-	 * @return True if there is the student permission on this array, or false if does not.
-	 */
-	private function haveStudentPermission($permissions_array){
 		
-		define("STUDENT_GROUP", 7);
-		
-		$arrarIsNotEmpty = is_array($permissions_array) && !is_null($permissions_array);
-		
-		if($arrarIsNotEmpty){
-			$existsThisPermission = FALSE;
-			foreach($permissions_array as $route => $permission_name){
-				
-				if($route === STUDENT_GROUP){
-					$existsThisPermission = TRUE;
-				}
-			}
-		}else{
-			$existsThisPermission = FALSE;
-		}
-
-		return $existsThisPermission;
-	}
-
-
-	
 }
 
 function alpha_dash_space($str) {
