@@ -187,7 +187,7 @@ function displayRegisteredStudents($students, $studentNameToSearch){
 		);
 	
 		echo form_label("Usuários encontrados:","user_to_enroll");
-		echo "<h4><small>OBS.: Usuários pertencentes aos grupos estudante e convidado.</small></h4>";
+		echo "<h4><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small></h4>";
 		echo form_dropdown('user_to_enroll', $students, "", "id = user_to_enroll class='form-control'");
 
 		echo "<br>";
@@ -195,7 +195,7 @@ function displayRegisteredStudents($students, $studentNameToSearch){
 		
 	}else{
 		echo "<div class=\"callout callout-info\">";
-			echo "<h4>Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.</h4>";
+			echo "<h4>Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.<br><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small></h4>";
 		echo "</div>";
 	}
 }
