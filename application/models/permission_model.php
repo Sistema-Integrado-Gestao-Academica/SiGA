@@ -1,6 +1,26 @@
 <?php 
 
 class Permission_model extends CI_Model {
+	
+	public function getAllPermissionsRoutes(){
+		$allPermissions = $this->getAllPermissions();
+
+		$permissions = array();
+		foreach($allPermissions as $permission){
+
+			$permissions[$permission['id_permission']] = $permission['route'];
+		}
+
+		return $permissions;
+	}
+
+	private function getAllPermissions(){
+		$searchResult = $this->db->get('permission');
+
+		$permissions = $searchResult->result_array();
+
+		return $permissions;
+	}
 
 	/**
 	  * Search on database for the permissions id's of a module
