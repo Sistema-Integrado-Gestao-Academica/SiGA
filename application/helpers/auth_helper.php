@@ -2,6 +2,7 @@
 
 require_once(APPPATH."/controllers/login.php");
 require_once(APPPATH."/controllers/permission.php");
+require_once(APPPATH."/controllers/module.php");
 
 function session() {
 	$ci = get_instance();
@@ -19,7 +20,7 @@ function session() {
  * @param $template - String with the view to be loaded
  * @param $data - Data to pass along the view
  */
-function loadTemplateSafely($requiredPermission, $template, $data = array()){
+function loadTemplateSafelyByPermission($requiredPermission, $template, $data = array()){
 
 	$permission = new Permission();
 
@@ -31,6 +32,26 @@ function loadTemplateSafely($requiredPermission, $template, $data = array()){
 		logoutUser();
 	}
 }
+
+/**
+ * Load a given view if the logged user have the required group
+ * @param $requiredGroup - String with the group required to access the asked view
+ * @param $template - String with the view to be loaded
+ * @param $data - Data to pass along the view
+ */
+function loadTemplateSafelyByGroup($requiredGroup, $template, $data = array()){
+
+	$group = new Module();
+
+	$userHasGroup = $group->checkUserGroup($requiredGroup);
+
+	if($userHasGroup){
+		$this->load->template($template, $data);
+	}else{
+		logoutUser();
+	}
+}
+
 
 /**
  * Logout the current user for unauthorized access to the page

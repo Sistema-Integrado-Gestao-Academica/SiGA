@@ -2,6 +2,43 @@
 
 class Module extends CI_Controller {
 
+	public function checkUserGroup($requiredGroup){
+
+		$groupExists = $this->checkIfGroupExists($requiredGroup);
+
+		if($groupExists){
+
+			$loggedUserData = $this->session->userdata('current_user');
+			$userGroups = $loggedUserData['user_groups'];
+
+			$haveGroup = FALSE;
+			foreach($userGroups as $groupName){
+				if($groupName === $requiredGroup){
+					$haveGroup = TRUE;
+					break;
+				}
+			}
+		}else{
+			$haveGroup = FALSE;
+		}
+
+		return $haveGroup;
+	}
+
+	private function checkIfGroupExists($group){
+		$allGroups = $this->getExistingModules();
+
+		$groupExists = FALSE;
+		foreach($allGroups as $idGroup => $groupName){
+			if($groupName === $group){
+				$groupExists = TRUE;
+				break;
+			}
+		}
+
+		return $groupExists;
+	}
+
 	public function addGroupToUser($groupName, $userId){
 
 		// Validar o $groupName
@@ -85,7 +122,7 @@ class Module extends CI_Controller {
 	
 		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
 			$keys[$cont] = $modules[$cont]['id_group'];
-			$values[$cont] = ucfirst($modules[$cont]['group_name']);
+			$values[$cont] = $modules[$cont]['group_name'];
 		}
 	
 		$form_modules = array_combine($keys, $values);

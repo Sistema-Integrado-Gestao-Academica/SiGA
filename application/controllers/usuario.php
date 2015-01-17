@@ -37,9 +37,7 @@ class Usuario extends CI_Controller {
 			'doctorates' => $courses['doctorates']
 		);
 
-		// Fazer o loadTemplateSafelly()
 		$this->load->template('usuario/secretary_home', $courseData);
-
 	}
 
 	private function loadCourses(){
