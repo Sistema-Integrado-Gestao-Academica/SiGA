@@ -2,6 +2,51 @@
 
 class Module extends CI_Controller {
 
+	public function addGroupToUser($groupName, $userId){
+
+		// Validar o $groupName
+
+		$groupId = $this->getGroupIdByGroupName($groupName);
+
+		$groupToUser = array(
+			'id_user' => $userId,
+			'id_group' => $groupId
+		);
+
+		$this->load->model('module_model');
+		$this->module_model->addGroupToUser($groupToUser);
+	}
+
+	public function deleteGroupOfUser($groupName, $userId){
+
+		// Validar o $groupName
+
+		$groupId = $this->getGroupIdByGroupName($groupName);
+
+		$groupToUser = array(
+			'id_user' => $userId,
+			'id_group' => $groupId
+		);
+
+		$this->load->model('module_model');
+		$this->module_model->deleteGroupOfUser($groupToUser);
+	}
+
+	private function getGroupIdByGroupName($groupName){
+		$this->db->select("id_group");
+		$searchResult = $this->db->get_where("group", array('group_name' => $groupName));
+
+		$foundGroup = $searchResult->row_array();
+
+		if(sizeof($foundGroup) > 0){
+			$groupId = $foundGroup['id_group'];
+		}else{
+			$groupId = FALSE;
+		}
+
+		return $groupId;
+	}
+
 	/**
 	  * Check the modules registered to an user
 	  * @param $user_id - User id to check the modules

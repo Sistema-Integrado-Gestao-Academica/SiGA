@@ -11,6 +11,9 @@ class Migration_Cria_tabela_de_grupos extends CI_migration {
 		$this->dbforge->add_key('id_group', true);
 		$this->dbforge->create_table('group', true);
 
+		$add_group_name_uk = "ALTER TABLE group ADD CONSTRAINT GROUP_NAME_UK UNIQUE (group_name)";
+		$this->db->query($add_group_name_uk);
+
 		// Group values
 		$object = array('id_group' => 1, 'group_name' => 'financeiro');
 		$this->db->insert('group', $object);

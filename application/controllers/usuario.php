@@ -279,7 +279,7 @@ class Usuario extends CI_Controller {
 
 	private function getRegisteredStudentsByName($userName){
 
-		define("STUDENT", "estudante");
+		// define("STUDENT", "estudante");
 		define("GUEST", "convidado");
 
 		$foundUsers = $this->getUserByName($userName);
@@ -296,10 +296,10 @@ class Usuario extends CI_Controller {
 				$userId = $user['id'];
 				$userGroups = $group->checkModules($userId);
 				
-				$userIsStudent = $this->checkIfIsStudent($userGroups);
+				// $userIsStudent = $this->checkIfIsStudent($userGroups);
 				$userIsGuest = $this->checkIfIsGuest($userGroups);
 
-				if($userIsStudent || $userIsGuest){
+				if($userIsGuest){
 					$students[$i] = $user;
 					$i++;
 				}

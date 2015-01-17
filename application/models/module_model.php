@@ -2,6 +2,16 @@
 
 class Module_model extends CI_Model {
 
+	public function addGroupToUser($groupToUser){
+
+		$this->db->insert('user_group', $groupToUser);
+	}
+	
+	public function deleteGroupOfUser($userGroup){
+
+		$this->db->delete('user_group', $userGroup);
+	}
+
 	/**
 	  * Search on database for the permissions of an user
 	  * @param $user_id - User id to look for permissions

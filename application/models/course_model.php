@@ -6,7 +6,6 @@ class Course_model extends CI_Model {
 	public function enrollStudentIntoCourse($enrollment){
 
 		$this->db->query($enrollment);
-
 	}
 
 	public function getCommonAttributesForThisCourse($courseId){

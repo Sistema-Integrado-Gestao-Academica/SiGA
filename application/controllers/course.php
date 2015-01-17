@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('login.php');
+require_once('module.php');
 require_once('postgraduation.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
@@ -140,9 +141,21 @@ class Course extends CI_Controller {
 		}
 
 		$this->course_model->enrollStudentIntoCourse($enrollment);
+		$this->addStudentGroupToNewStudent($userToEnroll);
 
 		$this->session->set_flashdata("success", "Aluno matriculado com sucesso");
 		redirect("secretary_home");
+	}
+
+	private function addStudentGroupToNewStudent($userId){
+		
+		$group = new Module();
+
+		$studentGroup = "estudante";
+		$group->addGroupToUser($studentGroup, $userId);
+		
+		$guestGroup = "convidado";
+		$group->deleteGroupOfUser($guestGroup, $userId);
 	}
 
 	public function checkChoosenCourseType(){
