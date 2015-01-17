@@ -38,6 +38,9 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "<span class=\"label label-primary\">Programa Acadêmico</span>";
 							    		echo "</td>";
 
+							    		echo "<td>";
+							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+							    		echo "</td>";
 						    		echo "</tr>";
 
 						    		echo "<tr>";
@@ -49,9 +52,6 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "<span class=\"label label-success\">Mestrado Acadêmico</span>";
 							    		echo "</td>";
 
-							    		echo "<td>";
-							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-							    		echo "</td>";
 						    		echo "</tr>";
 
 						    		echo "<tr>";
@@ -61,10 +61,6 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 
 							    		echo "<td>";
 							    		echo "<span class=\"label label-warning\">Doutorado Acadêmico</span>";
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
 							    		echo "</td>";
 						    		echo "</tr>";
 
@@ -83,6 +79,9 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "<span class=\"label label-primary\">Programa Acadêmico</span>";
 							    		echo "</td>";
 						    		
+							    		echo "<td>";
+							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+							    		echo "</td>";
 						    		echo "</tr>";
 
 						    		echo "<tr>";
@@ -94,9 +93,6 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 							    		echo "<span class=\"label label-success\">Mestrado Acadêmico</span>";
 							    		echo "</td>";
 
-							    		echo "<td>";
-							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-							    		echo "</td>";
 						    		echo "</tr>";
 
 		    					}
@@ -122,6 +118,9 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 						    		echo "<span class=\"label label-primary\">Programa Profissional</span>";
 						    		echo "</td>";
 					    		
+						    		echo "<td>";
+						    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+						    		echo "</td>";
 					    		echo "</tr>";
 
 					    		echo "<tr>";
@@ -133,9 +132,6 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 						    		echo "<span class=\"label label-success\">Mestrado Profissional</span>";
 						    		echo "</td>";
 
-						    		echo "<td>";
-						    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-						    		echo "</td>";
 					    		echo "</tr>";
 							}
 
