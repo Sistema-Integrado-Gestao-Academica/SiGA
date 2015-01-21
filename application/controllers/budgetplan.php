@@ -23,7 +23,7 @@ class Budgetplan extends CI_Controller {
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
-			array_push($courses, $c['course_name']);
+			$courses[$c['id_course']] = $c['course_name'];
 		}
 
 		$this->load->helper(array("currency"));
