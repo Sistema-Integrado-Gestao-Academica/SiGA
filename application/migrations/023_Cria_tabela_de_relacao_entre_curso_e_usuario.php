@@ -6,8 +6,8 @@ class Migration_Cria_tabela_de_relacao_entre_curso_e_usuario extends CI_migratio
 		$this->dbforge->add_field(array(
 				'id_course' => array('type' => 'INT'),
 				'id_user' => array('type' => 'INT'),
-				'id_master_degree' = array('type' => 'INT', 'null' => TRUE),
-				'id_doctorate' = array('type' => 'INT', 'null' => TRUE),
+				'id_master_degree' => array('type' => 'INT', 'null' => TRUE),
+				'id_doctorate' => array('type' => 'INT', 'null' => TRUE),
 				'enroll_date' => array('type' => 'DATETIME')
 		));
 		$this->dbforge->create_table('course_student');
