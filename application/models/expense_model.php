@@ -15,6 +15,10 @@ class Expense_model extends CI_Model {
 		return $this->db->get_where("expense", array($attr => $value))->row_array();
 	}
 
+	public function getExpenseTypes() {
+		return $this->db->get('expense_type')->result_array();
+	}
+
 }
 
 /* End of file expense.php */

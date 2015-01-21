@@ -33,12 +33,7 @@
 
 		<div class="form-group">
 			<?= form_label("Natureza da despesa", "nature") ?>
-			<?= form_textarea(array(
-				"name" => "nature",
-				"id" => "nature",
-				"class" => "form-campo",
-				"required" => "required"
-			)) ?>
+			<?= form_dropdown('type', $types) ?>
 		</div>
 
 		<div class="form-group">

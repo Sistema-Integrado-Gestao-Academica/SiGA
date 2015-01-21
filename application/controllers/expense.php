@@ -5,12 +5,19 @@ class Expense extends CI_Controller {
 	public function index($budgetplan_id) {
 		session();
 		$this->load->model('budgetplan_model');
+		$this->load->model('expense_model');
 		$budgetplan = $this->budgetplan_model->get('id', $budgetplan_id);
 
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 
-		$data = array('budgetplan' => $budgetplan, 'months' => $months);
+		$types = $this->expense_model->getExpenseTypes();
+		$expenseTypes = array();
+		foreach ($types as $type) {
+			array_push($expenseTypes, (string) $type['id'] . " - " . $type['description']);
+		}
+
+		$data = array('budgetplan' => $budgetplan, 'months' => $months, 'types' => $expenseTypes);
 		$this->load->template("budgetplan/expense", $data);
 	}
 
