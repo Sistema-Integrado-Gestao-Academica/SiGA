@@ -7,6 +7,7 @@ require_once('masterdegree.php');
 require_once('doctorate.php');
 require_once('graduation.php');
 require_once('ead.php');
+require_once('budgetplan.php');
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/MasterDegreeException.php");
 require_once(APPPATH."/exception/DoctorateException.php");
@@ -827,19 +828,24 @@ class Course extends CI_Controller {
 		define("ACADEMIC_PROGRAM", "academic_program");
 		define("PROFESSIONAL_PROGRAM", "professional_program");
 
+		$this->load->model('course_model');
 		switch($oldCourseType){
 			case GRADUATION:
-				$this->load->model('course_model');
+				
+				$this->cleanCourseDependencies($idCourse);
 				$this->course_model->deleteCourseById($idCourse);
 				break;
 			
 			case EAD:
-				$this->load->model('course_model');
+				
+				$this->cleanCourseDependencies($idCourse);
 				$this->course_model->deleteCourseById($idCourse);
 				break;
 
 			case ACADEMIC_PROGRAM:
 			case PROFESSIONAL_PROGRAM:
+				
+				$this->cleanCourseDependencies($idCourse);
 				
 				$post_graduation = new PostGraduation();
 				$post_graduation->cleanPostGraduationData($idCourse, $oldCourseType);
@@ -851,6 +857,26 @@ class Course extends CI_Controller {
 				break;
 		}
 
+	}
+
+	private function cleanCourseDependencies($idCourse){
+		
+		// Clean all course dependencies
+		$this->cleanBudgetplan($idCourse);
+		$this->cleanEnrolledStudents($idCourse);
+	}
+
+	private function cleanEnrolledStudents($idCourse){
+		$this->load->model('course_model');
+
+		$this->course_model->cleanEnrolledStudents($idCourse);
+	}
+
+	private function cleanBudgetplan($idCourse){
+		
+		$budgetplan = new Budgetplan();
+
+		$budgetplan->deleteBudgetplanByCourseId($idCourse);
 	}
 
 	/**
