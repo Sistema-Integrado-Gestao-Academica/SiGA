@@ -127,11 +127,11 @@ class Budgetplan extends CI_Controller {
 		$this->load->model('budgetplan_model');
 		if ($this->budgetplan_model->update($budgetplan)) {
 			$this->session->set_flashdata("success", "Plano orçamentário alterado");
-			redirect("planoorcamentario");
 		} else {
 			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
-			redirect("planoorcamentario/{$id}");
 		}
+		
+		redirect("planoorcamentario/{$id}");
 	}
 
 	public function delete() {

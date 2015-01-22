@@ -43,7 +43,7 @@
 				"id" => "year",
 				"type" => "number",
 				"class" => "form-campo",
-				"value" => "2000"
+				"value" => "2015"
 			)) ?>
 		</div>
 
