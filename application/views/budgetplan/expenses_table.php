@@ -20,7 +20,7 @@
 		<tr>
 			<td><?=++$i?></td>
 			<td><?=$expense['year']?></td>
-			<td><?=$expense['nature']?></td>
+			<td><?=$expense['expense_type']?></td>
 			<td><?=$expense['month']?></td>
 			<td><?=currencyBR($expense['value'])?></td>
 			<td>

@@ -61,6 +61,9 @@ class Budgetplan extends CI_Controller {
 	public function edit($id) {
 		session();
 		$this->load->model('budgetplan_model');
+		$this->load->model('course_model');
+		$this->load->model('expense_model');
+
 		$budgetplan = $this->budgetplan_model->get('id', $id);
 
 		$status_options = $this->db->get("budgetplan_status")->result_array();
@@ -69,7 +72,6 @@ class Budgetplan extends CI_Controller {
 			array_push($status, $s['description']);
 		}
 
-		$this->load->model('course_model');
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
@@ -80,6 +82,10 @@ class Budgetplan extends CI_Controller {
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
 
 		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
+		foreach ($expenses as $key => $expense) {
+			$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
+			$expenses[$key]['expense_type'] = $type['id'] . " - " . $type['description'];
+		}
 
 		$this->load->helper(array("currency"));
 		$data = array(

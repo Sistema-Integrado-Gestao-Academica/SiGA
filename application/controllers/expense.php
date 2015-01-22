@@ -11,10 +11,10 @@ class Expense extends CI_Controller {
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 
-		$types = $this->expense_model->getExpenseTypes();
+		$types = $this->expense_model->getAllExpenseTypes();
 		$expenseTypes = array();
 		foreach ($types as $type) {
-			array_push($expenseTypes, (string) $type['id'] . " - " . $type['description']);
+			$expenseTypes[$type['id']] = $type['id'] . " - " . $type['description'];
 		}
 
 		$data = array('budgetplan' => $budgetplan, 'months' => $months, 'types' => $expenseTypes);
@@ -28,7 +28,7 @@ class Expense extends CI_Controller {
 
 		$expense = array(
 			'year' => $this->input->post("year"),
-			'nature' => $this->input->post("nature"),
+			'expense_type_id' => $this->input->post("type"),
 			'value' => $this->input->post("value"),
 			'budgetplan_id' => $this->input->post("budgetplan_id")
 		);
