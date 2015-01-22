@@ -152,6 +152,12 @@ class Budgetplan extends CI_Controller {
 		redirect("planoorcamentario");
 	}
 
+	public function deleteBudgetplanByCourseId($courseId){
+
+		 $this->load->model("budgetplan_model");
+		 $this->budgetplan_model->deleteByCourseId($courseId);
+	}
+
 }
 
 /* End of file budgetplan.php */

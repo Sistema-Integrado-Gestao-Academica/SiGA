@@ -32,6 +32,25 @@ class Budgetplan_model extends CI_Model {
 	public function getExpenses($object) {
 		return $this->db->get_where("expense", array('budgetplan_id' => $object['id']))->result_array();
 	}
+
+	public function deleteByCourseId($courseId){
+
+		$budgetplan = $this->get("course_id", $courseId);
+		
+		if(sizeof($budgetplan) > 0){
+
+			$budgetplanId = $budgetplan['id'];
+
+			$this->load->model("expense_model");
+
+			$expenses = $this->getExpenses($budgetplanId);
+			foreach ($expenses as $expense) {
+				$this->expense_model->delete($expense['id']);
+			}
+
+			$this->delete($budgetplanId);
+		}
+	}
 }
 
 /* End of file budgetplan_model.php */
