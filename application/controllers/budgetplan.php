@@ -138,6 +138,12 @@ class Budgetplan extends CI_Controller {
 		session();
 		$id = $this->input->post("budgetplan_id");
 		$this->load->model('budgetplan_model');
+		$this->load->model('expense_model');
+
+		$expenses = $this->budgetplan_model->getExpenses($id);
+		foreach ($expenses as $expense) {
+			$this->expense_model->delete($expense['id']);
+		}
 
 		if ($this->budgetplan_model->delete($id)) {
 			$this->session->set_flashdata("danger", "Plano orçamentário foi removido");
