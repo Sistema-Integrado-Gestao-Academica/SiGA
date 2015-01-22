@@ -2,17 +2,14 @@
 class Migration_Cria_tabela_de_grupos extends CI_migration {
 
 	public function up() {
-
 		// Group table
 		$this->dbforge->add_field(array(
 			'id_group' => array('type' => 'INT','auto_increment' => true),
 			'group_name' => array('type' => 'varchar(20)')
 		));
+		
 		$this->dbforge->add_key('id_group', true);
 		$this->dbforge->create_table('group', true);
-
-		$add_group_name_uk = "ALTER TABLE group ADD CONSTRAINT GROUP_NAME_UK UNIQUE (group_name)";
-		$this->db->query($add_group_name_uk);
 
 		// Group values
 		$object = array('id_group' => 1, 'group_name' => 'financeiro');
@@ -33,6 +30,5 @@ class Migration_Cria_tabela_de_grupos extends CI_migration {
 
 	public function down() {
 		$this->dbforge->drop_table('group');
-
 	}
 }
