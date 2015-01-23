@@ -14,18 +14,25 @@ class Module_model extends CI_Model {
 
 	/**
 	  * Search on database for the permissions of an user
-	  * @param $user_id - User id to look for permissions
+	  * @param $userId - User id to look for permissions
 	  * @return an array with the permissions names and routes of the given user
 	  */
-	public function getUserPermissions($user_id){
+	public function getUserPermissions($userId){
 
 		$this->load->model("permission_model");
 
-		$groups = $this->getUserModules($user_id);
+		$groups = $this->getUserModules($userId);
 
-		$groupPermissions = $this->permission_model->getGroupsPermissions($groups);
+		$userPermissions = array();
+		foreach($groups as $group){
+			
+			$groupId = $group['id_group'];
+			$groupPermissions = $this->permission_model->getGroupPermissions($groupId);
 
-		return $groupPermissions;
+			$userPermissions[$group['group_name']] = $groupPermissions;
+		}
+
+		return $userPermissions;
 	}
 
 	public function getUserGroups($user_id){
@@ -68,12 +75,14 @@ class Module_model extends CI_Model {
 	  * @param $user_id - User id to look for modules
 	  * @return an array with the groups of the given user
 	  */
-	private function getUserModules($user_id){
+	private function getUserModules($userId){
 
-		$this->db->select('id_group');
-		$search_result = $this->db->get_where('user_group', array('id_user'=>$user_id));
-		
-		$groups_for_user = $search_result->result_array();
+		$this->db->select('group.*');
+		$this->db->from('group');
+		$this->db->join("user_group", "group.id_group = user_group.id_group");
+		$this->db->where("user_group.id_user", $userId);
+
+		$groups_for_user = $this->db->get()->result_array();
 
 		return $groups_for_user;
 	}

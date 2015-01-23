@@ -12,10 +12,14 @@ class Permission extends CI_Controller {
 			$userPermissions = $loggedUserData['user_permissions'];
 
 			$havePermission = FALSE;
-			foreach($userPermissions as $permission){
-				if($permission['route'] === $requiredPermission){
-					$havePermission = TRUE;
-					break;
+			foreach($userPermissions as $group => $groupPermissions){
+
+				foreach($groupPermissions as $permission){
+					
+					if($permission['route'] === $requiredPermission){
+						$havePermission = TRUE;
+						break;
+					}
 				}
 			}
 		}else{

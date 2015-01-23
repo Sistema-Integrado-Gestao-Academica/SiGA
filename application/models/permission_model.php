@@ -24,28 +24,16 @@ class Permission_model extends CI_Model {
 
 	/**
 	  * Search on database for the permissions of a group
-	  * @param $groups - Array with the groups of an user
-	  * @return an array with the permissions of the given groups
+	  * @param $groupId - The group id to get the permissions
+	  * @return an array with the permissions of the given group
 	  */
-	public function getGroupsPermissions($groups = array()){
+	public function getGroupPermissions($groupId){
 
 		$this->db->select('permission.permission_name, permission.route');
 		$this->db->from("permission");
 		$this->db->join("group_permission", "permission.id_permission = group_permission.id_permission");
-		
-		$i = 0;
-		foreach($groups as $group){
-			
-			// In case of the first where need to be a AND_WHERE clause
-			if($i === 0){
-				$this->db->where("group_permission.id_group", $group['id_group']);
-			}else{
-				$this->db->or_where("group_permission.id_group", $group['id_group']);
-			}
-
-			$i++;
-		}
-		
+		$this->db->where("group_permission.id_group", $groupId);
+	
 		$groupPermissions = $this->db->get()->result_array();
 
 		return $groupPermissions;

@@ -22,7 +22,6 @@ class Login extends CI_Controller {
 				
 				$this->load->model("module_model");
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
-
 				$registeredGroups = $this->module_model->getUserGroups($user['id']);
 
 				$userData = array(
