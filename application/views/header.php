@@ -49,11 +49,13 @@
                                         <?php
                                         	echo ucfirst($session['user']['name']);
 
-                                        	foreach($session['user_groups'] as $key => $type) {
+                                        	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
+                                        	foreach($session['user_groups'] as $group){
+                                        		echo ucfirst($group['group_name']);
                                         		echo "<br>";
-                                        		echo ucfirst($type);
                                         	}
                                         ?>
+                                        <br>	
                                         <small><?php echo $session['user']['email']?></small>
                                     </p>
                                 </li>
@@ -100,9 +102,9 @@
 
 		                            <ul class="dropdown-menu">
 		                            	<?php 
-		                            		foreach ($session['user_profiles'] as $group_name => $profile_route) {
+		                            		foreach($session['user_groups'] as $group){
 		                            			echo "<li>";
-		                            			echo "<a href=\"{$profile_route}\">".ucfirst($group_name)."</a>";
+		                            			echo "<a href=\"{$group['profile_route']}\">".ucfirst($group['group_name'])."</a>";
 		                            			echo "</li>";
 		                            		}
 		                            	?>
@@ -126,6 +128,7 @@
 	                define('SECRETARIA', 6);
 				 
 	                if(@$session['user_groups'][SECRETARIA]){
+
 						$secretario = $session['user_groups'][SECRETARIA];
 						echo "<li class='treeview'>";
 							echo anchor($secretario, ucfirst($secretario),"class='fa fa-folder-o'");
@@ -135,7 +138,7 @@
 								switch ($userGroupName){
 
 									case 'secretario': //nothing to do
-														break;
+										break;
 									default: 
 										echo "<li class='treeview'>". anchor($userGroupName, ucfirst($userGroupName),"class='fa fa-folder-open-o'");
 										
@@ -151,7 +154,7 @@
 							            	}
 							            	echo "</ul>";
 											echo "</li>";
-												  break;
+										break;
 								}
 							}
 							
@@ -196,4 +199,4 @@ if ($this->session->flashdata("success")) : ?>
 <?php endif;
 if ($this->session->flashdata("danger")) : ?>
 	<p class="alert alert-danger text-center"><?= $this->session->flashdata("danger") ?></p>
-<?php endif ?>
+<?php endif; ?>
