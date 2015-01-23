@@ -9,20 +9,11 @@ class Permission extends CI_Controller {
 		if($permissionExists){
 
 			$loggedUserData = $this->session->userdata('current_user');
-			$userPermissionsRoutes = $loggedUserData['user_permissions']['route'];
-
-			$userPermissions = array();
-			$i = 0;
-			foreach ($userPermissionsRoutes as $idGroup => $groupPermissions){
-				foreach ($groupPermissions as $permissionRoute){
-					$userPermissions[$i] = $permissionRoute;
-					$i++;
-				}
-			}
+			$userPermissions = $loggedUserData['user_permissions'];
 
 			$havePermission = FALSE;
-			foreach($userPermissions as $permissionRoute){
-				if($permissionRoute === $requiredPermission){
+			foreach($userPermissions as $permission){
+				if($permission['route'] === $requiredPermission){
 					$havePermission = TRUE;
 					break;
 				}

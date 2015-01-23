@@ -12,8 +12,8 @@ class Module extends CI_Controller {
 			$userGroups = $loggedUserData['user_groups'];
 
 			$haveGroup = FALSE;
-			foreach($userGroups as $groupName){
-				if($groupName === $requiredGroup){
+			foreach($userGroups as $group){
+				if($group['group_name'] === $requiredGroup){
 					$haveGroup = TRUE;
 					break;
 				}
