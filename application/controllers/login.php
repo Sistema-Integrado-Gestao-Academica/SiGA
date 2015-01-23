@@ -21,15 +21,14 @@ class Login extends CI_Controller {
 			if(sizeof($user) > 0){
 				
 				$this->load->model("module_model");
-				$registered_permissions = $this->module_model->getUserPermissions($user['id']);
-				
-				$registered_groups = $this->module_model->getUserGroups($user['id']);
+				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
+
+				$registeredGroups = $this->module_model->getUserGroups($user['id']);
 
 				$userData = array(
 					'user' => $user,
-					'user_permissions' => $registered_permissions,
-					'user_groups' => $registered_groups['idAndName'],
-					'user_profiles' => $registered_groups['nameAndProfile']
+					'user_permissions' => $registeredPermissions,
+					'user_groups' => $registeredGroups
 				);
 
 				$this->session->set_userdata("current_user", $userData);

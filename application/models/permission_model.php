@@ -23,57 +23,32 @@ class Permission_model extends CI_Model {
 	}
 
 	/**
-	  * Search on database for the permissions id's of a module
-	  * @param $module_id - Module id to look for permissions id's
-	  * @return an array with the permissions of the given module
+	  * Search on database for the permissions of a group
+	  * @param $groups - Array with the groups of an user
+	  * @return an array with the permissions of the given groups
 	  */
-	public function getPermissionIdsOfModule($module_id){
+	public function getGroupsPermissions($groups = array()){
 
-		$this->db->select('id_permission');
-		$module_permissions = $this->db->get_where('group_permission', array('id_group' => $module_id))->result_array();
-
-		return $module_permissions;
-	}
-
-	/**
-	  * Search on database for the permissions names of a set of permissions id's from a module
-	  * @param $module_permissions - Array with all permissions id's of a module
-	  * @return an array with all the permissions names of the the given permissions id's
-	  */
-	public function getPermissionNamesOfModules($module_permissions){
+		$this->db->select('permission.permission_name, permission.route');
+		$this->db->from("permission");
+		$this->db->join("group_permission", "permission.id_permission = group_permission.id_permission");
 		
-		for($i = 0; $i < sizeof($module_permissions); $i++){
+		$i = 0;
+		foreach($groups as $group){
+			
+			// In case of the first where need to be a AND_WHERE clause
+			if($i === 0){
+				$this->db->where("group_permission.id_group", $group['id_group']);
+			}else{
+				$this->db->or_where("group_permission.id_group", $group['id_group']);
+			}
 
-			$permission = $module_permissions[$i]['id_permission'];
-
-			$this->db->select('permission_name');	
-			$permission_name = $this->db->get_where('permission', array('id_permission' => $permission))->result_array();
-
-			$permission_names[$i] = $permission_name[0]['permission_name'];
-
+			$i++;
 		}
-
-		return $permission_names;
-	}
-
-	/**
-	  * Search on database for the permissions routes of a set of permissions id's from a module
-	  * @param $module_permissions - Array with all permissions id's of a module
-	  * @return an array with all the permissions routes of the the given permissions id's
-	  */
-	public function getPermissionRoutesByModules($module_permissions){
 		
-		for($i = 0; $i < sizeof($module_permissions); $i++){
+		$groupPermissions = $this->db->get()->result_array();
 
-			$permission = $module_permissions[$i]['id_permission'];
-
-			$this->db->select('route');	
-			$route = $this->db->get_where('permission', array('id_permission' => $permission))->result_array();
-
-			$routes[$i] = $route[0]['route'];
-
-		}
-
-		return $routes;
+		return $groupPermissions;
 	}
+
 }
