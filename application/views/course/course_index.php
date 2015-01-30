@@ -70,3 +70,19 @@
 	<?php }?>
 </table>
 
+<?=	form_open('course/saveSemester') ?>
+	<?= form_label('Semestre corrente') ?><br>
+	<?= form_input(array(
+		"id" => "semester",
+		"name" => "semester",
+		"value" => $current_semester,
+		"type" => $search,
+		$readonly => $readonly
+	)) ?>
+<?= form_close() ?>
+
+<script>
+	$(document).ready(function() {
+		$("#semester").mask('0º/0000', {placeholder: "_/____"});
+	});
+</script>

@@ -15,8 +15,23 @@ require_once(APPPATH."/exception/DoctorateException.php");
 class Course extends CI_Controller {
 
 	public function index(){
+		$semester = $this->db->get('semester')->row_array();
 
-		loadTemplateSafelyByPermission("cursos",'course/course_index');
+		$group = new Module();
+		if ($group->checkUserGroup('administrador')) {
+			$search = "search";
+			$readonly = "";
+		} else {
+			$search = "";
+			$readonly = "readonly";
+		}
+
+		$data = array(
+			'current_semester' => $semester['current'],
+			'search' => $search,
+			'readonly' => $readonly
+		);
+		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}
 
 	public function enrollStudentToCourse($courseId){
@@ -1040,5 +1055,15 @@ class Course extends CI_Controller {
 	
 		return $form_course_types;
 	}
-	
+
+
+	// TEMPORARY CODE
+	public function saveSemester() {
+		$semester = $this->input->post('semester');
+		$object = array('current' => $semester);
+		if ($this->db->update('semester', $object)) {
+			$this->session->set_flashdata("success", "Semestre corrente alterado");
+		}
+		redirect('/cursos/');
+	}
 }
