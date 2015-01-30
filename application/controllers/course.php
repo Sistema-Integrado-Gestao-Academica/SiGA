@@ -1057,6 +1057,15 @@ class Course extends CI_Controller {
 
 	// TEMPORARY CODE
 	public function saveSemester() {
+		$id_user = session()['user']['id'];
+		$current_user = $this->db->get_where('users', array('id'=>$id_user))->row_array();
+
+		$password = md5($this->input->post('password'));
+		if ($password != $current_user['password']) {
+			$this->session->set_flashdata("danger", "Senha incorreta");
+			redirect('/cursos/');
+		}
+
 		$semester_id = $this->input->post('current_semester_id') + 1;
 		$object = array('id' => $semester_id);
 		if ($this->db->update('current_semester', $object)) {
