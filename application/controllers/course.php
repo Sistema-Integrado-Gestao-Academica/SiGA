@@ -15,21 +15,19 @@ require_once(APPPATH."/exception/DoctorateException.php");
 class Course extends CI_Controller {
 
 	public function index(){
-		$semester = $this->db->get('semester')->row_array();
+		$course = new Course();
+		$registered = $course->listAllCourses();
+
+		$semester = $this->db->get('current_semester')->row_array();
+		$current_semester = $this->db->get_where('semester', array('id' => $semester['id']))->row_array();
 
 		$group = new Module();
-		if ($group->checkUserGroup('administrador')) {
-			$search = "search";
-			$readonly = "";
-		} else {
-			$search = "";
-			$readonly = "readonly";
-		}
+		$edit = $group->checkUserGroup('administrador');
 
 		$data = array(
-			'current_semester' => $semester['current'],
-			'search' => $search,
-			'readonly' => $readonly
+			'registered' => $registered,
+			'current_semester' => $current_semester,
+			'edit' => $edit
 		);
 		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}
@@ -1059,9 +1057,9 @@ class Course extends CI_Controller {
 
 	// TEMPORARY CODE
 	public function saveSemester() {
-		$semester = $this->input->post('semester');
-		$object = array('current' => $semester);
-		if ($this->db->update('semester', $object)) {
+		$semester_id = $this->input->post('current_semester_id') + 1;
+		$object = array('id' => $semester_id);
+		if ($this->db->update('current_semester', $object)) {
 			$this->session->set_flashdata("success", "Semestre corrente alterado");
 		}
 		redirect('/cursos/');
