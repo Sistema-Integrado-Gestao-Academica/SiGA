@@ -1,6 +1,6 @@
 <h2 class="principal">Disciplinas</h2>
 
-<?=anchor("course/formToRegisterNewCourse", "Cadastrar Disciplina", array(
+<?=anchor("discipline/formToRegisterNewDiscipline", "Cadastrar Disciplina", array(
 	"class" => "btn btn-primary",
 	"type" => "submit",
 	"content" => "newDiscipline"
@@ -23,6 +23,12 @@
 			Nome da Disciplina
 		</th>
 		<th class="text-center">
+			Código da Disciplina
+		</th>
+		<th class="text-center">
+			Carga Horária Semestral
+		</th>
+		<th class="text-center">
 			Ações
 		</th>
 	</tr>
@@ -33,9 +39,17 @@
 			echo "<tr>";
 
 				echo "<td>";
-				echo $indexes['discipline_name'];
+				echo $indexes['discipline_name'] . " (". $indexes['name_abbreviation'] . ")";
 				echo "</td>";
-
+				
+				echo "<td>";
+				echo $indexes['discipline_code'];
+				echo "</td>";
+				
+				echo "<td>";
+				echo $indexes['workload'];
+				echo "</td>";
+				
 				echo "<td>";
 					
 					echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
