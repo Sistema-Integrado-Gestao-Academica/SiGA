@@ -66,6 +66,7 @@ $route['guest_home'] = 'usuario/guest_index';
 $route['secretary_home'] = 'usuario/secretary_index';
 $route['enrollStudent/(:num)'] = 'course/enrollStudentToCourse/$1';
 $route['discipline'] = 'discipline/discipline_index';
+$route['discipline/(:num)'] = 'discipline/formToEditDiscipline/$1';
 
 
 /*
