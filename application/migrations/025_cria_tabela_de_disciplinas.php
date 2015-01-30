@@ -12,7 +12,16 @@ class Migration_Cria_tabela_de_disciplinas extends CI_migration {
 
 		$this->dbforge->add_key('discipline_code', true);
 		$this->dbforge->create_table('discipline', true);
-
+		
+		//Adding Discipline permissions and groups
+		$object = array('id_permission' => 9, 'permission_name' => 'Disciplinas', 'route' => 'disciplina');
+		$this->db->insert('permission', $object);
+		
+		$object = array('id_group' => 2, 'id_permission' => '9');
+		$this->db->insert('group_permission', $object);
+		
+		$object = array('id_group' => 3, 'id_permission' => '9');
+		$this->db->insert('group_permission', $object);
 	}
 
 	public function down() {
