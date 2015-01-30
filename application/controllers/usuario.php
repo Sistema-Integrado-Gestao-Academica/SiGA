@@ -30,6 +30,11 @@ class Usuario extends CI_Controller {
 
 	public function secretary_index(){
 
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
+	}
+
+	public function secretary_enrollStudent(){
+
 		$courses = $this->loadCourses();
 		
 		$courseData = array(
@@ -38,8 +43,12 @@ class Usuario extends CI_Controller {
 			'doctorates' => $courses['doctorates']
 		);
 
-		// On auth_helper
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home', $courseData);
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
+	}
+
+	public function secretary_offerList(){
+
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list');
 	}
 
 	private function loadCourses(){
