@@ -65,7 +65,7 @@ $route['student'] = 'usuario/student_index';
 $route['guest_home'] = 'usuario/guest_index';
 $route['secretary_home'] = 'usuario/secretary_index';
 $route['enrollStudent/(:num)'] = 'course/enrollStudentToCourse/$1';
-$route['disciplina'] = 'discipline/discipline_index';
+$route['discipline'] = 'discipline/discipline_index';
 
 
 /*
