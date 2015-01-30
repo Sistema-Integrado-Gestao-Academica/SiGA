@@ -12,6 +12,7 @@ class Migration_Cria_tabela_de_disciplinas extends CI_migration {
 		));
 
 		$this->dbforge->add_key('discipline_code', true);
+		$this->dbforge->add_key('discipline_name', true);
 		$this->dbforge->create_table('discipline', true);
 		
 		//Adding initial discipline
@@ -19,7 +20,7 @@ class Migration_Cria_tabela_de_disciplinas extends CI_migration {
 						'discipline_name'   => 'Desenho de Software', 
 						'name_abbreviation' => 'DSW',
 						'credits' 			=> 4,
-						'workload' 			=> 4
+						'workload' 			=> 60
 				  );
 		$this->db->insert('discipline', $object);
 		
