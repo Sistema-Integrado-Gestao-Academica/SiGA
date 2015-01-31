@@ -6,7 +6,7 @@ class Migration_Cria_tabela_de_disciplinas extends CI_migration {
 		$this->dbforge->add_field(array(
 				'discipline_code' => array('type' => 'INT'),
 				'discipline_name' => array('type' => 'varchar(70)'),
-				'name_abbreviation' => array('type' => 'varchar(6)'),
+				'name_abbreviation' => array('type' => 'varchar(8)'),
 				'credits'		  => array('type' => 'INT'),
 				'workload'	 	  => array('type' => 'INT')
 		));
