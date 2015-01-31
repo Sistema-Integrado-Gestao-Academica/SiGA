@@ -13,7 +13,7 @@ $discipline_code_to_form = array(
 		"id" => "discipline_code",
 		"type" => "text",
 		"class" => "form-campo",
-		"maxlength" => "6",
+		"maxlength" => "8",
 		"class" => "form-control",
 );
 

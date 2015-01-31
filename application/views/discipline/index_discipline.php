@@ -11,12 +11,10 @@
 	
 	?>
 <br>
-<table class="table">
+<table class="table table-bordered">
 	
 	<tr>
-		<th>
-			Disciplinas Cadastradas
-		</th>
+			<h3>Disciplinas Cadastradas</h3>
 	</tr>
 	<tr>
 		<th class="text-center">
@@ -47,7 +45,7 @@
 				echo "</td>";
 				
 				echo "<td>";
-				echo $indexes['workload'];
+				echo $indexes['workload']." h";
 				echo "</td>";
 				
 				echo "<td>";
