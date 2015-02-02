@@ -1,5 +1,5 @@
 <br>
-<h4 align="left"><b>Lista de ofertas</b></h4>
+<h4 align="center"><b>Lista de ofertas</b></h4>
 <br>
 
 <?=	form_open('semester/saveSemester') ?>
