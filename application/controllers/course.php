@@ -15,8 +15,21 @@ require_once(APPPATH."/exception/DoctorateException.php");
 class Course extends CI_Controller {
 
 	public function index(){
+		$course = new Course();
+		$registered = $course->listAllCourses();
 
-		loadTemplateSafelyByPermission("cursos",'course/course_index');
+		$semester = $this->db->get('current_semester')->row_array();
+		$current_semester = $this->db->get_where('semester', array('id' => $semester['id']))->row_array();
+
+		$group = new Module();
+		$edit = $group->checkUserGroup('administrador');
+
+		$data = array(
+			'registered' => $registered,
+			'current_semester' => $current_semester,
+			'edit' => $edit
+		);
+		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}
 
 	public function enrollStudentToCourse($courseId){
@@ -1040,5 +1053,24 @@ class Course extends CI_Controller {
 	
 		return $form_course_types;
 	}
-	
+
+
+	// TEMPORARY CODE
+	public function saveSemester() {
+		$id_user = session()['user']['id'];
+		$current_user = $this->db->get_where('users', array('id'=>$id_user))->row_array();
+
+		$password = md5($this->input->post('password'));
+		if ($password != $current_user['password']) {
+			$this->session->set_flashdata("danger", "Senha incorreta");
+			redirect('/cursos/');
+		}
+
+		$semester_id = $this->input->post('current_semester_id') + 1;
+		$object = array('id' => $semester_id);
+		if ($this->db->update('current_semester', $object)) {
+			$this->session->set_flashdata("success", "Semestre corrente alterado");
+		}
+		redirect('/cursos/');
+	}
 }
