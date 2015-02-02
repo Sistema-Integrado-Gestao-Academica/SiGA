@@ -17,4 +17,31 @@ class Semester_model extends CI_Model {
 
 		return $currentSemester;
 	}
+
+	public function updateCurrentSemester($newCurrentSemester){
+
+		$semesterExists = $this->checkIfSemesterExists($newCurrentSemester);
+
+		if($semesterExists){
+			
+			$currentSemester = array('id_semester' => $newCurrentSemester);
+			$this->db->update('current_semester', $currentSemester);
+
+			$semesterWasUpdated = TRUE;
+		}else{
+			$semesterWasUpdated = FALSE;
+		}
+
+		return $semesterWasUpdated;
+	}
+
+	private function checkIfSemesterExists($semesterId){
+
+		$searchResult = $this->db->get_where('semester', array('id_semester' => $semesterId));
+		$foundSemester = $searchResult->row_array();
+
+		$semesterExists = sizeof($foundSemester) > 0;
+
+		return $semesterExists;
+	}
 }
