@@ -3,6 +3,7 @@
 require_once('course.php');
 require_once('module.php');
 require_once('semester.php');
+require_once('offer.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -56,9 +57,14 @@ class Usuario extends CI_Controller {
 		$group = new Module();
 		$isAdmin = $group->checkUserGroup('administrador');
 
+		$offer = new Offer();
+		$proposedOffers = $offer->getProposedOfferLists();
+
 		$data = array(
 			'current_semester' => $currentSemester,
-			'isAdmin' => $isAdmin
+			'isAdmin' => $isAdmin,
+			'proposedOffers' => $proposedOffers,
+			'offer' => $offer
 		);
 
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);

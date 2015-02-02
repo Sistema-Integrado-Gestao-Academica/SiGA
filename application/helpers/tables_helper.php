@@ -172,6 +172,42 @@ echo "</div>";
 
 }
 
+function displayOfferList($id_semester, $id_offer, $status){
+
+	switch($status){
+		case "proposed":
+			$status = "Proposta";
+			break;
+		case "approved":
+			$status = "Aprovada";
+			break;
+
+		default:
+			
+			break;
+	}
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código da Lista: ".$id_offer."</th>";
+			        echo "<th class=\"text-center\">Status: ".$status."</th>";
+			    echo "</tr>";
+
+			    echo "<tr>";
+			    	echo "<td colspan=2>";
+			    	echo "<b>Disciplinas</b>";
+			    	echo "</td>";
+			    echo "</tr>";
+
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
 function displayRegisteredStudents($students, $studentNameToSearch){
 
 	$thereIsStudents = sizeof($students) > 0;
