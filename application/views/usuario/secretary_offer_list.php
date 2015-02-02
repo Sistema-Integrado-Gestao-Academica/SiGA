@@ -22,6 +22,7 @@
 <?php 
 	if($proposedOffers != FALSE){
 		
+		displayOffersList($proposedOffers);
 
 	}else{
 ?>
@@ -37,10 +38,7 @@
 				    'class' => 'btn btn-primary'
 				);
 
-		    	echo form_open('offer/newOffer');
-					echo form_hidden('current_semester_id', $current_semester['id_semester']);
-			    	echo form_button($newOfferBtn);
-		    	echo form_close();
+		    	echo anchor('offer/newOffer', "Nova Lista de Ofertas", "class='btn btn-primary'");
 		    ?>
 		    <p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>
 		</div>

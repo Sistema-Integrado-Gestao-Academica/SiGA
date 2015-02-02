@@ -1,15 +1,30 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('semester.php');
+
 class Offer extends CI_Controller {
 
 	public function newOffer(){
 
 		$this->load->model('offer_model');
 
-		$currentSesmester = $this->input->post('current_semester_id');
-		$offerData = $this->offer_model->newOffer($currentSesmester);
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
 
-		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
+		$offerData = $this->offer_model->newOffer($currentSemester['id_semester']);
+
+		$offerData['disciplines'] = $this->getOfferDisciplines($offerData['id_offer']);
+
+		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);		
+	}
+
+	public function getOfferDisciplines($idOffer){
+		
+		$this->load->model('offer_model');
+
+		$disciplines = $this->offer_model->getOfferDisciplines($idOffer);
+
+		return $disciplines;
 	}
 
 	public function getProposedOfferLists(){

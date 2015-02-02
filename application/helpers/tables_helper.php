@@ -172,14 +172,63 @@ echo "</div>";
 
 }
 
-function displayOfferList($id_semester, $id_offer, $status){
+function displayOffersList($offer){
 
-	switch($status){
+	switch($offer['offer_status']){
 		case "proposed":
 			$status = "Proposta";
 			break;
+
 		case "approved":
 			$status = "Aprovada";
+			break;
+
+		default:
+			$status = "-";
+			break;
+	}
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código da Lista </th>";
+			        echo "<th class=\"text-center\">Status</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    echo "<tr>";
+			    	
+			    	echo "<td>";
+			    		echo $offer['id_offer'];
+			    	echo "</td>";
+
+			    	echo "<td>";
+			    		echo $status;
+			    	echo "</td>";
+
+			    	if($status == "Proposta"){
+			    		echo "<td>";
+			    			echo anchor('','Editar', "class='btn btn-danger'");
+			    		echo "</td>";
+			    	}
+
+			    echo "</tr>";
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayOfferDisciplines($id_semester, $id_offer, $offer_status, $disciplines = FALSE){
+
+	switch($offer_status){
+		case "proposed":
+			$offer_status = "Proposta";
+			break;
+		case "approved":
+			$offer_status = "Aprovada";
 			break;
 
 		default:
@@ -193,7 +242,7 @@ function displayOfferList($id_semester, $id_offer, $status){
 
 			    echo "<tr>";
 			        echo "<th class=\"text-center\">Código da Lista: ".$id_offer."</th>";
-			        echo "<th class=\"text-center\">Status: ".$status."</th>";
+			        echo "<th class=\"text-center\">Status: ".$offer_status."</th>";
 			    echo "</tr>";
 
 			    echo "<tr>";
@@ -202,6 +251,29 @@ function displayOfferList($id_semester, $id_offer, $status){
 			    	echo "</td>";
 			    echo "</tr>";
 
+			    if($disciplines !== FALSE){
+
+				    foreach($disciplines as $discipline){
+					    
+					    echo "<tr>";
+					    	echo "<td colspan=2>";
+				    	echo $discipline['discipline_code']." - ".$discipline['discipline_name']."(".$discipline['name_abbreviation'].")";
+					    	echo "</td>";
+					    echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=2>";
+						    	echo "<div class=\"callout callout-info\">";
+	                            	echo "<h4>Nenhuma disciplina adicionada a essa lista de oferta no momento.</h4>";
+	                            	echo anchor('','Adicionar disciplinas', "class='btn btn-primary'");
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+				    		    	
+			    }
 
 			echo "</tbody>";
 		echo "</table>";

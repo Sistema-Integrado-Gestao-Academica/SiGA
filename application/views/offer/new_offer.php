@@ -1,8 +1,9 @@
 <br>
 <br>
 <br>
+<br>
 <?php
 	
-	displayOfferList($id_semester, $id_offer, $status);
+	displayOfferDisciplines($id_semester, $id_offer, $status, $disciplines);
 
 ?>
