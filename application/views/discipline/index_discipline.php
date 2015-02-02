@@ -57,7 +57,7 @@
 					));
 
 					echo form_open("discipline/deleteDiscipline");
-					echo form_hidden("id_course", $indexes['discipline_code']);
+					echo form_hidden("discipline_code", $indexes['discipline_code']);
 					echo form_button(array(
 						"class" => "btn btn-danger btn-remover",
 						"type" => "submit",

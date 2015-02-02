@@ -20,18 +20,6 @@ class Discipline_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
-	public function getDisciplineByCode($discipline_code){
-		$empty = empty($discipline_code);
-		
-		if(!$empty){
-			$this->db->where('discipline_code',$discipline_code);
-			$discipline = $this->db->get('discipline')->row_array();
-		}else{
-			$discipline = FALSE;
-		}
-		return $discipline;
-	}
-	
 	public function updateDisciplineData($disciplineCode,$disciplineToUpdate){
 		$disciplineExists = $this->getDisciplineByCode($disciplineCode);
 		
@@ -59,6 +47,31 @@ class Discipline_model extends CI_Model {
 		$this->db->update("discipline", $disciplineToUpdate);
 	}
 	
+	public function deleteDiscipline($disciplineCode){
+		$disciplineCodeExists = $this->disciplineExists($disciplineCode);
+		
+		if ($disciplineCodeExists['code']){
+			$this->db->delete('discipline', array('discipline_code' => $disciplineCode));
+			$disciplinWasDeleted = TRUE;
+		}else{
+			$disciplinWasDeleted = FALSE;
+		}
+		
+		return $disciplinWasDeleted;
+	}
+
+	public function getDisciplineByCode($discipline_code){
+		$empty = empty($discipline_code);
+	
+		if(!$empty){
+			$this->db->where('discipline_code',$discipline_code);
+			$discipline = $this->db->get('discipline')->row_array();
+		}else{
+			$discipline = FALSE;
+		}
+		return $discipline;
+	}
+	
 	private function checkDisciplineNameExists($askedName){
 		
 		$this->db->select('discipline_name');
@@ -77,12 +90,20 @@ class Discipline_model extends CI_Model {
 	}
 	
 	
-	public function disciplineExists($disciplineCode, $disciplineName){
-		$this->db->where('discipline_code',$disciplineCode);
-		$disciplineCodeExists = $this->db->get('discipline')->row_array();
+	public function disciplineExists($disciplineCode=NULL, $disciplineName=NULL){
+		if($disciplineCode){
+			$this->db->where('discipline_code',$disciplineCode);
+			$disciplineCodeExists = $this->db->get('discipline')->row_array();
+		}else{
+			$disciplineCodeExists = FALSE;
+		}
+		if($disciplineName){
+			$this->db->where('discipline_name',$disciplineName);
+			$disciplineNameExists = $this->db->get('discipline')->row_array();
+		}else{
+			$disciplineNameExists = FALSE;
+		}
 		
-		$this->db->where('discipline_name',$disciplineName);
-		$disciplineNameExists = $this->db->get('discipline')->row_array();
 		
 		if($disciplineCodeExists && $disciplineNameExists){
 			$existsCode = TRUE;

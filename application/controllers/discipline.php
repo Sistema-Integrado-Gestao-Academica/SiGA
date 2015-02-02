@@ -82,6 +82,23 @@ class Discipline extends CI_Controller {
 		redirect('/discipline/discipline_index');
 	}
 	
+	public function deleteDiscipline(){
+		$discipline_code = $this->input->post('discipline_code');
+		$disciplineWasDeleted = $this->dropDiscipline($discipline_code);
+		
+		if($disciplineWasDeleted){
+			$deleteStatus = "success";
+			$deleteMessage = "Disciplina excluída com sucesso.";
+		}else{
+			$deleteStatus = "danger";
+			$deleteMessage = "Não foi possível excluir esta disciplina.";
+		}
+		
+		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		
+		redirect('/discipline/discipline_index');
+	}
+	
 	public function formToEditDiscipline($code){
 		$this->load->helper('url');
 		$site_url = site_url();
@@ -99,6 +116,13 @@ class Discipline extends CI_Controller {
 	
 	public function formToRegisterNewDiscipline(){
 		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline");
+	}
+	
+	private function dropDiscipline($code){
+		$this->load->model('discipline_model');
+		$deletedDiscipline = $this->discipline_model->deleteDiscipline($code);
+		
+		return $deletedDiscipline;
 	}
 	
 	/**
