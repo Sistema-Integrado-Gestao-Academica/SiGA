@@ -11,6 +11,9 @@ class Migration_Adiciona_lista_de_oferta_ao_semestre extends CI_migration {
 		$offer_fk = "ALTER TABLE semester ADD CONSTRAINT IDOFFER_SEMESTER_FK FOREIGN KEY (offer) REFERENCES offer (id_offer)";
 		$this->db->query($offer_fk);
 
+		$offer_uk = "ALTER TABLE semester ADD CONSTRAINT IDOFFER_SEMESTER_UK UNIQUE (offer)";
+		$this->db->query($offer_uk);
+
 	}
 
 	public function down() {
