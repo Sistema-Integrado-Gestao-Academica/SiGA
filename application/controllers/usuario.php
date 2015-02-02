@@ -2,6 +2,7 @@
 
 require_once('course.php');
 require_once('module.php');
+require_once('semester.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -48,7 +49,19 @@ class Usuario extends CI_Controller {
 
 	public function secretary_offerList(){
 
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list');
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		// Check if the logged user have admin permission
+		$group = new Module();
+		$isAdmin = $group->checkUserGroup('administrador');
+
+		$data = array(
+			'current_semester' => $currentSemester,
+			'isAdmin' => $isAdmin
+		);
+
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);
 	}
 
 	private function loadCourses(){

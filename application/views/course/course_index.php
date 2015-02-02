@@ -44,24 +44,3 @@
 		<tr><td><h3><label class="label label-default"> Não existem cursos cadastrados</label></h3></td></tr>
 	<?php endif ?>
 </table>
-
-<?=	form_open('course/saveSemester') ?>
-	<?= form_hidden('current_semester_id', $current_semester['id']) ?>
-	<?= form_hidden('password') ?>
-	<?= form_label('Semestre corrente') ?>
-	<h4><?=$current_semester['description']?></h4>
-	<?php if ($edit): ?>
-		<?= form_button(array(
-			'type' => 'password',
-			'content' => 'Avançar semestre',
-			'onClick' => "passwordRequest()"
-		)) ?>
-	<?php endif ?>
-<?= form_close() ?>
-
-<script>
-	function passwordRequest() {
-		var password = prompt("Digite sua senha para continuar")
-		document.getElementsByName("password")[0].value = password;
-	}
-</script>
