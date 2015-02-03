@@ -1,6 +1,10 @@
 <?php
 class Discipline_model extends CI_Model {
 
+	/**
+	 * Function to list in an array all the disciplines registered in the database
+	 * @return array $registeredDisciplines
+	 */
 	public function listAllDisciplines(){
 		$this->db->select('*');
 		$this->db->from('discipline');
@@ -10,6 +14,11 @@ class Discipline_model extends CI_Model {
 		return $registeredDisciplines;
 	}
 	
+	/**
+	 * Function to save in the database a new discipline
+	 * @param array $disciplineToRegister
+	 * @return boolean $insertionStatus - TRUE for inserted discipline, FALSE for error
+	 */
 	public function saveNewDiscipline($disciplineToRegister){
 		$insertNew = $this->db->insert("discipline", $disciplineToRegister);
 		if($insertNew){
@@ -20,6 +29,14 @@ class Discipline_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
+	/**
+	 * Function to get updating data for one discipline and pass it to pdating function on db
+	 * @param int $disciplineCode
+	 * @param array $disciplineToUpdate
+	 * @throws DisciplineNameException
+	 * @throws DisciplineException
+	 * @return boolean $updated - TRUE for updated discipline, FALSE for error
+	 */
 	public function updateDisciplineData($disciplineCode,$disciplineToUpdate){
 		$disciplineExists = $this->getDisciplineByCode($disciplineCode);
 		
@@ -30,23 +47,36 @@ class Discipline_model extends CI_Model {
 			if($updatedName != $lastName){
 				$nameAlreadyExists = $this->checkDisciplineNameExists($updatedName);
 				if(!$nameAlreadyExists){
-					$this->updateDisciplineOnDB($disciplineCode,$disciplineToUpdate);
+					$updated = $this->updateDisciplineOnDB($disciplineCode,$disciplineToUpdate);
 				}else{
 					throw new DisciplineNameException("A disciplina '".$updatedName."' já existe.");
 				}
 			}else{
-				$this->updateDisciplineOnDB($disciplineCode,$disciplineToUpdate);
+				$updated = $this->updateDisciplineOnDB($disciplineCode,$disciplineToUpdate);
 			}
 		}else{
 			throw new DisciplineException("Impossível alterar disciplina. O código informado não existe.");
 		}
+		return $updated;
 	}
 	
+	/**
+	 * Function to update a discipline data on database
+	 * @param int $disciplineCode
+	 * @param array $disciplineToUpdate
+	 * @return boolean $updated - TRUE for updated discipline, FALSE for error
+	 */
 	private function updateDisciplineOnDB($disciplineCode,$disciplineToUpdate){
 		$this->db->where('discipline_code',$disciplineCode);
-		$this->db->update("discipline", $disciplineToUpdate);
+		$updated = $this->db->update("discipline", $disciplineToUpdate);
+		return $updated;
 	}
 	
+	/**
+	 * Function to drop some discipline from database
+	 * @param int $disciplineCode
+	 * @return boolean $disciplinWasDeleted - TRUE for deleted discipline
+	 */
 	public function deleteDiscipline($disciplineCode){
 		$disciplineCodeExists = $this->disciplineExists($disciplineCode);
 		
@@ -60,6 +90,11 @@ class Discipline_model extends CI_Model {
 		return $disciplinWasDeleted;
 	}
 
+	/**
+	 * Function to get an specific discipline on database
+	 * @param int $discipline_code
+	 * @return array $discipline case it exists, boolean FALSE case not
+	 */
 	public function getDisciplineByCode($discipline_code){
 		$empty = empty($discipline_code);
 	
@@ -72,6 +107,11 @@ class Discipline_model extends CI_Model {
 		return $discipline;
 	}
 	
+	/**
+	 * Function to check if one discipline name exists
+	 * @param string $askedName
+	 * @return boolean $disciplineNameAlreadyExists - TRUE if it exists, FALSE if not
+	 */
 	private function checkDisciplineNameExists($askedName){
 		
 		$this->db->select('discipline_name');
@@ -89,7 +129,12 @@ class Discipline_model extends CI_Model {
 		
 	}
 	
-	
+	/**
+	 * Function to check if onde discipline already exists
+	 * @param int $disciplineCode
+	 * @param string $disciplineName
+	 * @return multitype:boolean $exists
+	 */
 	public function disciplineExists($disciplineCode=NULL, $disciplineName=NULL){
 		if($disciplineCode){
 			$this->db->where('discipline_code',$disciplineCode);

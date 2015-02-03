@@ -1,10 +1,15 @@
 <?php
 class Discipline extends CI_Controller {
 	
+	//Function to load index page of disciplines
 	public function discipline_index(){
 		$this->load->template("discipline/index_discipline");
 	}
 	
+	/**
+	 * Function to get all disciplines registered in the database
+	 * @return array $registeredDisciplines
+	 */
 	public function getAllDisciplines(){
 		$this->load->model('discipline_model');
 		$registeredDisciplines = $this->discipline_model->listAllDisciplines();
@@ -12,6 +17,9 @@ class Discipline extends CI_Controller {
 		return $registeredDisciplines;
 	}
 	
+	/**
+	 * Function to save a new discipline
+	 */
 	public function newDiscipline(){
 		
 		$disciplineDataStatus = $this->validatesDisciplineFormsData();
@@ -53,6 +61,9 @@ class Discipline extends CI_Controller {
 		
 	}
 	
+	/**
+	 * Function to update some discipline
+	 */
 	public function updateDiscipline(){
 		$disciplineDataStatus = $this->validatesDisciplineFormsData();
 		
@@ -82,6 +93,9 @@ class Discipline extends CI_Controller {
 		redirect('/discipline/discipline_index');
 	}
 	
+	/**
+	 * Function to delete some discipline resgistered
+	 */
 	public function deleteDiscipline(){
 		$discipline_code = $this->input->post('discipline_code');
 		$disciplineWasDeleted = $this->dropDiscipline($discipline_code);
@@ -99,6 +113,7 @@ class Discipline extends CI_Controller {
 		redirect('/discipline/discipline_index');
 	}
 	
+	// Function to load a view form to edit a discipline
 	public function formToEditDiscipline($code){
 		$this->load->helper('url');
 		$site_url = site_url();
@@ -114,10 +129,16 @@ class Discipline extends CI_Controller {
 		
 	}
 	
+	// Function to load a view form to register a discipline
 	public function formToRegisterNewDiscipline(){
 		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline");
 	}
 	
+	/**
+	 * Function to drop a discipline from the database
+	 * @param int $code - Code of the discipline
+	 * @return boolean $deletedDiscipline
+	 */
 	private function dropDiscipline($code){
 		$this->load->model('discipline_model');
 		$deletedDiscipline = $this->discipline_model->deleteDiscipline($code);
