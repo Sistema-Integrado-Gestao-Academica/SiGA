@@ -18,7 +18,7 @@ class Migration_Adiciona_lista_de_oferta_ao_semestre extends CI_migration {
 
 	public function down() {
 
-		$offer_fk = "ALTER TABLE offer_discipline DROP CONSTRAINT IDOFFER_SEMESTER_FK";
+		$offer_fk = "ALTER TABLE semester DROP CONSTRAINT IDOFFER_SEMESTER_FK";
 		$this->db->query($offer_fk);
 
 		$this->dbforge->drop_column('semester', 'offer');
