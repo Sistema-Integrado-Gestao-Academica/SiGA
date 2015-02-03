@@ -23,15 +23,13 @@
 			<td class="text-center"><?=$budgetplan['status']?></td>
 
 			<td>
-				<a href="<?=base_url("planoorcamentario/{$budgetplan['id']}")?>" class="btn btn-primary btn-editar btn-sm">
-					<span class="glyphicon glyphicon-edit"></span>
-				</a>
-				<form action="<?=base_url("budgetplan/delete")?>" method="post">
-					<input type="hidden" name="budgetplan_id" value=<?=$budgetplan['id']?> />
+				<?= anchor("planoorcamentario/{$budgetplan['id']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
+				<?= form_open('/budgetplan/delete') ?>
+					<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
 					<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
 						<span class="glyphicon glyphicon-remove"></span>
 					</button>
-				</form>
+				<?= form_close() ?>
 			</td>
 		</tr>
 	<?php endforeach ?>
