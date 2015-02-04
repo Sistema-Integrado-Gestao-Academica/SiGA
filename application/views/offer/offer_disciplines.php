@@ -5,5 +5,8 @@
 
 <?php 
 	
-	displayRegisteredDisciplines($allDisciplines, $course, $offer);
+	displayRegisteredDisciplines($allDisciplines, $course, $idOffer);
+
+	echo "<br>";
+	echo anchor("offer/displayDisciplines/{$idOffer}/{$course['id_course']}", "Voltar", "class='btn btn-danger'");
 ?>
