@@ -14,9 +14,13 @@ require_once(APPPATH."/exception/DoctorateException.php");
 
 class Course extends CI_Controller {
 
-	public function index(){
+	public function index() {
+		$course = new Course();
+		$courses = $course->listAllCourses();
 
-		loadTemplateSafelyByPermission("cursos",'course/course_index');
+		$data = array('courses' => $courses);
+
+		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}
 
 	public function enrollStudentToCourse($courseId){
