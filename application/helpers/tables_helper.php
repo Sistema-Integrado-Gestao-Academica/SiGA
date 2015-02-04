@@ -407,3 +407,112 @@ function displayRegisteredStudents($students, $studentNameToSearch){
 		echo "</div>";
 	}
 }
+
+function displayRegisteredUsers($allUsers){
+	
+	echo "<h3>Lista de Usuários</h3>";
+	echo "<br>";
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código</th>";
+			        echo "<th class=\"text-center\">Nome</th>";
+			        echo "<th class=\"text-center\">CPF</th>";
+			        echo "<th class=\"text-center\">E-mail</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($allUsers !== FALSE){
+
+				    foreach($allUsers as $user){
+				    	
+				    	echo "<tr>";
+
+					    	echo "<td>";
+					    		echo $user['id'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $user['name'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $user['cpf'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    	 	echo $user['email'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo anchor("usuario/manageGroups/{$user['id']}", "<i class='fa fa-group'></i> Gerenciar Grupos", "class='btn btn-primary'");
+					    	echo "</td>";
+
+				    	echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=5>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há usuários cadastradas no momento.</h4>";
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayUserGroups($idUser, $userGroups){
+	
+	echo "<h3>Grupos </h3>";
+	echo "<br>";
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Grupo</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($userGroups !== FALSE){
+
+				    foreach($userGroups as $group){
+				    	
+				    	echo "<tr>";
+
+					    	echo "<td>";
+					    		echo $group['group_name'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo anchor("usuario/removeUserGroup/{$idUser}/{$group['id_group']}", "Remover Grupo", "class='btn btn-danger'");
+					    	echo "</td>";
+
+				    	echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=2>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há grupos cadastrados para esse usuário.</h4>";
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}

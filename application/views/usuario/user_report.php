@@ -1,0 +1,5 @@
+
+<br>
+<?php 
+	displayRegisteredUsers($allUsers);
+?>

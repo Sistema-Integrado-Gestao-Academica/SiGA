@@ -70,6 +70,17 @@ class Module_model extends CI_Model {
 		return $module_names;
 	}
 
+	public function checkIfGroupExists($idGroup){
+
+		$this->db->select('id_group');
+		$searchResult = $this->db->get_where('group', array('id_group' => $idGroup));
+		$foundGroup = $searchResult->row_array();
+
+		$groupExists = sizeof($foundGroup) > 0;
+
+		return $groupExists;
+	}
+
 	/**
 	  * Search on database for the groups of an user
 	  * @param $user_id - User id to look for modules

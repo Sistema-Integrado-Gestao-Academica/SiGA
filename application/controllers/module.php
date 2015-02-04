@@ -4,7 +4,7 @@ class Module extends CI_Controller {
 
 	public function checkUserGroup($requiredGroup){
 
-		$groupExists = $this->checkIfGroupExists($requiredGroup);
+		$groupExists = $this->checkIfGroupExistsByName($requiredGroup);
 
 		if($groupExists){
 
@@ -25,7 +25,7 @@ class Module extends CI_Controller {
 		return $haveGroup;
 	}
 
-	private function checkIfGroupExists($group){
+	private function checkIfGroupExistsByName($group){
 		$allGroups = $this->getExistingModules();
 
 		$groupExists = FALSE;
@@ -108,6 +108,24 @@ class Module extends CI_Controller {
 		$existing_modules_form = $this->turnCourseTypesToArray($existing_modules);
 		
 		return $existing_modules_form;
+	}
+
+	public function getUserGroups($idUser){
+		
+		$this->load->model('module_model');
+
+		$groups = $this->module_model->getUserGroups($idUser);
+
+		return $groups;
+	}
+
+	public function checkIfGroupExists($idGroup){
+
+		$this->load->model('module_model');
+
+		$groupExists = $this->module_model->checkIfGroupExists($idUser);
+
+		return $groupExists;
 	}
 	
 	/**

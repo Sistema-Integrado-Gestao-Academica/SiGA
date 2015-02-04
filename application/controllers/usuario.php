@@ -9,6 +9,65 @@ require_once('doctorate.php');
 
 class Usuario extends CI_Controller {
 	
+	public function usersReport(){
+
+		$allUsers = $this->getAllUsers();
+		
+		$data = array(
+			'allUsers' => $allUsers
+		);
+
+		loadTemplateSafelyByPermission('user_report','usuario/user_report', $data);
+	}
+
+	public function manageGroups($idUser){
+
+		$group = new Module();
+		$userGroups = $group->getUserGroups($idUser);
+
+		$data = array(
+			'idUser' => $idUser,
+			'userGroups' => $userGroups
+		);
+
+		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
+	}
+
+	public function removeUserGroup($idUser, $idGroup){
+		
+		$this->load->model('usuarios_model');
+		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Grupo removido com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/manageGroups/{$idUser}");
+	}
+
+	public function checkIfUserExists($idUser){
+		
+		$this->load->model('usuarios_model');
+
+		$userExists = $this->usuarios_model->checkIfUserExists($idUser);
+
+		return $userExists;
+	}
+
+	private function getAllUsers(){
+
+		$this->load->model('usuarios_model');
+
+		$allUsers = $this->usuarios_model->getAllUsers();
+
+		return $allUsers;
+	}
+
 	public function student_index(){
 		$logged_user_data = $this->session->userdata("current_user");
 		$userId = $logged_user_data['user']['id'];
