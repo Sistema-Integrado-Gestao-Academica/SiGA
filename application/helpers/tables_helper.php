@@ -411,7 +411,7 @@ function displayRegisteredStudents($students, $studentNameToSearch){
 
 function displayRegisteredUsers($allUsers){
 	
-	echo "<h3>Lista de Usuários</h3>";
+	echo "<h3>Lista de Usuários:</h3>";
 	echo "<br>";
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
@@ -520,7 +520,7 @@ function displayUserGroups($idUser, $userGroups){
 	echo "</div>";
 }
 
-function displayAllGroups($idUser, $allGroups, $userGroups){
+function displayAllGroupsToUser($idUser, $allGroups, $userGroups){
 
 	$user = new Usuario();
 	$foundUser = $user->getUserById($idUser);
@@ -566,6 +566,53 @@ function displayAllGroups($idUser, $allGroups, $userGroups){
 					    		}else{
 				    				echo anchor("usuario/addGroupToUser/{$idUser}/{$idGroup}", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary'");
 					    		}
+					    	echo "</td>";
+
+				    	echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=2>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há grupos cadastrados no sistema no momento.</h4>";
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayRegisteredGroups($allGroups){
+	echo "<h3>Grupos Cadastrados:</h3>";
+	echo "<br>";
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Grupo</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($allGroups !== FALSE){
+
+				    foreach($allGroups as $idGroup => $groupName){
+
+				    	echo "<tr>";
+
+					    	echo "<td>";
+					    		echo $groupName;
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo anchor("usuario/listUsersOfGroup/{$idGroup}", "<i class='fa fa-list-ol'></i> Listar usuários", "class='btn btn-primary' style='margin-right:5%;'");
+					    		echo anchor("usuario/removeAllUsersOfGroup/{$idGroup}", "<i class='fa fa-eraser'></i> Remover grupo de todos usuários", "class='btn btn-danger'");
 					    	echo "</td>";
 
 				    	echo "</tr>";

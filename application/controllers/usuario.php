@@ -10,11 +10,15 @@ require_once('doctorate.php');
 class Usuario extends CI_Controller {
 	
 	public function usersReport(){
-
+		
 		$allUsers = $this->getAllUsers();
 		
+		$group = new Module();
+		$allGroups = $group->getExistingModules();
+		
 		$data = array(
-			'allUsers' => $allUsers
+			'allUsers' => $allUsers,
+			'allGroups' => $allGroups
 		);
 
 		loadTemplateSafelyByPermission('user_report','usuario/user_report', $data);

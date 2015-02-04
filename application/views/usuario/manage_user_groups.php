@@ -2,5 +2,5 @@
 <?php 
 	displayUserGroups($idUser, $userGroups);
 	echo "<br>";
-	displayAllGroups($idUser, $allGroups, $userGroups);
+	displayAllGroupsToUser($idUser, $allGroups, $userGroups);
 ?>
