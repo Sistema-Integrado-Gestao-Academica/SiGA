@@ -1,10 +1,10 @@
 <h2 align="center">Menu de cursos</h2>
 
-<?=anchor("course/formToRegisterNewCourse", "Cadastrar Curso", array(
+<?= anchor("course/formToRegisterNewCourse", "Cadastrar Curso", array(
 	"class" => "btn btn-primary",
 	"type" => "submit",
 	"content" => "newCourse"
-))?>
+)) ?>
 
 <br><br>
 
@@ -39,4 +39,3 @@
 		</tr>
 	<?php endif ?>
 </table>
-

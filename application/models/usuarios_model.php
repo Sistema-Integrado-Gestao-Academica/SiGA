@@ -237,18 +237,28 @@ class Usuarios_model extends CI_Model {
 	}
 	
 	public function getAllSecretaries() {
-		define('SECRETARY', 6);
-		$this->db->select('id_user');
-		$id_users = $this->db->get_where('user_group',array('id_group'=>SECRETARY))->result_array();
-		$users = array();
-		$return_users = array();
 		
-		for ($i=0 ; $i < sizeof($id_users); $i++){
-			$users[$i] = $this->getUserById($id_users[$i]['id_user']);
-			$return_users = array($id_users[$i]['id_user']=>$users[$i]['name']);
+		$allSecretaries = $this->getSecretaries();
+
+		$secretaries = array();
+		foreach($allSecretaries as $secretary){
+			$secretaries[$secretary['id']] = $secretary['name'];
 		}
+
+		return $secretaries;
+	}
+
+	private function getSecretaries(){
 		
-		return $return_users;
+		define('SECRETARY_ID', 6);
+
+		$this->db->select('users.id, users.name');
+		$this->db->from('users');
+		$this->db->join('user_group', 'users.id = user_group.id_user');
+		$this->db->where('user_group.id_group', SECRETARY_ID);
+		$foundSecretaries = $this->db->get()->result_array();
+
+		return $foundSecretaries;
 	}
 	
 	public  function getUserById($id_user){

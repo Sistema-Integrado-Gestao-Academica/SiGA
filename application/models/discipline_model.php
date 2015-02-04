@@ -11,6 +11,12 @@ class Discipline_model extends CI_Model {
 		$this->db->order_by("discipline_name", "asc");
 		$registeredDisciplines = $this->db->get()->result_array();
 		
+		if(sizeof($registeredDisciplines) > 0){
+			// Nothing to do
+		}else{
+			$registeredDisciplines = FALSE;
+		}
+
 		return $registeredDisciplines;
 	}
 	
@@ -129,26 +135,24 @@ class Discipline_model extends CI_Model {
 		
 	}
 	
-	/**
-	 * Function to check if onde discipline already exists
-	 * @param int $disciplineCode
-	 * @param string $disciplineName
-	 * @return multitype:boolean $exists
-	 */
-	public function disciplineExists($disciplineCode=NULL, $disciplineName=NULL){
-		if($disciplineCode){
-			$this->db->where('discipline_code',$disciplineCode);
-			$disciplineCodeExists = $this->db->get('discipline')->row_array();
-		}else{
-			$disciplineCodeExists = FALSE;
-		}
-		if($disciplineName){
-			$this->db->where('discipline_name',$disciplineName);
-			$disciplineNameExists = $this->db->get('discipline')->row_array();
-		}else{
-			$disciplineNameExists = FALSE;
-		}
+	public function checkIfDisciplineExists($disciplineCode){
 		
+		$this->db->select('discipline_code');
+		$searchResult = $this->db->get_where('discipline', array('discipline_code' => $disciplineCode));
+
+		$foundDiscipline = $searchResult->row_array();
+
+		$disciplineExists = sizeof($foundDiscipline) > 0;
+
+		return $disciplineExists;
+	}
+
+	public function disciplineExists($disciplineCode, $disciplineName){
+		$this->db->where('discipline_code',$disciplineCode);
+		$disciplineCodeExists = $this->db->get('discipline')->row_array();
+		
+		$this->db->where('discipline_name',$disciplineName);
+		$disciplineNameExists = $this->db->get('discipline')->row_array();
 		
 		if($disciplineCodeExists && $disciplineNameExists){
 			$existsCode = TRUE;

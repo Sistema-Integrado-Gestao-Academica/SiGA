@@ -2,6 +2,8 @@
 
 require_once('course.php');
 require_once('module.php');
+require_once('semester.php');
+require_once('offer.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -30,6 +32,11 @@ class Usuario extends CI_Controller {
 
 	public function secretary_index(){
 
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
+	}
+
+	public function secretary_enrollStudent(){
+
 		$courses = $this->loadCourses();
 		
 		$courseData = array(
@@ -38,8 +45,48 @@ class Usuario extends CI_Controller {
 			'doctorates' => $courses['doctorates']
 		);
 
-		// On auth_helper
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home', $courseData);
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
+	}
+
+	public function secretary_offerList(){
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		// Check if the logged user have admin permission
+		$group = new Module();
+		$isAdmin = $group->checkUserGroup('administrador');
+
+		// Get the current user id
+		$logged_user_data = $this->session->userdata("current_user");
+		$currentUser = $logged_user_data['user']['id'];
+		// Get the courses of the secretary
+		$course = new Course();
+		$courses = $course->getCoursesOfSecretary($currentUser);
+		
+		// Get the proposed offers of every course
+		$offer = new Offer();
+		if($courses !== FALSE){
+
+			$proposedOffers = array();
+			foreach($courses as $course){
+				$courseId = $course['id_course'];
+				$courseName = $course['course_name'];
+				$proposedOffers[$courseName] = $offer->getCourseOfferList($courseId, $currentSemester['id_semester']);
+			}
+
+		}else{
+			$proposedOffers = FALSE;
+		}
+
+		$data = array(
+			'current_semester' => $currentSemester,
+			'isAdmin' => $isAdmin,
+			'proposedOffers' => $proposedOffers,
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);
 	}
 
 	private function loadCourses(){
