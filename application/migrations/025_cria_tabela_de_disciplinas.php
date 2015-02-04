@@ -15,6 +15,9 @@ class Migration_Cria_tabela_de_disciplinas extends CI_migration {
 		$this->dbforge->add_key('discipline_name', true);
 		$this->dbforge->create_table('discipline', true);
 		
+		$discipline_code_uk = "ALTER TABLE discipline ADD CONSTRAINT DISCIPLINE_CODE_UK UNIQUE (discipline_code)";
+		$this->db->query($discipline_code_uk);
+
 		//Adding initial discipline
 		$object = array('discipline_code'   => 111, 
 						'discipline_name'   => 'Desenho de Software', 

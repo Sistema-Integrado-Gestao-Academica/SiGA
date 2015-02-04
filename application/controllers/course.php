@@ -15,8 +15,14 @@ require_once(APPPATH."/exception/DoctorateException.php");
 class Course extends CI_Controller {
 
 	public function index(){
+		$course = new Course();
+		$registered = $course->listAllCourses();
 
-		loadTemplateSafelyByPermission("cursos",'course/course_index');
+		$data = array(
+			'registered' => $registered
+		);
+		
+		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}
 
 	public function enrollStudentToCourse($courseId){
@@ -992,6 +998,41 @@ class Course extends CI_Controller {
 		return $secretary;
 	}
 
+	public function getCoursesOfSecretary($userId){
+
+		$this->load->model('course_model');
+		$courses = $this->course_model->getCoursesOfSecretary($userId);
+
+		return $courses;
+	}
+
+	public function getCourseByName($courseName){
+		
+		$this->load->model('course_model');
+		
+		$course = $this->course_model->getCourseByName($courseName);
+
+		return $course;
+	}
+
+	public function getCourseById($courseId){
+
+		$this->load->model('course_model');
+		
+		$course = $this->course_model->getCourse($courseId);
+
+		return $course;
+	}
+
+	public function checkIfCourseExists($courseId){
+		
+		$this->load->model('course_model');
+
+		$courseExists = $this->course_model->chechIfCourseExists();
+		
+		return $courseExists;	
+	}
+
 	/**
 	 * Delete a registered course on DB
 	 * @param $course_id - The id from the course to be deleted
@@ -1040,5 +1081,5 @@ class Course extends CI_Controller {
 	
 		return $form_course_types;
 	}
-	
+
 }
