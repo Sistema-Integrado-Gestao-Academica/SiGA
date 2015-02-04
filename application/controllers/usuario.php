@@ -141,13 +141,17 @@ class Usuario extends CI_Controller {
 
 	public function formulario() {
 		$this->load->model('usuarios_model');
-		$usuarios = $this->usuarios_model->buscaTodos();
+		$users = $this->usuarios_model->buscaTodos();
 
-		if ($usuarios && !$this->session->userdata('current_user')) {
+		if ($users && !$this->session->userdata('current_user')) {
 			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
 		} else {
-			$this->load->template("usuario/formulario");
+			$user = new Usuario();
+			$user_groups = $user->getUserGroups();
+
+			$data = array('user_groups' => $user_groups);
+			$this->load->template("usuario/formulario", $data);
 		}
 	}
 	
@@ -202,16 +206,11 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$this->load->model("usuarios_model");
-			$user_group_options = $this->usuarios_model->getAllUserGroups();
-			$user_groups = array();
-
-			foreach ($user_group_options as $ug) {
-				array_push($user_groups, $ug['group_name']);
-			}
+			$user = new Usuario();
+			$user_groups = $user->getUserGroups();
 
 			$data = array('user_groups' => $user_groups);
-			$this->load->template("usuario/formulario_entrada", $data);
+			$this->load->template("usuario/formulario", $data);
 		}
 	}
 
