@@ -1,0 +1,3 @@
+<?php 
+	displayUsersOfGroup($idGroup, $usersOfGroup);
+?>

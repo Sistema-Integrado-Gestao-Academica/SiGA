@@ -3,6 +3,7 @@
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/offer.php");
 require_once(APPPATH."/controllers/usuario.php");
+require_once(APPPATH."/controllers/module.php");
 
 function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 	echo "<div class=\"box-body table-responsive no-padding\">";
@@ -505,13 +506,12 @@ function displayUserGroups($idUser, $userGroups){
 				    }
 
 			    }else{
-
 			    	echo "<tr>";
-					    	echo "<td colspan=2>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há grupos cadastrados para esse usuário.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
+				    	echo "<td colspan=2>";
+					    	echo "<div class=\"callout callout-warning\">";
+                            	echo "<h4>Não há grupos cadastrados para esse usuário.</h4>";
+                            echo "</div>";
+				    	echo "</td>";
 					echo "</tr>";
 			    }
 
@@ -612,7 +612,7 @@ function displayRegisteredGroups($allGroups){
 
 					    	echo "<td>";
 					    		echo anchor("usuario/listUsersOfGroup/{$idGroup}", "<i class='fa fa-list-ol'></i> Listar usuários", "class='btn btn-primary' style='margin-right:5%;'");
-					    		echo anchor("usuario/removeAllUsersOfGroup/{$idGroup}", "<i class='fa fa-eraser'></i> Remover grupo de todos usuários", "class='btn btn-danger'");
+					    		echo anchor("usuario/removeAllUsersOfGroup/{$idGroup}", "<i class='fa fa-eraser'></i> Remover todos usuários do grupo", "class='btn btn-danger'");
 					    	echo "</td>";
 
 				    	echo "</tr>";
@@ -624,6 +624,70 @@ function displayRegisteredGroups($allGroups){
 					    	echo "<td colspan=2>";
 						    	echo "<div class=\"callout callout-warning\">";
 	                            	echo "<h4>Não há grupos cadastrados no sistema no momento.</h4>";
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayUsersOfGroup($idGroup, $usersOfGroup){
+	
+	$group = new Module();
+	$foundGroup = $group->getGroupById($idGroup);
+	echo "<h3>Usuários do grupo <b>".$foundGroup['group_name']."</b>:</h3>";
+	echo "<br>";
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código</th>";
+			        echo "<th class=\"text-center\">Nome</th>";
+			        echo "<th class=\"text-center\">CPF</th>";
+			        echo "<th class=\"text-center\">E-mail</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($usersOfGroup !== FALSE){
+
+				    foreach($usersOfGroup as $user){
+
+				    	echo "<tr>";
+
+					    	echo "<td>";
+					    		echo $user['id'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $user['name'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $user['cpf'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    	 	echo $user['email'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo anchor("usuario/removeUserFromGroup/{$user['id']}/{$idGroup}", "<i class='fa fa-eraser'></i> Remover Usuário", "class='btn btn-danger'");
+					    	echo "</td>";
+
+				    	echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=5>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há usuários cadastrados nesse grupo no momento.</h4>";
 	                            echo "</div>";
 					    	echo "</td>";
 					echo "</tr>";

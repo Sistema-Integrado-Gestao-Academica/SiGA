@@ -164,6 +164,22 @@ class Usuarios_model extends CI_Model {
 		}
 	}
 
+	public function getUsersOfGroup($idGroup){
+		$this->db->select('users.id, users.name, users.cpf, users.email');
+		$this->db->from('users');
+		$this->db->join('user_group', "users.id = user_group.id_user");
+		$this->db->where('id_group', $idGroup);
+		$foundUsers = $this->db->get()->result_array();
+
+		if(sizeof($foundUsers) > 0){
+			// Nothing to do
+		}else{
+			$foundUsers = FALSE;
+		}
+
+		return $foundUsers;
+	}
+
 	public function getAllUsers(){
 		$this->db->select('id, name, cpf, email');
 		$foundUsers = $this->db->get('users')->result_array();

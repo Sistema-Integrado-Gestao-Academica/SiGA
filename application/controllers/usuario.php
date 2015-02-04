@@ -39,6 +39,20 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
 	}
 
+	public function listUsersOfGroup($idGroup){
+		
+		$this->load->model("usuarios_model");
+
+		$usersOfGroup = $this->usuarios_model->getUsersOfGroup($idGroup);
+
+		$data = array(
+			'idGroup' => $idGroup,
+			'usersOfGroup' => $usersOfGroup
+		);
+
+		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
+	}
+
 	public function addGroupToUser($idUser, $idGroup){
 
 		$this->load->model('usuarios_model');
@@ -71,6 +85,23 @@ class Usuario extends CI_Controller {
 		
 		$this->session->set_flashdata($status, $message);	
 		redirect("usuario/manageGroups/{$idUser}");
+	}
+
+	public function removeUserFromGroup($idUser, $idGroup){
+		
+		$this->load->model('usuarios_model');
+		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Usuario removido com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o usuário informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/listUsersOfGroup/{$idGroup}");
 	}
 
 	public function checkIfUserExists($idUser){

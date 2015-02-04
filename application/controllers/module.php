@@ -39,6 +39,15 @@ class Module extends CI_Controller {
 		return $groupExists;
 	}
 
+	public function getGroupById($idGroup){
+		
+		$this->load->model('module_model');
+		
+		$group = $this->module_model->getGroupById($idGroup);
+
+		return $group;
+	}
+
 	public function addGroupToUser($groupName, $userId){
 
 		// Validar o $groupName

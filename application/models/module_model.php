@@ -43,7 +43,28 @@ class Module_model extends CI_Model {
 
 		$foundGroups = $this->db->get()->result_array();
 
+		if(sizeof($foundGroups) > 0){
+			// Nothing to do
+		}else{
+			$foundGroups = FALSE;
+		}
+
 		return $foundGroups;
+	}
+
+	public function getGroupById($idGroup){
+
+		$searchResult = $this->db->get_where('group', array('id_group' => $idGroup));
+
+		$foundGroup = $searchResult->row_array();
+
+		if(sizeof($foundGroup) > 0){
+			// Nothing to do
+		}else{
+			$foundGroup = FALSE;
+		}
+
+		return $foundGroup;
 	}
 
 	/**
