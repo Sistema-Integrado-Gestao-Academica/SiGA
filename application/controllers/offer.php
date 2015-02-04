@@ -12,10 +12,14 @@ class Offer extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		$offerData = $this->offer_model->newOffer($currentSemester['id_semester']);
-
+		
 		$offerData['disciplines'] = $this->getOfferDisciplines($offerData['id_offer']);
-
+		
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);		
+	}
+
+	public function addDisciplines($idOffer){
+		echo "<h1>Adicionar disciplinas aqui</h1>";
 	}
 
 	public function getOfferDisciplines($idOffer){

@@ -1,8 +1,6 @@
 <?php
 class Migration_Adiciona_semestre_e_curso_a_oferta extends CI_migration {
 
-
-
 	public function up() {
 		
 		// Dropping the offer column
@@ -22,7 +20,6 @@ class Migration_Adiciona_semestre_e_curso_a_oferta extends CI_migration {
 
 		$semester_fk = "ALTER TABLE offer ADD CONSTRAINT IDSEMESTER_OFFER_FK FOREIGN KEY (semester) REFERENCES semester (id_semester) ON DELETE NO ACTION";
 		$this->db->query($semester_fk);
-
 
 		$semester_course_uk = "ALTER TABLE offer ADD CONSTRAINT SEMESTER_COURSE_UK UNIQUE (semester, course)";
 		$this->db->query($semester_course_uk);

@@ -209,7 +209,36 @@ class Course_model extends CI_Model {
 		$secretary_return = $this->db->get_where('secretary_course', array('id_course'=>$id_course))->row_array();
 		
 		return $secretary_return;
+	}
+
+	public function getSecretaryByUserId($id_user){
 		
+		$this->db->select('id_secretary, id_group, id_course');
+		$secretary = $this->db->get_where('secretary_course', array('id_user'=>$id_user))->result_array();
+		
+		return $secretary;	
+	}
+
+	/**
+	 * Get the course which the given user is secretary of
+	 * @param $userId - Secretary id to search for courses
+	 * @return an array with the found courses or FALSE if none course is found
+	 */
+	public function getCoursesOfSecretary($userId){
+		
+		$this->db->select('course.*');
+		$this->db->from('course');
+		$this->db->join('secretary_course','course.id_course = secretary_course.id_course');
+		$this->db->where('secretary_course.id_user', $userId);
+		$courses = $this->db->get()->result_array();
+
+		if(sizeof($courses) > 0){
+			// Nothing to do
+		}else{
+			$courses = FALSE;
+		}
+
+		return $courses;
 	}
 
 	/**

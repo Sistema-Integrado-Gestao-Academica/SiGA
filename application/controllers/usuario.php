@@ -57,14 +57,22 @@ class Usuario extends CI_Controller {
 		$group = new Module();
 		$isAdmin = $group->checkUserGroup('administrador');
 
+		// Get the proposed offers
 		$offer = new Offer();
 		$proposedOffers = $offer->getProposedOfferLists();
+
+		// Get the current user id
+		$logged_user_data = $this->session->userdata("current_user");
+		$currentUser = $logged_user_data['user']['id'];
+		// Get the courses of the secretary
+		$course = new Course();
+		$courses = $course->getCoursesOfSecretary($currentUser);
 
 		$data = array(
 			'current_semester' => $currentSemester,
 			'isAdmin' => $isAdmin,
 			'proposedOffers' => $proposedOffers,
-			'offer' => $offer
+			'courses' => $courses
 		);
 
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);

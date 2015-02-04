@@ -998,6 +998,14 @@ class Course extends CI_Controller {
 		return $secretary;
 	}
 
+	public function getCoursesOfSecretary($userId){
+		
+		$this->load->model('course_model');
+		$courses = $this->course_model->getCoursesOfSecretary($userId);
+
+		return $courses;
+	}
+
 	/**
 	 * Delete a registered course on DB
 	 * @param $course_id - The id from the course to be deleted
