@@ -26,6 +26,105 @@ class Usuarios_model extends CI_Model {
 		$this->db->insert("user_group",$user_group);
 	}
 
+	public function addGroupToUser($idUser, $idGroup){
+		
+		$userExists = $this->checkIfUserExists($idUser);
+
+		$this->load->model('module_model');
+		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
+
+		$dataIsOk = $userExists && $groupExists;
+
+		if($dataIsOk){
+
+			$this->addUserGroup($idUser, $idGroup);
+
+			$registeredUserGroup = $this->getUserGroupByUserAndGroup($idUser, $idGroup);
+
+			if($registeredUserGroup !== FALSE){
+				$wasAdded = TRUE;
+			}else{
+				$wasAdded = FALSE;
+			}
+
+		}else{
+			$wasAdded = FALSE;
+		}
+
+		return $wasAdded;
+	}
+
+	private function addUserGroup($idUser, $idGroup){
+
+		$userGroup = array(
+			'id_user' => $idUser,
+			'id_group' => $idGroup
+		);
+
+		$this->db->insert('user_group', $userGroup);
+	}
+
+	public function removeUserGroup($idUser, $idGroup){
+
+		$userExists = $this->checkIfUserExists($idUser);
+
+		$this->load->model('module_model');
+		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
+
+		$dataIsOk = $userExists && $groupExists;
+
+		if($dataIsOk){
+			$this->deleteUserGroup($idUser, $idGroup);
+
+			$registeredUserGroup = $this->getUserGroupByUserAndGroup($idUser, $idGroup);
+
+			if($registeredUserGroup !== FALSE){
+				$wasDeleted = FALSE;
+			}else{
+				$wasDeleted = TRUE;
+			}
+		}else{
+			$wasDeleted = FALSE;
+		}
+
+		return $wasDeleted;
+	}
+
+	/**
+	 * Used to check if previous added or removed user group from user_group table was correctly done
+	 * @param $idUser - User id to search for
+	 * @param $idGroup - Group id to search for
+	 * @return an array with the found users groups if found or FALSE if does not
+	 */
+	private function getUserGroupByUserAndGroup($idUser, $idGroup){
+		if(!empty($idUser)){
+			$this->db->where('id_user', $idUser);
+		}
+		if(!empty($idGroup)){
+			$this->db->where('id_group', $idGroup);
+		}
+		$searchResult = $this->db->get('user_group');
+		$foundUserGroup = $searchResult->result_array();
+
+		if(sizeof($foundUserGroup) > 0){
+			// Nothing to do
+		}else{
+			$foundUserGroup = FALSE;
+		}
+
+		return $foundUserGroup;
+	}
+
+	private function deleteUserGroup($idUser, $idGroup){
+
+		$userGroup = array(
+			'id_user' => $idUser,
+			'id_group' => $idGroup
+		);
+
+		$this->db->delete('user_group', $userGroup);
+	}
+
 	public function buscaPorLoginESenha($login, $senha = "0") {
 		$this->db->where("login", $login);
 		if ($senha) {
@@ -69,6 +168,64 @@ class Usuarios_model extends CI_Model {
 		}else{
 			throw new LoginException("É necessário um login e uma senha para acessar o sistema.");
 		}
+	}
+
+	public function getUsersOfGroup($idGroup){
+		$this->db->select('users.id, users.name, users.cpf, users.email');
+		$this->db->from('users');
+		$this->db->join('user_group', "users.id = user_group.id_user");
+		$this->db->where('id_group', $idGroup);
+		$foundUsers = $this->db->get()->result_array();
+
+		if(sizeof($foundUsers) > 0){
+			// Nothing to do
+		}else{
+			$foundUsers = FALSE;
+		}
+
+		return $foundUsers;
+	}
+
+	public function removeAllUsersOfGroup($idGroup){
+		
+		$this->load->model('module_model');
+		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
+
+		if($groupExists){
+			
+			$this->deleteAllUsersOfGroup($idGroup);
+
+			$registeredUserGroup = $this->getUserGroupByUserAndGroup('',$idGroup);
+
+			if($registeredUserGroup !== FALSE){
+				$wasDeleted = FALSE;
+			}else{
+				$wasDeleted = TRUE;
+			}
+
+		}else{
+			$wasDeleted = FALSE;
+		}
+
+		return $wasDeleted;
+	}
+
+	private function deleteAllUsersOfGroup($idGroup){
+		$this->db->where('id_group', $idGroup);
+		$this->db->delete('user_group');
+	}
+
+	public function getAllUsers(){
+		$this->db->select('id, name, cpf, email');
+		$foundUsers = $this->db->get('users')->result_array();
+
+		if(sizeof($foundUsers) > 0){
+			// Nothing to do
+		}else{
+			$foundUsers = FALSE;
+		}
+
+		return $foundUsers;
 	}
 
 	public function getUserByName($userName){
@@ -262,8 +419,12 @@ class Usuarios_model extends CI_Model {
 	}
 	
 	public  function getUserById($id_user){
-		$this->db->select('name');
-		return $this->db->get_where('users',array('id'=>$id_user))->row_array();
+		
+		$this->db->select('id, name, email');
+		
+		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
+		
+		return $foundUser;
 	}
 	
 	public function busca($str, $atributo) {
@@ -334,5 +495,16 @@ class Usuarios_model extends CI_Model {
 		}
 
 		return $isAdmin;
+	}
+
+	public function checkIfUserExists($idUser){
+
+		$this->db->select('id');
+		$searchResult = $this->db->get_where('users', array('id' => $idUser));
+		$foundUser = $searchResult->row_array();
+
+		$userExists = sizeof($foundUser) > 0;
+
+		return $userExists;
 	}
 }

@@ -9,6 +9,137 @@ require_once('doctorate.php');
 
 class Usuario extends CI_Controller {
 	
+	public function usersReport(){
+		
+		$allUsers = $this->getAllUsers();
+		
+		$group = new Module();
+		$allGroups = $group->getExistingModules();
+		
+		$data = array(
+			'allUsers' => $allUsers,
+			'allGroups' => $allGroups
+		);
+
+		loadTemplateSafelyByPermission('user_report','usuario/user_report', $data);
+	}
+
+	public function manageGroups($idUser){
+
+		$group = new Module();
+		$userGroups = $group->getUserGroups($idUser);
+		$allGroups = $group->getExistingModules();
+
+		$data = array(
+			'idUser' => $idUser,
+			'userGroups' => $userGroups,
+			'allGroups' => $allGroups
+		);
+
+		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
+	}
+
+	public function listUsersOfGroup($idGroup){
+		
+		$this->load->model("usuarios_model");
+
+		$usersOfGroup = $this->usuarios_model->getUsersOfGroup($idGroup);
+
+		$data = array(
+			'idGroup' => $idGroup,
+			'usersOfGroup' => $usersOfGroup
+		);
+
+		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
+	}
+
+	public function removeAllUsersOfGroup($idGroup){
+		
+		$this->load->model("usuarios_model");
+
+		$wasDeleted = $this->usuarios_model->removeAllUsersOfGroup($idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Usuários removidos com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover os usuários do grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("user_report");		
+	}
+
+	public function addGroupToUser($idUser, $idGroup){
+
+		$this->load->model('usuarios_model');
+		$wasSaved = $this->usuarios_model->addGroupToUser($idUser, $idGroup);
+
+		if($wasSaved){
+			$status = "success";
+			$message = "Grupo adicionado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/manageGroups/{$idUser}");
+	}
+
+	public function removeUserGroup($idUser, $idGroup){
+		
+		$this->load->model('usuarios_model');
+		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Grupo removido com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/manageGroups/{$idUser}");
+	}
+
+	public function removeUserFromGroup($idUser, $idGroup){
+		
+		$this->load->model('usuarios_model');
+		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Usuario removido com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o usuário informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/listUsersOfGroup/{$idGroup}");
+	}
+
+	public function checkIfUserExists($idUser){
+		
+		$this->load->model('usuarios_model');
+
+		$userExists = $this->usuarios_model->checkIfUserExists($idUser);
+
+		return $userExists;
+	}
+
+	private function getAllUsers(){
+
+		$this->load->model('usuarios_model');
+
+		$allUsers = $this->usuarios_model->getAllUsers();
+
+		return $allUsers;
+	}
+
 	public function student_index(){
 		$logged_user_data = $this->session->userdata("current_user");
 		$userId = $logged_user_data['user']['id'];
@@ -387,6 +518,15 @@ class Usuario extends CI_Controller {
 
 		$this->load->model('usuarios_model');
 		$foundUser = $this->usuarios_model->getUserByName($userName);
+
+		return $foundUser;
+	}
+
+	public function getUserById($userId){
+
+		$this->load->model('usuarios_model');
+		
+		$foundUser = $this->usuarios_model->getUserById($userId);
 
 		return $foundUser;
 	}
