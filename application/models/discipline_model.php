@@ -7,6 +7,12 @@ class Discipline_model extends CI_Model {
 		$this->db->order_by("discipline_name", "asc");
 		$registeredDisciplines = $this->db->get()->result_array();
 		
+		if(sizeof($registeredDisciplines) > 0){
+			// Nothing to do
+		}else{
+			$registeredDisciplines = FALSE;
+		}
+
 		return $registeredDisciplines;
 	}
 	
@@ -76,6 +82,17 @@ class Discipline_model extends CI_Model {
 		
 	}
 	
+	public function checkIfDisciplineExists($disciplineCode){
+		
+		$this->db->select('discipline_code');
+		$searchResult = $this->db->get_where('discipline', array('discipline_code' => $disciplineCode));
+
+		$foundDiscipline = $searchResult->row_array();
+
+		$disciplineExists = sizeof($foundDiscipline) > 0;
+
+		return $disciplineExists;
+	}
 	
 	public function disciplineExists($disciplineCode, $disciplineName){
 		$this->db->where('discipline_code',$disciplineCode);
