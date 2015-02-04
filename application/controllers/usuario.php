@@ -24,13 +24,20 @@ class Usuario extends CI_Controller {
 
 		$group = new Module();
 		$userGroups = $group->getUserGroups($idUser);
+		$allGroups = $group->getExistingModules();
 
 		$data = array(
 			'idUser' => $idUser,
-			'userGroups' => $userGroups
+			'userGroups' => $userGroups,
+			'allGroups' => $allGroups
 		);
 
 		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
+	}
+
+	public function addGroupToUser($idUser, $idGroup){
+
+		
 	}
 
 	public function removeUserGroup($idUser, $idGroup){
@@ -447,6 +454,15 @@ class Usuario extends CI_Controller {
 
 		$this->load->model('usuarios_model');
 		$foundUser = $this->usuarios_model->getUserByName($userName);
+
+		return $foundUser;
+	}
+
+	public function getUserById($userId){
+
+		$this->load->model('usuarios_model');
+		
+		$foundUser = $this->usuarios_model->getUserById($userId);
 
 		return $foundUser;
 	}

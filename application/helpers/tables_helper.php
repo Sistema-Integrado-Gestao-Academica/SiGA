@@ -2,6 +2,7 @@
 
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/offer.php");
+require_once(APPPATH."/controllers/usuario.php");
 
 function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 	echo "<div class=\"box-body table-responsive no-padding\">";
@@ -472,7 +473,9 @@ function displayRegisteredUsers($allUsers){
 
 function displayUserGroups($idUser, $userGroups){
 	
-	echo "<h3>Grupos </h3>";
+	$user = new Usuario();
+	$foundUser = $user->getUserById($idUser);
+	echo "<h3>Grupos pertencentes a <b>".$foundUser['name']."</b>:</h3>";
 	echo "<br>";
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
@@ -507,6 +510,56 @@ function displayUserGroups($idUser, $userGroups){
 					    	echo "<td colspan=2>";
 						    	echo "<div class=\"callout callout-warning\">";
 	                            	echo "<h4>Não há grupos cadastrados para esse usuário.</h4>";
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayAllGroups($idUser, $allGroups, $userGroups){
+
+	$user = new Usuario();
+	$foundUser = $user->getUserById($idUser);
+
+	echo "<h3>Grupos Existentes:</h3>";
+	echo "<br>";
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Grupo</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($allGroups !== FALSE){
+
+				    foreach($allGroups as $idGroup => $groupName){
+				    	
+				    	echo "<tr>";
+
+					    	echo "<td>";
+					    		echo $groupName;
+					    	echo "</td>";
+
+					    	echo "<td>";
+				    			echo anchor("usuario/addGroupToUser/{$idUser}/{$idGroup}", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary'");
+					    	echo "</td>";
+
+				    	echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=2>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há grupos cadastrados no sistema no momento.</h4>";
 	                            echo "</div>";
 					    	echo "</td>";
 					echo "</tr>";

@@ -330,8 +330,12 @@ class Usuarios_model extends CI_Model {
 	}
 	
 	public  function getUserById($id_user){
-		$this->db->select('name');
-		return $this->db->get_where('users',array('id'=>$id_user))->row_array();
+		
+		$this->db->select('id, name, email');
+		
+		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
+		
+		return $foundUser;
 	}
 	
 	public function busca($str, $atributo) {
