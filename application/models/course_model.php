@@ -30,19 +30,31 @@ class Course_model extends CI_Model {
 
 	public function getCourseIdByCourseName($courseName){
 
-		$courseId =$this->getCourseIdForThisCourseName($courseName);
+		$course = $this->getCourseForThisCourseName($courseName);
+		$courseId = $course['id_course'];
 
 		return $courseId;
 	}
 
-	private function getCourseIdForThisCourseName($courseName){
-		$this->db->select('id_course');
+	public function getCourseByName($courseName){
+
+		$foundCourse = $this->getCourseForThisCourseName($courseName);
+
+		return $foundCourse;
+	}
+
+	private function getCourseForThisCourseName($courseName){
+		
 		$searchResult = $this->db->get_where('course', array('course_name' => $courseName));
-		$searchResult = $searchResult->row_array();
+		$foundCourse = $searchResult->row_array();
 
-		$courseId = $searchResult['id_course'];
+		if(sizeof($foundCourse) > 0){
+			// Nothing to do
+		}else{
+			$foundCourse = FALSE;
+		}
 
-		return $courseId;
+		return $foundCourse;
 	}
 
 		public function checkExistingCourseTypeId($course_type_id){

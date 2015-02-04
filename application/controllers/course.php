@@ -999,11 +999,29 @@ class Course extends CI_Controller {
 	}
 
 	public function getCoursesOfSecretary($userId){
-		
+
 		$this->load->model('course_model');
 		$courses = $this->course_model->getCoursesOfSecretary($userId);
 
 		return $courses;
+	}
+
+	public function getCourseByName($courseName){
+		
+		$this->load->model('course_model');
+		
+		$course = $this->course_model->getCourseByName($courseName);
+
+		return $course;
+	}
+
+	public function checkIfCourseExists($courseId){
+		$this->db->select('id_course');
+		$foundCourse = $this->db->get_where('course', array('id_course' => $courseId))->row_array();
+
+		$courseExists = sizeof($foundCourse) > 0;
+
+		return $courseExists;
 	}
 
 	/**

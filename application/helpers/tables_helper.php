@@ -1,5 +1,7 @@
 <?php
 
+require_once(APPPATH."/controllers/course.php");
+
 function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 	echo "<div class=\"box-body table-responsive no-padding\">";
 	echo "<table class=\"table table-bordered table-hover\">";
@@ -177,6 +179,8 @@ function displayOffersList($offers){
 	define("PROPOSED", "proposed");
 	define("APPROVED", "approved");
 
+	$course = new Course();
+
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
@@ -228,10 +232,14 @@ function displayOffersList($offers){
 				    		echo "</td>";
 
 			    		}else{
+
+			    			$foundCourse = $course->getCourseByName($courseName);
+			    			$courseId = $foundCourse['id_course'];
+
 			    			echo "<td colspan=3>";
 		    					echo "<div class=\"callout callout-info\">";
 									echo "<h4>Nenhuma lista de ofertas proposta para o semestre atual.</h4>";
-							    	echo anchor('offer/newOffer', "Nova Lista de Ofertas", "class='btn btn-primary'");
+							    	echo anchor("offer/newOffer/{$courseId}", "Nova Lista de Ofertas", "class='btn btn-primary'");
 								    echo "<p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>";
 								echo "</div>";
 			    			echo "</td>";
