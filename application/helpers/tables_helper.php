@@ -1,6 +1,7 @@
 <?php
 
 require_once(APPPATH."/controllers/course.php");
+require_once(APPPATH."/controllers/offer.php");
 
 function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 	echo "<div class=\"box-body table-responsive no-padding\">";
@@ -291,6 +292,11 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 					    echo "</tr>";
 				    }
 
+				    echo "<tr>";
+						echo "<td colspan=2>";
+		                echo anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
+		                echo "</td>";
+				    echo "</tr>";
 			    }else{
 
 			    	echo "<tr>";
@@ -298,7 +304,65 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 						    	echo "<div class=\"callout callout-info\">";
 	                            	echo "<h4>Nenhuma disciplina adicionada a essa lista de oferta no momento.</h4>";
 
-	                            	echo anchor("offer/addDisciplines/{$idOffer}",'Adicionar disciplinas', "class='btn btn-primary'");
+	                            	echo anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código: </th>";
+			        echo "<th class=\"text-center\">Sigla</th>";
+			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Créditos</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($allDisciplines !== FALSE){
+
+				    foreach($allDisciplines as $discipline){
+					    
+					    echo "<tr>";
+					    	echo "<td>";
+				    			echo $discipline['discipline_code'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $discipline['name_abbreviation'];
+					    	echo "</td>";
+					    	
+					    	echo "<td>";
+					    		echo $discipline['discipline_name'];
+					    	echo "</td>";
+					    	
+					    	echo "<td>";
+					    		echo $discipline['credits'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar ao curso ".$course['course_name'], "class='btn btn-primary'");
+					    	echo "</td>";
+
+					    echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=5>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há disciplinas cadastradas no momento.</h4>";
 	                            echo "</div>";
 					    	echo "</td>";
 					echo "</tr>";

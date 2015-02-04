@@ -49,9 +49,48 @@ class Offer extends CI_Controller {
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
 	}
 
-	public function addDisciplines($idOffer){
+	public function addDisciplines($idOffer, $courseId){
 
 		$discipline = new Discipline();
+		$allDisciplines = $discipline->getAllDisciplines();
+
+		$course = new Course();
+		$offerCourse = $course->getCourseById($courseId);
+
+		$data = array(
+			'allDisciplines' => $allDisciplines,
+			'course' => $offerCourse,
+			'offer' => $idOffer
+		);
+
+		loadTemplateSafelyByGroup('secretario', 'offer/offer_disciplines', $data);
+	}
+
+	public function addDisciplineToOffer($idDiscipline, $idOffer, $idCourse){
+		
+		$this->load->model('offer_model');
+
+		$wasSaved = $this->offer_model->addDisciplineToOffer($idDiscipline, $idOffer);
+
+		if($wasSaved){
+			$status = "success";
+			$message = "Disciplina adicionada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível adicionar essa disciplina. Cheque os códigos informados.";
+		}
+
+		$this->session->set_flashdata($status, $message);	
+		redirect("offer/addDisciplines/{$idOffer}/{$idCourse}");
+	}
+
+	public function disciplineExistsInOffer($disciplineId, $offerId){
+
+		$this->load->model('offer_model');
+
+		$disciplineExists = $this->offer_model->disciplineExistsInOffer($disciplineId, $offerId);
+
+		return $disciplineExists;
 	}
 
 	private function getOfferDisciplines($idOffer){
