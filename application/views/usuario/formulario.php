@@ -48,7 +48,8 @@
 			<div class="form-group">
 				<?= form_label("Tipo de Usuário", "userGroup"); ?><br>
 				<?= form_dropdown("userGroup", $user_groups) ?>
-				<?= "* Para adicionar mais de um tipo, acesse o menu para editar usuário" ?>
+				<br>
+				<?= "* Para adicionar mais de um grupo, contate o administrador" ?>
 				<?= form_error("userGroup") ?>
 			</div>
 

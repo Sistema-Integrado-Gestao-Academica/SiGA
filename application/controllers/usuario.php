@@ -325,10 +325,10 @@ class Usuario extends CI_Controller {
 			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
 		} else {
-			$user = new Usuario();
-			$user_groups = $user->getUserGroups();
+			
+			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
-			$data = array('user_groups' => $user_groups);
+			$data = array('user_groups' => $userGroups);
 			$this->load->template("usuario/formulario", $data);
 		}
 	}
@@ -359,7 +359,6 @@ class Usuario extends CI_Controller {
 			$nome  = $this->input->post("nome");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
-			$grupo = $this->input->post("userGroup");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
@@ -384,10 +383,9 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$user = new Usuario();
-			$user_groups = $user->getUserGroups();
+			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
-			$data = array('user_groups' => $user_groups);
+			$data = array('user_groups' => $userGroups);
 			$this->load->template("usuario/formulario", $data);
 		}
 	}
@@ -545,14 +543,14 @@ class Usuario extends CI_Controller {
 		return $user_groups_to_array;
 	}
 	
-	public function getAllowedUserGroupsForNotLoggedRegistration(){
+	public function getAllowedUserGroupsForFirstRegistration(){
 
 		$this->load->model("usuarios_model");
-		$user_groups = $this->usuarios_model->getAllAllowedUserGroupsForNotLoggedRegistration();
+		$userGroups = $this->usuarios_model->getAllowedUserGroupsForFirstRegistration();
 		
-		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
+		$userGroupsArray = $this->turnUserGroupsToArray($userGroups);
 		
-		return $user_groups_to_array;
+		return $userGroupsArray;
 	}
 	
 	public function getAllSecretaryUsers(){

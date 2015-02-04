@@ -459,7 +459,7 @@ class Usuarios_model extends CI_Model {
 		return $userGroups;
 	}
 	
-	public function getAllAllowedUserGroupsForNotLoggedRegistration(){
+	public function getAllowedUserGroupsForFirstRegistration(){
 		
 		$this->db->select('id_group, group_name');
 		$where= "group_name = 'convidado'";
