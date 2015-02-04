@@ -97,7 +97,13 @@ class Usuarios_model extends CI_Model {
 	 * @return an array with the found users groups if found or FALSE if does not
 	 */
 	private function getUserGroupByUserAndGroup($idUser, $idGroup){
-		$searchResult = $this->db->get_where('user_group', array('id_user' => $idUser, 'id_group' => $idGroup));
+		if(!empty($idUser)){
+			$this->db->where('id_user', $idUser);
+		}
+		if(!empty($idGroup)){
+			$this->db->where('id_group', $idGroup);
+		}
+		$searchResult = $this->db->get('user_group');
 		$foundUserGroup = $searchResult->result_array();
 
 		if(sizeof($foundUserGroup) > 0){
@@ -178,6 +184,35 @@ class Usuarios_model extends CI_Model {
 		}
 
 		return $foundUsers;
+	}
+
+	public function removeAllUsersOfGroup($idGroup){
+		
+		$this->load->model('module_model');
+		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
+
+		if($groupExists){
+			
+			$this->deleteAllUsersOfGroup($idGroup);
+
+			$registeredUserGroup = $this->getUserGroupByUserAndGroup('',$idGroup);
+
+			if($registeredUserGroup !== FALSE){
+				$wasDeleted = FALSE;
+			}else{
+				$wasDeleted = TRUE;
+			}
+
+		}else{
+			$wasDeleted = FALSE;
+		}
+
+		return $wasDeleted;
+	}
+
+	private function deleteAllUsersOfGroup($idGroup){
+		$this->db->where('id_group', $idGroup);
+		$this->db->delete('user_group');
 	}
 
 	public function getAllUsers(){
