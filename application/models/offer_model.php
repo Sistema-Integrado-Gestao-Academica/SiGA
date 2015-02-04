@@ -93,9 +93,16 @@ class Offer_model extends CI_Model {
 		$this->db->update('semester', $dataToUpdate);
 	}	
 
-	public function getProposedOfferLists(){
+	public function getCourseOfferList($courseId, $semesterId){
 
-		$foundOffers = $this->getProposedOffers();
+		$searchResult = $this->db->get_where('offer', array('course' => $courseId, 'semester' => $semesterId));
+		$foundOffers = $searchResult->row_array();
+
+		if(sizeof($foundOffers) > 0){
+			// Nothing to do
+		}else{
+			$foundOffers = FALSE;
+		}
 
 		return $foundOffers;
 	}

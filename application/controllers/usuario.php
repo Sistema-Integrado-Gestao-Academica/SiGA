@@ -57,16 +57,27 @@ class Usuario extends CI_Controller {
 		$group = new Module();
 		$isAdmin = $group->checkUserGroup('administrador');
 
-		// Get the proposed offers
-		$offer = new Offer();
-		$proposedOffers = $offer->getProposedOfferLists();
-
 		// Get the current user id
 		$logged_user_data = $this->session->userdata("current_user");
 		$currentUser = $logged_user_data['user']['id'];
 		// Get the courses of the secretary
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($currentUser);
+		
+		// Get the proposed offers of every course
+		$offer = new Offer();
+		if($courses !== FALSE){
+
+			$proposedOffers = array();
+			foreach($courses as $course){
+				$courseId = $course['id_course'];
+				$courseName = $course['course_name'];
+				$proposedOffers[$courseName] = $offer->getCourseOfferList($courseId, $currentSemester['id_semester']);
+			}
+
+		}else{
+			$proposedOffers = FALSE;
+		}
 
 		$data = array(
 			'current_semester' => $currentSemester,

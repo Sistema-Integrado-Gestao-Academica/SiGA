@@ -1,3 +1,5 @@
+<?php  $session = $this->session->userdata("current_user"); ?>
+
 <br>
 <h4 align="center"><b>Lista de ofertas</b></h4>
 <br>
@@ -20,26 +22,17 @@
 <br>
 
 <?php 
-	if($proposedOffers != FALSE){
+	if($courses !== FALSE){
 		
+		echo "<h4>Cursos para o secretário <b>".$session['user']['name']."</b>:</h4>";
+
 		displayOffersList($proposedOffers);
 
 	}else{
 ?>
-		<div class="callout callout-info">
-		    <h4>Nenhuma lista de ofertas proposta no momento.</h4>
-		    <?php 
+		<div class="callout callout-warning">
+            <h4>Nenhum curso cadastrado para o secretário <b><?php echo $session['user']['name'];?></b>.<br><br>
+            <small><b>OBS.: Você somente pode criar e alterar listas de ofertas dos cursos os quais é secretário.</b></small></h4>
+        </div>
 
-		    	$newOfferBtn = array(
-				    'name' => 'new_offer_list_btn',
-				    'id' => 'new_offer_list_btn',
-				    'type' => 'submit',
-				    'content' => 'Nova Lista de Ofertas',
-				    'class' => 'btn btn-primary'
-				);
-
-		    	echo anchor('offer/newOffer', "Nova Lista de Ofertas", "class='btn btn-primary'");
-		    ?>
-		    <p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>
-		</div>
 <?php } ?>

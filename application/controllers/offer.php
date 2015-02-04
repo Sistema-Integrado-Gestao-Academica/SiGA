@@ -31,6 +31,15 @@ class Offer extends CI_Controller {
 		return $disciplines;
 	}
 
+	public function getCourseOfferList($courseId, $semester){
+		
+		$this->load->model('offer_model');
+
+		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
+
+		return $offerLists;
+	}
+
 	public function getProposedOfferLists(){
 		$this->load->model('offer_model');
 

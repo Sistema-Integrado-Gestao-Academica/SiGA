@@ -172,49 +172,73 @@ echo "</div>";
 
 }
 
-function displayOffersList($offer){
+function displayOffersList($offers){
 
-	switch($offer['offer_status']){
-		case "proposed":
-			$status = "Proposta";
-			break;
-
-		case "approved":
-			$status = "Aprovada";
-			break;
-
-		default:
-			$status = "-";
-			break;
-	}
+	define("PROPOSED", "proposed");
+	define("APPROVED", "approved");
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
 
 			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código da Lista </th>";
+			        echo "<th class=\"text-center\">Curso</th>";
+			        echo "<th class=\"text-center\">Lista de Oferta</th>";
 			        echo "<th class=\"text-center\">Status</th>";
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
-			    echo "<tr>";
-			    	
-			    	echo "<td>";
-			    		echo $offer['id_offer'];
-			    	echo "</td>";
+			    foreach($offers as $courseName => $offer){
+			    	echo "<tr>";
 
-			    	echo "<td>";
-			    		echo $status;
-			    	echo "</td>";
-
-			    	if($status == "Proposta"){
 			    		echo "<td>";
-			    			echo anchor('','Editar', "class='btn btn-danger'");
+			    			echo $courseName;
 			    		echo "</td>";
-			    	}
 
-			    echo "</tr>";
+			    		if($offer !== FALSE){
+
+			    			switch($offer['offer_status']){
+								case PROPOSED:
+									$status = "Proposta";
+									break;
+
+								case APPROVED:
+									$status = "Aprovada";
+									break;
+
+								default:
+									$status = "-";
+									break;
+							}
+
+				    		echo "<td>";
+				    			echo $offer['id_offer'];
+				    		echo "</td>";
+				    		
+				    		echo "<td>";
+				    			echo $status;
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    			if($offer['offer_status'] === PROPOSED){
+			    					echo anchor("offer/addDisciplines/{$offer['id_offer']}",'Editar', "class='btn btn-danger'");
+				    			}else{
+			    					echo anchor("",'Editar', "class='btn btn-danger disabled'");
+				    			}
+				    		echo "</td>";
+
+			    		}else{
+			    			echo "<td colspan=3>";
+		    					echo "<div class=\"callout callout-info\">";
+									echo "<h4>Nenhuma lista de ofertas proposta para o semestre atual.</h4>";
+							    	echo anchor('offer/newOffer', "Nova Lista de Ofertas", "class='btn btn-primary'");
+								    echo "<p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>";
+								echo "</div>";
+			    			echo "</td>";
+			    		}
+
+			    	echo "</tr>";
+			    }
 		
 			echo "</tbody>";
 		echo "</table>";
@@ -268,7 +292,13 @@ function displayOfferDisciplines($id_semester, $id_offer, $offer_status, $discip
 					    	echo "<td colspan=2>";
 						    	echo "<div class=\"callout callout-info\">";
 	                            	echo "<h4>Nenhuma disciplina adicionada a essa lista de oferta no momento.</h4>";
-	                            	echo anchor('','Adicionar disciplinas', "class='btn btn-primary'");
+
+	                            	/**
+
+
+
+	                            	*/
+	                            	echo anchor("offer/addDisciplines/{$id_offer}",'Adicionar disciplinas', "class='btn btn-primary'");
 	                            echo "</div>";
 					    	echo "</td>";
 					echo "</tr>";
