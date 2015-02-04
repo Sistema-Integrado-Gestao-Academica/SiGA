@@ -333,6 +333,9 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 
 				    foreach($allDisciplines as $discipline){
 					    
+					    $offer = new Offer();
+			    		$disciplineAlreadyExistsInOffer = $offer->disciplineExistsInOffer($discipline['discipline_code'], $idOffer);
+
 					    echo "<tr>";
 					    	echo "<td>";
 				    			echo $discipline['discipline_code'];
@@ -351,7 +354,11 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    	echo "</td>";
 
 					    	echo "<td>";
-					    		echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar ao curso ".$course['course_name'], "class='btn btn-primary'");
+					    		if($disciplineAlreadyExistsInOffer){
+					    			echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Já adicionada ao curso ".$course['course_name'], "class='btn btn-primary disabled'");
+					    		}else{
+					    			echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar ao curso ".$course['course_name'], "class='btn btn-primary'");
+					    		}
 					    	echo "</td>";
 
 					    echo "</tr>";

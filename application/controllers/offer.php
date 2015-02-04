@@ -60,7 +60,7 @@ class Offer extends CI_Controller {
 		$data = array(
 			'allDisciplines' => $allDisciplines,
 			'course' => $offerCourse,
-			'offer' => $idOffer
+			'idOffer' => $idOffer
 		);
 
 		loadTemplateSafelyByGroup('secretario', 'offer/offer_disciplines', $data);
