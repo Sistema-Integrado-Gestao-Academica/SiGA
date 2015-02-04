@@ -26,6 +26,44 @@ class Usuarios_model extends CI_Model {
 		$this->db->insert("user_group",$user_group);
 	}
 
+	public function addGroupToUser($idUser, $idGroup){
+		
+		$userExists = $this->checkIfUserExists($idUser);
+
+		$this->load->model('module_model');
+		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
+
+		$dataIsOk = $userExists && $groupExists;
+
+		if($dataIsOk){
+
+			$this->addUserGroup($idUser, $idGroup);
+
+			$registeredUserGroup = $this->getUserGroupByUserAndGroup($idUser, $idGroup);
+
+			if($registeredUserGroup !== FALSE){
+				$wasAdded = TRUE;
+			}else{
+				$wasAdded = FALSE;
+			}
+
+		}else{
+			$wasAdded = FALSE;
+		}
+
+		return $wasAdded;
+	}
+
+	private function addUserGroup($idUser, $idGroup){
+
+		$userGroup = array(
+			'id_user' => $idUser,
+			'id_group' => $idGroup
+		);
+
+		$this->db->insert('user_group', $userGroup);
+	}
+
 	public function removeUserGroup($idUser, $idGroup){
 
 		$userExists = $this->checkIfUserExists($idUser);

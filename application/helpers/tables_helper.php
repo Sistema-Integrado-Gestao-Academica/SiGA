@@ -541,6 +541,19 @@ function displayAllGroups($idUser, $allGroups, $userGroups){
 
 				    foreach($allGroups as $idGroup => $groupName){
 				    	
+				    	$alreadyHaveThisGroup = FALSE;
+				    	if($userGroups !== FALSE){
+
+					    	foreach($userGroups as $group){
+					    		if($idGroup == $group['id_group']){
+				    				$alreadyHaveThisGroup = TRUE;
+				    				break;
+					    		}
+					    	}
+				    	}else{
+				    		$alreadyHaveThisGroup = FALSE;
+				    	}
+
 				    	echo "<tr>";
 
 					    	echo "<td>";
@@ -548,7 +561,11 @@ function displayAllGroups($idUser, $allGroups, $userGroups){
 					    	echo "</td>";
 
 					    	echo "<td>";
-				    			echo anchor("usuario/addGroupToUser/{$idUser}/{$idGroup}", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary'");
+					    		if($alreadyHaveThisGroup){
+				    				echo anchor("", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary disabled'");
+					    		}else{
+				    				echo anchor("usuario/addGroupToUser/{$idUser}/{$idGroup}", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary'");
+					    		}
 					    	echo "</td>";
 
 				    	echo "</tr>";

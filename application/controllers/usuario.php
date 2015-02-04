@@ -37,7 +37,19 @@ class Usuario extends CI_Controller {
 
 	public function addGroupToUser($idUser, $idGroup){
 
+		$this->load->model('usuarios_model');
+		$wasSaved = $this->usuarios_model->addGroupToUser($idUser, $idGroup);
+
+		if($wasSaved){
+			$status = "success";
+			$message = "Grupo adicionado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
+		}
 		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/manageGroups/{$idUser}");
 	}
 
 	public function removeUserGroup($idUser, $idGroup){
