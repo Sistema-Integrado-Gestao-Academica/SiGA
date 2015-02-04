@@ -1015,13 +1015,22 @@ class Course extends CI_Controller {
 		return $course;
 	}
 
+	public function getCourseById($courseId){
+
+		$this->load->model('course_model');
+		
+		$course = $this->course_model->getCourse($courseId);
+
+		return $course;
+	}
+
 	public function checkIfCourseExists($courseId){
-		$this->db->select('id_course');
-		$foundCourse = $this->db->get_where('course', array('id_course' => $courseId))->row_array();
+		
+		$this->load->model('course_model');
 
-		$courseExists = sizeof($foundCourse) > 0;
-
-		return $courseExists;
+		$courseExists = $this->course_model->chechIfCourseExists();
+		
+		return $courseExists;	
 	}
 
 	/**

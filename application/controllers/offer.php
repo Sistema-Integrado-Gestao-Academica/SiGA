@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('semester.php');
+require_once('course.php');
+require_once('discipline.php');
 
 class Offer extends CI_Controller {
 
@@ -31,11 +33,28 @@ class Offer extends CI_Controller {
 		redirect('usuario/secretary_offerList');
 	}
 
-	public function addDisciplines($idOffer){
-		echo "<h1>Adicionar disciplinas aqui</h1>";
+	public function displayDisciplines($idOffer, $courseId){
+		
+		$disciplines = $this->getOfferDisciplines($idOffer);
+		
+		$course = new Course();
+		$offerCourse = $course->getCourseById($courseId);
+
+		$offerData = array(
+			'idOffer' => $idOffer,
+			'course' => $offerCourse,
+			'disciplines' => $disciplines
+		);
+
+		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
 	}
 
-	public function getOfferDisciplines($idOffer){
+	public function addDisciplines($idOffer){
+
+		$discipline = new Discipline();
+	}
+
+	private function getOfferDisciplines($idOffer){
 		
 		$this->load->model('offer_model');
 

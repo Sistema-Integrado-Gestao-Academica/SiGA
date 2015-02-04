@@ -186,6 +186,30 @@ class Course_model extends CI_Model {
 		$courseAsked = $this->db->get()->row();
 		return $courseAsked;
 	}
+
+	public function getCourse($courseId){
+
+		$this->db->where('id_course',$courseId);
+		$this->db->from('course');
+		$course = $this->db->get()->row_array();
+		
+		if(sizeof($course) > 0){
+			// Nothing to do
+		}else{
+			$course = FALSE;
+		}
+
+		return $course;	
+	}
+
+	public function chechIfCourseExists($courseId){
+		$this->db->select('id_course');
+		$foundCourse = $this->db->get_where('course', array('id_course' => $courseId))->row_array();
+
+		$courseExists = sizeof($foundCourse) > 0;
+
+		return $courseExists;
+	}
 	
 	/**
 	 * Update course attributes

@@ -68,16 +68,6 @@ class Offer_model extends CI_Model {
 		return $foundOffer;
 	}
 
-	private function linkOfferToCurrentSemester($offerId, $currentSemester){
-
-		$dataToUpdate = array(
-			'offer' => $offerId
-		);
-
-		$this->db->where('id_semester', $currentSemester);
-		$this->db->update('semester', $dataToUpdate);
-	}	
-
 	public function getCourseOfferList($courseId, $semesterId){
 
 		$searchResult = $this->db->get_where('offer', array('course' => $courseId, 'semester' => $semesterId));

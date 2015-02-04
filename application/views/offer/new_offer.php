@@ -3,7 +3,7 @@
 <br>
 <br>
 <?php
-	
-	displayOfferDisciplines($id_semester, $id_offer, $status, $disciplines);
+
+	displayOfferDisciplines($idOffer, $course, $disciplines);
 
 ?>
