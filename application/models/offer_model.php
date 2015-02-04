@@ -94,6 +94,53 @@ class Offer_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function removeDisciplineFromOffer($idDiscipline, $idOffer){
+
+		$offerExists = $this->checkIfOfferExists($idOffer);
+
+		$this->load->model('discipline_model');
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($idDiscipline);
+
+		$dataIsOk = $offerExists && $disciplineExists;
+
+		if($dataIsOk){
+			$this->eraseDisciplineFromOffer($idDiscipline, $idOffer);
+
+			$registeredOfferDiscipline = $this->getOfferDiscipline($idDiscipline, $idOffer);
+
+			if($registeredOfferDiscipline !== FALSE){
+				$wasRemoved= FALSE;
+			}else{
+				$wasRemoved = TRUE;
+			}
+
+		}else{
+			$wasRemoved = FALSE;
+		}
+
+		return $wasRemoved;
+	}
+
+	private function eraseDisciplineFromOffer($idDiscipline, $idOffer){
+
+		$offerDiscipline = array(
+			'id_offer' => $idOffer,
+			'id_discipline' => $idDiscipline
+		);
+
+		$this->db->delete('offer_discipline', $offerDiscipline);
+	}
+
+	private function saveDisciplineToOffer($idDiscipline, $idOffer){
+
+		$offerDiscipline = array(
+			'id_offer' => $idOffer,
+			'id_discipline' => $idDiscipline
+		);
+
+		$this->db->insert('offer_discipline', $offerDiscipline);
+	}
+
 	/**
 	 * Used to check if the data previous inserted was saved on offer_discipline table
 	 * @param $idDiscipline - Discipline code to search for
@@ -110,16 +157,6 @@ class Offer_model extends CI_Model {
 		}
 
 		return $foundOfferDisciplines;
-	}
-
-	private function saveDisciplineToOffer($idDiscipline, $idOffer){
-
-		$offerDiscipline = array(
-			'id_offer' => $idOffer,
-			'id_discipline' => $idDiscipline
-		);
-
-		$this->db->insert('offer_discipline', $offerDiscipline);
 	}
 
 	private function getProposedOffers(){

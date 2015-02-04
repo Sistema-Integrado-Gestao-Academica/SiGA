@@ -354,8 +354,8 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    	echo "</td>";
 
 					    	echo "<td>";
-					    		if($disciplineAlreadyExistsInOffer){
-					    			echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Já adicionada ao curso ".$course['course_name'], "class='btn btn-primary disabled'");
+					    		if($disciplineAlreadyExistsInOffer){					    			
+					    			echo anchor("offer/removeDisciplineFromOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Remover do curso ".$course['course_name'], "class='btn btn-danger'");
 					    		}else{
 					    			echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar ao curso ".$course['course_name'], "class='btn btn-primary'");
 					    		}

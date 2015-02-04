@@ -49,6 +49,24 @@ class Offer extends CI_Controller {
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
 	}
 
+	public function removeDisciplineFromOffer($idDiscipline, $idOffer, $idCourse){
+		
+		$this->load->model('offer_model');
+		
+		$wasRemoved = $this->offer_model->removeDisciplineFromOffer($idDiscipline, $idOffer);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Disciplina retirada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível retirar essa disciplina. Cheque os códigos informados.";
+		}
+
+		$this->session->set_flashdata($status, $message);	
+		redirect("offer/addDisciplines/{$idOffer}/{$idCourse}");
+	}
+
 	public function addDisciplines($idOffer, $courseId){
 
 		$discipline = new Discipline();
