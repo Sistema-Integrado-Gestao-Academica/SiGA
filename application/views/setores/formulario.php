@@ -14,7 +14,7 @@
 				<td>
 					<?= anchor("setores/{$setor['id']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
 
-					<?= form_open('/setor/remove') ?>
+					<?= form_open('setor/remove') ?>
 						<?= form_hidden('setor_id', $setor['id']) ?>
 						<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
 							<span class="glyphicon glyphicon-remove"></span>

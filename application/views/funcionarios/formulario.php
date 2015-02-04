@@ -14,7 +14,7 @@
 				<td>
 					<?= anchor("funcionarios/{$funcionario['id']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
 
-					<?= form_open('/funcionario/remove') ?>
+					<?= form_open('funcionario/remove') ?>
 						<?= form_hidden('funcionario_id', $funcionario['id']) ?>
 						<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
 							<span class="glyphicon glyphicon-remove"></span>
