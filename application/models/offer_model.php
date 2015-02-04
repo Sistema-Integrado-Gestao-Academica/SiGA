@@ -2,42 +2,32 @@
 
 class Offer_model extends CI_Model {
 
-	public function newOffer($currentSemester){
+	public function newOffer($offer){
 
-		$proposedOffers = $this->getProposedOffers();
+		$this->db->insert('offer', $offer);
 
-		// Means that there is no proposed offers registered
-		if($proposedOffers === FALSE){
-			
-			$offer = array('offer_status' => "proposed");
-			$this->createNewOffer($offer);
-			$proposedOffers = $this->getProposedOffers();
+		$registeredOffer = $this->getOfferBySemesterAndCourse($offer['semester'], $offer['course']);
+
+		if($registeredOffer !== FALSE){
+			$wasSaved = TRUE;
+		}else{
+			$wasSaved = FALSE;
 		}
-		
-		$offerId = $proposedOffers['id_offer'];
 
-		// $offerId = 0;
-		// foreach($proposedOffers as $offer){
-			
-		// 	$currentOfferId = $offer['id_offer'];
-			
-		// 	// Check if the offer id is not already associated to a semester
-		// 	$semester = $this->getOfferSemester($currentOfferId);
-		// 	if($semester === FALSE){
-		// 		$offerId = $currentOfferId;
-		// 		break;
-		// 	}
-		// }
+		return $wasSaved;
+	}
 
-		$this->linkOfferToCurrentSemester($offerId, $currentSemester);
+	private function getOfferBySemesterAndCourse($semester, $course){
+		$searchResult = $this->db->get_where('offer', array('semester' => $semester, 'course' => $course));
+		$foundOffer = $searchResult->row_array();
 
-		$offerData = array(
-			'id_semester' => $currentSemester,
-			'id_offer' => $offerId,
-			'status' => "proposed"
-		);
+		if(sizeof($foundOffer) > 0){
+			// Nothing to do
+		}else{
+			$foundOffer = FALSE;
+		}
 
-		return $offerData;
+		return $foundOffer;
 	}
 
 	public function getOfferDisciplines($idOffer){
@@ -76,11 +66,6 @@ class Offer_model extends CI_Model {
 		}
 
 		return $foundOffer;
-	}
-
-	private function createNewOffer($offer){
-
-		$this->db->insert('offer', $offer);
 	}
 
 	private function linkOfferToCurrentSemester($offerId, $currentSemester){
