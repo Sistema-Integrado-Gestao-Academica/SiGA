@@ -313,6 +313,24 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 			echo "</tbody>";
 		echo "</table>";
 	echo "</div>";
+
+	echo "<div class=\"row\">";
+		echo "<div class=\"col-xs-3\">";
+			if($disciplines !== FALSE){
+
+				echo anchor("offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
+			}else{
+				echo anchor("", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\" disabled='true'
+		             data-content=\"Não é possível aprovar uma lista sem disciplinas.\"");
+			}
+		echo "</div>";
+		echo "<div class=\"col-xs-3\">";
+			echo anchor("usuario/secretary_offerList", "Voltar", "class='btn btn-danger'");
+		echo "</div>";
+	echo "</div>";
 }
 
 function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){

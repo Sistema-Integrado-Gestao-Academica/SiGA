@@ -17,6 +17,70 @@ class Offer_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function approveOfferList($idOffer){
+
+		define("APPROVED", "approved");
+
+		$offerExists = $this->checkIfOfferExists($idOffer);
+
+		if($offerExists){
+
+			$offerHaveDisciplines = $this->checkIfOfferHaveDiscipline($idOffer);
+
+			if($offerHaveDisciplines){
+
+				$this->changeOfferStatus($idOffer, APPROVED);
+
+				$registeredStatus = $this->getOfferStatus($idOffer);
+
+				if($registeredStatus === APPROVED){
+					$wasApproved = TRUE;
+				}else{
+					$wasApproved = FALSE;
+				}
+			}else{
+				$wasApproved = FALSE;
+			}
+
+		}else{
+			$wasApproved = FALSE;
+		}
+
+		return $wasApproved;
+	}
+
+	private function changeOfferStatus($idOffer, $newStatus){
+		
+		$this->db->where('id_offer', $idOffer);
+		$this->db->update('offer', array('offer_status' => $newStatus));
+	}
+
+	private function checkIfOfferHaveDiscipline($idOffer){
+		$searchResult = $this->db->get_where('offer_discipline', array('id_offer' => $idOffer));
+
+		$foundOfferDisciplines = $searchResult->result_array();
+
+		$haveDisciplines = sizeof($foundOfferDisciplines) > 0;
+
+		return $haveDisciplines;
+	}
+
+	private function getOfferStatus($idOffer){
+
+		$this->db->select('offer_status');
+		$searchResult = $this->db->get_where('offer', array('id_offer' => $idOffer));
+
+		$foundOffer = $searchResult->row_array();
+
+		if(sizeof($foundOffer) > 0){
+			$status = $foundOffer['offer_status'];
+		}else{
+			$status = FALSE;
+		}
+
+		return $status;
+	}
+
 	private function getOfferBySemesterAndCourse($semester, $course){
 		$searchResult = $this->db->get_where('offer', array('semester' => $semester, 'course' => $course));
 		$foundOffer = $searchResult->row_array();

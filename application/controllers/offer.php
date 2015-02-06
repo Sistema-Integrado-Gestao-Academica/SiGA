@@ -33,6 +33,23 @@ class Offer extends CI_Controller {
 		redirect('usuario/secretary_offerList');
 	}
 
+	public function approveOfferList($idOffer){
+		
+		$this->load->model('offer_model');
+		$wasApproved = $this->offer_model->approveOfferList($idOffer);
+
+		if($wasApproved){
+			$status = "success";
+			$message = "Lista de Oferta aprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível aprovar essa lista de ofertas. Verifique se há discisplinas adicionadas a essa lista, não é possível aprovar uma lista sem disciplinas.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect('usuario/secretary_offerList');
+	}
+
 	public function displayDisciplines($idOffer, $courseId){
 		
 		$disciplines = $this->getOfferDisciplines($idOffer);
