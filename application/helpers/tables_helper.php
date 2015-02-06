@@ -234,7 +234,7 @@ function displayOffersList($offers){
 									echo "<h4>Editar</h4>";
 			    					
 			    					echo anchor("offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-								    echo "<p> <b><i>Aqui é possível adicionar disciplinas a lista de oferta.</i><b/></p>";
+								    echo "<p> <b><i>Aqui é possível adicionar disciplinas a lista de oferta e aprová-la.</i><b/></p>";
 				    			}else{
 			    					echo anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
 								    echo "<p> <b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/></p>";
