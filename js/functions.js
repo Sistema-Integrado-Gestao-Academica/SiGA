@@ -11,6 +11,12 @@ $(document).ready(function(){
 		searchForStudent();
 	});
 
+	$("#approve_offer_list_btn").hover(function(){
+		$("#approve_offer_list_btn").popover('show');
+	},function(){
+		$("#approve_offer_list_btn").popover('hide');
+	});
+
 });
 
 // Student functions
