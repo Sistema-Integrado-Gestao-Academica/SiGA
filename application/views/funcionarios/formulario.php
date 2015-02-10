@@ -3,7 +3,9 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Funcionários cadastrados</h3></td>
-		<td><h3 class="text-center">Ações</h3></td>
+		<?php if ($funcionarios): ?>
+			<td><h3 class="text-center">Ações</h3></td>
+		<?php endif ?>
 	</tr>
 
 	<?php if ($funcionarios): ?>

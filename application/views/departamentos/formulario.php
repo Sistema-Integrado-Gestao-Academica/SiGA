@@ -3,10 +3,12 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Departamentos cadastrados</h3></td>
-		<td><h3 class="text-center">Ações</h3></td>
+		<?php if ($departamentos): ?>
+			<td><h3 class="text-center">Ações</h3></td>
+		<?php endif ?>
 	</tr>
 
-	<?php if($departamentos): ?>
+	<?php if ($departamentos): ?>
 		<?php foreach ($departamentos as $departamento): ?>
 			<tr>
 				<td><?=$departamento['nome']?></td>

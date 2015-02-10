@@ -3,10 +3,12 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Setores cadastrados</h3></td>
-		<td><h3 class="text-center">Ações</h3></td>
+		<?php if ($setores): ?>
+			<td><h3 class="text-center">Ações</h3></td>
+		<?php endif ?>
 	</tr>
 
-	<?php if($setores): ?>
+	<?php if ($setores): ?>
 		<?php foreach ($setores as $setor): ?>
 			<tr>
 				<td><?=$setor['nome']?></td>
