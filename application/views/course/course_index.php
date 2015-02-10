@@ -1,4 +1,4 @@
-<h2 align="center">Menu de cursos</h2>
+<h2 class="principal">Menu de cursos</h2>
 
 <?= anchor("course/formToRegisterNewCourse", "Cadastrar Curso", array(
 	"class" => "btn btn-primary",
@@ -8,21 +8,18 @@
 
 <br><br>
 
-<table class="table">
+<table class="table table-striped table-bordered">
 	<tr>
-		<th>Cursos Cadastrados</th>
-	</tr>
-	<tr>
-		<th class="text-center">Nome do Curso</th>
-		<th class="text-center">Ações</th>
+		<td><h3 class="text-center">Cursos Cadastrados</h3></td>
+		<td><h3 class="text-center">Ações</h3></td>
 	</tr>
 	<?php if ($courses): ?>
 		<?php foreach($courses as $course): ?>
 			<tr>
-				<td><?= $course['course_name'] ?></td>
+				<td class="text-center"><?= $course['course_name'] ?></td>
 
 				<td>
-					<?= anchor("course/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
+					<?= anchor("curso/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
 
 					<?= form_open('course/deleteCourse') ?>
 						<?= form_hidden('id_course', $course['id_course']) ?>

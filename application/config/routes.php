@@ -45,30 +45,30 @@ $route['conta'] = 'usuario/conta';
 $route['logout'] = 'login/logout';
 
 $route['cadastro'] = 'usuario/formulario';
-$route['funcionarios'] = 'funcionario/formulario';
-$route['funcionarios/(:num)'] = 'funcionario/formulario_altera/$1';
-$route['course/(:num)'] = 'course/formToEditCourse/$1';
-$route['setores'] = 'setor/formulario';
-$route['setores/(:num)'] = 'setor/formulario_altera/$1';
-$route['funcoes'] = 'funcao/formulario';
-$route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
+$route['configuracoes'] = 'settings';
+$route['curso/(:num)'] = 'course/formToEditCourse/$1';
+$route['cursos'] = 'course/index';
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
-$route['cursos'] = 'course/index';
-$route['registerDoctorateCourse/(:num)'] = 'course/formToCreateDoctorateCourse/$1';
-$route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
-$route['secretaria'] = 'utils/loadSecretaria';
+$route['discipline'] = 'discipline/discipline_index';
+$route['discipline/(:num)'] = 'discipline/formToEditDiscipline/$1';
+$route['enrollStudent/(:num)'] = 'course/enrollStudentToCourse/$1';
+$route['funcionarios'] = 'funcionario/formulario';
+$route['funcionarios/(:num)'] = 'funcionario/formulario_altera/$1';
+$route['funcoes'] = 'funcao/formulario';
+$route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
+$route['guest_home'] = 'usuario/guest_index';
 $route['planoorcamentario'] = 'budgetplan';
 $route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
 $route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
-$route['student'] = 'usuario/student_index';
-$route['guest_home'] = 'usuario/guest_index';
+$route['registerDoctorateCourse/(:num)'] = 'course/formToCreateDoctorateCourse/$1';
+$route['secretaria'] = 'utils/loadSecretaria';
 $route['secretary_home'] = 'usuario/secretary_index';
-$route['enrollStudent/(:num)'] = 'course/enrollStudentToCourse/$1';
-$route['discipline'] = 'discipline/discipline_index';
-$route['discipline/(:num)'] = 'discipline/formToEditDiscipline/$1';
+$route['setores'] = 'setor/formulario';
+$route['setores/(:num)'] = 'setor/formulario_altera/$1';
+$route['student'] = 'usuario/student_index';
+$route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
 $route['user_report'] = 'usuario/usersReport';
-$route['configuracoes'] = 'settings';
 
 
 /*

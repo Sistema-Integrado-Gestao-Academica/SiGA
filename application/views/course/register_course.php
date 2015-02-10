@@ -13,10 +13,9 @@ $user = new Usuario();
 $form_user_secretary = $user->getAllSecretaryUsers();
 
 $form_course_type = array(
-
-	'graduation' => 'Graduação',
-	'ead' => 'Educação a distância',
-	'post_graduation' => 'Pós-Graduação'
+	'ead' => 'Educação à distância',
+	'master' => 'Mestrado',
+	'doctorade' => 'Doutorado'
 );
 
 $course_name_array_to_form = array(
