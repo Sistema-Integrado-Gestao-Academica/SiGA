@@ -383,7 +383,7 @@ class Course extends CI_Controller {
 			$insertMessage = "Doutorado cadastrado com sucesso.";
 			
 			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('/course/index');
+			redirect('cursos');
 
 		}else{
 			$insertStatus = "danger";
@@ -438,7 +438,7 @@ class Course extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect('/course/index');
+		redirect('cursos');
 	}
 
 	public function removeDoctorateCourse($courseId){
@@ -446,7 +446,7 @@ class Course extends CI_Controller {
 		$doctorate->deleteDoctorate($courseId);
 
 		$this->session->set_flashdata('success', 'Doutorado apagado com sucesso!');
-		redirect('/course/index');
+		redirect('cursos');
 	}
 
 	/**
@@ -469,8 +469,23 @@ class Course extends CI_Controller {
 	public function formToRegisterNewCourse(){
 		$this->load->helper('url');
 		$site_url = site_url();
+
+		$group = new Module();
+		$form_groups = $group->getExistingModules();
+		$user = new Usuario();
+		$form_user_secretary = $user->getAllSecretaryUsers();
+
+		$course_types = $this->db->get('course_type')->result_array();
+
+		foreach ($course_types as $ct) {
+			$form_course_types[$ct['id']] = $ct['description'];
+		}
+
 		$data = array(
-			'url' => $site_url
+			'url' => $site_url,
+			'form_groups' => $form_groups,
+			'form_user_secretary' => $form_user_secretary,
+			'form_course_types' => $form_course_types
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
@@ -485,14 +500,37 @@ class Course extends CI_Controller {
 		$site_url = site_url();
 		
 		$this->load->model('course_model');
-		$course_searched = $this->course_model->getCourseById($id);
+		$course = $this->course_model->getCourseById($id);
+
+		$group = new Module();
+		$form_groups = $group->getExistingModules();
+
+		$user = new Usuario();
+		$form_user_secretary = $user->getAllSecretaryUsers();
+
+		$course_controller = new Course();
+		$secretary_registered = $course_controller->getCourseSecrecretary($course['id_course']);
+
+		$course_types = $this->db->get('course_type')->result_array();
+		foreach ($course_types as $ct) {
+			$form_course_type[$ct['id']] = $ct['description'];
+		}
+
+		$original_course_type = $this->db->get_where('course_type', array('id' => $course['course_type_id']))->row_array();
+		$course['course_type'] = $original_course_type['description'];
+
+		// var_dump($course); exit();
+
 		$data = array(
-			'course' => $course_searched,
-			'url' => $site_url
+			'url' => $site_url,
+			'course' => $course,
+			'form_groups' => $form_groups,
+			'form_user_secretary' => $form_user_secretary,
+			'secretary_registered' => $secretary_registered,
+			'form_course_type' => $form_course_type,
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/update_course', $data);
-
 	}
 	
 	/**
@@ -502,11 +540,7 @@ class Course extends CI_Controller {
 
 		$courseDataIsOk = $this->validatesNewCourseData();
 
-		if($courseDataIsOk){
-
-			define("GRADUATION", "graduation");
-			define("EAD", "ead");
-			define("POST_GRADUATION", "post_graduation");
+		if ($courseDataIsOk) {
 
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
@@ -520,81 +554,94 @@ class Course extends CI_Controller {
 				'id_group' => $secretaryType
 			);
 
+			$course = array(
+				'course_name' => $courseName,
+				'course_type_id' => $courseType
+			);
 
-			switch ($courseType){
-				case GRADUATION:
-					$courseToRegister = array(
-						'course_name' => $courseName,
-						'course_type' => $courseType
-					);
+			$this->load->model('course_model');
 
-					$graduation = new Graduation();
-					$insertionWasMade = $graduation->saveGraduationCourse($courseToRegister,$secretaryToRegister);
-					
-					break;
-
-				case POST_GRADUATION:
-
-					$post_graduation_type = $this->input->post('post_graduation_type');
-					$program_name = $this->input->post('program_name');
-					$post_graduation_duration = $this->input->post('course_duration');
-					$post_graduation_total_credits = $this->input->post('course_total_credits');
-					$post_graduation_hours = $this->input->post('course_hours');
-					$post_graduation_class = $this->input->post('course_class');
-					$post_graduation_description = $this->input->post('course_description');
-
-					$commonAttr = array(
-						'course_name' => $program_name,
-						'course_type' => $post_graduation_type
-					);
-
-					$courseToRegister = array(
-						'master_degree_name' => $courseName,
-						'duration' => $post_graduation_duration,
-						'total_credits' => $post_graduation_total_credits,
-						'workload' =>$post_graduation_hours,
-						'start_class' => $post_graduation_class,
-						'description' => $post_graduation_description
-					);
-
-					$post_graduation = new PostGraduation();
-					$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
-
-					break;
-
-				case EAD:
-					$courseToRegister = array(
-						'course_name' => $courseName,
-						'course_type' => $courseType
-					);
-					
-					$ead = new Ead();
-					$insertionWasMade = $ead->saveEadCourse($courseToRegister, $secretaryToRegister);	
-					
-					break;
-
-				default:
-					
-					break;
-			}
-
-			if($insertionWasMade){
+			if ($this->course_model->saveCourse($course) &&
+			    $this->course_model->saveSecretary($secretaryToRegister, $course['course_name'])) {
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
-			}else{
+			} else {
 				$insertStatus = "danger";
 				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
 
 
-		}else{
+			// switch ($courseType){
+			// 	case GRADUATION:
+			// 		$courseToRegister = array(
+			// 			'course_name' => $courseName,
+			// 			'course_type' => $courseType
+			// 		);
+
+			// 		$graduation = new Graduation();
+			// 		$insertionWasMade = $graduation->saveGraduationCourse($courseToRegister,$secretaryToRegister);
+					
+			// 		break;
+
+			// 	case POST_GRADUATION:
+
+			// 		$post_graduation_type = $this->input->post('post_graduation_type');
+			// 		$program_name = $this->input->post('program_name');
+			// 		$post_graduation_duration = $this->input->post('course_duration');
+			// 		$post_graduation_total_credits = $this->input->post('course_total_credits');
+			// 		$post_graduation_hours = $this->input->post('course_hours');
+			// 		$post_graduation_class = $this->input->post('course_class');
+			// 		$post_graduation_description = $this->input->post('course_description');
+
+			// 		$commonAttr = array(
+			// 			'course_name' => $program_name,
+			// 			'course_type' => $post_graduation_type
+			// 		);
+
+			// 		$courseToRegister = array(
+			// 			'master_degree_name' => $courseName,
+			// 			'duration' => $post_graduation_duration,
+			// 			'total_credits' => $post_graduation_total_credits,
+			// 			'workload' =>$post_graduation_hours,
+			// 			'start_class' => $post_graduation_class,
+			// 			'description' => $post_graduation_description
+			// 		);
+
+			// 		$post_graduation = new PostGraduation();
+			// 		$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
+
+			// 		break;
+
+			// 	case EAD:
+			// 		$courseToRegister = array(
+			// 			'course_name' => $courseName,
+			// 			'course_type' => $courseType
+			// 		);
+					
+			// 		$ead = new Ead();
+			// 		$insertionWasMade = $ead->saveEadCourse($courseToRegister, $secretaryToRegister);
+					
+			// 		break;
+
+			// 	default:
+
+			// 		break;
+			// }
+
+			// if($insertionWasMade){
+			// }else{
+			// 	$insertStatus = "danger";
+			// 	$insertMessage = "Curso \"{$courseName}\" já existe.";
+			// }
+
+		} else {
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
 		}
 		
 		$this->session->set_flashdata($insertStatus, $insertMessage);
 
-		redirect('/course/index');
+		redirect('cursos');
 	}
 
 	/**
@@ -822,7 +869,7 @@ class Course extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect('/course/index');
+		redirect('cursos');
 	}
 	
 	private function cleanUpOldCourseData($idCourse, $oldCourseType){
@@ -985,7 +1032,7 @@ class Course extends CI_Controller {
 
 		$this->session->set_flashdata($deleteStatus, $deleteMessage);
 
-		redirect('/course/index');
+		redirect('cursos');
 	}
 	
 	public function getCourseSecrecretary($id_course){
