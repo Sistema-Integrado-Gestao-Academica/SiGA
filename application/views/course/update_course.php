@@ -53,7 +53,7 @@ $submit_button_array_to_form = array(
 			<br>
 
 			<?= form_label("Tipo de Curso", "courseType") ?>
-			<?= form_dropdown("courseType", $form_course_type, '', "id='courseType'") ?>
+			<?= form_dropdown("courseType", $form_course_type, $course['course_type_id'], "id='courseType'") ?>
 			<?= form_error("courseType") ?>
 
 			<br><br><br>
