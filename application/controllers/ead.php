@@ -6,11 +6,14 @@ class Ead extends CI_Controller {
 	
 		$this->load->model('course_model');
 		$savedCourse = $this->course_model->saveCourse($eadCourse);
-		$savedSecretary = $this->course_model->saveSecretary($eadSecretary,$eadCourse['course_name']);
+		/**
+		 * DEPRECATED CODE
+		 * $savedSecretary = $this->course_model->saveSecretary($eadSecretary,$eadCourse['course_name']);
+		 */
 		$this->load->model('ead_model');
 		$savedEad = $this->ead_model->saveEad($eadCourse['course_name']);
 	
-		if($savedCourse && $savedSecretary && $savedEad){
+		if($savedCourse && $savedEad){
 			$insertionStatus = TRUE;
 		}else{
 			$insertionStatus = FALSE;

@@ -56,21 +56,25 @@ $submit_button_array_to_form = array(
 			echo form_error("courseType");
 		?>
 		</div>
-		<div class="form-group">	
+		
+<!-- 	DEPRECATED CODE	
+		<div class="form-group">	 -->
 		<?php
-			// Secretary field
-			echo form_label("Tipo de Secretaria", "secreteary_type");
-			echo form_dropdown("secretary_type", $form_groups);
-			echo form_error("secretary_type");
-		?>
-		</div>
-		<div class="form-group">	
+// 			// Secretary field
+// 			echo form_label("Tipo de Secretaria", "secreteary_type");
+// 			echo form_dropdown("secretary_type", $form_groups);
+// 			echo form_error("secretary_type");
+// 		?>
+<!-- 		</div> -->
+<!-- 		<div class="form-group">	 -->
 		<?php
-			echo form_label("Escolher secretário", "user_secretary");
-			echo form_dropdown("user_secretary", $form_user_secretary);
-			echo form_error("user_secretary");
-		?>
-		</div>
+// 			echo form_label("Escolher secretário", "user_secretary");
+// 			echo form_dropdown("user_secretary", $form_user_secretary);
+// 			echo form_error("user_secretary");
+// 		?>
+<!-- 		</div>  
+		END OF DEPRECATED CODE-->
+		
 		<div class="form-group">	
 			<div id="post_grad_types"></div>
 		</div>

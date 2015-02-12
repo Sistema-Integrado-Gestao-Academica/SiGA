@@ -6,15 +6,13 @@ require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class MasterDegree_model extends CI_Model {
 
-	public function saveCourseCommonAttributes($commonAttributes, $secretary){
+	public function saveCourseCommonAttributes($commonAttributes){
 		
 		// Save on the course table the common attributes
 		$this->load->model('course_model');
 		$this->course_model->saveCourse($commonAttributes);
 
 		$courseName = $commonAttributes['course_name'];
-
-		$this->saveCourseSecretary($courseName, $secretary);
 
 		$insertedCourseId = $this->course_model->getCourseIdByCourseName($courseName);
 

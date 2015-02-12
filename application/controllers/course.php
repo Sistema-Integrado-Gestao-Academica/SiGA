@@ -507,14 +507,19 @@ class Course extends CI_Controller {
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
 
-			$secretaryType = $this->input->post('secretary_type');
-			$userSecretary = $this->input->post('user_secretary');
+			/**
+			 * DEPRECATED CODE
+			 * $secretaryType = $this->input->post('secretary_type');
+			 * $userSecretary = $this->input->post('user_secretary');
+			 *
+			 * // Secretary to be saved on database. Array with column names and its values
+			 * $secretaryToRegister = array(
+			 *	'id_user'   => $userSecretary,
+			 *	'id_group' => $secretaryType
+			 * );
+			 * 
+			 */
 			
-			// Secretary to be saved on database. Array with column names and its values
-			$secretaryToRegister = array(
-				'id_user'   => $userSecretary,
-				'id_group' => $secretaryType
-			);
 
 
 			switch ($courseType){
@@ -525,7 +530,7 @@ class Course extends CI_Controller {
 					);
 
 					$graduation = new Graduation();
-					$insertionWasMade = $graduation->saveGraduationCourse($courseToRegister,$secretaryToRegister);
+					$insertionWasMade = $graduation->saveGraduationCourse($courseToRegister);
 					
 					break;
 
@@ -554,7 +559,7 @@ class Course extends CI_Controller {
 					);
 
 					$post_graduation = new PostGraduation();
-					$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
+					$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister);
 
 					break;
 
@@ -565,7 +570,7 @@ class Course extends CI_Controller {
 					);
 					
 					$ead = new Ead();
-					$insertionWasMade = $ead->saveEadCourse($courseToRegister, $secretaryToRegister);	
+					$insertionWasMade = $ead->saveEadCourse($courseToRegister);	
 					
 					break;
 
@@ -605,8 +610,8 @@ class Course extends CI_Controller {
 		// $this->form_validation->set_rules("course_hours", "Course hours", "required");
 		// $this->form_validation->set_rules("course_class", "Course class", "required");
 		// $this->form_validation->set_rules("course_description", "Course description", "required");
-		$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
-		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
+		//$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
+		//$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 

@@ -11,7 +11,7 @@ require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class PostGraduation extends CI_Controller {
 
-	public function savePostGraduationCourse($post_graduation_type, $commonAttributes, $specificsAttributes, $secretary){
+	public function savePostGraduationCourse($post_graduation_type, $commonAttributes, $specificsAttributes){
 		
 		define("ACADEMIC_PROGRAM", "academic_program");
 		define("PROFESSIONAL_PROGRAM", "professional_program");
@@ -20,12 +20,12 @@ class PostGraduation extends CI_Controller {
 			// In this case, if it is an academic program, it is a master_degree.
 			case ACADEMIC_PROGRAM:
 				$master_degree = new MasterDegree();
-				$insertionStatus = $master_degree->saveMasterDegreeAcademicCourse($commonAttributes, $specificsAttributes, $secretary);
+				$insertionStatus = $master_degree->saveMasterDegreeAcademicCourse($commonAttributes, $specificsAttributes);
 				break;
 
 			case PROFESSIONAL_PROGRAM:
 				$master_degree = new MasterDegree();
-				$insertionStatus = $master_degree->saveMasterDegreeProfessionalCourse($commonAttributes, $specificsAttributes, $secretary);
+				$insertionStatus = $master_degree->saveMasterDegreeProfessionalCourse($commonAttributes, $specificsAttributes);
 				break;
 
 			default:
