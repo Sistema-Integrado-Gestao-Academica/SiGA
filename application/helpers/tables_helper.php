@@ -232,6 +232,39 @@ function displayCourseSyllabus($syllabus){
 	echo "</div>";	
 }
 
+function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines){
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Disciplinas</th>";
+			    echo "</tr>";
+
+			    if($syllabusDisciplines !== FALSE){
+
+			    	foreach($syllabusDisciplines as $discipline){
+			    		
+			    	}
+
+			    }else{
+
+			    	echo "<tr>";
+			    		echo "<td>";
+			    			echo "<div class=\"callout callout-info\">";
+								echo "<h4>Nenhuma disciplina adicionada ao currículo.</h4>";
+							   	echo anchor("syllabus/addDisciplines/{$syllabusId}", "Adicionar disciplinas", "class='btn btn-primary'");
+							echo "</div>";
+			    		echo "</td>";
+			    	echo "</tr>";
+			    }
+			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
 function displayOffersList($offers){
 
 	define("PROPOSED", "proposed");

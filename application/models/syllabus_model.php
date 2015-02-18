@@ -40,6 +40,23 @@ class Syllabus_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function getSyllabusDisciplines($syllabusId){
+
+		$this->db->select('discipline.*');
+		$this->db->from('discipline');
+		$this->db->join('syllabus_discipline', "syllabus_discipline.id_discipline = discipline.discipline_code");
+		$this->db->where('syllabus_discipline.id_syllabus', $syllabusId);
+		$foundDisciplines = $this->db->get()->result_array();
+
+		if(sizeof($foundDisciplines) > 0){
+			// Nothing to do
+		}else{
+			$foundDisciplines = FALSE;
+		}
+
+		return $foundDisciplines;
+	}
+
 	private function getSyllabusByCourseId($courseId){
 
 		$searchResult = $this->db->get_where('course_syllabus', array('id_course' => $courseId));
