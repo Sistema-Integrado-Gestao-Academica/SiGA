@@ -134,6 +134,15 @@ class Discipline extends CI_Controller {
 		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline");
 	}
 	
+	public function checkIfDisciplineExists($disciplineId){
+		
+		$this->load->model('discipline_model');
+
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($disciplineId);
+
+		return $disciplineExists;
+	}
+
 	/**
 	 * Function to drop a discipline from the database
 	 * @param int $code - Code of the discipline

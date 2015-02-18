@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/controllers/course.php");
+require_once(APPPATH."/controllers/discipline.php");
 
 class Syllabus_model extends CI_Model {
 
@@ -66,6 +67,63 @@ class Syllabus_model extends CI_Model {
 		$disciplineExists = sizeof($foundSyllabusDiscipline) > 0;
 
 		return $disciplineExists;
+	}
+
+	public function addDisciplineToSyllabus($syllabusId, $disciplineId){
+
+		$discipline = new Discipline();
+		$disciplineExists = $discipline->checkIfDisciplineExists($disciplineId);
+
+		$syllabusExists = $this->checkIfSyllabusExists($syllabusId);
+
+		$dataIsOk = $disciplineExists && $syllabusExists;
+
+		if($dataIsOk){
+
+			$syllabusDiscipline = array(
+				'id_syllabus' => $syllabusId,
+				'id_discipline' => $disciplineId
+			);
+			$this->db->insert('syllabus_discipline', $syllabusDiscipline);
+
+			$foundSyllabusDiscipline = $this->getSyllabusDiscipline($syllabusId, $disciplineId);
+
+			if($foundSyllabusDiscipline !== FALSE){
+				$wasSaved = TRUE;
+			}else{
+				$wasSaved = FALSE;
+			}
+
+		}else{
+			$wasSaved = FALSE;
+		}
+
+		return $wasSaved;
+	}
+
+	public function checkIfSyllabusExists($syllabusId){
+
+		$searchResult = $this->db->get_where('course_syllabus', array('id_syllabus' => $syllabusId));
+		$foundSyllabus = $searchResult->row_array();
+
+		$syllabusExists = sizeof($foundSyllabus) > 0;
+
+		return $syllabusExists;
+	}
+
+	private function getSyllabusDiscipline($syllabusId, $disciplineId){
+		
+		$searchResult = $this->db->get_where('syllabus_discipline', array('id_syllabus'=> $syllabusId, 'id_discipline' => $disciplineId));
+		
+		$foundSyllabusDiscipline = $searchResult->row_array();
+
+		if(sizeof($foundSyllabusDiscipline) > 0){
+			// Nothing to do
+		}else{
+			$foundSyllabusDiscipline = FALSE;
+		}
+
+		return $foundSyllabusDiscipline;
 	}
 
 	private function getSyllabusByCourseId($courseId){

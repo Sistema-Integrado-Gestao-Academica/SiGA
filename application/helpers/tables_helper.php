@@ -307,7 +307,7 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines){
 
 					    	echo "<td>";
 					    		if($disciplineAlreadyExistsInSyllabus){
-					    			echo anchor('');
+					    			echo anchor("syllabus/removeDisciplineFromSyllabus/{$syllabusId}/{$discipline['discipline_code']}", "Remover disciplina", "class='btn btn-danger'");
 					    		}else{
 					    			echo anchor("syllabus/addDisciplineToSyllabus/{$syllabusId}/{$discipline['discipline_code']}", "Adicionar disciplina", "class='btn btn-primary'");
 					    		}

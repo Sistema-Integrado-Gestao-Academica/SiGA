@@ -61,6 +61,24 @@ class Syllabus extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
 	}
 
+	public function addDisciplineToSyllabus($syllabusId, $disciplineId){
+		
+		$this->load->model('syllabus_model');
+
+		$wasSaved = $this->syllabus_model->addDisciplineToSyllabus($syllabusId, $disciplineId);
+
+		if($wasSaved){
+			$status = "success";
+			$message = "Disciplina adicionada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível adicionar a disciplina ao currículo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("syllabus/addDisciplines/{$syllabusId}");
+	}
+
 	public function disciplineExistsInSyllabus($idDiscipline, $syllabusId){
 		
 		$this->load->model('syllabus_model');
