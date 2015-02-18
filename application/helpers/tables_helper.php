@@ -246,8 +246,19 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines){
 			    if($syllabusDisciplines !== FALSE){
 
 			    	foreach($syllabusDisciplines as $discipline){
-			    		
+				    	
+				    	echo "<tr>";
+					    	echo "<td>";
+					    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
+					    	echo "</td>";
+				    	echo "</tr>";
 			    	}
+
+			    	echo "<tr>";
+			    		echo "<td>";
+							echo anchor("syllabus/addDisciplines/{$syllabusId}", "Adicionar disciplinas", "class='btn btn-primary'");
+			    		echo "</td>";
+			    	echo "</tr>";
 
 			    }else{
 
