@@ -4,6 +4,7 @@ require_once('course.php');
 require_once('module.php');
 require_once('semester.php');
 require_once('offer.php');
+require_once('syllabus.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -222,6 +223,9 @@ class Usuario extends CI_Controller {
 
 	public function secretary_courseSyllabus(){
 
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
 		// Get the current user id
 		$logged_user_data = $this->session->userdata("current_user");
 		$currentUser = $logged_user_data['user']['id'];
@@ -229,8 +233,23 @@ class Usuario extends CI_Controller {
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($currentUser);
 
+		if($courses !== FALSE){
+
+			$syllabus = new Syllabus();
+			$coursesSyllabus = array();
+			foreach ($courses as $course){
+				
+				$syllabusId = $syllabus->getCourseSyllabus($course['id_course'])['id_syllabus'];
+				$coursesSyllabus[$course['course_name']] = $syllabusId;
+			}
+		}else{
+			$coursesSyllabus = FALSE;
+		}
+
 		$data = array(
-			'courses' => $courses
+			'current_semester' => $currentSemester,
+			'courses' => $courses,
+			'syllabus' => $coursesSyllabus
 		);
 		
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_course_syllabus', $data);
