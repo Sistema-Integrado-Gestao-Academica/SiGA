@@ -15,6 +15,9 @@ class Migration_Cria_tabela_curriculo extends CI_Migration {
 
 		$id_course_fk = "ALTER TABLE course_syllabus ADD CONSTRAINT IDCOURSE_SYLLABUS_FK FOREIGN KEY (id_course) REFERENCES course(id_course)";
 		$this->db->query($id_course_fk);
+
+		$id_course_uk = "ALTER TABLE course_syllabus ADD CONSTRAINT IDCOURSE_SYLLABUS_UK UNIQUE (id_course)";
+		$this->db->query($id_course_uk);
 	}
 
 	public function down() {
