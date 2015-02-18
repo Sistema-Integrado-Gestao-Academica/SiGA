@@ -2,6 +2,7 @@
 
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/offer.php");
+require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
 
@@ -260,6 +261,72 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines){
 			    	echo "</tr>";
 			    }
 			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayDisciplinesToSyllabus($syllabusId, $allDisciplines){
+
+	echo "<h4>Lista de disciplinas:</h4>";
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código: </th>";
+			        echo "<th class=\"text-center\">Sigla</th>";
+			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Créditos</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($allDisciplines !== FALSE){
+
+				    foreach($allDisciplines as $discipline){
+					    
+					    $syllabus = new Syllabus();
+			    		$disciplineAlreadyExistsInSyllabus = $syllabus->disciplineExistsInSyllabus($discipline['discipline_code'], $syllabusId);
+
+					    echo "<tr>";
+					    	echo "<td>";
+				    			echo $discipline['discipline_code'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $discipline['name_abbreviation'];
+					    	echo "</td>";
+					    	
+					    	echo "<td>";
+					    		echo $discipline['discipline_name'];
+					    	echo "</td>";
+					    	
+					    	echo "<td>";
+					    		echo $discipline['credits'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		if($disciplineAlreadyExistsInSyllabus){
+					    			echo anchor('');
+					    		}else{
+					    			echo anchor("syllabus/addDisciplineToSyllabus/{$syllabusId}/{$discipline['discipline_code']}", "Adicionar disciplina", "class='btn btn-primary'");
+					    		}
+					    	echo "</td>";
+
+					    echo "</tr>";
+				    }
+
+			    }else{
+
+			    	echo "<tr>";
+					    	echo "<td colspan=5>";
+						    	echo "<div class=\"callout callout-warning\">";
+	                            	echo "<h4>Não há disciplinas cadastradas no momento.</h4>";
+	                            echo "</div>";
+					    	echo "</td>";
+					echo "</tr>";
+			    }
+
 			echo "</tbody>";
 		echo "</table>";
 	echo "</div>";

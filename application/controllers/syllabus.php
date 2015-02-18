@@ -49,7 +49,25 @@ class Syllabus extends CI_Controller {
 
 	public function addDisciplines($syllabusId){
 
+		$discipline = new Discipline();
+
+		$allDisciplines = $discipline->getAllDisciplines();
+
+		$data = array(
+			'allDisciplines' => $allDisciplines,
+			'syllabusId' => $syllabusId
+		);
+
+		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
+	}
+
+	public function disciplineExistsInSyllabus($idDiscipline, $syllabusId){
 		
+		$this->load->model('syllabus_model');
+
+		$disciplineExists = $this->syllabus_model->disciplineExistsInSyllabus($idDiscipline, $syllabusId);
+
+		return $disciplineExists;
 	}
 
 	private function getSyllabusDisciplines($syllabusId){
