@@ -13,7 +13,7 @@
 		
 		echo "<h4>Cursos para o secretário <b>".$session['user']['name']."</b>:</h4>";
 
-		//displayCourseSyllabus($syllabus);
+		displayCourseSyllabus($syllabus);
 
 	}else{
 ?>

@@ -1092,7 +1092,7 @@ class Course extends CI_Controller {
 		
 		$this->load->model('course_model');
 
-		$courseExists = $this->course_model->chechIfCourseExists();
+		$courseExists = $this->course_model->checkIfCourseExists($courseId);
 		
 		return $courseExists;	
 	}

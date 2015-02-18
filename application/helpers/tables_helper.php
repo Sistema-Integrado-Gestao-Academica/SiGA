@@ -177,6 +177,61 @@ echo "</div>";
 
 }
 
+function displayCourseSyllabus($syllabus){
+	$course = new Course();
+	
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Curso</th>";
+			        echo "<th class=\"text-center\">Código Currículo</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    foreach($syllabus as $courseName => $syllabus){
+			    	
+			    	$foundCourse = $course->getCourseByName($courseName);
+					$courseId = $foundCourse['id_course'];
+
+			    	echo "<tr>";
+
+			    		echo "<td>";
+			    			echo $courseName;
+			    		echo "</td>";
+
+			    		if($syllabus !== FALSE){
+
+			    			echo "<td>";
+			    				echo $syllabus['id_syllabus'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    				echo "<div class=\"callout callout-info\">";
+									echo "<h4>Editar</h4>";		    					
+			    					echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+								    echo "<p> <b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/></p>";
+								echo "</div>";
+			    			echo "</td>";
+
+			    		}else{
+							echo "<td colspan=2>";
+		    					echo "<div class=\"callout callout-info\">";
+									echo "<h4>Nenhum currículo cadastrado para esse curso.</h4>";
+							    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+								echo "</div>";
+			    			echo "</td>";			    			
+			    		}
+
+			    	echo "</tr>";
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";	
+}
+
 function displayOffersList($offers){
 
 	define("PROPOSED", "proposed");

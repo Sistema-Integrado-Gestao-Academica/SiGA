@@ -202,7 +202,7 @@ class Course_model extends CI_Model {
 		return $course;	
 	}
 
-	public function chechIfCourseExists($courseId){
+	public function checkIfCourseExists($courseId){
 		$this->db->select('id_course');
 		$foundCourse = $this->db->get_where('course', array('id_course' => $courseId))->row_array();
 

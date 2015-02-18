@@ -238,9 +238,8 @@ class Usuario extends CI_Controller {
 			$syllabus = new Syllabus();
 			$coursesSyllabus = array();
 			foreach ($courses as $course){
-				
-				$syllabusId = $syllabus->getCourseSyllabus($course['id_course'])['id_syllabus'];
-				$coursesSyllabus[$course['course_name']] = $syllabusId;
+
+				$coursesSyllabus[$course['course_name']] = $syllabus->getCourseSyllabus($course['id_course']);
 			}
 		}else{
 			$coursesSyllabus = FALSE;
