@@ -220,6 +220,22 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);
 	}
 
+	public function secretary_courseSyllabus(){
+
+		// Get the current user id
+		$logged_user_data = $this->session->userdata("current_user");
+		$currentUser = $logged_user_data['user']['id'];
+		// Get the courses of the secretary
+		$course = new Course();
+		$courses = $course->getCoursesOfSecretary($currentUser);
+
+		$data = array(
+			'courses' => $courses
+		);
+		
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_course_syllabus', $data);
+	}
+
 	private function loadCourses(){
 		
 		define("ACADEMIC_PROGRAM", "academic_program");
