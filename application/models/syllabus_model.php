@@ -101,6 +101,38 @@ class Syllabus_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function removeDisciplineFromSyllabus($syllabusId, $disciplineId){
+
+		$discipline = new Discipline();
+		$disciplineExists = $discipline->checkIfDisciplineExists($disciplineId);
+
+		$syllabusExists = $this->checkIfSyllabusExists($syllabusId);
+
+		$dataIsOk = $disciplineExists && $syllabusExists;
+
+		if($dataIsOk){
+
+			$syllabusDiscipline = array(
+				'id_syllabus' => $syllabusId,
+				'id_discipline' => $disciplineId
+			);
+			$this->db->delete('syllabus_discipline', $syllabusDiscipline);
+
+			$foundSyllabusDiscipline = $this->getSyllabusDiscipline($syllabusId, $disciplineId);
+
+			if($foundSyllabusDiscipline !== FALSE){
+				$wasDeleted = FALSE;
+			}else{
+				$wasDeleted = TRUE;
+			}
+
+		}else{
+			$wasDeleted = FALSE;
+		}
+
+		return $wasDeleted;
+	}
+
 	public function checkIfSyllabusExists($syllabusId){
 
 		$searchResult = $this->db->get_where('course_syllabus', array('id_syllabus' => $syllabusId));

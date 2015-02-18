@@ -79,6 +79,24 @@ class Syllabus extends CI_Controller {
 		redirect("syllabus/addDisciplines/{$syllabusId}");
 	}
 
+	public function removeDisciplineFromSyllabus($syllabusId, $disciplineId){
+
+		$this->load->model('syllabus_model');
+
+		$wasRemoved = $this->syllabus_model->removeDisciplineFromSyllabus($syllabusId, $disciplineId);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Disciplina removida com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover a disciplina do currículo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("syllabus/addDisciplines/{$syllabusId}");
+	}
+
 	public function disciplineExistsInSyllabus($idDiscipline, $syllabusId){
 		
 		$this->load->model('syllabus_model');
