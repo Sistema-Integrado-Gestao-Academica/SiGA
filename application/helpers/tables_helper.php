@@ -233,7 +233,7 @@ function displayCourseSyllabus($syllabus){
 	echo "</div>";	
 }
 
-function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines){
+function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId){
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
@@ -256,7 +256,7 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines){
 
 			    	echo "<tr>";
 			    		echo "<td>";
-							echo anchor("syllabus/addDisciplines/{$syllabusId}", "Adicionar disciplinas", "class='btn btn-primary'");
+							echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
 			    		echo "</td>";
 			    	echo "</tr>";
 
@@ -266,7 +266,7 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines){
 			    		echo "<td>";
 			    			echo "<div class=\"callout callout-info\">";
 								echo "<h4>Nenhuma disciplina adicionada ao currículo.</h4>";
-							   	echo anchor("syllabus/addDisciplines/{$syllabusId}", "Adicionar disciplinas", "class='btn btn-primary'");
+							   	echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
 							echo "</div>";
 			    		echo "</td>";
 			    	echo "</tr>";

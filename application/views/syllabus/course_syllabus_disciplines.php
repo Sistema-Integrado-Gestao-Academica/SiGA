@@ -4,4 +4,10 @@
 <h4>Código do currículo: <b><?php echo $syllabusId; ?></b></h4>
 <br>
 
-<?php displaySyllabusDisciplines($syllabusId, $syllabusDisciplines); ?>
+<?php 
+
+	displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $course['id_course']); 
+
+	echo anchor('usuario/secretary_courseSyllabus',"Voltar", "class='btn btn-primary'");
+
+?>

@@ -23,3 +23,5 @@
         </div>
 
 <?php } ?>
+
+<?php echo anchor('secretary_home', "Voltar", "class='btn btn-primary'"); ?>

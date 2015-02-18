@@ -47,7 +47,7 @@ class Syllabus extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'syllabus/course_syllabus_disciplines', $data);
 	}
 
-	public function addDisciplines($syllabusId){
+	public function addDisciplines($syllabusId, $courseId){
 
 		$discipline = new Discipline();
 
@@ -55,7 +55,8 @@ class Syllabus extends CI_Controller {
 
 		$data = array(
 			'allDisciplines' => $allDisciplines,
-			'syllabusId' => $syllabusId
+			'syllabusId' => $syllabusId,
+			'courseId' => $courseId
 		);
 
 		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
