@@ -555,7 +555,7 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 			    	echo "<tr>";
 					    	echo "<td colspan=5>";
 						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há disciplinas cadastradas no momento.</h4>";
+	                            	echo "<h4>Não há disciplinas cadastradas no currículo deste curso no momento.</h4>";
 	                            echo "</div>";
 					    	echo "</td>";
 					echo "</tr>";

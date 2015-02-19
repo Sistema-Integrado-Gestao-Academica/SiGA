@@ -7,9 +7,16 @@ class Syllabus_model extends CI_Model {
 
 	public function getCourseSyllabus($courseId){
 
-		$foundSyllabus = $this->getSyllabusByCourseId($courseId);
+		$foundSyllabus = $this->getSyllabus("id_course", $courseId);
 
 		return $foundSyllabus;
+	}
+
+	public function getSyllabusCourse($syllabusId){
+
+		$foundCourse = $this->getSyllabus("id_syllabus", $syllabusId);
+
+		return $foundCourse;
 	}
 
 	public function newSyllabus($courseId){
@@ -25,7 +32,7 @@ class Syllabus_model extends CI_Model {
 			);
 			$this->saveNewSyllabus($syllabus);
 
-			$foundSyllabus = $this->getSyllabusByCourseId($courseId);
+			$foundSyllabus = $this->getSyllabus("id_course", $courseId);
 
 			if($foundSyllabus !== FALSE){
 				$wasSaved = TRUE;
@@ -158,9 +165,9 @@ class Syllabus_model extends CI_Model {
 		return $foundSyllabusDiscipline;
 	}
 
-	private function getSyllabusByCourseId($courseId){
+	private function getSyllabus($attribute, $value){
 
-		$searchResult = $this->db->get_where('course_syllabus', array('id_course' => $courseId));
+		$searchResult = $this->db->get_where('course_syllabus', array($attribute => $value));
 		$foundSyllabus = $searchResult->row_array();
 
 		if(sizeof($foundSyllabus) > 0){

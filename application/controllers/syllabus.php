@@ -13,6 +13,15 @@ class Syllabus extends CI_Controller {
 		return $courseSyllabus;
 	}
 
+	public function getSyllabusCourse($syllabusId){
+
+		$this->load->model('syllabus_model');
+		
+		$syllabusCourse = $this->syllabus_model->getSyllabusCourse($syllabusId);
+
+		return $syllabusCourse;	
+	}
+
 	public function newSyllabus($courseId){
 
 		$this->load->model('syllabus_model');

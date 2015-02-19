@@ -87,7 +87,7 @@ class Offer extends CI_Controller {
 	public function addDisciplines($idOffer, $courseId){
 
 		$discipline = new Discipline();
-		$allDisciplines = $discipline->getAllDisciplines();
+		$allDisciplines = $discipline->getCourseSyllabusDisciplines($courseId);
 
 		$course = new Course();
 		$offerCourse = $course->getCourseById($courseId);

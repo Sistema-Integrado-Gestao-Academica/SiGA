@@ -19,6 +19,23 @@ class Discipline_model extends CI_Model {
 
 		return $registeredDisciplines;
 	}
+
+	public function getCourseSyllabusDisciplines($syllabusId){
+
+		$this->db->select('discipline.*');
+		$this->db->from('discipline');
+		$this->db->join("syllabus_discipline", "discipline.discipline_code = syllabus_discipline.id_discipline");
+		$this->db->where("syllabus_discipline.id_syllabus", $syllabusId);
+		$foundDisciplines = $this->db->get()->result_array();
+
+		if(sizeof($foundDisciplines) > 0){
+			// Nothing to do
+		}else{
+			$foundDisciplines = FALSE;
+		}
+
+		return $foundDisciplines;
+	}
 	
 	/**
 	 * Function to save in the database a new discipline
