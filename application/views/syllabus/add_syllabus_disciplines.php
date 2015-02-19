@@ -7,7 +7,7 @@
 
 <?php
 
-	displayDisciplinesToSyllabus($syllabusId, $allDisciplines);
+	displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId);
 
 	echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabusId}/{$courseId}","Voltar", "class='btn btn-primary'");
 

@@ -62,7 +62,7 @@ class Syllabus extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
 	}
 
-	public function addDisciplineToSyllabus($syllabusId, $disciplineId){
+	public function addDisciplineToSyllabus($syllabusId, $disciplineId, $courseId){
 		
 		$this->load->model('syllabus_model');
 
@@ -77,10 +77,10 @@ class Syllabus extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($status, $message);	
-		redirect("syllabus/addDisciplines/{$syllabusId}");
+		redirect("syllabus/addDisciplines/{$syllabusId}/{$courseId}");
 	}
 
-	public function removeDisciplineFromSyllabus($syllabusId, $disciplineId){
+	public function removeDisciplineFromSyllabus($syllabusId, $disciplineId, $courseId){
 
 		$this->load->model('syllabus_model');
 
@@ -95,7 +95,7 @@ class Syllabus extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($status, $message);	
-		redirect("syllabus/addDisciplines/{$syllabusId}");
+		redirect("syllabus/addDisciplines/{$syllabusId}/{$courseId}");
 	}
 
 	public function disciplineExistsInSyllabus($idDiscipline, $syllabusId){
