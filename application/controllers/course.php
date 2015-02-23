@@ -473,7 +473,7 @@ class Course extends CI_Controller {
 		$group = new Module();
 		$form_groups = $group->getExistingModules();
 		$user = new Usuario();
-		$form_user_secretary = $user->getAllSecretaryUsers();
+		//$form_user_secretary = $user->getAllSecretaryUsers();
 
 		$course_types = $this->db->get('course_type')->result_array();
 
@@ -484,7 +484,7 @@ class Course extends CI_Controller {
 		$data = array(
 			'url' => $site_url,
 			'form_groups' => $form_groups,
-			'form_user_secretary' => $form_user_secretary,
+			//'form_user_secretary' => $form_user_secretary,
 			'form_course_types' => $form_course_types
 		);
 
@@ -506,12 +506,13 @@ class Course extends CI_Controller {
 		$form_groups = $group->getExistingModules();
 
 		$user = new Usuario();
-		$form_user_secretary = $user->getAllSecretaryUsers();
+		$form_user_secretary = $user->getUsersToBeSecretaries();
 
 		$course_controller = new Course();
 		$secretary_registered = $course_controller->getCourseSecrecretary($course['id_course']);
-
+		
 		$course_types = $this->db->get('course_type')->result_array();
+		
 		foreach ($course_types as $ct) {
 			$form_course_type[$ct['id']] = $ct['description'];
 		}
@@ -564,8 +565,7 @@ class Course extends CI_Controller {
 
 			$this->load->model('course_model');
 
-			if ($this->course_model->saveCourse($course) &&
-			    $this->course_model->saveSecretary($secretaryToRegister, $course['course_name'])) {
+			if ($this->course_model->saveCourse($course)) {
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
 			} else {
@@ -663,7 +663,7 @@ class Course extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($saveStatus, $saveMessage);
-		redirect('/course/index');
+		redirect('/curso/'.$idCourse);
 	}
 
 	/**
@@ -1101,7 +1101,7 @@ class Course extends CI_Controller {
 		
 		$this->session->set_flashdata($deleteStatus, $deleteMessage);
 		
-		redirect('/course/'.$course_id);
+		redirect('/curso/'.$course_id);
 		
 		
 	}

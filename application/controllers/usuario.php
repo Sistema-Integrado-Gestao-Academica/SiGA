@@ -132,12 +132,20 @@ class Usuario extends CI_Controller {
 		return $userExists;
 	}
 
-	private function getAllUsers(){
+	public function getAllUsers(){
 
 		$this->load->model('usuarios_model');
 
 		$allUsers = $this->usuarios_model->getAllUsers();
 
+		return $allUsers;
+	}
+	
+	public function getUsersToBeSecretaries(){
+		$this->load->model('usuarios_model');
+		
+		$allUsers = $this->usuarios_model->buscaTodos();
+		
 		return $allUsers;
 	}
 

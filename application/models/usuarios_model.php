@@ -217,6 +217,7 @@ class Usuarios_model extends CI_Model {
 
 	public function getAllUsers(){
 		$this->db->select('id, name, cpf, email');
+		$this->db->where('name !=', 'admin');
 		$foundUsers = $this->db->get('users')->result_array();
 
 		if(sizeof($foundUsers) > 0){

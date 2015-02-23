@@ -34,6 +34,9 @@ $submit_button_array_to_form = array(
 				<?= form_error("courseType") ?>
 			</div>
 
+<?php /**
+		*	DEPRECATED CODE
+		*	
 			<div class="form-group">	
 				<?= form_label("Tipo de Secretaria", "secreteary_type") ?>
 				<?= form_dropdown("secretary_type", $form_groups) ?>
@@ -45,7 +48,8 @@ $submit_button_array_to_form = array(
 				<?= form_dropdown("user_secretary", $form_user_secretary) ?>
 				<?= form_error("user_secretary") ?>
 			</div>
-
+		*/
+?>
 			<div class="form-group">	
 				<div id="post_grad_types"></div>
 			</div>

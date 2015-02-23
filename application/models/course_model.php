@@ -312,6 +312,7 @@ class Course_model extends CI_Model {
 		$secretary = $this->db->get('secretary_course');
 		
 		$i=0;
+		$secretary_return = FALSE;
 		foreach ($secretary->result() as $row){
 			
 			$secretary_return[$i] = array("id_secretary"=>$row->id_secretary,
