@@ -1016,6 +1016,33 @@ class Course extends CI_Controller {
 		
 		return $secretary;
 	}
+	
+	public function deleteSecretary(){
+		$course_id = $this->input->post('id_course');
+		$secretary_id = $this->input->post('id_secretary');
+		$secretaryWasDeleted = $this->deleteSecretaryFromDb($course_id, $secretary_id);
+		
+		if($secretaryWasDeleted){
+			$deleteStatus = "success";
+			$deleteMessage = "Secretário excluído com sucesso.";
+		}else{
+			$deleteStatus = "danger";
+			$deleteMessage = "Não foi possível excluir este secretário.";
+		}
+		
+		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		
+		redirect('/course/'.$course_id);
+		
+		
+	}
+	
+	private function deleteSecretaryFromDb($course_id, $secretary_id){
+		$this->load->model('course_model');
+		$deletedSecretary = $this->course_model->deleteSecretary($course_id,$secretary_id);
+		
+		return $deletedSecretary;
+	}
 
 	/**
 	 * Delete a registered course on DB

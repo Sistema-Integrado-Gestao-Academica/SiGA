@@ -170,6 +170,22 @@ class Course_model extends CI_Model {
 
 		return $courseWasDeleted;
 	}
+	
+	public function deleteSecretary($id_course, $id_secretary){
+		$idCourseExists = $this->checkExistingId($id_course);
+		$idSecretaryExists = $this->checkExistingSecretaryId($id_course);
+		
+		$secretaryWasDeleted = FALSE;
+		if($idCourseExists && $idSecretaryExists){
+			$this->db->delete('secretary_course', array('id_course' => $id_course, 'id_secretary'=>$id_secretary));
+			$secretaryWasDeleted = TRUE;
+		}else{
+			$secretaryWasDeleted = FALSE;
+		}
+		
+		return $secretaryWasDeleted;
+		
+	}
 
 	public function cleanEnrolledStudents($idCourse){
 		$this->db->delete('course_student', array('id_course' => $idCourse));
@@ -191,6 +207,26 @@ class Course_model extends CI_Model {
 		}
 
 		return $idExistis;
+	}
+	
+	public function checkExistingSecretaryId($secretary_id){
+		$foundSecretary = $this->getSecretaryById($secretary_id);
+		
+		$idExistis = FALSE;
+		if(sizeof($foundSecretary) === 0){
+			$idExistis = FALSE;
+		}else{
+			$idExistis = TRUE;
+		}
+		
+		return $idExistis;
+	}
+	
+	private function getSecretaryById($secretary_id){
+		$this->db->where('id_secretary',$secretary_id);
+		$this->db->from('secretary_course');
+		$secretaryAsked = $this->db->get()->row();
+		return $secretaryAsked;
 	}
 	
 	/**
