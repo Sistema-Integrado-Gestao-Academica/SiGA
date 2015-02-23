@@ -11,6 +11,69 @@ class Program extends CI_Controller {
 		return $programs;
 	}
 
+	public function editProgram($programId){
+
+		$this->load->model('program_model');
+
+		$program = $this->program_model->getProgramById($programId);
+
+		$usersForCoordinator = array();
+		$data = array(
+			'programData' => $program,
+			'users' => $usersForCoordinator
+		);
+
+		loadTemplateSafelyByPermission('cursos', "program/edit_program", $data);
+	}
+
+	public function updateProgram(){
+
+		$programId = $this->input->post('programId');
+		
+		$programDataIsOk = $this->validatesNewProgramData();
+
+		if($programDataIsOk){
+
+			$programName = $this->input->post('program_name');
+			$programAcronym = $this->input->post('program_acronym');
+			$programCoordinator = $this->input->post('program_coordinator');
+			$openingYear = $this->input->post('opening_year');
+
+			$programData = array(
+				'program_name' => $programName,
+				'acronym' => $programAcronym,
+				'coordinator' => $programCoordinator,
+				'opening_year' => $openingYear
+			);
+
+			$this->load->model('program_model');
+
+			$wasUpdated = $this->program_model->editProgram($programId, $programData);
+
+			if($wasUpdated){
+				$insertStatus = "success";
+				$insertMessage = "Programa atualizado com sucesso!";
+			}else{
+				$insertStatus = "danger";
+				$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
+			}
+
+			$this->session->set_flashdata($insertStatus, $insertMessage);
+			redirect('cursos');
+
+		}else{
+			$insertStatus = "danger";
+			$insertMessage = "Dados na forma incorreta. Cheque os dados informados. Espaços em branco não são aceitos.";
+			
+			$this->session->set_flashdata($insertStatus, $insertMessage);
+			redirect("program/editProgram/{$programId}");
+		}
+	}
+
+	public function removeProgram($programId){
+
+	}
+
 	public function registerNewProgram(){
 
 		$usersForCoordinator = array();

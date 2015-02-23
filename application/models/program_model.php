@@ -22,6 +22,36 @@ class Program_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function editProgram($programId, $newProgram){
+
+		$wasUpdated = $this->updateProgram($programId, $newProgram);
+
+		return $wasUpdated;
+	}
+
+	private function updateProgram($programId, $newProgram){
+
+		$this->db->where('id_program', $programId);
+		$this->db->update('program', $newProgram);
+
+		$foundProgram = $this->getProgram($newProgram);
+
+		if($foundProgram !== FALSE){
+			$wasUpdated = TRUE;
+		}else{
+			$wasUpdated = FALSE;
+		}
+
+		return $wasUpdated;
+	}
+
+	public function getProgramById($programId){
+
+		$program = $this->getProgram(array('id_program' => $programId));
+
+		return $program;
+	}
+
 	private function insertProgram($program){
 		
 		$this->db->insert('program', $program);
@@ -39,7 +69,7 @@ class Program_model extends CI_Model {
 
 	private function getProgram($programToSearch){
 
-		$foundProgram = $this->db->get_where('program', $programToSearch)->result_array();
+		$foundProgram = $this->db->get_where('program', $programToSearch)->row_array();
 
 		if(sizeof($foundProgram) > 0){
 			// Nothing to do
