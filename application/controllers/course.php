@@ -19,7 +19,8 @@ class Course extends CI_Controller {
 		
 		$courses = $this->listAllCourses();
 
-		$programs = FALSE;
+		$program = new Program();
+		$programs = $program->getAllPrograms();
 
 		$data = array(
 			'courses' => $courses,
