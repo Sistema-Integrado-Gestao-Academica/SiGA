@@ -233,7 +233,19 @@ class Usuarios_model extends CI_Model {
 	
 	public function buscaTodos() {
 		$this->db->select('id, name');
-		return $this->db->get('users')->result_array();
+		$this->db->where('name !=', 'admin');
+		$users = $this->db->get('users')->result_array();
+		
+		$users_id = array();
+		$users_name = array();
+		
+		for ($i=0 ; $i < sizeof($users); $i++){
+			$users_id[$i] = $users[$i]['id'];
+			$users_name[$i] = $users[$i]['name'];
+		}
+		$return_users = array_combine($users_id, $users_name);
+		
+		return $return_users; 
 	}
 	
 	public function getAllSecretaries() {

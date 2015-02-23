@@ -104,7 +104,37 @@ class Course_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
-	public function saveSecretary($secretary, $courseName){
+	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse){
+		define("FINANCIAL_SECRETARY_GROUP", 1);
+		define("ACADEMIC_SECRETARY_GROUP", 2);
+		
+		$financialSecretaryToSave = array("id_user"  => $financialSecretaryUserId,
+										  "id_group" => FINANCIAL_SECRETARY_GROUP);
+		
+		$academicSecretaryToSave = array("id_user"  => $academicSecretaryUserId,
+										 "id_group" => ACADEMIC_SECRETARY_GROUP);
+		
+		$this->db->select('course_name');
+		$this->db->where('id_course',$idCourse);
+		$courseName = $this->db->get('course')->row_array();
+		
+		try{
+			
+			$savedFinancial = $this->saveSecretary($financialSecretaryToSave, $courseName['course_name']);
+			$savedAcademic  = $this->saveSecretary($academicSecretaryToSave, $courseName['course_name']);
+			
+		}catch (SecretaryException $caughtException){
+			throw $caughtException;
+		}
+		
+		if ($savedAcademic && $savedFinancial){
+			return TRUE;
+		}else {
+			return FALSE;
+		}
+	}
+	
+	private function saveSecretary($secretary, $courseName){
 		$this->db->select('id_course');
 		$courseId = $this->db->get_where('course',array('course_name'=> $courseName))->row_array();
 		
