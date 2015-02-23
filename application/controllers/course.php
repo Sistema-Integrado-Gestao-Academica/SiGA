@@ -474,8 +474,6 @@ class Course extends CI_Controller {
 	}
 
 	public function formToRegisterNewCourse(){
-		$this->load->helper('url');
-		$site_url = site_url();
 
 		$group = new Module();
 		$form_groups = $group->getExistingModules();
@@ -489,7 +487,6 @@ class Course extends CI_Controller {
 		}
 
 		$data = array(
-			'url' => $site_url,
 			'form_groups' => $form_groups,
 			'form_user_secretary' => $form_user_secretary,
 			'form_course_types' => $form_course_types

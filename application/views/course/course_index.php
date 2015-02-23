@@ -40,10 +40,7 @@
 <br>
 <br>
 
-<?= anchor("program/registerNewProgram", "Cadastrar Programa", array(
-	"class" => "btn btn-primary",
-	"type" => "submit"
-)) ?>
+<?= anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'") ?>
 
 <br><br>
 
