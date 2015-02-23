@@ -597,6 +597,26 @@ class Course extends CI_Controller {
 
 		redirect('/course/index');
 	}
+	
+	public function saveSecretary(){
+		
+		$financialSecretary = $this->input->post('financial_secretary');
+		$academicSecretary = $this->input->post('academic_secretary');
+		$idCourse = $this->input->post('id_course');
+		
+		$this->load->model('course_model');
+		try{
+			$savedSecretaries = $this->course_model->saveCourseSecretaries($financialSecretary, $academicSecretary, $idCourse);
+			$saveStatus = "success";
+			$saveMessage = "Secretários salvos com sucesso";
+		}catch(SecretaryException $caughtException){
+			$saveStatus = "danger";
+			$saveMessage = $caughtException->getMessage();
+		}
+		
+		$this->session->set_flashdata($saveStatus, $saveMessage);
+		redirect('/course/index');
+	}
 
 	/**
 	 * Validates the data submitted on the new course form

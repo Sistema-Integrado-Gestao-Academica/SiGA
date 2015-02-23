@@ -369,10 +369,10 @@ class Usuario extends CI_Controller {
 		return $user_groups_to_array;
 	}
 	
-	public function getAllSecretaryUsers(){
+	public function getAllUsers(){
 		
 		$this->load->model('usuarios_model');
-		$users = $this->usuarios_model->getAllSecretaries();
+		$users = $this->usuarios_model->buscaTodos();
 		
 		return $users;
 	}
