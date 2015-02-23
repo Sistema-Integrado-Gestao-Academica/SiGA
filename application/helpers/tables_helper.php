@@ -198,7 +198,7 @@ function displayRegisteredPrograms($programs){
 			    			echo "</td>";
 
 			    			echo "<td>";
-			    				
+
 			    			echo "</td>";
 
 			    		echo "</tr>";
@@ -231,41 +231,51 @@ function displayCourseSyllabus($syllabus){
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
-			    foreach($syllabus as $courseName => $syllabus){
-			    	
-			    	$foundCourse = $course->getCourseByName($courseName);
-					$courseId = $foundCourse['id_course'];
+			    if($syllabus !== FALSE){
 
-			    	echo "<tr>";
+				    foreach($syllabus as $courseName => $syllabus){
+				    	
+				    	$foundCourse = $course->getCourseByName($courseName);
+						$courseId = $foundCourse['id_course'];
 
-			    		echo "<td>";
-			    			echo $courseName;
-			    		echo "</td>";
+				    	echo "<tr>";
 
-			    		if($syllabus !== FALSE){
+				    		echo "<td>";
+				    			echo $courseName;
+				    		echo "</td>";
 
-			    			echo "<td>";
-			    				echo $syllabus['id_syllabus'];
-			    			echo "</td>";
+				    		if($syllabus !== FALSE){
 
-			    			echo "<td>";
-			    				echo "<div class=\"callout callout-info\">";
-									echo "<h4>Editar</h4>";		    					
-			    					echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-								    echo "<p> <b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/></p>";
-								echo "</div>";
-			    			echo "</td>";
+				    			echo "<td>";
+				    				echo $syllabus['id_syllabus'];
+				    			echo "</td>";
 
-			    		}else{
-							echo "<td colspan=2>";
-		    					echo "<div class=\"callout callout-info\">";
-									echo "<h4>Nenhum currículo cadastrado para esse curso.</h4>";
-							    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
-								echo "</div>";
-			    			echo "</td>";			    			
-			    		}
+				    			echo "<td>";
+				    				echo "<div class=\"callout callout-info\">";
+										echo "<h4>Editar</h4>";		    					
+				    					echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+									    echo "<p> <b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/></p>";
+									echo "</div>";
+				    			echo "</td>";
 
-			    	echo "</tr>";
+				    		}else{
+								echo "<td colspan=2>";
+			    					echo "<div class=\"callout callout-info\">";
+										echo "<h4>Nenhum currículo cadastrado para esse curso.</h4>";
+								    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+									echo "</div>";
+				    			echo "</td>";
+				    		}
+
+				    	echo "</tr>";
+				    }
+			    }else{
+					echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhum curso cadastrado.</h4>";
+					    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+						echo "</div>";
+	    			echo "</td>";
 			    }
 		
 			echo "</tbody>";
