@@ -10,7 +10,7 @@ $form_groups = $group->getExistingModules();
 
 $user = new Usuario();
 
-$form_user_secretary = $user->getAllSecretaryUsers();
+//$form_user_secretary = $user->getAllSecretaryUsers();
 
 $form_course_type = array(
 

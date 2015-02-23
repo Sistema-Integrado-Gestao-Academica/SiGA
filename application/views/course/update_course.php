@@ -18,13 +18,12 @@ $course_controller = new Course();
 
 $secretary_registered = $course_controller->getCourseSecrecretary($course_id);
 
-$hidden = array('id_course' => $course_id, 
-				'id_secretary'=>$secretary_registered['id_secretary'], 
+$hidden = array('id_course' => $course_id,  
 				'original_course_type'=> $original_course_type);
 
 $user = new Usuario();
 
-$form_user_secretary = $user->getAllSecretaryUsers();
+$form_user_secretary = $user->getAllUsers();
 
 
 $form_course_type = array(
@@ -49,10 +48,16 @@ $submit_button_array_to_form = array(
 		"content" => "Alterar",
 		"type" => "submit"
 );
+
+$submit_button_array_to_form_secretary = array(
+		"class" => "btn btn-primary",
+		"content" => "Cadastrar",
+		"type" => "submit"
+);
 ?>
 <div class="row">
 
-<div class="col-lg-12">
+<div class="col-lg-6">
 <?php
 echo form_open("course/updateCourse",'',$hidden);
 
@@ -64,24 +69,7 @@ echo form_open("course/updateCourse",'',$hidden);
 	echo "<br>";
 	
 	?>
-	<h3><span class="label label-primary">Secretaria</span></h3>
-	<br>
 	
-	<?php 
-	//secretary field
-	echo form_label("Tipo de Secretaria", "secreteary_type");
-	echo form_dropdown("secretary_type", $form_groups, $secretary_registered['id_group']);
-	echo form_error("secretary_type");
-	echo "<br>";
-	echo "<br>";
-	
-	echo form_label("Escolher secretário", "user_secretary");
-	echo form_dropdown("user_secretary", $form_user_secretary, $secretary_registered['id_user'], "id='user_secretary'");
-	echo form_error("user_secretary");
-	echo "<br>";
-	echo "<br>";
-	
-	?>
 	<h3><span class="label label-primary">Tipo de Curso</span></h3>
 	<br>
 	
@@ -96,7 +84,7 @@ echo form_open("course/updateCourse",'',$hidden);
 	<br><div id="post_grad_types"></div>
 	
 	<div class="row">
-		<div class="col-lg-6">
+		<div class="col-lg-8">
 			<div class="row">
 				<div id="registered_master_degree"></div>
 			</div>
@@ -104,7 +92,7 @@ echo form_open("course/updateCourse",'',$hidden);
 				<div id="registered_doctorate"></div>
 			</div>
 		</div>
-		<div class="col-lg-6">
+		<div class="col-lg-8">
 			<br><div id="update_master_degree"></div>
 		</div>
 	</div>
@@ -118,5 +106,45 @@ echo form_close();
 ?>
 </div>
 
+<div class="col-lg-6">
 
+<h3><span class="label label-primary">Secretaria</span></h3>
+	<br>
+	
+	<div class="form-box" id="login-box"> 
+		<div class="header">Cadastrar Secretários</div>	
+		<?php 
+		echo form_open("course/saveSecretary",'',$hidden);
+		?>
+		<div class="body bg-gray">
+			<div class="form-group">
+				<?php 	
+				//secretary field
+				echo form_label("Secretaria Financeira", "financial_secretary") . "<br>";
+				echo form_dropdown("financial_secretary", $form_user_secretary, '', "id='financial_secretary'");
+				echo form_error("financial_secretary");
+				echo "<br>";
+				echo "<br>";
+				?>
+			</div>
+			<div class="form-group">
+				<?php 
+				echo form_label("Secretaria Acadêmica", "academic_secretary") . "<br>";
+				echo form_dropdown("academic_secretary", $form_user_secretary, '', "id='academic_secretary'");
+				echo form_error("academic_secretary");
+				echo "<br>";
+				echo "<br>";
+				?>
+			</div>
+					
+		</div>
+		<div class="footer">
+			<?php 
+			// Submit button
+			echo form_button($submit_button_array_to_form_secretary);
+			echo form_close();
+			?>
+		</div>
+	</div>
+</div>
 </div>
