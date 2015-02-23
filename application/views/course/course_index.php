@@ -13,7 +13,7 @@
 		<td><h3 class="text-center">Cursos Cadastrados</h3></td>
 		<td><h3 class="text-center">Ações</h3></td>
 	</tr>
-	<?php if ($courses): ?>
+	<?php if ($courses !== FALSE): ?>
 		<?php foreach($courses as $course): ?>
 			<tr>
 				<td class="text-center"><?= $course['course_name'] ?></td>
@@ -33,6 +33,30 @@
 	<? else: ?>
 		<tr>
 			<td><h3><label class="label label-default"> Não existem cursos cadastrados</label></h3></td>
+		</tr>
+	<?php endif ?>
+</table>
+
+<br>
+<br>
+
+<?= anchor("program/registerNewProgram", "Cadastrar Programa", array(
+	"class" => "btn btn-primary",
+	"type" => "submit"
+)) ?>
+
+<br><br>
+
+<table class="table table-striped table-bordered">
+	<tr>
+		<td><h3 class="text-center">Programas Cadastrados</h3></td>
+		<td><h3 class="text-center">Ações</h3></td>
+	</tr>
+	<?php if ($programs !== FALSE): ?>
+		
+	<? else: ?>
+		<tr>
+			<td><h3><label class="label label-default"> Não existem programas cadastrados</label></h3></td>
 		</tr>
 	<?php endif ?>
 </table>

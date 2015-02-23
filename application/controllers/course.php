@@ -2,6 +2,7 @@
 
 require_once('login.php');
 require_once('module.php');
+require_once('program.php');
 require_once('postgraduation.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
@@ -15,10 +16,15 @@ require_once(APPPATH."/exception/DoctorateException.php");
 class Course extends CI_Controller {
 
 	public function index() {
-		$course = new Course();
-		$courses = $course->listAllCourses();
+		
+		$courses = $this->listAllCourses();
 
-		$data = array('courses' => $courses);
+		$programs = FALSE;
+
+		$data = array(
+			'courses' => $courses,
+			'programs' => $programs
+		);
 
 		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}

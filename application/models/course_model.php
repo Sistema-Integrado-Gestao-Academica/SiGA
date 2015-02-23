@@ -86,10 +86,17 @@ class Course_model extends CI_Model {
 	 * @return An array with the courses. Each position is a tuple of the relation.
 	 */
 	public function getAllCourses(){
+		
 		$this->db->select('*');
 		$this->db->from('course');
 		$this->db->order_by("course_name", "asc"); 
 		$registeredCourses = $this->db->get()->result_array();
+
+		if(sizeof($registeredCourses) > 0){
+			// Nothing to do
+		}else{
+			$registeredCourses = FALSE;
+		}
 
 		return $registeredCourses;
 	}
