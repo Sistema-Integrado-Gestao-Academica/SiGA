@@ -107,6 +107,67 @@ echo form_close();
 </div>
 
 <div class="col-lg-6">
+<?php
+	  define("FINANCEIRO", 1);
+	  define("ACADEMICO", 2);
+?>
+<table class="table">
+
+	<h4><span class="label label-primary">Secretarios Cadastrados</span></h4>
+	<tr>
+		<th>
+			Nome do Secretario
+		</th>
+		<th>
+			Tipo de Secretario
+		</th>
+		
+	</tr>
+	<?php
+	if($secretary_registered){
+		foreach($secretary_registered as $secretary => $indexes){
+			
+			echo "<tr>";
+
+				echo "<td>";
+				print_r($user->getUserNameById($indexes['id_user']));
+				echo "</td>";
+				
+				echo "<td>";
+				if($indexes['id_group'] == FINANCEIRO){
+					echo "Financeiro";
+				}else if($indexes['id_group'] == ACADEMICO){
+					echo "Acadêmico";
+				}
+				echo "</td>";
+				
+				echo "<td>";
+					echo "<br>";
+					echo form_open("course/deleteSecretary");
+					echo form_hidden(array("id_course"=>$course_id, "id_secretary"=>$indexes['id_secretary']));
+					echo form_button(array(
+						"class" => "btn btn-danger btn-remover",
+						"type" => "submit",
+						"content" => "Remover"
+					));
+					echo form_close();
+				echo "</td>";
+
+			echo "</tr>";
+		}
+	}else{ ?>
+		<tr>
+			<td>
+				<h3>
+					<label class="label label-default"> Não existem cursos cadastrados</label>
+				</h3>
+			</td>
+		</tr>
+	<?php }?>
+</table>
+
+
+
 
 <h3><span class="label label-primary">Secretaria</span></h3>
 	<br>

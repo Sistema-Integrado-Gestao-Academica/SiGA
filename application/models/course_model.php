@@ -236,7 +236,18 @@ class Course_model extends CI_Model {
 	public function getSecretaryByCourseId($id_course){
 		
 		$this->db->select('id_secretary, id_group, id_user');
-		$secretary_return = $this->db->get_where('secretary_course', array('id_course'=>$id_course))->row_array();
+		$this->db->where('id_course',$id_course);
+		$secretary = $this->db->get('secretary_course');
+		
+		$i=0;
+		foreach ($secretary->result() as $row){
+			
+			$secretary_return[$i] = array("id_secretary"=>$row->id_secretary,
+										  "id_group"    =>$row->id_group,
+										  "id_user"     =>$row->id_user
+									);
+			$i++;
+		}
 		
 		return $secretary_return;
 		

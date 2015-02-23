@@ -81,6 +81,14 @@ class Usuarios_model extends CI_Model {
 		return $foundUser;
 	}
 
+	public function getNameByUserId($userId){
+		$this->db->select('name');
+		$this->db->where('id', $userId);
+		$foundName = $this->db->get('users')->result_array();
+		
+		return $foundName[0]['name'];
+	}
+	
 	private function getUserByPartialName($userName){
 		$this->db->select('id, name');
 		$this->db->like('name', $userName);
