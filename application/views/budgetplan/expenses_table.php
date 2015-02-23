@@ -1,6 +1,4 @@
-<a href="<?=base_url("planoorcamentario/{$budgetplan['id']}/novadespesa")?>" class="btn-lg">
-	<span class="glyphicon glyphicon-plus-sign">Adicionar</span>
-</a>
+<?= anchor("planoorcamentario/{$budgetplan['id']}/novadespesa", "<span class='glyphicon glyphicon-plus-sign'>Adicionar</span>", "class='btn-lg'") ?>
 
 <?php if ($expenses): ?>
 

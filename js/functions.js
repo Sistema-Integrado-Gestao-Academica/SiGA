@@ -11,6 +11,12 @@ $(document).ready(function(){
 		searchForStudent();
 	});
 
+	$("#approve_offer_list_btn").hover(function(){
+		$("#approve_offer_list_btn").popover('show');
+	},function(){
+		$("#approve_offer_list_btn").popover('hide');
+	});
+
 });
 
 // Student functions
@@ -157,3 +163,7 @@ function deleteAccount() {
 	return confirm("Tem certeza que deseja apagar sua conta?");
 }
 
+function passwordRequest() {
+	var password = prompt("Digite sua senha para continuar")
+	document.getElementsByName("password")[0].value = password;
+}

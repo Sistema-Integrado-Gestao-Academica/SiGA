@@ -1,4 +1,7 @@
 <?php
+
+require_once('syllabus.php');
+
 class Discipline extends CI_Controller {
 	
 	//Function to load index page of disciplines
@@ -15,6 +18,24 @@ class Discipline extends CI_Controller {
 		$registeredDisciplines = $this->discipline_model->listAllDisciplines();
 		
 		return $registeredDisciplines;
+	}
+
+	public function getCourseSyllabusDisciplines($courseId){
+
+		$this->load->model('discipline_model');
+
+		$syllabus = new Syllabus();
+		$foundSyllabus = $syllabus->getCourseSyllabus($courseId);
+
+		if(sizeof($foundSyllabus) > 0){
+			
+			$syllabusId = $foundSyllabus['id_syllabus'];
+			$disciplines = $this->discipline_model->getCourseSyllabusDisciplines($syllabusId);
+		}else{
+			$disciplines = FALSE;			
+		}
+
+		return $disciplines;
 	}
 	
 	/**
@@ -134,6 +155,15 @@ class Discipline extends CI_Controller {
 		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline");
 	}
 	
+	public function checkIfDisciplineExists($disciplineId){
+		
+		$this->load->model('discipline_model');
+
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($disciplineId);
+
+		return $disciplineExists;
+	}
+
 	/**
 	 * Function to drop a discipline from the database
 	 * @param int $code - Code of the discipline

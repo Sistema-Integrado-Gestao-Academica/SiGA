@@ -30,19 +30,31 @@ class Course_model extends CI_Model {
 
 	public function getCourseIdByCourseName($courseName){
 
-		$courseId =$this->getCourseIdForThisCourseName($courseName);
+		$course = $this->getCourseForThisCourseName($courseName);
+		$courseId = $course['id_course'];
 
 		return $courseId;
 	}
 
-	private function getCourseIdForThisCourseName($courseName){
-		$this->db->select('id_course');
+	public function getCourseByName($courseName){
+
+		$foundCourse = $this->getCourseForThisCourseName($courseName);
+
+		return $foundCourse;
+	}
+
+	private function getCourseForThisCourseName($courseName){
+		
 		$searchResult = $this->db->get_where('course', array('course_name' => $courseName));
-		$searchResult = $searchResult->row_array();
+		$foundCourse = $searchResult->row_array();
 
-		$courseId = $searchResult['id_course'];
+		if(sizeof($foundCourse) > 0){
+			// Nothing to do
+		}else{
+			$foundCourse = FALSE;
+		}
 
-		return $courseId;
+		return $foundCourse;
 	}
 
 		public function checkExistingCourseTypeId($course_type_id){
@@ -237,8 +249,32 @@ class Course_model extends CI_Model {
 	public function getCourseById($id){
 		$this->db->where('id_course',$id);
 		$this->db->from('course');
-		$courseAsked = $this->db->get()->row();
+		$courseAsked = $this->db->get()->row_array();
 		return $courseAsked;
+	}
+
+	public function getCourse($courseId){
+
+		$this->db->where('id_course',$courseId);
+		$this->db->from('course');
+		$course = $this->db->get()->row_array();
+		
+		if(sizeof($course) > 0){
+			// Nothing to do
+		}else{
+			$course = FALSE;
+		}
+
+		return $course;	
+	}
+
+	public function checkIfCourseExists($courseId){
+		$this->db->select('id_course');
+		$foundCourse = $this->db->get_where('course', array('id_course' => $courseId))->row_array();
+
+		$courseExists = sizeof($foundCourse) > 0;
+
+		return $courseExists;
 	}
 	
 	/**
@@ -286,7 +322,36 @@ class Course_model extends CI_Model {
 		}
 		
 		return $secretary_return;
+	}
+
+	public function getSecretaryByUserId($id_user){
 		
+		$this->db->select('id_secretary, id_group, id_course');
+		$secretary = $this->db->get_where('secretary_course', array('id_user'=>$id_user))->result_array();
+		
+		return $secretary;	
+	}
+
+	/**
+	 * Get the course which the given user is secretary of
+	 * @param $userId - Secretary id to search for courses
+	 * @return an array with the found courses or FALSE if none course is found
+	 */
+	public function getCoursesOfSecretary($userId){
+		
+		$this->db->select('course.*');
+		$this->db->from('course');
+		$this->db->join('secretary_course','course.id_course = secretary_course.id_course');
+		$this->db->where('secretary_course.id_user', $userId);
+		$courses = $this->db->get()->result_array();
+
+		if(sizeof($courses) > 0){
+			// Nothing to do
+		}else{
+			$courses = FALSE;
+		}
+
+		return $courses;
 	}
 
 	/**

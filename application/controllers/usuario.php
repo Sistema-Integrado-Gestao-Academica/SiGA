@@ -2,11 +2,145 @@
 
 require_once('course.php');
 require_once('module.php');
+require_once('semester.php');
+require_once('offer.php');
+require_once('syllabus.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
 class Usuario extends CI_Controller {
 	
+	public function usersReport(){
+		
+		$allUsers = $this->getAllUsers();
+		
+		$group = new Module();
+		$allGroups = $group->getExistingModules();
+		
+		$data = array(
+			'allUsers' => $allUsers,
+			'allGroups' => $allGroups
+		);
+
+		loadTemplateSafelyByPermission('user_report','usuario/user_report', $data);
+	}
+
+	public function manageGroups($idUser){
+
+		$group = new Module();
+		$userGroups = $group->getUserGroups($idUser);
+		$allGroups = $group->getExistingModules();
+
+		$data = array(
+			'idUser' => $idUser,
+			'userGroups' => $userGroups,
+			'allGroups' => $allGroups
+		);
+
+		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
+	}
+
+	public function listUsersOfGroup($idGroup){
+		
+		$this->load->model("usuarios_model");
+
+		$usersOfGroup = $this->usuarios_model->getUsersOfGroup($idGroup);
+
+		$data = array(
+			'idGroup' => $idGroup,
+			'usersOfGroup' => $usersOfGroup
+		);
+
+		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
+	}
+
+	public function removeAllUsersOfGroup($idGroup){
+		
+		$this->load->model("usuarios_model");
+
+		$wasDeleted = $this->usuarios_model->removeAllUsersOfGroup($idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Usuários removidos com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover os usuários do grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("user_report");		
+	}
+
+	public function addGroupToUser($idUser, $idGroup){
+
+		$this->load->model('usuarios_model');
+		$wasSaved = $this->usuarios_model->addGroupToUser($idUser, $idGroup);
+
+		if($wasSaved){
+			$status = "success";
+			$message = "Grupo adicionado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/manageGroups/{$idUser}");
+	}
+
+	public function removeUserGroup($idUser, $idGroup){
+		
+		$this->load->model('usuarios_model');
+		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Grupo removido com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o grupo informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/manageGroups/{$idUser}");
+	}
+
+	public function removeUserFromGroup($idUser, $idGroup){
+		
+		$this->load->model('usuarios_model');
+		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Usuario removido com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o usuário informado. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($status, $message);	
+		redirect("usuario/listUsersOfGroup/{$idGroup}");
+	}
+
+	public function checkIfUserExists($idUser){
+		
+		$this->load->model('usuarios_model');
+
+		$userExists = $this->usuarios_model->checkIfUserExists($idUser);
+
+		return $userExists;
+	}
+
+	private function getAllUsers(){
+
+		$this->load->model('usuarios_model');
+
+		$allUsers = $this->usuarios_model->getAllUsers();
+
+		return $allUsers;
+	}
+
 	public function student_index(){
 		$logged_user_data = $this->session->userdata("current_user");
 		$userId = $logged_user_data['user']['id'];
@@ -30,6 +164,11 @@ class Usuario extends CI_Controller {
 
 	public function secretary_index(){
 
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
+	}
+
+	public function secretary_enrollStudent(){
+
 		$courses = $this->loadCourses();
 		
 		$courseData = array(
@@ -38,8 +177,81 @@ class Usuario extends CI_Controller {
 			'doctorates' => $courses['doctorates']
 		);
 
-		// On auth_helper
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home', $courseData);
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
+	}
+
+	public function secretary_offerList(){
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		// Check if the logged user have admin permission
+		$group = new Module();
+		$isAdmin = $group->checkUserGroup('administrador');
+
+		// Get the current user id
+		$logged_user_data = $this->session->userdata("current_user");
+		$currentUser = $logged_user_data['user']['id'];
+		// Get the courses of the secretary
+		$course = new Course();
+		$courses = $course->getCoursesOfSecretary($currentUser);
+		
+		// Get the proposed offers of every course
+		$offer = new Offer();
+		if($courses !== FALSE){
+
+			$proposedOffers = array();
+			foreach($courses as $course){
+				$courseId = $course['id_course'];
+				$courseName = $course['course_name'];
+				$proposedOffers[$courseName] = $offer->getCourseOfferList($courseId, $currentSemester['id_semester']);
+			}
+
+		}else{
+			$proposedOffers = FALSE;
+		}
+
+		$data = array(
+			'current_semester' => $currentSemester,
+			'isAdmin' => $isAdmin,
+			'proposedOffers' => $proposedOffers,
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);
+	}
+
+	public function secretary_courseSyllabus(){
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		// Get the current user id
+		$logged_user_data = $this->session->userdata("current_user");
+		$currentUser = $logged_user_data['user']['id'];
+		// Get the courses of the secretary
+		$course = new Course();
+		$courses = $course->getCoursesOfSecretary($currentUser);
+
+		if($courses !== FALSE){
+
+			$syllabus = new Syllabus();
+			$coursesSyllabus = array();
+			foreach ($courses as $course){
+
+				$coursesSyllabus[$course['course_name']] = $syllabus->getCourseSyllabus($course['id_course']);
+			}
+		}else{
+			$coursesSyllabus = FALSE;
+		}
+
+		$data = array(
+			'current_semester' => $currentSemester,
+			'courses' => $courses,
+			'syllabus' => $coursesSyllabus
+		);
+		
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_course_syllabus', $data);
 	}
 
 	private function loadCourses(){
@@ -141,13 +353,17 @@ class Usuario extends CI_Controller {
 
 	public function formulario() {
 		$this->load->model('usuarios_model');
-		$usuarios = $this->usuarios_model->buscaTodos();
+		$users = $this->usuarios_model->buscaTodos();
 
-		if ($usuarios && !$this->session->userdata('current_user')) {
+		if ($users && !$this->session->userdata('current_user')) {
 			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
 		} else {
-			$this->load->template("usuario/formulario");
+			
+			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
+
+			$data = array('user_groups' => $userGroups);
+			$this->load->template("usuario/formulario", $data);
 		}
 	}
 	
@@ -177,7 +393,6 @@ class Usuario extends CI_Controller {
 			$nome  = $this->input->post("nome");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
-			$grupo = $this->input->post("userGroup");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
@@ -202,16 +417,10 @@ class Usuario extends CI_Controller {
 				redirect("/");
 			}
 		} else {
-			$this->load->model("usuarios_model");
-			$user_group_options = $this->usuarios_model->getAllUserGroups();
-			$user_groups = array();
+			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
-			foreach ($user_group_options as $ug) {
-				array_push($user_groups, $ug['group_name']);
-			}
-
-			$data = array('user_groups' => $user_groups);
-			$this->load->template("usuario/formulario_entrada", $data);
+			$data = array('user_groups' => $userGroups);
+			$this->load->template("usuario/formulario", $data);
 		}
 	}
 
@@ -345,6 +554,15 @@ class Usuario extends CI_Controller {
 		return $foundUser;
 	}
 
+	public function getUserById($userId){
+
+		$this->load->model('usuarios_model');
+		
+		$foundUser = $this->usuarios_model->getUserById($userId);
+
+		return $foundUser;
+	}
+
 	/**
 	 * Get all the user types from database into an array.
 	 * @return An array with all user types on database as id => type_name
@@ -359,22 +577,14 @@ class Usuario extends CI_Controller {
 		return $user_groups_to_array;
 	}
 	
-	public function getAllowedUserGroupsForNotLoggedRegistration(){
+	public function getAllowedUserGroupsForFirstRegistration(){
 
 		$this->load->model("usuarios_model");
-		$user_groups = $this->usuarios_model->getAllAllowedUserGroupsForNotLoggedRegistration();
+		$userGroups = $this->usuarios_model->getAllowedUserGroupsForFirstRegistration();
 		
-		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
+		$userGroupsArray = $this->turnUserGroupsToArray($userGroups);
 		
-		return $user_groups_to_array;
-	}
-	
-	public function getAllUsers(){
-		
-		$this->load->model('usuarios_model');
-		$users = $this->usuarios_model->buscaTodos();
-		
-		return $users;
+		return $userGroupsArray;
 	}
 	
 	public function getUserNameById($idUser){
