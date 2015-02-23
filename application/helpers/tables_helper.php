@@ -178,6 +178,46 @@ echo "</div>";
 
 }
 
+function displayRegisteredPrograms($programs){
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\"><h3>Programas cadastrados</h3></th>";
+			        echo "<th class=\"text-center\"><h3>Ações</h3></th>";
+			    echo "</tr>";
+
+			    if($programs !== FALSE){
+
+			    	foreach($programs as $program){
+			    		echo "<tr>";
+
+			    			echo "<td>";
+			    				echo $program['program_name']." - ".$program['acronym'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    				
+			    			echo "</td>";
+
+			    		echo "</tr>";
+			    	}
+
+			    }else{
+			    	echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Não existem programas cadastrados</h4>";
+					    	echo anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'");
+						echo "</div>";
+	    			echo "</td>";	
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";	
+}
+
 function displayCourseSyllabus($syllabus){
 	$course = new Course();
 	
