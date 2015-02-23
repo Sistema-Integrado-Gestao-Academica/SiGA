@@ -13,8 +13,8 @@
 		<td><h3 class="text-center">Cursos Cadastrados</h3></td>
 		<td><h3 class="text-center">Ações</h3></td>
 	</tr>
-	<?php if ($courses){ ?>
-		<?php foreach($courses as $course){ ?>
+	<?php if ($courses): ?>
+		<?php foreach($courses as $course): ?>
 			<tr>
 				<td class="text-center"><?= $course['course_name'] ?></td>
 
@@ -29,10 +29,10 @@
 					<?= form_close() ?>
 				</td>
 			</tr>
-		<? } ?>
-	<? }else{ ?>
+		<?php endforeach ?>
+	<?php else: ?>
 		<tr>
 			<td><h3><label class="label label-default"> Não existem cursos cadastrados</label></h3></td>
 		</tr>
-	<?php } ?>
+	<?php endif ?>
 </table>
