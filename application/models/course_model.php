@@ -179,7 +179,15 @@ class Course_model extends CI_Model {
 		$courseWasDeleted = FALSE;
 		if($idExists){
 			$this->db->delete('course', array('id_course' => $id_course));
-			$courseWasDeleted = TRUE;
+			
+			$foundCourse = $this->getCourse(array('id_course' => $id_course));
+
+			if($foundCourse !== FALSE){
+				$courseWasDeleted = FALSE;
+			}else{
+				$courseWasDeleted = TRUE;
+			}
+
 		}else{
 			$courseWasDeleted = FALSE;
 		}

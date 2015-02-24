@@ -19,14 +19,8 @@
 				<td class="text-center"><?= $course['course_name'] ?></td>
 
 				<td>
-					<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
-
-					<?= form_open('course/deleteCourse') ?>
-						<?= form_hidden('id_course', $course['id_course']) ?>
-						<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
-							<span class="glyphicon glyphicon-remove"></span>
-						</button>
-					<?= form_close() ?>
+					<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+					<?= anchor("course/deleteCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger'") ?>
 				</td>
 			</tr>
 		<? endforeach ?>

@@ -823,9 +823,9 @@ class Course extends CI_Controller {
 	/**
 	 * Function to delete a registered course
 	 */
-	public function deleteCourse(){
-		$course_id = $this->input->post('id_course');
-		$courseWasDeleted = $this->deleteCourseFromDb($course_id);
+	public function deleteCourse($courseId){
+
+		$courseWasDeleted = $this->deleteCourseFromDb($courseId);
 
 		if($courseWasDeleted){
 			$deleteStatus = "success";
