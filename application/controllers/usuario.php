@@ -350,6 +350,7 @@ class Usuario extends CI_Controller {
 			$nome  = $this->input->post("nome");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
+			$group = $this->input->post("userGroup");
 			$login = $this->input->post("login");
 			$senha = md5($this->input->post("senha"));
 			
@@ -369,7 +370,7 @@ class Usuario extends CI_Controller {
 				redirect("usuario/formulario");
 			} else {
 				$this->usuarios_model->salva($usuario);
-				$this->usuarios_model->saveGroup($usuario, $grupo);
+				$this->usuarios_model->saveGroup($usuario, $group);
 				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
@@ -424,7 +425,6 @@ class Usuario extends CI_Controller {
 	}
 
 	public function searchForStudent(){
-
 
 		$studentNameToSearch = $this->input->post('student_name');
 

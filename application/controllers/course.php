@@ -33,41 +33,15 @@ class Course extends CI_Controller {
 	public function enrollStudentToCourse($courseId){
 
 		$this->load->model('course_model');
+		
 		$course = $this->course_model->getCourseById($courseId);
+		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
 
-		$courseName = $course->course_name;
-
-		switch($courseType){
-			case "academic_program":
-					
-				$masterDegree = new MasterDegree();
-				$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
-				
-				$doctorate = new Doctorate();
-				$foundDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
-				
-				break;
-
-			case "professional_program":
-				
-				$masterDegree = new MasterDegree();
-				$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
-
-				$foundDoctorate = FALSE;
-				break;
-
-			default:
-				$foundMasterDegree = FALSE;
-				$foundDoctorate = FALSE;
-				break;
-		}
+		$courseName = $course['course_name'];
 
 		$courseData = array(
 			'courseId' => $courseId,
-			'courseName' => $courseName,
-			'courseType' => $courseType,
-			'masterDegree'=> $foundMasterDegree,
-			'doctorate' => $foundDoctorate
+			'courseName' => $courseName
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/enroll_student.php', $courseData);
@@ -77,79 +51,10 @@ class Course extends CI_Controller {
 		
 		$this->load->model('course_model');
 
-		define('ACADEMIC_PROGRAM', 'academic_program');
-		define('PROFESSIONAL_PROGRAM', 'professional_program');
-		define('GRADUATION', 'graduation');
-		define('EAD', 'ead');
-		define('MASTER_DEGREE', 'master_degree');
-		define('DOCTORATE', 'doctorate');
-
 		$courseId = $this->input->post('courseId');
-		$courseType = $this->input->post('courseType');
 		$userToEnroll = $this->input->post('user_to_enroll');
-
-		switch($courseType){
-
-			case ACADEMIC_PROGRAM:
-			case PROFESSIONAL_PROGRAM:
-					
-				$academicProgramType = $this->input->post('program_dropdown');
-
-				switch($academicProgramType){
-					case MASTER_DEGREE:
-						$masterDegree = new MasterDegree();
-						$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
-						$masterDegreeId = $foundMasterDegree['id_master_degree'];
-
-						// $enrollment = array(
-						// 	'id_course' => $courseId,
-						// 	'id_user' => $userToEnroll,
-						// 	'id_master_degree' => $masterDegreeId,
-						// 	'enroll_date' => SYSDATE()
-						// );
-
-						$enrollment = "INSERT INTO course_student (id_course, id_user, id_master_degree, enroll_date) VALUES ({$courseId}, {$userToEnroll}, {$masterDegreeId}, NOW())";
-
-						break;
-					
-					case DOCTORATE:
-						$doctorate = new Doctorate();
-						$foundDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
-
-						$doctorateId = $foundDoctorate['id_doctorate'];
-
-						// $enrollment = array(
-						// 	'id_course' => $courseId,
-						// 	'id_user' => $userToEnroll,
-						// 	'id_doctorate' => $doctorateId,
-						// 	'enroll_date' => SYSDATE()
-						// );
-
-						$enrollment = "INSERT INTO course_student (id_course, id_user, id_doctorate, enroll_date) VALUES ({$courseId}, {$userToEnroll}, {$doctorateId}, NOW())";
-
-						break;
-					
-					default:
-						break;
-				}
-
-				break;
-
-			case GRADUATION:
-			case EAD:
-				// $enrollment = array(
-				// 	'id_course' => $courseId,
-				// 	'id_user' => $userToEnroll,
-				// 	'enroll_date' => SYSDATE()
-				// );
-				
-				$enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date) VALUES ({$courseId}, {$userToEnroll}, NOW())";
-
-				break;
-
-			default:
-				break;
-		}
+		
+		$enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date) VALUES ({$courseId}, {$userToEnroll}, NOW())";
 
 		$this->course_model->enrollStudentIntoCourse($enrollment);
 		$this->addStudentGroupToNewStudent($userToEnroll);
