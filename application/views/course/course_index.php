@@ -19,7 +19,7 @@
 				<td class="text-center"><?= $course['course_name'] ?></td>
 
 				<td>
-					<?= anchor("curso/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
+					<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
 
 					<?= form_open('course/deleteCourse') ?>
 						<?= form_hidden('id_course', $course['id_course']) ?>

@@ -5,8 +5,7 @@ $courseName = array(
 		"type" => "text",
 		"class" => "form-campo",
 		"class" => "form-control",
-		"maxlength" => "50",
-		"value" => set_value("nome", ""),
+		"maxlength" => "50"
 );
 
 $courseDuration = array(

@@ -46,7 +46,6 @@ $route['logout'] = 'login/logout';
 
 $route['cadastro'] = 'usuario/formulario';
 $route['configuracoes'] = 'settings';
-$route['curso/(:num)'] = 'course/formToEditCourse/$1';
 $route['cursos'] = 'course/index';
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';

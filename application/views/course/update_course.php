@@ -1,64 +1,148 @@
-<h2 class="principal">Cursos</h2>
-<input id="site_url" name="site_url" type="hidden" value="<?=$url?>">
-<input id="current_course" type="hidden" value="<?=$course['id_course']?>">
 
 <?php
-$hidden = array(
-	'id_course' => $course['id_course'], 
-	'id_secretary' => $secretary_registered['id_secretary'], 
-	'original_course_type' => $course['course_type']
-);
-
-$course_name_array_to_form = array(
+$courseName = array(
 		"name" => "courseName",
 		"id" => "courseName",
 		"type" => "text",
 		"class" => "form-campo",
+		"class" => "form-control",
 		"maxlength" => "50",
-		"value" => set_value("nome", $course['course_name']),
-		"style" => "width: 40%;"
+		"value" => $course['course_name']
 );
 
-$submit_button_array_to_form = array(
-		"class" => "btn btn-primary",
-		"content" => "Alterar",
-		"type" => "submit"
+$courseDuration = array(
+	'2' => '2 anos',
+	'4' => '4 anos'
+);
+
+$totalCredits = array(
+	'name' => 'course_total_credits',
+	'id' => 'course_total_credits',
+	'maxlength' => '10',
+	"class" => "form-control", 
+	"value" => $course['total_credits']
+);
+
+$courseHours = array(
+	'name' => 'course_hours',
+	'id' => 'course_hours',
+	'maxlength' => '10',
+	"class" => "form-control",
+	"value" => $course['workload']
+);
+
+$courseClass = array(
+	'name' => 'course_class',
+	'id' => 'course_class',
+	'placeholder' => 'Informe o semestre de início.',
+	'maxlength' => '6',
+	"class" => "form-control",
+	"value" => $course['start_class']
+);
+
+$description = array(
+	'name' => 'course_description',
+	'id' => 'course_description',
+	'placeholder' => 'Informe a descrição do curso.',
+	'rows' => '500',
+	"class" => "form-control",
+	'style' => 'height: 100px;',
+	"value" => $course['description']
+);
+
+$submitBtn = array(
+	"class" => "btn bg-olive btn-block",
+	"type" => "sumbit",
+	"content" => "Salvar"
 );
 ?>
 
-<div class="row">
-	<div class="col-lg-12">
-		<?= form_open("course/updateCourse", '', $hidden) ?>
+<div class="form-box" id="login-box">
+	<div class="header">Editar Curso</div>
+	<?= form_open("course/updateCourse") ?>
+
+	<?php 
+
+	echo form_hidden('id_course', $course['id_course']);
+	echo form_hidden('id_secretary', $secretary_registered['id_secretary']);
+
+	?>
+
+		<div class="body bg-gray">
+			<div class="form-group">	
+				<?= form_label("Nome do Curso", "courseName") ?>
+				<?= form_input($courseName) ?>
+				<?= form_error("courseName") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Tipo de Curso", "courseType") ?>
+				<?= form_dropdown("courseType", $form_course_types, $original_course_type, "id='courseType'") ?>
+				<?= form_error("courseType") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Tipo de Secretaria", "secreteary_type") ?>
+				<?= form_dropdown("secretary_type", $form_groups, $secretary_registered['id_secretary']) ?>
+				<?= form_error("secretary_type") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Escolher secretário", "user_secretary") ?>
+				<?= form_dropdown("user_secretary", $form_user_secretary) ?>
+				<?= form_error("user_secretary") ?>
+			</div>
+
+			<div class="form-group">
+				<?php 
+				// Course duration field
+				echo form_label('Duração do curso ', 'course_duration');
+				echo form_dropdown('course_duration', $courseDuration, $course['duration'], 'id=course_duration');
+				?>
+			</div>
+
+			<div class="form-group">
+				<?php
+				// Course total credits field
+				echo form_label('Créditos totais', 'course_total_credits');
+				echo form_input($totalCredits);
+				?>
+			</div>
+
+			<div class="form-group">
+				<?php
+				// Course hours field
+				echo form_label('Carga-horária total', 'course_hours');
+				echo form_input($courseHours);
+				?>
+			</div>
+
+			<div class="form-group">
+				<?php
+				// Course class field
+				echo form_label('Turma', 'course_class');
+				echo form_input($courseClass);
+				?>
+			</div>
 			
-			<?= form_label("Nome do Curso", "courseName") ?>
-			<?= form_input($course_name_array_to_form) ?>
-			<?= form_error("courseName") ?>
+			<div class="form-group">
+				<?php
+				// Course description field
+				echo form_label('Descrição ', 'course_description');
+				echo form_textarea($description);
+				?>
+			</div>
+		</div>
 
-			<br><br>
-			<h3><span class="label label-primary">Secretaria</span></h3>
-			<br>
-
-			<?= form_label("Tipo de Secretaria", "secreteary_type") ?>
-			<?= form_dropdown("secretary_type", $form_groups, $secretary_registered['id_group']) ?>
-			<?= form_error("secretary_type") ?>
-
-			<br><br>
-
-			<?= form_label("Escolher secretário", "user_secretary") ?>
-			<?= form_dropdown("user_secretary", $form_user_secretary, $secretary_registered['id_user'], "id='user_secretary'") ?>
-			<?= form_error("user_secretary") ?>
-
-			<br><br>
-			<h3><span class="label label-primary">Tipo de Curso</span></h3>
-			<br>
-
-			<?= form_label("Tipo de Curso", "courseType") ?>
-			<?= form_dropdown("courseType", $form_course_type, $course['course_type_id'], "id='courseType'") ?>
-			<?= form_error("courseType") ?>
-
-			<br><br><br>
-
-			<?= form_button($submit_button_array_to_form) ?>
-		<?= form_close() ?>
-	</div>
+		<div class="footer">
+			<div class="row">
+				<div class="col-xs-6">
+					<?= form_button($submitBtn) ?>
+				</div>
+				<div class="col-xs-6">
+					<?= anchor('cursos', 'Voltar', "class='btn bg-olive btn-block'") ?>
+				</div>
+			</div>
+		</div>
+	<?= form_close() ?>
 </div>
