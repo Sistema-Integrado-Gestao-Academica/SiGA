@@ -542,10 +542,15 @@ class Course extends CI_Controller {
 
 		$courseDataIsOk = $this->validatesNewCourseData();
 
-		if ($courseDataIsOk) {
+		if($courseDataIsOk){
 
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
+			$courseDuration = $this->input->post('course_duration');
+			$totalCredits = $this->input->post('course_total_credits');
+			$courseHours = $this->input->post('course_hours');
+			$courseClass = $this->input->post('course_class');
+			$courseDescription = $this->input->post('course_description');
 
 			$secretaryType = $this->input->post('secretary_type');
 			$userSecretary = $this->input->post('user_secretary');
@@ -558,85 +563,30 @@ class Course extends CI_Controller {
 
 			$course = array(
 				'course_name' => $courseName,
-				'course_type_id' => $courseType
+				'course_type_id' => $courseType,
+				'duration' => $courseDuration,
+				'total_credits' => $totalCredits,
+				'workload' => $courseHours,
+				'start_class' => $courseClass,
+				'description' => $courseDescription
 			);
 
 			$this->load->model('course_model');
 
-			if ($this->course_model->saveCourse($course) &&
-			    $this->course_model->saveSecretary($secretaryToRegister, $course['course_name'])) {
+			$courseWasSaved = $this->course_model->saveCourse($course);
+			$secretaryWasSaved = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
+
+			$wasSaved = $courseWasSaved && $secretaryWasSaved;
+
+			if($wasSaved){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
-			} else {
+			}else{
 				$insertStatus = "danger";
 				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
 
-
-			// switch ($courseType){
-			// 	case GRADUATION:
-			// 		$courseToRegister = array(
-			// 			'course_name' => $courseName,
-			// 			'course_type' => $courseType
-			// 		);
-
-			// 		$graduation = new Graduation();
-			// 		$insertionWasMade = $graduation->saveGraduationCourse($courseToRegister,$secretaryToRegister);
-					
-			// 		break;
-
-			// 	case POST_GRADUATION:
-
-			// 		$post_graduation_type = $this->input->post('post_graduation_type');
-			// 		$program_name = $this->input->post('program_name');
-			// 		$post_graduation_duration = $this->input->post('course_duration');
-			// 		$post_graduation_total_credits = $this->input->post('course_total_credits');
-			// 		$post_graduation_hours = $this->input->post('course_hours');
-			// 		$post_graduation_class = $this->input->post('course_class');
-			// 		$post_graduation_description = $this->input->post('course_description');
-
-			// 		$commonAttr = array(
-			// 			'course_name' => $program_name,
-			// 			'course_type' => $post_graduation_type
-			// 		);
-
-			// 		$courseToRegister = array(
-			// 			'master_degree_name' => $courseName,
-			// 			'duration' => $post_graduation_duration,
-			// 			'total_credits' => $post_graduation_total_credits,
-			// 			'workload' =>$post_graduation_hours,
-			// 			'start_class' => $post_graduation_class,
-			// 			'description' => $post_graduation_description
-			// 		);
-
-			// 		$post_graduation = new PostGraduation();
-			// 		$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttr, $courseToRegister, $secretaryToRegister);
-
-			// 		break;
-
-			// 	case EAD:
-			// 		$courseToRegister = array(
-			// 			'course_name' => $courseName,
-			// 			'course_type' => $courseType
-			// 		);
-					
-			// 		$ead = new Ead();
-			// 		$insertionWasMade = $ead->saveEadCourse($courseToRegister, $secretaryToRegister);
-					
-			// 		break;
-
-			// 	default:
-
-			// 		break;
-			// }
-
-			// if($insertionWasMade){
-			// }else{
-			// 	$insertStatus = "danger";
-			// 	$insertMessage = "Curso \"{$courseName}\" já existe.";
-			// }
-
-		} else {
+		}else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
 		}
@@ -653,11 +603,11 @@ class Course extends CI_Controller {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		// $this->form_validation->set_rules("course_duration", "Course duration", "required");
-		// $this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
-		// $this->form_validation->set_rules("course_hours", "Course hours", "required");
-		// $this->form_validation->set_rules("course_class", "Course class", "required");
-		// $this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
 		$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
 		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
@@ -1087,7 +1037,7 @@ class Course extends CI_Controller {
 
 		$this->load->model('course_model');
 		
-		$course = $this->course_model->getCourse($courseId);
+		$course = $this->course_model->getCourse(array('id_course' => $courseId));
 
 		return $course;
 	}

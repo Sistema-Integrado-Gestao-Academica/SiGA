@@ -114,8 +114,17 @@ class Course_model extends CI_Model {
 		$insertionStatus = FALSE;
 
 		if($courseNameAlreadyExists === FALSE){
+			
 			$this->db->insert("course", $courseToSave);
-			$insertionStatus = TRUE;
+			
+			$foundCourse = $this->getCourse($courseToSave);
+
+			if($foundCourse !== FALSE){
+				$insertionStatus = TRUE;
+			}else{
+				$insertionStatus = FALSE;
+			}
+
 		}else{
 			$insertionStatus = FALSE;
 		}
@@ -194,11 +203,9 @@ class Course_model extends CI_Model {
 		return $courseAsked;
 	}
 
-	public function getCourse($courseId){
+	public function getCourse($courseAttributes){
 
-		$this->db->where('id_course',$courseId);
-		$this->db->from('course');
-		$course = $this->db->get()->row_array();
+		$course = $this->db->get_where('course', $courseAttributes)->row_array();
 		
 		if(sizeof($course) > 0){
 			// Nothing to do

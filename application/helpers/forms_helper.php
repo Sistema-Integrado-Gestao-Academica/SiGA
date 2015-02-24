@@ -203,7 +203,7 @@ function commonAttrForPostGraduationCourses(){
 		'name' => 'course_hours',
 		'id' => 'course_hours',
 		'maxlength' => '10',
-		"class" => "form-control",
+		"class" => "form-control"
 	);
 
 	$course_class = array(
@@ -211,7 +211,7 @@ function commonAttrForPostGraduationCourses(){
 		'id' => 'course_class',
 		'placeholder' => 'Informe o semestre de início.',
 		'maxlength' => '6',
-		"class" => "form-control",
+		"class" => "form-control"
 	);
 
 	$description = array(
@@ -220,7 +220,7 @@ function commonAttrForPostGraduationCourses(){
 		'placeholder' => 'Informe a descrição do curso.',
 		'rows' => '500',
 		"class" => "form-control",
-		'style' => 'height: 100px;',
+		'style' => 'height: 100px;'
 	);
 ?>
 	<div class="form-group">
