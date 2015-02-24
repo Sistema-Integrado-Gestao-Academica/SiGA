@@ -36,7 +36,6 @@ class Course extends CI_Controller {
 		$course = $this->course_model->getCourseById($courseId);
 
 		$courseName = $course->course_name;
-		$courseType = $course->course_type;
 
 		switch($courseType){
 			case "academic_program":
@@ -897,6 +896,15 @@ class Course extends CI_Controller {
 		return $deletedCourse;
 	}
 	
+	public function getCourseTypeByCourseId($courseId){
+
+		$this->load->model('course_model');
+
+		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
+
+		return $courseType;
+	}
+
 	/**
 	 * Function to get the list of all registered courses
 	 * @return array $registeredCourses

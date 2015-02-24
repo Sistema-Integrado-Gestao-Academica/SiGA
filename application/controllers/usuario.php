@@ -170,11 +170,9 @@ class Usuario extends CI_Controller {
 	public function secretary_enrollStudent(){
 
 		$courses = $this->loadCourses();
-		
+
 		$courseData = array(
-			'courses' => $courses['courses'],
-			'masterDegrees' => $courses['masterDegrees'],
-			'doctorates' => $courses['doctorates']
+			'courses' => $courses
 		);
 
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
@@ -256,75 +254,34 @@ class Usuario extends CI_Controller {
 
 	private function loadCourses(){
 		
-		define("ACADEMIC_PROGRAM", "academic_program");
-		define("PROFESSIONAL_PROGRAM", "professional_program");
-
 		$logged_user_data = $this->session->userdata("current_user");
 		$currentUser = $logged_user_data['user']['id'];
 
-		$this->load->model('course_model');
-		$allCourses = $this->course_model->getAllCourses();
+		$course = new Course();
+		$allCourses = $course->listAllCourses();
+		
+		if($allCourses !== FALSE){
 
-		$masterDegrees = array();
-		$doctorates = array();
-	
-		for($i = 0; $i < sizeof($allCourses); $i++){
+			$courses = array();
+			$i = 0;
+			foreach($allCourses as $course){
 
-			$currentCourse = $allCourses[$i];
-			$currentCourseId = $currentCourse['id_course'];
+				$userHasSecretaryForThisCourse = $this->checkIfUserHasSecretaryOfThisCourse($course['id_course'], $currentUser);
 
-			$userHasSecretaryForThisCourse = $this->checkIfUserHasSecretaryOfThisCourse($currentCourseId, $currentUser);
-			
-			if($userHasSecretaryForThisCourse){
-
-				$currentCourseType = $currentCourse['course_type'];
-
-				switch($currentCourseType){
-					case ACADEMIC_PROGRAM:
-
-						$masterDegree = new MasterDegree();
-						$registeredMasterDegree = $masterDegree->getMasterDegreeByCourseId($currentCourseId);
-
-						$doctorate = new Doctorate();
-						$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($currentCourseId);
-
-						if($registeredMasterDegree !== FALSE){
-							$masterDegrees[$currentCourseId] = $registeredMasterDegree;
-						}
-
-						if($registeredDoctorate !== FALSE){
-							$doctorates[$currentCourseId] = $registeredDoctorate;
-						}
-
-						break;
-
-					case PROFESSIONAL_PROGRAM:
-						
-						$masterDegree = new MasterDegree();
-						$registeredMasterDegree = $masterDegree->getMasterDegreeByCourseId($currentCourseId);
-
-						if($registeredMasterDegree !== FALSE){
-							$masterDegrees[$currentCourseId] = $registeredMasterDegree;
-						}
-
-						break;
-
-					default:
-
-						break;
+				if($userHasSecretaryForThisCourse){
+					$courses[$i] = $course;
+					$i++;
 				}
-			}else{
-
-				// In this case this course does not belong to the current user secretary
-				unset($allCourses[$i]);
 			}
-		}
 
-		$courses = array(
-			'courses' => $allCourses,
-			'masterDegrees' =>$masterDegrees,
-			'doctorates' => $doctorates
-		);
+			if(!sizeof($courses) > 0){
+				$courses = FALSE;
+			}
+
+		}else{
+
+			$courses = FALSE;
+		}
 
 		return $courses;
 	}
