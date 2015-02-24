@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/controllers/course.php");
+
 class Program_model extends CI_Model {
 
 	public function getAllPrograms(){
@@ -13,6 +15,66 @@ class Program_model extends CI_Model {
 		}
 
 		return $allPrograms;
+	}
+
+	public function addCourseToProgram($courseId, $programId){
+
+		$course = new Course;
+
+		$programExists = $this->checkIfProgramExists($programId);
+		$courseExists = $course->checkIfCourseExists($courseId);
+
+		$dataIsOk = $programExists && $courseExists;
+
+		if($dataIsOk){
+
+			$programCourse = array(
+				'id_program' => $programId,
+				'id_course' => $courseId
+			);
+
+			$this->db->insert('program_course', $programCourse);
+
+			$foundProgramCourse = $this->getProgramCourse($programId, $courseId);
+
+			if($foundProgramCourse !== FALSE){
+				$wasAdded = TRUE;	
+			}else{
+				$wasAdded = FALSE;
+			}
+
+		}else{
+			$wasAdded = FALSE;
+		}
+
+		return $wasAdded;
+	}
+
+	public function checkIfCourseIsOnProgram($programId, $courseId){
+
+		$programCourse = $this->getProgramCourse($programId, $courseId);
+
+		if($programCourse !== FALSE){
+			$isOnProgram = TRUE;
+		}else{
+			$isOnProgram = FALSE;
+		}
+
+		return $isOnProgram;
+	}
+
+	private function getProgramCourse($programId, $courseId){
+		
+		$searchResult = $this->db->get_where('program_course', array('id_program' => $programId, 'id_course' => $courseId));
+		$foundProgramCourse = $searchResult->row_array();
+
+		if(sizeof($foundProgramCourse) > 0){
+			// Nothing to do
+		}else{
+			$foundProgramCourse = FALSE;
+		}
+
+		return$foundProgramCourse;
 	}
 
 	public function deleteProgram($programId){

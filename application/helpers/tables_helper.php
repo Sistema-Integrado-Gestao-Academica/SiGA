@@ -1,6 +1,7 @@
 <?php
 
 require_once(APPPATH."/controllers/course.php");
+require_once(APPPATH."/controllers/program.php");
 require_once(APPPATH."/controllers/offer.php");
 require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
@@ -176,6 +177,59 @@ function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
 	echo "</table>";
 echo "</div>";
 
+}
+
+function displayRegisteredCoursesToProgram($programId, $courses){
+
+	$program = new Program();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código do curso</th>";
+			        echo "<th class=\"text-center\">Curso</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($courses !== FALSE){
+
+				    foreach($courses as $course){
+				    	
+				    	$courseAlreadyExistsOnProgram = $program->checkIfCourseIsOnProgram($programId, $course['id_course']);
+				    	
+				    	echo "<tr>";
+
+				    		echo "<td>";
+				    			echo $course['id_course'];
+				    		echo "</td>";
+
+			    			echo "<td>";
+			    				echo $course['course_name'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    				if($courseAlreadyExistsOnProgram){
+		    						echo anchor("program/removeCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
+			    				}else{
+		    						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
+			    				}
+			    			echo "</td>";
+
+				    	echo "</tr>";
+				    }
+			    }else{
+					echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhum curso cadastrado.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
 }
 
 function displayRegisteredPrograms($programs){

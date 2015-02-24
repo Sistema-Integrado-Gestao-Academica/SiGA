@@ -84,3 +84,10 @@ $submitBtn = array(
 		</div>
 	<?= form_close() ?>
 </div>
+
+<br>
+<br>
+
+<h3> Adicionar cursos ao programa </h3>
+
+<?php displayRegisteredCoursesToProgram($programData['id_program'], $courses)?>

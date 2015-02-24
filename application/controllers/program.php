@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('usuario.php');
+require_once('course.php');
 
 class Program extends CI_Controller {
 	
@@ -11,6 +12,33 @@ class Program extends CI_Controller {
 		$programs = $this->program_model->getAllPrograms();
 
 		return $programs;
+	}
+
+	public function addCourseToProgram($courseId, $programId){
+
+		$this->load->model('program_model');
+
+		$wasAdded = $this->program_model->addCourseToProgram($courseId, $programId);
+
+		if($wasAdded){
+			$insertStatus = "success";
+			$insertMessage = "Curso adicionado com sucesso ao programa.";
+		}else{
+			$insertStatus = "danger";
+			$insertMessage = "Não foi possível adicionar o curso informado.";
+		}
+
+		$this->session->set_flashdata($insertStatus, $insertMessage);
+		redirect("program/editProgram/{$programId}");
+	}
+
+	public function checkIfCourseIsOnProgram($programId, $courseId){
+
+		$this->load->model('program_model');
+
+		$courseIsOnProgram = $this->program_model->checkIfCourseIsOnProgram($programId, $courseId);
+
+		return $courseIsOnProgram;
 	}
 
 	public function editProgram($programId){
@@ -29,9 +57,14 @@ class Program extends CI_Controller {
 			$usersForCoordinator[$user['id']] = $user['name'];
 		}
 
+		$course = new Course();
+
+		$courses = $course->listAllCourses();
+
 		$data = array(
 			'programData' => $program,
-			'users' => $usersForCoordinator
+			'users' => $usersForCoordinator,
+			'courses' => $courses
 		);
 
 		loadTemplateSafelyByPermission('cursos', "program/edit_program", $data);
