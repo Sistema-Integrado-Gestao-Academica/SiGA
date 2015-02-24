@@ -211,7 +211,7 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 
 			    			echo "<td>";
 			    				if($courseAlreadyExistsOnProgram){
-		    						echo anchor("program/removeCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
+		    						echo anchor("program/removeCourseFromProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
 			    				}else{
 		    						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
 			    				}

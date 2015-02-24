@@ -50,6 +50,39 @@ class Program_model extends CI_Model {
 		return $wasAdded;
 	}
 
+	public function removeCourseFromProgram($courseId, $programId){
+
+		$course = new Course;
+
+		$programExists = $this->checkIfProgramExists($programId);
+		$courseExists = $course->checkIfCourseExists($courseId);
+
+		$dataIsOk = $programExists && $courseExists;
+
+		if($dataIsOk){
+
+			$programCourse = array(
+				'id_program' => $programId,
+				'id_course' => $courseId
+			);
+
+			$this->db->delete('program_course', $programCourse);
+
+			$foundProgramCourse = $this->getProgramCourse($programId, $courseId);
+
+			if($foundProgramCourse !== FALSE){
+				$wasRemoved = FALSE;	
+			}else{
+				$wasRemoved = TRUE;
+			}
+
+		}else{
+			$wasRemoved = FALSE;
+		}
+
+		return $wasRemoved;
+	}
+
 	public function checkIfCourseIsOnProgram($programId, $courseId){
 
 		$programCourse = $this->getProgramCourse($programId, $courseId);

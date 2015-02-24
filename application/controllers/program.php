@@ -32,6 +32,24 @@ class Program extends CI_Controller {
 		redirect("program/editProgram/{$programId}");
 	}
 
+	public function removeCourseFromProgram($courseId, $programId){
+
+		$this->load->model('program_model');
+
+		$wasRemoved = $this->program_model->removeCourseFromProgram($courseId, $programId);
+
+		if($wasRemoved){
+			$removeStatus = "success";
+			$removeMessage = "Curso removido com sucesso do programa.";
+		}else{
+			$removeStatus = "danger";
+			$removeMessage = "Não foi possível adicionar o curso informado.";
+		}
+
+		$this->session->set_flashdata($removeStatus, $removeMessage);
+		redirect("program/editProgram/{$programId}");
+	}
+
 	public function checkIfCourseIsOnProgram($programId, $courseId){
 
 		$this->load->model('program_model');
