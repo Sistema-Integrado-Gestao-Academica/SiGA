@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('usuario.php');
+
 class Program extends CI_Controller {
 	
 	public function getAllPrograms(){
@@ -13,11 +15,20 @@ class Program extends CI_Controller {
 
 	public function editProgram($programId){
 
+		define("COORDINATOR_ID", 9);
+
 		$this->load->model('program_model');
 
 		$program = $this->program_model->getProgramById($programId);
 
-		$usersForCoordinator = array();
+		$user = new Usuario();
+
+		$users = $user->getUsersOfGroup(COORDINATOR_ID);
+
+		foreach($users as $user){
+			$usersForCoordinator[$user['id']] = $user['name'];
+		}
+
 		$data = array(
 			'programData' => $program,
 			'users' => $usersForCoordinator
@@ -76,7 +87,15 @@ class Program extends CI_Controller {
 
 	public function registerNewProgram(){
 
-		$usersForCoordinator = array();
+		define("COORDINATOR_ID", 9);
+
+		$user = new Usuario();
+
+		$users = $user->getUsersOfGroup(COORDINATOR_ID);
+		
+		foreach($users as $user){
+			$usersForCoordinator[$user['id']] = $user['name'];
+		}
 
 		$data = array(
 			'users' => $usersForCoordinator

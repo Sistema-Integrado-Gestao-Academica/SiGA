@@ -60,7 +60,7 @@ $submitBtn = array(
 
 			<div class="form-group">	
 				<?= form_label("Coordenador", "program_coordinator") ?>
-				<?= form_dropdown("program_coordinator", $users) ?>
+				<?= form_dropdown("program_coordinator", $users, $programData['coordinator']) ?>
 				<?= form_error("program_coordinator") ?>
 			</div>
 

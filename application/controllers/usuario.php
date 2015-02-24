@@ -554,6 +554,15 @@ class Usuario extends CI_Controller {
 		return $foundUser;
 	}
 
+	public function getUsersOfGroup($idGroup){
+
+		$this->load->model('usuarios_model');
+
+		$groups = $this->usuarios_model->getUsersOfGroup($idGroup);
+
+		return $groups;
+	}
+
 	public function getUserById($userId){
 
 		$this->load->model('usuarios_model');
