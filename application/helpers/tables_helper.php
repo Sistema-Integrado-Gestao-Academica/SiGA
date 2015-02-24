@@ -198,8 +198,13 @@ function displayRegisteredPrograms($programs){
 			    			echo "</td>";
 
 			    			echo "<td>";
-			    				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%'");
-			    				echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger'");
+			    				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
+		             				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		             				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
+			    				
+			    				echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
+		             				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		             				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
 			    			echo "</td>";
 
 			    		echo "</tr>";

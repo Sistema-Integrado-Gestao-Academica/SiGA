@@ -17,6 +17,18 @@ $(document).ready(function(){
 		$("#approve_offer_list_btn").popover('hide');
 	});
 
+	$("#remove_program_btn").hover(function(){
+		$("#remove_program_btn").popover('show');
+	},function(){
+		$("#remove_program_btn").popover('hide');
+	});
+
+	$("#edit_program_btn").hover(function(){
+		$("#edit_program_btn").popover('show');
+	},function(){
+		$("#edit_program_btn").popover('hide');
+	});
+
 });
 
 // Student functions
