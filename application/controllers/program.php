@@ -83,6 +83,20 @@ class Program extends CI_Controller {
 
 	public function removeProgram($programId){
 
+		$this->load->model('program_model');
+
+		$wasDeleted = $this->program_model->deleteProgram($programId);
+
+		if($wasDeleted){
+			$deleteStatus = "success";
+			$deleteMessage = "Programa apagado com sucesso.";
+		}else{
+			$deleteStatus = "danger";
+			$deleteMessage = "Não foi possível deletar o programa informado. Tente novamente.";
+		}
+
+		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		redirect('cursos');
 	}
 
 	public function registerNewProgram(){

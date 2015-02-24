@@ -15,6 +15,45 @@ class Program_model extends CI_Model {
 		return $allPrograms;
 	}
 
+	public function deleteProgram($programId){
+
+		$programExists = $this->checkIfProgramExists($programId);
+
+		if($programExists){
+
+			$this->dissociateCoursesOfProgram($programId);
+
+			$this->db->delete('program', array('id_program' => $programId));
+
+			$foundProgram = $this->getProgram(array('id_program' => $programId));
+
+			if($foundProgram !== FALSE){
+				$wasDeleted = FALSE;
+			}else{
+				$wasDeleted = TRUE;
+			}
+
+		}else{
+			$wasDeleted = FALSE;
+		}
+
+		return $wasDeleted;
+	}
+
+	private function dissociateCoursesOfProgram($programId){
+
+		$this->db->delete('program_course', array('id_program' => $programId));
+	}
+
+	public function checkIfProgramExists($programId){
+
+		$program = $this->getProgram(array('id_program' => $programId));
+
+		$programExists = $program !== FALSE;
+
+		return $programExists;
+	}
+
 	public function saveProgram($program){
 
 		$wasSaved = $this->insertProgram($program);
