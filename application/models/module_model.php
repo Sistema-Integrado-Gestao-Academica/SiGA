@@ -114,8 +114,8 @@ class Module_model extends CI_Model {
 			
 		}
 		
-		$academicGroupName = $newGroupName."Academic";
-		$financialGroupName = $newGroupName."Financial";
+		$academicGroupName = $newGroupName."Academico";
+		$financialGroupName = $newGroupName."Financeiro";
 		
 		$groupNames = array('academic'  => $academicGroupName,
 							'financial' => $financialGroupName);
