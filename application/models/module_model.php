@@ -72,7 +72,7 @@ class Module_model extends CI_Model {
 	 * @param String $courseName
 	 * @return boolean 
 	 */
-	public function saveNewGroups($courseName){
+	public function saveNewCourseGroups($courseName){
 		$courseName = strtolower($courseName);
 		$separatedName = explode(' ', $courseName);
 		
@@ -175,7 +175,7 @@ class Module_model extends CI_Model {
 		return $savedPermissions;
 	}
 	
-	private function getGroupIdByName($groupsNames){
+	public function getGroupIdByName($groupsNames){
 		$academicGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['academic']))->row_array();
 		$financialGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['financial']))->row_array();
 		
