@@ -3,12 +3,13 @@
 <br>
 <h5><b>Lista de cursos:</b></h5>
 <?php 
-	if (sizeof($courses) > 0){
+
+	if($courses !== FALSE){
 		// On tables helper
-		courseTableToSecretaryPage($courses, $masterDegrees, $doctorates);
+		courseTableToSecretaryPage($courses);
  	} else{
 ?>
 	<div class="callout callout-info">
-		<h4>Nenhum curso cadastrado no momento para sua secretária.</h4>
+		<h4>Nenhum curso cadastrado no momento para sua secretaria.</h4>
 	</div>
 <?php }?>

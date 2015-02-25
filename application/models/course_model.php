@@ -71,14 +71,19 @@ class Course_model extends CI_Model {
 		return $idExists;
 	}
 
-	public function getCourseTypeById($courseId){
-		$this->db->select('course_type');
-		$searchResult = $this->db->get_where('course', array('id_course' => $courseId));
-		$searchResult = $searchResult->row_array();
+	public function getCourseTypeByCourseId($courseId){
+		
+		$courseTypeId = $this->getCourseTypeForThisCourseId($courseId);
 
-		$foundCourseType = $searchResult['course_type'];
+		$courseType = $this->db->get_where('course_type', array('id' => $courseTypeId))->row_array();
 
-		return $foundCourseType;
+		if(sizeof($courseType) > 0){
+			// Nothing to do
+		}else{
+			$courseType = FALSE;
+		}
+
+		return $courseType;
 	}
 
 	/**
@@ -86,12 +91,32 @@ class Course_model extends CI_Model {
 	 * @return An array with the courses. Each position is a tuple of the relation.
 	 */
 	public function getAllCourses(){
+		
 		$this->db->select('*');
 		$this->db->from('course');
 		$this->db->order_by("course_name", "asc"); 
 		$registeredCourses = $this->db->get()->result_array();
 
+		if(sizeof($registeredCourses) > 0){
+			// Nothing to do
+		}else{
+			$registeredCourses = FALSE;
+		}
+
 		return $registeredCourses;
+	}
+
+	public function getAllCourseTypes(){
+		
+		$courseTypes = $this->db->get('course_type')->result_array();
+
+		if(sizeof($courseTypes) > 0){
+			// Nothing to do
+		}else{
+			$courseTypes = FALSE;
+		}
+
+		return $courseTypes;
 	}
 
 	/**
@@ -107,8 +132,17 @@ class Course_model extends CI_Model {
 		$insertionStatus = FALSE;
 
 		if($courseNameAlreadyExists === FALSE){
+			
 			$this->db->insert("course", $courseToSave);
-			$insertionStatus = TRUE;
+			
+			$foundCourse = $this->getCourse($courseToSave);
+
+			if($foundCourse !== FALSE){
+				$insertionStatus = TRUE;
+			}else{
+				$insertionStatus = FALSE;
+			}
+
 		}else{
 			$insertionStatus = FALSE;
 		}
@@ -175,7 +209,15 @@ class Course_model extends CI_Model {
 		$courseWasDeleted = FALSE;
 		if($idExists){
 			$this->db->delete('course', array('id_course' => $id_course));
-			$courseWasDeleted = TRUE;
+			
+			$foundCourse = $this->getCourse(array('id_course' => $id_course));
+
+			if($foundCourse !== FALSE){
+				$courseWasDeleted = FALSE;
+			}else{
+				$courseWasDeleted = TRUE;
+			}
+
 		}else{
 			$courseWasDeleted = FALSE;
 		}
@@ -253,11 +295,9 @@ class Course_model extends CI_Model {
 		return $courseAsked;
 	}
 
-	public function getCourse($courseId){
+	public function getCourse($courseAttributes){
 
-		$this->db->where('id_course',$courseId);
-		$this->db->from('course');
-		$course = $this->db->get()->row_array();
+		$course = $this->db->get_where('course', $courseAttributes)->row_array();
 		
 		if(sizeof($course) > 0){
 			// Nothing to do
@@ -283,26 +323,40 @@ class Course_model extends CI_Model {
 	 * @param array $courseToUpdate - The new course data to replace the old one
 	 * @return void
 	 */
-	public function updateCourse($id_course, $courseToUpdate){
+	public function updateCourse($idCourse, $courseToUpdate){
 
-		$idExists = $this->checkExistingId($id_course);
+		$idExists = $this->checkExistingId($idCourse);
 
 		if($idExists){
 			$newCourseName = $courseToUpdate['course_name'];			
-			$courseNameHasChange = $this->checkIfCourseNameHasChanged($id_course, $newCourseName);
+			$courseNameHasChange = $this->checkIfCourseNameHasChanged($idCourse, $newCourseName);
 			$courseNameAlreadyExists = $this->courseNameAlreadyExists($newCourseName);
 
 			// The course name has to change and do not exists or already exists and do not change
 			$courseNameIsOk = ($courseNameAlreadyExists && !$courseNameHasChange) || (!$courseNameAlreadyExists && $courseNameHasChange);
 
 			if($courseNameIsOk){
-				$this->updateCourseOnDb($id_course, $courseToUpdate);
+				
+				$this->updateCourseOnDb($idCourse, $courseToUpdate);
+
+				$courseToUpdate['id_course'] = $idCourse;
+				$foundCourse = $this->getCourse($courseToUpdate);
+
+				if($foundCourse !== FALSE){
+					$wasUpdated = TRUE;
+				}else{
+					$wasUpdated = FALSE;
+				}
+
 			}else{
-				throw new CourseNameException("O curso '".$newCourseName."' já existe.");
+				$wasUpdated = FALSE;
 			}
 		}else{
-			throw new CourseException("Cannot update this course. The informed ID does not exists.");
+			
+			$wasUpdated = FALSE;
 		}
+
+		return $wasUpdated;
 	}
 	
 	public function getSecretaryByCourseId($id_course){
@@ -323,6 +377,7 @@ class Course_model extends CI_Model {
 		}
 		
 		return $secretary_return;
+
 	}
 
 	public function getSecretaryByUserId($id_user){
@@ -377,7 +432,7 @@ class Course_model extends CI_Model {
 		return $foundSecretary;
 	}
 
-	private function updateSecretary($secretaryId, $newSecretary){
+	public function updateSecretary($secretaryId, $newSecretary){
 		$this->db->where('id_secretary', $secretaryId);
 		$this->db->update('secretary_course', $newSecretary);
 	}

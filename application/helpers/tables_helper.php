@@ -1,181 +1,153 @@
 <?php
 
 require_once(APPPATH."/controllers/course.php");
+require_once(APPPATH."/controllers/program.php");
 require_once(APPPATH."/controllers/offer.php");
 require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
 
-function courseTableToSecretaryPage($courses, $masterDegrees, $doctorates){
+function courseTableToSecretaryPage($courses){
+
+	$courseController = new Course();
+
 	echo "<div class=\"box-body table-responsive no-padding\">";
 	echo "<table class=\"table table-bordered table-hover\">";
 		echo "<tbody>";
 		    echo "<tr>";
-		        echo "<th class=\"text-center\">ID</th>";
+		        echo "<th class=\"text-center\">Código</th>";
 		        echo "<th class=\"text-center\">Curso</th>";
 		        echo "<th class=\"text-center\">Tipo</th>";
 		        echo "<th class=\"text-center\">Ações</th>";
 		    echo "</tr>";
 
 		    	foreach($courses as $courseData){
-		    		$courseType = $courseData['course_type'];
+
 		    		$courseId = $courseData['id_course'];
+		    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
 
-		    		switch($courseType){
-		    			case "academic_program":
+					echo "<tr>";
+			    		echo "<td>";
+			    		echo $courseId;
+			    		echo "</td>";
 
-		    				$thereIsMasterDegree = array_key_exists($courseId, $masterDegrees);
-		    				$thereIsDoctorate = array_key_exists($courseId, $doctorates);
-		    				
-		    				if($thereIsMasterDegree){
+			    		echo "<td>";
+			    		echo $courseData['course_name'];
+			    		echo "</td>";
 
-		    					if($thereIsDoctorate){
+			    		echo "<td>";
+			    		echo $courseType['description'];
+			    		echo "</td>";
 
-		    						echo "<tr>";
-							    		echo "<td align='center' rowspan=\"3\">";
-							    		echo $courseId;
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<i class='fa fa-hand-o-down'></i>	".$courseData['course_name'];
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<span class=\"label label-primary\">Programa Acadêmico</span>";
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-							    		echo "</td>";
-						    		echo "</tr>";
-
-						    		echo "<tr>";
-							    		echo "<td>";
-							    		echo "<i class='fa fa-caret-right'></i>	".$masterDegrees[$courseId]['master_degree_name'];
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<span class=\"label label-success\">Mestrado Acadêmico</span>";
-							    		echo "</td>";
-
-						    		echo "</tr>";
-
-						    		echo "<tr>";
-							    		echo "<td>";
-							    		echo "<i class='fa fa-caret-right'></i>	".$doctorates[$courseId]['doctorate_name'];
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<span class=\"label label-warning\">Doutorado Acadêmico</span>";
-							    		echo "</td>";
-						    		echo "</tr>";
-
-		    					}else{
-
-				    				echo "<tr>";
-							    		echo "<td align='center' rowspan=\"2\">";
-							    		echo $courseId;
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<i class='fa fa-hand-o-down'></i>	".$courseData['course_name'];
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<span class=\"label label-primary\">Programa Acadêmico</span>";
-							    		echo "</td>";
-						    		
-							    		echo "<td>";
-							    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-							    		echo "</td>";
-						    		echo "</tr>";
-
-						    		echo "<tr>";
-							    		echo "<td>";
-							    		echo "<i class='fa fa-caret-right'></i>	".$masterDegrees[$courseId]['master_degree_name'];
-							    		echo "</td>";
-
-							    		echo "<td>";
-							    		echo "<span class=\"label label-success\">Mestrado Acadêmico</span>";
-							    		echo "</td>";
-
-						    		echo "</tr>";
-
-		    					}
-		    				}
-
-		    				break;
-
-		    			case "professional_program":
-		    				$thereIsMasterDegree = array_key_exists($courseId, $masterDegrees);
-		
-							if($thereIsMasterDegree){
-
-			    				echo "<tr>";
-						    		echo "<td align='center' rowspan=\"2\">";
-						    		echo $courseId;
-						    		echo "</td>";
-
-						    		echo "<td>";
-						    		echo "<i class='fa fa-hand-o-down'></i>	".$courseData['course_name'];
-						    		echo "</td>";
-
-						    		echo "<td>";
-						    		echo "<span class=\"label label-primary\">Programa Profissional</span>";
-						    		echo "</td>";
-					    		
-						    		echo "<td>";
-						    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-						    		echo "</td>";
-					    		echo "</tr>";
-
-					    		echo "<tr>";
-						    		echo "<td>";
-						    		echo "<i class='fa fa-caret-right'></i>	".$masterDegrees[$courseId]['master_degree_name'];
-						    		echo "</td>";
-
-						    		echo "<td>";
-						    		echo "<span class=\"label label-success\">Mestrado Profissional</span>";
-						    		echo "</td>";
-
-					    		echo "</tr>";
-							}
-
-		    				break;
-
-		    			default:
-				    		echo "<tr>";
-				    		echo "<td>";
-				    		echo $courseId;
-				    		echo "</td>";
-
-				    		echo "<td>";
-				    		echo $courseData['course_name'];
-				    		echo "</td>";
-
-				    		echo "<td>";
-				    		if($courseType == "graduation"){
-							    echo "<span class=\"label label-primary\">Graduação</span>";
-				    		}else if($courseType == "ead"){
-							   	echo "<span class=\"label label-primary\">EAD</span>";
-				    		}else{
-				    			echo "-";
-				    		}
-				    		echo "</td>";
-
-				    		echo "<td>";
-				    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-				    		echo "</td>";
-				    		
-				    		echo "</tr>";
-		    				break;
-		    		}
+			    		echo "<td>";
+			    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+			    		echo "</td>";
+		    		echo "</tr>";	
 		    	}
 		    
 		echo "</tbody>";
 	echo "</table>";
 echo "</div>";
 
+}
+
+function displayRegisteredCoursesToProgram($programId, $courses){
+
+	$program = new Program();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código do curso</th>";
+			        echo "<th class=\"text-center\">Curso</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($courses !== FALSE){
+
+				    foreach($courses as $course){
+				    	
+				    	$courseAlreadyExistsOnProgram = $program->checkIfCourseIsOnProgram($programId, $course['id_course']);
+				    	
+				    	echo "<tr>";
+
+				    		echo "<td>";
+				    			echo $course['id_course'];
+				    		echo "</td>";
+
+			    			echo "<td>";
+			    				echo $course['course_name'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    				if($courseAlreadyExistsOnProgram){
+		    						echo anchor("program/removeCourseFromProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
+			    				}else{
+		    						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
+			    				}
+			    			echo "</td>";
+
+				    	echo "</tr>";
+				    }
+			    }else{
+					echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhum curso cadastrado.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayRegisteredPrograms($programs){
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\"><h3>Programas cadastrados</h3></th>";
+			        echo "<th class=\"text-center\"><h3>Ações</h3></th>";
+			    echo "</tr>";
+
+			    if($programs !== FALSE){
+
+			    	foreach($programs as $program){
+			    		echo "<tr>";
+
+			    			echo "<td>";
+			    				echo $program['program_name']." - ".$program['acronym'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
+		             				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		             				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
+			    				
+			    				echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
+		             				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		             				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
+			    			echo "</td>";
+
+			    		echo "</tr>";
+			    	}
+
+			    }else{
+			    	echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Não existem programas cadastrados</h4>";
+					    	echo anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'");
+						echo "</div>";
+	    			echo "</td>";	
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";	
 }
 
 function displayCourseSyllabus($syllabus){
@@ -191,41 +163,51 @@ function displayCourseSyllabus($syllabus){
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
-			    foreach($syllabus as $courseName => $syllabus){
-			    	
-			    	$foundCourse = $course->getCourseByName($courseName);
-					$courseId = $foundCourse['id_course'];
+			    if($syllabus !== FALSE){
 
-			    	echo "<tr>";
+				    foreach($syllabus as $courseName => $syllabus){
+				    	
+				    	$foundCourse = $course->getCourseByName($courseName);
+						$courseId = $foundCourse['id_course'];
 
-			    		echo "<td>";
-			    			echo $courseName;
-			    		echo "</td>";
+				    	echo "<tr>";
 
-			    		if($syllabus !== FALSE){
+				    		echo "<td>";
+				    			echo $courseName;
+				    		echo "</td>";
 
-			    			echo "<td>";
-			    				echo $syllabus['id_syllabus'];
-			    			echo "</td>";
+				    		if($syllabus !== FALSE){
 
-			    			echo "<td>";
-			    				echo "<div class=\"callout callout-info\">";
-									echo "<h4>Editar</h4>";		    					
-			    					echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-								    echo "<p> <b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/></p>";
-								echo "</div>";
-			    			echo "</td>";
+				    			echo "<td>";
+				    				echo $syllabus['id_syllabus'];
+				    			echo "</td>";
 
-			    		}else{
-							echo "<td colspan=2>";
-		    					echo "<div class=\"callout callout-info\">";
-									echo "<h4>Nenhum currículo cadastrado para esse curso.</h4>";
-							    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
-								echo "</div>";
-			    			echo "</td>";			    			
-			    		}
+				    			echo "<td>";
+				    				echo "<div class=\"callout callout-info\">";
+										echo "<h4>Editar</h4>";		    					
+				    					echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+									    echo "<p> <b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/></p>";
+									echo "</div>";
+				    			echo "</td>";
 
-			    	echo "</tr>";
+				    		}else{
+								echo "<td colspan=2>";
+			    					echo "<div class=\"callout callout-info\">";
+										echo "<h4>Nenhum currículo cadastrado para esse curso.</h4>";
+								    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+									echo "</div>";
+				    			echo "</td>";
+				    		}
+
+				    	echo "</tr>";
+				    }
+			    }else{
+					echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhum curso cadastrado.</h4>";
+					    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+						echo "</div>";
+	    			echo "</td>";
 			    }
 		
 			echo "</tbody>";
