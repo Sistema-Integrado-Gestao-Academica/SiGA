@@ -485,7 +485,13 @@ class Course extends CI_Controller {
 			//$secretaryWasSaved = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
 
 			//$wasSaved = $courseWasSaved && $secretaryWasSaved;
-			$wasSaved = $courseWasSaved;
+			$this->load->model('module_model');
+			if($courseWasSaved){
+				$groupsWereSaved = $this->module_model->saveNewGroups($courseName);
+			}
+			
+			
+			$wasSaved = $courseWasSaved && $groupsWereSaved;
 			if($wasSaved){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
