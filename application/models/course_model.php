@@ -198,8 +198,8 @@ class Course_model extends CI_Model {
 		
 		$saveSecretary = array_merge($secretary,$courseId);
 		$save = $this->db->insert("secretary_course", $saveSecretary);
-		
-		if($save){
+		$saveUserGroup = $this->db->insert('user_group', $secretary);
+		if($save && $saveUserGroup){
 			$insertionStatus = TRUE;
 		}else{
 			$insertionStatus = FALSE;
