@@ -66,7 +66,124 @@ class Module_model extends CI_Model {
 
 		return $foundGroup;
 	}
-
+	
+	/**
+	 * Function to save new secretary groups for one course
+	 * @param String $courseName
+	 * @return boolean 
+	 */
+	public function saveNewGroups($courseName){
+		$courseName = strtolower($courseName);
+		$separatedName = explode(' ', $courseName);
+		
+		if ($separatedName){
+			$groupsNames = $this->prepareGroupName($separatedName);
+		}else {
+			$groupsNames = $this->prepareGroupName($courseName,TRUE);
+		}
+		
+		
+		$savedGroups = $this->saveNewGroupsOnDB($groupsNames);
+		$grantedPremissions = $this->grantGroupsPermissions($groupsNames);
+		
+		$savedGroupsAndPermissions = $savedGroups && $grantedPremissions;
+		
+		return $savedGroupsAndPermissions;
+	}
+	
+	/**
+	 * Function to get a course name and make a new group name by taking first 3 letters of any name
+	 * and concatenate them with 'Academic' and 'Financial' to make new academic and financial groups for the course
+	 * @param mixed $separatedName
+	 * @param boolean $singleName
+	 * @return array:string
+	 */
+	public function prepareGroupName($separatedName,$singleName = FALSE){
+		
+		if($singleName){
+			$letters = str_split($separatedName);
+			$newGroupName = $letters[0].$letters[1].$letters[2];
+		}else{
+			$length = count($separatedName);
+			$newGroupName = '';
+			for ($i=0; $i < $length; $i++){
+				$letters = str_split($separatedName[$i]);
+				$first3Letters[$i] = $letters[0].$letters[1].$letters[2];
+				$newGroupName = $newGroupName . $first3Letters[$i];
+			}
+			
+		}
+		
+		$academicGroupName = $newGroupName."Academic";
+		$financialGroupName = $newGroupName."Financial";
+		
+		$groupNames = array('academic'  => $academicGroupName,
+							'financial' => $financialGroupName);
+		
+		return $groupNames;
+	}
+	
+	public function saveNewGroupsOnDB($groupsNames){
+		$academic = array('group_name' => $groupsNames['academic']);
+		$financial = array('group_name' => $groupsNames['financial']);
+		
+		$savedAcademic = $this->db->insert('group',$academic);
+		$savedFinancial = $this->db->insert('group',$financial);
+		
+		$savedGroups = $savedAcademic && $savedFinancial;
+		
+		return $savedGroups;
+	}
+	
+	private function grantGroupsPermissions($groupsNames){
+		
+		$idGroups = $this->getGroupIdByName($groupsNames);
+		
+		/**
+		 * Granting permissions to academic secretary
+		 * Academic permissions ids: 2, 3, 4, 5, 6, 9
+		 */
+		$academicPermissions = array(
+				
+				array('id_group'=>$idGroups['academic'], 'id_permission'=>2),
+				array('id_group'=>$idGroups['academic'], 'id_permission'=>3),
+				array('id_group'=>$idGroups['academic'], 'id_permission'=>4),
+				array('id_group'=>$idGroups['academic'], 'id_permission'=>5),
+				array('id_group'=>$idGroups['academic'], 'id_permission'=>6),
+				array('id_group'=>$idGroups['academic'], 'id_permission'=>9)
+				
+		);
+		
+		$savedAcademicPermissions = $this->db->insert_batch('group_permission', $academicPermissions);
+		
+		/**
+		 * Granting permissions to financial secretary
+		 * Academic permissions ids: 2 , 4 , 7  
+		 */
+		$financialPermissions = array(
+			
+				array('id_group'=>$idGroups['financial'], 'id_permission'=>2),
+				array('id_group'=>$idGroups['financial'], 'id_permission'=>4),
+				array('id_group'=>$idGroups['financial'], 'id_permission'=>7)
+				
+		);
+		
+		$savedFinancialPermissions = $this->db->insert_batch('group_permission', $financialPermissions);
+		
+		$savedPermissions = $savedAcademicPermissions && $savedFinancialPermissions;
+		
+		return $savedPermissions;
+	}
+	
+	private function getGroupIdByName($groupsNames){
+		$academicGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['academic']))->row_array();
+		$financialGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['financial']))->row_array();
+		
+		$groupsIds = array('academic'=>$academicGroupId['id_group'], 
+						   'financial'=>$financialGroupId['id_group']);
+		return $groupsIds;
+	}
+	
 	/**
 	  * Search on database for the modules names of an user
 	  * @param $user_id - User id to look for modules names
