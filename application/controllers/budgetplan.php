@@ -10,7 +10,7 @@ class Budgetplan extends CI_Controller {
 		foreach ($budgetplans as $key => $b) {
 			$budgetplans[$key]['status'] = $this->budgetplan_model->getBudgetplanStatus($b['status']);
 			$course = $this->course_model->getCourseById($b['course_id']);
-			$budgetplans[$key]['course'] = $course ? $course->course_name : "Nenhum";
+			$budgetplans[$key]['course'] = $course ? $course['course_name'] : "Nenhum";
 		}
 
 		$status_options = $this->db->get("budgetplan_status")->result_array();
