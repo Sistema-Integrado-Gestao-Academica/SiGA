@@ -297,20 +297,15 @@ class Usuario extends CI_Controller {
 	private function checkIfUserHasSecretaryOfThisCourse($courseId, $userId){
 
 		$course = new Course();
-		$foundSecretary = $course->getCourseSecrecretary($courseId);
-		
-		if($foundSecretary !== FALSE){
-			
-			$secretaryUser = $foundSecretary['id_user'];
+		$foundSecretaries = $course->getCourseSecrecretary($courseId);
+		$userHasSecretary = FALSE;
 
-			if($secretaryUser === $userId){
-				$userHasSecretary = TRUE;
-			}else{
-				$userHasSecretary = FALSE;
+		if ($foundSecretaries !== FALSE) {
+			foreach ($foundSecretaries as $secretary) {
+				if ($secretary['id_user'] === $userId) {
+					$userHasSecretary = TRUE;
+				}
 			}
-
-		}else{
-			$userHasSecretary = FALSE;
 		}
 
 		return $userHasSecretary;
