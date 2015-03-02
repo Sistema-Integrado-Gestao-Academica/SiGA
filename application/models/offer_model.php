@@ -130,7 +130,18 @@ class Offer_model extends CI_Model {
 
 		return $disciplines;
 	}
-
+	
+	public function getOfferByCourseId($courseId){
+		
+		$this->db->select('id_offer');
+		$this->db->from('offer');
+		$this->db->where('course',$courseId);
+		$offer = $this->db->get()->result_array();
+		
+		return $offer;
+		
+	}
+	
 	public function addDisciplineToOffer($idDiscipline, $idOffer){
 
 		$offerExists = $this->checkIfOfferExists($idOffer);
