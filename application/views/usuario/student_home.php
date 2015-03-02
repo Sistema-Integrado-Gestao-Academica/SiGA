@@ -1,32 +1,29 @@
-<br><br><br>
-<div class="col-lg-12 col-xs-6">
-	<div class="small-box bg-green">
-		<div class="inner">
-		    
-		    <font size="6">Perfil Estudante</font>
-		    
-		    <p>
-		        <h4><b>Curso:</b></h4>
-		        <font color="black">
-		        <?php
-		        	foreach ($courses as $course) {
-		        		echo $course['course_name'];
-		        		echo "<br>";
-		        		echo "Data matrícula: ".$course['enroll_date'];
-		        		echo "<br>";
-		        		echo "<br>";
-		        	}
-		        ?>
-		        </font>
-		        <h4><b>Status:</b> <font color="black"> <?php echo $status;?> </font></h4>
-		    </p>
-		</div>
-		<div class="icon">
-		    <i class="fa fa-tags"></i>
-		</div>
-		<a href="#" class="small-box-footer">
-		    Mais informações <i class="fa fa-arrow-circle-right"></i>
-		</a>
-	</div>
-</div>
+
+
+<br>
+<br>
+<h2 align="center">Bem vindo estudante!</h2>
+<br>
+
+<h4>Semestre atual: <?php echo $currentSemester['description'];?></h4>
+
+<p>
+    <h3>Cursos:</h3>
+    <?php
+    if($courses !== FALSE){
+
+    	foreach ($courses as $course) {
+    		echo "<b>".$course['course_name']."</b>";
+    		echo "<br>";
+    		echo "Data matrícula: ".$course['enroll_date'];
+    		echo "<br>";
+    	}
+    }else{
+    	echo "Usuário não matriculado em nenhum curso.";
+    }
+    ?>
+    <h3>Status: <?php echo $status;?></h3>
+</p>
+
+
 

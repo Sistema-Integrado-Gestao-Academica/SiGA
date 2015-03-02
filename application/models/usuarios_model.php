@@ -315,6 +315,12 @@ class Usuarios_model extends CI_Model {
 
 		$foundCourse = $this->db->get()->result_array();
 
+		if(sizeof($foundCourse) > 0){
+			// Nothing to do
+		}else{
+			$foundCourse = FALSE;
+		}
+
 		return $foundCourse;
 	}
 

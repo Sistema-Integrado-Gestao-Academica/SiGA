@@ -150,16 +150,20 @@ class Usuario extends CI_Controller {
 	}
 
 	public function student_index(){
-		$logged_user_data = $this->session->userdata("current_user");
-		$userId = $logged_user_data['user']['id'];
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
 
 		$this->load->model('usuarios_model');
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 		$userCourse = $this->usuarios_model->getUserCourse($userId);
 
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
 		$userData = array(
 			'status' => $userStatus,
-			'courses' => $userCourse
+			'courses' => $userCourse,
+			'currentSemester' => $currentSemester
 		);
 
 		// On auth_helper
