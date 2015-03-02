@@ -5,9 +5,9 @@ class Migration_Adiciona_atributos_a_oferta_de_disciplina extends CI_Migration {
 	public function up() {
 
 		$fields = array(
-			'class' => array('type' => "varchar(3)", 'default' => "A"),
-			'total_vacancies' => array('type' => 'INT'),
-			'current_vacancies' => array('type' => 'INT'),
+			'class' => array('type' => "varchar(3)", 'null' => TRUE),
+			'total_vacancies' => array('type' => 'INT', 'unsigned' => TRUE),
+			'current_vacancies' => array('type' => 'INT', 'unsigned' => TRUE),
 			'main_teacher' => array('type' => 'INT'),
 			'secondary_teacher' => array('type' => 'INT', 'null' => TRUE),
 
@@ -20,12 +20,6 @@ class Migration_Adiciona_atributos_a_oferta_de_disciplina extends CI_Migration {
 		$class_uk = "ALTER TABLE offer_discipline ADD CONSTRAINT CLASS_UK UNIQUE (id_offer, id_discipline, class)";
 		$this->db->query($class_uk);
 
-		$vacancy_ck = "ALTER TABLE offer_discipline ADD CONSTRAINT TOTAL_VACANCIES_CK CHECK (total_vacancies >= 0)";
-		$this->db->query($vacancy_ck);
-
-		$vacancy_ck = "ALTER TABLE offer_discipline ADD CONSTRAINT CURRENT_VACANCIES_CK CHECK (current_vacancies >= 0)";
-		$this->db->query($vacancy_ck);
-
 		$teacher_fk = "ALTER TABLE offer_discipline ADD CONSTRAINT IDMAINTEACHER_OFFERDISCIPLINE_FK FOREIGN KEY (main_teacher) REFERENCES users(id)";
 		$this->db->query($teacher_fk);
 
@@ -35,6 +29,12 @@ class Migration_Adiciona_atributos_a_oferta_de_disciplina extends CI_Migration {
 
 	public function down() {
 		
+		$teacher_fk = "ALTER TABLE offer_discipline DROP FOREIGN KEY IDMAINTEACHER_OFFERDISCIPLINE_FK";
+		$this->db->query($teacher_fk);
+
+		$teacher_fk = "ALTER TABLE offer_discipline DROP FOREIGN KEY IDSECONDTEACHER_OFFERDISCIPLINE_FK";
+		$this->db->query($teacher_fk);
+
 		$fields = array(
 			'class',
 			'total_vacancies',
