@@ -49,6 +49,23 @@ class Offer extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect('usuario/secretary_offerList');
 	}
+	
+	public function displayOfferedDisciplines($courseId){
+		$this->load->model('offer_model');
+		$idOffer = $this->offer_model->getOfferByCourseId($courseId);
+		
+		if($idOffer){
+			$offerSize = sizeof($idOffer);
+			for($i=0; $i<$offerSize; $i++){
+				$disciplines[$i] = $this->getOfferDisciplines($idOffer[$i]['id_offer']);
+			}
+			
+		}else{
+			$disciplines = FALSE;
+		}
+		
+		return $disciplines;
+	}
 
 	public function displayDisciplines($idOffer, $courseId){
 		
