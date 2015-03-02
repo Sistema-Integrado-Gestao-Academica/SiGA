@@ -227,7 +227,7 @@ class Course_model extends CI_Model {
 	
 	public function deleteSecretary($id_course, $id_secretary){
 		$idCourseExists = $this->checkExistingId($id_course);
-		$idSecretaryExists = $this->checkExistingSecretaryId($id_course);
+		$idSecretaryExists = $this->checkExistingSecretaryId($id_secretary);
 		
 		$secretaryWasDeleted = FALSE;
 		if($idCourseExists && $idSecretaryExists){
