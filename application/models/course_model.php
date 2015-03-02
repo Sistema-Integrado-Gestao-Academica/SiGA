@@ -150,9 +150,21 @@ class Course_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
-	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse){
-		define("FINANCIAL_SECRETARY_GROUP", 1);
-		define("ACADEMIC_SECRETARY_GROUP", 2);
+	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse, $courseName){
+		$this->load->model('module_model');
+		$courseName = strtolower($courseName);
+		$separatedName = explode(' ', $courseName);
+		
+		if ($separatedName){
+			$groupsNames = $this->module_model->prepareGroupName($separatedName);
+		}else {
+			$groupsNames = $this->module_model->prepareGroupName($courseName,TRUE);
+		}
+		
+		$groupsIds = $this->module_model->getGroupIdByName($groupsNames);
+		
+		define("FINANCIAL_SECRETARY_GROUP", $groupsIds['financial']);
+		define("ACADEMIC_SECRETARY_GROUP", $groupsIds['academic']);
 		
 		$financialSecretaryToSave = array("id_user"  => $financialSecretaryUserId,
 										  "id_group" => FINANCIAL_SECRETARY_GROUP);
@@ -186,8 +198,8 @@ class Course_model extends CI_Model {
 		
 		$saveSecretary = array_merge($secretary,$courseId);
 		$save = $this->db->insert("secretary_course", $saveSecretary);
-		
-		if($save){
+		$saveUserGroup = $this->db->insert('user_group', $secretary);
+		if($save && $saveUserGroup){
 			$insertionStatus = TRUE;
 		}else{
 			$insertionStatus = FALSE;

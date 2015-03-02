@@ -6,6 +6,7 @@ $user = new Usuario();
 
 $hidden = array(
 	'id_course' => $course['id_course'],
+	'course_name' => $course['course_name']
 );
 
 $courseName = array(

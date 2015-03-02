@@ -485,7 +485,13 @@ class Course extends CI_Controller {
 			//$secretaryWasSaved = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
 
 			//$wasSaved = $courseWasSaved && $secretaryWasSaved;
-			$wasSaved = $courseWasSaved;
+			$this->load->model('module_model');
+			if($courseWasSaved){
+				$groupsWereSaved = $this->module_model->saveNewCourseGroups($courseName);
+			}
+			
+			
+			$wasSaved = $courseWasSaved && $groupsWereSaved;
 			if($wasSaved){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
@@ -510,10 +516,11 @@ class Course extends CI_Controller {
 		$financialSecretary = $this->input->post('financial_secretary');
 		$academicSecretary = $this->input->post('academic_secretary');
 		$idCourse = $this->input->post('id_course');
+		$courseName = $this->input->post('course_name');
 		
 		$this->load->model('course_model');
 		try{
-			$savedSecretaries = $this->course_model->saveCourseSecretaries($financialSecretary, $academicSecretary, $idCourse);
+			$savedSecretaries = $this->course_model->saveCourseSecretaries($financialSecretary, $academicSecretary, $idCourse, $courseName);
 			$saveStatus = "success";
 			$saveMessage = "Secretários salvos com sucesso";
 		}catch(SecretaryException $caughtException){
