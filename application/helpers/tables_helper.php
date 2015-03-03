@@ -51,6 +51,98 @@ echo "</div>";
 
 }
 
+function displayDisciplineClasses($disciplineClasses){
+
+	$user = new Usuario();
+
+   	if($disciplineClasses !== FALSE){
+
+	   	foreach ($disciplineClasses as $class) {
+	   		
+	   		$mainTeacher = $user->getUserById($class['main_teacher']);
+
+	   		echo "<div class='row' align='center'>";
+			echo "<div class='panel panel-primary' style='width:40%;'>";
+				echo "<div class='panel-heading'>";
+		    	echo "<h4>"."Turma - <b>".$class['class']."</b><h4>";
+				echo "</div>";
+
+	   			echo "<div class='panel-body'>";
+			    	
+			    	echo "Vagas totais: <b>".$class['total_vacancies']."</b>";
+			    	echo "<hr>";
+			    	echo "Vagas disponíveis: <b>".$class['current_vacancies']."</b>";
+			    	echo "<hr>";
+			    	if($class['secondary_teacher'] !== NULL){
+						$secondaryTeacher = $user->getUserById($class['secondary_teacher']);
+						$secondaryTeacher = $secondaryTeacher['name'];
+			    		echo "Professores: <b>".$mainTeacher['name']."</b> e <b>".$secondaryTeacher."</b>";
+					}else{
+			    		echo "Professores: <b>".$mainTeacher['name']."</b>";
+					}
+			    	echo "<hr>";
+				echo "</div>";
+		    	
+		    	echo "<div class='panel-footer'>";
+		    	echo anchor("", "Solicitar Matrícula", "class='btn btn-primary'");
+				echo "</div>";
+    			
+			echo "</div>";
+			echo "</div>";
+	   	}
+	}else{
+	
+		echo "<div class=\"callout callout-info\">";
+			echo "<h4>Nenhuma turma cadastrada para oferta.</h4>";
+		echo "</div>";
+	}
+}
+
+function displayOfferListDisciplines($offerListDisciplines, $courseId){
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+		    echo "<tr>";
+		        echo "<th class=\"text-center\">Código</th>";
+		        echo "<th class=\"text-center\">Disciplina</th>";
+		        echo "<th class=\"text-center\">Créditos</th>";
+		    echo "</tr>";
+
+		    if($offerListDisciplines != FALSE){
+
+		    	foreach($offerListDisciplines as $discipline){
+
+					echo "<tr>";
+			    		echo "<td>";
+			    		echo $discipline['discipline_code'];
+			    		echo "</td>";
+
+			    		echo "<td>";
+			    		echo anchor("discipline/displayDisciplineClassesToEnroll/{$courseId}/{$discipline['discipline_code']}", "<b>".$discipline['discipline_name']." - ".$discipline['name_abbreviation']."</b>");
+			    		echo "</td>";
+
+			    		echo "<td>";
+			    		echo $discipline['credits'];
+			    		echo "</td>";
+		    		echo "</tr>";	
+		    	}
+		    }else{
+				echo "<tr>";
+		    	echo "<td colspan=3>";
+					echo "<div class=\"callout callout-info\">";
+						echo "<h4>Nenhuma lista de oferta cadastrada para o semestre atual.</h4>";
+					echo "</div>";
+    			echo "</td>";
+				echo "</tr>";
+		    }
+		    
+		echo "</tbody>";
+	echo "</table>";
+echo "</div>";
+
+}
+
 function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers){
 
 	if($offerDisciplineClasses !== FALSE){

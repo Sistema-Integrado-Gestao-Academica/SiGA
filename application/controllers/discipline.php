@@ -1,6 +1,7 @@
 <?php
 
 require_once('syllabus.php');
+require_once('offer.php');
 
 class Discipline extends CI_Controller {
 	
@@ -9,6 +10,24 @@ class Discipline extends CI_Controller {
 		$this->load->template("discipline/index_discipline");
 	}
 	
+	public function displayDisciplineClassesToEnroll($courseId, $disciplineId){
+
+		$disciplineData = $this->getDisciplineByCode($disciplineId);
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		$offer = new Offer();
+		$classes = $offer->getApprovedOfferListDisciplineClasses($courseId, $currentSemester['id_semester'], $disciplineId);
+
+		$data = array(
+			'disciplineClasses' => $classes,
+			'disciplineData' => $disciplineData
+		);
+
+		loadTemplateSafelyByGroup('estudante', 'discipline/discipline_classes_enroll', $data);
+	}
+
 	/**
 	 * Function to get all disciplines registered in the database
 	 * @return array $registeredDisciplines

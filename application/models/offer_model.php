@@ -278,15 +278,17 @@ class Offer_model extends CI_Model {
 	 * Get the disciplines classes of an offer list of a specific course in a specific semester
 	 * @param $courseId - Id of the course to search for offer lists
 	 * @param $semester - Id of the semester to search for
+	 * @param $disciplineId - Id of the discipline to search for classes
 	 * @return if there is approved offer lists, an Array with the disciplines of the offer list, if does not, return FALSE
 	 */
-	public function getCourseApprovedOfferList($courseId, $semester){
+	public function getApprovedOfferListDisciplineClasses($courseId, $semester, $disciplineId){
 
-		define("APPROVED_STATUS", approved);
+		define("APPROVED_STATUS", "approved");
 
 		$this->db->select('offer_discipline.*');
 		$this->db->from('offer');
 		$this->db->join('offer_discipline', "offer.id_offer = offer_discipline.id_offer");
+		$this->db->where('offer_discipline.id_discipline', $disciplineId);
 		$this->db->where('offer.offer_status', APPROVED_STATUS);
 		$this->db->where('offer.course', $courseId);
 		$this->db->where('offer.semester', $semester);

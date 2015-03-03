@@ -253,7 +253,7 @@ class Offer extends CI_Controller {
 		return $disciplineExists;
 	}
 
-	public function getOfferDisciplines($idOffer){
+	private function getOfferDisciplines($idOffer){
 		
 		$this->load->model('offer_model');
 
@@ -271,17 +271,41 @@ class Offer extends CI_Controller {
 		return $offerLists;
 	}
 
+	public function getCourseApprovedOfferListDisciplines($courseId, $semester){
+
+		define("APPROVED_STATUS", "approved");
+
+		$offer = $this->getCourseOfferList($courseId, $semester);
+
+		if($offer !== FALSE){
+
+			$offerListIsApproved = $offer['offer_status'] === APPROVED_STATUS;
+
+			if($offerListIsApproved){
+				$disciplines = $this->getOfferDisciplines($offer['id_offer']);
+			}else{
+				$disciplines = FALSE;
+			}
+		}else{
+
+			$disciplines = FALSE;
+		}
+
+		return $disciplines;
+	}
+
 	/**
 	 * Get the disciplines classes of an offer list of a specific course in a specific semester
 	 * @param $courseId - Id of the course to search for offer lists
 	 * @param $semester - Id of the semester to search for
+	 * @param $disciplineId - Id of the discipline to search for classes
 	 * @return if there is approved offer lists, an Array with the disciplines of the offer list, if does not, return FALSE
 	 */
-	public function getCourseApprovedOfferList($courseId, $semester){
+	public function getApprovedOfferListDisciplineClasses($courseId, $semester, $disciplineId){
 
 		$this->load->model('offer_model');
 
-		$offerLists = $this->offer_model->getCourseApprovedOfferList($courseId, $semester);
+		$offerLists = $this->offer_model->getApprovedOfferListDisciplineClasses($courseId, $semester, $disciplineId);
 
 		return $offerLists;
 	}

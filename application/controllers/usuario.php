@@ -180,9 +180,13 @@ class Usuario extends CI_Controller {
 		$course = new Course();
 		$courseData = $course->getCourseById($courseId);
 
+		$offer = new Offer();
+		$offerListDisciplines = $offer->getCourseApprovedOfferListDisciplines($courseId, $currentSemester['id_semester']);
+
 		$data = array(
 			'currentSemester' => $currentSemester,
-			'course' => $courseData
+			'course' => $courseData,
+			'offerListDisciplines' => $offerListDisciplines
 		);
 
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_course_page', $data);
