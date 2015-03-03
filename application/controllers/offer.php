@@ -253,7 +253,7 @@ class Offer extends CI_Controller {
 		return $disciplineExists;
 	}
 
-	private function getOfferDisciplines($idOffer){
+	public function getOfferDisciplines($idOffer){
 		
 		$this->load->model('offer_model');
 
@@ -267,6 +267,21 @@ class Offer extends CI_Controller {
 		$this->load->model('offer_model');
 
 		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
+
+		return $offerLists;
+	}
+
+	/**
+	 * Get the disciplines classes of an offer list of a specific course in a specific semester
+	 * @param $courseId - Id of the course to search for offer lists
+	 * @param $semester - Id of the semester to search for
+	 * @return if there is approved offer lists, an Array with the disciplines of the offer list, if does not, return FALSE
+	 */
+	public function getCourseApprovedOfferList($courseId, $semester){
+
+		$this->load->model('offer_model');
+
+		$offerLists = $this->offer_model->getCourseApprovedOfferList($courseId, $semester);
 
 		return $offerLists;
 	}
