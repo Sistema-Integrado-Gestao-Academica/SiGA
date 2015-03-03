@@ -148,7 +148,7 @@ class Offer extends CI_Controller {
 				$message = "Turma cadastrada com sucesso.";
 			}else{
 				$status = "danger";
-				$message = "Não foi possível cadastrar essa turma. Cheque os códigos informados.";
+				$message = "Não foi possível cadastrar essa turma. Cheque os dados informados, não é possível cadastrar um turma que já existe.";
 			}
 
 		}else{

@@ -144,8 +144,9 @@ class Offer_model extends CI_Model {
 
 		$this->load->model('discipline_model');
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
+		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
 
-		$dataIsOk = $offerExists && $disciplineExists;
+		$dataIsOk = $offerExists && $disciplineExists && (!$classAlreadyExists);
 
 		if($dataIsOk){
 			
@@ -164,6 +165,21 @@ class Offer_model extends CI_Model {
 		}
 
 		return $wasSaved;
+	}
+
+	private function checkIfClassExists($idOffer, $idDiscipline, $classToCheck){
+
+		$conditions = array(
+			'id_offer' => $idOffer,
+			'id_discipline' => $idDiscipline,
+			'class' => $classToCheck
+		);
+
+		$foundClass = $this->db->get_where('offer_discipline', $conditions)->row_array();
+
+		$classAlreadyExists = sizeof($foundClass) > 0;
+
+		return $classAlreadyExists;
 	}
 
 	private function getOfferDisciplineClass($classData){
