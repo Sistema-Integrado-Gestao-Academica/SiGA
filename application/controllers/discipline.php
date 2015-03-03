@@ -155,6 +155,15 @@ class Discipline extends CI_Controller {
 		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline");
 	}
 	
+	public function getDisciplineByCode($disciplineCode){
+
+		$this->load->model('discipline_model');
+
+		$discipline = $this->discipline_model->getDisciplineByCode($disciplineCode);
+
+		return $discipline;
+	}
+
 	public function checkIfDisciplineExists($disciplineId){
 		
 		$this->load->model('discipline_model');

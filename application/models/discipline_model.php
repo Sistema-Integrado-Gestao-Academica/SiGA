@@ -118,15 +118,17 @@ class Discipline_model extends CI_Model {
 	 * @param int $discipline_code
 	 * @return array $discipline case it exists, boolean FALSE case not
 	 */
-	public function getDisciplineByCode($discipline_code){
-		$empty = empty($discipline_code);
-	
-		if(!$empty){
-			$this->db->where('discipline_code',$discipline_code);
-			$discipline = $this->db->get('discipline')->row_array();
+	public function getDisciplineByCode($disciplineCode){
+		
+		$this->db->where('discipline_code', $disciplineCode);
+		$discipline = $this->db->get('discipline')->row_array();
+		
+		if(sizeof($discipline) > 0){
+			// Nothing to do
 		}else{
 			$discipline = FALSE;
 		}
+
 		return $discipline;
 	}
 	

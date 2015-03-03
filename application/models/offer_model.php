@@ -131,6 +131,13 @@ class Offer_model extends CI_Model {
 		return $disciplines;
 	}
 
+	public function getOfferDisciplineClasses($idDiscipline, $idOffer){
+
+		$disciplineClasses = $this->getOfferDiscipline($idDiscipline, $idOffer);	
+
+		return $disciplineClasses;
+	}
+
 	public function addDisciplineToOffer($idDiscipline, $idOffer){
 
 		$offerExists = $this->checkIfOfferExists($idOffer);

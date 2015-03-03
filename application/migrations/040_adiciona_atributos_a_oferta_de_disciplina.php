@@ -5,7 +5,7 @@ class Migration_Adiciona_atributos_a_oferta_de_disciplina extends CI_Migration {
 	public function up() {
 
 		$fields = array(
-			'class' => array('type' => "varchar(3)", 'null' => TRUE),
+			'class' => array('type' => "varchar(3)"),
 			'total_vacancies' => array('type' => 'INT', 'unsigned' => TRUE),
 			'current_vacancies' => array('type' => 'INT', 'unsigned' => TRUE),
 			'main_teacher' => array('type' => 'INT'),

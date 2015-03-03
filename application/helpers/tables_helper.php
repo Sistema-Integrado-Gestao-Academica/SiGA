@@ -51,6 +51,108 @@ echo "</div>";
 
 }
 
+function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers){
+
+	if($offerDisciplineClasses !== FALSE){
+
+		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Turma</th>";
+			        echo "<th class=\"text-center\"></th>";
+			        echo "<th class=\"text-center\">Tipo</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    	
+			    
+			echo "</tbody>";
+		echo "</table>";
+		echo "</div>";
+	}else{
+		echo "<div class=\"callout callout-info\">";
+			echo "<h4>Nenhuma turma cadastrada no momento.</h4>";
+			echo "<p>Cadastre logo abaixo.</p>";
+		echo "</div>";
+
+		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+	}
+}
+
+function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
+
+	if($teachers !== FALSE){
+		// Nothing to do
+	}else{
+		$teachers = array('0' => 'Nenhum professor cadastrado.');
+	}
+
+	$disciplineClass = array(
+		"name" => "disciplineClass",
+		"id" => "disciplineClass",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "3"
+	);
+
+	$totalVacancies = array(
+		"name" => "totalVacancies",
+		"id" => "totalVacancies",
+		"type" => "number",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"min" => "0",
+		"value" => "0"
+	);
+
+	$submitBtn = array(
+		"class" => "btn bg-olive btn-block",
+		"type" => "sumbit",
+		"content" => "Cadastrar turma"
+	);
+
+	echo form_open("offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}");
+
+		echo "<div class='form-box'>";
+			echo"<div class='header'>Nova turma para oferta</div>";
+			echo "<div class='body bg-gray'>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Turma", "disciplineClass");
+					echo form_input($disciplineClass);
+					echo form_error("disciplineClass");
+				echo "</div>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Vagas totais", "totalVacancies");
+					echo form_input($totalVacancies);
+					echo form_error("disciplineClass");
+				echo "</div>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Professor principal", "mainTeacher");
+					echo form_dropdown("mainTeacher", $teachers);
+					echo form_error("mainTeacher");
+				echo "</div>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Professor secundário", "secondaryTeacher");
+					echo form_dropdown("secondaryTeacher", $teachers);
+					echo form_error("secondaryTeacher");
+				echo "</div>";
+		
+			echo "</div>";
+			
+			echo "<div class='footer bg-gray'>";
+				echo form_button($submitBtn);
+			echo "</div>";
+		echo "</div>";
+
+	echo form_close();
+}
+
 function displayRegisteredCoursesToProgram($programId, $courses){
 
 	$program = new Program();
@@ -502,7 +604,8 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 				    foreach($allDisciplines as $discipline){
 					    
 					    $offer = new Offer();
-			    		$disciplineAlreadyExistsInOffer = $offer->disciplineExistsInOffer($discipline['discipline_code'], $idOffer);
+			    		// $disciplineAlreadyExistsInOffer = $offer->disciplineExistsInOffer($discipline['discipline_code'], $idOffer);
+			    		$thereIsClassForDiscipline = $offer->disciplineExistsInOffer($discipline['discipline_code'], $idOffer);
 
 					    echo "<tr>";
 					    	echo "<td>";
@@ -522,11 +625,12 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    	echo "</td>";
 
 					    	echo "<td>";
-					    		if($disciplineAlreadyExistsInOffer){					    			
-					    			echo anchor("offer/removeDisciplineFromOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Remover do curso ".$course['course_name'], "class='btn btn-danger'");
-					    		}else{
-					    			echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar ao curso ".$course['course_name'], "class='btn btn-primary'");
-					    		}
+					    		// if($disciplineAlreadyExistsInOffer){					    			
+					    		// 	echo anchor("offer/removeDisciplineFromOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Remover disciplina da lista", "class='btn btn-danger'");
+					    		// }else{
+				    			// 	echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar à lista de oferta de ".$course['course_name'], "class='btn btn-primary'");
+					    		// }
+				    			echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Cadastrar nova turma para oferta", "class='btn btn-primary'");
 					    	echo "</td>";
 
 					    echo "</tr>";

@@ -3,6 +3,8 @@
 require_once('semester.php');
 require_once('course.php');
 require_once('discipline.php');
+require_once('module.php');
+require_once('usuario.php');
 
 class Offer extends CI_Controller {
 
@@ -64,6 +66,60 @@ class Offer extends CI_Controller {
 		);
 
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
+	}
+
+	public function displayDisciplineClasses($idDiscipline, $idOffer, $idCourse){
+
+		// Get the classes of a discipline in an offer
+		$this->load->model('offer_model');
+		$offerDisciplineClasses = $this->offer_model->getOfferDisciplineClasses($idDiscipline, $idOffer);
+
+		// Get course data
+		$course = new Course();
+		$offerCourse = $course->getCourseById($idCourse);
+
+		// Get discipline data
+		$discipline = new Discipline();
+		$disciplineData = $discipline->getDisciplineByCode($idDiscipline);
+
+		// Get all teachers
+		define("TEACHER_GROUP", "docente");
+
+		$group = new Module();
+		$foundGroup = $group->getGroupByName(TEACHER_GROUP);
+
+		if($foundGroup !== FALSE){
+			$user = new Usuario();
+			$teachers = $user->getUsersOfGroup($foundGroup['id_group']);
+
+			if($teachers !== FALSE){
+
+				$allTeachers = array();
+
+				foreach($teachers as $teacher){
+					$allTeachers[$teacher['id']] = $teacher['name'];
+				}
+			}else{
+				$allTeachers = FALSE;
+			}
+
+		}else{
+			$allTeachers = FALSE;
+		}
+
+		$data = array(
+			'disciplineData' => $disciplineData,
+			'offerDisciplineData' => $offerDisciplineClasses,
+			'idOffer' => $idOffer,
+			'course' => $offerCourse,
+			'teachers' => $allTeachers
+		);
+
+		loadTemplateSafelyByGroup('secretario', 'offer/offer_discipline_classes', $data);
+	}
+
+	public function newOfferDisciplineClass($idDiscipline, $idOffer){
+
 	}
 
 	public function removeDisciplineFromOffer($idDiscipline, $idOffer, $idCourse){
