@@ -649,10 +649,6 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 
 				    foreach($allDisciplines as $discipline){
 					    
-					    $offer = new Offer();
-			    		// $disciplineAlreadyExistsInOffer = $offer->disciplineExistsInOffer($discipline['discipline_code'], $idOffer);
-			    		$thereIsClassForDiscipline = $offer->disciplineExistsInOffer($discipline['discipline_code'], $idOffer);
-
 					    echo "<tr>";
 					    	echo "<td>";
 				    			echo $discipline['discipline_code'];
@@ -676,7 +672,7 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    		// }else{
 				    			// 	echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar à lista de oferta de ".$course['course_name'], "class='btn btn-primary'");
 					    		// }
-				    			echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}", "Cadastrar nova turma para oferta", "class='btn btn-primary'");
+								echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
 					    	echo "</td>";
 
 					    echo "</tr>";
@@ -685,11 +681,11 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 			    }else{
 
 			    	echo "<tr>";
-					    	echo "<td colspan=5>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há disciplinas cadastradas no currículo deste curso no momento.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
+				    	echo "<td colspan=5>";
+					    	echo "<div class=\"callout callout-warning\">";
+                            	echo "<h4>Não há disciplinas cadastradas no currículo deste curso no momento.</h4>";
+                            echo "</div>";
+				    	echo "</td>";
 					echo "</tr>";
 			    }
 

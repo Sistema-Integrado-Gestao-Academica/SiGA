@@ -112,6 +112,7 @@ class Offer_model extends CI_Model {
 
 		if($offerExists){
 
+			$this->db->distinct();
 			$this->db->select('discipline.*');
 			$this->db->from('discipline');
 			$this->db->join('offer_discipline', 'discipline.discipline_code = offer_discipline.id_discipline');
