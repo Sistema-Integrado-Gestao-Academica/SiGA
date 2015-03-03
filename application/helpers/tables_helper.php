@@ -55,21 +55,65 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 
 	if($offerDisciplineClasses !== FALSE){
 
-		echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Turma</th>";
-			        echo "<th class=\"text-center\"></th>";
-			        echo "<th class=\"text-center\">Tipo</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+		$user = new Usuario();
 
-			    	
-			    
-			echo "</tbody>";
-		echo "</table>";
-		echo "</div>";
+		foreach($offerDisciplineClasses as $class){
+			
+			$mainTeacher = $user->getUserById($class['main_teacher']);
+
+			if($class['secondary_teacher'] !== NULL){
+				$secondaryTeacher = $user->getUserById($class['secondary_teacher']);
+				$secondaryTeacher = $secondaryTeacher['name'];
+			}else{
+				$secondaryTeacher = "-";
+			}
+
+			echo "<div class=\"box-body table-responsive no-padding\">";
+			echo "<table class=\"table table-bordered table-hover\">";
+				echo "<tbody>";
+				    echo "<tr>";
+				        echo "<th class=\"text-center\">Turma</th>";
+				        echo "<th class=\"text-center\">Vagas totais</th>";
+				        echo "<th class=\"text-center\">Vagas atuais</th>";
+				        echo "<th class=\"text-center\">Professor principal</th>";
+				        echo "<th class=\"text-center\">Professor secundário</th>";
+				        echo "<th class=\"text-center\">Ações</th>";
+				    echo "</tr>";
+
+				    echo "<tr>";
+
+				    	echo "<td>";
+				    	echo $class['class'];
+				    	echo "</td>";
+
+				    	echo "<td>";
+				    	echo $class['total_vacancies'];
+				    	echo "</td>";
+
+				    	echo "<td>";
+				    	echo $class['current_vacancies'];
+				    	echo "</td>";
+
+				    	echo "<td>";
+				    	echo $mainTeacher['name'];
+				    	echo "</td>";
+				    	
+				    	echo "<td>";
+				    	echo $secondaryTeacher;
+				    	echo "</td>";
+
+				    	echo "<td>";
+				    	echo "</td>";
+
+				    echo "</tr>";
+				    
+				echo "</tbody>";
+			echo "</table>";
+			echo "</div>";
+		}
+
+		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+
 	}else{
 		echo "<div class=\"callout callout-info\">";
 			echo "<h4>Nenhuma turma cadastrada no momento.</h4>";

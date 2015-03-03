@@ -445,11 +445,17 @@ class Usuarios_model extends CI_Model {
 		return $foundSecretaries;
 	}
 	
-	public  function getUserById($id_user){
+	public function getUserById($id_user){
 		
 		$this->db->select('id, name, email');
 		
 		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
+
+		if(sizeof($foundUser) > 0){
+			// Nothing to do
+		}else{
+			$foundUser = FALSE;
+		}
 		
 		return $foundUser;
 	}
