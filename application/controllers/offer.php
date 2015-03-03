@@ -68,15 +68,11 @@ class Offer extends CI_Controller {
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
 	}
 
-	public function displayDisciplineClasses($idDiscipline, $idOffer, $idCourse){
+	public function displayDisciplineClasses($idDiscipline, $idOffer){
 
 		// Get the classes of a discipline in an offer
 		$this->load->model('offer_model');
 		$offerDisciplineClasses = $this->offer_model->getOfferDisciplineClasses($idDiscipline, $idOffer);
-
-		// Get course data
-		$course = new Course();
-		$offerCourse = $course->getCourseById($idCourse);
 
 		// Get discipline data
 		$discipline = new Discipline();
@@ -111,7 +107,6 @@ class Offer extends CI_Controller {
 			'disciplineData' => $disciplineData,
 			'offerDisciplineData' => $offerDisciplineClasses,
 			'idOffer' => $idOffer,
-			'course' => $offerCourse,
 			'teachers' => $allTeachers
 		);
 
@@ -120,6 +115,62 @@ class Offer extends CI_Controller {
 
 	public function newOfferDisciplineClass($idDiscipline, $idOffer){
 
+		$dataIsOk = $this->validateDisciplineClassData();
+
+		if($dataIsOk){
+
+			$disciplineClass = $this->input->post('disciplineClass');
+			$totalVacancies = $this->input->post('totalVacancies');
+			$mainTeacher = $this->input->post('mainTeacher');
+			$secondaryTeacher = $this->input->post('secondaryTeacher');
+
+			// As is a new class, the current vacancy is equal to the total
+			$currentVacancies = $totalVacancies;
+
+			$classData = array(
+				'id_offer' => $idOffer,
+				'id_discipline' => $idDiscipline,
+				'class' => $disciplineClass,
+				'total_vacancies' => $totalVacancies,
+				'current_vacancies' => $currentVacancies,
+				'main_teacher' => $mainTeacher
+			);
+
+			if($mainTeacher !== $secondaryTeacher){
+				$classData['secondary_teacher'] = $secondaryTeacher;
+			}
+
+			$this->load->model('offer_model');
+			$wasSaved = $this->offer_model->addOfferDisciplineClass($classData);
+
+			if($wasSaved){
+				$status = "success";
+				$message = "Turma cadastrada com sucesso.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível cadastrar essa turma. Cheque os códigos informados.";
+			}
+
+		}else{
+			$status = "danger";
+			$message = "Dados na forma incorreta.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+	}
+
+	private function validateDisciplineClassData(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("disciplineClass", "Turma", "required|alpha");
+		$this->form_validation->set_rules("totalVacancies", "Vagas totais", "required");
+		$this->form_validation->set_rules("mainTeacher", "Professor principal", "required");
+		$this->form_validation->set_rules("secondaryTeacher", "Professor secundário", "");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$status = $this->form_validation->run();
+
+		return $status;
 	}
 
 	public function removeDisciplineFromOffer($idDiscipline, $idOffer, $idCourse){
@@ -157,23 +208,23 @@ class Offer extends CI_Controller {
 		loadTemplateSafelyByGroup('secretario', 'offer/offer_disciplines', $data);
 	}
 
-	public function addDisciplineToOffer($idDiscipline, $idOffer, $idCourse){
+	// public function addDisciplineToOffer($idDiscipline, $idOffer, $idCourse){
 		
-		$this->load->model('offer_model');
+	// 	$this->load->model('offer_model');
 
-		$wasSaved = $this->offer_model->addDisciplineToOffer($idDiscipline, $idOffer);
+	// 	$wasSaved = $this->offer_model->addDisciplineToOffer($idDiscipline, $idOffer);
 
-		if($wasSaved){
-			$status = "success";
-			$message = "Disciplina adicionada com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Não foi possível adicionar essa disciplina. Cheque os códigos informados.";
-		}
+	// 	if($wasSaved){
+	// 		$status = "success";
+	// 		$message = "Disciplina adicionada com sucesso.";
+	// 	}else{
+	// 		$status = "danger";
+	// 		$message = "Não foi possível adicionar essa disciplina. Cheque os códigos informados.";
+	// 	}
 
-		$this->session->set_flashdata($status, $message);	
-		redirect("offer/addDisciplines/{$idOffer}/{$idCourse}");
-	}
+	// 	$this->session->set_flashdata($status, $message);	
+	// 	redirect("offer/addDisciplines/{$idOffer}/{$idCourse}");
+	// }
 
 	public function disciplineExistsInOffer($disciplineId, $offerId){
 

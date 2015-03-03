@@ -138,31 +138,46 @@ class Offer_model extends CI_Model {
 		return $disciplineClasses;
 	}
 
-	public function addDisciplineToOffer($idDiscipline, $idOffer){
+	public function addOfferDisciplineClass($classData){
 
-		$offerExists = $this->checkIfOfferExists($idOffer);
+		$offerExists = $this->checkIfOfferExists($classData['id_offer']);
 
 		$this->load->model('discipline_model');
-		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($idDiscipline);
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
 
 		$dataIsOk = $offerExists && $disciplineExists;
 
 		if($dataIsOk){
-			$this->saveDisciplineToOffer($idDiscipline, $idOffer);
+			
+			$this->saveOfferDisciplineClass($classData);
 
-			$registeredOfferDiscipline = $this->getOfferDiscipline($idDiscipline, $idOffer);
+			$registeredClass = $this->getOfferDisciplineClass($classData);
 
-			if($registeredOfferDiscipline !== FALSE){
+			if($registeredClass !== FALSE){
 				$wasSaved = TRUE;
 			}else{
 				$wasSaved = FALSE;
 			}
-
+			
 		}else{
 			$wasSaved = FALSE;
 		}
 
 		return $wasSaved;
+	}
+
+	private function getOfferDisciplineClass($classData){
+
+		$searchResult = $this->db->get_where('offer_discipline', $classData);
+		$foundOfferDisciplineClasses = $searchResult->result_array();
+
+		if(sizeof($foundOfferDisciplineClasses) > 0){
+			// Nothing to do
+		}else{
+			$foundOfferDisciplineClasses = FALSE;
+		}
+
+		return $foundOfferDisciplineClasses;
 	}
 
 	public function removeDisciplineFromOffer($idDiscipline, $idOffer){
@@ -202,14 +217,9 @@ class Offer_model extends CI_Model {
 		$this->db->delete('offer_discipline', $offerDiscipline);
 	}
 
-	private function saveDisciplineToOffer($idDiscipline, $idOffer){
+	private function saveOfferDisciplineClass($classData){
 
-		$offerDiscipline = array(
-			'id_offer' => $idOffer,
-			'id_discipline' => $idDiscipline
-		);
-
-		$this->db->insert('offer_discipline', $offerDiscipline);
+		$this->db->insert('offer_discipline', $classData);
 	}
 
 	/**

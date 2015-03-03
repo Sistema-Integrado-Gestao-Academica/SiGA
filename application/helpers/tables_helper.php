@@ -630,7 +630,7 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    		// }else{
 				    			// 	echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar à lista de oferta de ".$course['course_name'], "class='btn btn-primary'");
 					    		// }
-				    			echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Cadastrar nova turma para oferta", "class='btn btn-primary'");
+				    			echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}", "Cadastrar nova turma para oferta", "class='btn btn-primary'");
 					    	echo "</td>";
 
 					    echo "</tr>";
