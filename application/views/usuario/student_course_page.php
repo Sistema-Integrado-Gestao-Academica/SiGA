@@ -10,3 +10,5 @@
 <h3 align="center"><b>Oferta</b></h3>
 <br>
 <?php displayOfferListDisciplines($offerListDisciplines, $course['id_course']); ?>
+
+<?php echo anchor("student", "Voltar", "class='btn btn-danger'"); ?>

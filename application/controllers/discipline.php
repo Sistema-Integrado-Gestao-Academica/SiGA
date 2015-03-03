@@ -21,6 +21,7 @@ class Discipline extends CI_Controller {
 		$classes = $offer->getApprovedOfferListDisciplineClasses($courseId, $currentSemester['id_semester'], $disciplineId);
 
 		$data = array(
+			'courseId' => $courseId,
 			'disciplineClasses' => $classes,
 			'disciplineData' => $disciplineData
 		);

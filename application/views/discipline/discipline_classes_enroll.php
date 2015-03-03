@@ -6,3 +6,5 @@
 
 <br>
 <?php displayDisciplineClasses($disciplineClasses); ?>
+
+<?php echo anchor("usuario/studentCoursePage/{$courseId}", "Voltar", "class='btn btn-danger'"); ?>

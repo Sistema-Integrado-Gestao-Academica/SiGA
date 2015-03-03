@@ -172,7 +172,7 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 
-	public function studentCoursePage($userId, $courseId){
+	public function studentCoursePage($courseId){
 
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
