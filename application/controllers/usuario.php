@@ -150,6 +150,7 @@ class Usuario extends CI_Controller {
 	}
 
 	public function student_index(){
+
 		$loggedUserData = $this->session->userdata("current_user");
 		$userId = $loggedUserData['user']['id'];
 
@@ -161,6 +162,7 @@ class Usuario extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		$userData = array(
+			'userData' => $loggedUserData['user'],
 			'status' => $userStatus,
 			'courses' => $userCourse,
 			'currentSemester' => $currentSemester
@@ -168,6 +170,22 @@ class Usuario extends CI_Controller {
 
 		// On auth_helper
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
+	}
+
+	public function studentCoursePage($userId, $courseId){
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		$course = new Course();
+		$courseData = $course->getCourseById($courseId);
+
+		$data = array(
+			'currentSemester' => $currentSemester,
+			'course' => $courseData
+		);
+
+		loadTemplateSafelyByGroup("estudante", 'usuario/student_course_page', $data);
 	}
 
 	public function guest_index(){
