@@ -3,6 +3,7 @@
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/program.php");
 require_once(APPPATH."/controllers/offer.php");
+require_once(APPPATH."/controllers/discipline.php");
 require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
@@ -49,6 +50,71 @@ function courseTableToSecretaryPage($courses){
 	echo "</table>";
 echo "</div>";
 
+}
+
+function displayDisciplinesToRequest($request){
+
+	$offer = new Offer();
+	$discipline = new Discipline();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código</th>";
+			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Turma</th>";
+			    echo "</tr>";
+
+			    if($request != FALSE){
+
+			    	foreach($request as $request){
+
+			    		$foundClass = $offer->getOfferDisciplineById($request['discipline_class']);
+
+			    		if($foundClass !== FALSE){
+
+			    			$foundDiscipline = $discipline->getDisciplineByCode($foundClass['id_discipline']);
+							echo "<tr>";
+					    		echo "<td>";
+					    		echo $foundClass['id_offer_discipline'];
+					    		echo "</td>";
+
+					    		echo "<td>";
+					    		echo "Cod.: ".$foundDiscipline['discipline_code']." - ".$foundDiscipline['discipline_name']." (".$foundDiscipline['name_abbreviation'].")";
+					    		echo "</td>";
+
+					    		echo "<td>";
+					    		echo $foundClass['class'];
+					    		echo "</td>";
+				    		echo "</tr>";	
+			    		}else{
+			    			echo "<tr>";
+					    		echo "<td>";
+					    		echo $foundClass['id_offer_discipline'];
+					    		echo "</td>";
+
+					    		echo "<td colspan='2'>";
+					    		echo "<div class=\"callout callout-info\">";
+									echo "<h4>Não foi encontrada a turma informada.</h4>";
+								echo "</div>";
+					    		echo "</td>";
+				    		echo "</tr>";	
+			    		}
+			    	}
+			    }else{
+					echo "<tr>";
+			    	echo "<td colspan=3>";
+						echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhuma disciplina adicionada para solicitação de matrícula.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+					echo "</tr>";
+			    }
+			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
 }
 
 function displayDisciplineClasses($disciplineClasses){

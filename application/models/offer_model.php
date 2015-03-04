@@ -107,6 +107,20 @@ class Offer_model extends CI_Model {
 		return $disciplineExists;
 	}
 
+	public function getOfferDisciplineById($idOfferDiscipline){
+		
+		$searchResult = $this->db->get_where('offer_discipline', array('id_offer_discipline' => $idOfferDiscipline));
+		$foundOfferDiscipline = $searchResult->row_array();
+
+		if(sizeof($foundOfferDiscipline) > 0){
+			// Nothing to do
+		}else{
+			$foundOfferDiscipline = FALSE;
+		}
+
+		return $foundOfferDiscipline;
+	}
+
 	public function getOfferDisciplines($idOffer){
 		$offerExists = $this->checkIfOfferExists($idOffer);
 

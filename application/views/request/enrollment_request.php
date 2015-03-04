@@ -15,50 +15,9 @@
 	</div>
 
 	<div class="panel-body">
+		<?php displayDisciplinesToRequest($disciplinesToRequest); ?>
+	</div>
 	
-
-	<div class="box-body table-responsive no-padding">
-	<table class="table table-bordered table-hover">
-		<tbody>
-		   	<tr>
-		       	<th class="text-center">Código</th>
-		        <th class="text-center">Disciplina</th>
-		       	<th class="text-center">Turma</th>
-		    </tr>
-
-		    <?php
-		    	if($disciplinesToRequest !== FALSE){
-
-		    	foreach($disciplinesToRequest as $discipline){
-		    ?>
-
-		    	<tr>
-		    		<td></td>
-		    		<td></td>
-		    		<td></td>
-		    		
-		    	</tr>
-
-		    <?php
-		    	}
-		    	}else{
-		    ?>	
-		    	<tr>
-		    	<td colspan="3">
-		    	<div class="callout callout-info">
-		    		<h4>Nenhuma disciplina adicionada para solicitação de matrícula.</h4>
-		    	</div>
-		    	</td>
-		    	</tr>
-		    <?php
-		    	}
-		    ?>
-		    
-		</tbody>
-	</table>
-	</div>
-	</div>
-
 	<div class="panel-footer">
 	</div>
 </div>
