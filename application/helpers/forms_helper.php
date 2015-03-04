@@ -37,8 +37,8 @@ function addDisciplinesToRequestForm($courseId, $userId){
 	echo "<h3><i class='fa fa-search-plus'> </i> Adicionar disciplinas</h3>";
 	echo"<br>";
 
-	echo "<div class='row'>";
-		echo form_open('temporaryrequest/addTempDisciplines', array('role' => "form"), $hidden);
+	echo form_open('temporaryrequest/addTempDisciplinesToRequest', array('role' => "form"), $hidden);
+		echo "<div class='row'>";
 			echo "<div class='col-lg-3'>";
 				echo "<div class='input-group input-group-sm'>";
 				echo form_label("Código da disciplina", "discipline_code_search");
@@ -51,14 +51,14 @@ function addDisciplinesToRequestForm($courseId, $userId){
 				echo form_input($disciplineClass);
 				echo "</div>";
 			echo "</div>";
-		echo form_close();
-	echo "</div>";
-	echo "<br>";
-	echo "<div class='row'>";
-		echo "<div class='col-lg-3'>";
-			echo form_button($searchBtn);
 		echo "</div>";
-	echo "</div>";
+	echo "<br>";
+		echo "<div class='row'>";
+			echo "<div class='col-lg-3'>";
+				echo form_button($searchBtn);
+			echo "</div>";
+		echo "</div>";
+	echo form_close();
 }
 
 function displayEnrollStudentForm(){

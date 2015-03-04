@@ -55,6 +55,8 @@ echo "</div>";
 function displayDisciplinesToRequest($request){
 
 	$offer = new Offer();
+	$offer->loadModel();
+	
 	$discipline = new Discipline();
 
 	echo "<div class=\"box-body table-responsive no-padding\">";

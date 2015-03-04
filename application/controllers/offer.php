@@ -8,6 +8,14 @@ require_once('usuario.php');
 
 class Offer extends CI_Controller {
 
+	/**
+	 * Used to solve problems of instance of objects in other files
+	 */
+	public function loadModel(){
+		
+		$this->load->model('offer_model');
+	}
+
 	public function newOffer($courseId){
 
 		$this->load->model('offer_model');
@@ -242,6 +250,24 @@ class Offer extends CI_Controller {
 		$disciplineExists = $this->offer_model->disciplineExistsInOffer($disciplineId, $offerId);
 
 		return $disciplineExists;
+	}
+
+	public function checkIfClassExistsInDiscipline($disciplineId, $courseId, $semesterId, $classToCheck){
+
+		$this->load->model('offer_model');
+
+		$classExists = $this->offer_model->checkIfClassExistsInDiscipline($disciplineId, $courseId, $semesterId, $classToCheck);
+
+		return $classExists;
+	}
+
+	public function getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass){
+
+		$this->load->model('offer_model');
+
+		$offerDiscipline = $this->offer_model->getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass);
+
+		return $offerDiscipline;
 	}
 
 	private function getOfferDisciplines($idOffer){

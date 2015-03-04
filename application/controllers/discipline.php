@@ -192,7 +192,7 @@ class Discipline extends CI_Controller {
 
 		return $disciplineExists;
 	}
-
+	
 	/**
 	 * Function to drop a discipline from the database
 	 * @param int $code - Code of the discipline

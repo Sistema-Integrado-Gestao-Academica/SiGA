@@ -107,6 +107,19 @@ class Offer_model extends CI_Model {
 		return $disciplineExists;
 	}
 
+	public function getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass){
+	
+		$offer = $this->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+		if($offer !== FALSE){
+			$offerDiscipline = $this->getClass($disciplineId, $offer['id_offer'], $disciplineClass);
+		}else{
+			$offerDiscipline = FALSE;
+		}
+
+		return $offerDiscipline;
+	}
+
 	public function getOfferDisciplineById($idOfferDiscipline){
 		
 		$searchResult = $this->db->get_where('offer_discipline', array('id_offer_discipline' => $idOfferDiscipline));
@@ -199,19 +212,45 @@ class Offer_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function checkIfClassExistsInDiscipline($disciplineId, $courseId, $semesterId, $classToCheck){
+
+		$offer = $this->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+		if($offer !== FALSE){
+			$classExists = $this->checkIfClassExists($offer['id_offer'], $disciplineId, $classToCheck);
+		}else{
+			$classExists = FALSE;
+		}
+
+		return $classExists;
+	}
+
 	private function checkIfClassExists($idOffer, $idDiscipline, $classToCheck){
 
-		$conditions = array(
-			'id_offer' => $idOffer,
-			'id_discipline' => $idDiscipline,
-			'class' => $classToCheck
-		);
-
-		$foundClass = $this->db->get_where('offer_discipline', $conditions)->row_array();
+		$foundClass = $this->getClass($idOffer, $idDiscipline, $classToCheck);
 
 		$classAlreadyExists = sizeof($foundClass) > 0;
 
 		return $classAlreadyExists;
+	}
+
+	private function getClass($disciplineId, $offerId, $class){
+
+		$conditions = array(
+			'id_offer' => $offerId,
+			'id_discipline' => $disciplineId,
+			'class' => $class
+		);
+
+		$foundClass = $this->db->get_where('offer_discipline', $conditions)->row_array();
+
+		if(sizeof($foundClass) > 0){
+			// Nothing to do
+		}else{
+			$foundClass = FALSE;
+		}
+
+		return $foundClass;
 	}
 
 	private function getOfferDisciplineClass($classData){
