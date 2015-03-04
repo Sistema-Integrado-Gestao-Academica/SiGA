@@ -24,4 +24,6 @@
 
 <?php addDisciplinesToRequestForm($courseId, $userId); ?>
 
+<br>
+<br>
 <?php echo anchor("usuario/studentCoursePage/{$courseId}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>

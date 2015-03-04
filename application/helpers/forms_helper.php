@@ -1,7 +1,64 @@
+
 <?php
 
 function addDisciplinesToRequestForm($courseId, $userId){
+	
+	$disciplineCode = array(
+		"name" => "discipline_code_search",
+		"id" => "discipline_code_search",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "8"
+	);
 
+	$disciplineClass = array(
+		"name" => "discipline_class_search",
+		"id" => "discipline_class_search",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "3"
+	);
+
+	$searchBtn = array(
+		"id" => "discipline_search_btn",
+		"class" => "btn bg-blue btn-block",
+		"content" => "Adicionar disciplina",
+		"type" => "submit",
+		"style" => "width:80%"
+	);
+
+	$hidden = array(
+		'courseId' => $courseId,
+		'userId' => $userId
+	);
+
+	echo "<h3><i class='fa fa-search-plus'> </i> Adicionar disciplinas</h3>";
+	echo"<br>";
+
+	echo "<div class='row'>";
+		echo form_open('temporaryrequest/addTempDisciplines', array('role' => "form"), $hidden);
+			echo "<div class='col-lg-3'>";
+				echo "<div class='input-group input-group-sm'>";
+				echo form_label("Código da disciplina", "discipline_code_search");
+				echo form_input($disciplineCode);
+				echo "</div>";
+			echo "</div>";
+			echo "<div class='col-lg-2'>";
+				echo "<div class='input-group input-group-sm'>";
+				echo form_label("Turma", "discipline_name_search");
+				echo form_input($disciplineClass);
+				echo "</div>";
+			echo "</div>";
+		echo form_close();
+	echo "</div>";
+	echo "<br>";
+	echo "<div class='row'>";
+		echo "<div class='col-lg-3'>";
+			echo form_button($searchBtn);
+		echo "</div>";
+	echo "</div>";
 }
 
 function displayEnrollStudentForm(){
