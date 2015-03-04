@@ -94,6 +94,47 @@ class Offer_model extends CI_Model {
 		return $foundOffer;
 	}
 
+	public function subtractOneVacancy($idOfferDiscipline){
+
+		define("NO_VACANCY", 0);
+
+		$offerDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
+
+		if($offerDiscipline !== FALSE){
+
+			$currentVacancies = $offerDiscipline['current_vacancies'];
+
+			if($currentVacancies != NO_VACANCY){
+
+				$newQuantityOfVacancies = $currentVacancies - 1;
+				
+				$this->updateOfferDiscipline($idOfferDiscipline, array('current_vacancies' => $newQuantityOfVacancies));
+
+				// At this point, the offer_discipline exists because was checked on the firs 'if'
+				$foundOfferDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
+
+				if($foundOfferDiscipline['current_vacancies'] == $newQuantityOfVacancies){
+					$wasSubtracted = TRUE;
+				}else{
+					$wasSubtracted = FALSE;
+				}
+			}else{
+				$wasSubtracted = FALSE;
+			}
+
+		}else{
+			$wasSubtracted = FALSE;
+		}
+		
+		return $wasSubtracted;
+	}
+
+	private function updateOfferDiscipline($idOfferDiscipline, $newData){
+
+		$this->db->where('id_offer_discipline', $idOfferDiscipline);
+		$this->db->update('offer_discipline', $newData);
+	}
+
 	public function disciplineExistsInOffer($disciplineId, $offerId){
 
 		$foundOfferDisciplines = $this->getOfferDiscipline($disciplineId, $offerId);
