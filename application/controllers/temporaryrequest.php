@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('request.php');
 require_once('offer.php');
 require_once('discipline.php');
 require_once('semester.php');
@@ -11,7 +12,47 @@ class TemporaryRequest extends CI_Controller {
 
 	public function confirmEnrollmentRequest($userId, $courseId, $semesterId){
 
+		$userRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);
+
+		if($userRequest !== FALSE){
+
+			$this->load->model('temporaryrequest_model');
+
+			$request = new Request();
+
+			// $requestWasReceived = $request->receiveStudentRequest($userRequest);
+
+			if($requestWasReceived){
+				$wasConfirmed = $this->cleanUserTempRequest($userRequest);
+			}else{
+				$wasConfirmed = FALSE;
+			}
+
+		}else{
+			$wasConfirmed = FALSE;
+		}
+
+		if($wasConfirmed){
+			$status = "success";
+			$message = "Matrícula confirmada com sucesso.";
+		}else{
+			$message = "Não foi possível confirmar sua matrícula, tente novamente.";
+			$status = "danger";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+
+		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}
+
+	private function cleanUserTempRequest($userId, $courseId, $semesterId){
+
+		$this->load->model('temporaryrequest_model');
+
+		$wasCleaned = $this->temporaryrequest_model->cleanUserTempRequest($userId, $courseId, $semesterId);
+
+		return $wasCleaned;		
+	}	
 
 	public function getUserTempRequest($userId, $courseId, $semesterId){
 

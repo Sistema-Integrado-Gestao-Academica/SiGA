@@ -21,6 +21,25 @@ class TemporaryRequest_model extends CI_Model {
 		return $foundRequest;
 	}
 
+	public function cleanUserTempRequest($userId, $courseId, $semesterId){
+
+		$this->db->delete('temporary_student_request', array(
+			'id_student' => $userId,
+			'id_course' => $courseId,
+			'semesterId' =>$semesterId
+		));
+
+		$foundRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);
+
+		if($foundRequest !== FALSE){
+			$wasCleaned = FALSE;
+		}else{
+			$wasCleaned = TRUE;
+		}
+		
+		return $wasCleaned;
+	}	
+
 	public function saveTempRequest($tempRequestData){
 
 		$this->db->insert('temporary_student_request', $tempRequestData);
