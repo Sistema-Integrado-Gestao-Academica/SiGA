@@ -9,6 +9,10 @@ require_once('semester.php');
  */
 class TemporaryRequest extends CI_Controller {
 
+	public function confirmEnrollmentRequest($userId, $courseId, $semesterId){
+
+	}
+
 	public function getUserTempRequest($userId, $courseId, $semesterId){
 
 		$this->load->model('temporaryrequest_model');

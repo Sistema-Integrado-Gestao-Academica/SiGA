@@ -13,11 +13,14 @@ class Request extends CI_Controller {
 		$temporaryRequest = new TemporaryRequest();
 		$disciplinesToRequest = $temporaryRequest->getUserTempRequest($userId, $courseId, $currentSemester['id_semester']);
 
+		$thereIsDisciplinesToRequest = $disciplinesToRequest !== FALSE;
+
 		$data = array(
 			'semester' => $currentSemester,
 			'courseId' => $courseId,
 			'userId' => $userId,
-			'disciplinesToRequest' => $disciplinesToRequest
+			'disciplinesToRequest' => $disciplinesToRequest,
+			'thereIsDisciplinesToRequest' => $thereIsDisciplinesToRequest
 		);
 
 		loadTemplateSafelyByGroup("estudante", 'request/enrollment_request', $data);

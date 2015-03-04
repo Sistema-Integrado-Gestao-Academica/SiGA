@@ -18,7 +18,17 @@
 		<?php displayDisciplinesToRequest($disciplinesToRequest, $courseId, $userId, $semester['id_semester']); ?>
 	</div>
 	
-	<div class="panel-footer">
+	<div class="panel-footer" align="right">
+	<?php
+	if($thereIsDisciplinesToRequest){
+
+		echo anchor(
+			"temporaryrequest/confirmEnrollmentRequest/{$userId}/{$courseId}/{$semester['id_semester']}",
+			"Confirmar solicitação",
+			"class='btn btn-primary btn-flat'"
+		);
+	}
+	?>
 	</div>
 </div>
 
