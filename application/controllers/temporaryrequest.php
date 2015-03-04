@@ -83,6 +83,17 @@ class TemporaryRequest extends CI_Controller {
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}
 
+	private function validateTempDisciplineData(){
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("discipline_code_search", "Código da disciplina", "required");
+		$this->form_validation->set_rules("discipline_class_search", "Turma da disciplina", "required|alpha");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$status = $this->form_validation->run();
+
+		return $status;
+	}
+
 	private function saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $idOfferDiscipline){
 
 		$this->load->model('temporaryrequest_model');
@@ -106,14 +117,51 @@ class TemporaryRequest extends CI_Controller {
 		return $requestWasSaved;
 	}
 
-	private function validateTempDisciplineData(){
+	public function removeDisciplineFromTempRequest($userId, $courseId, $semesterId, $disciplineId, $disciplineClass){
+		
+		$this->load->model('temporaryrequest_model');
 
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("discipline_code_search", "Código da disciplina", "required");
-		$this->form_validation->set_rules("discipline_class_search", "Turma da disciplina", "required|alpha");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$status = $this->form_validation->run();
+		$offer = new Offer();
+		$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass);
+		
 
-		return $status;
+		if($offerDiscipline !== FALSE){
+			
+			$idOfferDiscipline = $offerDiscipline['id_offer_discipline'];
+
+			$requestToRemove = array(
+				'id_student' => $userId,
+				'id_course' => $courseId,
+				'id_semester' => $semesterId,
+				'discipline_class' => $idOfferDiscipline
+			);
+
+			$requestWasRemoved = $this->removeTempRequest($requestToRemove);
+
+			if($requestWasRemoved){
+				$status = "success";
+				$message = "Disciplina removida com sucesso da solicitação.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível remover a disciplina. Cheque os dados informados e tente novamente.";
+			}
+
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover a disciplina. Cheque os dados informados e tente novamente.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+
+		redirect("request/studentEnrollment/{$courseId}/{$userId}");
+	}
+
+	private function removeTempRequest($requestToRemove){
+
+		$this->load->model('temporaryrequest_model');
+
+		$requestWasRemoved = $this->temporaryrequest_model->removeTempRequest($requestToRemove);
+		
+		return $requestWasRemoved;
 	}
 }

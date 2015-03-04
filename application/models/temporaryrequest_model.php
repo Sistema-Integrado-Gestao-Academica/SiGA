@@ -36,6 +36,27 @@ class TemporaryRequest_model extends CI_Model {
 		return $requestWasSaved;
 	}
 
+	public function removeTempRequest($requestToRemove){
+
+		$foundRequest = $this->getTempRequest($requestToRemove);
+		if($foundRequest !== FALSE){
+			
+			$this->db->delete('temporary_student_request', $requestToRemove);
+
+			$foundRequest = $this->getTempRequest($requestToRemove);
+
+			if($foundRequest !== FALSE){
+				$requestWasRemoved = FALSE;
+			}else{
+				$requestWasRemoved = TRUE;
+			}
+		}else{
+			$requestWasRemoved = FALSE;
+		}
+
+		return $requestWasRemoved;
+	}
+
 	public function getTempRequest($tempRequestData){
 
 		$foundRequest = $this->db->get_where('temporary_student_request', $tempRequestData)->row_array();

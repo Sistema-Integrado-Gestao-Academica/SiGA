@@ -15,7 +15,7 @@
 	</div>
 
 	<div class="panel-body">
-		<?php displayDisciplinesToRequest($disciplinesToRequest); ?>
+		<?php displayDisciplinesToRequest($disciplinesToRequest, $courseId, $userId, $semester['id_semester']); ?>
 	</div>
 	
 	<div class="panel-footer">

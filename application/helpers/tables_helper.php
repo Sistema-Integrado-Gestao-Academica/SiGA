@@ -52,7 +52,7 @@ echo "</div>";
 
 }
 
-function displayDisciplinesToRequest($request){
+function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 	$offer = new Offer();
 	$offer->loadModel();
@@ -66,6 +66,7 @@ function displayDisciplinesToRequest($request){
 			        echo "<th class=\"text-center\">Código</th>";
 			        echo "<th class=\"text-center\">Disciplina</th>";
 			        echo "<th class=\"text-center\">Turma</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
 			    if($request != FALSE){
@@ -89,6 +90,14 @@ function displayDisciplinesToRequest($request){
 					    		echo "<td>";
 					    		echo $foundClass['class'];
 					    		echo "</td>";
+
+					    		echo "<td>";
+					    		echo anchor(
+					    				"temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
+				    					"Remover Disciplina",
+				    					"class='btn btn-danger btn-flat'"
+					    			);
+					    		echo "<td>";
 				    		echo "</tr>";	
 			    		}else{
 			    			echo "<tr>";
@@ -96,7 +105,7 @@ function displayDisciplinesToRequest($request){
 					    		echo $foundClass['id_offer_discipline'];
 					    		echo "</td>";
 
-					    		echo "<td colspan='2'>";
+					    		echo "<td colspan='3'>";
 					    		echo "<div class=\"callout callout-info\">";
 									echo "<h4>Não foi encontrada a turma informada.</h4>";
 								echo "</div>";
@@ -106,7 +115,7 @@ function displayDisciplinesToRequest($request){
 			    	}
 			    }else{
 					echo "<tr>";
-			    	echo "<td colspan=3>";
+			    	echo "<td colspan=4>";
 						echo "<div class=\"callout callout-info\">";
 							echo "<h4>Nenhuma disciplina adicionada para solicitação de matrícula.</h4>";
 						echo "</div>";
