@@ -36,7 +36,7 @@ class TemporaryRequest_model extends CI_Model {
 		return $requestWasSaved;
 	}
 
-	private function getTempRequest($tempRequestData){
+	public function getTempRequest($tempRequestData){
 
 		$foundRequest = $this->db->get_where('temporary_student_request', $tempRequestData)->row_array();
 

@@ -55,11 +55,13 @@ class TemporaryRequest extends CI_Controller {
 					}
 
 					if($requestWasSaved){
-						$status = "suscess";
+						$status = "success";
 						$message = "Disciplina adicionada com sucesso à solicitação";
 					}else{
 						$status = "danger";
-						$message = "Não foi possível adicionar a disciplina informada. Cheque os dados informados e tente novamente.";
+						$message = "Não foi possível adicionar a disciplina informada.
+									 Cheque os dados informados e tente novamente.<br>	
+									 Não é possível adicionar a mesma turma de uma disciplina várias vezes.";
 					}
 				}else{
 					$status = "danger";
@@ -83,6 +85,8 @@ class TemporaryRequest extends CI_Controller {
 
 	private function saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $idOfferDiscipline){
 
+		$this->load->model('temporaryrequest_model');
+
 		$tempRequest = array(
 			'id_student' => $userId,
 			'id_course' => $courseId,
@@ -90,10 +94,15 @@ class TemporaryRequest extends CI_Controller {
 			'discipline_class' => $idOfferDiscipline
 		);
 
-		$this->load->model('temporaryrequest_model');
+		$foundRequest = $this->temporaryrequest_model->getTempRequest($tempRequest);
 
-		$requestWasSaved = $this->temporaryrequest_model->saveTempRequest($tempRequest);
-
+		// In this case the chosen class was not picked yet
+		if($foundRequest === FALSE){
+			$requestWasSaved = $this->temporaryrequest_model->saveTempRequest($tempRequest);
+		}else{
+			$requestWasSaved = FALSE;
+		}
+		
 		return $requestWasSaved;
 	}
 
