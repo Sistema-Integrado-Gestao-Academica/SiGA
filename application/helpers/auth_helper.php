@@ -3,6 +3,7 @@
 require_once(APPPATH."/controllers/login.php");
 require_once(APPPATH."/controllers/permission.php");
 require_once(APPPATH."/controllers/module.php");
+require_once(APPPATH."/controllers/request.php");
 
 function session() {
 	$ci = get_instance();
@@ -55,7 +56,6 @@ function loadTemplateSafelyByGroup($requiredGroup, $template, $data = array()){
 		logoutUser();
 	}
 }
-
 
 /**
  * Logout the current user for unauthorized access to the page

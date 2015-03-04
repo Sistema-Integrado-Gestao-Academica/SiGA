@@ -172,7 +172,22 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 
-	public function studentCoursePage($courseId){
+	public function studentCoursePage($courseId, $userId){
+
+		$userData = $this->getUserById($userId);
+
+		$course = new Course();
+		$courseData = $course->getCourseById($courseId);
+
+		$data = array(
+			'course' => $courseData,
+			'user' => $userData
+		);
+
+		loadTemplateSafelyByGroup("estudante", 'usuario/student_course_page', $data);
+	}
+
+	public function student_offerList($courseId){
 
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
@@ -188,8 +203,8 @@ class Usuario extends CI_Controller {
 			'course' => $courseData,
 			'offerListDisciplines' => $offerListDisciplines
 		);
-
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_course_page', $data);
+		
+		loadTemplateSafelyByGroup("estudante", 'usuario/student_offer_list', $data);
 	}
 
 	public function guest_index(){

@@ -83,8 +83,8 @@ function displayDisciplineClasses($disciplineClasses){
 			    	echo "<hr>";
 				echo "</div>";
 		    	
-		    	echo "<div class='panel-footer'>";
-		    	echo anchor("", "Solicitar Matrícula", "class='btn btn-primary'");
+		    	echo "<div class='panel-footer' align='left'>";
+		    	
 				echo "</div>";
     			
 			echo "</div>";

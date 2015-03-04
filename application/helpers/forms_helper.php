@@ -1,5 +1,9 @@
 <?php
 
+function addDisciplinesToRequestForm($courseId, $userId){
+
+}
+
 function displayEnrollStudentForm(){
 	
 	$studentName = array(
