@@ -67,7 +67,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			}else{
 				$secondaryTeacher = "-";
 			}
-
+			
 			echo "<div class=\"box-body table-responsive no-padding\">";
 			echo "<table class=\"table table-bordered table-hover\">";
 				echo "<tbody>";
@@ -103,8 +103,8 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				    	echo "</td>";
 
 				    	echo "<td>";
-		    			echo anchor("","Editar turma", "class='btn btn-warning' style='margin-right:5%;'");
-		    			echo anchor("offer/deleteDiscipline/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
+		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%;'");
+		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
 				    	echo "</td>";
 
 				    echo "</tr>";
@@ -195,6 +195,80 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 				echo form_button($submitBtn);
 			echo "</div>";
 		echo "</div>";
+
+	echo form_close();
+}
+
+function formToUpdateOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $offerDisciplineClass){
+
+	if($teachers !== FALSE){
+		// Nothing to do
+	}else{
+		$teachers = array('0' => 'Nenhum professor cadastrado.');
+	}
+
+	$disciplineClass = array(
+			"name" => "disciplineClass",
+			"id" => "disciplineClass",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "3",
+			"value" => $offerDisciplineClass['class']
+	);
+
+	$totalVacancies = array(
+			"name" => "totalVacancies",
+			"id" => "totalVacancies",
+			"type" => "number",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"min" => "0",
+			"value" => $offerDisciplineClass['total_vacancies']
+	);
+
+	$submitBtn = array(
+			"class" => "btn bg-olive btn-block",
+			"type" => "sumbit",
+			"content" => "Salvar turma"
+	);
+
+	echo form_open("offer/updateOfferDisciplineClass/{$idDiscipline}/{$idOffer}/{$offerDisciplineClass['class']}");
+
+	echo "<div class='form-box'>";
+	echo"<div class='header'>Editar turma para oferta</div>";
+	echo "<div class='body bg-gray'>";
+
+	echo "<div class='form-group'>";
+	echo form_label("Turma", "disciplineClass");
+	echo form_input($disciplineClass);
+	echo form_error("disciplineClass");
+	echo "</div>";
+
+	echo "<div class='form-group'>";
+	echo form_label("Vagas totais", "totalVacancies");
+	echo form_input($totalVacancies);
+	echo form_error("disciplineClass");
+	echo "</div>";
+
+	echo "<div class='form-group'>";
+	echo form_label("Professor principal", "mainTeacher"). " ";
+	echo form_dropdown("mainTeacher", $teachers);
+	echo form_error("mainTeacher");
+	echo "</div>";
+
+	echo "<div class='form-group'>";
+	echo form_label("Professor secundário", "secondaryTeacher"). " ";
+	echo form_dropdown("secondaryTeacher", $teachers);
+	echo form_error("secondaryTeacher");
+	echo "</div>";
+
+	echo "</div>";
+		
+	echo "<div class='footer bg-gray'>";
+	echo form_button($submitBtn);
+	echo "</div>";
+	echo "</div>";
 
 	echo form_close();
 }

@@ -17,7 +17,7 @@ class Offer_model extends CI_Model {
 		return $wasSaved;
 	}
 	
-	public function deleteDisciplineOffer($idOffer, $idDiscipline, $class){
+	public function deleteDisciplineClassOffer($idOffer, $idDiscipline, $class){
 		$disciplineOfferToDelete = array('id_offer' => $idOffer, 'id_discipline' => $idDiscipline, 'class' => $class); 
 		$deletedDisciplineOffer = $this->db->delete('offer_discipline', $disciplineOfferToDelete);
 		return $deletedDisciplineOffer;
@@ -190,7 +190,40 @@ class Offer_model extends CI_Model {
 
 		return $wasSaved;
 	}
+	
+	public function updateOfferDisciplineClass($classData, $oldClass){
+		$offerExists = $this->checkIfOfferExists($classData['id_offer']);
+		
+		$this->load->model('discipline_model');
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
+		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
+		
+		$dataIsOk = $offerExists && $disciplineExists && (!$classAlreadyExists);
+		
+		if($dataIsOk){
+			$updated = $this->updateOfferDisciplineClassOnDb($classData, $oldClass);	
 
+			if ($updated !== FALSE){
+				$wasUpdatedSafely = TRUE;
+			}else{
+				$wasUpdatedSafely = FALSE;
+			}
+		}else{
+			$wasUpdatedSafely = FALSE;
+		}
+		
+		return $wasUpdatedSafely;
+	}
+	
+	private function updateOfferDisciplineClassOnDb($classData, $oldClass){
+		$where = array('id_offer' => $classData['id_offer'], 'id_discipline' => $classData['id_discipline'], 'class' => $oldClass);
+		
+		$this->db->where($where);
+		$updated = $this->db->update('offer_discipline', $classData);
+		
+		return $updated;
+	}
+	
 	private function checkIfClassExists($idOffer, $idDiscipline, $classToCheck){
 
 		$conditions = array(
