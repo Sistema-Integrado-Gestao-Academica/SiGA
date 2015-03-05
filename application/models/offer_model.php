@@ -81,7 +81,7 @@ class Offer_model extends CI_Model {
 		return $status;
 	}
 
-	private function getOfferBySemesterAndCourse($semester, $course){
+	public function getOfferBySemesterAndCourse($semester, $course){
 		$searchResult = $this->db->get_where('offer', array('semester' => $semester, 'course' => $course));
 		$foundOffer = $searchResult->row_array();
 
@@ -293,7 +293,11 @@ class Offer_model extends CI_Model {
 
 		$foundClass = $this->getClass($idOffer, $idDiscipline, $classToCheck);
 
-		$classAlreadyExists = sizeof($foundClass) > 0;
+		if($foundClass !== FALSE){
+			$classAlreadyExists = sizeof($foundClass) > 0;
+		}else{
+			$classAlreadyExists = FALSE;
+		}
 
 		return $classAlreadyExists;
 	}
