@@ -35,21 +35,32 @@ class TemporaryRequest extends CI_Controller {
 		if($wasConfirmed){
 
 			$status = "success";
-			$message = "Solicitação de matrícula confirmada com sucesso.";
+			$message = "Solicitação de matrícula enviada com sucesso.";
 
+			// In this case the result is the no vacancy disciplines
 			if($result !== FALSE){
 
-				if(sizeof($result) > 0){
-					$message = $message."<br><br> As disciplinas abaixo não possuiam vagas disponíveis:<br>";
+				$quantityOfNoVacancy = sizeof($result);
+				if($quantityOfNoVacancy > 0){
+					$status = "danger";
+
+					$message = $message."<br><br>Algumas solitações não foram atendidas.<br><br> As disciplinas abaixo não possuiam vagas disponíveis:<br>";
+
+					$discipline = new Discipline();
+					foreach($result as $offerDiscipline){
+
+						$foundDiscipline = $discipline->getDisciplineByCode($offerDiscipline['id_discipline']);
+						$message = $message."<br>";
+						$message = $message."{$foundDiscipline['discipline_name']}"." - Turma {$offerDiscipline['class']}";
+					}
+					
+					$quantityOfDisciplinesRequested = sizeof($userRequest);
+					if($quantityOfDisciplinesRequested === $quantityOfNoVacancy){
+						$message = $message."<br><br> Como todas as disciplinas solicitadas foram recusadas por falta de vagas, você pode realizar novamente sua matrícula.";
+					}
 				}
 
-				$discipline = new Discipline();
-				foreach($result as $offerDiscipline){
-
-					$foundDiscipline = $discipline->getDisciplineByCode($offerDiscipline['id_discipline']);
-					$message = $message."<br>";
-					$message = $message."{$foundDiscipline['discipline_name']}"." - Turma {$offerDiscipline['class']}";
-				}
+				// var_dump($message); exit;
 			}
 		}else{
 			$message = "Não foi possível confirmar sua matrícula, tente novamente.";

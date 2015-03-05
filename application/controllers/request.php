@@ -112,7 +112,7 @@ class Request extends CI_Controller {
 		}else{
 			$wasReceived = FALSE;
 		}
-
+		
 		return $wasReceived;
 	}
 

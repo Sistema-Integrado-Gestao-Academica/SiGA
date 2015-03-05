@@ -13,14 +13,21 @@ class Request_model extends CI_Model {
 			'request_status' => INCOMPLETE
 		);
 
-		$this->db->insert('student_request', $requestData);
+		$registeredRequest = $this->getRequest($requestData);
 
-		$foundRequest = $this->getRequest($requestData);
-
-		if($foundRequest !== FALSE){
-			$requestId = $foundRequest['id_request'];
+		if($registeredRequest !== FALSE){
+			$requestId = $registeredRequest['id_request'];
 		}else{
-			$requestId = FALSE;
+
+			$this->db->insert('student_request', $requestData);
+
+			$foundRequest = $this->getRequest($requestData);
+
+			if($foundRequest !== FALSE){
+				$requestId = $foundRequest['id_request'];
+			}else{
+				$requestId = FALSE;
+			}
 		}
 
 		return $requestId;
