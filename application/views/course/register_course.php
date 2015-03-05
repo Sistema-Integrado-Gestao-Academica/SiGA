@@ -69,26 +69,6 @@ $submitBtn = array(
 				<?= form_error("courseType") ?>
 			</div>
 
-<?php /**
-		*	DEPRECATED CODE
-		*	
-			<div class="form-group">	
-				<?= form_label("Tipo de Secretaria", "secreteary_type") ?>
-				<?= form_dropdown("secretary_type", $form_groups) ?>
-				<?= form_error("secretary_type") ?>
-			</div>
-
-			<div class="form-group">	
-				<?= form_label("Escolher secretário", "user_secretary") ?>
-				<?= form_dropdown("user_secretary", $form_user_secretary) ?>
-				<?= form_error("user_secretary") ?>
-			</div>
-		*/
-?>
-			<div class="form-group">	
-				<div id="post_grad_types"></div>
-
-
 			<div class="form-group">
 				<?php 
 				// Course duration field
