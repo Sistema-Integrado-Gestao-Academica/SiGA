@@ -60,6 +60,69 @@ class Offer extends CI_Controller {
 		redirect('usuario/secretary_offerList');
 	}
 	
+	public function deleteDisciplineClass($idOffer, $idDiscipline, $class){
+		$this->load->model('offer_model');
+		$deletedDisciplineOffer = $this->offer_model->deleteDisciplineClassOffer($idOffer, $idDiscipline,$class);
+		
+		if($deletedDisciplineOffer){
+			$status = "success";
+			$message = "Turma apagada da oferta.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível apagar essa turma da lista de ofertas.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+	}
+	
+	public function formToUpdateDisciplineClass($idOffer, $idDiscipline, $class){
+	
+		// Get the classes of a discipline in an offer
+		$this->load->model('offer_model');
+		$offerDisciplineClasses = $this->offer_model->getOfferDisciplineClasses($idDiscipline, $idOffer);
+	
+		// Get discipline data
+		$discipline = new Discipline();
+		$disciplineData = $discipline->getDisciplineByCode($idDiscipline);
+	
+		// Get all teachers
+		define("TEACHER_GROUP", "docente");
+	
+		$group = new Module();
+		$foundGroup = $group->getGroupByName(TEACHER_GROUP);
+	
+		if($foundGroup !== FALSE){
+			$user = new Usuario();
+			$teachers = $user->getUsersOfGroup($foundGroup['id_group']);
+	
+			if($teachers !== FALSE){
+	
+				$allTeachers = array();
+	
+				foreach($teachers as $teacher){
+					$allTeachers[$teacher['id']] = $teacher['name'];
+				}
+			}else{
+				$allTeachers = FALSE;
+			}
+	
+		}else{
+			$allTeachers = FALSE;
+		}
+	
+		$data = array(
+				'disciplineData'      => $disciplineData,
+				'offerDisciplineData' => $offerDisciplineClasses,
+				'idOffer'             => $idOffer,
+				'teachers'            => $allTeachers,
+				'class'               => $class
+		);
+	
+		loadTemplateSafelyByGroup('secretario', 'offer/offer_update_discipline_classes', $data);
+	
+	}
+	
 	public function displayOfferedDisciplines($courseId){
 		
 		$this->load->model('offer_model');
@@ -93,7 +156,7 @@ class Offer extends CI_Controller {
 
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
 	}
-
+	
 	public function displayDisciplineClasses($idDiscipline, $idOffer){
 
 		// Get the classes of a discipline in an offer
@@ -186,7 +249,55 @@ class Offer extends CI_Controller {
 
 		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
 	}
-
+	
+	public function updateOfferDisciplineClass($idDiscipline, $idOffer, $oldClass){
+		$dataIsOk = $this->validateDisciplineClassData();
+		
+		if($dataIsOk){
+			$disciplineClass = $this->input->post('disciplineClass');
+			$totalVacancies = $this->input->post('totalVacancies');
+			$mainTeacher = $this->input->post('mainTeacher');
+			$secondaryTeacher = $this->input->post('secondaryTeacher');
+			
+			// As is a new class, the current vacancy is equal to the total
+			$currentVacancies = $totalVacancies;
+			
+			$classData = array(
+					'id_offer' => $idOffer,
+					'id_discipline' => $idDiscipline,
+					'class' => $disciplineClass,
+					'total_vacancies' => $totalVacancies,
+					'current_vacancies' => $currentVacancies,
+					'main_teacher' => $mainTeacher
+			);
+			
+			if($mainTeacher !== $secondaryTeacher){
+				$classData['secondary_teacher'] = $secondaryTeacher;
+			}else{
+				// Nothing to do
+			}
+			
+			$this->load->model('offer_model');
+			$wasUpdated = $this->offer_model->updateOfferDisciplineClass($classData, $oldClass);
+			
+		if($wasUpdated){
+				$status = "success";
+				$message = "Turma alterada com sucesso.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível alterar essa turma. Cheque os dados informados, não é possível cadastrar uma turma que já existe.";
+			}
+			
+		}else{
+			$status = "danger";
+			$message = "Dados na forma incorreta.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+	}
+	
 	private function validateDisciplineClassData(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("disciplineClass", "Turma", "required|alpha");
