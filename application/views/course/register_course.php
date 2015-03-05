@@ -17,15 +17,17 @@ $courseDuration = array(
 $totalCredits = array(
 	'name' => 'course_total_credits',
 	'id' => 'course_total_credits',
-	'maxlength' => '10',
-	"class" => "form-control"
+	"class" => "form-control",
+	"type" => "number",
+	'min' => '1'
 );
 
 $courseHours = array(
 	'name' => 'course_hours',
 	'id' => 'course_hours',
-	'maxlength' => '10',
-	"class" => "form-control"
+	"class" => "form-control",
+	"type" => "number",
+	'min' => '1'
 );
 
 $courseClass = array(
