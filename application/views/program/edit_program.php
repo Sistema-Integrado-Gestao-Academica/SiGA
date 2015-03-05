@@ -60,7 +60,14 @@ $submitBtn = array(
 
 			<div class="form-group">	
 				<?= form_label("Coordenador", "program_coordinator") ?>
-				<?= form_dropdown("program_coordinator", $users, $programData['coordinator']) ?>
+				<?php
+					if($users !== FALSE){
+						echo form_dropdown("program_coordinator", $users, $programData['coordinator']);
+					}else{
+						$submitBtn['disabled'] = TRUE;
+						echo form_dropdown("program_coordinator", array('Não há nenhum coordenador cadastrado.'));
+					}
+				?>
 				<?= form_error("program_coordinator") ?>
 			</div>
 
@@ -84,6 +91,14 @@ $submitBtn = array(
 		</div>
 	<?= form_close() ?>
 </div>
+
+<?php if($users == FALSE) {
+	echo "<div class='callout callout-danger'>";
+		echo "<h4>Não é possível editar um programa para que fique sem um coordenador.</h4>";
+		echo "<p>Contate o administrador.</p>";
+	echo "</div>";
+}
+?>
 
 <br>
 <br>

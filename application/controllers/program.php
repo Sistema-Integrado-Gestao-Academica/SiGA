@@ -62,18 +62,31 @@ class Program extends CI_Controller {
 
 	public function editProgram($programId){
 
-		define("COORDINATOR_ID", 9);
-
 		$this->load->model('program_model');
-
 		$program = $this->program_model->getProgramById($programId);
+		
+		define("COORDINATOR_GROUP", "coordenador");
 
-		$user = new Usuario();
+		$group = new Module();
+		$foundGroup = $group->getGroupByName(COORDINATOR_GROUP);
 
-		$users = $user->getUsersOfGroup(COORDINATOR_ID);
+		if($foundGroup !== FALSE){
 
-		foreach($users as $user){
-			$usersForCoordinator[$user['id']] = $user['name'];
+			$user = new Usuario();
+			$users = $user->getUsersOfGroup($foundGroup['id_group']);
+
+			if($users !== FALSE){
+
+				$usersForCoordinator = array();
+				foreach($users as $user){
+					$usersForCoordinator[$user['id']] = $user['name'];
+				}
+			}else{
+				$usersForCoordinator = FALSE;
+			}
+
+		}else{
+			$usersForCoordinator = FALSE;
 		}
 
 		$course = new Course();
