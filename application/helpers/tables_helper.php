@@ -349,11 +349,6 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 
 function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 
-	if($teachers !== FALSE){
-		// Nothing to do
-	}else{
-		$teachers = array('0' => 'Nenhum professor cadastrado.');
-	}
 
 	$disciplineClass = array(
 		"name" => "disciplineClass",
@@ -400,13 +395,22 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 
 				echo "<div class='form-group'>";
 					echo form_label("Professor principal", "mainTeacher");
-					echo form_dropdown("mainTeacher", $teachers);
+					if($teachers !== FALSE){
+						echo form_dropdown("mainTeacher", $teachers);
+					}else{
+						$submitBtn['disabled'] = TRUE;
+						echo form_dropdown("mainTeacher", array('Nenhum professor cadastrado.'));
+					}
 					echo form_error("mainTeacher");
 				echo "</div>";
 
 				echo "<div class='form-group'>";
 					echo form_label("Professor secundário", "secondaryTeacher");
-					echo form_dropdown("secondaryTeacher", $teachers);
+					if($teachers !== FALSE){
+						echo form_dropdown("secondaryTeacher", $teachers);
+					}else{
+						echo form_dropdown("secondaryTeacher", array('Nenhum professor cadastrado.'));
+					}
 					echo form_error("secondaryTeacher");
 				echo "</div>";
 		
@@ -418,6 +422,14 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 		echo "</div>";
 
 	echo form_close();
+
+	if($teachers === FALSE){
+
+		echo "<div class='callout callout-danger'>";
+			echo "<h4>Não é possível cadastrar uma turma para oferta sem um professor principal.</h4>";
+			echo "<p>Contate o administrador.</p>";
+		echo "</div>";
+	}
 }
 
 function formToUpdateOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $offerDisciplineClass){
