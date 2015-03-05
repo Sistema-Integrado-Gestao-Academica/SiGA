@@ -38,8 +38,8 @@ class Migration_Arruma_tabelas_solicitacao_e_offer_discipline extends CI_Migrati
 
 		$this->dbforge->drop_column('request_discipline', 'id_discipline');
 
-		$discipline_fk = "ALTER TABLE request_discipline DROP INDEX CLASS_REQUEST_FK";
-		$this->db->query($discipline_fk);
+		$discipline_uk = "ALTER TABLE request_discipline DROP INDEX CLASS_REQUEST_UK";
+		$this->db->query($discipline_uk);
 
 		$this->dbforge->drop_column('request_discipline', 'discipline_class');
 
