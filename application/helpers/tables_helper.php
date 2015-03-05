@@ -52,6 +52,58 @@ echo "</div>";
 
 }
 
+function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
+
+	$discipline = new Discipline();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código</th>";
+			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Turma</th>";
+			        echo "<th class=\"text-center\">OBS</th>";
+			    echo "</tr>";
+
+			    if($requestDisciplinesClasses !== FALSE){
+
+			    	foreach($requestDisciplinesClasses as $class){
+
+		    			$foundDiscipline = $discipline->getDisciplineByCode($class['id_discipline']);
+						echo "<tr>";
+				    		echo "<td>";
+				    		echo $class['id_offer_discipline'];
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    		echo "Cod.: ".$foundDiscipline['discipline_code']." - ".$foundDiscipline['discipline_name']." (".$foundDiscipline['name_abbreviation'].")";
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    		echo $class['class'];
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    		echo "<td>";
+			    		echo "</tr>";	
+			    		
+			    	}
+			    }else{
+					echo "<tr>";
+			    	echo "<td colspan=4>";
+						echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhuma disciplina adicionada para solicitação de matrícula.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+					echo "</tr>";
+			    }
+			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
 function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 	$offer = new Offer();

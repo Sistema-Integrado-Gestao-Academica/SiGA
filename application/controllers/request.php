@@ -8,8 +8,11 @@ class Request extends CI_Controller {
 
 	public function studentEnrollment($courseId, $userId){
 
+		$this->load->model('request_model');
+
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
+
 
 		$temporaryRequest = new TemporaryRequest();
 		$disciplinesToRequest = $temporaryRequest->getUserTempRequest($userId, $courseId, $currentSemester['id_semester']);
@@ -21,10 +24,39 @@ class Request extends CI_Controller {
 			'courseId' => $courseId,
 			'userId' => $userId,
 			'disciplinesToRequest' => $disciplinesToRequest,
-			'thereIsDisciplinesToRequest' => $thereIsDisciplinesToRequest
+			'thereIsDisciplinesToRequest' => $thereIsDisciplinesToRequest,
 		);
 
+		$requestForSemester = $this->getUserRequestDisciplines($userId, $courseId, $currentSemester['id_semester']);
+		if($requestForSemester !== FALSE){
+
+			$data['requestDisciplinesClasses'] = $requestForSemester['requestDisciplinesClasses'];
+			
+			switch($requestForSemester['requestStatus']){
+				case 'incomplete':
+					$requestStatus = "Incompleta (Aguardar aprovação do coordenador)";
+					break;
+				default:
+					$requestStatus = "-";
+					break;
+			}
+
+			$data['requestStatus'] = $requestStatus;
+		}else{
+			$data['requestDisciplinesClasses'] = FALSE;
+			$data['requestStatus'] = FALSE;
+		}
+
 		loadTemplateSafelyByGroup("estudante", 'request/enrollment_request', $data);
+	}
+
+	private function getUserRequestDisciplines($userId, $courseId, $semesterId){
+
+		$this->load->model('request_model');
+		
+		$requestDisciplines = $this->request_model->getUserRequestDisciplines($userId, $courseId, $semesterId);
+
+		return $requestDisciplines;
 	}
 
 	public function receiveStudentRequest($userResquest){

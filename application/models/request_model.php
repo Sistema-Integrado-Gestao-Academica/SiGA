@@ -59,6 +59,51 @@ class Request_model extends CI_Model {
 		return $foundRequestDiscipline;
 	}
 
+	public function getUserRequestDisciplines($userId, $courseId, $semesterId){
+
+		$requestData = array(
+			'id_student' => $userId,
+			'id_course' => $courseId,
+			'id_semester' => $semesterId
+		);
+
+		$request = $this->request_model->getRequest($requestData);
+
+		if($request !== FALSE){
+
+			$requestStatus = $request['request_status'];
+
+			$classes = $this->getRequestDisciplinesClasses($request['id_request']);
+
+			$requestDisciplinesClasses = array(
+				'requestStatus' => $requestStatus,
+				'requestDisciplinesClasses' => $classes
+			);
+			
+		}else{
+			$requestDisciplinesClasses = FALSE;
+		}
+
+		return $requestDisciplinesClasses;
+	}
+
+	private function getRequestDisciplinesClasses($requestId){
+
+		$this->db->select('offer_discipline.*');
+		$this->db->from('request_discipline');
+		$this->db->join('offer_discipline', "request_discipline.discipline_class = offer_discipline.id_offer_discipline");
+		$this->db->where('request_discipline.id_request', $requestId);
+		$foundClasses = $this->db->get()->result_array();
+
+		if(sizeof($foundClasses) > 0){
+			// Nothing to do
+		}else{
+			$foundClasses = FALSE;
+		}
+
+		return $foundClasses;
+	}
+
 	public function getRequest($requestData){
 
 		$foundRequest = $this->db->get_where('student_request', $requestData)->row_array();
