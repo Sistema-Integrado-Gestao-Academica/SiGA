@@ -52,6 +52,22 @@ class Offer extends CI_Controller {
 		redirect('usuario/secretary_offerList');
 	}
 	
+	public function deleteDiscipline($idOffer, $idDiscipline, $class){
+		$this->load->model('offer_model');
+		$deletedDisciplineOffer = $this->offer_model->deleteDisciplineOffer($idOffer, $idDiscipline,$class);
+		
+		if($deletedDisciplineOffer){
+			$status = "success";
+			$message = "Disciplina apagada da oferta.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível apagar essa disciplina da lista de ofertas.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+	}
+	
 	public function displayOfferedDisciplines($courseId){
 		
 		$this->load->model('offer_model');

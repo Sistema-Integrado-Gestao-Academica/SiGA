@@ -16,7 +16,13 @@ class Offer_model extends CI_Model {
 
 		return $wasSaved;
 	}
-
+	
+	public function deleteDisciplineOffer($idOffer, $idDiscipline, $class){
+		$disciplineOfferToDelete = array('id_offer' => $idOffer, 'id_discipline' => $idDiscipline, 'class' => $class); 
+		$deletedDisciplineOffer = $this->db->delete('offer_discipline', $disciplineOfferToDelete);
+		return $deletedDisciplineOffer;
+	}
+	
 	public function approveOfferList($idOffer){
 
 		define("APPROVED", "approved");

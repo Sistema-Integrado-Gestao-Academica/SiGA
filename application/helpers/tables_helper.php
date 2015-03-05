@@ -104,7 +104,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 
 				    	echo "<td>";
 		    			echo anchor("","Editar turma", "class='btn btn-warning' style='margin-right:5%;'");
-		    			echo anchor("","Remover turma", "class='btn btn-danger'");
+		    			echo anchor("offer/deleteDiscipline/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
 				    	echo "</td>";
 
 				    echo "</tr>";
