@@ -6,15 +6,18 @@ $discipline_name_to_form = array(
 		"class" => "form-campo",
 		"maxlength" => "70",
 		"class" => "form-control",
+		"required" => TRUE
 );
 	
 $discipline_code_to_form = array(
 		"name" => "discipline_code",
 		"id" => "discipline_code",
-		"type" => "text",
+		"type" => "number",
+		"min" => 1,
 		"class" => "form-campo",
 		"maxlength" => "8",
 		"class" => "form-control",
+		"required" => TRUE
 );
 
 $discipline_abbreviation_name_to_form = array(
@@ -24,15 +27,18 @@ $discipline_abbreviation_name_to_form = array(
 		"class" => "form-campo",
 		"maxlength" => "6",
 		"class" => "form-control",
+		"required" => TRUE
 );
 
 $discipline_credits_to_form = array(
 		"name" => "credits",
 		"id" => "credits",
-		"type" => "text",
+		"type" => "number",
+		"min" => 2,
 		"class" => "form-campo",
 		"maxlength" => "2",
 		"class" => "form-control",
+		"required" => TRUE
 );
 
 
