@@ -453,21 +453,7 @@ class Course extends CI_Controller {
 			$totalCredits = $this->input->post('course_total_credits');
 			$courseHours = $this->input->post('course_hours');
 			$courseClass = $this->input->post('course_class');
-			$courseDescription = $this->input->post('course_description');
-
-			/**
-			 * DEPRECATED CODE
-			 * $secretaryType = $this->input->post('secretary_type');
-			 * $userSecretary = $this->input->post('user_secretary');
-			 *
-			 * // Secretary to be saved on database. Array with column names and its values
-			 * $secretaryToRegister = array(
-			 *	'id_user'   => $userSecretary,
-			 *	'id_group' => $secretaryType
-			 * );
-			 * 
-			 */
-			
+			$courseDescription = $this->input->post('course_description');	
 
 			$course = array(
 				'course_name' => $courseName,
@@ -482,14 +468,11 @@ class Course extends CI_Controller {
 			$this->load->model('course_model');
 
 			$courseWasSaved = $this->course_model->saveCourse($course);
-			//$secretaryWasSaved = $this->course_model->saveSecretary($secretaryToRegister, $courseName);
 
-			//$wasSaved = $courseWasSaved && $secretaryWasSaved;
 			$this->load->model('module_model');
 			if($courseWasSaved){
 				$groupsWereSaved = $this->module_model->saveNewCourseGroups($courseName);
 			}
-			
 			
 			$wasSaved = $courseWasSaved && $groupsWereSaved;
 			if($wasSaved){
@@ -536,6 +519,7 @@ class Course extends CI_Controller {
 	 * Validates the data submitted on the new course form
 	 */
 	private function validatesNewCourseData(){
+
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
@@ -544,11 +528,6 @@ class Course extends CI_Controller {
 		$this->form_validation->set_rules("course_hours", "Course hours", "required");
 		$this->form_validation->set_rules("course_class", "Course class", "required");
 		$this->form_validation->set_rules("course_description", "Course description", "required");
-		/**
-		 * Deprecated Code
-		 * $this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
-		 * $this->form_validation->set_rules("user_secretary", "User Secretary", "required");
-		 */
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 
