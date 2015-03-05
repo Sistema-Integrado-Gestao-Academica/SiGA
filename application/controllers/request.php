@@ -13,7 +13,6 @@ class Request extends CI_Controller {
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
 
-
 		$temporaryRequest = new TemporaryRequest();
 		$disciplinesToRequest = $temporaryRequest->getUserTempRequest($userId, $courseId, $currentSemester['id_semester']);
 

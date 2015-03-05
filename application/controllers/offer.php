@@ -235,7 +235,7 @@ class Offer extends CI_Controller {
 	}
 
 	public function checkAvailableVacancies($idOfferDiscipline){
-		
+
 		$this->load->model('offer_model');
 
 		$wasSubtracted = $this->offer_model->checkAvailableVacancies($idOfferDiscipline);
@@ -270,20 +270,20 @@ class Offer extends CI_Controller {
 		return $disciplineExists;
 	}
 
-	public function checkIfClassExistsInDiscipline($disciplineId, $courseId, $semesterId, $classToCheck){
+	public function checkIfClassExistsInDiscipline($offerId, $disciplineId, $classToCheck){
 
 		$this->load->model('offer_model');
 
-		$classExists = $this->offer_model->checkIfClassExistsInDiscipline($disciplineId, $courseId, $semesterId, $classToCheck);
+		$classExists = $this->offer_model->checkIfClassExistsInDiscipline($offerId, $disciplineId, $classToCheck);
 
 		return $classExists;
 	}
 
-	public function getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass){
+	public function getCourseOfferDisciplineByClass($disciplineId, $offerId, $disciplineClass){
 
 		$this->load->model('offer_model');
 
-		$offerDiscipline = $this->offer_model->getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass);
+		$offerDiscipline = $this->offer_model->getCourseOfferDisciplineByClass($disciplineId, $offerId, $disciplineClass);
 
 		return $offerDiscipline;
 	}
@@ -304,6 +304,15 @@ class Offer extends CI_Controller {
 		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
 
 		return $offerLists;
+	}
+
+	public function getOfferBySemesterAndCourse($semesterId, $courseId){
+
+		$this->load->model('offer_model');
+		
+		$offer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+		return $offer;
 	}
 
 	public function getCourseApprovedOfferListDisciplines($courseId, $semester){

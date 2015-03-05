@@ -91,26 +91,29 @@ class TemporaryRequest extends CI_Controller {
 		if($dataIsOk){
 
 			$disciplineCode = $this->input->post('discipline_code_search');
+			$semesterId = $this->input->post('semesterId');
 
-			$discipline = new Discipline();
-			$disciplineExists = $discipline->checkIfDisciplineExists($disciplineCode);
+			$offer = new Offer();
+			$courseOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
 
-			if($disciplineExists){
+			if($courseOffer !== FALSE){
+				$disciplineExistsInOfferList = $offer->disciplineExistsInOffer($disciplineCode, $courseOffer['id_offer']);
+			}else{
+				$disciplineExistsInOfferList = FALSE;
+			}
+
+			if($disciplineExistsInOfferList){
 
 				$disciplineClass = $this->input->post('discipline_class_search');
 
-				$semester = new Semester();
-				$currentSemester = $semester->getCurrentSemester();
-
-				$offer = new Offer();
-				$classExists = $offer->checkIfClassExistsInDiscipline($disciplineCode, $courseId, $currentSemester['id_semester'], $disciplineClass);
+				$classExists = $offer->checkIfClassExistsInDiscipline($courseOffer['id_offer'], $disciplineCode, $disciplineClass);
 
 				if($classExists){
 					
-					$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineCode, $courseId, $currentSemester['id_semester'], $disciplineClass);
+					$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineCode, $courseOffer['id_offer'], $disciplineClass);
 					
 					if($offerDiscipline !== FALSE){
-						$requestWasSaved = $this->saveTempRequest($userId, $courseId, $currentSemester['id_semester'], $disciplineCode, $offerDiscipline['id_offer_discipline']);
+						$requestWasSaved = $this->saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $offerDiscipline['id_offer_discipline']);
 					}else{
 						$requestWasSaved = FALSE;
 					}
@@ -131,7 +134,7 @@ class TemporaryRequest extends CI_Controller {
 
 			}else{
 				$status = "danger";
-				$message = "Disciplina não encontrada.";
+				$message = "Disciplina não encontrada na lista de oferta do seu curso.";
 			}
 
 		}else{
@@ -183,8 +186,13 @@ class TemporaryRequest extends CI_Controller {
 		$this->load->model('temporaryrequest_model');
 
 		$offer = new Offer();
-		$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineId, $courseId, $semesterId, $disciplineClass);
-		
+		$foundOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+		if($foundOffer !== FALSE){
+			$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineId, $foundOffer['id_offer'], $disciplineClass);
+		}else{
+			$offerDiscipline = FALSE;
+		}
 
 		if($offerDiscipline !== FALSE){
 			

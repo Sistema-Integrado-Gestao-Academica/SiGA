@@ -1,7 +1,7 @@
 
 <?php
 
-function addDisciplinesToRequestForm($courseId, $userId){
+function addDisciplinesToRequestForm($courseId, $userId, $semesterId){
 	
 	$disciplineCode = array(
 		"name" => "discipline_code_search",
@@ -31,7 +31,8 @@ function addDisciplinesToRequestForm($courseId, $userId){
 
 	$hidden = array(
 		'courseId' => $courseId,
-		'userId' => $userId
+		'userId' => $userId,
+		'semesterId' => $semesterId
 	);
 
 	echo "<h3><i class='fa fa-search-plus'> </i> Adicionar disciplinas</h3>";

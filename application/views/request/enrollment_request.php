@@ -34,7 +34,7 @@
 		</div>
 	</div>
 
-	<?php addDisciplinesToRequestForm($courseId, $userId); ?>
+	<?php addDisciplinesToRequestForm($courseId, $userId, $semester['id_semester']); ?>
 
 <!-- In this case, the student has requested enrollment -->
 <?php }else{ ?>
