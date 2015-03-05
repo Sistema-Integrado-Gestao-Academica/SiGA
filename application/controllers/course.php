@@ -379,21 +379,21 @@ class Course extends CI_Controller {
 
 	public function formToRegisterNewCourse(){
 
-		$group = new Module();
-		$form_groups = $group->getExistingModules();
-		$user = new Usuario();
-		//$form_user_secretary = $user->getAllSecretaryUsers();
+		$this->load->model('course_model');
 
-		$course_types = $this->db->get('course_type')->result_array();
+		$courseTypes = $this->course_model->getAllCourseTypes();
 
-		foreach ($course_types as $ct) {
-			$form_course_types[$ct['id']] = $ct['description'];
+		if($courseTypes !== FALSE){
+
+			foreach($courseTypes as $courseType){
+				$formCourseTypes[$courseType['id']] = $courseType['description'];
+			}
+		}else{
+			$formCourseTypes = array('Nenhum tipo de curso cadastrado.');
 		}
 
 		$data = array(
-			'form_groups' => $form_groups,
-			//'form_user_secretary' => $form_user_secretary,
-			'form_course_types' => $form_course_types
+			'form_course_types' => $formCourseTypes
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
