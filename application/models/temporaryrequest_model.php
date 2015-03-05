@@ -26,7 +26,7 @@ class TemporaryRequest_model extends CI_Model {
 		$this->db->delete('temporary_student_request', array(
 			'id_student' => $userId,
 			'id_course' => $courseId,
-			'semesterId' =>$semesterId
+			'id_semester' => $semesterId
 		));
 
 		$foundRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);

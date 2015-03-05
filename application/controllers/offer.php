@@ -234,6 +234,15 @@ class Offer extends CI_Controller {
 		loadTemplateSafelyByGroup('secretario', 'offer/offer_disciplines', $data);
 	}
 
+	public function checkAvailableVacancies($idOfferDiscipline){
+		
+		$this->load->model('offer_model');
+
+		$wasSubtracted = $this->offer_model->checkAvailableVacancies($idOfferDiscipline);
+
+		return $wasSubtracted;
+	}
+
 	public function subtractOneVacancy($idOfferDiscipline){
 
 		$this->load->model('offer_model');

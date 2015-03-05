@@ -94,6 +94,29 @@ class Offer_model extends CI_Model {
 		return $foundOffer;
 	}
 
+	public function checkAvailableVacancies($idOfferDiscipline){
+
+		$offerDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
+
+		if($offerDiscipline !== FALSE){
+			
+			define("MIN_VACANCY_QUANTITY_TO_ENROLL", 1);
+
+			$currentVacancies = $offerDiscipline['current_vacancies'];
+
+			if($currentVacancies >= MIN_VACANCY_QUANTITY_TO_ENROLL){
+				$thereIsVacancy = TRUE;
+			}else{
+				$thereIsVacancy = FALSE;
+			}
+
+		}else{
+			$thereIsVacancy = FALSE;
+		}
+
+		return $thereIsVacancy;
+	}
+
 	public function subtractOneVacancy($idOfferDiscipline){
 
 		define("NO_VACANCY", 0);
@@ -125,7 +148,7 @@ class Offer_model extends CI_Model {
 		}else{
 			$wasSubtracted = FALSE;
 		}
-		
+
 		return $wasSubtracted;
 	}
 

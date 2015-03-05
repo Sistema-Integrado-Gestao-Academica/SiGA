@@ -20,10 +20,10 @@ class TemporaryRequest extends CI_Controller {
 
 			$request = new Request();
 
-			// $requestWasReceived = $request->receiveStudentRequest($userRequest);
+			$result = $request->receiveStudentRequest($userRequest);
 
-			if($requestWasReceived){
-				$wasConfirmed = $this->cleanUserTempRequest($userRequest);
+			if($result !== FALSE){
+				$wasConfirmed = $this->cleanUserTempRequest($userId, $courseId, $semesterId);
 			}else{
 				$wasConfirmed = FALSE;
 			}
@@ -33,8 +33,24 @@ class TemporaryRequest extends CI_Controller {
 		}
 
 		if($wasConfirmed){
+
 			$status = "success";
-			$message = "Matrícula confirmada com sucesso.";
+			$message = "Solicitação de matrícula confirmada com sucesso.";
+
+			if($result !== FALSE){
+
+				if(sizeof($result) > 0){
+					$message = $message."<br><br> As disciplinas abaixo não possuiam vagas disponíveis:<br>";
+				}
+
+				$discipline = new Discipline();
+				foreach($result as $offerDiscipline){
+
+					$foundDiscipline = $discipline->getDisciplineByCode($offerDiscipline['id_discipline']);
+					$message = $message."<br>";
+					$message = $message."{$foundDiscipline['discipline_name']}"." - Turma {$offerDiscipline['class']}";
+				}
+			}
 		}else{
 			$message = "Não foi possível confirmar sua matrícula, tente novamente.";
 			$status = "danger";
