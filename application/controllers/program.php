@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('usuario.php');
+require_once('module.php');
 require_once('course.php');
 
 class Program extends CI_Controller {
@@ -152,16 +153,30 @@ class Program extends CI_Controller {
 
 	public function registerNewProgram(){
 
-		define("COORDINATOR_ID", 9);
+		define("COORDINATOR_GROUP", "coordenador");
 
-		$user = new Usuario();
+		$group = new Module();
+		$foundGroup = $group->getGroupByName(COORDINATOR_GROUP);
 
-		$users = $user->getUsersOfGroup(COORDINATOR_ID);
-		
-		foreach($users as $user){
-			$usersForCoordinator[$user['id']] = $user['name'];
+		if($foundGroup !== FALSE){
+
+			$user = new Usuario();
+			$users = $user->getUsersOfGroup($foundGroup['id_group']);
+
+			if($users !== FALSE){
+
+				$usersForCoordinator = array();
+				foreach($users as $user){
+					$usersForCoordinator[$user['id']] = $user['name'];
+				}
+			}else{
+				$usersForCoordinator = FALSE;
+			}
+
+		}else{
+			$usersForCoordinator = FALSE;
 		}
-
+		
 		$data = array(
 			'users' => $usersForCoordinator
 		);

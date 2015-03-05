@@ -328,7 +328,7 @@ function commonAttrForPostGraduationCourses(){
  * @param $masterDegreeData - Array with the data of the registered master degree
  */
 function displayMasterDegreeData($masterDegreeData){
-	$thereIsMasterDegree = $masterDegreeData != FALSE;
+	$thereIsMasterDegree = $masterDegreeData !== FALSE;
 
 	echo "<br><h4><span class='label label-default'>Mestrado Acadêmico cadastrado</span></h4>";
 	echo "<table class = 'table table-hover'>";
