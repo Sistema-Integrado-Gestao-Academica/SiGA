@@ -482,10 +482,10 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo "<div class='form-group'>";
 	echo form_label("Professor principal", "mainTeacher"). " ";
 	if($teachers !== FALSE){
-		echo form_dropdown("mainTeacher", $teachers, $offerDisciplineClass['main_teacher']);
+		echo form_dropdown("mainTeacher", $teachers, $offerDisciplineClass['main_teacher'], "class='form-control'");
 	}else{
 		$submitBtn['disabled'] = TRUE;
-		echo form_dropdown("mainTeacher", array("Nenhum professor cadastrado."));
+		echo form_dropdown("mainTeacher", array("Nenhum professor cadastrado."), '', "class='form-control'");
 	}
 	echo form_error("mainTeacher");
 	echo "</div>";
@@ -493,9 +493,11 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo "<div class='form-group'>";
 	echo form_label("Professor secundário", "secondaryTeacher"). " ";
 	if($teachers !== FALSE){
-		echo form_dropdown("secondaryTeacher", $teachers, $offerDisciplineClass['secondary_teacher']);
+		define("NONE_TEACHER", 0);
+		$teachers[NONE_TEACHER] = "Nenhum";
+		echo form_dropdown("secondaryTeacher", $teachers, $offerDisciplineClass['secondary_teacher'], "class='form-control'");
 	}else{
-		echo form_dropdown("secondaryTeacher", array("Nenhum professor cadastrado."));
+		echo form_dropdown("secondaryTeacher", array("Nenhum professor cadastrado."), '', "class='form-control'");
 	}
 	echo form_error("secondaryTeacher");
 	echo "</div>";

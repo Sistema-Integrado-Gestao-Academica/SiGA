@@ -224,7 +224,9 @@ class Offer extends CI_Controller {
 				'main_teacher' => $mainTeacher
 			);
 
-			if($secondaryTeacher != 0){
+			define("NONE_TEACHER_OPTION", 0);
+
+			if($secondaryTeacher != NONE_TEACHER_OPTION){
 				if($mainTeacher !== $secondaryTeacher){
 					$classData['secondary_teacher'] = $secondaryTeacher;
 				}else{
@@ -276,11 +278,17 @@ class Offer extends CI_Controller {
 				'current_vacancies' => $currentVacancies,
 				'main_teacher' => $mainTeacher
 			);
-			
-			if($mainTeacher !== $secondaryTeacher){
-				$classData['secondary_teacher'] = $secondaryTeacher;
+				
+			define("NONE_TEACHER_OPTION", 0);
+
+			if($secondaryTeacher != NONE_TEACHER_OPTION){
+				if($mainTeacher !== $secondaryTeacher){
+					$classData['secondary_teacher'] = $secondaryTeacher;
+				}else{
+					// Nothing to do because the main and secondary teachers might not be equal
+				}
 			}else{
-				// Nothing to do
+				$classData['secondary_teacher'] = NULL;
 			}
 			
 			$this->load->model('offer_model');
