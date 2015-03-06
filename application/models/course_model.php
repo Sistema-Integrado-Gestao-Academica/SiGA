@@ -151,35 +151,41 @@ class Course_model extends CI_Model {
 	}
 	
 	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse, $courseName){
-		$this->load->model('module_model');
-		$courseName = strtolower($courseName);
-		$separatedName = explode(' ', $courseName);
-		
-		if ($separatedName){
-			$groupsNames = $this->module_model->prepareGroupName($separatedName);
-		}else {
-			$groupsNames = $this->module_model->prepareGroupName($courseName,TRUE);
-		}
-		
-		$groupsIds = $this->module_model->getGroupIdByName($groupsNames);
-		
-		define("FINANCIAL_SECRETARY_GROUP", $groupsIds['financial']);
-		define("ACADEMIC_SECRETARY_GROUP", $groupsIds['academic']);
+		/**
+		 * LINES 157 -> 165  ARE DEPRECATED CODE
+		 * 
+		 * $this->load->model('module_model');
+		 * $courseName = strtolower($courseName);
+		 * $separatedName = explode(' ', $courseName);
+		 * if ($separatedName){
+		 * $groupsNames = $this->module_model->prepareGroupName($separatedName);
+		 * }else {
+		 * $groupsNames = $this->module_model->prepareGroupName($courseName,TRUE);
+		 * }
+		 * $groupsIds = $this->module_model->getGroupIdByName($groupsNames);
+		 *
+		 */
+		define("FINANCIAL_SECRETARY_GROUP", 10);
+		define("ACADEMIC_SECRETARY_GROUP", 11);
 		
 		$financialSecretaryToSave = array("id_user"  => $financialSecretaryUserId,
-										  "id_group" => FINANCIAL_SECRETARY_GROUP);
+										  "id_group" => FINANCIAL_SECRETARY_GROUP,
+										  "id_course"=> $idCourse);
 		
 		$academicSecretaryToSave = array("id_user"  => $academicSecretaryUserId,
-										 "id_group" => ACADEMIC_SECRETARY_GROUP);
+										 "id_group" => ACADEMIC_SECRETARY_GROUP,
+										 "id_course"=> $idCourse);
 		
-		$this->db->select('course_name');
-		$this->db->where('id_course',$idCourse);
-		$courseName = $this->db->get('course')->row_array();
-		
+		/**
+		 * DEPRECATED CODE
+		 *$this->db->select('course_name');
+		 *$this->db->where('id_course',$idCourse);
+		 *$courseName = $this->db->get('course')->row_array();
+		 */
 		try{
 			
-			$savedFinancial = $this->saveSecretary($financialSecretaryToSave, $courseName['course_name']);
-			$savedAcademic  = $this->saveSecretary($academicSecretaryToSave, $courseName['course_name']);
+			$savedFinancial = $this->saveSecretary($financialSecretaryToSave);
+			$savedAcademic  = $this->saveSecretary($academicSecretaryToSave);
 			
 		}catch (SecretaryException $caughtException){
 			throw $caughtException;
@@ -192,13 +198,11 @@ class Course_model extends CI_Model {
 		}
 	}
 	
-	private function saveSecretary($secretary, $courseName){
-		$this->db->select('id_course');
-		$courseId = $this->db->get_where('course',array('course_name'=> $courseName))->row_array();
+	private function saveSecretary($secretary){
 		
-		$saveSecretary = array_merge($secretary,$courseId);
-		$save = $this->db->insert("secretary_course", $saveSecretary);
-		$saveUserGroup = $this->db->insert('user_group', $secretary);
+		$save = $this->db->insert("secretary_course", $secretary);
+		
+		$saveUserGroup = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>$secretary['id_group']));
 		if($save && $saveUserGroup){
 			$insertionStatus = TRUE;
 		}else{

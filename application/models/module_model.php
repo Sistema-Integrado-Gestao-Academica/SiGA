@@ -68,10 +68,13 @@ class Module_model extends CI_Model {
 	}
 	
 	/**
+	 *	LINES 70 -> 180   ARE ALL DEPRECATED CODE 
+	 * 
+	 *
 	 * Function to save new secretary groups for one course
 	 * @param String $courseName
 	 * @return boolean 
-	 */
+	 *
 	public function saveNewCourseGroups($courseName){
 		$courseName = strtolower($courseName);
 		$separatedName = explode(' ', $courseName);
@@ -97,7 +100,7 @@ class Module_model extends CI_Model {
 	 * @param mixed $separatedName
 	 * @param boolean $singleName
 	 * @return array:string
-	 */
+	 *
 	public function prepareGroupName($separatedName,$singleName = FALSE){
 		
 		if($singleName){
@@ -142,7 +145,7 @@ class Module_model extends CI_Model {
 		/**
 		 * Granting permissions to academic secretary
 		 * Academic permissions ids: 2, 3, 4, 5, 6, 9
-		 */
+		 *
 		$academicPermissions = array(
 				
 				array('id_group'=>$idGroups['academic'], 'id_permission'=>2),
@@ -159,7 +162,7 @@ class Module_model extends CI_Model {
 		/**
 		 * Granting permissions to financial secretary
 		 * Academic permissions ids: 2 , 4 , 7  
-		 */
+		 *
 		$financialPermissions = array(
 			
 				array('id_group'=>$idGroups['financial'], 'id_permission'=>2),
@@ -174,7 +177,7 @@ class Module_model extends CI_Model {
 		
 		return $savedPermissions;
 	}
-	
+	*/
 	public function getGroupIdByName($groupsNames){
 		$academicGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['academic']))->row_array();
 		$financialGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['financial']))->row_array();
