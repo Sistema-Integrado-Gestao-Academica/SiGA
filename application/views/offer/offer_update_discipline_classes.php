@@ -1,23 +1,24 @@
 
 <br>
 
-<?php
-
-for ($i=0; $i<sizeof($offerDisciplineData); $i++){
+<?php 
 	
-	$equalClasses = strcmp($offerDisciplineData[$i]['class'], $class);
-	
-	/**
-	 * The strcmp() function returns 0 if strings are identical
-	 */
-	
-	if ($equalClasses == 0){
-		formToUpdateOfferDisciplineClass($disciplineData['discipline_code'],$idOffer,$teachers, $offerDisciplineData[$i]);
-		break;
+	if($disciplineData !== FALSE){
+		if($offerDisciplineData !== FALSE){
+			formToUpdateOfferDisciplineClass($disciplineData['discipline_code'], $idOffer, $teachers, $offerDisciplineData);
+		}else{
+			$status = "danger";
+			$message = "Não foi possível recuperar os dados desta turma. Tente novamente.";
+			$this->session->set_flashdata($status, $message);
+			redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}");
+		}
 	}else{
-		$status = "danger";
-		$message = "Não foi possível editar esta turma da lista de ofertas.";
-		$this->session->set_flashdata($status, $message);
-		redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}");
+?>
+	<div class="callout callout-danger">
+		<h4>O código da disciplina informado não foi encontrado. Por favor contate o administrador.</h4>
+	</div>
+<?php
 	}
-}
+?> 
+
+

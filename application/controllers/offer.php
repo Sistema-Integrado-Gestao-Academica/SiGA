@@ -78,9 +78,8 @@ class Offer extends CI_Controller {
 	
 	public function formToUpdateDisciplineClass($idOffer, $idDiscipline, $class){
 	
-		// Get the classes of a discipline in an offer
-		$this->load->model('offer_model');
-		$offerDisciplineClasses = $this->offer_model->getOfferDisciplineClasses($idDiscipline, $idOffer);
+		// Get the classe of a discipline in an offer
+		$offerDisciplineClass = $this->getCourseOfferDisciplineByClass($idDiscipline, $idOffer, $class);
 	
 		// Get discipline data
 		$discipline = new Discipline();
@@ -113,7 +112,7 @@ class Offer extends CI_Controller {
 	
 		$data = array(
 				'disciplineData'      => $disciplineData,
-				'offerDisciplineData' => $offerDisciplineClasses,
+				'offerDisciplineData' => $offerDisciplineClass,
 				'idOffer'             => $idOffer,
 				'teachers'            => $allTeachers,
 				'class'               => $class
