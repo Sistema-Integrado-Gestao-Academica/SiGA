@@ -224,10 +224,16 @@ class Offer extends CI_Controller {
 				'main_teacher' => $mainTeacher
 			);
 
-			if($mainTeacher !== $secondaryTeacher){
-				$classData['secondary_teacher'] = $secondaryTeacher;
+			if($secondaryTeacher != 0){
+				if($mainTeacher !== $secondaryTeacher){
+					$classData['secondary_teacher'] = $secondaryTeacher;
+				}else{
+					// Nothing to do because the main and secondary teachers might not be equal
+				}
+			}else{
+				// Nothing to do because was not chosen a secondary teacher
 			}
-
+			
 			$this->load->model('offer_model');
 			$wasSaved = $this->offer_model->addOfferDisciplineClass($classData);
 
