@@ -5,7 +5,7 @@ class Migration_Cria_tabela_de_grupos extends CI_migration {
 		// Group table
 		$this->dbforge->add_field(array(
 			'id_group' => array('type' => 'INT','auto_increment' => true),
-			'group_name' => array('type' => 'varchar(20)')
+			'group_name' => array('type' => 'varchar(25)')
 		));
 		
 		$this->dbforge->add_key('id_group', true);
