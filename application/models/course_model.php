@@ -199,10 +199,11 @@ class Course_model extends CI_Model {
 	}
 	
 	private function saveSecretary($secretary){
+		define("SECRETARY", 6);
 		
 		$save = $this->db->insert("secretary_course", $secretary);
-		
-		$saveUserGroup = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>$secretary['id_group']));
+		$this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>$secretary['id_group']));
+		$saveUserGroup = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>SECRETARY));
 		if($save && $saveUserGroup){
 			$insertionStatus = TRUE;
 		}else{

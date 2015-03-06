@@ -68,7 +68,7 @@ $submitBtn = array(
 );
 
 $submit_button_array_to_form_secretary = array(
-		"class" => "btn btn-primary",
+		"class" => "btn bg-olive btn-block",
 		"content" => "Cadastrar",
 		"type" => "submit"
 );
@@ -154,8 +154,8 @@ $submit_button_array_to_form_secretary = array(
 	</div>
 	<div class="col-lg-6">
 		<?php
-			  define("FINANCEIRO", 1);
-			  define("ACADEMICO", 2);
+			  define("FINANCEIRO", 10);
+			  define("ACADEMICO", 11);
 		?>
 		<table class="table">
 		

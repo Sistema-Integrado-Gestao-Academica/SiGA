@@ -105,7 +105,11 @@
 		                            	<?php 
 		                            		foreach($session['user_groups'] as $group){
 		                            			echo "<li>";
-		                            			echo anchor($group['profile_route'], ucfirst($group['group_name']));
+		                            			if($group['group_name'] == "secretario"){
+													continue;
+												}else{
+		                            				echo anchor($group['profile_route'], ucfirst($group['group_name']));
+		                            			}
 		                            			echo "</li>";
 		                            		}
 		                            	?>
@@ -129,21 +133,25 @@
 	                
 						
 						foreach($session['user_permissions'] as $groupName => $groupPermissions){
-                			echo "<li class='treeview'>";
-							
-							echo anchor("", ucfirst($groupName),"class='fa fa-folder-o'");
-							echo "<ul class='treeview-menu'>";
-
-							foreach($groupPermissions as $permission){
-							
-								echo "<li>";
-								echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+                			if($groupName == "secretario"){
+								continue;
+							}else{
+								echo "<li class='treeview'>";
+								
+								echo anchor("", ucfirst($groupName),"class='fa fa-folder-o'");
+								echo "<ul class='treeview-menu'>";
+	
+								foreach($groupPermissions as $permission){
+								
+									echo "<li>";
+									echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+									echo "</li>";
+								}
+	
+								echo "</ul>";
+								
 								echo "</li>";
 							}
-
-							echo "</ul>";
-							
-							echo "</li>";
 						}
 
 					?>
