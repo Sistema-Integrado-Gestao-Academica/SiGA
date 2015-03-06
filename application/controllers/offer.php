@@ -250,6 +250,7 @@ class Offer extends CI_Controller {
 	}
 	
 	public function updateOfferDisciplineClass($idDiscipline, $idOffer, $oldClass){
+		
 		$dataIsOk = $this->validateDisciplineClassData();
 		
 		if($dataIsOk){
@@ -258,16 +259,16 @@ class Offer extends CI_Controller {
 			$mainTeacher = $this->input->post('mainTeacher');
 			$secondaryTeacher = $this->input->post('secondaryTeacher');
 			
-			// As is a new class, the current vacancy is equal to the total
+			// As this code is only reached when the offer list is proposed, the current vacancies does not change
 			$currentVacancies = $totalVacancies;
 			
 			$classData = array(
-					'id_offer' => $idOffer,
-					'id_discipline' => $idDiscipline,
-					'class' => $disciplineClass,
-					'total_vacancies' => $totalVacancies,
-					'current_vacancies' => $currentVacancies,
-					'main_teacher' => $mainTeacher
+				'id_offer' => $idOffer,
+				'id_discipline' => $idDiscipline,
+				'class' => $disciplineClass,
+				'total_vacancies' => $totalVacancies,
+				'current_vacancies' => $currentVacancies,
+				'main_teacher' => $mainTeacher
 			);
 			
 			if($mainTeacher !== $secondaryTeacher){
@@ -289,7 +290,7 @@ class Offer extends CI_Controller {
 			
 		}else{
 			$status = "danger";
-			$message = "Dados na forma incorreta.";
+			$message = "Dados na forma incorreta. Cheque os dados informados.<br> Informe apenas letras para a turma.";
 		}
 		
 		$this->session->set_flashdata($status, $message);

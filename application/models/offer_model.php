@@ -277,13 +277,19 @@ class Offer_model extends CI_Model {
 	}
 	
 	public function updateOfferDisciplineClass($classData, $oldClass){
+
 		$offerExists = $this->checkIfOfferExists($classData['id_offer']);
 		
 		$this->load->model('discipline_model');
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
-		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
 		
-		$dataIsOk = $offerExists && $disciplineExists && (!$classAlreadyExists);
+		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
+		$classHasChanged = $classData['class'] !== $oldClass;
+
+		// The class need to change and not exists or don't change and exists
+		$classIsOk = ($classAlreadyExists && !$classHasChanged) || (!$classAlreadyExists && $classHasChanged);
+
+		$dataIsOk = $offerExists && $disciplineExists && $classIsOk;
 		
 		if($dataIsOk){
 			$updated = $this->updateOfferDisciplineClassOnDb($classData, $oldClass);	
