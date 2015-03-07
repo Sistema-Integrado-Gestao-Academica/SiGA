@@ -124,7 +124,7 @@ class ClassHour_Test extends CI_Controller{
 
 		$test_report = array('unit_report' => $this->unit->report());
 
-		$this->load->view('course/course_test_report', $test_report);
+		$this->load->view('classHour_test_report', $test_report);
 	}
 
 }
