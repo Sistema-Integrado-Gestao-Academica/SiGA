@@ -56,11 +56,7 @@ class Syllabus_model extends CI_Model {
 		$this->db->where('syllabus_discipline.id_syllabus', $syllabusId);
 		$foundDisciplines = $this->db->get()->result_array();
 
-		if(sizeof($foundDisciplines) > 0){
-			// Nothing to do
-		}else{
-			$foundDisciplines = FALSE;
-		}
+		$foundDisciplines = checkArray($foundDisciplines);
 
 		return $foundDisciplines;
 	}
@@ -71,7 +67,9 @@ class Syllabus_model extends CI_Model {
 
 		$foundSyllabusDiscipline = $searchResult->row_array();
 
-		$disciplineExists = sizeof($foundSyllabusDiscipline) > 0;
+		$foundSyllabusDiscipline = checkArray($foundSyllabusDiscipline);
+
+		$disciplineExists = $foundSyllabusDiscipline !== FALSE;
 
 		return $disciplineExists;
 	}
@@ -156,11 +154,7 @@ class Syllabus_model extends CI_Model {
 		
 		$foundSyllabusDiscipline = $searchResult->row_array();
 
-		if(sizeof($foundSyllabusDiscipline) > 0){
-			// Nothing to do
-		}else{
-			$foundSyllabusDiscipline = FALSE;
-		}
+		$foundSyllabusDiscipline = checkArray($foundSyllabusDiscipline);
 
 		return $foundSyllabusDiscipline;
 	}
@@ -170,11 +164,7 @@ class Syllabus_model extends CI_Model {
 		$searchResult = $this->db->get_where('course_syllabus', array($attribute => $value));
 		$foundSyllabus = $searchResult->row_array();
 
-		if(sizeof($foundSyllabus) > 0){
-			// Nothing to do
-		}else{
-			$foundSyllabus = FALSE;
-		}
+		$foundSyllabus = checkArray($foundSyllabus);
 
 		return $foundSyllabus;
 	}
