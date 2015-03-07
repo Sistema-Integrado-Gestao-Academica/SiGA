@@ -83,6 +83,7 @@ $route['module_test'] = 'tests/module_test';
 $route['permission_test'] = 'tests/permission_test';
 $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
+$route['classHour_test'] = 'tests/ClassHour_test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */
