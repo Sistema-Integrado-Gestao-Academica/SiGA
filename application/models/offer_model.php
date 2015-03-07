@@ -91,11 +91,7 @@ class Offer_model extends CI_Model {
 		$searchResult = $this->db->get_where('offer', array('semester' => $semester, 'course' => $course));
 		$foundOffer = $searchResult->row_array();
 
-		if(sizeof($foundOffer) > 0){
-			// Nothing to do
-		}else{
-			$foundOffer = FALSE;
-		}
+		$foundOffer = checkArray($foundOffer);
 
 		return $foundOffer;
 	}
@@ -189,11 +185,7 @@ class Offer_model extends CI_Model {
 		$searchResult = $this->db->get_where('offer_discipline', array('id_offer_discipline' => $idOfferDiscipline));
 		$foundOfferDiscipline = $searchResult->row_array();
 
-		if(sizeof($foundOfferDiscipline) > 0){
-			// Nothing to do
-		}else{
-			$foundOfferDiscipline = FALSE;
-		}
+		$foundOfferDiscipline = checkArray($foundOfferDiscipline);
 
 		return $foundOfferDiscipline;
 	}
@@ -210,11 +202,7 @@ class Offer_model extends CI_Model {
 			$this->db->where('offer_discipline.id_offer', $idOffer);
 			$disciplines = $this->db->get()->result_array();
 
-			if(sizeof($disciplines) > 0){
-				// Nothing to do 
-			}else{
-				$disciplines = FALSE;
-			}
+			$disciplines = checkArray($disciplines);
 
 		}else{
 			$disciplines = FALSE;
@@ -231,11 +219,7 @@ class Offer_model extends CI_Model {
 		$this->db->where('semester', $semester);
 		$offer = $this->db->get()->row_array();
 		
-		if(sizeof($offer) > 0){
-			// Nothing to do
-		}else{
-			$offer = FALSE;
-		}
+		$offer = checkArray($offer);
 
 		return $offer;
 	}
@@ -345,11 +329,7 @@ class Offer_model extends CI_Model {
 
 		$foundClass = $this->db->get_where('offer_discipline', $conditions)->row_array();
 
-		if(sizeof($foundClass) > 0){
-			// Nothing to do
-		}else{
-			$foundClass = FALSE;
-		}
+		$foundClass = checkArray($foundClass);
 
 		return $foundClass;
 	}
@@ -359,11 +339,7 @@ class Offer_model extends CI_Model {
 		$searchResult = $this->db->get_where('offer_discipline', $classData);
 		$foundOfferDisciplineClasses = $searchResult->result_array();
 
-		if(sizeof($foundOfferDisciplineClasses) > 0){
-			// Nothing to do
-		}else{
-			$foundOfferDisciplineClasses = FALSE;
-		}
+		$foundOfferDisciplineClasses = checkArray($foundOfferDisciplineClasses);
 
 		return $foundOfferDisciplineClasses;
 	}
@@ -419,11 +395,7 @@ class Offer_model extends CI_Model {
 		$searchResult = $this->db->get_where('offer_discipline', array('id_discipline' => $idDiscipline, 'id_offer' => $idOffer));
 		$foundOfferDisciplines = $searchResult->result_array();
 
-		if(sizeof($foundOfferDisciplines) > 0){
-			// Nothing to do
-		}else{
-			$foundOfferDisciplines = FALSE;
-		}
+		$foundOfferDisciplines = checkArray($foundOfferDisciplines);
 
 		return $foundOfferDisciplines;
 	}
@@ -448,11 +420,7 @@ class Offer_model extends CI_Model {
 		$this->db->where('offer.semester', $semester);
 		$foundOfferClasses = $this->db->get()->result_array();
 
-		if(sizeof($foundOfferClasses) > 0){
-			// Nothing to do
-		}else{
-			$foundOfferClasses = FALSE;
-		}
+		$foundOfferClasses = checkArray($foundOfferClasses);
 
 		return $foundOfferClasses;
 	}
@@ -469,11 +437,7 @@ class Offer_model extends CI_Model {
 		$searchResult = $this->db->get_where('offer', array('offer_status' => "proposed"));
 		$foundOffer = $searchResult->row_array();
 
-		if(sizeof($foundOffer) > 0){
-			// Nothing to do
-		}else{
-			$foundOffer = FALSE;
-		}
+		$foundOffer = checkArray($foundOffer);
 
 		return $foundOffer;
 	}
@@ -483,11 +447,7 @@ class Offer_model extends CI_Model {
 		$searchResult = $this->db->get_where('offer', array('course' => $courseId, 'semester' => $semesterId));
 		$foundOffers = $searchResult->row_array();
 
-		if(sizeof($foundOffers) > 0){
-			// Nothing to do
-		}else{
-			$foundOffers = FALSE;
-		}
+		$foundOffers = checkArray($foundOffers);
 
 		return $foundOffers;
 	}
@@ -501,11 +461,7 @@ class Offer_model extends CI_Model {
 			$searchResult = $this->db->get_where('semester', array('offer' => $offerId));
 			$foundOfferSemester = $searchResult->row_array();
 
-			if(sizeof($foundOfferSemester) > 0){
-				// Nothing to do
-			}else{
-				$foundOfferSemester = FALSE;
-			}
+			$foundOfferSemester = checkArray($foundOfferSemester);
 
 		}else{
 			$foundOfferSemester = FALSE;
