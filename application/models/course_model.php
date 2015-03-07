@@ -15,6 +15,8 @@ class Course_model extends CI_Model {
 		if($idExists){
 			$searchResult = $this->db->get_where('course', array('id_course' => $courseId));
 			$foundCourse = $searchResult->row_array();
+
+			$foundCourse = checkArray($foundCourse);
 		}else{
 			$foundCourse = FALSE;
 		}
@@ -31,7 +33,12 @@ class Course_model extends CI_Model {
 	public function getCourseIdByCourseName($courseName){
 
 		$course = $this->getCourseForThisCourseName($courseName);
-		$courseId = $course['id_course'];
+		
+		if($course !== FALSE){
+			$courseId = $course['id_course'];
+		}else{
+			$courseId = FALSE;
+		}
 
 		return $courseId;
 	}
@@ -48,25 +55,18 @@ class Course_model extends CI_Model {
 		$searchResult = $this->db->get_where('course', array('course_name' => $courseName));
 		$foundCourse = $searchResult->row_array();
 
-		if(sizeof($foundCourse) > 0){
-			// Nothing to do
-		}else{
-			$foundCourse = FALSE;
-		}
+		$foundCourse = checkArray($foundCourse);
 
 		return $foundCourse;
 	}
 
-		public function checkExistingCourseTypeId($course_type_id){
+	public function checkExistingCourseTypeId($courseTypeId){
+		
+		$foundCourseType = $this->db->get_where('course_type', array('id' => $courseTypeId))->row_array();
 
-		$foundType = $this->getCourseTypeById($course_type_id);
+		$foundCourseType = checkArray($foundCourseType);
 
-		$idExists = FALSE;
-		if(sizeof($foundType) === 0){
-			$idExists = FALSE;
-		}else{
-			$idExists = TRUE;
-		}
+		$idExists = $foundCourseType !== FALSE;
 
 		return $idExists;
 	}
@@ -77,11 +77,7 @@ class Course_model extends CI_Model {
 
 		$courseType = $this->db->get_where('course_type', array('id' => $courseTypeId))->row_array();
 
-		if(sizeof($courseType) > 0){
-			// Nothing to do
-		}else{
-			$courseType = FALSE;
-		}
+		$courseType = checkArray($courseType);
 
 		return $courseType;
 	}
@@ -97,11 +93,7 @@ class Course_model extends CI_Model {
 		$this->db->order_by("course_name", "asc"); 
 		$registeredCourses = $this->db->get()->result_array();
 
-		if(sizeof($registeredCourses) > 0){
-			// Nothing to do
-		}else{
-			$registeredCourses = FALSE;
-		}
+		$registeredCourses = checkArray($registeredCourses);
 
 		return $registeredCourses;
 	}
@@ -110,11 +102,7 @@ class Course_model extends CI_Model {
 		
 		$courseTypes = $this->db->get('course_type')->result_array();
 
-		if(sizeof($courseTypes) > 0){
-			// Nothing to do
-		}else{
-			$courseTypes = FALSE;
-		}
+		$courseTypes = checkArray($courseTypes);
 
 		return $courseTypes;
 	}
@@ -268,35 +256,33 @@ class Course_model extends CI_Model {
 	 * @return TRUE if the id exists or FALSE if does not
 	 */
 	public function checkExistingId($course_id){
+		
 		$foundCourse = $this->getCourseById($course_id);
 
-		$idExistis = FALSE;
-		if(sizeof($foundCourse) === 0){
-			$idExistis = FALSE;
-		}else{
-			$idExistis = TRUE;
-		}
+		$idExists = $foundCourse !== FALSE;
 
-		return $idExistis;
+		return $idExists;
 	}
 	
 	public function checkExistingSecretaryId($secretary_id){
 		$foundSecretary = $this->getSecretaryById($secretary_id);
 		
-		$idExistis = FALSE;
+		$idExists = FALSE;
 		if(sizeof($foundSecretary) === 0){
-			$idExistis = FALSE;
+			$idExists = FALSE;
 		}else{
-			$idExistis = TRUE;
+			$idExists = TRUE;
 		}
 		
-		return $idExistis;
+		return $idExists;
 	}
 	
 	private function getSecretaryById($secretary_id){
+
 		$this->db->where('id_secretary',$secretary_id);
 		$this->db->from('secretary_course');
 		$secretaryAsked = $this->db->get()->row();
+
 		return $secretaryAsked;
 	}
 	
@@ -306,9 +292,13 @@ class Course_model extends CI_Model {
 	 * @return object $courseAsked if it exists, boolean $courseAsked if not exists
 	 */
 	public function getCourseById($id){
+
 		$this->db->where('id_course',$id);
 		$this->db->from('course');
 		$courseAsked = $this->db->get()->row_array();
+
+		$courseAsked = checkArray($courseAsked);
+
 		return $courseAsked;
 	}
 
@@ -316,11 +306,7 @@ class Course_model extends CI_Model {
 
 		$course = $this->db->get_where('course', $courseAttributes)->row_array();
 		
-		if(sizeof($course) > 0){
-			// Nothing to do
-		}else{
-			$course = FALSE;
-		}
+		$course = checkArray($course);
 
 		return $course;	
 	}
@@ -379,6 +365,9 @@ class Course_model extends CI_Model {
 	public function getSecretaryByCourseId($id_course){
 
 		$secretary = $this->db->get_where("secretary_course", array('id_course' => $id_course))->result_array();
+
+		$secretary = checkArray($secretary);
+
 		return $secretary;
 	}
 
@@ -386,7 +375,9 @@ class Course_model extends CI_Model {
 		
 		$this->db->select('id_secretary, id_group, id_course');
 		$secretary = $this->db->get_where('secretary_course', array('id_user'=>$id_user))->result_array();
-		
+			
+		$secretary = checkArray($secretary);
+
 		return $secretary;	
 	}
 
@@ -403,11 +394,7 @@ class Course_model extends CI_Model {
 		$this->db->where('secretary_course.id_user', $userId);
 		$courses = $this->db->get()->result_array();
 
-		if(sizeof($courses) > 0){
-			// Nothing to do
-		}else{
-			$courses = FALSE;
-		}
+		$courses = checkArray($courses);
 
 		return $courses;
 	}
@@ -429,7 +416,13 @@ class Course_model extends CI_Model {
 
 		$searchResult = $searchResult->row_array();
 
-		$foundSecretary = $searchResult['id_secretary'];
+		$searchResult = checkArray($searchResult);
+
+		if($searchResult !== FALSE){
+			$foundSecretary = $searchResult['id_secretary'];
+		}else{
+			$foundSecretary = FALSE;
+		}
 
 		return $foundSecretary;
 	}
@@ -479,7 +472,9 @@ class Course_model extends CI_Model {
 
 		$foundCourseName = $searchResult->row_array();
 
-		if(sizeof($foundCourseName) > 0){
+		$foundCourseName = checkArray($foundCourseName);
+		
+		if($foundCourseName !== FALSE){
 			$foundCourseName = $foundCourseName['course_name'];
 		}else{
 			$foundCourseName = FALSE;
@@ -517,7 +512,9 @@ class Course_model extends CI_Model {
 
 		$foundCourseType = $searchResult->row_array();
 
-		if(sizeof($foundCourseType) > 0){
+		$foundCourseType = checkArray($foundCourseType);
+
+		if($foundCourseType !== FALSE){
 			$foundCourseType = $foundCourseType['course_type_id'];
 		}else{
 			$foundCourseType = FALSE;
