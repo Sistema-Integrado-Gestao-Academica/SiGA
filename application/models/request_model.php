@@ -65,11 +65,7 @@ class Request_model extends CI_Model {
 
 		$foundRequestDiscipline = $this->db->get_where('request_discipline', $requestDisciplineData)->result_array();
 
-		if(sizeof($foundRequestDiscipline) > 0){
-			// Nothing to do
-		}else{
-			$foundRequestDiscipline = FALSE;
-		}
+		$foundRequestDiscipline = checkArray($foundRequestDiscipline);
 
 		return $foundRequestDiscipline;
 	}
@@ -110,11 +106,7 @@ class Request_model extends CI_Model {
 		$this->db->where('request_discipline.id_request', $requestId);
 		$foundClasses = $this->db->get()->result_array();
 
-		if(sizeof($foundClasses) > 0){
-			// Nothing to do
-		}else{
-			$foundClasses = FALSE;
-		}
+		$foundClasses = checkArray($foundClasses);
 
 		return $foundClasses;
 	}
@@ -123,11 +115,7 @@ class Request_model extends CI_Model {
 
 		$foundRequest = $this->db->get_where('student_request', $requestData)->row_array();
 
-		if(sizeof($foundRequest) > 0){
-			// Nothing to do
-		}else{
-			$foundRequest = FALSE;
-		}
+		$foundRequest = checkArray($foundRequest);
 
 		return $foundRequest;
 	}
