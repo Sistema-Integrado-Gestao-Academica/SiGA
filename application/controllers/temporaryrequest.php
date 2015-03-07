@@ -37,14 +37,13 @@ class TemporaryRequest extends CI_Controller {
 			$status = "success";
 			$message = "Solicitação de matrícula enviada com sucesso.";
 
-			// In this case the result is the no vacancy disciplines
+			// If different of FALSE, $result is the disciplines of request which have problem to be saved
 			if($result !== FALSE){
 
-				$quantityOfNoVacancy = sizeof($result);
-				if($quantityOfNoVacancy > 0){
+				if(sizeof($result) > 0){
 					$status = "danger";
 
-					$message = $message."<br><br>Algumas solitações não foram atendidas.<br><br> As disciplinas abaixo não possuiam vagas disponíveis:<br>";
+					$message = "Algumas solitações não foram atendidas.<br><br> Ocorreu um erro ao processar as matrículas das disciplinas abaixo:<br>";
 
 					$discipline = new Discipline();
 					foreach($result as $offerDiscipline){
@@ -53,14 +52,9 @@ class TemporaryRequest extends CI_Controller {
 						$message = $message."<br>";
 						$message = $message."{$foundDiscipline['discipline_name']}"." - Turma {$offerDiscipline['class']}";
 					}
-					
-					$quantityOfDisciplinesRequested = sizeof($userRequest);
-					if($quantityOfDisciplinesRequested === $quantityOfNoVacancy){
-						$message = $message."<br><br> Como todas as disciplinas solicitadas foram recusadas por falta de vagas, você pode realizar novamente sua matrícula.";
-					}
-				}
 
-				// var_dump($message); exit;
+					$message = $message."<br><br>Contate o coordenador.";
+				}
 			}
 		}else{
 			$message = "Não foi possível confirmar sua matrícula, tente novamente.";

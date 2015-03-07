@@ -33,11 +33,12 @@ class Request_model extends CI_Model {
 		return $requestId;
 	}
 
-	public function saveDisciplineRequest($requestId, $idOfferDiscipline){
+	public function saveDisciplineRequest($requestId, $idOfferDiscipline, $status){
 
 		$requestDiscipline = array(
 			'id_request' => $requestId,
-			'discipline_class' => $idOfferDiscipline
+			'discipline_class' => $idOfferDiscipline,
+			'status' => $status
 		);
 
 		$this->db->insert('request_discipline', $requestDiscipline);
@@ -53,9 +54,16 @@ class Request_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function getRequestDisciplinesById($requestId){
+
+		$disciplines = $this->getRequestDisciplines(array('id_request' => $requestId));
+
+		return $disciplines;
+	}
+
 	private function getRequestDisciplines($requestDisciplineData){
 
-		$foundRequestDiscipline = $this->db->get_where('request_discipline', $requestDisciplineData)->row_array();
+		$foundRequestDiscipline = $this->db->get_where('request_discipline', $requestDisciplineData)->result_array();
 
 		if(sizeof($foundRequestDiscipline) > 0){
 			// Nothing to do
@@ -96,7 +104,7 @@ class Request_model extends CI_Model {
 
 	private function getRequestDisciplinesClasses($requestId){
 
-		$this->db->select('offer_discipline.*');
+		$this->db->select('offer_discipline.*, request_discipline.status');
 		$this->db->from('request_discipline');
 		$this->db->join('offer_discipline', "request_discipline.discipline_class = offer_discipline.id_offer_discipline");
 		$this->db->where('request_discipline.id_request', $requestId);

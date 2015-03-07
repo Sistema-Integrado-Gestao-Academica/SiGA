@@ -71,6 +71,21 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 			    	foreach($requestDisciplinesClasses as $class){
 
 		    			$foundDiscipline = $discipline->getDisciplineByCode($class['id_discipline']);
+
+		    			switch($class['status']){
+		    				case 'pre_enrolled':
+		    					$disciplineRequestStatus = "Pré-matriculado";
+		    					break;
+
+		    				case 'no_vacancy':
+		    					$disciplineRequestStatus = "Não matriculado. Não há vagas.";
+		    					break;
+		    				
+		    				default:
+		    					$disciplineRequestStatus = "-" ;
+		    					break;
+		    			}
+
 						echo "<tr>";
 				    		echo "<td>";
 				    		echo $class['id_offer_discipline'];
@@ -85,6 +100,7 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 				    		echo "</td>";
 
 				    		echo "<td>";
+				    		echo $disciplineRequestStatus;
 				    		echo "<td>";
 			    		echo "</tr>";	
 			    		

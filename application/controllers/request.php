@@ -58,28 +58,38 @@ class Request extends CI_Controller {
 		return $requestDisciplines;
 	}
 
-	public function receiveStudentRequest($userResquest){
+	private function getRequest($requestData){
 
-		if($userResquest !== FALSE){
+		$this->load->model('request_model');
+		
+		$request = $this->request_model->getRequest($requestData);
+
+		return $request;	
+	}
+
+	public function receiveStudentRequest($userRequest){
+
+		if($userRequest !== FALSE){
 
 			// Requisition ids
-			$student = $userResquest[0]['id_student'];
-			$course = $userResquest[0]['id_course'];
-			$semester = $userResquest[0]['id_semester'];
+			$student = $userRequest[0]['id_student'];
+			$course = $userRequest[0]['id_course'];
+			$semester = $userRequest[0]['id_semester'];
 
 			$requestId = $this->saveNewRequest($student, $course, $semester);
 
 			if($requestId !== FALSE){
 
 				define("MIN_VACANCY_QUANTITY_TO_ENROLL", 1);
+				define("PRE_ENROLLED_STATUS", "pre_enrolled");
+				define("NO_VACANCY_STATUS", "no_vacancy");
+
 
 				$this->load->model('request_model');
 
 				$offer = new Offer();
 
-				$noVacancyClasses = array();
-				$i = 0;
-				foreach($userResquest as $tempRequest){
+				foreach($userRequest as $tempRequest){
 					
 					$idOfferDiscipline = $tempRequest['discipline_class'];
 
@@ -92,18 +102,14 @@ class Request extends CI_Controller {
 						/**
 							CHECAR RETORNO
 						 */
-						$this->saveDisciplineRequest($requestId, $idOfferDiscipline);
+						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, PRE_ENROLLED_STATUS);
 
 					}else{
-						$noVacancyClasses[$i] = $class;
-						$i++;
+						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, NO_VACANCY_STATUS);
 					}
 				}
 
-				/**
-				  VERIFICAR NO BANCO SE TODAS AS DISCIPLINAS(TURMAS) PEDIDAS (COM EXCEÇÃO DAS SEM VAGAS) FORAM SALVAS
-				 */
-				$wasReceived = $noVacancyClasses;
+				$wasReceived = $this->checkIfRequestWasSaved($userRequest, $requestId);
 
 			}else{
 				$wasReceived = FALSE;
@@ -116,30 +122,86 @@ class Request extends CI_Controller {
 		return $wasReceived;
 	}
 
-	private function saveDisciplineRequest($requestId, $idOfferDiscipline){
+	private function checkIfRequestWasSaved($userRequest, $requestId){
+
+		$noSavedDisciplines = array();
+		$i = 0;
+		$savedRequestDisciplines = $this->getRequestDisciplines($requestId);
+		if($savedRequestDisciplines !== FALSE){
+			$offer = new Offer();
+			foreach($userRequest as $tempRequest){
+
+				$idOfferDiscipline = $tempRequest['discipline_class'];
+				$wasSaved = FALSE;
+				foreach($savedRequestDisciplines as $requestDiscipline){
+					
+					if($requestDiscipline['discipline_class'] === $idOfferDiscipline){
+						$wasSaved = TRUE;
+						break;
+					}
+				}
+
+				if($wasSaved){
+					// Nothing to do because was saved
+				}else{
+					$missedDisciplineClass = $offer->getOfferDisciplineById($idOfferDiscipline);
+					$noSavedDisciplines[$i] = $missedDisciplineClass;
+					$i++;
+				}
+			}
+
+			$wasReceived = $noSavedDisciplines;
+		}else{
+			$wasReceived = FALSE;
+		}
+
+		return $wasReceived;
+	}
+
+	private function getRequestDisciplines($requestId){
 
 		$this->load->model('request_model');
 		
-		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline);
+		$disciplines = $this->request_model->getRequestDisciplinesById($requestId);
+
+		return $disciplines;
+	}
+
+	private function saveDisciplineRequest($requestId, $idOfferDiscipline, $status){
+
+		$this->load->model('request_model');
+		
+		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline, $status);
+
+		define("NO_VACANCY_STATUS", "no_vacancy");
 
 		if($wasSaved){
-			$offer = new Offer();
-			$wasSubtracted = $offer->subtractOneVacancy($idOfferDiscipline);
 
-			if($wasSubtracted){
-				$disciplineWasAdded = TRUE;
+			$canSubtract = $status !== NO_VACANCY_STATUS;
 
+			if($canSubtract){
+				
+				$offer = new Offer();
+				$wasSubtracted = $offer->subtractOneVacancy($idOfferDiscipline);
+
+				if($wasSubtracted){
+					$disciplineWasAdded = TRUE;
+
+				}else{
+
+					/**
+
+					  In this case, the discipline might be saved but the vacancy might be not subtracted
+
+					 */
+					$disciplineWasAdded = FALSE;
+				}
 			}else{
-
-				/**
-
-				  In this case, the discipline might be saved but the vacancy might be not subtracted
-
-				 */
-				$disciplineWasAdded = FALSE;
+				// If there is no vacancy, don't need to subtract the vacancy
+				$disciplineWasAdded = TRUE;
 			}
 		}else{
-			$disciplineWasAdded = TRUE;
+			$disciplineWasAdded = FALSE;
 		}
 
 		return $disciplineWasAdded;
