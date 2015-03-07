@@ -12,11 +12,7 @@ class TemporaryRequest_model extends CI_Model {
 
 		$foundRequest = $this->db->get_where('temporary_student_request', $conditions)->result_array();
 
-		if(sizeof($foundRequest) > 0){
-			// Nothing to do
-		}else{
-			$foundRequest = FALSE;
-		}
+		$foundRequest = checkArray($foundRequest);
 
 		return $foundRequest;
 	}
@@ -80,11 +76,7 @@ class TemporaryRequest_model extends CI_Model {
 
 		$foundRequest = $this->db->get_where('temporary_student_request', $tempRequestData)->row_array();
 
-		if(sizeof($foundRequest) > 0){
-			// Nothing to do
-		}else{
-			$foundRequest = FALSE;
-		}
+		$foundRequest = checkArray($foundRequest);
 
 		return $foundRequest;
 	}
