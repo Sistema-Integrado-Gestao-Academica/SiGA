@@ -8,11 +8,7 @@ class Program_model extends CI_Model {
 
 		$allPrograms = $this->db->get('program')->result_array();
 
-		if(sizeof($allPrograms) > 0){
-			// Nothing to do
-		}else{
-			$allPrograms = FALSE;
-		}
+		$allPrograms = checkArray($allPrograms);
 
 		return $allPrograms;
 	}
@@ -101,12 +97,8 @@ class Program_model extends CI_Model {
 		$searchResult = $this->db->get_where('program_course', array('id_program' => $programId, 'id_course' => $courseId));
 		$foundProgramCourse = $searchResult->row_array();
 
-		if(sizeof($foundProgramCourse) > 0){
-			// Nothing to do
-		}else{
-			$foundProgramCourse = FALSE;
-		}
-
+		$foundProgramCourse = checkArray($foundProgramCourse);
+		
 		return$foundProgramCourse;
 	}
 
@@ -205,11 +197,7 @@ class Program_model extends CI_Model {
 
 		$foundProgram = $this->db->get_where('program', $programToSearch)->row_array();
 
-		if(sizeof($foundProgram) > 0){
-			// Nothing to do
-		}else{
-			$foundProgram = FALSE;
-		}
+		$foundProgram = checkArray($foundProgram);
 
 		return $foundProgram;
 	}
