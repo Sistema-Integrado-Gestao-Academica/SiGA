@@ -20,6 +20,10 @@ class ClassHour{
 	const MAX_DAY = 6;
 	const MIN_DAY = 1;
 
+	const ERR_INVALID_HOUR = "Hour out of range 1-9";
+	const ERR_INVALID_DAY = "Day out of range 1-6";
+	const ERR_INVALID_LOCAL = "Local of class must be a string";
+
 	public function __construct($hour = 0, $day = 0, $local = ""){
 
 		try{
@@ -38,7 +42,7 @@ class ClassHour{
 		if($hourIsOk){
 			$this->hour = $hour;
 		}else{
-			throw new ClassHourException("Hour out of range 1-9");
+			throw new ClassHourException(self::ERR_INVALID_HOUR);
 		}
 	}
 
@@ -48,7 +52,7 @@ class ClassHour{
 		if($dayIsOk){
 			$this->day = $day;
 		}else{
-			throw new ClassHourException("Day out of range 1-6");
+			throw new ClassHourException(self::ERR_INVALID_DAY);
 		}
 	}
 
@@ -61,7 +65,7 @@ class ClassHour{
 			}
 			$this->local = $local;
 		}else{
-			throw new ClassHourException("Local of class must be a string");
+			throw new ClassHourException(self::ERR_INVALID_LOCAL);
 		}
 		
 	}
