@@ -105,6 +105,24 @@ class ClassHour_Test extends CI_Controller{
 	}
 //
 
+// Testing getClassHour() method
+
+	public function shouldReturnAnArrayWithData(){
+
+		$classHour = new ClassHour(1, 2, "Sala 1");
+
+		$classHourData = $classHour->getClassHour();
+
+		$test_name = "Test the method getClassHour()";
+
+		$this->unit->run($classHourData, 'is_array', $test_name);	
+		$this->unit->run($classHourData['hour'], 1, $test_name);	
+		$this->unit->run($classHourData['day'], 2, $test_name);	
+		$this->unit->run($classHourData['local'], "Sala 1", $test_name);
+	}
+
+// 
+
 /*End of tests for valid entries */
 
 /*Invalid entries test set*/
@@ -314,6 +332,7 @@ class ClassHour_Test extends CI_Controller{
 		$this->shouldNotInstantiateWithParams_1_1_FALSE();
 		$this->shouldNotInstantiateWithParams_1_1_1();
 		$this->shouldNotInstantiateWithParams_1_1_array();
+		$this->shouldReturnAnArrayWithData();
 
 		$test_report = array('unit_report' => $this->unit->report());
 
