@@ -107,7 +107,188 @@ class ClassHour_Test extends CI_Controller{
 
 /*End of tests for valid entries */
 
+/*Invalid entries test set*/
 
+// Ranging the first parameter
+	public function shouldNotInstantiateWithParams_0_1_String(){
+
+		try{
+			$classHour = new ClassHour(0, 1, "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging first parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_HOUR, $test_name);
+	}
+
+	public function shouldNotInstantiateWithParams_10_1_String(){
+
+		try{
+			$classHour = new ClassHour(10, 1, "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging first parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_HOUR, $test_name);
+	}
+
+	public function shouldNotInstantiateWithParams_randMax_1_String(){
+
+		try{
+			$classHour = new ClassHour(rand(10, PHP_INT_MAX), 1, "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging first parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_HOUR, $test_name);
+	}
+
+	public function shouldNotInstantiateWithParams_randMin_1_String(){
+
+		try{
+			$classHour = new ClassHour(rand((-1)*PHP_INT_MAX, 0), 1, "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging first parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_HOUR, $test_name);
+	}
+// 
+
+// Ranging the second parameter
+
+	public function shouldNotInstantiateWithParams_1_0_String(){
+
+		try{
+			$classHour = new ClassHour(1, 0, "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging second parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_DAY, $test_name);
+	}
+	
+	public function shouldNotInstantiateWithParams_1_7_String(){
+
+		try{
+			$classHour = new ClassHour(1, 7, "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging second parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_DAY, $test_name);
+	}
+
+	public function shouldNotInstantiateWithParams_1_randMax_String(){
+
+		try{
+			$classHour = new ClassHour(1, rand(7, PHP_INT_MAX), "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging second parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_DAY, $test_name);
+	}
+
+	public function shouldNotInstantiateWithParams_1_randMin_String(){
+
+		try{
+			$classHour = new ClassHour(1, rand((-1)*PHP_INT_MAX, 0), "Sala 1");
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging second parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_DAY, $test_name);
+	}
+
+// 
+
+// Ranging the third parameter
+
+	public function shouldNotInstantiateWithParams_1_1_NULL(){
+
+		try{
+			$classHour = new ClassHour(1, 1, NULL);
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging third parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_LOCAL, $test_name);
+	}
+	
+	public function shouldNotInstantiateWithParams_1_1_TRUE(){
+
+		try{
+			$classHour = new ClassHour(1, 1, TRUE);
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging third parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_LOCAL, $test_name);
+	}
+	
+	public function shouldNotInstantiateWithParams_1_1_FALSE(){
+
+		try{
+			$classHour = new ClassHour(1, 1, FALSE);
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging third parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_LOCAL, $test_name);
+	}
+	
+	public function shouldNotInstantiateWithParams_1_1_1(){
+
+		try{
+			$classHour = new ClassHour(1, 1, 1);
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging third parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_LOCAL, $test_name);
+	}
+	
+	public function shouldNotInstantiateWithParams_1_1_array(){
+
+		try{
+			$classHour = new ClassHour(1, 1, array());
+		}catch (Exception $caughtException){
+			$classHour = $caughtException->getMessage();
+		}
+
+		$test_name = "Test the class constructor with invalid arguments by ranging third parameter";
+
+		$this->unit->run($classHour, ClassHour::ERR_INVALID_LOCAL, $test_name);
+	}
+
+// 
+
+/*End of tests for invalid entries*/
 
 	public function index(){
 
@@ -121,6 +302,18 @@ class ClassHour_Test extends CI_Controller{
 		$this->shouldInstantiateWithParams_1_rand_String();
 		$this->shouldInstantiateWithParams_1_6_String();
 		$this->shouldInstantiateWithParams_1_1_EmptyString();
+		$this->shouldNotInstantiateWithParams_0_1_String();
+		$this->shouldNotInstantiateWithParams_10_1_String();
+		$this->shouldNotInstantiateWithParams_randMax_1_String();
+		$this->shouldNotInstantiateWithParams_randMin_1_String();
+		$this->shouldNotInstantiateWithParams_1_0_String();
+		$this->shouldNotInstantiateWithParams_1_7_String();
+		$this->shouldNotInstantiateWithParams_1_randMax_String();
+		$this->shouldNotInstantiateWithParams_1_randMin_String();
+		$this->shouldNotInstantiateWithParams_1_1_NULL();
+		$this->shouldNotInstantiateWithParams_1_1_FALSE();
+		$this->shouldNotInstantiateWithParams_1_1_1();
+		$this->shouldNotInstantiateWithParams_1_1_array();
 
 		$test_report = array('unit_report' => $this->unit->report());
 
