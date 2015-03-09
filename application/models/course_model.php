@@ -1,6 +1,7 @@
 <?php 
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
+require_once(APPPATH."/exception/SecretaryException.php");
 class Course_model extends CI_Model {
 
 	public function enrollStudentIntoCourse($enrollment){
@@ -138,6 +139,15 @@ class Course_model extends CI_Model {
 		return $insertionStatus;
 	}
 	
+	/**
+	 * Function to manipulate secretary data to save it on database
+	 * @param int $financialSecretaryUserId
+	 * @param int $academicSecretaryUserId
+	 * @param int $idCourse
+	 * @param String $courseName
+	 * @throws SecretaryException
+	 * @return boolean
+	 */
 	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse, $courseName){
 		/**
 		 * LINES 157 -> 165  ARE DEPRECATED CODE
@@ -186,20 +196,108 @@ class Course_model extends CI_Model {
 		}
 	}
 	
+	/**
+	 * Function to save a secretary in the database
+	 * @param array $secretary
+	 * @return boolean
+	 */
 	private function saveSecretary($secretary){
 		define("SECRETARY", 6);
 		
-		$save = $this->db->insert("secretary_course", $secretary);
-		$this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>$secretary['id_group']));
-		$saveUserGroup = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>SECRETARY));
-		if($save && $saveUserGroup){
-			$insertionStatus = TRUE;
+		$alreadySavedSecretary = $this->checkExistingSecretary($secretary);
+		
+		if(!$alreadySavedSecretary){
+			try{
+				$save = $this->db->insert("secretary_course", $secretary);
+			}catch (SecretaryException $caughtException){
+				throw new SecretaryException('Não foi possível salvar este secretário.');
+			}
+		
+			$alreadySavedUserGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], $secretary['id_group']);
+			$alreadySavedSecretaryGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], SECRETARY);
+			
+			if(!$alreadySavedUserGroup){
+					
+				try{
+					$saveUserGroup  = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>$secretary['id_group']));
+				}catch (SecretaryException $caughtException){
+					throw new SecretaryException('Não foi possível atribuir este grupo ao usuário. Verifique a existência do mesmo.');
+				}
+					
+			}else{
+				// If the group is already saved, we dont need to save it again, so it's true that it's saved
+				$saveUserGroup = TRUE;
+			}
+			
+			if(!$alreadySavedSecretaryGroup){
+					
+				try{
+					$saveUserSecretary = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>SECRETARY));
+				}catch (SecretaryException $caughtException){
+					throw new SecretaryException('Não foi possível atribuir este grupo ao usuário. Verifique a existência do mesmo.');
+				}
+					
+			}else{
+				// If the group is already saved, we dont need to save it again, so it's true that it's saved
+				$saveUserSecretary = TRUE;
+			}
+			
+			$groupsWhereSaved = $saveUserGroup && $saveUserSecretary;
+			
+			if($save && $groupsWhereSaved){
+				$insertionStatus = TRUE;
+			}else{
+				$insertionStatus = FALSE;
+			}
+				
+		
 		}else{
 			$insertionStatus = FALSE;
+			throw new SecretaryException('Este secretário já foi cadastrado para esta secretaria neste curso.');
 		}
-
+		
 		return $insertionStatus;
 		
+	}
+	
+	/**
+	 * Function to check in user_group table if one row of user and group id is already saved
+	 * @param int $userId
+	 * @param int $groupId
+	 * @return boolean
+	 */
+	private function checkExistingSavedUserGroup($userId, $groupId){
+		$check = array('id_user'=>$userId, 'id_group'=>$groupId);
+		$savedRelation = $this->db->get_where('user_group', $check)->row_array();
+		
+		$exists = count($savedRelation);
+		
+		if($exists > 0){
+			$relationAlreadyExists = TRUE;
+		}else{
+			$relationAlreadyExists = FALSE;
+		}
+		
+		return $relationAlreadyExists;
+	}
+	
+	/**
+	 * Function to check if a secretary is already saved in the database
+	 * @param array $secretary
+	 * @return boolean
+	 */
+	private function checkExistingSecretary($secretary){
+		$savedSecretary = $this->db->get_where('secretary_course', $secretary)->row_array();
+		
+		$exists = count($savedSecretary);
+		
+		if($exists > 0){
+			$secretaryAlreadyExists = TRUE;
+		}else{
+			$secretaryAlreadyExists = FALSE;
+		}
+		
+		return $secretaryAlreadyExists;
 	}
 	
 	/**
