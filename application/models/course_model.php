@@ -189,7 +189,8 @@ class Course_model extends CI_Model {
 			throw $caughtException;
 		}
 		
-		if ($savedAcademic && $savedFinancial){
+		$savedSecretaries = $savedAcademic && $savedFinancial;
+		if ($savedSecretaries){
 			return TRUE;
 		}else {
 			return FALSE;
@@ -253,7 +254,6 @@ class Course_model extends CI_Model {
 		
 		}else{
 			$insertionStatus = FALSE;
-			throw new SecretaryException('Este secretário já foi cadastrado para esta secretaria neste curso.');
 		}
 		
 		return $insertionStatus;
