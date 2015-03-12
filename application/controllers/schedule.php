@@ -45,6 +45,8 @@ class Schedule extends CI_Controller {
 			    define("MAX_ROW", 9);
 			    define("HOUR_INTERVAL_OF_CLASS", 2);
 			    $hour = 6;
+
+			    // Consider 'i x j' as 'line x column'
 			    for($i = 1; $i <= MAX_ROW; $i++){
 			    	
 				    echo "<tr>";
@@ -59,35 +61,44 @@ class Schedule extends CI_Controller {
 							    $hour = $hour + 2;
 					    	}else{
 							    echo "<td>";
-							    
-							    	echo form_open("schedule/insertClassHour");
-									    $hidden = array(
-									    	'hour' => $i,
-									    	'day' => $j,
-									    	'idOfferDiscipline' => $offerDiscipline['id_offer_discipline'],
-									    	'discipline' => $offerDiscipline['id_discipline'],
-									    	'offer' => $offerDiscipline['id_offer'],
-									    	'class' => $offerDiscipline['class']
-									    );
-									    echo form_hidden($hidden);
 
-									    echo form_label("Local:", "classLocal");
-									    echo form_input(array(
-									    	"name" => "classLocal",
-											"id" => "classLocal",
-											"type" => "text",
-											"class" => "form-campo",
-											"class" => "form-control",
-											"maxlength" => "15"
-									    ));
-									
-										echo form_button(array(
-											"class" => "btn btn-info btn-flat",
-											"type" => "submit",
-											"content" => "Adicionar horário"
-										));
-										    
-									echo form_close();
+							    	$foundClassHour = $this->getClassHourInSchedule($offerDiscipline['id_offer_discipline'], $i, $j);
+							    	
+							    	$classHourIsOnSchedule = $foundClassHour !== FALSE;
+
+							    	if($classHourIsOnSchedule){
+
+							    	}else{
+
+								    	echo form_open("schedule/insertClassHour");
+										    $hidden = array(
+										    	'hour' => $i,
+										    	'day' => $j,
+										    	'idOfferDiscipline' => $offerDiscipline['id_offer_discipline'],
+										    	'discipline' => $offerDiscipline['id_discipline'],
+										    	'offer' => $offerDiscipline['id_offer'],
+										    	'class' => $offerDiscipline['class']
+										    );
+										    echo form_hidden($hidden);
+
+										    echo form_label("Local:", "classLocal");
+										    echo form_input(array(
+										    	"name" => "classLocal",
+												"id" => "classLocal",
+												"type" => "text",
+												"class" => "form-campo",
+												"class" => "form-control",
+												"maxlength" => "15"
+										    ));
+										
+											echo form_button(array(
+												"class" => "btn btn-info btn-flat",
+												"type" => "submit",
+												"content" => "Adicionar horário"
+											));
+											    
+										echo form_close();
+							    	}
 
 								echo "</td>";
 					    	}
@@ -158,6 +169,15 @@ class Schedule extends CI_Controller {
 		$wasSaved = $this->schedule_model->saveClassHour($classHour, $idOfferDiscipline);
 
 		return $wasSaved;
+	}
+
+	private function getClassHourInSchedule($idOfferDiscipline, $hour, $day){
+
+		$this->load->model('schedule_model');
+
+		$hourIsOnSchedule = $this->schedule_model->getClassHourInSchedule($idOfferDiscipline, $hour, $day);
+
+		return $hourIsOnSchedule;
 	}
 
 	/**
