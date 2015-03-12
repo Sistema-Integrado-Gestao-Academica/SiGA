@@ -1,5 +1,6 @@
 <?php
 
+require_once(APPPATH."/controllers/schedule.php");
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/program.php");
 require_once(APPPATH."/controllers/offer.php");
@@ -386,7 +387,7 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 
 	$submitBtn = array(
 		"class" => "btn bg-olive btn-block",
-		"type" => "sumbit",
+		"type" => "submit",
 		"content" => "Cadastrar turma"
 	);
 
@@ -432,7 +433,6 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 				echo "</div>";
 		
 			echo "</div>";
-			
 			echo "<div class='footer bg-gray'>";
 				echo form_button($submitBtn);
 			echo "</div>";
@@ -447,6 +447,13 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 			echo "<p>Contate o administrador.</p>";
 		echo "</div>";
 	}
+}
+
+function drawFullScheduleTable($offerDiscipline){
+
+	$schedule = new Schedule();
+
+	$schedule->drawFullSchedule($offerDiscipline);
 }
 
 function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass){
@@ -473,7 +480,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 
 	$submitBtn = array(
 		"class" => "btn bg-olive btn-block",
-		"type" => "sumbit",
+		"type" => "submit",
 		"content" => "Salvar alterações"
 	);
 
@@ -533,6 +540,12 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 			echo "<p>Contate o administrador.</p>";
 		echo "</div>";
 	}
+
+	echo "<br>";
+	echo "<br>";
+	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
+	echo "<br>";
+	drawFullScheduleTable($offerDisciplineClass);
 }
 
 function displayRegisteredCoursesToProgram($programId, $courses){
