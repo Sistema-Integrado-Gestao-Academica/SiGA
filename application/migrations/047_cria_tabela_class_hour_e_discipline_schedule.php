@@ -18,7 +18,7 @@ class Migration_Cria_tabela_class_hour_e_discipline_schedule extends CI_Migratio
 		$this->dbforge->add_field(array(
 			'id_offer_discipline' => array('type' => 'INT'),
 			'id_class_hour' => array('type' => 'INT'),
-			'class_local' => array('type' => 'varchar(15)')
+			'class_local' => array('type' => 'varchar(15)' "null" => TRUE)
 		));
 		$this->dbforge->create_table('discipline_schedule', TRUE);
 

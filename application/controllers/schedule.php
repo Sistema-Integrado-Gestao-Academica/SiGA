@@ -53,15 +53,13 @@ class Schedule extends CI_Controller {
 					    	// First column
 					    	if($j === 0){
 					    		
-							    echo "<td>";
-							    echo $i.$j."<br>";	
+							    echo "<td>";	
 							    echo $hour."-".($hour + HOUR_INTERVAL_OF_CLASS);
 							    echo "</td>";
 							    $hour = $hour + 2;
 					    	}else{
 							    echo "<td>";
-							    echo $i.$j;	
-
+							    
 							    	echo form_open("schedule/insertClassHour");
 									    $hidden = array(
 									    	'hour' => $i,
@@ -153,6 +151,14 @@ class Schedule extends CI_Controller {
 		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}");
 	}
 
+	private function saveClassHour($classHour, $idOfferDiscipline){
+
+		$this->load->model('schedule_model');
+
+		$wasSaved = $this->schedule_model->saveClassHour($classHour, $idOfferDiscipline);
+
+		return $wasSaved;
+	}
 
 	/**
 	 * Add a class hour to the discipline schedule
