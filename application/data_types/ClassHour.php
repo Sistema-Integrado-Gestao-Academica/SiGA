@@ -16,9 +16,15 @@ class ClassHour{
 
 	const MAX_HOUR = 9;
 	const MIN_HOUR = 1;
-
 	const MAX_DAY = 6;
 	const MIN_DAY = 1;
+
+	const MONDAY = "Segunda";
+	const TUESDAY = "Terça";
+	const WEDNESDAY = "Quarta";
+	const THURSDAY = "Quinta";
+	const FRIDAY = "Sexta";
+	const SATURDAY = "Sábado";
 
 	const ERR_INVALID_HOUR = "Hour out of range 1-9";
 	const ERR_INVALID_DAY = "Day out of range 1-6";
@@ -179,27 +185,27 @@ class ClassHour{
 
 		switch($day){
 			case 1:
-				$convertedDay = "Segunda";
+				$convertedDay = self::MONDAY;
 				break;
 
 			case 2:
-				$convertedDay = "Terça";
+				$convertedDay = self::TUESDAY;
 				break;
 
 			case 3:
-				$convertedDay = "Quarta";
+				$convertedDay = self::WEDNESDAY;
 				break;
 			
 			case 4:
-				$convertedDay = "Quinta";
+				$convertedDay = self::THURSDAY;
 				break;
 
 			case 5:
-				$convertedDay = "Sexta";
+				$convertedDay = self::FRIDAY;
 				break;
 
 			case 6:
-				$convertedDay = "Sábado";
+				$convertedDay = self::SATURDAY;
 				break;
 
 			default:
