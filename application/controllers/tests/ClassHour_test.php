@@ -121,7 +121,166 @@ class ClassHour_Test extends CI_Controller{
 		$this->unit->run($classHourData['local'], "Sala 1", $test_name);
 	}
 
-// 
+//
+
+// Testing getDayHourPair() method
+
+	public function shouldReturnString_MondayHours(){
+
+		$test_name = "Test the method getDayHourPair() for monday hours";
+
+		$hours = array(
+			'1' => "06h-08h",
+			'2' => "08h-10h",
+			'3' => "10h-12h",
+			'4' => "12h-14h",
+			'5' => "14h-16h",
+			'6' => "16h-18h",
+			'7' => "18h-20h",
+			'8' => "20h-22h",
+			'9' => "22h-24h"
+		);
+
+		for($i = 1; $i <= 9; $i++){
+			
+			$classHour = new ClassHour($i, 1, "Sala 1");
+
+			$dayHour = $classHour->getDayHourPair();
+
+			$this->unit->run($dayHour, "Segunda ".$hours[$i], $test_name);
+		}
+	}
+	
+	public function shouldReturnString_TuesdayHours(){
+
+		$test_name = "Test the method getDayHourPair() for tuesday hours";
+
+		$hours = array(
+			'1' => "06h-08h",
+			'2' => "08h-10h",
+			'3' => "10h-12h",
+			'4' => "12h-14h",
+			'5' => "14h-16h",
+			'6' => "16h-18h",
+			'7' => "18h-20h",
+			'8' => "20h-22h",
+			'9' => "22h-24h"
+		);
+
+		for($i = 1; $i <= 9; $i++){
+			
+			$classHour = new ClassHour($i, 2, "Sala 1");
+
+			$dayHour = $classHour->getDayHourPair();
+
+			$this->unit->run($dayHour, "Terça ".$hours[$i], $test_name);
+		}
+	}
+
+	public function shouldReturnString_WednesdayHours(){
+
+		$test_name = "Test the method getDayHourPair() for wednesday hours";
+
+		$hours = array(
+			'1' => "06h-08h",
+			'2' => "08h-10h",
+			'3' => "10h-12h",
+			'4' => "12h-14h",
+			'5' => "14h-16h",
+			'6' => "16h-18h",
+			'7' => "18h-20h",
+			'8' => "20h-22h",
+			'9' => "22h-24h"
+		);
+
+		for($i = 1; $i <= 9; $i++){
+			
+			$classHour = new ClassHour($i, 3, "Sala 1");
+
+			$dayHour = $classHour->getDayHourPair();
+
+			$this->unit->run($dayHour, "Quarta ".$hours[$i], $test_name);
+		}
+	}
+
+	public function shouldReturnString_ThursdayHours(){
+
+		$test_name = "Test the method getDayHourPair() for thursday hours";
+
+		$hours = array(
+			'1' => "06h-08h",
+			'2' => "08h-10h",
+			'3' => "10h-12h",
+			'4' => "12h-14h",
+			'5' => "14h-16h",
+			'6' => "16h-18h",
+			'7' => "18h-20h",
+			'8' => "20h-22h",
+			'9' => "22h-24h"
+		);
+
+		for($i = 1; $i <= 9; $i++){
+			
+			$classHour = new ClassHour($i, 4, "Sala 1");
+
+			$dayHour = $classHour->getDayHourPair();
+
+			$this->unit->run($dayHour, "Quinta ".$hours[$i], $test_name);
+		}
+	}
+
+	public function shouldReturnString_FridayHours(){
+
+		$test_name = "Test the method getDayHourPair() for friday hours";
+
+		$hours = array(
+			'1' => "06h-08h",
+			'2' => "08h-10h",
+			'3' => "10h-12h",
+			'4' => "12h-14h",
+			'5' => "14h-16h",
+			'6' => "16h-18h",
+			'7' => "18h-20h",
+			'8' => "20h-22h",
+			'9' => "22h-24h"
+		);
+
+		for($i = 1; $i <= 9; $i++){
+			
+			$classHour = new ClassHour($i, 5, "Sala 1");
+
+			$dayHour = $classHour->getDayHourPair();
+
+			$this->unit->run($dayHour, "Sexta ".$hours[$i], $test_name);
+		}
+	}
+
+	public function shouldReturnString_SaturdayHours(){
+
+		$test_name = "Test the method getDayHourPair() for saturday hours";
+
+		$hours = array(
+			'1' => "06h-08h",
+			'2' => "08h-10h",
+			'3' => "10h-12h",
+			'4' => "12h-14h",
+			'5' => "14h-16h",
+			'6' => "16h-18h",
+			'7' => "18h-20h",
+			'8' => "20h-22h",
+			'9' => "22h-24h"
+		);
+
+		for($i = 1; $i <= 9; $i++){
+			
+			$classHour = new ClassHour($i, 6, "Sala 1");
+
+			$dayHour = $classHour->getDayHourPair();
+
+			$this->unit->run($dayHour, "Sábado ".$hours[$i], $test_name);
+		}
+	}
+//
 
 /*End of tests for valid entries */
 
@@ -333,6 +492,13 @@ class ClassHour_Test extends CI_Controller{
 		$this->shouldNotInstantiateWithParams_1_1_1();
 		$this->shouldNotInstantiateWithParams_1_1_array();
 		$this->shouldReturnAnArrayWithData();
+		$this->shouldReturnString_MondayHours();
+		$this->shouldReturnString_TuesdayHours();
+		$this->shouldReturnString_WednesdayHours();
+		$this->shouldReturnString_ThursdayHours();
+		$this->shouldReturnString_FridayHours();
+		$this->shouldReturnString_SaturdayHours();
+
 
 		$test_report = array('unit_report' => $this->unit->report());
 

@@ -97,7 +97,7 @@ class ClassHour{
 		return $this->local;
 	}
 
-	public function getDayHour(){
+	public function getDayHourPair(){
 
 		$hour = $this->getHour();
 		$day = $this->getDay();
