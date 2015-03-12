@@ -6,11 +6,42 @@ require_once(APPPATH."/exception/ScheduleException.php");
 
 class Schedule_model extends CI_Model {
 
+	public function updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal){
+
+		$disciplineClassHour = array(
+			'id_offer_discipline' => $idOfferDiscipline,
+			'id_class_hour' => $idClassHour
+		);
+
+		$foundClassHour = $this->getDisciplineClassHour($disciplineClassHour);
+
+		if($foundClassHour !== FALSE){
+
+			$this->db->where('id_offer_discipline', $idOfferDiscipline);
+			$this->db->where('id_class_hour', $idClassHour);
+			$this->db->update('discipline_schedule', array('class_local' => $newClassLocal));
+				
+			$disciplineClassHour['class_local'] = $newClassLocal;
+			$foundClassHour = $this->getDisciplineClassHour($disciplineClassHour);
+
+			if($foundClassHour !== FALSE){
+				$wasUpdated = TRUE;
+			}else{
+				$wasUpdated = FALSE;
+			}
+
+		}else{
+			$wasUpdated = FALSE;
+		}
+
+		return $wasUpdated;
+	}
+
 	/**
 	 * Save a single class hour to a discipline class
 	 * @param $classHour - ClassHour object that contains the class hour data 
 	 * @param $idOfferDiscipline - Offer discipline id (references to offer_discipline table)
-	 * @return TRUE if was saved, or FALSE if it does not
+	 * @return TRUE if was saved, or FALSE if it was not
 	 */
 	public function saveClassHour($classHour, $idOfferDiscipline){
 

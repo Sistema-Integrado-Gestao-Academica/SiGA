@@ -81,12 +81,15 @@ class Schedule extends CI_Controller {
 							    		echo form_open("schedule/changeClassLocal");
 										    $hidden = array(
 										    	'idOfferDiscipline' => $idOfferDiscipline,
-										    	'idClassHour' => $idClassHour
+										    	'idClassHour' => $idClassHour,
+										    	'discipline' => $offerDiscipline['id_discipline'],
+										    	'offer' => $offerDiscipline['id_offer'],
+										    	'class' => $offerDiscipline['class']
 										    );
 
 										    $localClassInput = array(
-										    	"name" => "classLocal",
-												"id" => "classLocal",
+										    	"name" => "newClassLocal",
+												"id" => "newClassLocal",
 												"type" => "text",
 												"class" => "form-campo",
 												"class" => "form-control",
@@ -155,6 +158,40 @@ class Schedule extends CI_Controller {
 			echo "</tbody>";
 		echo "</table>";
 		echo "</div>";
+	}
+
+	public function changeClassLocal(){
+
+		$idOfferDiscipline = $this->input->post('idOfferDiscipline');
+		$idClassHour = $this->input->post('idClassHour');
+		$newClassLocal = $this->input->post('newClassLocal');
+
+		$discipline = $this->input->post('discipline');
+		$offer = $this->input->post('offer');
+		$class = $this->input->post('class');
+
+		$wasUpdated = $this->updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal);
+
+		if($wasUpdated){
+			$status = "success";
+			$message = "Local alterado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Ocorreu um erro e não foi possível alterar o local.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+
+		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}");
+	}
+
+	private function updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal){
+
+		$this->load->model('schedule_model');
+
+		$wasUpdated = $this->schedule_model->updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal);
+
+		return $wasUpdated;
 	}
 
 	public function removeClassHourFromSchedule($idOfferDiscipline, $idClassHour, $idOffer, $idDiscipline, $class){
