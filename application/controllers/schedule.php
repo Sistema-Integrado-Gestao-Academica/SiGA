@@ -67,14 +67,21 @@ class Schedule extends CI_Controller {
 							    	$classHourIsOnSchedule = $foundClassHour !== FALSE;
 							    	if($classHourIsOnSchedule){
 
+							    		$idOfferDiscipline = $foundClassHour['id_offer_discipline'];
+							    		$idClassHour = $foundClassHour['id_class_hour'];
+
 							    		// Anchor to remove the class hour
-							    		echo anchor("schedule/removeClassHourFromSchedule", "Remover Horário", "class='btn btn-danger btn-flat'");
+							    		echo anchor(
+							    			"schedule/removeClassHourFromSchedule/{$idOfferDiscipline}/{$idClassHour}/{$offerDiscipline['id_offer']}/{$offerDiscipline['id_discipline']}/{$offerDiscipline['class']}",
+							    			"Remover Horário",
+							    			"class='btn btn-danger btn-flat'"
+							    		);
 
 							    		// Form to update the class local
 							    		echo form_open("schedule/changeClassLocal");
 										    $hidden = array(
-										    	'idOfferDiscipline' => $foundClassHour['id_offer_discipline'],
-										    	'idClassHour' => $foundClassHour['id_class_hour']
+										    	'idOfferDiscipline' => $idOfferDiscipline,
+										    	'idClassHour' => $idClassHour
 										    );
 
 										    $localClassInput = array(
@@ -148,6 +155,25 @@ class Schedule extends CI_Controller {
 			echo "</tbody>";
 		echo "</table>";
 		echo "</div>";
+	}
+
+	public function removeClassHourFromSchedule($idOfferDiscipline, $idClassHour, $idOffer, $idDiscipline, $class){
+
+		$this->load->model('schedule_model');
+
+		$wasRemoved = $this->schedule_model->removeClassHourFromSchedule($idOfferDiscipline, $idClassHour);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Horário retirado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Ocorreu um erro e não foi possível retirar o horário";
+		}
+
+		$this->session->set_flashdata($status, $message);
+
+		redirect("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class}");
 	}
 
 	public function insertClassHour(){

@@ -89,4 +89,32 @@ class Schedule_model extends CI_Model {
 
 		return $foundClassHour;
 	}
+	
+	public function removeClassHourFromSchedule($idOfferDiscipline, $idClassHour){
+
+		$disciplineClassHour = array(
+			'id_offer_discipline' => $idOfferDiscipline,
+			'id_class_hour' => $idClassHour
+		);
+
+		$foundClassHour = $this->getDisciplineClassHour($disciplineClassHour);
+
+		if($foundClassHour !== FALSE){
+
+			$this->db->delete('discipline_schedule', $disciplineClassHour);
+
+			$foundClassHour = $this->getDisciplineClassHour($disciplineClassHour);
+
+			if($foundClassHour !== FALSE){
+				$wasRemoved = FALSE;
+			}else{
+				$wasRemoved = TRUE;
+			}
+
+		}else{
+			$wasRemoved = TRUE;
+		}
+
+		return $wasRemoved;	
+	}
 }
