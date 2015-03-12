@@ -65,8 +65,46 @@ class Schedule extends CI_Controller {
 							    	$foundClassHour = $this->getClassHourInSchedule($offerDiscipline['id_offer_discipline'], $i, $j);
 							    	
 							    	$classHourIsOnSchedule = $foundClassHour !== FALSE;
-
 							    	if($classHourIsOnSchedule){
+
+							    		// Anchor to remove the class hour
+							    		echo anchor("schedule/removeClassHourFromSchedule", "Remover Horário", "class='btn btn-danger btn-flat'");
+
+							    		// Form to update the class local
+							    		echo form_open("schedule/changeClassLocal");
+										    $hidden = array(
+										    	'idOfferDiscipline' => $foundClassHour['id_offer_discipline'],
+										    	'idClassHour' => $foundClassHour['id_class_hour']
+										    );
+
+										    $localClassInput = array(
+										    	"name" => "classLocal",
+												"id" => "classLocal",
+												"type" => "text",
+												"class" => "form-campo",
+												"class" => "form-control",
+												"maxlength" => "15"
+										    );
+
+										    if($foundClassHour['class_local'] !== NULL){
+										    	$localClassInput['value'] = $foundClassHour['class_local'];
+										    }else{
+										    	$localClassInput['value'] = "";
+										    	$localClassInput['placeholder'] = "Nenhum local adicionado";
+										    }
+
+										    echo form_hidden($hidden);
+
+										    echo form_label("Local adicionado:", "classLocal");
+										    echo form_input($localClassInput);
+										
+											echo form_button(array(
+												"class" => "btn bg-navy btn-flat",
+												"type" => "submit",
+												"content" => "Alterar local"
+											));
+											    
+										echo form_close();
 
 							    	}else{
 
@@ -88,7 +126,8 @@ class Schedule extends CI_Controller {
 												"type" => "text",
 												"class" => "form-campo",
 												"class" => "form-control",
-												"maxlength" => "15"
+												"maxlength" => "15",
+												"placeholder" => "Informe o local"
 										    ));
 										
 											echo form_button(array(
