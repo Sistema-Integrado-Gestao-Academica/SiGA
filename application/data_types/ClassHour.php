@@ -97,4 +97,117 @@ class ClassHour{
 		return $this->local;
 	}
 
+	public function getDayHour(){
+
+		$hour = $this->getHour();
+		$day = $this->getDay();
+
+		$dayHourPair = $this->convertToDayHourPair($hour, $day);
+
+		return $dayHourPair;
+	}
+
+	private function convertToDayHourPair($hour, $day){
+
+		try{
+
+			$convertedHour = $this->convertHour($hour);
+			$convertedDay = $this->convertDay($day);
+
+			$dayHour = $convertedDay." ".$convertedHour;
+
+		}catch(ClassHourException $caughException){
+			
+			$dayHour = "";
+		}
+
+		return $dayHour;
+	}
+
+	private function convertHour($hour){
+
+		$convertedHour = "";
+
+		switch($hour){
+			case 1:
+				$convertedHour = "06h-08h";
+				break;
+
+			case 2:
+				$convertedHour = "08h-10h";
+				break;
+
+			case 3:
+				$convertedHour = "10h-12h";
+				break;
+			
+			case 4:
+				$convertedHour = "12h-14h";
+				break;
+
+			case 5:
+				$convertedHour = "14h-16h";
+				break;
+
+			case 6:
+				$convertedHour = "16h-18h";
+				break;
+
+			case 7:
+				$convertedHour = "18h-20h";
+				break;
+
+			case 8:
+				$convertedHour = "20h-22h";
+				break;
+
+			case 9:
+				$convertedHour = "22h-24h";
+				break;
+
+			default:
+				throw new ClassHourException(self::ERR_INVALID_HOUR);
+				break;
+		}
+
+		return $convertedHour;
+	}
+
+	private function convertDay($day){
+
+		$convertedDay = "";
+
+		switch($day){
+			case 1:
+				$convertedDay = "Segunda";
+				break;
+
+			case 2:
+				$convertedDay = "Terça";
+				break;
+
+			case 3:
+				$convertedDay = "Quarta";
+				break;
+			
+			case 4:
+				$convertedDay = "Quinta";
+				break;
+
+			case 5:
+				$convertedDay = "Sexta";
+				break;
+
+			case 6:
+				$convertedDay = "Sábado";
+				break;
+
+			default:
+				throw new ClassHourException(self::ERR_INVALID_DAY);
+				break;
+		}
+
+		return $convertedDay;
+	}
+
 }
