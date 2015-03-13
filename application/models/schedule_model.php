@@ -125,6 +125,7 @@ class Schedule_model extends CI_Model {
 		$this->db->select('discipline_schedule.*');
 		$this->db->from('discipline_schedule');
 		$this->db->join('class_hour', "discipline_schedule.id_class_hour = class_hour.id_class_hour");
+		$this->db->where('discipline_schedule.id_offer_discipline', $idOfferDiscipline);
 		$this->db->where('class_hour.hour', $hour);
 		$this->db->where('class_hour.day', $day);
 		$foundClassHour = $this->db->get()->row_array();
