@@ -28,7 +28,7 @@ class ClassHour{
 
 	const ERR_INVALID_HOUR = "Hour out of range 1-9";
 	const ERR_INVALID_DAY = "Day out of range 1-6";
-	const ERR_INVALID_LOCAL = "Local of class must be a string";
+	const ERR_INVALID_LOCAL = "Local of class must be a string or NULL";
 
 	public function __construct($hour = 0, $day = 0, $local = ""){
 
@@ -64,11 +64,15 @@ class ClassHour{
 
 	private function setLocal($local){
 
-		if(is_string($local)){
+		// In case of $local being NULL or an empty string, it means that there is no local setted to a class
+		$localIsOk = is_string($local) || $local === NULL;
+
+		if($localIsOk){
 
 			if(empty($local)){
 				$local = NULL;
 			}
+
 			$this->local = $local;
 		}else{
 			throw new ClassHourException(self::ERR_INVALID_LOCAL);

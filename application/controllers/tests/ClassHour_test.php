@@ -99,7 +99,20 @@ class ClassHour_Test extends CI_Controller{
 			$classHour = FALSE;
 		}
 
-		$test_name = "Test the class constructor with valid arguments by ranging second parameter";
+		$test_name = "Test the class constructor with valid arguments by ranging third parameter";
+
+		$this->unit->run($classHour, 'is_object', $test_name);
+	}
+
+	public function shouldInstantiateWithParams_1_1_NULL(){
+
+		try{
+			$classHour = new ClassHour(1, 1, NULL);
+		}catch (Exception $caughtException){
+			$classHour = FALSE;
+		}
+
+		$test_name = "Test the class constructor with valid arguments by ranging third parameter";
 
 		$this->unit->run($classHour, 'is_object', $test_name);
 	}
@@ -397,19 +410,6 @@ class ClassHour_Test extends CI_Controller{
 // 
 
 // Ranging the third parameter
-
-	public function shouldNotInstantiateWithParams_1_1_NULL(){
-
-		try{
-			$classHour = new ClassHour(1, 1, NULL);
-		}catch (Exception $caughtException){
-			$classHour = $caughtException->getMessage();
-		}
-
-		$test_name = "Test the class constructor with invalid arguments by ranging third parameter";
-
-		$this->unit->run($classHour, ClassHour::ERR_INVALID_LOCAL, $test_name);
-	}
 	
 	public function shouldNotInstantiateWithParams_1_1_TRUE(){
 
@@ -479,6 +479,7 @@ class ClassHour_Test extends CI_Controller{
 		$this->shouldInstantiateWithParams_1_rand_String();
 		$this->shouldInstantiateWithParams_1_6_String();
 		$this->shouldInstantiateWithParams_1_1_EmptyString();
+		$this->shouldInstantiateWithParams_1_1_NULL();
 		$this->shouldNotInstantiateWithParams_0_1_String();
 		$this->shouldNotInstantiateWithParams_10_1_String();
 		$this->shouldNotInstantiateWithParams_randMax_1_String();
@@ -487,7 +488,6 @@ class ClassHour_Test extends CI_Controller{
 		$this->shouldNotInstantiateWithParams_1_7_String();
 		$this->shouldNotInstantiateWithParams_1_randMax_String();
 		$this->shouldNotInstantiateWithParams_1_randMin_String();
-		$this->shouldNotInstantiateWithParams_1_1_NULL();
 		$this->shouldNotInstantiateWithParams_1_1_FALSE();
 		$this->shouldNotInstantiateWithParams_1_1_1();
 		$this->shouldNotInstantiateWithParams_1_1_array();
