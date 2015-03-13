@@ -305,6 +305,8 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			}else{
 				$secondaryTeacher = "-";
 			}
+
+			$schedule = new Schedule();
 			
 			echo "<div class=\"box-body table-responsive no-padding\">";
 			echo "<table class=\"table table-bordered table-hover\">";
@@ -315,6 +317,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				        echo "<th class=\"text-center\">Vagas atuais</th>";
 				        echo "<th class=\"text-center\">Professor principal</th>";
 				        echo "<th class=\"text-center\">Professor secundário</th>";
+				        echo "<th class=\"text-center\">Horários</th>";
 				        echo "<th class=\"text-center\">Ações</th>";
 				    echo "</tr>";
 
@@ -341,7 +344,50 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				    	echo "</td>";
 
 				    	echo "<td>";
-		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%;'");
+						$schedule->getDisciplineHours($class['id_offer_discipline']);
+				    	$disciplineSchedule = $schedule->getDisciplineSchedule();
+				    	
+				    	if(sizeof($disciplineSchedule) > 0){
+
+				    		echo "<div class=\"box-body table-responsive no-padding\">";
+							echo "<table class=\"table table-bordered table-hover\">";
+								echo "<tbody>";
+								    echo "<tr>";
+								        echo "<th class=\"text-center\">Dia-Horário</th>";
+								        echo "<th class=\"text-center\">Local</th>";
+								    echo "</tr>";
+						    		foreach($disciplineSchedule as $classHour){
+						    			echo "<tr>";
+						    			
+						    			$classHourData = $classHour->getClassHour();
+
+						    			echo "<td>";
+						    			echo "<b>".$classHour->getDayHourPair()."</b>";
+						    			echo "</td>";
+						    			
+						    			echo "<td>";
+						    			if($classHourData['local'] !== NULL){
+						    				echo $classHourData['local'];
+						    			}else{
+						    				echo "<i>Não definido</i>";
+						    			}
+						    			echo "</td>";
+				    					
+				    					echo "</tr>";
+						    		}
+								echo "</tbody>";
+							echo "</table>";
+							echo "</div>";
+				    	}else{
+				    		echo "<div class='callout callout-info'>";
+				    		echo "<h4>Sem horários adicionados no momento.</h4>";
+				    		echo "<p> Clique em 'Editar' para adicionar horários.</p>";
+				    		echo "</div>";
+				    	}
+				    	echo "</td>";
+
+				    	echo "<td>";
+		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
 		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
 				    	echo "</td>";
 
@@ -528,8 +574,23 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo "</div>";
 		
 	echo "<div class='footer bg-gray'>";
-	echo form_button($submitBtn);
+		echo "<div class='row'>";
+
+		echo "<div class='col-lg-6'>";
+		echo form_button($submitBtn);
+		echo "</div>";
+
+		echo "<div class='col-lg-6'>";
+		echo anchor(
+			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}",
+			"Voltar",
+			"class='btn bg-olive btn-block'"
+		);
+		echo "</div>";
+		
+		echo "</div>";
 	echo "</div>";
+
 	echo "</div>";
 
 	echo form_close();

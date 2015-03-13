@@ -20,6 +20,52 @@ class Schedule extends CI_Controller {
 		return $this->disciplineSchedule;
 	}
 
+	public function getDisciplineHours($idOfferDiscipline){
+
+		$this->load->model('schedule_model');
+
+		$disciplineHours = $this->schedule_model->getDisciplineHours($idOfferDiscipline);
+
+		if($disciplineHours !== FALSE){
+
+			foreach($disciplineHours as $disciplineHour){
+
+				try{
+					$classHour = new ClassHour($disciplineHour['hour'], $disciplineHour['day'], $disciplineHour['class_local']);
+
+					$this->addClassHour($classHour);
+				}catch(ClassHourException $caughtException){
+					continue;
+				}catch(ScheduleException $caughtException){
+					continue;
+				}
+			}
+
+		}else{
+			// Nothing to do because the $disciplineSchedule will still being a empty array
+		}
+	}
+
+	/**
+	 * Add a class hour to the discipline schedule
+	 * @param $classHour - ClassHour object that contains the class hour data
+	 * @throws ScheduleException if the param is not an ClassHour object
+	 */
+	private function addClassHour($classHour){
+
+		// Arbitrary object
+		$ch = new ClassHour(1 , 1, "");
+		$expectedClass = get_class($ch);
+
+		$objectClass = get_class($classHour);
+
+		if($objectClass === $expectedClass){
+			$this->disciplineSchedule[] = $classHour;
+		}else{
+			throw new ScheduleException(self::ERR_INVALID_OBJECT);
+		}
+	}
+
 	public function drawFullSchedule($offerDiscipline){
 
 		/* FIXING BUG*/
@@ -280,24 +326,6 @@ class Schedule extends CI_Controller {
 		$hourIsOnSchedule = $this->schedule_model->getClassHourInSchedule($idOfferDiscipline, $hour, $day);
 
 		return $hourIsOnSchedule;
-	}
-
-	/**
-	 * Add a class hour to the discipline schedule
-	 * @param $classHour - ClassHour object that contains the class hour data
-	 * @throws ScheduleException if the param is not an ClassHour object
-	 */
-	private function addClassHour($classHour){
-
-		define("CLASS_HOUR_CLASS", "ClassHour");
-
-		$objectClass = get_class($classHour);
-
-		if($objectClass === CLASS_HOUR_CLASS){
-			$this->disciplineSchedule[] = $classHour;
-		}else{
-			throw new ScheduleException(self::ERR_INVALID_OBJECT);
-		}
 	}
 
 }

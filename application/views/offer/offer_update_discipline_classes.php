@@ -12,6 +12,12 @@
 			$this->session->set_flashdata($status, $message);
 			redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}");
 		}
+
+		echo anchor(
+			"offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}",
+			"Voltar",
+			"class='btn btn-danger'"
+		);
 	}else{
 ?>
 	<div class="callout callout-danger">

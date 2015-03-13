@@ -89,6 +89,19 @@ class Schedule_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function getDisciplineHours($idOfferDiscipline){
+
+		$this->db->select('class_hour.*, discipline_schedule.class_local');
+		$this->db->from('class_hour');
+		$this->db->join('discipline_schedule', "class_hour.id_class_hour = discipline_schedule.id_class_hour");
+		$this->db->where('discipline_schedule.id_offer_discipline', $idOfferDiscipline);
+		$disciplineHours = $this->db->get()->result_array();
+
+		$disciplineHours = checkArray($disciplineHours);
+
+		return $disciplineHours;
+	}
+
 	private function getDisciplineClassHour($disciplineClassHourData){
 
 		$foundClassHour = $this->db->get_where('discipline_schedule', $disciplineClassHourData)->row_array();
