@@ -143,17 +143,13 @@ class TemporaryRequest extends CI_Controller {
 								$insertedDisciplines[] = $disciplineSchedule;
 							}
 
-							/**
+							$conflicts = $schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
 
-							*/
-							$thereIsConflits = $schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
-							/**
-
-							*/
 							$tryToSave = FALSE;
-							if($thereIsConflits){
+							if($conflicts !== FALSE){
 								$status = "danger";
-								$message = "Não foi possível adicionar a disciplina pedida porque houve conflito de horários com disciplinas já adicionadas.";
+								$message = "Não foi possível adicionar a disciplina pedida porque houve conflito de horários com disciplinas já adicionadas.<br>
+								<i>Conflito no horário <b>".$conflicts->getDayHourPair()."</b>.</i>";
 							}else{
 								$tryToSave = TRUE;
 							}

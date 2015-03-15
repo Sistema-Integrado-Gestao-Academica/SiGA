@@ -8,6 +8,8 @@ class Schedule extends CI_Controller {
 
 	private $disciplineSchedule;
 
+	const HOUR_CONFLICT = "Occurred an hour conflict with the day hour pair passed";
+	
 	const ERR_INVALID_OBJECT = "Required an ClassHour object as param";
 
 	public function __construct(){
@@ -64,6 +66,100 @@ class Schedule extends CI_Controller {
 		}else{
 			throw new ScheduleException(self::ERR_INVALID_OBJECT);
 		}
+	}
+
+	/**
+	 * Check if occur hour conflicts when trying to add a discipline to request
+	 * @param $requestedDisciplineSchedule
+	 * @param $registeredDisciplinesSchedules
+	 * @return a ClassHour object with the hour and day where occurred the conflict, or FALSE if did not occur a conflict
+	 */
+	public function checkHourConflits($requestedDisciplineSchedule, $registeredDisciplinesSchedules){
+
+		$fullSchedule = $this->createFullSchedule();
+		
+		// At first time fill the schedule with the disciplines already added to request
+		$fullSchedule = $this->fillWithRegisteredDisciplines($fullSchedule, $registeredDisciplinesSchedules);
+		
+		$conflict = FALSE;
+		foreach($requestedDisciplineSchedule as $classHour){
+			
+			try{
+				$fullSchedule = $this->fillSchedule($fullSchedule, $classHour);
+			}catch(ScheduleException $caughtException){
+				// Receive the class hour where occurs the conflict
+				$conflict = $classHour;
+				break;
+			}
+		}
+
+		return $conflict;
+	}
+
+	private function fillWithRegisteredDisciplines($fullSchedule, $disciplinesSchedules){
+
+		foreach($disciplinesSchedules as $schedule){
+			
+			foreach($schedule as $classHour){
+
+				try{
+
+					$fullSchedule = $this->fillSchedule($fullSchedule, $classHour);	
+				}catch(ScheduleException $caughtException){
+					// In this case occured an error because the system accepted an hour conflict (What should not be done)
+					continue;
+				}
+			}
+		}
+
+		return $fullSchedule;
+	}
+
+	/**
+	 * Add a day hour pair on the schedule
+	 * @param $fullSchedule - The schedule (9 x 6 matrix) to fill
+	 * @param $classHour - ClassHour object to insert on the schedule
+	 * @return the schedule with the day hour pair added
+	 */
+	private function fillSchedule($fullSchedule, $classHour){
+
+		$classHourData = $classHour->getClassHour();
+
+		$hour = $classHourData['hour'];
+		$day = $classHourData['day'];
+
+		// Correcting indexes numbers because the full schedule starts at 0
+		$hour--;
+		$day--;
+		
+		$isNotFilled = $fullSchedule[$hour][$day] == 0;
+
+		if($isNotFilled){
+			$fullSchedule[$hour][$day] = 1;
+		}else{
+			// In this case occurs an hour conflict
+			throw new ScheduleException(self::HOUR_CONFLICT);
+		}
+
+		return $fullSchedule;
+	}
+
+	/**
+	 * Create a full schedule matrix (9 x 6)
+	 * @return a bidimensional array with all values equal to zero
+	 */
+	private function createFullSchedule(){
+
+		$schedule = array(array());
+
+		for($i = 0; $i < ClassHour::MAX_HOUR; $i++){
+			for($j = 0; $j < ClassHour::MAX_DAY; $j++){
+
+				$schedule[$i][$j] = 0;
+			}
+		}
+
+		return $schedule;
 	}
 
 	public function drawFullSchedule($offerDiscipline){
