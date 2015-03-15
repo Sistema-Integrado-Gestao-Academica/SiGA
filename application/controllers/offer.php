@@ -5,6 +5,7 @@ require_once('course.php');
 require_once('discipline.php');
 require_once('module.php');
 require_once('usuario.php');
+require_once('schedule.php');
 
 class Offer extends CI_Controller {
 

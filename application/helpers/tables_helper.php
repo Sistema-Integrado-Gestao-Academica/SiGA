@@ -1,5 +1,6 @@
 <?php
 
+require_once(APPPATH."/controllers/schedule.php");
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/program.php");
 require_once(APPPATH."/controllers/offer.php");
@@ -134,6 +135,7 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 			        echo "<th class=\"text-center\">Código</th>";
 			        echo "<th class=\"text-center\">Disciplina</th>";
 			        echo "<th class=\"text-center\">Turma</th>";
+			        echo "<th class=\"text-center\">Horário</th>";
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
@@ -157,6 +159,10 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 					    		echo "<td>";
 					    		echo $foundClass['class'];
+					    		echo "</td>";
+
+					    		echo "<td>";
+					    		displayDisciplineHours($foundClass['id_offer_discipline']);
 					    		echo "</td>";
 
 					    		echo "<td>";
@@ -229,7 +235,7 @@ function displayDisciplineClasses($disciplineClasses){
 				echo "</div>";
 		    	
 		    	echo "<div class='panel-footer' align='left'>";
-		    	
+		    	displayDisciplineHours($class['id_offer_discipline']);
 				echo "</div>";
     			
 			echo "</div>";
@@ -314,6 +320,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				        echo "<th class=\"text-center\">Vagas atuais</th>";
 				        echo "<th class=\"text-center\">Professor principal</th>";
 				        echo "<th class=\"text-center\">Professor secundário</th>";
+				        echo "<th class=\"text-center\">Horários</th>";
 				        echo "<th class=\"text-center\">Ações</th>";
 				    echo "</tr>";
 
@@ -340,7 +347,11 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				    	echo "</td>";
 
 				    	echo "<td>";
-		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%;'");
+						displayDisciplineHours($class['id_offer_discipline']);
+				    	echo "</td>";
+
+				    	echo "<td>";
+		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
 		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
 				    	echo "</td>";
 
@@ -360,6 +371,50 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 		echo "</div>";
 
 		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+	}
+}
+
+function displayDisciplineHours($idOfferDiscipline){
+
+	$schedule = new Schedule();
+	$schedule->getDisciplineHours($idOfferDiscipline);
+	$disciplineSchedule = $schedule->getDisciplineSchedule();
+	
+	if(sizeof($disciplineSchedule) > 0){
+
+		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Dia-Horário</th>";
+			        echo "<th class=\"text-center\">Local</th>";
+			    echo "</tr>";
+	    		foreach($disciplineSchedule as $classHour){
+	    			echo "<tr>";
+	    			
+	    			$classHourData = $classHour->getClassHour();
+
+	    			echo "<td>";
+	    			echo "<b>".$classHour->getDayHourPair()."</b>";
+	    			echo "</td>";
+	    			
+	    			echo "<td>";
+	    			if($classHourData['local'] !== NULL){
+	    				echo $classHourData['local'];
+	    			}else{
+	    				echo "<i>Não definido</i>";
+	    			}
+	    			echo "</td>";
+					
+					echo "</tr>";
+	    		}
+			echo "</tbody>";
+		echo "</table>";
+		echo "</div>";
+	}else{
+		echo "<div class='callout callout-info'>";
+		echo "<h4>Sem horários adicionados no momento.</h4>";
+		echo "</div>";
 	}
 }
 
@@ -386,7 +441,7 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 
 	$submitBtn = array(
 		"class" => "btn bg-olive btn-block",
-		"type" => "sumbit",
+		"type" => "submit",
 		"content" => "Cadastrar turma"
 	);
 
@@ -432,7 +487,6 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 				echo "</div>";
 		
 			echo "</div>";
-			
 			echo "<div class='footer bg-gray'>";
 				echo form_button($submitBtn);
 			echo "</div>";
@@ -447,6 +501,13 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 			echo "<p>Contate o administrador.</p>";
 		echo "</div>";
 	}
+}
+
+function drawFullScheduleTable($offerDiscipline){
+
+	$schedule = new Schedule();
+
+	$schedule->drawFullSchedule($offerDiscipline);
 }
 
 function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass){
@@ -473,7 +534,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 
 	$submitBtn = array(
 		"class" => "btn bg-olive btn-block",
-		"type" => "sumbit",
+		"type" => "submit",
 		"content" => "Salvar alterações"
 	);
 
@@ -521,8 +582,23 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo "</div>";
 		
 	echo "<div class='footer bg-gray'>";
-	echo form_button($submitBtn);
+		echo "<div class='row'>";
+
+		echo "<div class='col-lg-6'>";
+		echo form_button($submitBtn);
+		echo "</div>";
+
+		echo "<div class='col-lg-6'>";
+		echo anchor(
+			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}",
+			"Voltar",
+			"class='btn bg-olive btn-block'"
+		);
+		echo "</div>";
+		
+		echo "</div>";
 	echo "</div>";
+
 	echo "</div>";
 
 	echo form_close();
@@ -533,6 +609,12 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 			echo "<p>Contate o administrador.</p>";
 		echo "</div>";
 	}
+
+	echo "<br>";
+	echo "<br>";
+	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
+	echo "<br>";
+	drawFullScheduleTable($offerDisciplineClass);
 }
 
 function displayRegisteredCoursesToProgram($programId, $courses){
