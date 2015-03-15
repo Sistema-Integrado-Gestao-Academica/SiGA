@@ -230,7 +230,7 @@ function displayDisciplineClasses($disciplineClasses){
 				echo "</div>";
 		    	
 		    	echo "<div class='panel-footer' align='left'>";
-		    	
+		    	displayDisciplineHours($class['id_offer_discipline']);
 				echo "</div>";
     			
 			echo "</div>";
@@ -305,8 +305,6 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			}else{
 				$secondaryTeacher = "-";
 			}
-
-			$schedule = new Schedule();
 			
 			echo "<div class=\"box-body table-responsive no-padding\">";
 			echo "<table class=\"table table-bordered table-hover\">";
@@ -344,46 +342,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				    	echo "</td>";
 
 				    	echo "<td>";
-						$schedule->getDisciplineHours($class['id_offer_discipline']);
-				    	$disciplineSchedule = $schedule->getDisciplineSchedule();
-				    	
-				    	if(sizeof($disciplineSchedule) > 0){
-
-				    		echo "<div class=\"box-body table-responsive no-padding\">";
-							echo "<table class=\"table table-bordered table-hover\">";
-								echo "<tbody>";
-								    echo "<tr>";
-								        echo "<th class=\"text-center\">Dia-Horário</th>";
-								        echo "<th class=\"text-center\">Local</th>";
-								    echo "</tr>";
-						    		foreach($disciplineSchedule as $classHour){
-						    			echo "<tr>";
-						    			
-						    			$classHourData = $classHour->getClassHour();
-
-						    			echo "<td>";
-						    			echo "<b>".$classHour->getDayHourPair()."</b>";
-						    			echo "</td>";
-						    			
-						    			echo "<td>";
-						    			if($classHourData['local'] !== NULL){
-						    				echo $classHourData['local'];
-						    			}else{
-						    				echo "<i>Não definido</i>";
-						    			}
-						    			echo "</td>";
-				    					
-				    					echo "</tr>";
-						    		}
-								echo "</tbody>";
-							echo "</table>";
-							echo "</div>";
-				    	}else{
-				    		echo "<div class='callout callout-info'>";
-				    		echo "<h4>Sem horários adicionados no momento.</h4>";
-				    		echo "<p> Clique em 'Editar' para adicionar horários.</p>";
-				    		echo "</div>";
-				    	}
+						displayDisciplineHours($class['id_offer_discipline']);
 				    	echo "</td>";
 
 				    	echo "<td>";
@@ -407,6 +366,50 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 		echo "</div>";
 
 		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+	}
+}
+
+function displayDisciplineHours($idOfferDiscipline){
+
+	$schedule = new Schedule();
+	$schedule->getDisciplineHours($idOfferDiscipline);
+	$disciplineSchedule = $schedule->getDisciplineSchedule();
+	
+	if(sizeof($disciplineSchedule) > 0){
+
+		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Dia-Horário</th>";
+			        echo "<th class=\"text-center\">Local</th>";
+			    echo "</tr>";
+	    		foreach($disciplineSchedule as $classHour){
+	    			echo "<tr>";
+	    			
+	    			$classHourData = $classHour->getClassHour();
+
+	    			echo "<td>";
+	    			echo "<b>".$classHour->getDayHourPair()."</b>";
+	    			echo "</td>";
+	    			
+	    			echo "<td>";
+	    			if($classHourData['local'] !== NULL){
+	    				echo $classHourData['local'];
+	    			}else{
+	    				echo "<i>Não definido</i>";
+	    			}
+	    			echo "</td>";
+					
+					echo "</tr>";
+	    		}
+			echo "</tbody>";
+		echo "</table>";
+		echo "</div>";
+	}else{
+		echo "<div class='callout callout-info'>";
+		echo "<h4>Sem horários adicionados no momento.</h4>";
+		echo "</div>";
 	}
 }
 
