@@ -135,6 +135,7 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 			        echo "<th class=\"text-center\">Código</th>";
 			        echo "<th class=\"text-center\">Disciplina</th>";
 			        echo "<th class=\"text-center\">Turma</th>";
+			        echo "<th class=\"text-center\">Horário</th>";
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
@@ -158,6 +159,10 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 					    		echo "<td>";
 					    		echo $foundClass['class'];
+					    		echo "</td>";
+
+					    		echo "<td>";
+					    		displayDisciplineHours($foundClass['id_offer_discipline']);
 					    		echo "</td>";
 
 					    		echo "<td>";

@@ -4,6 +4,7 @@ require_once('request.php');
 require_once('offer.php');
 require_once('discipline.php');
 require_once('semester.php');
+require_once('schedule.php');
 
 /**
  * In this class, consider where is written 'temp' equals to 'temporary'
@@ -118,20 +119,70 @@ class TemporaryRequest extends CI_Controller {
 					$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineCode, $courseOffer['id_offer'], $disciplineClass);
 					
 					if($offerDiscipline !== FALSE){
-						$requestWasSaved = $this->saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $offerDiscipline['id_offer_discipline']);
-					}else{
-						$requestWasSaved = FALSE;
-					}
 
-					if($requestWasSaved){
-						$status = "success";
-						$message = "Disciplina adicionada com sucesso à solicitação";
+						$idOfferDiscipline = $offerDiscipline['id_offer_discipline'];
+
+						$userTempRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);
+
+						$tryToSave = FALSE;
+						if($userTempRequest !== FALSE){
+
+							// Get the requested discipline hours
+							$schedule = new Schedule();
+							$schedule->getDisciplineHours($idOfferDiscipline);
+							$requestedDisciplineSchedule = $schedule->getDisciplineSchedule();
+
+							// Get disciplines hours from already inserted to resquest disciplines
+							$insertedDisciplines = array();
+							foreach($userTempRequest as $registeredRequest){
+								
+								$schedule = new Schedule();
+								$schedule->getDisciplineHours($registeredRequest['discipline_class']);
+								$disciplineSchedule = $schedule->getDisciplineSchedule();
+
+								$insertedDisciplines[] = $disciplineSchedule;
+							}
+
+							/**
+
+							*/
+							$thereIsConflits = $schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
+							/**
+
+							*/
+							$tryToSave = FALSE;
+							if($thereIsConflits){
+								$status = "danger";
+								$message = "Não foi possível adicionar a disciplina pedida porque houve conflito de horários com disciplinas já adicionadas.";
+							}else{
+								$tryToSave = TRUE;
+							}
+						}else{
+							// In this case there is no discipline added to temp request, so is not a problem to add
+							$tryToSave = TRUE;
+						}
+
+						if($tryToSave){
+							$requestWasSaved = $this->saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $idOfferDiscipline);
+
+							if($requestWasSaved){
+								$status = "success";
+								$message = "Disciplina adicionada com sucesso à solicitação";
+							}else{
+								$status = "danger";
+								$message = "Não foi possível adicionar a disciplina informada.
+											 Cheque os dados informados e tente novamente.<br>	
+											 Não é possível adicionar a mesma turma de uma disciplina várias vezes.";
+							}
+						}
+
 					}else{
 						$status = "danger";
 						$message = "Não foi possível adicionar a disciplina informada.
 									 Cheque os dados informados e tente novamente.<br>	
 									 Não é possível adicionar a mesma turma de uma disciplina várias vezes.";
 					}
+
 				}else{
 					$status = "danger";
 					$message = "Turma não encontrada para disciplina informada.";
