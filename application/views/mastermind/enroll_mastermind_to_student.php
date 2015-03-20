@@ -1,0 +1,3 @@
+<?php
+	displayEnrollMastermindToStudentForm($students, $masterminds); 
+?>
