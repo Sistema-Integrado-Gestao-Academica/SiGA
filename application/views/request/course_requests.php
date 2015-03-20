@@ -4,4 +4,6 @@
 
 <?php
 	displayCourseRequests($requests, $course['id_course']);
+
+	echo anchor("usuario/secretary_requestReport", "Voltar", "class='btn btn-danger'");
 ?>
