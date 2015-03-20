@@ -88,7 +88,7 @@ function displayEnrollStudentForm(){
 	echo form_button($searchForStudentBtn);
 }
 
-function displayEnrollMastermindToStudentForm($students, $masterminds){
+function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId){
 	$submit_button_array_to_form = array(
 		"class" => "btn bg-olive btn-block",
 		"content" => "Relacionar",
@@ -98,7 +98,7 @@ function displayEnrollMastermindToStudentForm($students, $masterminds){
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Relacionar Orientador a Aluno</div>";
 		
-		echo form_open('mastermind/saveMastermindToStudent');
+		echo form_open('mastermind/saveMastermindToStudent','',array('courseId'=>$courseId));
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
 				echo form_label("Aluno do curso", "course_student") . "<br>";

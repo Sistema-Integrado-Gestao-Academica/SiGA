@@ -23,6 +23,35 @@ class MasterMind extends CI_Controller {
 		loadTemplateSafelyByPermission("cursos",'mastermind/enroll_mastermind_to_student.php', $courseData);
 	}
 	
+	public function saveMastermindToStudent(){
+		
+		$student = $this->input->post('course_student');
+		$mastermind = $this->input->post('student_mastermind');
+		$courseId = $this->input->post('courseId');
+		
+		$saveRelation = array(
+				'id_student' => $student,
+				'id_mastermind' => $mastermind
+				
+		);
+		
+		$this->load->model('mastermind_model');
+		$savedMastermindStudent = $this->mastermind_model->relateMastermindToStudent($saveRelation);
+		
+		
+		if($savedMastermindStudent){
+			$updateStatus = "success";
+			$updateMessage = "Relação entre orientador e aluno salva com sucesso";
+		}else{
+			$updateStatus = "danger";
+			$updateMessage = "Não foi possível salvar a relação entre orientador e aluno. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+		redirect("usuario/secretary_enrollMasterMinds");
+		
+	}
+	
 	private function getCourseStudents($students, $courseId){
 		
 		$limit = sizeof($students);
