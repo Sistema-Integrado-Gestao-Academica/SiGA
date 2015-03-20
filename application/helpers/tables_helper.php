@@ -108,6 +108,8 @@ function displayCourseRequests($requests, $courseId){
 	echo "<h3>Solicitações:</h3>";
 	echo "<br>";
 
+	echo anchor("request/courseRequests/{$courseId}", "Visualizar todas", "class='btn bg-olive btn-flat' style='margin-bottom:1%;'");
+
 	$user = new Usuario();
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
