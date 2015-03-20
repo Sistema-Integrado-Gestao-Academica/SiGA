@@ -54,6 +54,23 @@ class Request_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function getStudentRequests($courseId, $semesterId, $studentId){
+
+		$this->db->select("student_request.*, request_discipline.*");
+		$this->db->from("student_request");
+		$this->db->join("request_discipline", "student_request.id_request = request_discipline.id_request");
+		$this->db->where("student_request.id_course", $courseId);
+		$this->db->where("student_request.id_semester", $semesterId);
+		$this->db->where("student_request.id_student", $studentId);
+		$this->db->order_by("request_status", "asc");
+
+		$foundRequest = $this->db->get()->result_array();
+
+		$foundRequest = checkArray($foundRequest);
+
+		return $foundRequest;
+	}
+
 	public function getRequestDisciplinesById($requestId){
 
 		$disciplines = $this->getRequestDisciplines(array('id_request' => $requestId));

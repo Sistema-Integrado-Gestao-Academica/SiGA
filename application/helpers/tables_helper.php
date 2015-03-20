@@ -98,16 +98,24 @@ echo "</div>";
 
 }
 
-function displayCourseRequests($requests){
+function displayCourseRequests($requests, $courseId){
+
+	echo "<div class='row'>";
+	searchForStudentRequestByIdForm($courseId);
+	echo "</div>";
+
+	echo "<br>";
+	echo "<h3>Solicitações:</h3>";
+	echo "<br>";
 
 	$user = new Usuario();
-
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
 			    echo "<tr>";
 			        echo "<th class=\"text-center\">Código da requisição</th>";
-			        echo "<th class=\"text-center\">Usuário requerente</th>";
+			        echo "<th class=\"text-center\">Aluno requerente</th>";
+			        echo "<th class=\"text-center\">Matrícula aluno</th>";
 			        echo "<th class=\"text-center\">Disciplina requerida</th>";
 			        echo "<th class=\"text-center\">Turma requerida</th>";
 			        echo "<th class=\"text-center\">Vagas totais</th>";
@@ -126,9 +134,13 @@ function displayCourseRequests($requests){
 			    		echo $request['id_request'];
 			    		echo "</td>";
 			    		
-			    		echo "<td>";
 			    		$foundUser = $user->getUserById($request['id_student']);
+			    		echo "<td>";
 			    		echo $foundUser['name'];
+			    		echo "</td>";
+
+			    		echo "<td>";
+			    		echo $foundUser['id'];
 			    		echo "</td>";
 			    		
 			    		$offer = new Offer();
@@ -183,9 +195,9 @@ function displayCourseRequests($requests){
 			    	}
 			    }else{
 					echo "<tr>";
-			    	echo "<td colspan=6>";
+			    	echo "<td colspan=9>";
 						echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhuma solicitação para este curso.</h4>";
+							echo "<h4>Nenhuma solicitação encontrada.</h4>";
 						echo "</div>";
 	    			echo "</td>";
 					echo "</tr>";
@@ -194,6 +206,41 @@ function displayCourseRequests($requests){
 			echo "</tbody>";
 		echo "</table>";
 	echo "</div>";	
+}
+
+function searchForStudentRequestByIdForm($courseId){
+
+	$student = array(
+		"name" => "student_identifier",
+		"id" => "student_identifier",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "50",
+		'style' => "width:40%;"
+	);
+
+	$searchForStudentBtn = array(
+		"id" => "search_student_request_btn",
+		"class" => "btn bg-primary btn-flat",
+		"content" => "Pesquisar por matrícula",
+		"type" => "submit",
+		'style' => "width:20%;"
+	);
+
+	define("SEARCH_BY_ID", "by_id");
+
+	echo form_open("request/searchForStudentRequest");
+		echo form_hidden('searchType', SEARCH_BY_ID); 
+		echo form_hidden('courseId', $courseId);
+		
+		echo "<div class='form-group'>";
+			echo form_label("Informe a matrícula do aluno para pesquisar:", "student_identifier");
+			echo form_input($student);
+		echo "</div>";
+		
+		echo form_button($searchForStudentBtn);
+	echo form_close();
 }
 
 function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){

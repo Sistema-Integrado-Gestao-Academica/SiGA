@@ -3,5 +3,5 @@
 <br>
 
 <?php
-	displayCourseRequests($requests);
+	displayCourseRequests($requests, $course['id_course']);
 ?>

@@ -26,6 +26,50 @@ class Request extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'request/course_requests', $data);
 	}
 
+	public function searchForStudentRequest(){
+		
+		$this->load->model("request_model");
+
+		$searchType = $this->input->post('searchType');
+
+		$courseId = $this->input->post('courseId');
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+		
+		switch($searchType){
+			case 'by_id':
+				$studentId = $this->input->post('student_identifier');
+				$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentId);
+				break;
+
+			case 'by_name':
+				break;
+			
+			default:
+				break;
+		}		
+
+		$course = new Course();
+		$courseData = $course->getCourseById($courseId);
+
+		$data = array(
+			'requests' => $courseRequests,
+			'course' => $courseData
+		);
+
+		loadTemplateSafelyByGroup("secretario",'request/course_requests', $data);
+	}
+
+	private function getStudentRequests($courseId, $semesterId, $studentId){
+
+		$this->load->model("request_model");
+
+		$courseRequests = $this->request_model->getStudentRequests($courseId, $semesterId, $studentId);
+
+		return $courseRequests;
+	}
+
 	public function getCourseRequests($courseId, $semesterId){
 
 		$this->load->model("request_model");
