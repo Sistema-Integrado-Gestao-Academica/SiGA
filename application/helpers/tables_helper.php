@@ -8,6 +8,7 @@ require_once(APPPATH."/controllers/discipline.php");
 require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
+require_once(APPPATH."/controllers/mastermind.php");
 
 function courseTableToSecretaryPage($courses){
 
@@ -50,6 +51,50 @@ function courseTableToSecretaryPage($courses){
 		echo "</tbody>";
 	echo "</table>";
 echo "</div>";
+
+}
+
+function courseTableToSecretaryCheckMastermind($courses){
+
+	$courseController = new Course();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+	echo "<table class=\"table table-bordered table-hover\">";
+	echo "<tbody>";
+	echo "<tr>";
+	echo "<th class=\"text-center\">Código</th>";
+	echo "<th class=\"text-center\">Curso</th>";
+	echo "<th class=\"text-center\">Tipo</th>";
+	echo "<th class=\"text-center\">Ações</th>";
+	echo "</tr>";
+
+	foreach($courses as $courseData){
+
+		$courseId = $courseData['id_course'];
+		$courseType = $courseController->getCourseTypeByCourseId($courseId);
+
+		echo "<tr>";
+		echo "<td>";
+		echo $courseId;
+		echo "</td>";
+
+		echo "<td>";
+		echo $courseData['course_name'];
+		echo "</td>";
+
+		echo "<td>";
+		echo $courseType['description'];
+		echo "</td>";
+
+		echo "<td>";
+		echo anchor("enrollMastermind/{$courseId}","<i class='fa fa-plus-square'>Cadastrar Orientador</i>", "class='btn btn-primary'");
+		echo "</td>";
+		echo "</tr>";
+	}
+
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
 
 }
 

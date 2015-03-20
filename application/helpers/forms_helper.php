@@ -88,6 +88,41 @@ function displayEnrollStudentForm(){
 	echo form_button($searchForStudentBtn);
 }
 
+function displayEnrollMastermindToStudentForm($students, $masterminds){
+	$submit_button_array_to_form = array(
+		"class" => "btn bg-olive btn-block",
+		"content" => "Relacionar",
+		"type" => "submit"
+	);
+	
+	echo "<div class='form-box' id='login-box'>";
+		echo "<div class='header'>Relacionar Orientador a Aluno</div>";
+		
+		echo form_open('mastermind/saveMastermindToStudent');
+		echo "<div class='body bg-gray'>";
+			echo "<div class='form-group'>";
+				echo form_label("Aluno do curso", "course_student") . "<br>";
+				echo form_dropdown("course_student", $students, '', "id='course_student'");
+				echo form_error("course_student");
+				echo "<br>";
+				echo "<br>";
+			echo "</div>";
+			echo "<div class='form-group'>";
+				echo form_label("Orientador para este aluno", "student_mastermind") . "<br>";
+				echo form_dropdown("student_mastermind", $masterminds, '', "id='student_mastermind'");
+				echo form_error("student_mastermind");
+				echo "<br>";
+				echo "<br>";
+			echo "</div>";
+		echo "</div>";
+		echo "<div class='footer'>";
+			echo form_button($submit_button_array_to_form);
+		echo "</div>";
+		echo form_close();
+	echo "</div>";
+	
+}
+
 function postGraduationTypesSelect(){
 	$post_graduation_types = array(
 		'academic_program' => 'Programa Acadêmico',
