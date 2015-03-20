@@ -6,6 +6,35 @@ require_once('temporaryrequest.php');
 
 class Request extends CI_Controller {
 
+	public function courseRequests($courseId){
+
+		$this->load->model("request_model");
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		$courseRequests = $this->getCourseRequests($courseId, $currentSemester['id_semester']);
+
+		$course = new Course();
+		$courseData = $course->getCourseById($courseId);
+
+		$data = array(
+			'requests' => $courseRequests,
+			'course' => $courseData
+		);
+
+		loadTemplateSafelyByGroup("secretario",'request/course_requests', $data);
+	}
+
+	public function getCourseRequests($courseId, $semesterId){
+
+		$this->load->model("request_model");
+
+		$courseRequests = $this->request_model->getCourseRequests($courseId, $semesterId);
+
+		return $courseRequests;
+	}
+
 	public function studentEnrollment($courseId, $userId){
 
 		$this->load->model('request_model');
@@ -156,6 +185,15 @@ class Request extends CI_Controller {
 		}
 
 		return $wasReceived;
+	}
+
+	public function getRequestDisciplinesClasses($requestId){
+
+		$this->load->model('request_model');
+		
+		$disciplineClasses = $this->request_model->getRequestDisciplinesClasses($requestId);
+
+		return $disciplineClasses;
 	}
 
 	private function getRequestDisciplines($requestId){

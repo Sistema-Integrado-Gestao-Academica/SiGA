@@ -1,6 +1,7 @@
 <?php
 
 require_once(APPPATH."/controllers/schedule.php");
+require_once(APPPATH."/controllers/request.php");
 require_once(APPPATH."/controllers/course.php");
 require_once(APPPATH."/controllers/program.php");
 require_once(APPPATH."/controllers/offer.php");
@@ -51,6 +52,148 @@ function courseTableToSecretaryPage($courses){
 	echo "</table>";
 echo "</div>";
 
+}
+
+function secretaryCoursesToRequestReport($courses){
+
+	$courseController = new Course();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+		    echo "<tr>";
+		        echo "<th class=\"text-center\">Código</th>";
+		        echo "<th class=\"text-center\">Curso</th>";
+		        echo "<th class=\"text-center\">Tipo</th>";
+		        echo "<th class=\"text-center\">Ações</th>";
+		    echo "</tr>";
+
+		    	foreach($courses as $courseData){
+
+		    		$courseId = $courseData['id_course'];
+		    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
+
+					echo "<tr>";
+			    		echo "<td>";
+			    		echo $courseId;
+			    		echo "</td>";
+
+			    		echo "<td>";
+			    		echo $courseData['course_name'];
+			    		echo "</td>";
+
+			    		echo "<td>";
+			    		echo $courseType['description'];
+			    		echo "</td>";
+
+			    		echo "<td>";
+			    		echo anchor("request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
+			    		echo "</td>";
+		    		echo "</tr>";	
+		    	}
+		    
+		echo "</tbody>";
+	echo "</table>";
+echo "</div>";
+
+}
+
+function displayCourseRequests($requests){
+
+	$user = new Usuario();
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código da requisição</th>";
+			        echo "<th class=\"text-center\">Usuário requerente</th>";
+			        echo "<th class=\"text-center\">Disciplina requerida</th>";
+			        echo "<th class=\"text-center\">Turma requerida</th>";
+			        echo "<th class=\"text-center\">Vagas totais</th>";
+			        echo "<th class=\"text-center\">Vagas disponíveis</th>";
+			        echo "<th class=\"text-center\">Status da solicitação</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($requests !== FALSE){
+
+			    	foreach($requests as $request){
+
+			    		echo "<tr>";
+
+			    		echo "<td>";
+			    		echo $request['id_request'];
+			    		echo "</td>";
+			    		
+			    		echo "<td>";
+			    		$foundUser = $user->getUserById($request['id_student']);
+			    		echo $foundUser['name'];
+			    		echo "</td>";
+			    		
+			    		$offer = new Offer();
+			    		$disciplineClass = $offer->getOfferDisciplineById($request['discipline_class']);
+
+			    		if($disciplineClass !== FALSE){
+
+			    			$discipline = new Discipline();
+		    				$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+
+			    			echo "<td>";
+			    			echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    			echo $disciplineClass['class'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    			echo "<b>".$disciplineClass['total_vacancies']."</b>";
+			    			echo "</td>";
+			    			
+			    			echo "<td>";
+			    			echo "<b>".$disciplineClass['current_vacancies']."</b>";
+			    			echo "</td>";
+				    		
+				    		echo "<td>";			    		
+				    		switch($request['status']){
+				    			case "pre_enrolled":
+				    				echo "Pré-matriculado";
+				    				break;
+				    			
+				    			default:
+				    				echo "-";
+				    				break;
+				    		}
+				    		echo "</td>";
+				    		
+				    		echo "<td>";
+				    		// ACTIONS
+				    		echo anchor("", "Aprovar solicitação", "class='btn btn-primary btn-flat'");
+				    		echo "</td>";	
+			    		}else{
+							echo "<td colspan='4'>";
+							echo "<div class='callout callout-danger'>";
+							echo "<p>Ocorreu um erro. Disciplina não encontrada.</p>";
+							echo "</div>";
+			    			echo "</td>";			    			
+			    		}	    		
+
+			    		echo "</tr>";
+			    	}
+			    }else{
+					echo "<tr>";
+			    	echo "<td colspan=6>";
+						echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhuma solicitação para este curso.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+					echo "</tr>";
+			    }
+			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";	
 }
 
 function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){

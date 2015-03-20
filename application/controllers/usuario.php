@@ -5,6 +5,7 @@ require_once('module.php');
 require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
+require_once('request.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -225,6 +226,17 @@ class Usuario extends CI_Controller {
 		);
 
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
+	}
+
+	public function secretary_requestReport(){
+
+		$courses = $this->loadCourses();
+
+		$courseData = array(
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByGroup("secretario",'request/secretary_courses_request', $courseData);
 	}
 
 	public function secretary_offerList(){
