@@ -69,6 +69,7 @@ $route['student'] = 'usuario/student_index';
 $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
 $route['user_report'] = 'usuario/usersReport';
 $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
+$route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
 
 /*
  * Test report routes
