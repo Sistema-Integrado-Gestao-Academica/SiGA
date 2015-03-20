@@ -2,27 +2,6 @@
 
 class MasterMind extends CI_Controller {
 	
-	public function enrollMastermindToStudent($courseId){
-		define("STUDENT", 7);
-		define("TEACHERS", 5);
-		$this->load->model('usuarios_model');
-		
-		$students = $this->usuarios_model->getUsersOfGroup(STUDENT);
-		$masterminds = $this->usuarios_model->getUsersOfGroup(TEACHERS);
-		
-		$courseStudents = $this->getCourseStudents($students, $courseId);
-		$courseStudentsToForm = $this->changeStudentsArrayToFormMode($courseStudents);
-		$mastermindsToForm = $this->changeMasterMindsArrayToFormMode($masterminds);
-		
-		$courseData = array(
-				'students' => $courseStudentsToForm,
-				'masterminds' => $mastermindsToForm,
-				'course_id' => $courseId
-		);
-		
-		loadTemplateSafelyByPermission("cursos",'mastermind/enroll_mastermind_to_student.php', $courseData);
-	}
-	
 	public function saveMastermindToStudent(){
 		
 		$student = $this->input->post('course_student');
@@ -48,7 +27,84 @@ class MasterMind extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect("usuario/secretary_enrollMasterMinds");
+		redirect("mastermind/displayMastermindPage/$courseId");
+		
+	}
+	
+	public function deleteMastermindStudentRelation($mastermindId, $studentId,$courseId){
+		$lineToRemove = array(
+				'id_mastermind' => $mastermindId,
+				'id_student'    => $studentId
+		);
+		
+		$this->load->model('mastermind_model');
+		$removed = $this->mastermind_model->removeMastermindStudentRelation($lineToRemove);
+		
+		if($removed){
+			$updateStatus = "success";
+			$updateMessage = "Relação entre orientador e aluno deletada com sucesso";
+		}else{
+			$updateStatus = "danger";
+			$updateMessage = "Não foi possível deletar a relação entre orientador e aluno. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+		redirect("mastermind/displayMastermindPage/$courseId");
+	}
+	
+	public function enrollMastermindToStudent($courseId){
+		define("STUDENT", 7);
+		define("TEACHERS", 5);
+		$this->load->model('usuarios_model');
+	
+		$students = $this->usuarios_model->getUsersOfGroup(STUDENT);
+		$masterminds = $this->usuarios_model->getUsersOfGroup(TEACHERS);
+	
+		$courseStudents = $this->getCourseStudents($students, $courseId);
+		$courseStudentsToForm = $this->changeStudentsArrayToFormMode($courseStudents);
+		$mastermindsToForm = $this->changeMasterMindsArrayToFormMode($masterminds);
+	
+		$courseData = array(
+				'students' => $courseStudentsToForm,
+				'masterminds' => $mastermindsToForm,
+				'course_id' => $courseId
+		);
+	
+		loadTemplateSafelyByPermission("cursos",'mastermind/enroll_mastermind_to_student.php', $courseData);
+	}
+	
+	
+	public function displayMastermindPage($courseId){
+		$this->load->model('mastermind_model');
+		$existingRelations = $this->mastermind_model->getMastermindStudentRelations();
+		if($existingRelations){
+			$relationsToTable = $this->getMasterminsAndStudentNames($existingRelations);
+		}else{
+			$relationsToTable = FALSE;
+		}
+		$data = array(
+				'relationsToTable' => $relationsToTable,
+				'courseId' => $courseId
+		);
+		loadTemplateSafelyByPermission("cursos",'mastermind/check_mastermind.php',$data);
+	}
+	
+	
+	private function getMasterminsAndStudentNames($existingRelations){
+		$this->load->model('usuarios_model');
+		$limit = sizeof($existingRelations);
+		
+		for($i=0; $i<$limit; $i++){
+			$mastemindName = $this->usuarios_model->getNameByUserId($existingRelations[$i]['id_mastermind']);
+			$studentName = $this->usuarios_model->getNameByUserId($existingRelations[$i]['id_student']);
+			$relatedMastermindAndStudent[$i]['mastermind_name'] = ucfirst($mastemindName);
+			$relatedMastermindAndStudent[$i]['mastermind_id'] = $existingRelations[$i]['id_mastermind'];
+			$relatedMastermindAndStudent[$i]['student_name'] = ucfirst($studentName);
+			$relatedMastermindAndStudent[$i]['student_id'] = $existingRelations[$i]['id_student'];
+			
+		}
+		
+		return $relatedMastermindAndStudent;
 		
 	}
 	

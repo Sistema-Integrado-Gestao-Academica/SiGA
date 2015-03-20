@@ -123,7 +123,7 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 							echo "</td>";
 							
 							echo "<td>";
-							echo anchor("mastermind/deleteMastermindStudantRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
+							echo anchor("mastermind/deleteMastermindStudentRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}/{$courseId}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
 							echo "</td>";
 						echo "</tr>";
 					}
