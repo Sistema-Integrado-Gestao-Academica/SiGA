@@ -59,43 +59,78 @@ function courseTableToSecretaryCheckMastermind($courses){
 	$courseController = new Course();
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-	echo "<tbody>";
-	echo "<tr>";
-	echo "<th class=\"text-center\">Código</th>";
-	echo "<th class=\"text-center\">Curso</th>";
-	echo "<th class=\"text-center\">Tipo</th>";
-	echo "<th class=\"text-center\">Ações</th>";
-	echo "</tr>";
-
-	foreach($courses as $courseData){
-
-		$courseId = $courseData['id_course'];
-		$courseType = $courseController->getCourseTypeByCourseId($courseId);
-
-		echo "<tr>";
-		echo "<td>";
-		echo $courseId;
-		echo "</td>";
-
-		echo "<td>";
-		echo $courseData['course_name'];
-		echo "</td>";
-
-		echo "<td>";
-		echo $courseType['description'];
-		echo "</td>";
-
-		echo "<td>";
-		echo anchor("enrollMastermind/{$courseId}","<i class='fa fa-plus-square'>Cadastrar Orientador</i>", "class='btn btn-primary'");
-		echo "</td>";
-		echo "</tr>";
-	}
-
-	echo "</tbody>";
-	echo "</table>";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+				echo "<tr>";
+					echo "<th class=\"text-center\">Código</th>";
+					echo "<th class=\"text-center\">Curso</th>";
+					echo "<th class=\"text-center\">Tipo</th>";
+					echo "<th class=\"text-center\">Ações</th>";
+				echo "</tr>";
+			
+				foreach($courses as $courseData){
+			
+					$courseId = $courseData['id_course'];
+					$courseType = $courseController->getCourseTypeByCourseId($courseId);
+			
+					echo "<tr>";
+						echo "<td>";
+						echo $courseId;
+						echo "</td>";
+				
+						echo "<td>";
+						echo $courseData['course_name'];
+						echo "</td>";
+				
+						echo "<td>";
+						echo $courseType['description'];
+						echo "</td>";
+				
+						echo "<td>";
+						echo anchor("checkMastermind/{$courseId}","<i class='fa fa-plus-square'>Checar Orientadores do Curso</i>", "class='btn btn-primary'");
+						echo "</td>";
+					echo "</tr>";
+				}
+		
+			echo "</tbody>";
+		echo "</table>";
 	echo "</div>";
+	
+}
 
+function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
+	
+	echo anchor("enrollMastermind/{$courseId}","<i class='fa fa-plus-square'>Cadastrar Orientador</i>", "class='btn btn-primary'");
+	echo "<br>";
+	echo "<br>";
+	
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+					echo "<tr>";
+					echo "<th class=\"text-center\">Orientador</th>";
+					echo "<th class=\"text-center\">Estudante</th>";
+					echo "<th class=\"text-center\">Ações</th>";
+					echo "</tr>";
+					foreach ($relationsToTable as $mastermindAndStudent){
+						echo "<tr>";
+							echo "<td>";
+							echo $mastermindAndStudent['mastermind_name'];
+							echo "</td>";
+							
+							echo "<td>";
+							echo $mastermindAndStudent['student_name'];
+							echo "</td>";
+							
+							echo "<td>";
+							echo anchor("mastermind/deleteMastermindStudantRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
+							echo "</td>";
+						echo "</tr>";
+					}
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+	
 }
 
 function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
