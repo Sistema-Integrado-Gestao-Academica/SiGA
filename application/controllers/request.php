@@ -37,13 +37,31 @@ class Request extends CI_Controller {
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
 		
+		define("SEARCH_BY_STUDENT_ID", "by_id");
+		define("SEARCH_BY_STUDENT_NAME", "by_name");
+
 		switch($searchType){
-			case 'by_id':
-				$studentId = $this->input->post('student_identifier');
+			case SEARCH_BY_STUDENT_ID:
+				$studentId = array();
+				$studentId[] = $this->input->post('student_identifier');
 				$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentId);
 				break;
 
-			case 'by_name':
+			case SEARCH_BY_STUDENT_NAME:
+				$studentName = $this->input->post('student_identifier');
+
+				$user = new Usuario();
+				$foundUser = $user->getUserByName($studentName);
+				
+				if($foundUser !== FALSE){
+					$studentId = array();
+					foreach($foundUser as $student){
+						$studentId[] = $student['id'];
+					}
+					$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentId);
+				}else{
+					$courseRequests = FALSE;
+				}
 				break;
 			
 			default:
