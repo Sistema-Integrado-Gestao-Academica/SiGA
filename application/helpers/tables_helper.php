@@ -112,19 +112,25 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 					echo "<th class=\"text-center\">Estudante</th>";
 					echo "<th class=\"text-center\">Ações</th>";
 					echo "</tr>";
-					foreach ($relationsToTable as $mastermindAndStudent){
+					if ($relationsToTable){
+						foreach ($relationsToTable as $mastermindAndStudent){
+							echo "<tr>";
+								echo "<td>";
+								echo $mastermindAndStudent['mastermind_name'];
+								echo "</td>";
+								
+								echo "<td>";
+								echo $mastermindAndStudent['student_name'];
+								echo "</td>";
+								
+								echo "<td>";
+								echo anchor("mastermind/deleteMastermindStudentRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}/{$courseId}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
+								echo "</td>";
+							echo "</tr>";
+						}
+					}else {
 						echo "<tr>";
-							echo "<td>";
-							echo $mastermindAndStudent['mastermind_name'];
-							echo "</td>";
-							
-							echo "<td>";
-							echo $mastermindAndStudent['student_name'];
-							echo "</td>";
-							
-							echo "<td>";
-							echo anchor("mastermind/deleteMastermindStudentRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}/{$courseId}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
-							echo "</td>";
+							echo "<td><h3><label class='label label-default'> Não existem orientadores designados no momento</label></h3></td>";
 						echo "</tr>";
 					}
 			echo "</tbody>";
