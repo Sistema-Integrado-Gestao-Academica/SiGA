@@ -107,12 +107,13 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
+				if ($relationsToTable){
 					echo "<tr>";
 					echo "<th class=\"text-center\">Orientador</th>";
 					echo "<th class=\"text-center\">Estudante</th>";
 					echo "<th class=\"text-center\">Ações</th>";
 					echo "</tr>";
-					if ($relationsToTable){
+					
 						foreach ($relationsToTable as $mastermindAndStudent){
 							echo "<tr>";
 								echo "<td>";
@@ -128,7 +129,7 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 								echo "</td>";
 							echo "</tr>";
 						}
-					}else {
+				}else {
 						echo "<tr>";
 							echo "<td><h3><label class='label label-default'> Não existem orientadores designados no momento</label></h3></td>";
 						echo "</tr>";
