@@ -42,9 +42,16 @@ class Request extends CI_Controller {
 
 		switch($searchType){
 			case SEARCH_BY_STUDENT_ID:
-				$studentId = array();
-				$studentId[] = $this->input->post('student_identifier');
-				$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentId);
+				$studentIds = array();
+
+				$studentId = $this->input->post('student_identifier');
+				if(!empty($studentId)){
+					$studentIds[] = $studentId;
+				}else{
+					$studentIds[] = 0;
+				}
+
+				$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentIds);
 				break;
 
 			case SEARCH_BY_STUDENT_NAME:
