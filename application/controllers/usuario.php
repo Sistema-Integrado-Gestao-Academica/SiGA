@@ -5,6 +5,7 @@ require_once('module.php');
 require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
+require_once('request.php');
 require_once('masterdegree.php');
 require_once('doctorate.php');
 
@@ -235,6 +236,17 @@ class Usuario extends CI_Controller {
 		);
 		
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_master_mind', $courseData);
+	}
+
+	public function secretary_requestReport(){
+
+		$courses = $this->loadCourses();
+
+		$courseData = array(
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByGroup("secretario",'request/secretary_courses_request', $courseData);
 	}
 
 	public function secretary_offerList(){
@@ -501,7 +513,6 @@ class Usuario extends CI_Controller {
 
 	private function getRegisteredStudentsByName($userName){
 
-		// define("STUDENT", "estudante");
 		define("GUEST", "convidado");
 
 		$foundUsers = $this->getUserByName($userName);
@@ -533,6 +544,8 @@ class Usuario extends CI_Controller {
 
 	private function checkIfIsStudent($userGroups){
 		
+		define("STUDENT", "estudante");
+		
 		$isStudent = FALSE;
 		foreach($userGroups as $group_name){
 			if($group_name == STUDENT){
@@ -557,9 +570,10 @@ class Usuario extends CI_Controller {
 		return $isGuest;
 	}
 
-	private function getUserByName($userName){
+	public function getUserByName($userName){
 
 		$this->load->model('usuarios_model');
+
 		$foundUser = $this->usuarios_model->getUserByName($userName);
 
 		return $foundUser;
