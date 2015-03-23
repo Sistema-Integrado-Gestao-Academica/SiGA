@@ -309,7 +309,7 @@ function displayMastermindStudentRequest($requests){
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
 	echo "<br>";
 	
-	echo "<div class=\"box-body table-responsive no-padding\">";
+	echo "<div class=\"table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
 				echo "<tr>";
@@ -330,7 +330,16 @@ function displayMastermindStudentRequest($requests){
 						
 						if ($request !== FALSE){
 							foreach ($request as $studentRequest){
-								echo "<tr>";
+								
+								switch ($studentRequest['status']){
+									case "enrolled"		: echo "<tr class='success'>";
+														  break;
+									case "no_vacancy"   : echo "<tr  class='danger'>";
+														  break;
+								    default				: echo "<tr>";
+														  break;
+										
+								}
 						
 								echo "<td>";
 								echo $studentRequest['id_request'];
@@ -374,7 +383,15 @@ function displayMastermindStudentRequest($requests){
 										case "pre_enrolled":
 											echo "Pré-matriculado";
 											break;
-										  
+										
+										case "enrolled"		: 
+											echo "Matriculado";
+											break;
+										
+										case "no_vacancy"   : 
+											echo "Matricula Negada";
+											break;
+										
 										default:
 											echo "-";
 											break;
