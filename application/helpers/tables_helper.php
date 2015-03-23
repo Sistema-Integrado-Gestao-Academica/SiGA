@@ -302,6 +302,116 @@ function displayCourseRequests($requests, $courseId){
 	echo "</div>";	
 }
 
+function displayMastermindStudentRequest($requests){
+	$user = new Usuario();
+	
+	echo "<br>";
+	echo "<h3>Solicitações dos alunos orientados:</h3>";
+	echo "<br>";
+	
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+				echo "<tr>";
+					echo "<th class=\"text-center\">Código da requisição</th>";
+					echo "<th class=\"text-center\">Aluno requerente</th>";
+					echo "<th class=\"text-center\">Matrícula aluno</th>";
+					echo "<th class=\"text-center\">Disciplina requerida</th>";
+					echo "<th class=\"text-center\">Turma requerida</th>";
+					echo "<th class=\"text-center\">Vagas totais</th>";
+					echo "<th class=\"text-center\">Vagas disponíveis</th>";
+					echo "<th class=\"text-center\">Status da solicitação</th>";
+					echo "<th class=\"text-center\">Ações</th>";
+				echo "</tr>";
+				
+				if($requests !== FALSE){
+				
+					foreach($requests as $key =>$request){
+						
+						if ($request !== FALSE){
+							foreach ($request as $studentRequest){
+								echo "<tr>";
+						
+								echo "<td>";
+								echo $studentRequest['id_request'];
+								echo "</td>";
+								 
+								$foundUser = $user->getUserById($studentRequest['id_student']);
+								echo "<td>";
+								echo $foundUser['name'];
+								echo "</td>";
+						
+								echo "<td>";
+								echo $foundUser['id'];
+								echo "</td>";
+								 
+								$offer = new Offer();
+								$disciplineClass = $offer->getOfferDisciplineById($studentRequest['discipline_class']);
+						
+								if($disciplineClass !== FALSE){
+						
+									$discipline = new Discipline();
+									$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+						
+									echo "<td>";
+									echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+									echo "</td>";
+						
+									echo "<td>";
+									echo $disciplineClass['class'];
+									echo "</td>";
+						
+									echo "<td>";
+									echo "<b>".$disciplineClass['total_vacancies']."</b>";
+									echo "</td>";
+						
+									echo "<td>";
+									echo "<b>".$disciplineClass['current_vacancies']."</b>";
+									echo "</td>";
+						
+									echo "<td>";
+									switch($studentRequest['status']){
+										case "pre_enrolled":
+											echo "Pré-matriculado";
+											break;
+										  
+										default:
+											echo "-";
+											break;
+									}
+									echo "</td>";
+						
+									echo "<td>";
+									// ACTIONS
+									echo anchor("", "Aprovar solicitação", "class='btn btn-primary btn-flat'");
+									echo "</td>";
+								}else{
+									echo "<td colspan='4'>";
+									echo "<div class='callout callout-danger'>";
+									echo "<p>Ocorreu um erro. Disciplina não encontrada.</p>";
+									echo "</div>";
+									echo "</td>";
+								}
+						
+								echo "</tr>";
+							}
+						}
+					}
+				}else{
+					echo "<tr>";
+					echo "<td colspan=9>";
+					echo "<div class=\"callout callout-info\">";
+					echo "<h4>Nenhuma solicitação encontrada.</h4>";
+					echo "</div>";
+					echo "</td>";
+					echo "</tr>";
+				}
+				 
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
 function searchForStudentRequestByIdForm($courseId){
 
 	$student = array(
