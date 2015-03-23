@@ -34,4 +34,11 @@ class Mastermind_model extends CI_Model {
 		return $masermindsAndStudants;
 		
 	}
+	
+	public function getStutentsByIdMastermind($idMastermind){
+		$this->db->select('id_student');
+		$this->db->where('id_mastermind', $idMastermind);
+		$students = $this->db->get('mastermind_student')->result_array();
+		return $students;
+	}
 }
