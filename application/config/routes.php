@@ -70,7 +70,7 @@ $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1'
 $route['user_report'] = 'usuario/usersReport';
 $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
 $route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
-
+$route['mastermind'] = 'mastermind/displayMastermindStudents';
 /*
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test
