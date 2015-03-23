@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('semester.php');
 class MasterMind extends CI_Controller {
 	
 	public function saveMastermindToStudent(){
@@ -89,6 +90,36 @@ class MasterMind extends CI_Controller {
 		loadTemplateSafelyByPermission("cursos",'mastermind/check_mastermind.php',$data);
 	}
 	
+	public function displayMastermindStudents(){
+		
+		$session = $this->session->userdata("current_user");
+		
+		$this->load->model('semester_model');
+		$currentSemester = $this->semester_model->getCurrentSemester();
+		
+		$this->load->model('mastermind_model');
+
+		$students = $this->mastermind_model->getStutentsByIdMastermind($session['user']['id']);
+		
+		$studentsRequests = $this->getStudentsRequests($students,$currentSemester['id_semester']);
+		
+		$requestData = array('requests' => $studentsRequests);
+		
+		
+		loadTemplateSafelyByPermission("mastermind",'mastermind/display_mastermind_students.php',$requestData);
+	}
+	
+	private function getStudentsRequests($students, $currentSemester){
+		$stutendArraySize = sizeof($students);
+		$this->load->model('request_model');
+		
+		for ($i=0; $i<$stutendArraySize; $i++){
+			$studentsRequests[$i] = $this->request_model->getMastermindStudentRequest($students[$i]['id_student'], $currentSemester);
+		}
+		
+		return $studentsRequests;
+		
+	}
 	
 	private function getMasterminsAndStudentNames($existingRelations){
 		$this->load->model('usuarios_model');
