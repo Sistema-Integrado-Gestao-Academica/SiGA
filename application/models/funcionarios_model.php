@@ -4,11 +4,14 @@ class Funcionarios_model extends CI_Model {
 
 	public function busca($atributo, $setor) {
 		$res = $this->db->get_where("funcionarios", array($atributo => $setor[$atributo]))->row_array();
+		$res = checkArray($res);
 		return $res;
 	}
 
 	public function buscaTodos() {
-		return $this->db->get("funcionarios")->result_array();
+		$allFuncionaries = $this->db->get("funcionarios")->result_array();
+		$allFuncionaries = checkArray($allFuncionaries);
+		return $allFuncionaries;
 	}
 
 	public function salva($setor) {
