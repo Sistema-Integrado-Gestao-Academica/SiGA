@@ -31,6 +31,7 @@ class Mastermind_model extends CI_Model {
 	public function getMastermindStudentRelations(){
 		$this->db->select('id_mastermind,id_student');
 		$masermindsAndStudants = $this->db->get('mastermind_student')->result_array();
+		$masermindsAndStudants = checkArray($masermindsAndStudants);
 		return $masermindsAndStudants;
 		
 	}
@@ -39,6 +40,7 @@ class Mastermind_model extends CI_Model {
 		$this->db->select('id_student');
 		$this->db->where('id_mastermind', $idMastermind);
 		$students = $this->db->get('mastermind_student')->result_array();
+		$students = checkArray($students);
 		return $students;
 	}
 }
