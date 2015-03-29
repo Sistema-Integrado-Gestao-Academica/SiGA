@@ -8,14 +8,14 @@ class Syllabus_model extends CI_Model {
 	public function getCourseSyllabus($courseId){
 
 		$foundSyllabus = $this->getSyllabus("id_course", $courseId);
-
+		$foundSyllabus = checkArray($foundSyllabus);
 		return $foundSyllabus;
 	}
 
 	public function getSyllabusCourse($syllabusId){
 
 		$foundCourse = $this->getSyllabus("id_syllabus", $syllabusId);
-
+		$foundCourse = checkArray($foundCourse);
 		return $foundCourse;
 	}
 
@@ -57,7 +57,7 @@ class Syllabus_model extends CI_Model {
 		$foundDisciplines = $this->db->get()->result_array();
 
 		$foundDisciplines = checkArray($foundDisciplines);
-
+		$foundDisciplines = checkArray($foundDisciplines);
 		return $foundDisciplines;
 	}
 
