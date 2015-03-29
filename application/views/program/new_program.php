@@ -19,12 +19,6 @@ $programAcronym = array(
 	"maxlength" => "6"
 );
 
-$openingYear = array();
-// GET THE CURRENT YEAR
-$currentYear = 2015;
-for($i = $currentYear; $i < $currentYear + 100; $i++ ){
-	$openingYear[$i] = $i;
-}
 
 $submitBtn = array(
 	"id" => "sregister_new_program",
@@ -32,6 +26,18 @@ $submitBtn = array(
 	"content" => "Cadastrar programa",
 	"type" => "submit"
 );
+
+$openingYear = array();
+$currentYear = getCurrentYear();
+if($currentYear !== FALSE){
+
+	for($i = $currentYear; $i < $currentYear + 100; $i++ ){
+		$openingYear[$i] = $i;
+	}
+}else{
+	$openingYear[] = "Ocorreu um erro ao ler o ano do banco de dados";
+	$submitBtn['disabled'] = TRUE;
+}
 
 ?>
 
