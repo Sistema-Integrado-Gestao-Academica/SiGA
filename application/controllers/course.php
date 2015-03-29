@@ -117,50 +117,6 @@ class Course extends CI_Controller {
 		}
 	}
 
-	public function displayMasterDegreeUpdateForm(){
-
-		define('ACADEMIC_PROGRAM', 'academic_program');
-
-		$choosenProgram = $this->input->post('program');
-
-		switch($choosenProgram){
-			// This form is only aplicable to the academic program
-			case ACADEMIC_PROGRAM:
-				masterDegreeProgramForm();
-				break;
-			default:
-				emptyDiv();
-				break;
-		}
-	}
-
-	public function displayRegisteredDoctorate(){
-		
-		define('ACADEMIC_PROGRAM', 'academic_program');
-		
-		$choosenProgram = $this->input->post('program');
-		$course = $this->input->post('course');
-
-		switch($choosenProgram){
-			// This form is only aplicable to the academic program
-			case ACADEMIC_PROGRAM:
-				$this->getRegisteredDoctorateForThisCourse($course);
-				break;
-			default:
-				emptyDiv();
-				break;
-		}
-	}
-
-	private function getRegisteredDoctorateForThisCourse($courseId){
-		$doctorate = new Doctorate();
-		$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
-		$haveMasterDegree = $doctorate->checkIfHaveMasterDegree($courseId);
-		$haveDoctorate = $doctorate->checkIfHaveDoctorate($courseId);
-
-		displayRegisteredDoctorateData($courseId, $haveMasterDegree, $haveDoctorate, $registeredDoctorate);
-	}
-
 	// Used for the update course page
 	public function checkChoosenProgram(){
 

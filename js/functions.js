@@ -128,46 +128,8 @@ function evaluatesProgram(){
 
 			$("#registered_master_degree").html(data);
 
-			displayMasterDegreeForm();
-
-			// evaluatesAcademicProgram();
-			// $("#academic_program_types").change(function(){
-			// 	evaluatesAcademicProgram();
-			// });
-
 		}
 
-	);
-}
-
-function displayMasterDegreeForm(){
-
-	var choosenProgram = getChoosenPostGradType();
-	var urlToPost = choosenProgram.siteUrl + "/course/displayMasterDegreeUpdateForm";
-
-	$.post(
-		urlToPost,
-		{program: choosenProgram.postGradType},
-		function(data){
-
-			$("#update_master_degree").html(data);
-
-			displayRegisteredDoctorate();
-		}
-	);
-}
-
-function displayRegisteredDoctorate(){
-	var choosenProgram = getChoosenPostGradType();
-	var urlToPost = choosenProgram.siteUrl + "/course/displayRegisteredDoctorate";
-	var currentCourse = getCurrentCourse();
-
-	$.post(
-		urlToPost,
-		{program: choosenProgram.postGradType, course: currentCourse},
-		function(data){
-			$("#registered_doctorate").html(data);
-		}
 	);
 }
 
