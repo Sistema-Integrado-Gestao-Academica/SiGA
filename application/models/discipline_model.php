@@ -11,11 +11,7 @@ class Discipline_model extends CI_Model {
 		$this->db->order_by("discipline_name", "asc");
 		$registeredDisciplines = $this->db->get()->result_array();
 		
-		if(sizeof($registeredDisciplines) > 0){
-			// Nothing to do
-		}else{
-			$registeredDisciplines = FALSE;
-		}
+		$registeredDisciplines = checkArray($registeredDisciplines);
 
 		return $registeredDisciplines;
 	}
@@ -28,11 +24,7 @@ class Discipline_model extends CI_Model {
 		$this->db->where("syllabus_discipline.id_syllabus", $syllabusId);
 		$foundDisciplines = $this->db->get()->result_array();
 
-		if(sizeof($foundDisciplines) > 0){
-			// Nothing to do
-		}else{
-			$foundDisciplines = FALSE;
-		}
+		$foundDisciplines = checkArray($foundDisciplines);
 
 		return $foundDisciplines;
 	}
@@ -123,11 +115,7 @@ class Discipline_model extends CI_Model {
 		$this->db->where('discipline_code', $disciplineCode);
 		$discipline = $this->db->get('discipline')->row_array();
 		
-		if(sizeof($discipline) > 0){
-			// Nothing to do
-		}else{
-			$discipline = FALSE;
-		}
+		$discipline = checkArray($discipline);
 
 		return $discipline;
 	}
@@ -170,8 +158,12 @@ class Discipline_model extends CI_Model {
 		$this->db->where('discipline_code',$disciplineCode);
 		$disciplineCodeExists = $this->db->get('discipline')->row_array();
 		
+		$disciplineCodeExists = checkArray($disciplineCodeExists);
+		
 		$this->db->where('discipline_name',$disciplineName);
 		$disciplineNameExists = $this->db->get('discipline')->row_array();
+		
+		$disciplineNameExists = checkArray($disciplineNameExists);
 		
 		if($disciplineCodeExists && $disciplineNameExists){
 			$existsCode = TRUE;
