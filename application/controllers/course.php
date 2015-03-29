@@ -294,21 +294,6 @@ class Course extends CI_Controller {
 			$courseClass = $this->input->post('course_class');
 			$courseDescription = $this->input->post('course_description');
 		
-			/**
-			 * DEPRECATED CODE
-			 * $idSecretary = $this->input->post('id_secretary');
-			 * $secretaryType = $this->input->post('secretary_type');
-			 * $userSecretary = $this->input->post('user_secretary');
-			 *
-			 *
-			 * // Secretary to be saved on database. Array with column names and its values
-			 * $secretaryToUpdate = array(
-			 *	'id_secretary' => $idSecretary,
-			 *	'id_user'   => $userSecretary,
-			 *	'id_course' => $idCourse,
-			 *	'id_group' => $secretaryType
-			 * );
-			 */
 			$course = array(
 				'course_name' => $courseName,
 				'course_type_id' => $courseType,
@@ -351,8 +336,8 @@ class Course extends CI_Controller {
 
 		// define("GRADUATION", "graduation");
 		// define("EAD", "ead");
-		define("ACADEMIC_PROGRAM", "academic_program");
-		define("PROFESSIONAL_PROGRAM", "professional_program");
+// 		define("ACADEMIC_PROGRAM", "academic_program");
+// 		define("PROFESSIONAL_PROGRAM", "professional_program");
 
 		$this->load->model('course_model');
 		switch($oldCourseType){
@@ -367,17 +352,7 @@ class Course extends CI_Controller {
 				$this->cleanCourseDependencies($idCourse);
 				$this->course_model->deleteCourseById($idCourse);
 				break;
-
-			case ACADEMIC_PROGRAM:
-			case PROFESSIONAL_PROGRAM:
 				
-				$this->cleanCourseDependencies($idCourse);
-				
-				$post_graduation = new PostGraduation();
-				$post_graduation->cleanPostGraduationData($idCourse, $oldCourseType);
-	
-				break;
-
 			default:
 				
 				break;
