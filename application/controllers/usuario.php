@@ -6,8 +6,6 @@ require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
-require_once('masterdegree.php');
-require_once('doctorate.php');
 
 class Usuario extends CI_Controller {
 	

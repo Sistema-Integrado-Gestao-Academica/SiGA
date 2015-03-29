@@ -1,13 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('masterdegree.php');
-require_once('doctorate.php');
 require_once('graduation.php');
 require_once('ead.php');
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
-require_once(APPPATH."/exception/DoctorateException.php");
-require_once(APPPATH."/exception/MasterDegreeException.php");
 
 class PostGraduation extends CI_Controller {
 

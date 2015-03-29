@@ -3,15 +3,10 @@
 require_once('login.php');
 require_once('module.php');
 require_once('program.php');
-require_once('postgraduation.php');
-require_once('masterdegree.php');
-require_once('doctorate.php');
 require_once('graduation.php');
 require_once('ead.php');
 require_once('budgetplan.php');
 require_once(APPPATH."/exception/CourseNameException.php");
-require_once(APPPATH."/exception/MasterDegreeException.php");
-require_once(APPPATH."/exception/DoctorateException.php");
 
 class Course extends CI_Controller {
 
