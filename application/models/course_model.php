@@ -9,22 +9,6 @@ class Course_model extends CI_Model {
 		$this->db->query($enrollment);
 	}
 
-	public function getCommonAttributesForThisCourse($courseId){
-		
-		$idExists = $this->checkExistingId($courseId);
-
-		if($idExists){
-			$searchResult = $this->db->get_where('course', array('id_course' => $courseId));
-			$foundCourse = $searchResult->row_array();
-
-			$foundCourse = checkArray($foundCourse);
-		}else{
-			$foundCourse = FALSE;
-		}
-	
-		return $foundCourse;		
-	}
-
 	public function getCourseName($courseId){
 		$courseName = $this->getCourseNameForThisCourseId($courseId);
 

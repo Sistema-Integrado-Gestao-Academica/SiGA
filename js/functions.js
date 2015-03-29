@@ -89,11 +89,6 @@ function evaluatesPostGraduationType(){
 		{postGradType: choosenPostGraduationType.postGradType},
 		function(data){
 			$("#chosen_post_grad_type").html(data);
-
-			evaluatesProgram();
-			$("#post_graduation_type").change(function(){
-				evaluatesProgram();
-			});
 		}
 	);
 }
@@ -114,23 +109,6 @@ function getCurrentCourse(){
 	var currentCourse = $("#current_course").val();
 
 	return currentCourse;
-}
-
-function evaluatesProgram(){
-	var choosenProgram = getChoosenPostGradType();
-	var urlToPost = choosenProgram.siteUrl + "/course/checkChoosenProgram";
-	var currentCourse = getCurrentCourse();
-
-	$.post(
-		urlToPost,
-		{program: choosenProgram.postGradType, course: currentCourse},
-		function(data){
-
-			$("#registered_master_degree").html(data);
-
-		}
-
-	);
 }
 
 function deleteAccount() {
