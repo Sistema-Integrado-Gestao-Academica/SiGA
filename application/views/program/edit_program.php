@@ -24,19 +24,24 @@ if($programData !== FALSE){
 	$programAcronym['value'] = $programData['acronym'];
 }
 
-$openingYear = array();
-// GET THE CURRENT YEAR
-$currentYear = 2015;
-for($i = $currentYear; $i < $currentYear + 100; $i++ ){
-	$openingYear[$i] = $i;
-}
-
 $submitBtn = array(
 	"id" => "sregister_new_program",
 	"class" => "btn bg-olive btn-block",
 	"content" => "Editar programa",
 	"type" => "submit"
 );
+
+$openingYear = array();
+$currentYear = getCurrentYear();
+if($currentYear !== FALSE){
+
+	for($i = $currentYear; $i < $currentYear + 100; $i++ ){
+		$openingYear[$i] = $i;
+	}
+}else{
+	$openingYear[] = "Ocorreu um erro ao ler o ano do banco de dados";
+	$submitBtn['disabled'] = TRUE;
+}
 
 ?>
 
