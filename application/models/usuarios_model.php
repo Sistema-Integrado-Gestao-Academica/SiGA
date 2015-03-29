@@ -106,11 +106,7 @@ class Usuarios_model extends CI_Model {
 		$searchResult = $this->db->get('user_group');
 		$foundUserGroup = $searchResult->result_array();
 
-		if(sizeof($foundUserGroup) > 0){
-			// Nothing to do
-		}else{
-			$foundUserGroup = FALSE;
-		}
+		$foundUserGroup = checkArray($foundUserGroup);
 
 		return $foundUserGroup;
 	}
@@ -134,7 +130,7 @@ class Usuarios_model extends CI_Model {
 		// Select here the data from user to put on the session
 		$this->db->select('id, name, email, login');
 		$usuario = $this->db->get("users")->row_array();
-		
+		$usuario = checkArray($usuario);
 		return $usuario;
 	}
 
@@ -177,11 +173,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->where('id_group', $idGroup);
 		$foundUsers = $this->db->get()->result_array();
 
-		if(sizeof($foundUsers) > 0){
-			// Nothing to do
-		}else{
-			$foundUsers = FALSE;
-		}
+		$foundUsers = checkArray($foundUsers);
 
 		return $foundUsers;
 	}
@@ -220,19 +212,14 @@ class Usuarios_model extends CI_Model {
 		$this->db->where('name !=', 'admin');
 		$foundUsers = $this->db->get('users')->result_array();
 
-		if(sizeof($foundUsers) > 0){
-			// Nothing to do
-		}else{
-			$foundUsers = FALSE;
-		}
-
+		$foundUsers = checkArray($foundUsers);
 		return $foundUsers;
 	}
 
 	public function getUserByName($userName){
 		
 		$foundUser = $this->getUserByPartialName($userName);
-
+		$foundUser = checkArray($foundUser);
 		return $foundUser;
 	}
 
@@ -240,7 +227,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('name');
 		$this->db->where('id', $userId);
 		$foundName = $this->db->get('users')->result_array();
-		
+		$foundName = checkArray($foundName);
 		return $foundName[0]['name'];
 	}
 	
@@ -314,11 +301,7 @@ class Usuarios_model extends CI_Model {
 
 		$foundCourse = $this->db->get()->result_array();
 
-		if(sizeof($foundCourse) > 0){
-			// Nothing to do
-		}else{
-			$foundCourse = FALSE;
-		}
+		$foundCourse = checkArray($foundCourse);
 
 		return $foundCourse;
 	}
@@ -388,7 +371,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('id_course');
 		$user_is_secretary = $this->db->get_where("secretary_course",array('id_user'=>$user_id))->row_array();
 		
-		
+		$user_is_secretary = checkArray($user_is_secretary);
 		if($user_is_secretary){
 			
 			$this->db->select('course_name');
@@ -440,7 +423,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->join('user_group', 'users.id = user_group.id_user');
 		$this->db->where('user_group.id_group', SECRETARY_ID);
 		$foundSecretaries = $this->db->get()->result_array();
-
+		$foundSecretaries = checkArray($foundSecretaries);
 		return $foundSecretaries;
 	}
 	
@@ -450,11 +433,7 @@ class Usuarios_model extends CI_Model {
 		
 		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
 
-		if(sizeof($foundUser) > 0){
-			// Nothing to do
-		}else{
-			$foundUser = FALSE;
-		}
+		$foundUser = checkArray($foundUser);
 		
 		return $foundUser;
 	}
@@ -462,6 +441,7 @@ class Usuarios_model extends CI_Model {
 	public function busca($str, $atributo) {
 		$this->db->where($str, $atributo);
 		$usuario = $this->db->get("users")->row_array();
+		$usuario = checkArray($usuario);
 		return $usuario;
 	}
 
@@ -487,7 +467,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->order_by('group_name','ASC');
 		$this->db->from('group');
 		$userGroups = $this->db->get()->result_array();
-		
+		$userGroups = checkArray($userGroups);
 		return $userGroups;
 	}
 	
@@ -499,7 +479,7 @@ class Usuarios_model extends CI_Model {
 		
 		$this->db->from('group');
 		$userGroups = $this->db->get()->result_array();
-		
+		$userGroups = checkArray($userGroups);
 		return $userGroups;
 	}
 
