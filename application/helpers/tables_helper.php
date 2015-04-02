@@ -203,6 +203,7 @@ function displayCourseRequests($requests, $courseId){
 	echo anchor("request/courseRequests/{$courseId}", "Visualizar todas", "class='btn bg-olive btn-flat' style='margin-bottom:1%;'");
 
 	$user = new Usuario();
+
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
@@ -247,15 +248,26 @@ function displayCourseRequests($requests, $courseId){
 
 			    		echo "<td>";
 			    		echo anchor(
-			    				"#solicitation_details",
+			    				"#solicitation_details_".$request['id_request'],
 			    				"Visualizar solicitação",
 			    				"class='btn btn-primary'
 			    				data-toggle='collapse'
 			    				aria-expanded='false'
-			    				aria-controls='solicitation_details'"
+			    				aria-controls='solicitation_details".$request['id_request']."'"
 			    			);
+			    		echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 			    		echo "</td>";
 			    		
+			    		echo "</tr>";
+
+			    		echo "<tr>";
+
+			    		echo "<td colspan=4>";
+				    		echo "<div class='collapse' id='solicitation_details_".$request['id_request']."'>";
+							requestedDisciplineClasses($request['id_request']);
+				    		echo "</div>";
+			    		echo "</td>";
+
 			    		echo "</tr>";
 			    	}
 			    }else{
@@ -268,6 +280,74 @@ function displayCourseRequests($requests, $courseId){
 					echo "</tr>";
 			    }
 			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function requestedDisciplineClasses($requestId){
+
+	$requestController = new Request();
+	$requestDisciplines = $requestController->getRequestDisciplinesClasses($requestId);
+	
+	$discipline = new Discipline();
+	
+	echo "<div class='panel panel-info'>";
+	  
+		echo "<div class='panel-heading'>Disciplinas solicitadas</div>";
+
+		echo "<table class='table table-hover'>";
+			echo "<tbody>";
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código Disciplina</th>";
+			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Turma requerida</th>";
+			        echo "<th class=\"text-center\">Vagas totais</th>";
+			        echo "<th class=\"text-center\">Vagas disponíveis</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+	    		foreach($requestDisciplines as $disciplineClass){
+
+					$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+
+					echo "<tr>";
+
+						echo "<td>";
+						echo $disciplineClass['id_discipline'];
+						echo "</td>";
+
+						if($foundDiscipline !== FALSE){
+							echo "<td>";
+							echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+							echo "</td>";
+						}else{
+							echo "<td>";
+								echo "<div class='callout callout-info'>";
+								echo "Disciplina não encontrada.";
+								echo "</div>";
+							echo "</td>";
+						}
+
+						echo "<td>";
+						echo $disciplineClass['class'];
+						echo "</td>";
+
+						echo "<td>";
+						echo $disciplineClass['total_vacancies'];
+						echo "</td>";
+
+						echo "<td>";
+						echo $disciplineClass['current_vacancies'];
+						echo "</td>";
+
+						echo "<td>";
+						echo anchor("", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+						echo anchor("", "Recusar", "class='btn btn-danger btn-flat'");
+						echo "</td>";
+					echo "</tr>";
+				}
+
 			echo "</tbody>";
 		echo "</table>";
 	echo "</div>";
