@@ -30,7 +30,7 @@ function searchForStudent(){
 	var studentName = $("#student_name").val();
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "usuario/searchForStudent";
+	var urlToPost = siteUrl + "/usuario/searchForStudent";
 	$.post(
 		urlToPost,
 		{student_name: studentName},
