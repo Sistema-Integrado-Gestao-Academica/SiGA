@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/constants/EnrollmentConstants.php");
+
 class Request_model extends CI_Model {
 
 	public function saveNewRequest($student, $course, $semester){
@@ -56,9 +58,7 @@ class Request_model extends CI_Model {
 
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
 
-		define("ENROLLED_STATUS", "enrolled");
-
-		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, ENROLLED_STATUS);
+		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::ENROLLED_STATUS);
 
 		return $wasApproved;
 	}

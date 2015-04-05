@@ -4,6 +4,8 @@ require_once('offer.php');
 require_once('semester.php');
 require_once('temporaryrequest.php');
 
+require_once(APPPATH."/constants/EnrollmentConstants.php");
+
 class Request extends CI_Controller {
 
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
@@ -196,11 +198,6 @@ class Request extends CI_Controller {
 
 			if($requestId !== FALSE){
 
-				define("MIN_VACANCY_QUANTITY_TO_ENROLL", 1);
-				define("PRE_ENROLLED_STATUS", "pre_enrolled");
-				define("NO_VACANCY_STATUS", "no_vacancy");
-
-
 				$this->load->model('request_model');
 
 				$offer = new Offer();
@@ -213,15 +210,15 @@ class Request extends CI_Controller {
 					$currentVacancies = $class['current_vacancies'];
 
 					// If there is vacancy, enroll student
-					if($currentVacancies >= MIN_VACANCY_QUANTITY_TO_ENROLL){
+					if($currentVacancies >= EnrollmentConstants::MIN_VACANCY_QUANTITY_TO_ENROLL){
 
 						/**
 							CHECAR RETORNO
 						 */
-						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, PRE_ENROLLED_STATUS);
+						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::PRE_ENROLLED_STATUS);
 
 					}else{
-						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, NO_VACANCY_STATUS);
+						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::NO_VACANCY_STATUS);
 					}
 				}
 
@@ -298,11 +295,9 @@ class Request extends CI_Controller {
 		
 		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline, $status);
 
-		define("NO_VACANCY_STATUS", "no_vacancy");
-
 		if($wasSaved){
 
-			$canSubtract = $status !== NO_VACANCY_STATUS;
+			$canSubtract = $status !== EnrollmentConstants::NO_VACANCY_STATUS;
 
 			if($canSubtract){
 				
