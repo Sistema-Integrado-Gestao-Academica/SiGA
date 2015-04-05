@@ -343,13 +343,14 @@ function requestedDisciplineClasses($requestId, $courseId){
 						echo "</td>";
 
 						echo "<td>";
+
 						switch($disciplineClass['status']){
 							case "pre_enrolled":
-								$status = "Pré-matriculado";
+								$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
 								break;
 
 							case "enrolled":
-								$status = "Matriculado";
+								$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
 								break;
 
 							default:
@@ -360,8 +361,15 @@ function requestedDisciplineClasses($requestId, $courseId){
 						echo "</td>";
 
 						echo "<td>";
-						echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+
+						if($disciplineClass['status'] === "enrolled"){
+							// In this case the request already was approved
+						}else{
+							echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+						}
+
 						echo anchor("", "Recusar", "class='btn btn-danger btn-flat'");
+
 						echo "</td>";
 					echo "</tr>";
 				}
@@ -598,7 +606,7 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 		    					break;
 
 		    				case 'enrolled':
-		    					$disciplineRequestStatus = "Matriculado";
+		    					$disciplineRequestStatus = "<b><font color='green'>Matriculado</font></b>";
 		    					break;
 		    				
 		    				default:
