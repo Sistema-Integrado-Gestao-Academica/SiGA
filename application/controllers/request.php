@@ -8,6 +8,24 @@ require_once(APPPATH."/constants/EnrollmentConstants.php");
 
 class Request extends CI_Controller {
 
+	public function approveAllRequest($requestId, $courseId){
+
+		$this->load->model("request_model");
+
+		$wasRefused = $this->request_model->approveAllRequest($requestId);
+
+		if($wasRefused){
+			$status = "success";
+			$message = "Toda a solicitação foi aprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Toda a solicitação não pôde ser aprovada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");		
+	}
+
 	public function refuseAllRequest($requestId, $courseId){
 
 		$this->load->model("request_model");
@@ -192,6 +210,10 @@ class Request extends CI_Controller {
 
 				case EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS:
 					$requestStatus = "Aprovada";
+					break;
+
+				case EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS:
+					$requestStatus = "Recusada";
 					break;
 
 				case EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS:

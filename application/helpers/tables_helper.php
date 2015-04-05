@@ -265,12 +265,26 @@ function displayCourseRequests($requests, $courseId){
 			    		echo anchor(
 			    				"#solicitation_details_".$request['id_request'],
 			    				"Visualizar solicitação",
-			    				"class='btn btn-primary'
+			    				"class='btn btn-info'
 			    				data-toggle='collapse'
 			    				aria-expanded='false'
 			    				aria-controls='solicitation_details".$request['id_request']."'"
 			    			);
-			    		echo anchor("request/refuseAllRequest/{$request['id_request']}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+
+			    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS){
+			    			// In this case all request is already refused
+			    		}else{
+			    			echo anchor("request/approveAllRequest/{$request['id_request']}/{$courseId}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+			    		}
+
+			    		echo "<br>";
+
+			    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS){
+			    			// In this case all request is already refused
+			    		}else{
+			    			echo anchor("request/refuseAllRequest/{$request['id_request']}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+			    		}
+
 			    		echo "</td>";
 			    		
 			    		echo "</tr>";
