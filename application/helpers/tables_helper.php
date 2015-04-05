@@ -11,6 +11,8 @@ require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
 require_once(APPPATH."/controllers/mastermind.php");
 
+require_once(APPPATH."/constants/EnrollmentConstants.php");
+
 function courseTableToSecretaryPage($courses){
 
 	$courseController = new Course();
@@ -345,11 +347,11 @@ function requestedDisciplineClasses($requestId, $courseId){
 						echo "<td>";
 
 						switch($disciplineClass['status']){
-							case "pre_enrolled":
+							case EnrollmentConstants::PRE_ENROLLED_STATUS:
 								$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
 								break;
 
-							case "enrolled":
+							case EnrollmentConstants::ENROLLED_STATUS:
 								$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
 								break;
 
@@ -362,7 +364,7 @@ function requestedDisciplineClasses($requestId, $courseId){
 
 						echo "<td>";
 
-						if($disciplineClass['status'] === "enrolled"){
+						if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
 							// In this case the request already was approved
 						}else{
 							echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
@@ -409,12 +411,18 @@ function displayMastermindStudentRequest($requests){
 							foreach ($request as $studentRequest){
 								
 								switch ($studentRequest['status']){
-									case "enrolled"		: echo "<tr class='success'>";
-														  break;
-									case "no_vacancy"   : echo "<tr  class='danger'>";
-														  break;
-								    default				: echo "<tr>";
-														  break;
+									
+									case EnrollmentConstants::ENROLLED_STATUS:
+										echo "<tr class='success'>";
+										break;
+
+									case EnrollmentConstants::NO_VACANCY_STATUS:
+										echo "<tr  class='danger'>";
+										break;
+
+								    default:
+								   		echo "<tr>";
+										break;
 										
 								}
 						
@@ -457,15 +465,15 @@ function displayMastermindStudentRequest($requests){
 						
 									echo "<td>";
 									switch($studentRequest['status']){
-										case "pre_enrolled":
+										case EnrollmentConstants::PRE_ENROLLED_STATUS:
 											echo "Pré-matriculado";
 											break;
 										
-										case "enrolled"		: 
+										case EnrollmentConstants::ENROLLED_STATUS: 
 											echo "Matriculado";
 											break;
 										
-										case "no_vacancy"   : 
+										case EnrollmentConstants::NO_VACANCY_STATUS: 
 											echo "Matricula Negada";
 											break;
 										
@@ -597,15 +605,15 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 		    			$foundDiscipline = $discipline->getDisciplineByCode($class['id_discipline']);
 
 		    			switch($class['status']){
-		    				case 'pre_enrolled':
+		    				case EnrollmentConstants::PRE_ENROLLED_STATUS:
 		    					$disciplineRequestStatus = "Pré-matriculado";
 		    					break;
 
-		    				case 'no_vacancy':
+		    				case EnrollmentConstants::NO_VACANCY_STATUS:
 		    					$disciplineRequestStatus = "Não matriculado. Não há vagas.";
 		    					break;
 
-		    				case 'enrolled':
+		    				case EnrollmentConstants::ENROLLED_STATUS:
 		    					$disciplineRequestStatus = "<b><font color='green'>Matriculado</font></b>";
 		    					break;
 		    				
