@@ -238,9 +238,14 @@ function displayCourseRequests($requests, $courseId){
 			    				    				    		
 			    		echo "<td>";
 			    		switch($request['request_status']){
-			    			case "incomplete":
-			    				$status = "Incompleta";
+			    			case EnrollmentConstants::REQUEST_INCOMPLETE_STATUS:
+			    				$status = "<h4><span class='label label-warning'>Incompleta</span></h4>";
 			    				break;
+			    			
+			    			case EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS:
+			    				$status = "<h4><span class='label label-success'>Aprovada</span></h4>";
+			    				break;
+
 			    			default:
 			    				$status = "-";
 			    				break;
@@ -606,11 +611,11 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 
 		    			switch($class['status']){
 		    				case EnrollmentConstants::PRE_ENROLLED_STATUS:
-		    					$disciplineRequestStatus = "Pré-matriculado";
+		    					$disciplineRequestStatus = "<b><font color='orange'>Pré-matriculado</font></b>";
 		    					break;
 
 		    				case EnrollmentConstants::NO_VACANCY_STATUS:
-		    					$disciplineRequestStatus = "Não matriculado. Não há vagas.";
+		    					$disciplineRequestStatus = "<b><font color='red'>Não matriculado. Não há vagas.</font></b>";
 		    					break;
 
 		    				case EnrollmentConstants::ENROLLED_STATUS:

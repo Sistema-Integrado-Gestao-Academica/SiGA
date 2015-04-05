@@ -60,7 +60,58 @@ class Request_model extends CI_Model {
 
 		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::ENROLLED_STATUS);
 
+		$this->checkRequestGeneralStatus($requestId);
+
 		return $wasApproved;
+	}
+
+	private function checkRequestGeneralStatus($requestId){
+
+		$wasAllApproved = $this->checkIfRequestWasAllApproved($requestId);
+
+		if($wasAllApproved){
+			$this->changeRequestGeneralStatus($requestId, EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS);
+		}else{
+			// Nothing to do
+		}
+	}
+
+	private function changeRequestGeneralStatus($requestId, $newStatus){
+
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('request_status' => $newStatus));
+	}
+
+	private function checkIfRequestWasAllApproved($requestId){
+
+		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+
+		if($requestDisciplines !== FALSE){
+
+			$disciplinesApproved = 0;
+
+			// Check if all disciplines was approved (ENROLLED_STATUS)
+			foreach($requestDisciplines as $requestedDiscipline){
+				
+				if($requestedDiscipline['status'] === EnrollmentConstants::ENROLLED_STATUS){
+					$disciplinesApproved++;
+				}
+			}
+
+			$quantityOfDisciplines = sizeof($requestDisciplines);
+
+			// In this case all disciplines as approved
+			if($quantityOfDisciplines === $disciplinesApproved){
+				$wasAllApproved = TRUE;
+			}else{
+				$wasAllApproved = FALSE;
+			}
+
+		}else{
+			$wasAllApproved = FALSE;
+		}
+
+		return $wasAllApproved;
 	}
 
 	private function changeRequestDisciplineStatus($requestId, $idOfferDiscipline, $newStatus){

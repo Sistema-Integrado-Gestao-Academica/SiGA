@@ -150,9 +150,14 @@ class Request extends CI_Controller {
 			$data['requestDisciplinesClasses'] = $requestForSemester['requestDisciplinesClasses'];
 			
 			switch($requestForSemester['requestStatus']){
-				case 'incomplete':
+				case EnrollmentConstants::REQUEST_INCOMPLETE_STATUS:
 					$requestStatus = "Incompleta (Aguardar aprovação do coordenador)";
 					break;
+
+				case EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS:
+					$requestStatus = "Aprovada";
+					break;
+
 				default:
 					$requestStatus = "-";
 					break;
