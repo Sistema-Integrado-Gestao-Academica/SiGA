@@ -56,6 +56,28 @@ class Request_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function refuseAllRequest($requestId){
+
+		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+
+		if($requestDisciplines !== FALSE){
+
+			foreach($requestDisciplines as $requestedDiscipline){
+				
+				$this->changeRequestDisciplineStatus($requestId, $requestedDiscipline['discipline_class'], EnrollmentConstants::REFUSED_STATUS);
+			}
+
+			$this->checkRequestGeneralStatus($requestId);
+			$wasRefused = TRUE;
+
+		}else{
+
+			$wasRefused = FALSE;
+		}
+
+		return $wasRefused;
+	}
+
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
 
 		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::ENROLLED_STATUS);
@@ -73,7 +95,6 @@ class Request_model extends CI_Model {
 
 		return $wasRefused;
 	}
-
 
 	private function checkRequestGeneralStatus($requestId){
 

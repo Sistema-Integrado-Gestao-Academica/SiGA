@@ -270,7 +270,7 @@ function displayCourseRequests($requests, $courseId){
 			    				aria-expanded='false'
 			    				aria-controls='solicitation_details".$request['id_request']."'"
 			    			);
-			    		echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+			    		echo anchor("request/refuseAllRequest/{$request['id_request']}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 			    		echo "</td>";
 			    		
 			    		echo "</tr>";

@@ -8,6 +8,24 @@ require_once(APPPATH."/constants/EnrollmentConstants.php");
 
 class Request extends CI_Controller {
 
+	public function refuseAllRequest($requestId, $courseId){
+
+		$this->load->model("request_model");
+
+		$wasRefused = $this->request_model->refuseAllRequest($requestId);
+
+		if($wasRefused){
+			$status = "success";
+			$message = "Toda a solicitação foi recusada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Toda a solicitação não pôde ser recusada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");		
+	}
+
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
 
 		$this->load->model("request_model");
