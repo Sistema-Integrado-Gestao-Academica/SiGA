@@ -65,15 +65,33 @@ class Request_model extends CI_Model {
 		return $wasApproved;
 	}
 
+	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline){
+
+		$wasRefused = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::REFUSED_STATUS);
+
+		$this->checkRequestGeneralStatus($requestId);
+
+		return $wasRefused;
+	}
+
+
 	private function checkRequestGeneralStatus($requestId){
 
-		$wasAllApproved = $this->checkIfRequestWasAllApproved($requestId);
+		$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::ENROLLED_STATUS);
+		$wasAllRefused = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::REFUSED_STATUS);
+		$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
 
 		if($wasAllApproved){
-			$this->changeRequestGeneralStatus($requestId, EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS);
+			$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
+		}else if($wasAllRefused){
+			$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
+		}else if($hasPreEnrolled){
+			$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
 		}else{
-			// Nothing to do
+			$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
 		}
+		
+		$this->changeRequestGeneralStatus($requestId, $status);
 	}
 
 	private function changeRequestGeneralStatus($requestId, $newStatus){
@@ -82,36 +100,57 @@ class Request_model extends CI_Model {
 		$this->db->update('student_request', array('request_status' => $newStatus));
 	}
 
-	private function checkIfRequestWasAllApproved($requestId){
+	private function checkIfRequestHasPreEnrolled($requestId){
 
 		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
 
 		if($requestDisciplines !== FALSE){
 
-			$disciplinesApproved = 0;
-
-			// Check if all disciplines was approved (ENROLLED_STATUS)
+			$hasPreEnrolled = FALSE;
 			foreach($requestDisciplines as $requestedDiscipline){
 				
-				if($requestedDiscipline['status'] === EnrollmentConstants::ENROLLED_STATUS){
-					$disciplinesApproved++;
+				if($requestedDiscipline['status'] === EnrollmentConstants::PRE_ENROLLED_STATUS){
+					$hasPreEnrolled = TRUE;
+					break;
+				}
+			}
+		}else{
+			$hasPreEnrolled = FALSE;
+		}
+
+		return $hasPreEnrolled;
+	}
+
+	private function checkIfRequestWasAllApprovedOrRefused($requestId, $statusToCheck){
+
+		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+
+		if($requestDisciplines !== FALSE){
+
+			$disciplinesWithStatus = 0;
+
+			// Check if all disciplines has the given status
+			foreach($requestDisciplines as $requestedDiscipline){
+				
+				if($requestedDiscipline['status'] === $statusToCheck){
+					$disciplinesWithStatus++;
 				}
 			}
 
 			$quantityOfDisciplines = sizeof($requestDisciplines);
 
 			// In this case all disciplines as approved
-			if($quantityOfDisciplines === $disciplinesApproved){
-				$wasAllApproved = TRUE;
+			if($quantityOfDisciplines === $disciplinesWithStatus){
+				$wasAll = TRUE;
 			}else{
-				$wasAllApproved = FALSE;
+				$wasAll = FALSE;
 			}
 
 		}else{
-			$wasAllApproved = FALSE;
+			$wasAll = FALSE;
 		}
 
-		return $wasAllApproved;
+		return $wasAll;
 	}
 
 	private function changeRequestDisciplineStatus($requestId, $idOfferDiscipline, $newStatus){

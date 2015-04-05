@@ -246,6 +246,14 @@ function displayCourseRequests($requests, $courseId){
 			    				$status = "<h4><span class='label label-success'>Aprovada</span></h4>";
 			    				break;
 
+			    			case EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS:
+			    				$status = "<h4><span class='label label-danger'>Recusada</span></h4>";
+			    				break;
+
+			    			case EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS:
+			    				$status = "<h4><span class='label label-info'>Parcialmente aprovada</span></h4>";
+			    				break;
+
 			    			default:
 			    				$status = "-";
 			    				break;
@@ -360,6 +368,10 @@ function requestedDisciplineClasses($requestId, $courseId){
 								$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
 								break;
 
+							case EnrollmentConstants::REFUSED_STATUS:
+								$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
+								break;
+
 							default:
 								$status = "-";
 								break;
@@ -370,12 +382,16 @@ function requestedDisciplineClasses($requestId, $courseId){
 						echo "<td>";
 
 						if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
-							// In this case the request already was approved
+							// In this case the request was already approved
 						}else{
 							echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
 						}
 
-						echo anchor("", "Recusar", "class='btn btn-danger btn-flat'");
+						if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
+							// In this case the request was already refused
+						}else{
+							echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+						}
 
 						echo "</td>";
 					echo "</tr>";
@@ -620,6 +636,10 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 
 		    				case EnrollmentConstants::ENROLLED_STATUS:
 		    					$disciplineRequestStatus = "<b><font color='green'>Matriculado</font></b>";
+		    					break;
+
+		    				case EnrollmentConstants::REFUSED_STATUS:
+		    					$disciplineRequestStatus = "<b><font color='red'>Recusado</font></b>";
 		    					break;
 		    				
 		    				default:

@@ -19,11 +19,29 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina aprovada com sucesso.";
 		}else{
 			$status = "danger";
-			$message = "";
+			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
 		$this->session->set_flashdata($status, $message);
 		redirect("request/courseRequests/{$courseId}");
+	}
+
+	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+
+		$this->load->model("request_model");
+
+		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
+
+		if($wasRefused){
+			$status = "success";
+			$message = "Solicitação de disciplina recusada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Solicitação de disciplina não pôde ser recusada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");	
 	}
 
 	public function courseRequests($courseId){
@@ -156,6 +174,10 @@ class Request extends CI_Controller {
 
 				case EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS:
 					$requestStatus = "Aprovada";
+					break;
+
+				case EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS:
+					$requestStatus = "Parcialmente aprovada";
 					break;
 
 				default:
