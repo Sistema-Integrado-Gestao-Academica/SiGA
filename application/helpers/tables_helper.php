@@ -300,10 +300,11 @@ function requestedDisciplineClasses($requestId){
 			echo "<tbody>";
 			    echo "<tr>";
 			        echo "<th class=\"text-center\">Código Disciplina</th>";
-			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Disciplina requerida</th>";
 			        echo "<th class=\"text-center\">Turma requerida</th>";
 			        echo "<th class=\"text-center\">Vagas totais</th>";
 			        echo "<th class=\"text-center\">Vagas disponíveis</th>";
+			        echo "<th class=\"text-center\">Status</th>";
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
@@ -339,6 +340,19 @@ function requestedDisciplineClasses($requestId){
 
 						echo "<td>";
 						echo $disciplineClass['current_vacancies'];
+						echo "</td>";
+
+						echo "<td>";
+						switch($disciplineClass['status']){
+							case "pre_enrolled":
+								$status = "Pré-matriculado";
+								break;
+							
+							default:
+								$status = "-";
+								break;
+						}
+						echo $status;
 						echo "</td>";
 
 						echo "<td>";
