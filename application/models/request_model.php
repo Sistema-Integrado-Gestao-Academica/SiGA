@@ -54,6 +54,34 @@ class Request_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
+
+		define("ENROLLED_STATUS", "enrolled");
+
+		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, ENROLLED_STATUS);
+
+		return $wasApproved;
+	}
+
+	private function changeRequestDisciplineStatus($requestId, $idOfferDiscipline, $newStatus){
+
+		$this->db->where("id_request", $requestId);
+		$this->db->where("discipline_class", $idOfferDiscipline);
+		$this->db->update('request_discipline', array('status' => $newStatus));
+
+		$requestDisciplineData = array(
+			'id_request' => $requestId,
+			'discipline_class' => $idOfferDiscipline,
+			'status' => $newStatus
+		);
+
+		$foundRequestDiscipline = $this->getRequestDisciplines($requestDisciplineData);
+
+		$wasChanged = $foundRequestDiscipline !== FALSE;
+
+		return $wasChanged;
+	}
+
 	public function getStudentRequests($courseId, $semesterId, $studentIds){
 
 		$this->db->select("student_request.*");

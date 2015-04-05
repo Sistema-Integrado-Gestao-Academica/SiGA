@@ -6,6 +6,24 @@ require_once('temporaryrequest.php');
 
 class Request extends CI_Controller {
 
+	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+
+		$this->load->model("request_model");
+
+		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline);
+
+		if($wasApproved){
+			$status = "success";
+			$message = "Solicitação de disciplina aprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");
+	}
+
 	public function courseRequests($courseId){
 
 		$this->load->model("request_model");

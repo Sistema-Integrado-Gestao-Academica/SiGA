@@ -264,7 +264,7 @@ function displayCourseRequests($requests, $courseId){
 
 			    		echo "<td colspan=4>";
 				    		echo "<div class='collapse' id='solicitation_details_".$request['id_request']."'>";
-							requestedDisciplineClasses($request['id_request']);
+							requestedDisciplineClasses($request['id_request'], $courseId);
 				    		echo "</div>";
 			    		echo "</td>";
 
@@ -285,7 +285,7 @@ function displayCourseRequests($requests, $courseId){
 	echo "</div>";
 }
 
-function requestedDisciplineClasses($requestId){
+function requestedDisciplineClasses($requestId, $courseId){
 
 	$requestController = new Request();
 	$requestDisciplines = $requestController->getRequestDisciplinesClasses($requestId);
@@ -347,7 +347,11 @@ function requestedDisciplineClasses($requestId){
 							case "pre_enrolled":
 								$status = "Pré-matriculado";
 								break;
-							
+
+							case "enrolled":
+								$status = "Matriculado";
+								break;
+
 							default:
 								$status = "-";
 								break;
@@ -356,7 +360,7 @@ function requestedDisciplineClasses($requestId){
 						echo "</td>";
 
 						echo "<td>";
-						echo anchor("", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+						echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
 						echo anchor("", "Recusar", "class='btn btn-danger btn-flat'");
 						echo "</td>";
 					echo "</tr>";
@@ -591,6 +595,10 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 
 		    				case 'no_vacancy':
 		    					$disciplineRequestStatus = "Não matriculado. Não há vagas.";
+		    					break;
+
+		    				case 'enrolled':
+		    					$disciplineRequestStatus = "Matriculado";
 		    					break;
 		    				
 		    				default:
