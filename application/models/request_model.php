@@ -62,6 +62,13 @@ class Request_model extends CI_Model {
 
 		return $wasApproved;
 	}
+	
+	public function mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester, $requestId){
+		
+		$wasApproved = $this->changeStudentRequestsStatus($studentId, $currentSemester, EnrollmentConstants::ENROLLED_STATUS, $requestId);
+		
+		return $wasApproved;
+	}
 
 	public function refuseAllRequest($requestId){
 
@@ -70,6 +77,12 @@ class Request_model extends CI_Model {
 		return $wasRefused;
 	}
 
+	public function mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester, $requestId){
+	
+		$wasRefused = $this->changeStudentRequestsStatus($studentId, $currentSemester, EnrollmentConstants::REFUSED_STATUS, $requestId);
+	
+		return $wasRefused;
+	}
 	private function changeAllRequest($requestId, $newStatus){
 
 		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
@@ -92,6 +105,44 @@ class Request_model extends CI_Model {
 		return $wasChanged;
 	}
 
+	private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
+		$hasRequests = $this->checkStudentHasRequest($studentId);
+		
+		if ($hasRequests ==! FALSE){
+			$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+			if ($requestDisciplines){
+				foreach ($requestDisciplines as $requestedDisciplines){
+					$this->changeRequestDisciplineStatus($requestId, $requestedDisciplines['discipline_class'], $newStatus);
+				}
+				$this->changeStudentStatusRequest($studentId, $currentSemester, $newStatus);
+				$wasChanged = TRUE;
+			}else{
+				$wasChanged = FALSE;
+			}
+		}else{
+			$wasChanged = FALSE;
+		}
+		
+		return $wasChanged;
+	}
+	
+	private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
+		$where = array('id_student'=>$studentId, 'id_semester'=> $currentSemester);
+		$change = array('request_status'=>$newStatus);
+		$this->db->where($where);
+		$this->db->update('student_request', $change);
+	}
+
+	private function checkStudentHasRequest($studentId){
+		$this->db->select('id_request');
+		$this->db->where('id_student', $studentId);
+		$this->db->from('student_request');
+		$hasRequest = $this->db->get()->result_array();
+		
+		$hasRequest = checkArray($hasRequest);
+		
+		return $hasRequest;
+	}
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
 
 		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::ENROLLED_STATUS);
