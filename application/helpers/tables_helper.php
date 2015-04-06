@@ -418,7 +418,6 @@ function requestedDisciplineClasses($requestId){
 
 function displayMastermindStudentRequest($requests){
 	$user = new Usuario();
-	
 	echo "<br>";
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
 	echo "<br>";
@@ -510,9 +509,10 @@ function displayMastermindStudentRequest($requests){
 						    				aria-expanded='false'
 						    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
 										);
-									echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+									
+									echo anchor("request/approveAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
 									echo "<br>";
-									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+									echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 									echo "</td>";
 
 								echo "</tr>";
