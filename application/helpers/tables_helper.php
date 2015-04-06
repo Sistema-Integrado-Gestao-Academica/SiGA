@@ -450,7 +450,11 @@ function displayMastermindStudentRequest($requests){
 									case EnrollmentConstants::NO_VACANCY_STATUS:
 										echo "<tr  class='danger'>";
 										break;
-
+									
+									case EnrollmentConstants::REFUSED_STATUS:
+										echo "<tr  class='danger'>";
+										break;
+										
 								    default:
 								   		echo "<tr>";
 										break;
@@ -484,9 +488,13 @@ function displayMastermindStudentRequest($requests){
 											break;
 										
 										case EnrollmentConstants::NO_VACANCY_STATUS: 
+											echo "Não existem mais vagas";
+											break;
+											
+										case EnrollmentConstants::REFUSED_STATUS:
 											echo "Matricula Negada";
 											break;
-										
+											
 										default:
 											echo "-";
 											break;

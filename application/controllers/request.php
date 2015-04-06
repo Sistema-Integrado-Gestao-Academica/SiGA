@@ -101,8 +101,7 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser recusada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");	
+		$this->redirectToCurrentUserRequests($status, $message, $courseId);
 	}
 
 	public function courseRequests($courseId){
