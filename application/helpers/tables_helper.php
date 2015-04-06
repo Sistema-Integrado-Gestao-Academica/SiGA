@@ -430,10 +430,6 @@ function displayMastermindStudentRequest($requests){
 					echo "<th class=\"text-center\">Código da requisição</th>";
 					echo "<th class=\"text-center\">Aluno requerente</th>";
 					echo "<th class=\"text-center\">Matrícula aluno</th>";
-					echo "<th class=\"text-center\">Disciplina requerida</th>";
-					echo "<th class=\"text-center\">Turma requerida</th>";
-					echo "<th class=\"text-center\">Vagas totais</th>";
-					echo "<th class=\"text-center\">Vagas disponíveis</th>";
 					echo "<th class=\"text-center\">Status da solicitação</th>";
 					echo "<th class=\"text-center\">Ações</th>";
 				echo "</tr>";
@@ -476,28 +472,7 @@ function displayMastermindStudentRequest($requests){
 								 
 								$offer = new Offer();
 								$disciplineClass = $offer->getOfferDisciplineById($studentRequest['discipline_class']);
-						
-								if($disciplineClass !== FALSE){
-						
-									$discipline = new Discipline();
-									$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
-						
-									echo "<td>";
-									echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
-									echo "</td>";
-						
-									echo "<td>";
-									echo $disciplineClass['class'];
-									echo "</td>";
-						
-									echo "<td>";
-									echo "<b>".$disciplineClass['total_vacancies']."</b>";
-									echo "</td>";
-						
-									echo "<td>";
-									echo "<b>".$disciplineClass['current_vacancies']."</b>";
-									echo "</td>";
-						
+									
 									echo "<td>";
 									switch($studentRequest['status']){
 										case EnrollmentConstants::PRE_ENROLLED_STATUS:
@@ -519,17 +494,26 @@ function displayMastermindStudentRequest($requests){
 									echo "</td>";
 						
 									echo "<td>";
-									// ACTIONS
-									echo anchor("", "Aprovar solicitação", "class='btn btn-primary btn-flat'");
+									echo anchor(
+											"#solicitation_details_".$studentRequest['id_request'],
+											"Visualizar solicitação",
+											"class='btn btn-primary'
+						    				data-toggle='collapse'
+						    				aria-expanded='false'
+						    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
+										);
+									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 									echo "</td>";
-								}else{
-									echo "<td colspan='4'>";
-									echo "<div class='callout callout-danger'>";
-									echo "<p>Ocorreu um erro. Disciplina não encontrada.</p>";
-									echo "</div>";
+
+								echo "</tr>";
+								echo "<tr>";
+								
+									echo "<td colspan=4>";
+										echo "<div class='collapse' id='solicitation_details_".$studentRequest['id_request']."'>";
+										requestedDisciplineClasses($studentRequest['id_request']);
+										echo "</div>";
 									echo "</td>";
-								}
-						
+								
 								echo "</tr>";
 							}
 						}
