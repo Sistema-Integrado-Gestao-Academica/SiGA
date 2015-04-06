@@ -13,9 +13,9 @@ class Request extends CI_Controller {
 
 		$this->load->model("request_model");
 
-		$wasRefused = $this->request_model->approveAllRequest($requestId);
+		$wasApproved = $this->request_model->approveAllRequest($requestId);
 
-		if($wasRefused){
+		if($wasApproved){
 			$status = "success";
 			$message = "Toda a solicitação foi aprovada com sucesso.";
 		}else{
@@ -27,6 +27,45 @@ class Request extends CI_Controller {
 		redirect("request/courseRequests/{$courseId}");		
 	}
 
+	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
+		$this->load->model("request_model");
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+		
+		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		
+		if($wasApproved){
+			$status = "success";
+			$message = "Toda a solicitação foi aprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Toda a solicitação não pôde ser aprovada.";
+		}
+		
+		$this->redirectToCurrentUserRequests($status, $message);
+		
+	}
+	
+	public function refuseAllStudentRequestsByMastermind($requestId,$studentId){
+		$this->load->model("request_model");
+		
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+		
+		$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		
+		if($wasApproved){
+			$status = "success";
+			$message = "Toda a solicitação foi reprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Toda a solicitação não pôde ser reprovada.";
+		}
+		
+		$this->redirectToCurrentUserRequests($status, $message);
+		
+	}
+	
 	public function refuseAllRequest($requestId, $courseId){
 
 		$this->load->model("request_model");
@@ -62,7 +101,7 @@ class Request extends CI_Controller {
 		$this->redirectToCurrentUserRequests($status, $message, $courseId);
 	}
 
-	public function redirectToCurrentUserRequests($status, $message, $courseId){
+	public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
 		$session = $this->session->userdata("current_user");
 		$user_groups = array();
 		
