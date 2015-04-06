@@ -3,6 +3,7 @@
 require_once('offer.php');
 require_once('semester.php');
 require_once('temporaryrequest.php');
+require_once('mastermind.php');
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 
@@ -45,7 +46,7 @@ class Request extends CI_Controller {
 	}
 
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
-
+		
 		$this->load->model("request_model");
 
 		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline);
@@ -58,10 +59,34 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");
+		$this->redirectToCurrentUserRequests($status, $message, $courseId);
 	}
 
+	public function redirectToCurrentUserRequests($status, $message, $courseId){
+		$session = $this->session->userdata("current_user");
+		$user_groups = array();
+		
+		foreach ($session['user_groups'] as $key => $group){
+			if($group['group_name'] == 'docente' || $group['group_name'] == 'secretario'){
+				$user_groups = array_merge_recursive($user_groups, $group);
+			}
+		}
+
+		switch ($user_groups['group_name']){
+			
+			case 'secretario':
+				$this->session->set_flashdata($status, $message);
+				$this->courseRequests($courseId);
+				break;
+			case 'docente':
+				$mastermind = new MasterMind();
+				$this->session->set_flashdata($status, $message);
+				$mastermind->displayMastermindStudents();
+				break;
+			default:  break;
+		}
+	}
+	
 	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
 
 		$this->load->model("request_model");

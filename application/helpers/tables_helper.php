@@ -502,6 +502,8 @@ function displayMastermindStudentRequest($requests){
 						    				aria-expanded='false'
 						    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
 										);
+									echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+									echo "<br>";
 									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 									echo "</td>";
 
