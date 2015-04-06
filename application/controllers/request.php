@@ -338,6 +338,14 @@ class Request extends CI_Controller {
 		return $wasReceived;
 	}
 
+	public function getCourseIdByIdRequest($requestId){
+		$this->load->model('request_model');
+		
+		$courseId = $this->request_model->getRequestCourseId($requestId);
+		
+		return $courseId['id_course'];
+	}
+	
 	public function getRequestDisciplinesClasses($requestId){
 
 		$this->load->model('request_model');

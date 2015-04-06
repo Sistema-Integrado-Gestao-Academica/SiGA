@@ -255,6 +255,18 @@ class Request_model extends CI_Model {
 
 		return $foundRequestDiscipline;
 	}
+	
+	public function getRequestCourseId($requestId){
+		
+		$this->db->select('id_course');
+		$this->db->from('student_request');
+		$this->db->where('id_request', $requestId);
+		$course_id = $this->db->get()->row_array();
+		$course_id = checkArray($course_id);
+		
+		return $course_id;
+		
+	}
 
 	public function getUserRequestDisciplines($userId, $courseId, $semesterId){
 

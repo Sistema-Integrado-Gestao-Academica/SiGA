@@ -293,7 +293,7 @@ function displayCourseRequests($requests, $courseId){
 
 			    		echo "<td colspan=4>";
 				    		echo "<div class='collapse' id='solicitation_details_".$request['id_request']."'>";
-							requestedDisciplineClasses($request['id_request'], $courseId);
+							requestedDisciplineClasses($request['id_request']);
 				    		echo "</div>";
 			    		echo "</td>";
 
@@ -314,11 +314,11 @@ function displayCourseRequests($requests, $courseId){
 	echo "</div>";
 }
 
-function requestedDisciplineClasses($requestId, $courseId){
+function requestedDisciplineClasses($requestId){
 
 	$requestController = new Request();
 	$requestDisciplines = $requestController->getRequestDisciplinesClasses($requestId);
-	
+	$courseId = $requestController->getCourseIdByIdRequest($requestId);
 	$discipline = new Discipline();
 	
 	echo "<div class='panel panel-info'>";
