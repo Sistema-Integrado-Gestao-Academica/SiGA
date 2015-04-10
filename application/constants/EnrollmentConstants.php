@@ -18,4 +18,6 @@ class EnrollmentConstants extends Constants{
 	const REQUEST_ALL_REFUSED_STATUS = "all_refused";
 	const REQUEST_PARTIALLY_APPROVED_STATUS = "partially_approved";
 
+	const REQUEST_APPROVED_BY_MASTERMIND = 1;
+
 }

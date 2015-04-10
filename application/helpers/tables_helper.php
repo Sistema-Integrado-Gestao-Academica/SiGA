@@ -471,6 +471,7 @@ function displayMastermindStudentRequest($requests){
 								echo "</td>";
 					
 								echo "<td>";
+								
 								echo anchor(
 										"#solicitation_details_".$studentRequest['id_request'],
 										"Visualizar solicitação",
@@ -484,18 +485,18 @@ function displayMastermindStudentRequest($requests){
 								echo "<br>";
 								echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 								echo "<br>";
+								echo anchor("mastermind/finalizeRequest/{$studentRequest['id_request']}", "Finalizar solicitação", "class='btn bg-olive btn-flat' style='margin-top:10%;'");
 
 								echo "</td>";
 
 								echo "</tr>";
+
 								echo "<tr>";
-								
 									echo "<td colspan=4>";
 										echo "<div class='collapse' id='solicitation_details_".$studentRequest['id_request']."'>";
 										requestedDisciplineClasses($studentRequest['id_request']);
 										echo "</div>";
 									echo "</td>";
-								
 								echo "</tr>";
 							}
 						}

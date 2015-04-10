@@ -42,6 +42,7 @@ class Request extends CI_Controller {
 		}
 		
 		// $this->redirectToCurrentUserRequests($status, $message);
+		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
 	}
 	
@@ -60,6 +61,7 @@ class Request extends CI_Controller {
 		}
 		
 		// $this->redirectToCurrentUserRequests($status, $message);
+		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
 	}
 	
@@ -96,7 +98,36 @@ class Request extends CI_Controller {
 		}
 
 		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
+		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
+	}
+
+	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+
+		$this->load->model("request_model");
+
+		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
+
+		if($wasRefused){
+			$status = "success";
+			$message = "Solicitação de disciplina recusada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Solicitação de disciplina não pôde ser recusada.";
+		}
+
+		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
+		$this->session->set_flashdata($status, $message);
+		redirect('mastermind');
+	}
+
+	public function finalizeRequestToMastermind($requestId){
+
+		$this->load->model('request_model');
+
+		$wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
+
+		return $wasFinalized;
 	}
 
 	// public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
@@ -124,23 +155,6 @@ class Request extends CI_Controller {
 	// 	}
 	// }
 	
-	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
-
-		$this->load->model("request_model");
-
-		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
-
-		if($wasRefused){
-			$status = "success";
-			$message = "Solicitação de disciplina recusada com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Solicitação de disciplina não pôde ser recusada.";
-		}
-
-		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
-		redirect('mastermind');
-	}
 
 	public function courseRequests($courseId){
 

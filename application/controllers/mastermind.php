@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('semester.php');
+require_once('request.php');
+
 class MasterMind extends CI_Controller {
 	
 	public function saveMastermindToStudent(){
@@ -108,6 +110,24 @@ class MasterMind extends CI_Controller {
 		loadTemplateSafelyByPermission("mastermind", 'mastermind/display_mastermind_students', $requestData);
 	}
 	
+	public function finalizeRequest($requestId){
+
+		$request = new Request();
+		
+		$wasFinalized = $request->finalizeRequestToMastermind($requestId);
+
+		if($wasFinalized){
+			$status = "success";
+			$message = "Solicitação finalizada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "A solicitação não pôde ser finalizada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect('mastermind');
+	}
+
 	private function getStudentsRequests($students, $currentSemester){
 		$stutendArraySize = sizeof($students);
 		$this->load->model('request_model');

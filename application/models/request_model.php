@@ -106,6 +106,18 @@ class Request_model extends CI_Model {
 		return $wasChanged;
 	}
 
+	public function finalizeRequestToMastermind($requestId){
+
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('mastermind_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND));
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId, 'mastermind_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND));
+
+		$wasFinalized = $foundRequest !== FALSE;
+
+		return $wasFinalized;
+	}
+
 	/*private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
 		$hasRequests = $this->checkStudentHasRequest($studentId);
 		
