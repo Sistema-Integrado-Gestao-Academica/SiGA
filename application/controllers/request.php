@@ -319,6 +319,13 @@ class Request extends CI_Controller {
 		return $requestDisciplines;
 	}
 
+	public function getRequestById($requestId){
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId));
+
+		return $foundRequest;
+	}
+
 	private function getRequest($requestData){
 
 		$this->load->model('request_model');
