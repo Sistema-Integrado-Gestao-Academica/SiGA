@@ -62,13 +62,6 @@ class Request_model extends CI_Model {
 
 		return $wasApproved;
 	}
-	
-	public function mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester, $requestId){
-		
-		$wasApproved = $this->changeStudentRequestsStatus($studentId, $currentSemester, EnrollmentConstants::ENROLLED_STATUS, $requestId);
-		
-		return $wasApproved;
-	}
 
 	public function refuseAllRequest($requestId){
 
@@ -76,13 +69,21 @@ class Request_model extends CI_Model {
 
 		return $wasRefused;
 	}
-
-	public function mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester, $requestId){
 	
-		$wasRefused = $this->changeStudentRequestsStatus($studentId, $currentSemester, EnrollmentConstants::REFUSED_STATUS, $requestId);
+	public function mastermindApproveAllCurrentStudentRequest($requestId){
+		
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::ENROLLED_STATUS);
+
+		return $wasApproved;
+	}
+
+	public function mastermindRefuseAllCurrentStudentRequest($requestId){
+	
+		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS);
 	
 		return $wasRefused;
 	}
+
 	private function changeAllRequest($requestId, $newStatus){
 
 		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
@@ -105,7 +106,7 @@ class Request_model extends CI_Model {
 		return $wasChanged;
 	}
 
-	private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
+	/*private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
 		$hasRequests = $this->checkStudentHasRequest($studentId);
 		
 		if ($hasRequests ==! FALSE){
@@ -124,14 +125,14 @@ class Request_model extends CI_Model {
 		}
 		
 		return $wasChanged;
-	}
+	}*/
 	
-	private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
+	/*private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
 		$where = array('id_student'=>$studentId, 'id_semester'=> $currentSemester);
 		$change = array('request_status'=>$newStatus);
 		$this->db->where($where);
 		$this->db->update('student_request', $change);
-	}
+	}*/
 
 	private function checkStudentHasRequest($studentId){
 		$this->db->select('id_request');
@@ -380,6 +381,7 @@ class Request_model extends CI_Model {
 		$this->db->order_by("request_status", "asc");
 		
 		$foundRequest = $this->db->get()->result_array();
+
 		$foundRequest = checkArray($foundRequest);
 		
 		return $foundRequest;
@@ -387,7 +389,8 @@ class Request_model extends CI_Model {
 	
 	public function getMastermindStudentRequest($studentId, $semesterId){
 	
-		$this->db->select("student_request.*, request_discipline.*");
+		$this->db->select("student_request.*");
+		$this->db->distinct();
 		$this->db->from("student_request");
 		$this->db->join("request_discipline", "student_request.id_request = request_discipline.id_request");
 		$this->db->where("student_request.id_student", $studentId);

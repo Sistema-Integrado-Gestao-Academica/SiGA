@@ -104,9 +104,8 @@ class MasterMind extends CI_Controller {
 		$studentsRequests = $this->getStudentsRequests($students,$currentSemester['id_semester']);
 		
 		$requestData = array('requests' => $studentsRequests);
-		
-		
-		loadTemplateSafelyByPermission("mastermind",'mastermind/display_mastermind_students.php',$requestData);
+				
+		loadTemplateSafelyByPermission("mastermind", 'mastermind/display_mastermind_students', $requestData);
 	}
 	
 	private function getStudentsRequests($students, $currentSemester){

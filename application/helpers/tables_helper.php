@@ -186,6 +186,32 @@ echo "</div>";
 
 }
 
+function switchRequestGeneralStatus($requestStatus){
+	switch($requestStatus){
+		case EnrollmentConstants::REQUEST_INCOMPLETE_STATUS:
+			$status = "<h4><span class='label label-warning'>Incompleta</span></h4>";
+			break;
+		
+		case EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS:
+			$status = "<h4><span class='label label-success'>Aprovada</span></h4>";
+			break;
+
+		case EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS:
+			$status = "<h4><span class='label label-danger'>Recusada</span></h4>";
+			break;
+
+		case EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS:
+			$status = "<h4><span class='label label-info'>Parcialmente aprovada</span></h4>";
+			break;
+
+		default:
+			$status = "-";
+			break;
+	}
+
+	echo $status;
+}
+
 function displayCourseRequests($requests, $courseId){
 
 	echo "<div class='row'>";
@@ -237,28 +263,7 @@ function displayCourseRequests($requests, $courseId){
 			    		echo "</td>";
 			    				    				    		
 			    		echo "<td>";
-			    		switch($request['request_status']){
-			    			case EnrollmentConstants::REQUEST_INCOMPLETE_STATUS:
-			    				$status = "<h4><span class='label label-warning'>Incompleta</span></h4>";
-			    				break;
-			    			
-			    			case EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS:
-			    				$status = "<h4><span class='label label-success'>Aprovada</span></h4>";
-			    				break;
-
-			    			case EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS:
-			    				$status = "<h4><span class='label label-danger'>Recusada</span></h4>";
-			    				break;
-
-			    			case EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS:
-			    				$status = "<h4><span class='label label-info'>Parcialmente aprovada</span></h4>";
-			    				break;
-
-			    			default:
-			    				$status = "-";
-			    				break;
-			    		}
-			    		echo $status;
+			    			switchRequestGeneralStatus($request['request_status']);
 			    		echo "</td>";	
 
 			    		echo "<td>";
@@ -272,7 +277,7 @@ function displayCourseRequests($requests, $courseId){
 			    			);
 
 			    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS){
-			    			// In this case all request is already refused
+			    			// In this case all request is already approved
 			    		}else{
 			    			echo anchor("request/approveAllRequest/{$request['id_request']}/{$courseId}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
 			    		}
@@ -435,30 +440,13 @@ function displayMastermindStudentRequest($requests){
 				
 				if($requests !== FALSE){
 				
-					foreach($requests as $key =>$request){
+					foreach($requests as $request){
 						
 						if ($request !== FALSE){
+
 							foreach ($request as $studentRequest){
 								
-								switch ($studentRequest['status']){
-									
-									case EnrollmentConstants::ENROLLED_STATUS:
-										echo "<tr class='success'>";
-										break;
-
-									case EnrollmentConstants::NO_VACANCY_STATUS:
-										echo "<tr  class='danger'>";
-										break;
-									
-									case EnrollmentConstants::REFUSED_STATUS:
-										echo "<tr  class='danger'>";
-										break;
-										
-								    default:
-								   		echo "<tr>";
-										break;
-										
-								}
+								echo "<tr>"; 
 						
 								echo "<td>";
 								echo $studentRequest['id_request'];
@@ -473,47 +461,31 @@ function displayMastermindStudentRequest($requests){
 								echo $foundUser['id'];
 								echo "</td>";
 								 
-								$offer = new Offer();
-								$disciplineClass = $offer->getOfferDisciplineById($studentRequest['discipline_class']);
+								// $offer = new Offer();
+								// $disciplineClass = $offer->getOfferDisciplineById($studentRequest['discipline_class']);
 									
-									echo "<td>";
-									switch($studentRequest['status']){
-										case EnrollmentConstants::PRE_ENROLLED_STATUS:
-											echo "Pré-matriculado";
-											break;
-										
-										case EnrollmentConstants::ENROLLED_STATUS: 
-											echo "Matriculado";
-											break;
-										
-										case EnrollmentConstants::NO_VACANCY_STATUS: 
-											echo "Não existem mais vagas";
-											break;
-											
-										case EnrollmentConstants::REFUSED_STATUS:
-											echo "Matricula Negada";
-											break;
-											
-										default:
-											echo "-";
-											break;
-									}
-									echo "</td>";
-						
-									echo "<td>";
-									echo anchor(
-											"#solicitation_details_".$studentRequest['id_request'],
-											"Visualizar solicitação",
-											"class='btn btn-primary'
-						    				data-toggle='collapse'
-						    				aria-expanded='false'
-						    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
-										);
-									
-									echo anchor("request/approveAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-									echo "<br>";
-									echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
-									echo "</td>";
+								echo "<td>";
+
+								switchRequestGeneralStatus($studentRequest['request_status']);
+								
+								echo "</td>";
+					
+								echo "<td>";
+								echo anchor(
+										"#solicitation_details_".$studentRequest['id_request'],
+										"Visualizar solicitação",
+										"class='btn btn-primary'
+					    				data-toggle='collapse'
+					    				aria-expanded='false'
+					    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
+									);
+								
+								echo anchor("request/approveAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+								echo "<br>";
+								echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+								echo "<br>";
+
+								echo "</td>";
 
 								echo "</tr>";
 								echo "<tr>";

@@ -28,11 +28,10 @@ class Request extends CI_Controller {
 	}
 
 	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
-		$this->load->model("request_model");
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
 		
-		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		$this->load->model("request_model");
+		
+		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($requestId);
 		
 		if($wasApproved){
 			$status = "success";
@@ -42,19 +41,17 @@ class Request extends CI_Controller {
 			$message = "Toda a solicitação não pôde ser aprovada.";
 		}
 		
-		$this->redirectToCurrentUserRequests($status, $message);
-		
+		// $this->redirectToCurrentUserRequests($status, $message);
+		redirect('mastermind');
 	}
 	
-	public function refuseAllStudentRequestsByMastermind($requestId,$studentId){
+	public function refuseAllStudentRequestsByMastermind($requestId, $studentId){
+		
 		$this->load->model("request_model");
 		
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$wasRefused = $this->request_model->mastermindRefuseAllCurrentStudentRequest($requestId);
 		
-		$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
-		
-		if($wasApproved){
+		if($wasRefused){
 			$status = "success";
 			$message = "Toda a solicitação foi reprovada com sucesso.";
 		}else{
@@ -62,8 +59,8 @@ class Request extends CI_Controller {
 			$message = "Toda a solicitação não pôde ser reprovada.";
 		}
 		
-		$this->redirectToCurrentUserRequests($status, $message);
-		
+		// $this->redirectToCurrentUserRequests($status, $message);
+		redirect('mastermind');
 	}
 	
 	public function refuseAllRequest($requestId, $courseId){
@@ -98,33 +95,34 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		$this->redirectToCurrentUserRequests($status, $message, $courseId);
+		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
+		redirect('mastermind');
 	}
 
-	public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
-		$session = $this->session->userdata("current_user");
-		$user_groups = array();
+	// public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
+	// 	$session = $this->session->userdata("current_user");
+	// 	$user_groups = array();
 		
-		foreach ($session['user_groups'] as $key => $group){
-			if($group['group_name'] == 'docente' || $group['group_name'] == 'secretario'){
-				$user_groups = array_merge_recursive($user_groups, $group);
-			}
-		}
+	// 	foreach ($session['user_groups'] as $key => $group){
+	// 		if($group['group_name'] == 'docente' || $group['group_name'] == 'secretario'){
+	// 			$user_groups = array_merge_recursive($user_groups, $group);
+	// 		}
+	// 	}
 
-		switch ($user_groups['group_name']){
+	// 	switch ($user_groups['group_name']){
 			
-			case 'secretario':
-				$this->session->set_flashdata($status, $message);
-				$this->courseRequests($courseId);
-				break;
-			case 'docente':
-				$mastermind = new MasterMind();
-				$this->session->set_flashdata($status, $message);
-				$mastermind->displayMastermindStudents();
-				break;
-			default:  break;
-		}
-	}
+	// 		case 'secretario':
+	// 			$this->session->set_flashdata($status, $message);
+	// 			$this->courseRequests($courseId);
+	// 			break;
+	// 		case 'docente':
+	// 			$mastermind = new MasterMind();
+	// 			$this->session->set_flashdata($status, $message);
+	// 			$mastermind->displayMastermindStudents();
+	// 			break;
+	// 		default:  break;
+	// 	}
+	// }
 	
 	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
 
@@ -140,7 +138,8 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser recusada.";
 		}
 
-		$this->redirectToCurrentUserRequests($status, $message, $courseId);
+		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
+		redirect('mastermind');
 	}
 
 	public function courseRequests($courseId){
