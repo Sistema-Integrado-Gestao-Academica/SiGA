@@ -45,7 +45,7 @@
 		</div>
 
 		<div class="panel-body">
-			<?php displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses); ?>
+			<?php displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses, $mastermind_message); ?>
 		</div>
 		
 		<div class="panel-footer" align="left">
