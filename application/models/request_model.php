@@ -401,11 +401,12 @@ class Request_model extends CI_Model {
 		return $foundRequest;
 	}
 	
-	public function saveMasterindMessage($message, $requestId, $studentId, $mastermindId){
+	public function saveMasterindMessage($message, $requestId=NULL, $studentId, $mastermindId, $idOfferDiscipline=NULL){
 		$messageData = array(
 				'id_mastermind' => $mastermindId,
 				'id_student' => $studentId,
 				'id_request' => $requestId,
+				'id_offer_discipline' => $idOfferDiscipline,
 				'message' => $message
 		);
 			

@@ -416,6 +416,111 @@ function requestedDisciplineClasses($requestId){
 	echo "</div>";
 }
 
+function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idStudent){
+
+	$requestController = new Request();
+	$requestDisciplines = $requestController->getRequestDisciplinesClasses($requestId);
+	$courseId = $requestController->getCourseIdByIdRequest($requestId);
+	$discipline = new Discipline();
+
+	echo "<div class='panel panel-info'>";
+	 
+	echo "<div class='panel-heading'>Disciplinas solicitadas</div>";
+
+	echo "<table class='table table-hover'>";
+	echo "<tbody>";
+	echo "<tr>";
+	echo "<th class=\"text-center\">Código Disciplina</th>";
+	echo "<th class=\"text-center\">Disciplina requerida</th>";
+	echo "<th class=\"text-center\">Turma requerida</th>";
+	echo "<th class=\"text-center\">Vagas totais</th>";
+	echo "<th class=\"text-center\">Vagas disponíveis</th>";
+	echo "<th class=\"text-center\">Status</th>";
+	echo "<th class=\"text-center\">Ações</th>";
+	echo "</tr>";
+
+	foreach($requestDisciplines as $disciplineClass){
+
+		$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+
+		echo "<tr>";
+
+		echo "<td>";
+		echo $disciplineClass['id_discipline'];
+		echo "</td>";
+
+		if($foundDiscipline !== FALSE){
+			echo "<td>";
+			echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+			echo "</td>";
+		}else{
+			echo "<td>";
+			echo "<div class='callout callout-info'>";
+			echo "Disciplina não encontrada.";
+			echo "</div>";
+			echo "</td>";
+		}
+
+		echo "<td>";
+		echo $disciplineClass['class'];
+		echo "</td>";
+
+		echo "<td>";
+		echo $disciplineClass['total_vacancies'];
+		echo "</td>";
+
+		echo "<td>";
+		echo $disciplineClass['current_vacancies'];
+		echo "</td>";
+
+		echo "<td>";
+
+		switch($disciplineClass['status']){
+			case EnrollmentConstants::PRE_ENROLLED_STATUS:
+				$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
+				break;
+
+			case EnrollmentConstants::ENROLLED_STATUS:
+				$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
+				break;
+
+			case EnrollmentConstants::REFUSED_STATUS:
+				$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
+				break;
+
+			default:
+				$status = "-";
+				break;
+		}
+		echo $status;
+		echo "</td>";
+
+		echo "<td>";
+
+		if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
+			// In this case the request was already approved
+		}else{
+			displayAcceptStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
+			//echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+		}
+
+		if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
+			// In this case the request was already refused
+		}else{
+			displayRefuseStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
+			//echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+		}
+
+		echo "</td>";
+		echo "</tr>";
+	}
+
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
+}
+
+
 function displayMastermindStudentRequest($requests, $idMastermind){
 	$user = new Usuario();
 	echo "<br>";
@@ -524,7 +629,7 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 								
 									echo "<td colspan=9>";
 										echo "<div class='collapse' id='solicitation_details_".$studentRequest['id_request']."'>";
-										requestedDisciplineClasses($studentRequest['id_request']);
+										requestedDisciplineClassesForMastermind($studentRequest['id_request'], $idMastermind, $studentRequest['id_student']);
 										echo "</div>";
 									echo "</td>";
 								

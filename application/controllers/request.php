@@ -74,8 +74,10 @@ class Request extends CI_Controller {
 			$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
 		}else{
 			$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+			$savedMessage = TRUE;
 		}
-		if($wasApproved){
+		
+		if($wasApproved && $savedMessage){
 			$status = "success";
 			$message = "Toda a solicitação foi reprovada com sucesso.";
 		}else{
@@ -122,6 +124,37 @@ class Request extends CI_Controller {
 		$this->redirectToCurrentUserRequests($status, $message, $courseId);
 	}
 
+	public function approveRequestedDisciplineByMastermind(){
+	
+		$this->load->model("request_model");
+	
+		
+		$message = $this->input->post('mastermind_message');
+		$requestId = $this->input->post('idRequest');
+		$studentId = $this->input->post('idStudent');
+		$mastermindId = $this->input->post('idMastermind');
+		$idOfferDiscipline = $this->input->post('idOfferDiscipline');
+		$courseId = $this->input->post('idCourse');
+		
+		if($message){
+			$savedMessage = $this->request_model->saveMasterindMessage($message, $requestId, $studentId, $mastermindId);
+			$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline);
+		}else{
+			$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline);
+			$savedMessage = TRUE;
+		}
+	
+		if($wasApproved && $savedMessage){
+			$status = "success";
+			$message = "Solicitação de disciplina aprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Solicitação de disciplina não pôde ser aprovada.";
+		}
+	
+		$this->redirectToCurrentUserRequests($status, $message, $courseId);
+	}
+	
 	public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
 		$session = $this->session->userdata("current_user");
 		$user_groups = array();
@@ -164,6 +197,37 @@ class Request extends CI_Controller {
 		$this->redirectToCurrentUserRequests($status, $message, $courseId);
 	}
 
+	public function refuseRequestedDisciplineByMastermind(){
+	
+		$this->load->model("request_model");
+	
+	
+		$message = $this->input->post('mastermind_message');
+		$requestId = $this->input->post('idRequest');
+		$studentId = $this->input->post('idStudent');
+		$mastermindId = $this->input->post('idMastermind');
+		$idOfferDiscipline = $this->input->post('idOfferDiscipline');
+		$courseId = $this->input->post('idCourse');
+	
+		if($message){
+			$savedMessage = $this->request_model->saveMasterindMessage($message, $requestId, $studentId, $mastermindId, $idOfferDiscipline);
+			$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
+		}else{
+			$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
+			$savedMessage = TRUE;
+		}
+	
+		if($wasRefused && $savedMessage){
+			$status = "success";
+			$message = "Solicitação de disciplina aprovada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Solicitação de disciplina não pôde ser aprovada.";
+		}
+	
+		$this->redirectToCurrentUserRequests($status, $message, $courseId);
+	}
+	
 	public function courseRequests($courseId){
 
 		$this->load->model("request_model");

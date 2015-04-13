@@ -7,7 +7,7 @@ class Migration_Cria_tabela_mensagem_orientador_aluno extends CI_Migration {
 		$this->dbforge->add_field(array(
 				'id_mastermind' => array('type' => 'INT'),
 				'id_student' => array('type' => 'INT'),
-				'id_request' => array('type' => 'INT'),
+				'id_request' => array('type' => 'INT', 'null'=>TRUE),
 				'message' => array('type' => 'varchar(500)')
 		));
 		
