@@ -722,7 +722,7 @@ function searchForStudentRequestByNameForm($courseId){
 	echo form_close();
 }
 
-function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
+function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses,$mastermind_message){
 
 	$discipline = new Discipline();
 
@@ -734,6 +734,7 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 			        echo "<th class=\"text-center\">Disciplina</th>";
 			        echo "<th class=\"text-center\">Turma</th>";
 			        echo "<th class=\"text-center\">OBS</th>";
+			        echo "<th class=\"text-center\">Mensagem Orientador</th>";
 			    echo "</tr>";
 
 			    if($requestDisciplinesClasses !== FALSE){
@@ -780,6 +781,10 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 				    		echo "<td>";
 				    		echo $disciplineRequestStatus;
 				    		echo "<td>";
+				    		
+			    			echo $mastermind_message;
+				    	
+				    		
 			    		echo "</tr>";	
 			    		
 			    	}

@@ -346,6 +346,24 @@ class Request_model extends CI_Model {
 
 		return $requestDisciplinesClasses;
 	}
+	
+	public function getMastermindMessage($studentId, $courseId, $semesterId){
+		$requestData = array(
+				'id_student' => $studentId,
+				'id_course' => $courseId,
+				'id_semester' => $semesterId
+		);
+		
+		$request = $this->request_model->getRequest($requestData);
+		
+		if($request !== FALSE){
+			$message = $this->getMastermindMessageForStudent($studentId, $request['id_request']);
+		}else{
+			$message = 'Seu Orientador não deixou mensagem.';
+		}
+		
+		return $message;
+	}
 
 	public function getRequestDisciplinesClasses($requestId){
 
@@ -360,6 +378,24 @@ class Request_model extends CI_Model {
 		return $foundClasses;
 	}
 
+	private function getMastermindMessageForStudent($studentId, $requestId){
+		$where = array(
+			'id_request' => $requestId,
+			'id_student' => $studentId
+		);
+		$mastermindMessage = $this->db->get_where('mastermind_message', $where)->row_array();
+		
+		$mastermindMessage = checkArray($mastermindMessage);
+		
+		if ($mastermindMessage){
+			$message = $mastermindMessage['message'];
+		}else{
+			$message = 'Seu Orientador não deixou mensagem.';
+		}
+		
+		return $message;
+	}
+	
 	public function getRequest($requestData){
 
 		$foundRequest = $this->db->get_where('student_request', $requestData)->row_array();
