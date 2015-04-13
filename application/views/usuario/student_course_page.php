@@ -11,7 +11,7 @@
 		    <div class="list-group">
 				<?=anchor("request/studentEnrollment/{$course['id_course']}/{$user['id']}", "Matrícula", "class='list-group-item' style='width:20%;'");?>
 				<?=anchor("usuario/student_offerList/{$course['id_course']}", "Lista de Oferta", "class='list-group-item' style='width:20%;'");?>
-				<?=anchor("", "Currículo do curso", "class='list-group-item' style='width:20%;'");?>
+				<?=anchor("syllabus/courseSyllabus/{$course['id_course']}", "Currículo do curso", "class='list-group-item' style='width:20%;'");?>
 			</div>
         	</p>
 
