@@ -400,4 +400,46 @@ class Request_model extends CI_Model {
 	
 		return $foundRequest;
 	}
+	
+	public function saveMasterindMessage($message, $requestId, $studentId, $mastermindId){
+		$messageData = array(
+				'id_mastermind' => $mastermindId,
+				'id_student' => $studentId,
+				'id_request' => $requestId,
+				'message' => $message
+		);
+			
+		$messageExist = $this->checkExistingMessage($messageData);
+		
+		if ($messageExist){
+			$savedMessage = $this->updateMessageInDb($messageData);
+		}else{
+			$savedMessage = $this->insertMessageInDb($messageData);
+		}
+		return $savedMessage;
+	}
+	
+	private function checkExistingMessage($messageData){
+		
+		$existingMessage = $this->db->get_where('mastermind_message', $messageData);
+		
+		return $existingMessage;
+	}
+	
+	private function updateMessageInDb($messageData){
+		$where = array(
+				'id_student'=>$messageData['id_student'],
+				'id_mastermind'=>$messageData['id_mastermind'],
+				'id_request'=>$messageData['id_request']
+		);
+		
+		$this->db->where($where);
+		$updatedMessageData = $this->db->update('mastermind_message', $messageData);
+		return $updatedMessageData;
+	}
+	
+	private function insertMessageInDb($messageData){
+		$savedMessage = $this->db->insert('mastermind_message', $messageData);
+		return $savedMessage;
+	}
 }

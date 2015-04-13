@@ -416,7 +416,7 @@ function requestedDisciplineClasses($requestId){
 	echo "</div>";
 }
 
-function displayMastermindStudentRequest($requests){
+function displayMastermindStudentRequest($requests, $idMastermind){
 	$user = new Usuario();
 	echo "<br>";
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
@@ -513,10 +513,10 @@ function displayMastermindStudentRequest($requests){
 										);
 									echo "</td>";
 									echo "<td>";
-										displayAcceptStudentsSolicitation($studentRequest['id_request'], $studentRequest['id_student']);
+										displayAcceptStudentsSolicitation($studentRequest['id_request'], $studentRequest['id_student'], $idMastermind);
 									echo "</td>";
 									echo "<td>";
-										displayRefuseStudentsSolicitation($studentRequest['id_request'], $studentRequest['id_student']);
+										displayRefuseStudentsSolicitation($studentRequest['id_request'], $studentRequest['id_student'], $idMastermind);
 									echo "</td>";
 									
 								echo "</tr>";

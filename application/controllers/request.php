@@ -27,14 +27,26 @@ class Request extends CI_Controller {
 		redirect("request/courseRequests/{$courseId}");		
 	}
 
-	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
+	public function approveAllStudentRequestsByMastermind(){
+		define("APPROVE_MESSAGE", 'aproved');
 		$this->load->model("request_model");
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
 		
-		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		$message = $this->input->post('mastermind_message');
+		$requestId = $this->input->post('idRequest');
+		$studentId = $this->input->post('idStudent');
+		$mastermindId = $this->input->post('idMastermind');
 		
-		if($wasApproved){
+		if($message){
+			$savedMessage = $this->request_model->saveMasterindMessage($message, $requestId, $studentId, $mastermindId);
+			$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		}else{
+			$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+			$savedMessage = TRUE;
+		}
+		
+		if($wasApproved && $savedMessage){
 			$status = "success";
 			$message = "Toda a solicitação foi aprovada com sucesso.";
 		}else{
@@ -46,14 +58,23 @@ class Request extends CI_Controller {
 		
 	}
 	
-	public function refuseAllStudentRequestsByMastermind($requestId,$studentId){
+	public function refuseAllStudentRequestsByMastermind(){
 		$this->load->model("request_model");
 		
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
 		
-		$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		$message = $this->input->post('mastermind_message');
+		$requestId = $this->input->post('idRequest');
+		$studentId = $this->input->post('idStudent');
+		$mastermindId = $this->input->post('idMastermind');
 		
+		if($message){
+			$savedMessage = $this->request_model->saveMasterindMessage($message, $requestId, $studentId, $mastermindId);
+			$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		}else{
+			$wasApproved = $this->request_model->mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester['id_semester'], $requestId);
+		}
 		if($wasApproved){
 			$status = "success";
 			$message = "Toda a solicitação foi reprovada com sucesso.";

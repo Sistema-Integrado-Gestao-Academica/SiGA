@@ -123,14 +123,14 @@ function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId
 	
 }
 
-function displayAcceptStudentsSolicitation($idRequest, $idStudent){
+function displayAcceptStudentsSolicitation($idRequest, $idStudent, $idMastermind){
 	$submit_button_array_to_form = array(
 			"class" => "btn btn-success btn-sm btn-block",
 			"content" => "Aprovar toda a solicitação",
 			"type" => "submit"
 	);
 	
-	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest);
+	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest, 'idMastermind'=>$idMastermind);
 	$message = array(
 			'name' => 'mastermind_message',
 			'id' => 'mastermind_message',
@@ -147,14 +147,14 @@ function displayAcceptStudentsSolicitation($idRequest, $idStudent){
 	echo form_close();
 }
 
-function displayRefuseStudentsSolicitation($idRequest, $idStudent){
+function displayRefuseStudentsSolicitation($idRequest, $idStudent, $idMastermind){
 	$submit_button_array_to_form = array(
 			"class" => "btn btn-danger btn-sm btn-block",
 			"content" => "Rejeitar toda a solicitação",
 			"type" => "submit"
 	);
 
-	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest);
+	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest, 'idMastermind'=>$idMastermind);
 	$message = array(
 			'name' => 'mastermind_message',
 			'id' => 'mastermind_message',

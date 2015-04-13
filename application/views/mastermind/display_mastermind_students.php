@@ -1,3 +1,3 @@
 <?php
 
-displayMastermindStudentRequest($requests);
+displayMastermindStudentRequest($requests, $idMastermind);
