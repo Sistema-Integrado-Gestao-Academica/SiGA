@@ -430,7 +430,9 @@ function displayMastermindStudentRequest($requests){
 					echo "<th class=\"text-center\">Aluno requerente</th>";
 					echo "<th class=\"text-center\">Matrícula aluno</th>";
 					echo "<th class=\"text-center\">Status da solicitação</th>";
-					echo "<th class=\"text-center\">Ações</th>";
+					echo "<th class=\"text-center\">Viziualização</th>";
+					echo "<th class=\"text-center\">Aprovação</th>";
+					echo "<th class=\"text-center\">Rejeição</th>";
 				echo "</tr>";
 				
 				if($requests !== FALSE){
@@ -501,24 +503,26 @@ function displayMastermindStudentRequest($requests){
 									echo "</td>";
 						
 									echo "<td>";
-									echo anchor(
-											"#solicitation_details_".$studentRequest['id_request'],
-											"Visualizar solicitação",
-											"class='btn btn-primary'
-						    				data-toggle='collapse'
-						    				aria-expanded='false'
-						    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
+										echo anchor(
+												"#solicitation_details_".$studentRequest['id_request'],
+												"Visualizar solicitação",
+												"class='btn btn-primary btn-block'
+										    				data-toggle='collapse'
+										    				aria-expanded='false'
+										    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
 										);
-									
-									echo anchor("request/approveAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-									echo "<br>";
-									echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 									echo "</td>";
-
+									echo "<td>";
+										displayAcceptStudentsSolicitation($studentRequest['id_request'], $studentRequest['id_student']);
+									echo "</td>";
+									echo "<td>";
+										displayRefuseStudentsSolicitation($studentRequest['id_request'], $studentRequest['id_student']);
+									echo "</td>";
+									
 								echo "</tr>";
 								echo "<tr>";
 								
-									echo "<td colspan=4>";
+									echo "<td colspan=9>";
 										echo "<div class='collapse' id='solicitation_details_".$studentRequest['id_request']."'>";
 										requestedDisciplineClasses($studentRequest['id_request']);
 										echo "</div>";

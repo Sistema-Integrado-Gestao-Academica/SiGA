@@ -123,6 +123,54 @@ function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId
 	
 }
 
+function displayAcceptStudentsSolicitation($idRequest, $idStudent){
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-sm btn-block",
+			"content" => "Aprovar toda a solicitação",
+			"type" => "submit"
+	);
+	
+	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest);
+	$message = array(
+			'name' => 'mastermind_message',
+			'id' => 'mastermind_message',
+			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
+			'rows' => '20',
+			"class" => "form-control",
+			'style' => 'height: 70px; margin-top:-15%;'
+	);
+	
+	echo form_open('request/approveAllStudentRequestsByMastermind','',$hidden);
+		echo form_label('', 'mastermind_message');
+		echo form_textarea($message);
+		echo form_button($submit_button_array_to_form);
+	echo form_close();
+}
+
+function displayRefuseStudentsSolicitation($idRequest, $idStudent){
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-danger btn-sm btn-block",
+			"content" => "Rejeitar toda a solicitação",
+			"type" => "submit"
+	);
+
+	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest);
+	$message = array(
+			'name' => 'mastermind_message',
+			'id' => 'mastermind_message',
+			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
+			'rows' => '20',
+			"class" => "form-control",
+			'style' => 'height: 70px; margin-top:-15%;'
+	);
+
+	echo form_open('request/refuseAllStudentRequestsByMastermind','',$hidden);
+	echo form_label('', 'mastermind_message');
+	echo form_textarea($message);
+	echo form_button($submit_button_array_to_form);
+	echo form_close();
+}
+
 function emptyDiv(){
 	echo "";
 }
