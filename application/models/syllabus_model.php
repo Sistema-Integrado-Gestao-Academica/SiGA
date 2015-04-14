@@ -57,7 +57,7 @@ class Syllabus_model extends CI_Model {
 		$foundDisciplines = $this->db->get()->result_array();
 
 		$foundDisciplines = checkArray($foundDisciplines);
-		$foundDisciplines = checkArray($foundDisciplines);
+		
 		return $foundDisciplines;
 	}
 

@@ -4,6 +4,27 @@ require_once('discipline.php');
 
 class Syllabus extends CI_Controller {
 
+	public function courseSyllabus($courseId){
+
+		$foundSyllabus = $this->getCourseSyllabus($courseId);
+
+		if($foundSyllabus !== FALSE){
+			$syllabusDisciplines = $this->getSyllabusDisciplines($foundSyllabus['id_syllabus']);
+		}else{
+			$syllabusDisciplines = FALSE;
+		}
+
+		$course = new Course();
+		$foundCourse = $course->getCourseById($courseId);
+
+		$data = array(
+			'syllabusDisciplines' => $syllabusDisciplines,
+			'course' => $foundCourse,
+		);
+
+		loadTemplateSafelyByGroup("estudante",'syllabus/course_syllabus_disciplines_student', $data);
+	}
+
 	public function getCourseSyllabus($courseId){
 		
 		$this->load->model('syllabus_model');

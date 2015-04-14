@@ -1463,6 +1463,60 @@ function displayCourseSyllabus($syllabus){
 	echo "</div>";	
 }
 
+function displaySyllabusDisciplinesToStudent($syllabusDisciplines){
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código da Disciplina</th>";
+			        echo "<th class=\"text-center\">Disciplina</th>";
+			        echo "<th class=\"text-center\">Créditos</th>";
+			        echo "<th class=\"text-center\">Carga-horária</th>";
+			    echo "</tr>";
+			    
+			    if($syllabusDisciplines !== FALSE){
+
+			    	foreach($syllabusDisciplines as $discipline){
+				    	
+				    	echo "<tr>";
+					    	
+					    	echo "<td>";
+					    		echo $discipline['discipline_code'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $discipline['discipline_name']."  (".$discipline['name_abbreviation'].")";
+					    	echo "</td>";
+					    	
+					    	echo "<td>";
+					    		echo $discipline['credits'];
+					    	echo "</td>";
+
+					    	echo "<td>";
+					    		echo $discipline['workload'];
+					    	echo "</td>";
+
+				    	echo "</tr>";
+			    	}
+
+			    }else{
+
+			    	echo "<tr>";
+			    		echo "<td colspan='4'>";
+			    			echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhuma disciplina no currículo deste curso.</h4>";
+						echo "</div>";
+			    		echo "</td>";
+			    	echo "</tr>";
+			    }
+			    
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
 function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId){
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
