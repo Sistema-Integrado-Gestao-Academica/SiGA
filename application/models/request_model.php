@@ -58,7 +58,7 @@ class Request_model extends CI_Model {
 
 	public function approveAllRequest($requestId){
 
-		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::ENROLLED_STATUS);
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS);
 
 		return $wasApproved;
 	}
@@ -72,7 +72,7 @@ class Request_model extends CI_Model {
 	
 	public function mastermindApproveAllCurrentStudentRequest($requestId){
 		
-		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::ENROLLED_STATUS);
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS);
 
 		return $wasApproved;
 	}
@@ -156,9 +156,10 @@ class Request_model extends CI_Model {
 		
 		return $hasRequest;
 	}
+
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
 
-		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::ENROLLED_STATUS);
+		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::APPROVED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
 
@@ -176,7 +177,7 @@ class Request_model extends CI_Model {
 
 	private function checkRequestGeneralStatus($requestId){
 
-		$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::ENROLLED_STATUS);
+		$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::APPROVED_STATUS);
 		$wasAllRefused = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::REFUSED_STATUS);
 		$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
 

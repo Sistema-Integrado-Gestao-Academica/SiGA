@@ -9,10 +9,11 @@ class EnrollmentConstants extends Constants{
 	// Request discipline status
 	const NO_VACANCY_STATUS = "no_vacancy";
 	const PRE_ENROLLED_STATUS = "pre_enrolled";
-	const ENROLLED_STATUS = "enrolled";
+	const APPROVED_STATUS = "approved";
 	const REFUSED_STATUS = "refused";
 
 	// Request general status
+	const ENROLLED_STATUS = "enrolled";
 	const REQUEST_INCOMPLETE_STATUS = "incomplete";
 	const REQUEST_ALL_APPROVED_STATUS = "all_approved";
 	const REQUEST_ALL_REFUSED_STATUS = "all_refused";

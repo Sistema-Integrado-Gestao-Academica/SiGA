@@ -127,7 +127,7 @@ class Request extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);			
 	}
-	
+
 	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
 
 		$this->load->model("request_model");
@@ -154,6 +154,10 @@ class Request extends CI_Controller {
 		$wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
 
 		return $wasFinalized;
+	}
+
+	public function finalizeRequestSecretary($requestId){
+
 	}
 
 	// public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
