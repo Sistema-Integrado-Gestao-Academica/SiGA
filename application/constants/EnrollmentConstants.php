@@ -20,4 +20,7 @@ class EnrollmentConstants extends Constants{
 
 	const REQUEST_APPROVED_BY_MASTERMIND = 1;
 
+	const REQUESTING_AREA_SECRETARY = "secretary_requesting";
+	const REQUESTING_AREA_MASTERMIND = "mastermind_requesting";
+
 }

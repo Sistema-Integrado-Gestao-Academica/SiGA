@@ -80,10 +80,38 @@ class Request extends CI_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");		
+		redirect("request/courseRequests/{$courseId}");	
 	}
 
-	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
+
+		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+		
+		redirect("request/courseRequests/{$courseId}");
+	}
+	
+	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
+
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+
+		redirect("request/courseRequests/{$courseId}");
+	}
+
+	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
+
+		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+		
+		redirect("mastermind");
+	}
+
+	public function refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
+
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+
+		redirect("mastermind");
+	}
+
+	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
 		
 		$this->load->model("request_model");
 
@@ -97,12 +125,10 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
-		$this->session->set_flashdata($status, $message);
-		redirect('mastermind');
+		$this->session->set_flashdata($status, $message);			
 	}
-
-	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+	
+	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
 
 		$this->load->model("request_model");
 
@@ -118,7 +144,7 @@ class Request extends CI_Controller {
 
 		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
 		$this->session->set_flashdata($status, $message);
-		redirect('mastermind');
+		// redirect('mastermind');
 	}
 
 	public function finalizeRequestToMastermind($requestId){
