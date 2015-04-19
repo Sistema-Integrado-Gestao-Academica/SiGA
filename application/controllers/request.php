@@ -160,8 +160,18 @@ class Request extends CI_Controller {
 
 		$this->load->model('request_model');
 
-		$this->request_model->finalizeRequestSecretary($requestId);
+		$wasFinalized = $this->request_model->finalizeRequestSecretary($requestId);
 
+		if($wasFinalized){
+			$status = "success";
+			$message = "Solicitação finalizada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "A solicitação não pôde ser finalizada.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");	
 	}
 
 	// public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){

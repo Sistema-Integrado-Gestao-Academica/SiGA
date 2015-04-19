@@ -137,8 +137,11 @@ class Request_model extends CI_Model {
 
 	public function finalizeRequestSecretary($requestId){
 
-		$wasApproved = $this->secretary_approval($requestId);
-		
+		$wasApproved = $this->secretaryApproval($requestId);
+
+		$this->checkRequestGeneralStatus($requestId);
+
+		return $wasApproved;
 	}
 
 	private function secretaryApproval($requestId){
@@ -265,21 +268,32 @@ class Request_model extends CI_Model {
 
 	private function checkRequestGeneralStatus($requestId){
 
-		$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::APPROVED_STATUS);
-		$wasAllRefused = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::REFUSED_STATUS);
-		$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
+		$foundRequest = $this->getRequest(array('id_request' => $requestId));
 
-		if($wasAllApproved){
-			$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
-		}else if($wasAllRefused){
-			$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
-		}else if($hasPreEnrolled){
-			$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
-		}else{
-			$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
+		if($foundRequest !== FALSE){
+
+			$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::APPROVED_STATUS);
+			$wasAllRefused = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::REFUSED_STATUS);
+			$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
+
+			$requestIsFinalizedBySecretary = $foundRequest['secretary_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
+			
+			if($wasAllApproved){
+				if($requestIsFinalizedBySecretary){
+					$status = EnrollmentConstants::ENROLLED_STATUS;
+				}else{
+					$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
+				}
+			}else if($wasAllRefused){
+				$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
+			}else if($hasPreEnrolled){
+				$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
+			}else{
+				$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
+			}
+			
+			$this->changeRequestGeneralStatus($requestId, $status);
 		}
-		
-		$this->changeRequestGeneralStatus($requestId, $status);
 	}
 
 	private function changeRequestGeneralStatus($requestId, $newStatus){
