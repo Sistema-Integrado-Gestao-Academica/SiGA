@@ -26,6 +26,24 @@ class Request extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect("request/courseRequests/{$courseId}");		
 	}
+	
+	public function refuseAllRequest($requestId, $courseId){
+
+		$this->load->model("request_model");
+
+		$wasRefused = $this->request_model->refuseAllRequest($requestId);
+
+		if($wasRefused){
+			$status = "success";
+			$message = "Toda a solicitação foi recusada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Toda a solicitação não pôde ser recusada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");	
+	}
 
 	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
 		
@@ -63,24 +81,6 @@ class Request extends CI_Controller {
 		// $this->redirectToCurrentUserRequests($status, $message);
 		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
-	}
-	
-	public function refuseAllRequest($requestId, $courseId){
-
-		$this->load->model("request_model");
-
-		$wasRefused = $this->request_model->refuseAllRequest($requestId);
-
-		if($wasRefused){
-			$status = "success";
-			$message = "Toda a solicitação foi recusada com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Toda a solicitação não pôde ser recusada.";
-		}
-
-		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");	
 	}
 
 	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){

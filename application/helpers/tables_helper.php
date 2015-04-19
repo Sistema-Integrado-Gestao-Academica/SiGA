@@ -422,7 +422,13 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 										if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
 											// In this case the request was already approved
 										}else{
-											echo anchor("request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+											if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
+												echo anchor("request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+											}else{
+												echo "<div class=\"callout callout-danger\">";
+												echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
+												echo "</div>";
+											}
 										}
 
 										if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
@@ -432,7 +438,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 										}
 									}else{
 										echo "<div class=\"callout callout-info\">";
-										echo "<h6>Não aprovado pelo coordenador. Sem ações.</h6>";
+										echo "<h6>Não aprovado pelo orientador. Sem ações.</h6>";
 										echo "</div>";
 									}
 

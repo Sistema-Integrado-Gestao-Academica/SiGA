@@ -90,13 +90,26 @@ class Request_model extends CI_Model {
 
 	private function changeAllRequest($requestId, $newStatus){
 
-		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+		$disciplinesConditions = array(
+			'id_request' => $requestId,
+			'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
+		);
+
+		$requestDisciplines = $this->getRequestDisciplines($disciplinesConditions);
 
 		if($requestDisciplines !== FALSE){
 
 			foreach($requestDisciplines as $requestedDiscipline){
 				
 				$this->changeRequestDisciplineStatus($requestId, $requestedDiscipline['discipline_class'], $newStatus);
+
+				if($newStatus === EnrollmentConstants::APPROVED_STATUS){
+					$isToApprove = TRUE;
+				}else{
+					$isToApprove = FALSE;
+				}
+
+				$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_SECRETARY, $isToApprove, $requestId, $requestedDiscipline['discipline_class']);
 			}
 
 			$this->checkRequestGeneralStatus($requestId);
@@ -438,7 +451,7 @@ class Request_model extends CI_Model {
 
 	public function getRequestDisciplinesClasses($requestId){
 
-		$this->db->select('offer_discipline.*, request_discipline.status');
+		$this->db->select('offer_discipline.*, request_discipline.*');
 		$this->db->from('request_discipline');
 		$this->db->join('offer_discipline', "request_discipline.discipline_class = offer_discipline.id_offer_discipline");
 		$this->db->where('request_discipline.id_request', $requestId);
