@@ -58,21 +58,21 @@ class Request_model extends CI_Model {
 
 	public function approveAllRequest($requestId){
 
-		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS);
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
 		return $wasApproved;
 	}
 
 	public function refuseAllRequest($requestId){
 
-		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS);
+		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
 		return $wasRefused;
 	}
 	
 	public function mastermindApproveAllCurrentStudentRequest($requestId){
 		
-		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS);
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 		
 		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, TRUE, $requestId);
 
@@ -81,19 +81,29 @@ class Request_model extends CI_Model {
 
 	public function mastermindRefuseAllCurrentStudentRequest($requestId){
 	
-		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS);
+		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 		
 		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, FALSE, $requestId);
 	
 		return $wasRefused;
 	}
 
-	private function changeAllRequest($requestId, $newStatus){
+	private function changeAllRequest($requestId, $newStatus, $requestingArea){
 
-		$disciplinesConditions = array(
-			'id_request' => $requestId,
-			'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
-		);
+		switch($requestingArea){
+			case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
+				$disciplinesConditions = array(
+					'id_request' => $requestId,
+					'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
+				);
+				break;
+	
+			default:
+				$disciplinesConditions = array(
+					'id_request' => $requestId
+				);
+				break;
+		}
 
 		$requestDisciplines = $this->getRequestDisciplines($disciplinesConditions);
 
