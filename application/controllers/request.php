@@ -92,7 +92,7 @@ class Request extends CI_Controller {
 	
 	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
 
-		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
 		redirect("request/courseRequests/{$courseId}");
 	}
@@ -106,7 +106,7 @@ class Request extends CI_Controller {
 
 	public function refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
 
-		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 
 		redirect("mastermind");
 	}
@@ -128,11 +128,11 @@ class Request extends CI_Controller {
 		$this->session->set_flashdata($status, $message);			
 	}
 
-	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea){
 
 		$this->load->model("request_model");
 
-		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
+		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasRefused){
 			$status = "success";

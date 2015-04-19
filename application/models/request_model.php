@@ -74,7 +74,7 @@ class Request_model extends CI_Model {
 		
 		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS);
 		
-		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestId);
+		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, TRUE, $requestId);
 
 		return $wasApproved;
 	}
@@ -82,6 +82,8 @@ class Request_model extends CI_Model {
 	public function mastermindRefuseAllCurrentStudentRequest($requestId){
 	
 		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS);
+		
+		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, FALSE, $requestId);
 	
 		return $wasRefused;
 	}
@@ -177,7 +179,7 @@ class Request_model extends CI_Model {
 		return $hasRequest;
 	}
 
-	private function requestDisciplineApproval($requestingArea, $requestId, $idOfferDiscipline = FALSE){
+	private function requestDisciplineApproval($requestingArea, $isToApprove, $requestId, $idOfferDiscipline = FALSE){
 
 		if($idOfferDiscipline !== FALSE){
 
@@ -194,15 +196,27 @@ class Request_model extends CI_Model {
 
 		switch($requestingArea){
 			case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
-				$toUpdate = array(
-					'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
-				);
+				if($isToApprove){
+					$toUpdate = array(
+						'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
+					);
+				}else{
+					$toUpdate = array(
+						'mastermind_approval' => EnrollmentConstants::DISCIPLINE_REFUSED_BY_MASTERMIND
+					);
+				}
 				break;
 
 			case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
-				$toUpdate = array(
-					'secretary_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_SECRETARY
-				);
+				if($isToApprove){
+					$toUpdate = array(
+						'secretary_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_SECRETARY
+					);
+				}else{
+					$toUpdate = array(
+						'secretary_approval' => EnrollmentConstants::DISCIPLINE_REFUSED_BY_SECRETARY
+					);
+				}
 				break;
 
 			default:
@@ -220,16 +234,18 @@ class Request_model extends CI_Model {
 
 		$this->checkRequestGeneralStatus($requestId);
 
-		$this->requestDisciplineApproval($requestingArea, $requestId, $idOfferDiscipline);
+		$this->requestDisciplineApproval($requestingArea, TRUE, $requestId, $idOfferDiscipline);
 		
 		return $wasApproved;
 	}
 
-	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline){
+	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 
 		$wasRefused = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::REFUSED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
+		
+		$this->requestDisciplineApproval($requestingArea, FALSE, $requestId, $idOfferDiscipline);
 
 		return $wasRefused;
 	}
