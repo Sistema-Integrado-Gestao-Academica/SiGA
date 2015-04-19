@@ -300,7 +300,7 @@ function displayCourseRequests($requests, $courseId){
 
 				    		echo "<br>";
 				    		echo "<div class=\"callout callout-info\">";
-				    			echo anchor("request/finalizeRequestSecretary/{$request['id_request']}", "Finalizar solicitação", "class='btn btn-primary btn-flat' style='margin-top: 5%;'");
+				    			echo anchor("request/finalizeRequestSecretary/{$request['id_request']}/{$courseId}", "Finalizar solicitação", "class='btn btn-primary btn-flat' style='margin-top: 5%;'");
 								echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
 							echo "</div>";
 
@@ -544,7 +544,7 @@ function displayMastermindStudentRequest($requests){
 								echo anchor(
 										"#solicitation_details_".$studentRequest['id_request'],
 										"Visualizar solicitação",
-										"class='btn btn-primary'
+										"class='btn btn-info'
 					    				data-toggle='collapse'
 					    				aria-expanded='false'
 					    				aria-controls='solicitation_details".$studentRequest['id_request']."'"
@@ -559,11 +559,15 @@ function displayMastermindStudentRequest($requests){
 									echo "<br>";
 									echo anchor("", "Já Finalizada!", "class='btn bg-olive btn-flat' style='margin-top:10%;' disabled='true'");
 								}else{
+									echo "<br>";
 									echo anchor("request/approveAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
 									echo "<br>";
 									echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
 									echo "<br>";
-									echo anchor("mastermind/finalizeRequest/{$studentRequest['id_request']}", "Finalizar solicitação", "class='btn bg-olive btn-flat' style='margin-top:10%;'");
+									echo "<div class=\"callout callout-info\">";
+										echo anchor("mastermind/finalizeRequest/{$studentRequest['id_request']}", "Finalizar solicitação", "class='btn btn-primary btn-flat'");
+										echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
+									echo "</div>";
 								}
 
 								echo "</td>";

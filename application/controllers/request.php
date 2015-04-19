@@ -85,7 +85,7 @@ class Request extends CI_Controller {
 
 	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
 
-		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 		
 		redirect("request/courseRequests/{$courseId}");
 	}
@@ -99,7 +99,7 @@ class Request extends CI_Controller {
 
 	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
 
-		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId);
+		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 		
 		redirect("mastermind");
 	}
@@ -111,11 +111,11 @@ class Request extends CI_Controller {
 		redirect("mastermind");
 	}
 
-	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 		
 		$this->load->model("request_model");
 
-		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline);
+		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasApproved){
 			$status = "success";
@@ -156,7 +156,11 @@ class Request extends CI_Controller {
 		return $wasFinalized;
 	}
 
-	public function finalizeRequestSecretary($requestId){
+	public function finalizeRequestSecretary($requestId, $courseId){
+
+		$this->load->model('request_model');
+
+		$this->request_model->finalizeRequestSecretary($requestId);
 
 	}
 

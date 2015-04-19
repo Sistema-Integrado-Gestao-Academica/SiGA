@@ -73,6 +73,8 @@ class Request_model extends CI_Model {
 	public function mastermindApproveAllCurrentStudentRequest($requestId){
 		
 		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS);
+		
+		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestId);
 
 		return $wasApproved;
 	}
@@ -118,6 +120,24 @@ class Request_model extends CI_Model {
 		return $wasFinalized;
 	}
 
+	public function finalizeRequestSecretary($requestId){
+
+		$wasApproved = $this->secretary_approval($requestId);
+		
+	}
+
+	private function secretaryApproval($requestId){
+
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('secretary_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY));
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId, 'secretary_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY));
+
+		$wasFinalized = $foundRequest !== FALSE;
+
+		return $wasFinalized;	
+	}
+
 	/*private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
 		$hasRequests = $this->checkStudentHasRequest($studentId);
 		
@@ -157,12 +177,51 @@ class Request_model extends CI_Model {
 		return $hasRequest;
 	}
 
-	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
+	private function requestDisciplineApproval($requestingArea, $requestId, $idOfferDiscipline = FALSE){
+
+		if($idOfferDiscipline !== FALSE){
+
+			$whereClause = array(
+				'id_request' => $requestId,
+				'discipline_class' => $idOfferDiscipline
+			);
+		}else{
+			// In this case is to update all the disciplines of a request
+			$whereClause = array(
+				'id_request' => $requestId
+			);
+		}
+
+		switch($requestingArea){
+			case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
+				$toUpdate = array(
+					'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
+				);
+				break;
+
+			case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
+				$toUpdate = array(
+					'secretary_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_SECRETARY
+				);
+				break;
+
+			default:
+				$toUpdate = array();
+				break;
+		}
+
+		$this->db->where($whereClause);
+		$this->db->update('request_discipline', $toUpdate);	
+	}
+
+	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 
 		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::APPROVED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
 
+		$this->requestDisciplineApproval($requestingArea, $requestId, $idOfferDiscipline);
+		
 		return $wasApproved;
 	}
 

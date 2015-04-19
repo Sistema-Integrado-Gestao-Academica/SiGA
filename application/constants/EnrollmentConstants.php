@@ -20,6 +20,10 @@ class EnrollmentConstants extends Constants{
 	const REQUEST_PARTIALLY_APPROVED_STATUS = "partially_approved";
 
 	const REQUEST_APPROVED_BY_MASTERMIND = 1;
+	const REQUEST_APPROVED_BY_SECRETARY = 1;
+
+	const DISCIPLINE_APPROVED_BY_MASTERMIND = 1;
+	const DISCIPLINE_APPROVED_BY_SECRETARY = 1;
 
 	const REQUESTING_AREA_SECRETARY = "secretary_requesting";
 	const REQUESTING_AREA_MASTERMIND = "mastermind_requesting";
