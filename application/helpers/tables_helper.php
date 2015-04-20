@@ -13,6 +13,55 @@ require_once(APPPATH."/controllers/mastermind.php");
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 
+
+function displayStudentSpecificDataPage($idUser){
+
+	$user = new Usuario();
+	
+	$studentData = $user->getStudentBasicInformation($idUser);
+	echo "<h4>Dados Pessoais:</h4>";
+	echo "<div class=\"box-body table-responsive no-padding\">";
+	echo "<table class=\"table table-bordered table-hover\">";
+	echo "<tbody>";
+
+	echo "<tr>";
+	echo "<th class=\"text-center\">Matrícula</th>";
+	echo "<th class=\"text-center\">Email</th>";
+	echo "<th class=\"text-center\">Telefone (residência)</th>";
+	echo "<th class=\"text-center\">Telefone (celular)</th>";
+	echo "</tr>";
+
+	if($studentData !== FALSE){
+			echo "<tr>";
+				echo "<td>";
+					echo $studentData['email'];
+				echo "</td>";
+				echo "<td>";
+					echo $studentData['student_registration'];
+				echo "</td>";
+				echo "<td>";
+					echo $studentData['home_phone_number'];
+				echo "</td>";
+				echo "<td>";
+					echo $studentData['cell_phone_number'];
+				echo "</td>";
+			echo "</tr>";
+	}else{
+
+		echo "<tr>";
+		echo "<td colspan=5>";
+		echo "<div class=\"callout callout-warning\">";
+		echo "<h4>Você ainda não atualizou seus dados.</h4>";
+		echo "</div>";
+		echo "</td>";
+		echo "</tr>";
+	}
+
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
+}
+
 function courseTableToSecretaryPage($courses){
 
 	$courseController = new Course();

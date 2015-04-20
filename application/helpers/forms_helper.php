@@ -231,6 +231,197 @@ function displayRefuseStudentDisciplineSolicitation($requestId, $idOfferDiscipli
 	echo form_close();
 }
 
+function displayFormUpdateStudentBasicInformation($idUser){
+	$user = new Usuario();
+	
+	$studentData = $user->getStudentBasicInformation($idUser);
+	
+	
+	$emailLabel = array(
+			"name" => "email",
+			"id" => "email",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "30"
+	);
+	
+	$cellPonheLabel = array(
+			"name" => "cell_phone_number",
+			"id" => "cell_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9"
+	);
+	
+	$homePonheLabel = array(
+			"name" => "home_phone_number",
+			"id" => "home_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9"
+	);
+
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-block ",
+			"content" => "Aprovar",
+			"type" => "submit"
+	);
+
+	if($studentData){
+		echo "<h4>Mantenha-nos atualizados:</h4>";
+		echo "<div class='form-box' id='login-box'>";
+			echo "<div class='header'>Informações Básicas</div>";
+			updateStudentBasicInformationForm($studentData);
+	}else{
+		echo "<h4>Cadastre aqui seus dados:</h4>";
+		echo "<div class='form-box' id='login-box'>";
+			echo "<div class='header'>Informações Básicas</div>";
+			saveStudentBasicInformationForm();
+	}
+	
+	echo "</div>";
+}
+
+function saveStudentBasicInformationForm(){
+	
+	$emailLabel = array(
+			"name" => "email",
+			"id" => "email",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "30"
+	);
+	
+	$cellPonheLabel = array(
+			"name" => "cell_phone_number",
+			"id" => "cell_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9"
+	);
+	
+	$homePonheLabel = array(
+			"name" => "home_phone_number",
+			"id" => "home_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9"
+	);
+	
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-block ",
+			"content" => "Aprovar",
+			"type" => "submit"
+	);
+	
+	echo form_open('usuario/saveStudentBasicInformation','');
+	echo "<div class='body bg-gray'>";
+	echo "<div class='form-group'>";
+	echo form_label("Email", "email") . "<br>";
+	echo form_input($emailLabel);
+	echo form_error("email");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
+	echo form_input($homePonheLabel);
+	echo form_error("home_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
+	echo form_input($cellPonheLabel);
+	echo form_error("cell_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "</div>";
+	echo "<div class='footer'>";
+	echo form_button($submit_button_array_to_form);
+	echo "</div>";
+	echo form_close();
+	
+	
+}
+
+
+function updateStudentBasicInformationForm($studentData){
+
+	$emailLabel = array(
+			"name" => "email",
+			"id" => "email",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "30",
+			"value" => $studentData['email']
+	);
+
+	$cellPonheLabel = array(
+			"name" => "cell_phone_number",
+			"id" => "cell_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9",
+			"value" => $studentData['cell_phone_number']
+	);
+
+	$homePonheLabel = array(
+			"name" => "home_phone_number",
+			"id" => "home_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9",
+			"value" => $studentData['home_phone_number']
+	);
+
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-block ",
+			"content" => "Aprovar",
+			"type" => "submit"
+	);
+
+	echo form_open('usuario/updateStudentBasicInformation','');
+	echo "<div class='body bg-gray'>";
+	echo "<div class='form-group'>";
+	echo form_label("Email", "email") . "<br>";
+	echo form_input($emailLabel);
+	echo form_error("email");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
+	echo form_input($homePonheLabel);
+	echo form_error("home_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
+	echo form_input($cellPonheLabel);
+	echo form_error("cell_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "</div>";
+	echo "<div class='footer'>";
+	echo form_button($submit_button_array_to_form);
+	echo "</div>";
+	echo form_close();
+
+
+}
 function emptyDiv(){
 	echo "";
 }
