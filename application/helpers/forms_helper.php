@@ -241,7 +241,7 @@ function displayFormUpdateStudentBasicInformation($idUser){
 		echo "<h4>Mantenha-nos atualizados:</h4>";
 		echo "<div class='form-box' id='login-box'>";
 			echo "<div class='header'>Informações Básicas</div>";
-			updateStudentBasicInformationForm($studentData);
+			updateStudentBasicInformationForm($studentData,$hidden);
 	}else{
 		echo "<h4>Cadastre aqui seus dados:</h4>";
 		echo "<div class='form-box' id='login-box'>";
@@ -320,7 +320,7 @@ function saveStudentBasicInformationForm($hidden){
 }
 
 
-function updateStudentBasicInformationForm($studentData){
+function updateStudentBasicInformationForm($studentData,$hidden){
 
 	$emailLabel = array(
 			"name" => "email",
@@ -358,7 +358,7 @@ function updateStudentBasicInformationForm($studentData){
 			"type" => "submit"
 	);
 
-	echo form_open('usuario/updateStudentBasicInformation','');
+	echo form_open('usuario/updateStudentBasicInformation','', $hidden);
 	echo "<div class='body bg-gray'>";
 	echo "<div class='form-group'>";
 	echo form_label("Email", "email") . "<br>";
