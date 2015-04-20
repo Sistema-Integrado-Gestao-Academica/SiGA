@@ -519,4 +519,13 @@ class Usuarios_model extends CI_Model {
 
 		return $userExists;
 	}
+	
+	public function getStudentBasicInformation($idUser){
+		
+		$studentBasics = $this->db->get_where('students_basic_information', array('id_user'=>$idUser))->row_array();
+		
+		$studentBasics = checkArray($studentBasics);
+
+		return $studentBasics;
+	}
 }
