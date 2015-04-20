@@ -235,41 +235,8 @@ function displayFormUpdateStudentBasicInformation($idUser){
 	$user = new Usuario();
 	
 	$studentData = $user->getStudentBasicInformation($idUser);
+	$hidden = array('student_registration' => $idUser, 'id_user' => $idUser);
 	
-	
-	$emailLabel = array(
-			"name" => "email",
-			"id" => "email",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "30"
-	);
-	
-	$cellPonheLabel = array(
-			"name" => "cell_phone_number",
-			"id" => "cell_phone_number",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "9"
-	);
-	
-	$homePonheLabel = array(
-			"name" => "home_phone_number",
-			"id" => "home_phone_number",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "9"
-	);
-
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-success btn-block ",
-			"content" => "Aprovar",
-			"type" => "submit"
-	);
-
 	if($studentData){
 		echo "<h4>Mantenha-nos atualizados:</h4>";
 		echo "<div class='form-box' id='login-box'>";
@@ -279,13 +246,13 @@ function displayFormUpdateStudentBasicInformation($idUser){
 		echo "<h4>Cadastre aqui seus dados:</h4>";
 		echo "<div class='form-box' id='login-box'>";
 			echo "<div class='header'>Informações Básicas</div>";
-			saveStudentBasicInformationForm();
+			saveStudentBasicInformationForm($hidden);
 	}
 	
 	echo "</div>";
 }
 
-function saveStudentBasicInformationForm(){
+function saveStudentBasicInformationForm($hidden){
 	
 	$emailLabel = array(
 			"name" => "email",
@@ -320,7 +287,7 @@ function saveStudentBasicInformationForm(){
 			"type" => "submit"
 	);
 	
-	echo form_open('usuario/saveStudentBasicInformation','');
+	echo form_open('usuario/saveStudentBasicInformation','',$hidden);
 	echo "<div class='body bg-gray'>";
 	echo "<div class='form-group'>";
 	echo form_label("Email", "email") . "<br>";

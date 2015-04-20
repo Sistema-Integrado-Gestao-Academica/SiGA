@@ -528,4 +528,10 @@ class Usuarios_model extends CI_Model {
 
 		return $studentBasics;
 	}
+	
+	public function saveStudentBasicInformation($studentBasics){
+		
+		$inserted = $this->db->insert('students_basic_information', $studentBasics);
+		return $inserted;
+	}
 }

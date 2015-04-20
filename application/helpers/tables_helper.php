@@ -34,10 +34,10 @@ function displayStudentSpecificDataPage($idUser){
 	if($studentData !== FALSE){
 			echo "<tr>";
 				echo "<td>";
-					echo $studentData['email'];
+					echo $studentData['student_registration'];
 				echo "</td>";
 				echo "<td>";
-					echo $studentData['student_registration'];
+					echo $studentData['email'];
 				echo "</td>";
 				echo "<td>";
 					echo $studentData['home_phone_number'];
