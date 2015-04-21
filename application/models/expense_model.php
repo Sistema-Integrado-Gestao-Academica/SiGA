@@ -12,15 +12,22 @@ class Expense_model extends CI_Model {
 	}
 
 	public function get($attr, $value) {
-		return $this->db->get_where("expense", array($attr => $value))->row_array();
+		$objectToReturn = $this->db->get_where("expense", array($attr => $value))->row_array();
+		
+		$objectToReturn =checkArray($objectToReturn);
+		return $objectToReturn;
 	}
 
 	public function getAllExpenseTypes() {
-		return $this->db->get('expense_type')->result_array();
+		$objectToReturn = $this->db->get('expense_type')->result_array();
+		$objectToReturn = checkArray($objectToReturn);
+		return $objectToReturn;
 	}
 
 	public function getExpenseType($value) {
-		return $this->db->get_where("expense_type", array('id' => $value))->row_array();
+		$objectToReturn = $this->db->get_where("expense_type", array('id' => $value))->row_array();
+		$objectToReturn = checkArray($objectToReturn);
+		return $objectToReturn;
 	}
 }
 

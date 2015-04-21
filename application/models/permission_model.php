@@ -10,7 +10,7 @@ class Permission_model extends CI_Model {
 
 			$permissions[$permission['id_permission']] = $permission['route'];
 		}
-
+		$permissions = checkArray($permissions);
 		return $permissions;
 	}
 
@@ -18,7 +18,7 @@ class Permission_model extends CI_Model {
 		$searchResult = $this->db->get('permission');
 
 		$permissions = $searchResult->result_array();
-
+		$permissions = checkArray($permissions);
 		return $permissions;
 	}
 
@@ -35,7 +35,7 @@ class Permission_model extends CI_Model {
 		$this->db->where("group_permission.id_group", $groupId);
 	
 		$groupPermissions = $this->db->get()->result_array();
-
+		$groupPermissions = checkArray($groupPermissions);
 		return $groupPermissions;
 	}
 

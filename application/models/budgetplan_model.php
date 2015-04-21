@@ -11,7 +11,10 @@ class Budgetplan_model extends CI_Model {
 	}
 
 	public function get($attr, $value) {
-		return $this->db->get_where("budgetplan", array($attr => $value))->row_array();
+		$object = $this->db->get_where("budgetplan", array($attr => $value))->row_array();
+		
+		$object = checkArray($object);
+		return $object;
 	}
 
 	public function update($object) {

@@ -3,11 +3,14 @@ class Funcoes_model extends CI_Model {
 
 	public function busca($atributo, $funcao) {
 		$res = $this->db->get_where("funcoes", array($atributo => $funcao[$atributo]))->row_array();
+		$res = checkArray($res);
 		return $res;
 	}
 
 	public function buscaTodos() {
-		return $this->db->get("funcoes")->result_array();
+		$res = $this->db->get("funcoes")->result_array();
+		$res = checkArray($res);
+		return $res;
 	}
 
 	public function salva($funcao) {

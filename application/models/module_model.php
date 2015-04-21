@@ -31,7 +31,9 @@ class Module_model extends CI_Model {
 
 			$userPermissions[$group['group_name']] = $groupPermissions;
 		}
-
+	
+		$userPermissions = checkArray($userPermissions);
+		
 		return $userPermissions;
 	}
 
@@ -43,11 +45,7 @@ class Module_model extends CI_Model {
 
 		$foundGroups = $this->db->get()->result_array();
 
-		if(sizeof($foundGroups) > 0){
-			// Nothing to do
-		}else{
-			$foundGroups = FALSE;
-		}
+		$foundGroups = checkArray($foundGroups);
 
 		return $foundGroups;
 	}
@@ -58,11 +56,7 @@ class Module_model extends CI_Model {
 
 		$foundGroup = $searchResult->row_array();
 
-		if(sizeof($foundGroup) > 0){
-			// Nothing to do
-		}else{
-			$foundGroup = FALSE;
-		}
+		$foundGroup = checkArray($foundGroup);
 
 		return $foundGroup;
 	}
@@ -182,6 +176,9 @@ class Module_model extends CI_Model {
 		$academicGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['academic']))->row_array();
 		$financialGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['financial']))->row_array();
 		
+		$academicGroupId = checkArray($academicGroupId);
+		$financialGroupId = checkArray($financialGroupId);
+		
 		$groupsIds = array('academic'=>$academicGroupId['id_group'], 
 						   'financial'=>$financialGroupId['id_group']);
 		return $groupsIds;
@@ -207,6 +204,8 @@ class Module_model extends CI_Model {
 			$module_names[$i] = $module_name_array[0]['group_name'];
 
 		}
+		
+		$module_names = checkArray($module_names);
 
 		return $module_names;
 	}
@@ -236,6 +235,7 @@ class Module_model extends CI_Model {
 
 		$groups_for_user = $this->db->get()->result_array();
 
+		$groups_for_user = checkArray($groups_for_user);
 		return $groups_for_user;
 	}
 	
@@ -246,7 +246,7 @@ class Module_model extends CI_Model {
 	public function getAllModules(){
 		
 		$modules = $this->db->get('group')->result_array();
-		
+		$modules = checkArray($modules);
 		return $modules;
 	}
 }

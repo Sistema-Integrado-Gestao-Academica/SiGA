@@ -88,333 +88,307 @@ function displayEnrollStudentForm(){
 	echo form_button($searchForStudentBtn);
 }
 
-function postGraduationTypesSelect(){
-	$post_graduation_types = array(
-		'academic_program' => 'Programa Acadêmico',
-		'professional_program' => 'Programa Profissional'
-	);
-	$courseDuration = "<br>Duração mínima - 18 meses<br>Regular - 24 meses<br>Máxima - 30 meses<br>";
-
-	echo form_label('Escolha o tipo da Pós-graduação');
-	echo form_dropdown('post_graduation_type', $post_graduation_types,
-				       'academic_program', 'id=post_graduation_type');
-	echo $courseDuration;
-}
-
-function academicProgramForm(){
-
-	$academic_program_name = array(
-		"name" => "program_name",
-		"id" => "program_name",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "40"
-	);
-
-	echo "<h3><span class='label label-primary'>Programa Acadêmico</span></h3>";
-	?>
-	<div class='form-group'>
-	<?php 
-		echo form_label('Nome do Programa Acadêmico', 'program_name');
-		echo form_input($academic_program_name);
-	?>
-	</div>	
-	<?php 
-	echo "<h4><span class='label label-default'>Mestrado Acadêmico</span></h4>";
-	echo "<small> Para cadastrar um Doutorado acesse a página para editar um curso.</small>";
-	
-	commonAttrForPostGraduationCourses();
-}
-
-function professionalProgramForm(){
-	
-	$professional_program_name = array(
-		"name" => "program_name",
-		"id" => "program_name",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "40"
-	);
-	echo "<h3><span class='label label-primary'>Programa Profissional</span></h3>";
-	?>
-	<div class='form-group'>
-		<?php
-			echo form_label('Nome do Programa Professional', 'program_name');
-			echo form_input($professional_program_name);
-		?>
-	</div>
-	<?php
-	echo "<h4><span class='label label-default'>Mestrado Profissional</span></h4>";
-
-	commonAttrForPostGraduationCourses();
-}
-
-function masterDegreeProgramForm(){
-
-	$masterDegreeName = array(
-		"name" => "master_degree_name_update",
-		"id" => "master_degree_name_update",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "40"
-	);
-
-	echo "<h4><span class='label label-default'>Mestrado Acadêmico - Alterar</span></h4>";
-	?>
-	<div class='form-group'>
-		<?php
-			echo form_label('Nome do mestrado', 'master_degree_name_update');
-			echo form_input($masterDegreeName);
-		?>
-	</div>
-		<?php
-	commonAttrForPostGraduationCourses();
-}
-
-function doctorateProgramForm(){
-
-	echo "<h4><span class='label label-default'>Doutorado Acadêmico</span></h4>";
-
-	commonAttrForPostGraduationCourses();
-}
-
-function formToCreateDoctorateCourse(){
-
-	$doctorate_course_name = array(
-		"name" => "doctorate_course_name",
-		"id" => "doctorate_course_name",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "50"
-	);
-
-	$submit_button = array(
+function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId){
+	$submit_button_array_to_form = array(
 		"class" => "btn bg-olive btn-block",
-		"content" => "Cadastrar Doutorado",
+		"content" => "Relacionar",
 		"type" => "submit"
 	);
-
-	echo "<h4><span class='label label-default'>Doutorado Acadêmico</span></h4>";
-	?>
-	<div class='form-group'>
-		<?php
-			echo form_label('Nome do curso', 'doctorate_course_name');
-			echo form_input($doctorate_course_name);
-		?>
-	</div>
-	<?php
 	
-	commonAttrForPostGraduationCourses();
+	echo "<div class='form-box' id='login-box'>";
+		echo "<div class='header'>Relacionar Orientador a Aluno</div>";
+		
+		echo form_open('mastermind/saveMastermindToStudent','',array('courseId'=>$courseId));
+		echo "<div class='body bg-gray'>";
+			echo "<div class='form-group'>";
+				echo form_label("Aluno do curso", "course_student") . "<br>";
+				echo form_dropdown("course_student", $students, '', "id='course_student'");
+				echo form_error("course_student");
+				echo "<br>";
+				echo "<br>";
+			echo "</div>";
+			echo "<div class='form-group'>";
+				echo form_label("Orientador para este aluno", "student_mastermind") . "<br>";
+				echo form_dropdown("student_mastermind", $masterminds, '', "id='student_mastermind'");
+				echo form_error("student_mastermind");
+				echo "<br>";
+				echo "<br>";
+			echo "</div>";
+		echo "</div>";
+		echo "<div class='footer'>";
+			echo form_button($submit_button_array_to_form);
+		echo "</div>";
+		echo form_close();
+	echo "</div>";
 	
-	echo "<br><br>";
-	echo form_button($submit_button);
 }
 
-function formToUpdateDoctorateCourse(){
-	
-	$doctorate_course_name = array(
-		"name" => "doctorate_course_name",
-		"id" => "doctorate_course_name",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "50"
+function displayAcceptStudentsSolicitation($idRequest, $idStudent, $idMastermind){
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-sm btn-block",
+			"content" => "Aprovar toda a solicitação",
+			"type" => "submit"
 	);
-
-	$submit_button = array(
-		"class" => "btn bg-olive btn-block",
-		"content" => "Alterar Doutorado",
-		"type" => "submit"
-	);
-
-	echo "<h4><span class='label label-default'>Doutorado Acadêmico - Alterar</span></h4>";
-
-	?>
-	<div class='form-group'>
-		<?php
-			echo form_label('Nome do curso', 'doctorate_course_name');
-			echo form_input($doctorate_course_name);
-		?>
-	</div>
-	<?php
-	commonAttrForPostGraduationCourses();
 	
-	echo "<br><br>";
-	echo form_button($submit_button);	
+	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest, 'idMastermind'=>$idMastermind);
+	$message = array(
+			'name' => 'mastermind_message',
+			'id' => 'mastermind_message',
+			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
+			'rows' => '20',
+			"class" => "form-control",
+			'style' => 'height: 70px; margin-top:-15%;'
+	);
+	
+	echo form_open('request/approveAllStudentRequestsByMastermind','',$hidden);
+		echo form_label('', 'mastermind_message');
+		echo form_textarea($message);
+		echo form_button($submit_button_array_to_form);
+	echo form_close();
 }
 
-function commonAttrForPostGraduationCourses(){
-	
-	$course_duration = array(
-		'2' => '2 anos',
-		'4' => '4 anos'
+function displayRefuseStudentsSolicitation($idRequest, $idStudent, $idMastermind){
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-danger btn-sm btn-block",
+			"content" => "Rejeitar toda a solicitação",
+			"type" => "submit"
 	);
 
-	$total_credits = array(
-		'name' => 'course_total_credits',
-		'id' => 'course_total_credits',
-		'maxlength' => '10',
-		"class" => "form-control"
+	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest, 'idMastermind'=>$idMastermind);
+	$message = array(
+			'name' => 'mastermind_message',
+			'id' => 'mastermind_message',
+			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
+			'rows' => '20',
+			"class" => "form-control",
+			'style' => 'height: 70px; margin-top:-15%;'
 	);
 
-	$course_hours = array(
-		'name' => 'course_hours',
-		'id' => 'course_hours',
-		'maxlength' => '10',
-		"class" => "form-control"
-	);
-
-	$course_class = array(
-		'name' => 'course_class',
-		'id' => 'course_class',
-		'placeholder' => 'Informe o semestre de início.',
-		'maxlength' => '6',
-		"class" => "form-control"
-	);
-
-	$description = array(
-		'name' => 'course_description',
-		'id' => 'course_description',
-		'placeholder' => 'Informe a descrição do curso.',
-		'rows' => '500',
-		"class" => "form-control",
-		'style' => 'height: 100px;'
-	);
-?>
-	<div class="form-group">
-		<?php 
-		// Course duration field
-		echo form_label('Duração do curso ', 'course_duration');
-		echo form_dropdown('course_duration', $course_duration, '2', 'id=course_duration');
-		?>
-	</div>
-	<div class="form-group">
-		<?php
-		// Course total credits field
-		echo form_label('Créditos totais', 'total_credits');
-		echo form_input($total_credits);
-		?>
-	</div>
-	<div class="form-group">
-		<?php
-		// Course hours field
-		echo form_label('Carga-horária total', 'course_hours');
-		echo form_input($course_hours);
-		?>
-	</div>
-	<div class="form-group">
-		<?php
-		// Course class field
-		echo form_label('Turma', 'course_class');
-		echo form_input($course_class);
-		?>
-	</div>
-	<div class="form-group">
-		<?php
-		// Course description field
-		echo form_label('Descrição ', 'course_description');
-		echo form_textarea($description);
-		?>
-	</div>
-	<?php 	
+	echo form_open('request/refuseAllStudentRequestsByMastermind','',$hidden);
+		echo form_label('', 'mastermind_message');
+		echo form_textarea($message);
+		echo form_button($submit_button_array_to_form);
+	echo form_close();
 }
 
-/**
- * 
- * @param $masterDegreeData - Array with the data of the registered master degree
- */
-function displayMasterDegreeData($masterDegreeData){
-	$thereIsMasterDegree = $masterDegreeData !== FALSE;
+function displayAcceptStudentDisciplineSolicitation($requestId, $idOfferDiscipline, $courseId, $idMastermind, $idStudent){
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-sm btn-block btn-flat",
+			"content" => "Aprovar",
+			"type" => "submit"
+	);
+	
+	$hidden = array(
+			'idStudent'=>$idStudent, 
+			'idRequest'=>$requestId, 
+			'idMastermind'=>$idMastermind, 
+			'idCourse'=>$courseId,
+			'idOfferDiscipline' => $idOfferDiscipline
+	);
+	$message = array(
+			'name' => 'mastermind_message',
+			'id' => 'mastermind_message',
+			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
+			'rows' => '20',
+			"class" => "form-control",
+			'style' => 'height: 70px; margin-top:-10%;'
+	);
+	
+	echo form_open('request/approveRequestedDisciplineByMastermind','',$hidden);
+	echo form_label('', 'mastermind_message');
+	echo form_textarea($message);
+	echo form_button($submit_button_array_to_form);
+	echo form_close();
+}
 
-	echo "<br><h4><span class='label label-default'>Mestrado Acadêmico cadastrado</span></h4>";
-	echo "<table class = 'table table-hover'>";
-		echo "<tr>";
-			echo "<th class='text-center'>Nome</th>";
-			echo "<th class='text-center'>Duração</th>";
-			echo "<th class='text-center'>Créditos totais</th>";
-			echo "<th class='text-center'>Carga-horária</th>";
-			echo "<th class='text-center'>Turma</th>";
-			echo "<th class='text-center'>Descrição</th>";
-		echo "</tr>";
+function displayRefuseStudentDisciplineSolicitation($requestId, $idOfferDiscipline, $courseId, $idMastermind, $idStudent){
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-danger btn-sm btn-block btn-flat",
+			"content" => "Recusar",
+			"type" => "submit"
+	);
 
-	if($thereIsMasterDegree){
+	$hidden = array(
+			'idStudent'=>$idStudent,
+			'idRequest'=>$requestId,
+			'idMastermind'=>$idMastermind,
+			'idCourse'=>$courseId,
+			'idOfferDiscipline' => $idOfferDiscipline
+	);
+	$message = array(
+			'name' => 'mastermind_message',
+			'id' => 'mastermind_message',
+			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
+			'rows' => '20',
+			"class" => "form-control",
+			'style' => 'height: 70px; margin-top:-10%;'
+	);
 
-		echo "<tr>";
-			echo "<td class='text-center'>".$masterDegreeData['master_degree_name']."</td>";
-			echo "<td class='text-center'>".$masterDegreeData['duration']." anos</td>";
-			echo "<td class='text-center'>".$masterDegreeData['total_credits']."</td>";
-			echo "<td class='text-center'>".$masterDegreeData['workload']."h</td>";
-			echo "<td class='text-center'>".$masterDegreeData['start_class']."</td>";
-			echo "<td class='text-center'>".$masterDegreeData['description']."</td>";
-		echo "</tr>";
-		echo "</table>";
+	echo form_open('request/refuseRequestedDisciplineByMastermind','',$hidden);
+	echo form_label('', 'mastermind_message');
+	echo form_textarea($message);
+	echo form_button($submit_button_array_to_form);
+	echo form_close();
+}
 
+function displayFormUpdateStudentBasicInformation($idUser){
+	$user = new Usuario();
+	
+	$studentData = $user->getStudentBasicInformation($idUser);
+	$hidden = array('student_registration' => $idUser, 'id_user' => $idUser);
+	
+	if($studentData){
+		echo "<h4>Mantenha-nos atualizados:</h4>";
+		echo "<div class='form-box' id='login-box'>";
+			echo "<div class='header'>Informações Básicas</div>";
+			updateStudentBasicInformationForm($studentData,$hidden);
 	}else{
-		echo "</table>";
-		echo "<h4><span class='label label-danger'>Nenhum mestrado cadastrado para esse Programa Acadêmico.</span></h4>";
+		echo "<h4>Cadastre aqui seus dados:</h4>";
+		echo "<div class='form-box' id='login-box'>";
+			echo "<div class='header'>Informações Básicas</div>";
+			saveStudentBasicInformationForm($hidden);
 	}
+	
+	echo "</div>";
 }
 
-function displayRegisteredDoctorateData($courseId, $haveMasterDegree, $haveDoctorate, $doctorateData){
-	$thereIsDoctorateDegree = $doctorateData != FALSE;
-
-	echo "<br><h4><span class='label label-default'>Doutorado Acadêmico cadastrado</span></h4>";
-	echo "<table class = 'table table-hover'>";
-		echo "<tr>";
-			echo "<th class='text-center'>Nome</th>";
-			echo "<th class='text-center'>Duração</th>";
-			echo "<th class='text-center'>Créditos totais</th>";
-			echo "<th class='text-center'>Carga-horária</th>";
-			echo "<th class='text-center'>Turma</th>";
-			echo "<th class='text-center'>Descrição</th>";
-		echo "</tr>";
-
-	if($thereIsDoctorateDegree){
-
-		echo "<tr>";
-			echo "<td class='text-center'>".$doctorateData['doctorate_name']."</td>";
-			echo "<td class='text-center'>".$doctorateData['duration']." anos</td>";
-			echo "<td class='text-center'>".$doctorateData['total_credits']."</td>";
-			echo "<td class='text-center'>".$doctorateData['workload']."h</td>";
-			echo "<td class='text-center'>".$doctorateData['start_class']."</td>";
-			echo "<td class='text-center'>".$doctorateData['description']."</td>";
-		echo "</tr>";
-		echo "</table>";
-
-		if($haveDoctorate){
-			echo anchor(
-				"updateDoctorateCourse/{$courseId}",
-				'Alterar Doutorado',
-				array(
-					"class" => "btn btn-primary",
-					"id" => "update_doctorate_btn"
-				)
-			);
-
-			echo anchor(
-				"/course/removeDoctorateCourse/{$courseId}",
-				'Remover Doutorado',
-				array(
-					"class" => "btn btn-danger",
-					"id" => "remove_doctorate_btn"
-				)
-			);
-		}
-
-	}else{
-		echo "</table>";
-		echo "<h4><span class='label label-danger'>Nenhum doutorado cadastrado para esse Programa Acadêmico.</span></h4><br>";
-		if($haveMasterDegree){
-			echo anchor("registerDoctorateCourse/{$courseId}", 'Cadastrar Doutorado', array(
-			"class" => "btn btn-primary"));
-		}
-	}
+function saveStudentBasicInformationForm($hidden){
+	
+	$emailLabel = array(
+			"name" => "email",
+			"id" => "email",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "30"
+	);
+	
+	$cellPonheLabel = array(
+			"name" => "cell_phone_number",
+			"id" => "cell_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9"
+	);
+	
+	$homePonheLabel = array(
+			"name" => "home_phone_number",
+			"id" => "home_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9"
+	);
+	
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-block ",
+			"content" => "Aprovar",
+			"type" => "submit"
+	);
+	
+	echo form_open('usuario/saveStudentBasicInformation','',$hidden);
+	echo "<div class='body bg-gray'>";
+	echo "<div class='form-group'>";
+	echo form_label("Email", "email") . "<br>";
+	echo form_input($emailLabel);
+	echo form_error("email");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
+	echo form_input($homePonheLabel);
+	echo form_error("home_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
+	echo form_input($cellPonheLabel);
+	echo form_error("cell_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "</div>";
+	echo "<div class='footer'>";
+	echo form_button($submit_button_array_to_form);
+	echo "</div>";
+	echo form_close();
+	
+	
 }
 
+
+function updateStudentBasicInformationForm($studentData,$hidden){
+
+	$emailLabel = array(
+			"name" => "email",
+			"id" => "email",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "30",
+			"value" => $studentData['email']
+	);
+
+	$cellPonheLabel = array(
+			"name" => "cell_phone_number",
+			"id" => "cell_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9",
+			"value" => $studentData['cell_phone_number']
+	);
+
+	$homePonheLabel = array(
+			"name" => "home_phone_number",
+			"id" => "home_phone_number",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "9",
+			"value" => $studentData['home_phone_number']
+	);
+
+	$submit_button_array_to_form = array(
+			"class" => "btn btn-success btn-block ",
+			"content" => "Aprovar",
+			"type" => "submit"
+	);
+
+	echo form_open('usuario/updateStudentBasicInformation','', $hidden);
+	echo "<div class='body bg-gray'>";
+	echo "<div class='form-group'>";
+	echo form_label("Email", "email") . "<br>";
+	echo form_input($emailLabel);
+	echo form_error("email");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
+	echo form_input($homePonheLabel);
+	echo form_error("home_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "<div class='form-group'>";
+	echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
+	echo form_input($cellPonheLabel);
+	echo form_error("cell_phone_number");
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
+	echo "</div>";
+	echo "<div class='footer'>";
+	echo form_button($submit_button_array_to_form);
+	echo "</div>";
+	echo form_close();
+
+
+}
 function emptyDiv(){
 	echo "";
 }

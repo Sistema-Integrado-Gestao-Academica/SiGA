@@ -3,15 +3,10 @@
 require_once('login.php');
 require_once('module.php');
 require_once('program.php');
-require_once('postgraduation.php');
-require_once('masterdegree.php');
-require_once('doctorate.php');
 require_once('graduation.php');
 require_once('ead.php');
 require_once('budgetplan.php');
 require_once(APPPATH."/exception/CourseNameException.php");
-require_once(APPPATH."/exception/MasterDegreeException.php");
-require_once(APPPATH."/exception/DoctorateException.php");
 
 class Course extends CI_Controller {
 
@@ -120,261 +115,6 @@ class Course extends CI_Controller {
 				// Function located on the helper 'forms' - Loaded by autoload
 				emptyDiv();
 		}
-	}
-
-	public function displayMasterDegreeUpdateForm(){
-
-		define('ACADEMIC_PROGRAM', 'academic_program');
-
-		$choosenProgram = $this->input->post('program');
-
-		switch($choosenProgram){
-			// This form is only aplicable to the academic program
-			case ACADEMIC_PROGRAM:
-				masterDegreeProgramForm();
-				break;
-			default:
-				emptyDiv();
-				break;
-		}
-	}
-
-	public function displayRegisteredDoctorate(){
-		
-		define('ACADEMIC_PROGRAM', 'academic_program');
-		
-		$choosenProgram = $this->input->post('program');
-		$course = $this->input->post('course');
-
-		switch($choosenProgram){
-			// This form is only aplicable to the academic program
-			case ACADEMIC_PROGRAM:
-				$this->getRegisteredDoctorateForThisCourse($course);
-				break;
-			default:
-				emptyDiv();
-				break;
-		}
-	}
-
-	private function getRegisteredDoctorateForThisCourse($courseId){
-		$doctorate = new Doctorate();
-		$registeredDoctorate = $doctorate->getRegisteredDoctorateForCourse($courseId);
-		$haveMasterDegree = $doctorate->checkIfHaveMasterDegree($courseId);
-		$haveDoctorate = $doctorate->checkIfHaveDoctorate($courseId);
-
-		displayRegisteredDoctorateData($courseId, $haveMasterDegree, $haveDoctorate, $registeredDoctorate);
-	}
-
-	// Used for the update course page
-	public function checkChoosenProgram(){
-
-		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
-		define('ACADEMIC_PROGRAM', 'academic_program');
-		define('PROFESSIONAL_PROGRAM', 'professional_program');
-
-		$choosenProgram = $this->input->post('program');
-		$course = $this->input->post('course');
-
-		switch($choosenProgram){
-			case ACADEMIC_PROGRAM:
-				// Function located on the helper 'forms' - Loaded by autoload
-				$this->displayRegisteredMasterDegree($course);
-
-				break;
-			case PROFESSIONAL_PROGRAM:
-				// Function located on the helper 'forms' - Loaded by autoload
-				professionalProgramForm();
-				break;
-			default:
-				// Function located on the helper 'forms' - Loaded by autoload
-				emptyDiv();
-				break;
-		}
-	}
-
-	private function displayRegisteredMasterDegree($courseId){
-		
-		$courseCommonAttributes = $this->getCourseCommonAttributes($courseId);
-
-		$registeredMasterDegree = $this->getRegisteredMasterDegreeForThisCourse($courseId);
-
-		$commonAttributesIsOk = $courseCommonAttributes != FALSE;
-		$specificsAttributesIsOk = $registeredMasterDegree != FALSE;
-		$attributesIsOk = $commonAttributesIsOk && $specificsAttributesIsOk;		
-
-		if($attributesIsOk){
-			$masterDegreeData = array_merge($courseCommonAttributes, $registeredMasterDegree);
-		}else{
-			$masterDegreeData = FALSE;
-		}
-
-		displayMasterDegreeData($masterDegreeData);	
-	}
-
-	private function getRegisteredMasterDegreeForThisCourse($courseId){
-		$masterDegree = new MasterDegree();
-		$foundMasterDegree = $masterDegree->getMasterDegreeByCourseId($courseId);
-
-		return $foundMasterDegree;
-	}
-
-	private function getCourseCommonAttributes($courseId){
-		$this->load->model('course_model');
-		$commonAttributes = $this->course_model->getCommonAttributesForThisCourse($courseId);
-
-		return $commonAttributes;
-	}
-
-	public function checkChoosenAcademicProgram(){
-		
-		define('MASTER_DEGREE', 'master_degree');
-		define('DOCTORATE', 'doctorate');
-
-		$choosenAcademicProgram = $this->input->post('academicProgram');
-
-		switch($choosenAcademicProgram){
-			case MASTER_DEGREE:
-				// Function located on the helper 'forms' - Loaded by autoload
-				masterDegreeProgramForm();
-				break;
-			case DOCTORATE:
-				// Function located on the helper 'forms' - Loaded by autoload
-				doctorateProgramForm();
-				break;
-			default:
-				// Function located on the helper 'forms' - Loaded by autoload
-				emptyDiv();
-				break;
-		}
-	}
-
-	public function formToCreateDoctorateCourse($courseId){
-		
-		$course = array('course_id' => $courseId);
-
-		loadTemplateSafelyByPermission("cursos",'course/register_doctorate_course', $course);
-	}
-
-	public function formToUpdateDoctorateCourse($courseId){
-
-		$course = array('course_id' => $courseId);
-
-		loadTemplateSafelyByPermission("cursos",'course/update_doctorate_course', $course);	
-	}
-
-	public function registerDoctorateCourse(){
-		
-		$doctorateDataIsOk = $this->validatesNewDoctorateData();
-
-		$programId = $this->input->post('course_id');
-
-		if($doctorateDataIsOk){
-
-			$doctorateName = $this->input->post('doctorate_course_name');
-			$doctorateDuration = $this->input->post('course_duration');
-			$doctorateTotalCredits = $this->input->post('course_total_credits');
-			$doctorateHours= $this->input->post('course_hours');
-			$doctorateClass= $this->input->post('course_class');
-			$doctorateDescription = $this->input->post('course_description');
-
-			$doctorateToRegister = array(
-				'doctorate_name' => $doctorateName,
-				'duration' => $doctorateDuration,
-				'total_credits' => $doctorateTotalCredits,
-				'workload' =>$doctorateHours,
-				'start_class' => $doctorateClass,
-				'description' => $doctorateDescription
-			);
-
-			$doctorate = new Doctorate();
-			$doctorate->saveDoctorate($programId, $doctorateToRegister);
-
-			$insertStatus = "success";
-			$insertMessage = "Doutorado cadastrado com sucesso.";
-			
-			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('cursos');
-
-		}else{
-			$insertStatus = "danger";
-			$insertMessage = "Dados na forma incorreta.";
-			
-			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('registerDoctorateCourse/'.$courseId);
-		}
-		
-	}
-
-	public function updateDoctorateCourse(){
-
-		// $doctorateDataIsOk = $this->validatesNewDoctorateData();
-		$doctorateDataIsOk = TRUE;
-
-		$programId = $this->input->post('course_id');
-
-		if($doctorateDataIsOk){
-
-			$doctorateName = $this->input->post('doctorate_course_name');
-			$doctorateDuration = $this->input->post('course_duration');
-			$doctorateTotalCredits = $this->input->post('course_total_credits');
-			$doctorateHours= $this->input->post('course_hours');
-			$doctorateClass= $this->input->post('course_class');
-			$doctorateDescription = $this->input->post('course_description');
-
-			$doctorateToUpdate = array(
-				'doctorate_name' => $doctorateName,
-				'duration' => $doctorateDuration,
-				'total_credits' => $doctorateTotalCredits,
-				'workload' =>$doctorateHours,
-				'start_class' => $doctorateClass,
-				'description' => $doctorateDescription
-			);
-
-			try{
-
-				$doctorate = new Doctorate();
-				$doctorate->updateDoctorate($programId ,$doctorateToUpdate);
-
-				$updateStatus = "success";
-				$updateMessage =  "Doutorado alterado com sucesso!";
-			}catch(DoctorateException $caughtException){
-				$updateStatus = "danger";
-				$updateMessage =  $caughtException->getMessage();
-			}
-
-		}else{
-			$updateStatus = "danger";
-			$updateMessage =  "Dados na forma incorreta.";
-		}
-		
-		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect('cursos');
-	}
-
-	public function removeDoctorateCourse($courseId){
-		$doctorate = new Doctorate();
-		$doctorate->deleteDoctorate($courseId);
-
-		$this->session->set_flashdata('success', 'Doutorado apagado com sucesso!');
-		redirect('cursos');
-	}
-
-	/**
-	 * Validates the data submitted on the register doctorate form
-	 */
-	private function validatesNewDoctorateData(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("doctorate_course_name", "Doctorate Name", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("course_duration", "Course duration", "required");
-		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
-		$this->form_validation->set_rules("course_hours", "Course hours", "required");
-		$this->form_validation->set_rules("course_class", "Course class", "required");
-		$this->form_validation->set_rules("course_description", "Course description", "required");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$courseDataStatus = $this->form_validation->run();
-
-		return $courseDataStatus;
 	}
 
 	public function formToRegisterNewCourse(){
@@ -554,21 +294,6 @@ class Course extends CI_Controller {
 			$courseClass = $this->input->post('course_class');
 			$courseDescription = $this->input->post('course_description');
 		
-			/**
-			 * DEPRECATED CODE
-			 * $idSecretary = $this->input->post('id_secretary');
-			 * $secretaryType = $this->input->post('secretary_type');
-			 * $userSecretary = $this->input->post('user_secretary');
-			 *
-			 *
-			 * // Secretary to be saved on database. Array with column names and its values
-			 * $secretaryToUpdate = array(
-			 *	'id_secretary' => $idSecretary,
-			 *	'id_user'   => $userSecretary,
-			 *	'id_course' => $idCourse,
-			 *	'id_group' => $secretaryType
-			 * );
-			 */
 			$course = array(
 				'course_name' => $courseName,
 				'course_type_id' => $courseType,
@@ -611,8 +336,8 @@ class Course extends CI_Controller {
 
 		// define("GRADUATION", "graduation");
 		// define("EAD", "ead");
-		define("ACADEMIC_PROGRAM", "academic_program");
-		define("PROFESSIONAL_PROGRAM", "professional_program");
+// 		define("ACADEMIC_PROGRAM", "academic_program");
+// 		define("PROFESSIONAL_PROGRAM", "professional_program");
 
 		$this->load->model('course_model');
 		switch($oldCourseType){
@@ -627,17 +352,7 @@ class Course extends CI_Controller {
 				$this->cleanCourseDependencies($idCourse);
 				$this->course_model->deleteCourseById($idCourse);
 				break;
-
-			case ACADEMIC_PROGRAM:
-			case PROFESSIONAL_PROGRAM:
 				
-				$this->cleanCourseDependencies($idCourse);
-				
-				$post_graduation = new PostGraduation();
-				$post_graduation->cleanPostGraduationData($idCourse, $oldCourseType);
-	
-				break;
-
 			default:
 				
 				break;

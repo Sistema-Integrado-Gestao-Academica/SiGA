@@ -3,11 +3,17 @@ class Departamentos_model extends CI_Model {
 
 	public function busca($atributo, $departamento) {
 		$res = $this->db->get_where("departamentos", array($atributo => $departamento[$atributo]))->row_array();
+		
+		$res = checkArray($res);
+		
 		return $res;
 	}
 
 	public function buscaTodos() {
-		return $this->db->get("departamentos")->result_array();
+		$res = $this->db->get("departamentos")->result_array();
+		
+		$res = checkArray($res);
+		return $res;
 	}
 
 	public function salva($departamento) {

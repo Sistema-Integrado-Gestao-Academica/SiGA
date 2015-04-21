@@ -3,11 +3,14 @@ class Setores_model extends CI_Model {
 
 	public function busca($atributo, $setor) {
 		$res = $this->db->get_where("setores", array($atributo => $setor[$atributo]))->row_array();
+		$res = checkArray($res);
 		return $res;
 	}
 
 	public function buscaTodos() {
-		return $this->db->get("setores")->result_array();
+		$res = $this->db->get("setores")->result_array();
+		$res = checkArray($res);
+		return $res;
 	}
 
 	public function salva($setor) {

@@ -68,8 +68,10 @@ $route['setores/(:num)'] = 'setor/formulario_altera/$1';
 $route['student'] = 'usuario/student_index';
 $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
 $route['user_report'] = 'usuario/usersReport';
-
-
+$route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
+$route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
+$route['mastermind'] = 'mastermind/displayMastermindStudents';
+$route['student_information'] = 'usuario/studentInformationsForm';
 /*
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test
@@ -83,6 +85,7 @@ $route['module_test'] = 'tests/module_test';
 $route['permission_test'] = 'tests/permission_test';
 $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
+$route['classHour_test'] = 'tests/ClassHour_test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */

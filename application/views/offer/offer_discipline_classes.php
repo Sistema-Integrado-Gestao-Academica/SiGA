@@ -10,6 +10,7 @@
 
 <?php
 		displayOfferDisciplineClasses($disciplineData['discipline_code'], $idOffer, $offerDisciplineData, $teachers);
+
 	}else{
 ?>
 	<div class="callout callout-danger">
