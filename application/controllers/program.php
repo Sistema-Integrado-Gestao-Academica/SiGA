@@ -15,6 +15,15 @@ class Program extends CI_Controller {
 		return $programs;
 	}
 
+	public function getCoordinatorPrograms($coordinatorId){
+
+		$this->load->model('program_model');
+
+		$programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
+
+		return $programs;	
+	}
+
 	public function addCourseToProgram($courseId, $programId){
 
 		$this->load->model('program_model');
