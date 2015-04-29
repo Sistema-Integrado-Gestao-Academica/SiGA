@@ -20,4 +20,19 @@ class Coordinator extends CI_Controller {
 
 		loadTemplateSafelyByGroup("coordenador",'program/coordinator_programs', $data);
 	}
+
+	public function displayProgramCourses($programId){
+
+		$program = new Program();
+
+		$programCourses = $program->getProgramCourses($programId);
+		$programData = $program->getProgramById($programId);
+
+		$data = array(
+			'programCourses' => $programCourses,
+			'program' => $programData
+		);
+
+		loadTemplateSafelyByGroup("coordenador",'program/coordinator_program_courses', $data);
+	}
 }

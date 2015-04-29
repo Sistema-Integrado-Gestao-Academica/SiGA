@@ -1375,6 +1375,90 @@ function displayRegisteredPrograms($programs){
 	echo "</div>";	
 }
 
+function displayCoordinatorPrograms($programs){
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\"><h3>Programas cadastrados</h3></th>";
+			        echo "<th class=\"text-center\"><h3>Ações</h3></th>";
+			    echo "</tr>";
+
+			    if($programs !== FALSE){
+
+			    	foreach($programs as $program){
+			    		echo "<tr>";
+
+			    			echo "<td>";
+			    				echo $program['program_name']." - ".$program['acronym'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    			echo anchor("coordinator/displayProgramCourses/{$program['id_program']}", "Visualizar cursos", "class='btn btn-primary btn-flat'");
+			    			echo "</td>";
+
+			    		echo "</tr>";
+			    	}
+
+			    }else{
+			    	echo "<td colspan=2>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Não existem programas cadastrados.</h4>";
+						echo "</div>";
+	    			echo "</td>";	
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";	
+}
+
+function displayProgramCourses($programId, $courses){
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código do curso</th>";
+			        echo "<th class=\"text-center\">Curso</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($courses !== FALSE){
+
+				    foreach($courses as $course){
+				    	
+				    	echo "<tr>";
+
+				    		echo "<td>";
+				    			echo $course['id_course'];
+				    		echo "</td>";
+
+			    			echo "<td>";
+			    				echo $course['course_name'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+
+			    			echo "</td>";
+
+				    	echo "</tr>";
+				    }
+			    }else{
+					echo "<td colspan=3>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhum curso cadastrado.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
 function displayCourseSyllabus($syllabus){
 	$course = new Course();
 	
