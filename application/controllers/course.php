@@ -528,6 +528,15 @@ class Course extends CI_Controller {
 		return $courses;
 	}
 
+	public function getCourseStudents($courseId){
+
+		$this->load->model('course_model');
+		
+		$courseStudents = $this->course_model->getCourseStudents($courseId);
+
+		return $courseStudents;
+	}
+
 	public function getCourseByName($courseName){
 		
 		$this->load->model('course_model');

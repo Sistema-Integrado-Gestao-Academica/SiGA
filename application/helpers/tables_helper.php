@@ -1441,7 +1441,7 @@ function displayProgramCourses($programId, $courses){
 			    			echo "</td>";
 
 			    			echo "<td>";
-
+		    				echo anchor("coordinator/displayCourseStudents/{$course['id_course']}", "Visualizar alunos do curso", "class='btn btn-primary btn-flat'");
 			    			echo "</td>";
 
 				    	echo "</tr>";
@@ -1450,6 +1450,56 @@ function displayProgramCourses($programId, $courses){
 					echo "<td colspan=3>";
     					echo "<div class=\"callout callout-info\">";
 							echo "<h4>Nenhum curso cadastrado.</h4>";
+						echo "</div>";
+	    			echo "</td>";
+			    }
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
+
+function displayCourseStudents($courseId, $students){
+
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+			    echo "<tr>";
+			        echo "<th class=\"text-center\">Código do aluno</th>";
+			        echo "<th class=\"text-center\">Aluno</th>";
+			        echo "<th class=\"text-center\">E-mail</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
+			    echo "</tr>";
+
+			    if($students !== FALSE){
+
+				    foreach($students as $student){
+				    	
+				    	echo "<tr>";
+
+				    		echo "<td>";
+				    			echo $student['id'];
+				    		echo "</td>";
+
+			    			echo "<td>";
+			    				echo $student['name'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+			    				echo $student['email'];
+			    			echo "</td>";
+
+			    			echo "<td>";
+
+			    			echo "</td>";
+
+				    	echo "</tr>";
+				    }
+			    }else{
+					echo "<td colspan=4>";
+    					echo "<div class=\"callout callout-info\">";
+							echo "<h4>Nenhum aluno matriculado neste curso.</h4>";
 						echo "</div>";
 	    			echo "</td>";
 			    }
