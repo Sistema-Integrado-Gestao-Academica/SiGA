@@ -132,8 +132,19 @@ class Course extends CI_Controller {
 			$formCourseTypes = array('Nenhum tipo de curso cadastrado.');
 		}
 
+		$program = new Program();
+		$registeredPrograms = $program->getAllPrograms();
+
+		if($registeredPrograms !== FALSE){
+
+			foreach ($registeredPrograms as $currentProgram){
+				$registeredProgramsForm[$currentProgram['id_program']] = $currentProgram['program_name'];
+			}
+		}
+
 		$data = array(
-			'form_course_types' => $formCourseTypes
+			'form_course_types' => $formCourseTypes,
+			'registeredPrograms' => $registeredProgramsForm
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
