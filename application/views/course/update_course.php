@@ -10,15 +10,14 @@ $hidden = array(
 );
 
 $courseName = array(
-
-		"name" => "courseName",
-		"id" => "courseName",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "50",
-		"value" => $course['course_name'],
-		"style" => "width: 60%;"
+	"name" => "courseName",
+	"id" => "courseName",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control",
+	"maxlength" => "50",
+	"value" => $course['course_name'],
+	"style" => "width: 60%;"
 );
 
 $courseDuration = array(
@@ -72,6 +71,17 @@ $submit_button_array_to_form_secretary = array(
 		"content" => "Cadastrar",
 		"type" => "submit"
 );
+
+if($registeredPrograms !== FALSE){
+	// Nothing to do because there are programs to associate to a course
+	$thereAreNoPrograms = FALSE;
+}else{
+	$thereAreNoPrograms = TRUE;
+
+	$submitBtn['disabled'] = TRUE;
+	$registeredPrograms = array("Nenhum programa cadastrado.");
+}
+
 ?>
 
 <div class="row">
@@ -80,11 +90,7 @@ $submit_button_array_to_form_secretary = array(
 			<div class="header">Editar Curso</div>
 			<?= form_open("course/updateCourse") ?>
 		
-			<?php 
-			
-			echo form_hidden('id_course', $course['id_course']);
-		
-			?>
+			<?php echo form_hidden('id_course', $course['id_course']); ?>
 		
 				<div class="body bg-gray">
 					<div class="form-group">	
@@ -97,6 +103,12 @@ $submit_button_array_to_form_secretary = array(
 						<?= form_label("Tipo de Curso", "courseType") ?>
 						<?= form_dropdown("courseType", $form_course_types, $original_course_type, "id='courseType'") ?>
 						<?= form_error("courseType") ?>
+					</div>
+
+					<div class="form-group">
+						<?= form_label("Programa do curso", "courseProgram") ?>
+						<?= form_dropdown("courseProgram", $registeredPrograms, $course['id_program'] , "id='courseProgram'") ?>
+						<?= form_error("courseProgram") ?>
 					</div>
 		
 					<div class="form-group">
@@ -150,6 +162,11 @@ $submit_button_array_to_form_secretary = array(
 					</div>
 				</div>
 			<?= form_close() ?>
+			<?php if($thereAreNoPrograms){ ?>
+				<div class="callout callout-danger">
+					<h4>Não é possível cadastrar um curso sem um programa.</h4>
+				</div>
+			<?php } ?>
 		</div>
 	</div>
 	<div class="col-lg-6">

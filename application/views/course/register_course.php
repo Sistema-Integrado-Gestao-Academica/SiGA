@@ -55,6 +55,7 @@ $submitBtn = array(
 
 if($registeredPrograms !== FALSE){
 	// Nothing to do because there are programs to associate to a course
+	$thereAreNoPrograms = FALSE;
 }else{
 	$thereAreNoPrograms = TRUE;
 
