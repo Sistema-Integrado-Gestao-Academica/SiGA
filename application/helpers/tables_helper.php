@@ -2212,3 +2212,31 @@ function displayUsersOfGroup($idGroup, $usersOfGroup){
 		echo "</table>";
 	echo "</div>";
 }
+
+function displayRegisteredCourses($courses){
+
+	echo "<table class='table table-striped table-bordered'>";
+		echo "<tr>";
+			echo "<td><h3 class='text-center'>Cursos Cadastrados</h3></td>";
+			echo "<td><h3 class='text-center'>Ações</h3></td>";
+		echo "</tr>";
+		if ($courses !== FALSE){
+			foreach($courses as $course){
+				echo "<tr>";
+					echo "<td class='text-center'>";
+					 echo $course['course_name'];
+					echo "</td>";
+	
+					echo "<td>";
+						echo anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'");
+						echo anchor("course/deleteCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger'");
+					echo "</td>";
+				echo "</tr>";
+			}
+		}else{
+			echo "<tr>";
+				echo "<td><h3><label class='label label-default'> Não existem cursos cadastrados</label></h3></td>";
+			echo "</tr>";
+		}
+	echo "</table>";
+}
