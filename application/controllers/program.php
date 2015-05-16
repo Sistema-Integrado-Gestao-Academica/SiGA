@@ -60,15 +60,6 @@ class Program extends CI_Controller {
 		redirect("program/editProgram/{$programId}");
 	}
 
-	public function checkIfCourseIsOnProgram($programId, $courseId){
-
-		$this->load->model('program_model');
-
-		$courseIsOnProgram = $this->program_model->checkIfCourseIsOnProgram($programId, $courseId);
-
-		return $courseIsOnProgram;
-	}
-
 	public function editProgram($programId){
 
 		$this->load->model('program_model');
@@ -100,7 +91,7 @@ class Program extends CI_Controller {
 
 		$course = new Course();
 
-		$courses = $course->listAllCourses();
+		$courses = $course->getCoursesToProgram($programId);
 
 		$data = array(
 			'programData' => $program,

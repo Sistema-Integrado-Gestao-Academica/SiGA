@@ -1366,7 +1366,8 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 
 				    foreach($courses as $course){
 				    	
-				    	$courseAlreadyExistsOnProgram = $program->checkIfCourseIsOnProgram($programId, $course['id_course']);
+				    	$courseIsOnProgram = $course['id_program'] == $programId;
+				    	$courseIsOnNoneProgram = $course['id_program'] == NULL;
 				    	
 				    	echo "<tr>";
 
@@ -1379,10 +1380,12 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 			    			echo "</td>";
 
 			    			echo "<td>";
-			    				if($courseAlreadyExistsOnProgram){
+			    				if($courseIsOnProgram){
 		    						echo anchor("program/removeCourseFromProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
-			    				}else{
+			    				}else if($courseIsOnNoneProgram){
 		    						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
+			    				}else{
+		    						echo anchor("","Sem ação.", "class='btn btn-primary' disabled='true'");
 			    				}
 			    			echo "</td>";
 

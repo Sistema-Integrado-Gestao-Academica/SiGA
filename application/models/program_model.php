@@ -24,17 +24,14 @@ class Program_model extends CI_Model {
 
 		if($dataIsOk){
 
-			$programCourse = array(
-				'id_program' => $programId,
-				'id_course' => $courseId
-			);
+			$this->db->where('id_course', $courseId);
+			$this->db->update('course', array('id_program' => $programId));
 
-			$this->db->insert('program_course', $programCourse);
+			$course = new Course();
+			$foundCourse = $course->getCourseById($courseId);
 
-			$foundProgramCourse = $this->getProgramCourse($programId, $courseId);
-
-			if($foundProgramCourse !== FALSE){
-				$wasAdded = TRUE;	
+			if($foundCourse['id_program'] == $programId){
+				$wasAdded = TRUE;
 			}else{
 				$wasAdded = FALSE;
 			}
@@ -57,17 +54,14 @@ class Program_model extends CI_Model {
 
 		if($dataIsOk){
 
-			$programCourse = array(
-				'id_program' => $programId,
-				'id_course' => $courseId
-			);
+			$this->db->where('id_course', $courseId);
+			$this->db->update('course', array('id_program' => NULL));
 
-			$this->db->delete('program_course', $programCourse);
+			$course = new Course();
+			$foundCourse = $course->getCourseById($courseId);
 
-			$foundProgramCourse = $this->getProgramCourse($programId, $courseId);
-
-			if($foundProgramCourse !== FALSE){
-				$wasRemoved = FALSE;	
+			if($foundCourse['id_program'] == $programId){
+				$wasRemoved = FALSE;
 			}else{
 				$wasRemoved = TRUE;
 			}
@@ -77,19 +71,6 @@ class Program_model extends CI_Model {
 		}
 
 		return $wasRemoved;
-	}
-
-	public function checkIfCourseIsOnProgram($programId, $courseId){
-
-		$programCourse = $this->getProgramCourse($programId, $courseId);
-
-		if($programCourse !== FALSE){
-			$isOnProgram = TRUE;
-		}else{
-			$isOnProgram = FALSE;
-		}
-
-		return $isOnProgram;
 	}
 
 	private function getProgramCourse($programId, $courseId){

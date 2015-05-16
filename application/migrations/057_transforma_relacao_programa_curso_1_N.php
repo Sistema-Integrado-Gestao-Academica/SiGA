@@ -5,7 +5,7 @@ class Migration_Transforma_relacao_programa_curso_1_N extends CI_Migration {
 	public function up() {
 
 		$field = array(
-			'id_program' => array('type' => 'INT')
+			'id_program' => array('type' => 'INT', 'null' => TRUE)
 		);
 
 		$this->dbforge->add_column('course', $field);

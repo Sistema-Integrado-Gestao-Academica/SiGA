@@ -604,6 +604,15 @@ class Course extends CI_Controller {
 		return $courseType;
 	}
 
+	public function getCoursesToProgram($programId){
+
+		$this->load->model('course_model');
+
+		$programCourses = $this->course_model->getCoursesToProgram($programId);
+
+		return $programCourses;
+	}
+
 	/**
 	 * Function to get the list of all registered courses
 	 * @return array $registeredCourses
