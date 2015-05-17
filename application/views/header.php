@@ -140,12 +140,15 @@
 								
 								echo anchor("", ucfirst($groupName),"class='fa fa-folder-o'");
 								echo "<ul class='treeview-menu'>";
-	
-								foreach($groupPermissions as $permission){
 								
-									echo "<li>";
-									echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-									echo "</li>";
+								if($groupPermissions !== FALSE){
+									
+									foreach($groupPermissions as $permission){
+									
+										echo "<li>";
+										echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+										echo "</li>";
+									}
 								}
 	
 								echo "</ul>";

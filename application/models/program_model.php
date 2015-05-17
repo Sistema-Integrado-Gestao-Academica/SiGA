@@ -13,6 +13,15 @@ class Program_model extends CI_Model {
 		return $allPrograms;
 	}
 
+	public function getCoordinatorPrograms($coodinatorId){
+
+		$programs = $this->db->get_where('program', array('coordinator' => $coodinatorId))->result_array();
+
+		$programs = checkArray($programs);
+
+		return $programs;
+	}
+
 	public function addCourseToProgram($courseId, $programId){
 
 		$course = new Course;

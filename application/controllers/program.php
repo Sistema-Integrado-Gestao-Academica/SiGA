@@ -5,7 +5,7 @@ require_once('module.php');
 require_once('course.php');
 
 class Program extends CI_Controller {
-	
+
 	public function getAllPrograms(){
 
 		$this->load->model('program_model');
@@ -13,6 +13,15 @@ class Program extends CI_Controller {
 		$programs = $this->program_model->getAllPrograms();
 
 		return $programs;
+	}
+
+	public function getCoordinatorPrograms($coordinatorId){
+
+		$this->load->model('program_model');
+
+		$programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
+
+		return $programs;	
 	}
 
 	public function getProgramById($programId){
