@@ -45,28 +45,32 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		 echo "<div class='dropdown'>";
-				    		 echo "<button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
-	                           <i class='fa fa-certificate'></i> Avaliação do Programa <span class='fa fa-caret-down'></span></button>";
 
-	                            echo "<ul class='dropdown-menu'>";
-	                            	 
-	                        		foreach($evaluationsPeriods as $evaluationId => $period){
-	                        			echo "<li>";
-	                        				if($evaluationId !== 0){
-						    					echo anchor(
-						    						"coordinator/program_evaluation_index/{$program['id_program']}/{$evaluationId}",
-						    						$period
-						    					);
-	                        				}else{
-	                        					// In this case, there is none evaluation to the program
-	                        					echo $period;
-	                        				}
-	                        			echo "</li>";
-	                        		}
-	                            	
-	                            "</ul>";
-                             echo "</div>";
+				    			if($programEvaluations !== FALSE){
+
+						    		echo "<div class='dropdown'>";
+						    		echo "<button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+			                          <i class='fa fa-certificate'></i> Avaliação do Programa <span class='fa fa-caret-down'></span></button>";
+
+			                           echo "<ul class='dropdown-menu'>";
+			                           	 
+			                        	foreach($evaluationsPeriods as $evaluationId => $period){
+			                        		echo "<li>";
+							    				echo anchor(
+							    					"coordinator/program_evaluation_index/{$program['id_program']}/{$evaluationId}",
+							    					$period
+							    				);
+			                        		echo "</li>";
+			                        	}
+			                           	
+			                           echo "</ul>";
+		                            echo "</div>";
+				    			}else{
+				    				echo "<div class='callout callout-info'>";
+				    					echo "<h4>Nenhuma avaliação para o programa.</h4>";
+				    					echo anchor("coordinator/createProgramEvaluation/{$program['id_program']}", "Criar Avaliação", "class='btn btn-primary btn-flat'");
+				    				echo "</div>";
+				    			}
 				    		
 				    		echo "</td>";
 			    		echo "</tr>";	
