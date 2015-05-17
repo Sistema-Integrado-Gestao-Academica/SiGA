@@ -7,21 +7,17 @@ class Migration_Cria_tabela_avaliacao_dimensao_indicador extends CI_Migration {
 		// Creating program evaluation table
 		$this->dbforge->add_field(array(
 			'id_program_evaluation' => array('type' => 'INT', 'auto_increment' => true),
+			'id_program' => array('type' => 'INT'),
 			'current_year' => array('type' => 'YEAR'),
-			'evaluation_period' => array('type' => 'INT'),
+			'start_year' => array('type' => 'YEAR'),
+			'end_year' => array('type' => 'YEAR'),
 			'general_note' => array('type' => "INT")
 		));
 		$this->dbforge->add_key('id_program_evaluation', true);
 		$this->dbforge->create_table('program_evaluation', true);
 
-		// Relating the evaluation to a program
-		$field = array(
-			'id_program_evaluation' => array('type' => 'INT', 'null' => true)
-		);
-		$this->dbforge->add_column('program', $field);
-
-		$fk = "ALTER TABLE program ADD CONSTRAINT IDEVALUATION_PROGRAM_FK FOREIGN KEY (id_program_evaluation)
-		 REFERENCES program_evaluation(id_program_evaluation)";
+		$fk = "ALTER TABLE program_evaluation ADD CONSTRAINT IDPROGRAM_PROGRAMEVALUATION_FK FOREIGN KEY (id_program)
+		 REFERENCES program(id_program)";
 		$this->db->query($fk);
 
 		// Creating dimension type table
