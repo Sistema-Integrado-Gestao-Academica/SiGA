@@ -17,8 +17,19 @@
 		    <?php
 
 		    	if($coordinatorPrograms !== FALSE){
-
+		    	
 			    	foreach($coordinatorPrograms as $program){
+
+			    		$programEvaluations = $programObject->getProgramEvaluations($program['id_program']);
+
+						if($programEvaluations !== FALSE){
+
+							foreach($programEvaluations as $evaluation){
+								$evaluationsPeriods[$evaluation['id_program_evaluation']] = "Período ".$evaluation['start_year']." - ".$evaluation['end_year'];
+							}
+						}else{
+							$evaluationsPeriods = array(0 => 'Nenhuma avaliação para este programa.');
+						}
 
 						echo "<tr>";
 				    		echo "<td>";
@@ -34,7 +45,29 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor("coordinator/program_evaluation_index/{$program['id_program']}","<i class='fa fa-certificate'></i> Avaliação do Programa", "class='btn btn-primary'");
+				    		 echo "<div class='dropdown'>";
+				    		 echo "<button type='button' class='btn btn-primary dropdown-toggle' data-toggle='dropdown'>
+	                           <i class='fa fa-certificate'></i> Avaliação do Programa <span class='fa fa-caret-down'></span></button>";
+
+	                            echo "<ul class='dropdown-menu'>";
+	                            	 
+	                        		foreach($evaluationsPeriods as $evaluationId => $period){
+	                        			echo "<li>";
+	                        				if($evaluationId !== 0){
+						    					echo anchor(
+						    						"coordinator/program_evaluation_index/{$program['id_program']}/{$evaluationId}",
+						    						$period
+						    					);
+	                        				}else{
+	                        					// In this case, there is none evaluation to the program
+	                        					echo $period;
+	                        				}
+	                        			echo "</li>";
+	                        		}
+	                            	
+	                            "</ul>";
+                             echo "</div>";
+				    		
 				    		echo "</td>";
 			    		echo "</tr>";	
 			    	}

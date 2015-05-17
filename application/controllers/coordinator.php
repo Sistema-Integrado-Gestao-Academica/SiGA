@@ -22,20 +22,23 @@ class Coordinator extends CI_Controller {
 		
 		$data = array(
 			'coordinatorPrograms' => $coordinatorPrograms,
-			'userData' => $userData
+			'userData' => $userData,
+			'programObject' => $program
 		);
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/coordinator_programs", $data);
 	}
 
-	public function program_evaluation_index($programId){
+	public function program_evaluation_index($programId, $programEvaluationId){
 
 		$program = new Program();
 
 		$programData = $program->getProgramById($programId);
+		$evaluation = $program->getProgramEvaluation($programEvaluationId);
 
 		$data = array(
-			'programData' => $programData
+			'programData' => $programData,
+			'programEvaluation' => $evaluation
 		);
 		
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_index", $data);

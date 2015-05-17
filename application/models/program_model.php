@@ -22,6 +22,25 @@ class Program_model extends CI_Model {
 		return $programs;
 	}
 
+	public function getProgramEvaluations($programId){
+
+		$this->db->order_by("start_year", "asc");
+		$evaluations = $this->db->get_where('program_evaluation', array('id_program' => $programId))->result_array();
+
+		$evaluations = checkArray($evaluations);
+
+		return $evaluations;
+	}
+
+	public function getProgramEvaluation($programEvaluationId){
+
+		$evaluation = $this->db->get_where('program_evaluation', array('id_program_evaluation' => $programEvaluationId))->row_array();
+
+		$evaluation = checkArray($evaluation);
+
+		return $evaluation;
+	}
+
 	public function addCourseToProgram($courseId, $programId){
 
 		$course = new Course;

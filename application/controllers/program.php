@@ -24,6 +24,24 @@ class Program extends CI_Controller {
 		return $programs;	
 	}
 
+	public function getProgramEvaluations($programId){
+
+		$this->load->model('program_model');
+
+		$programEvaluations = $this->program_model->getProgramEvaluations($programId);
+
+		return $programEvaluations;	
+	}
+
+	public function getProgramEvaluation($programEvaluationId){
+
+		$this->load->model('program_model');
+
+		$programEvaluation = $this->program_model->getProgramEvaluation($programEvaluationId);
+
+		return $programEvaluation;
+	}
+
 	public function getProgramById($programId){
 
 		$this->load->model('program_model');
