@@ -80,6 +80,24 @@ class Coordinator extends CI_Controller {
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_dimension", $data);	
 	}
 
+	public function disableDimension($evaluationId, $dimensionType, $dimensionId){
+
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$wasDisabled = $this->evaluation->disableDimension($dimensionId);
+
+		if($wasDisabled){
+			$status = "success";
+			$message = "Dimensão desativada com sucesso!";
+		}else{
+			$status = "danger";
+			$message = "Ñão foi possível desativar a dimensão.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}");
+	}
+
 	public function createProgramEvaluation($programId){
 
 		$program = new Program();

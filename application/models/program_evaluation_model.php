@@ -50,6 +50,50 @@ class Program_Evaluation_model extends CI_Model {
 		return $dimensionData;
 	}
 
+	public function disableDimension($dimensionId){
+
+		define("NULL_WEIGHT", 0);
+
+		$disabled = $this->changeDimensionWeight($dimensionId, NULL_WEIGHT);
+
+		return $disabled;
+	}
+
+	private function changeDimensionWeight($dimensionId, $newWeight){
+
+		$newDimensionData = array(
+			'weight' => $newWeight
+		);
+
+		$this->db->where('id_dimension', $dimensionId);
+		$this->db->update('evaluation_dimension', $newDimensionData);
+
+		$foundDimensionData = $this->getDimensionDataById($dimensionId);
+
+		if($foundDimensionData !== FALSE){
+
+			if($foundDimensionData['weight'] == $newWeight){
+				$wasChanged = TRUE;
+			}else{
+				$wasChanged = FALSE;
+			}
+
+		}else{
+			$wasChanged = FALSE;
+		}
+
+		return $wasChanged;
+	}
+
+	private function getDimensionDataById($dimensionId){
+		
+		$dimensionData = $this->db->get_where('evaluation_dimension', array('id_dimension' => $dimensionId))->row_array();
+
+		$dimensionData = checkArray($dimensionData);
+
+		return $dimensionData;
+	}
+
 	public function checkIfHaveAllDimensions($evaluationId){
 
 		$evaluationDimensions = $this->getEvaluationDimensions($evaluationId);
