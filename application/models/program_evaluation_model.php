@@ -36,6 +36,20 @@ class Program_Evaluation_model extends CI_Model {
 		return $allDimensions;
 	}
 
+	public function getDimensionData($evaluationId, $dimensionType){
+
+		$conditions = array(
+			'id_evaluation' => $evaluationId,
+			'id_dimension_type' => $dimensionType
+		);
+		
+		$dimensionData = $this->db->get_where('evaluation_dimension', $conditions)->row_array();
+
+		$dimensionData = checkArray($dimensionData);
+
+		return $dimensionData;
+	}
+
 	public function checkIfHaveAllDimensions($evaluationId){
 
 		$evaluationDimensions = $this->getEvaluationDimensions($evaluationId);

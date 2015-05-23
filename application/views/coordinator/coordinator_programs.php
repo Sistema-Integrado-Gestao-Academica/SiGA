@@ -89,3 +89,6 @@
 		</tbody>
 	</table>
 </div>
+
+<br>
+<?php echo anchor('coordinator_home', "Voltar", "class='btn btn-danger'");?>

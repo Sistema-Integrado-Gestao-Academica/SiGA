@@ -31,6 +31,10 @@ class Coordinator extends CI_Controller {
 
 	public function program_evaluation_index($programId, $programEvaluationId){
 
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
+
 		$program = new Program();
 
 		$programData = $program->getProgramById($programId);
@@ -38,10 +42,42 @@ class Coordinator extends CI_Controller {
 
 		$data = array(
 			'programData' => $programData,
-			'programEvaluation' => $evaluation
+			'programEvaluation' => $evaluation,
+			'dimensionsTypes' => $dimensionsTypes
 		);
 		
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_index", $data);
+	}
+
+	public function evaluationDimensionData($evaluationId, $dimensionType){
+
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$dimensionData = $this->evaluation->getDimensionData($evaluationId, $dimensionType);
+		$allDimensionsTypes = $this->evaluation->getAllDimensionTypes();
+
+		// Find the dimension name
+		if($allDimensionsTypes !== FALSE){
+			foreach($allDimensionsTypes as $type){
+				if($type['id_dimension_type'] == $dimensionType){
+					$dimensionName = $type['dimension_type_name'];
+					break;
+				}
+			}
+		}else{
+			$dimensionName = FALSE;
+		}
+
+		$program = new Program();		
+		$evaluationData = $program->getProgramEvaluation($evaluationId);
+
+		$data = array(
+			'dimensionData' => $dimensionData,
+			'evaluationData' => $evaluationData,
+			'dimensionName' => $dimensionName
+		);
+
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_dimension", $data);	
 	}
 
 	public function createProgramEvaluation($programId){
