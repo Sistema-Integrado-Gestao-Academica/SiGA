@@ -49,7 +49,7 @@ class Coordinator extends CI_Controller {
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_index", $data);
 	}
 
-	public function evaluationDimensionData($evaluationId, $dimensionType){
+	public function evaluationDimensionData($evaluationId, $dimensionType, $programId){
 
 		$this->load->model('program_evaluation_model', 'evaluation');
 
@@ -74,13 +74,14 @@ class Coordinator extends CI_Controller {
 		$data = array(
 			'dimensionData' => $dimensionData,
 			'evaluationData' => $evaluationData,
-			'dimensionName' => $dimensionName
+			'dimensionName' => $dimensionName,
+			'programId' => $programId
 		);
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_dimension", $data);	
 	}
 
-	public function disableDimension($evaluationId, $dimensionType, $dimensionId){
+	public function disableDimension($evaluationId, $dimensionType, $dimensionId, $programId){
 
 		$this->load->model('program_evaluation_model', 'evaluation');
 
@@ -95,7 +96,7 @@ class Coordinator extends CI_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}");
+		redirect("coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}/{$programId}");
 	}
 
 	public function createProgramEvaluation($programId){

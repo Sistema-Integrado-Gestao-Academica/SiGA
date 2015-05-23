@@ -39,7 +39,7 @@
 
 			    			// echo "<td>";
 			    				echo anchor(
-			    					"coordinator/evaluationDimensionData/{$programEvaluation['id_program_evaluation']}/{$dimension['id_dimension_type']}",
+			    					"coordinator/evaluationDimensionData/{$programEvaluation['id_program_evaluation']}/{$dimension['id_dimension_type']}/{$programData['id_program']}",
 			    					"<i class='fa fa-eye'></i> Dados da dimensão <h4><b>".$dimension['dimension_type_name']."</b></h4>",
 			    					"class='btn btn-primary' btn-flat"
 			    				);
