@@ -22,6 +22,7 @@
 
 			    		$programEvaluations = $programObject->getProgramEvaluations($program['id_program']);
 
+			    		$evaluationsPeriods = array();
 						if($programEvaluations !== FALSE){
 
 							foreach($programEvaluations as $evaluation){
