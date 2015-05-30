@@ -17,11 +17,12 @@ class Program_Evaluation_model extends CI_Model {
 		return $evaluationId;
 	}
 
-	public function addDimensionTypeToEvaluation($evaluationId, $dimensionType){
+	public function addDimensionTypeToEvaluation($evaluationId, $dimensionType, $dimensionWeight){
 
 		$dimensionData = array(
 			'id_evaluation' => $evaluationId,
-			'id_dimension_type' => $dimensionType
+			'id_dimension_type' => $dimensionType,
+			'weight' => $dimensionWeight
 		);
 
 		$this->db->insert('evaluation_dimension', $dimensionData);

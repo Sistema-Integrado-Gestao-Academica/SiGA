@@ -164,7 +164,7 @@ class Coordinator extends CI_Controller {
 		if($dimensionsTypes !== FALSE){
 
 			foreach($dimensionsTypes as $type){
-				$this->evaluation->addDimensionTypeToEvaluation($evaluationId, $type['id_dimension_type']);
+				$this->evaluation->addDimensionTypeToEvaluation($evaluationId, $type['id_dimension_type'], $type['default_weight']);
 			}
 
 			$dimensionsSetted = $this->evaluation->checkIfHaveAllDimensions($evaluationId);
