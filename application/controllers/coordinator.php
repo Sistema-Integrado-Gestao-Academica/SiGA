@@ -148,7 +148,7 @@ class Coordinator extends CI_Controller {
 
 		}else{
 			$status = "danger";
-			$message = "Ñão foi possível salvar a avaliação. Tente novamente.";
+			$message = "Não foi possível salvar a avaliação. Tente novamente.";
 		}
 
 		$this->session->set_flashdata($status, $message);
@@ -173,6 +173,30 @@ class Coordinator extends CI_Controller {
 		}
 
 		return $dimensionsSetted;
+	}
+
+	public function changeDimensionWeight(){
+
+		$dimensionId = $this->input->post('dimensionId');
+		$programEvaluationId = $this->input->post('programEvaluationId');
+		$dimensionType = $this->input->post('dimensionType');
+		$programId = $this->input->post('programId');
+		$newWeight = $this->input->post('dimension_new_weight');
+		
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$wasChanged = $this->evaluation->updateDimensionWeight($dimensionId, $newWeight);
+
+		if($wasChanged){
+			$status = "success";
+			$message = "Peso da dimensão alterado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível alterar o peso da dimensão. Tente novamente.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("coordinator/evaluationDimensionData/{$programEvaluationId}/{$dimensionType}/{$programId}");
 	}
 
 }

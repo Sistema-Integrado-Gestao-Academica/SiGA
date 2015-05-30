@@ -3,6 +3,8 @@
 
 <br>
 
+<h4>Nota geral: <b><?php echo $dimensionData['indicators_note']; ?></b></h4>
+
 <div class="row">
 <div class="col-lg-3">
 	<h4>Peso da dimensão: <b><?php echo $dimensionData['weight']; ?>%</b></h4>
@@ -16,10 +18,57 @@
 		);
 	?>
 </div>
+<div class="col-lg-3">
+	<?php
+		echo anchor(
+			"#change_dimension_weight_form",
+		 	"Alterar peso da dimensão",
+		 	"class='btn btn-primary'
+			data-toggle='collapse'
+			aria-expanded='false'
+			aria-controls='change_dimension_weight_form'"
+		);
+	?>
+
+	<div class="collapse" id="change_dimension_weight_form">
+		<?php
+			$weight = array(
+				'name' => 'dimension_new_weight',
+				'id' => 'dimension_new_weight',
+				"class" => "form-control",
+				"type" => "number",
+				"required" => TRUE,
+				"min" => 0,
+				"max" => 100,
+				"step" => 0.01
+			);
+
+			$submitBtn = array(
+				"class" => "btn bg-olive btn-flat",
+				"type" => "submit",
+				"content" => "Salvar novo peso"
+			);
+
+			echo form_open("coordinator/changeDimensionWeight");
+				echo form_hidden(array(
+					'dimensionId' => $dimensionData['id_dimension'],
+					'programEvaluationId' => $evaluationData['id_program_evaluation'],
+					'dimensionType' => $dimensionData['id_dimension_type'],
+					'programId' => $programId
+				));
+
+				echo "<br>";
+				echo form_label("Informe o novo peso:","dimension_new_weight");
+				echo form_input($weight);
+
+				echo "<br>";
+				echo form_button($submitBtn);
+			echo form_close();
+			
+		?>
+	</div>
 </div>
-
-<h4>Nota geral: <b><?php echo $dimensionData['indicators_note']; ?></b></h4>
-
+</div>
 
 
 <br>

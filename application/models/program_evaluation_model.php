@@ -60,6 +60,13 @@ class Program_Evaluation_model extends CI_Model {
 		return $disabled;
 	}
 
+	public function updateDimensionWeight($dimensionId, $newWeight){
+
+		$wasChanged = $this->changeDimensionWeight($dimensionId, $newWeight);
+
+		return $wasChanged;
+	}
+
 	private function changeDimensionWeight($dimensionId, $newWeight){
 
 		$newDimensionData = array(
