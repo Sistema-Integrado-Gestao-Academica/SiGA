@@ -32,6 +32,8 @@
 
 	<div class="collapse" id="change_dimension_weight_form">
 		<?php
+
+
 			$weight = array(
 				'name' => 'dimension_new_weight',
 				'id' => 'dimension_new_weight',
@@ -39,7 +41,6 @@
 				"type" => "number",
 				"required" => TRUE,
 				"min" => 0,
-				"max" => 100,
 				"step" => 0.01
 			);
 
@@ -48,6 +49,31 @@
 				"type" => "submit",
 				"content" => "Salvar novo peso"
 			);
+
+			if($weightsSum == 100){
+				$weight['disabled'] = TRUE;
+				$submitBtn['disabled'] = TRUE;
+
+				$message = "Todas as dimensões já utilizam 100% no total. Não é possível alterar o peso.";
+			}else{
+				$availableWeight = 100 - $weightsSum;
+				$currentWeight = $dimensionData['weight'];
+				
+				if($availableWeight >= $currentWeight){
+					$maxWeight = $availableWeight;	
+				}else{
+					$maxWeight = $currentWeight;
+				}
+
+				$weight['max'] = $maxWeight;
+
+				$message = "O peso máximo possível é <b>".$maxWeight."%</b>";
+			}
+
+			echo "<br>";
+			echo "<div class='callout callout-warning'>";
+			echo $message;
+			echo "</div>";
 
 			echo form_open("coordinator/changeDimensionWeight");
 				echo form_hidden(array(

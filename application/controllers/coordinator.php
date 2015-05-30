@@ -67,6 +67,18 @@ class Coordinator extends CI_Controller {
 		}else{
 			$dimensionName = FALSE;
 		}
+		
+		$evaluationDimensions = $this->evaluation->getEvaluationDimensions($evaluationId);
+
+		if($evaluationDimensions !== FALSE){
+
+			$weightsSum = 0;
+			foreach($evaluationDimensions as $dimension){
+				$weightsSum = $weightsSum + $dimension['weight'];
+			}
+		}else{
+			$weightsSum = 0;
+		}
 
 		$program = new Program();		
 		$evaluationData = $program->getProgramEvaluation($evaluationId);
@@ -75,7 +87,8 @@ class Coordinator extends CI_Controller {
 			'dimensionData' => $dimensionData,
 			'evaluationData' => $evaluationData,
 			'dimensionName' => $dimensionName,
-			'programId' => $programId
+			'programId' => $programId,
+			'weightsSum' => $weightsSum
 		);
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_dimension", $data);	

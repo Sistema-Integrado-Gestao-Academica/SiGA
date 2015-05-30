@@ -134,7 +134,7 @@ class Program_Evaluation_model extends CI_Model {
 		return $haveAllDimensions;
 	}
 
-	private function getEvaluationDimensions($evaluationId){
+	public function getEvaluationDimensions($evaluationId){
 
 		$evaluationDimensions = $this->db->get_where('evaluation_dimension', array('id_evaluation' => $evaluationId))->result_array();
 
