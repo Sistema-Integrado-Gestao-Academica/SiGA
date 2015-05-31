@@ -44,7 +44,24 @@ class Coordinator extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 		redirect("coordinator/manageDimensions");
+	}
 
+	public function addDimensionToEvaluation($programId, $evaluationId, $dimensionType, $dimensionWeight = 0){
+
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$wasAdded = $this->evaluation->addDimensionTypeToEvaluation($evaluationId, $dimensionType, $dimensionWeight);
+
+		if($wasAdded){
+			$status = "success";
+			$message = "Dimensão adicionada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível adicionar a dimensão à essa avaliação.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("coordinator/program_evaluation_index/{$programId}/{$evaluationId}");
 	}
 
 	public function coordinator_programs(){
@@ -70,6 +87,7 @@ class Coordinator extends CI_Controller {
 		$this->load->model('program_evaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getDimensionTypesForEvaluation($programEvaluationId);
+		$allDimensionsTypes = $this->evaluation->getAllDimensionTypes();
 
 		$program = new Program();
 
@@ -79,7 +97,8 @@ class Coordinator extends CI_Controller {
 		$data = array(
 			'programData' => $programData,
 			'programEvaluation' => $evaluation,
-			'dimensionsTypes' => $dimensionsTypes
+			'dimensionsTypes' => $dimensionsTypes,
+			'allDimensionsTypes' => $allDimensionsTypes
 		);
 		
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_index", $data);

@@ -73,6 +73,25 @@ class Program_Evaluation_model extends CI_Model {
 		);
 
 		$this->db->insert('evaluation_dimension', $dimensionData);
+
+		$foundEvaluation = $this->getEvaluationDimension($dimensionData);
+
+		if($foundEvaluation !== FALSE){
+			$wasAdded = TRUE;
+		}else{
+			$wasAdded = FALSE;
+		}
+
+		return $wasAdded;
+	}
+
+	private function getEvaluationDimension($evaluationData){
+
+		$evaluation = $this->db->get_where('evaluation_dimension', $evaluationData)->row_array();
+
+		$evaluation = checkArray($evaluation);
+
+		return $evaluation;
 	}
 
 	public function getAllDimensionTypes(){
