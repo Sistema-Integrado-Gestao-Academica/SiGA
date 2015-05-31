@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('program.php');
+require_once(APPPATH."/exception/DimensionException.php");
 
 class Coordinator extends CI_Controller {
 
@@ -9,6 +10,41 @@ class Coordinator extends CI_Controller {
 	public function index() {
 		
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/coordinator_home");
+	}
+
+	public function manageDimensions(){
+
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
+
+		$data = array(
+			'allDimensions' => $dimensionsTypes
+		);
+
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/manage_dimensions", $data);
+	}
+
+	public function createDimension(){
+
+		$dimensionName = $this->input->post('new_dimension_name');
+		$dimensionWeight = $this->input->post('dimension_weight');
+
+		$this->load->model('program_evaluation_model', 'evaluation');
+
+		$wasSaved = $this->evaluation->newDimensionType($dimensionName, $dimensionWeight);
+
+		if($wasSaved){
+			$status = "success";
+			$message = "Dimensão criada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível criar a dimensão. Não é permitido nomes iguais, cheque o nome informado.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("coordinator/manageDimensions");
+
 	}
 
 	public function coordinator_programs(){
@@ -105,7 +141,7 @@ class Coordinator extends CI_Controller {
 			$message = "Dimensão desativada com sucesso!";
 		}else{
 			$status = "danger";
-			$message = "Ñão foi possível desativar a dimensão.";
+			$message = "Não foi possível desativar a dimensão.";
 		}
 
 		$this->session->set_flashdata($status, $message);
@@ -156,7 +192,7 @@ class Coordinator extends CI_Controller {
 				$message = "Avaliação salva com sucesso.";
 			}else{
 				$status = "danger";
-				$message = "Ñão foi possível salvar algumas dimensões da avaliação. Tente novamente.";
+				$message = "Não foi possível salvar algumas dimensões da avaliação. Tente novamente.";
 			}
 
 		}else{

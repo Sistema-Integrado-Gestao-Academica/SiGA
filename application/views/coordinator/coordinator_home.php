@@ -10,7 +10,8 @@
 				<div class="col-lg-6">
 				    <p>
 					    <div class="list-group" align='center'>
-							<?=anchor('coordinator/coordinator_programs', "Avaliação de programas", "class='list-group-item' style='width:70%;'");?>
+							<?php echo anchor('coordinator/coordinator_programs', "Avaliação de programas", "class='list-group-item' style='width:70%;'");?>
+							<?php echo anchor('coordinator/manageDimensions', "Dimensões de avaliação", "class='list-group-item' style='width:70%;'");?>
 						</div>
 		        	</p>
 			    </div>

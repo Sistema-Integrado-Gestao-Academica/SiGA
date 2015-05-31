@@ -50,13 +50,14 @@
 				"content" => "Salvar novo peso"
 			);
 
-			if($weightsSum == 100){
+			define("MAX_WEIGHT", 100);
+			if($weightsSum == MAX_WEIGHT){
 				$weight['disabled'] = TRUE;
 				$submitBtn['disabled'] = TRUE;
 
 				$message = "Todas as dimensões já utilizam 100% no total. Não é possível alterar o peso.";
 			}else{
-				$availableWeight = 100 - $weightsSum;
+				$availableWeight = MAX_WEIGHT - $weightsSum;
 				$currentWeight = $dimensionData['weight'];
 				
 				if($availableWeight >= $currentWeight){

@@ -17,6 +17,53 @@ class Program_Evaluation_model extends CI_Model {
 		return $evaluationId;
 	}
 
+	public function newDimensionType($dimensionName, $dimensionWeight){
+
+		$alreadyExists = $this->checkIfDimensionNameAlreadyExists($dimensionName);
+
+		if(!$alreadyExists){
+
+			$this->db->insert('dimension_type', array(
+				'dimension_type_name' => $dimensionName,
+				'default_weight' => $dimensionWeight
+			));
+
+			$foundDimensionType = $this->getDimensionType(array('dimension_type_name' => $dimensionName));
+
+			if($foundDimensionType !== FALSE){
+				$wasSaved = TRUE;
+			}else{
+				$wasSaved = FALSE;
+			}
+		}else{
+			$wasSaved = FALSE;
+		}
+
+		return $wasSaved;
+	}
+
+	private function checkIfDimensionNameAlreadyExists($dimensionName){
+
+		$dimensionType = $this->getDimensionType(array('dimension_type_name' => $dimensionName));
+
+		if($dimensionType === FALSE){
+			$alreadyExists = FALSE;
+		}else{
+			$alreadyExists = TRUE;
+		}
+
+		return $alreadyExists;
+	}
+
+	private function getDimensionType($dimensionData){
+
+		$dimensionType = $this->db->get_where('dimension_type', $dimensionData)->row_array();
+
+		$dimensionType = checkArray($dimensionType);
+
+		return $dimensionType;
+	}
+
 	public function addDimensionTypeToEvaluation($evaluationId, $dimensionType, $dimensionWeight){
 
 		$dimensionData = array(
