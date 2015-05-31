@@ -69,7 +69,7 @@ class Coordinator extends CI_Controller {
 
 		$this->load->model('program_evaluation_model', 'evaluation');
 
-		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
+		$dimensionsTypes = $this->evaluation->getDimensionTypesForEvaluation($programEvaluationId);
 
 		$program = new Program();
 

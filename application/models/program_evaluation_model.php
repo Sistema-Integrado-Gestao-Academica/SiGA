@@ -84,6 +84,19 @@ class Program_Evaluation_model extends CI_Model {
 		return $allDimensions;
 	}
 
+	public function getDimensionTypesForEvaluation($evaluationId){
+
+		$this->db->select('dimension_type.*');
+		$this->db->from('dimension_type');
+		$this->db->join("evaluation_dimension", "evaluation_dimension.id_dimension_type = dimension_type.id_dimension_type");
+		$this->db->where("evaluation_dimension.id_evaluation", $evaluationId);
+		$dimensions = $this->db->get()->result_array();
+
+		$dimensions = checkArray($dimensions);
+
+		return $dimensions;
+	}
+
 	public function getDimensionData($evaluationId, $dimensionType){
 
 		$conditions = array(
