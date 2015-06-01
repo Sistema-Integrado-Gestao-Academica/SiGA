@@ -7,7 +7,9 @@ class Migration_Cria_tabela_avaliacao_capes extends CI_Migration {
 		$this->dbforge->add_field(array(
 				'id_avaliation' => array('type' => 'INT'),
 				'id_course' => array('type' => 'INT'),
-				'course_grade' => array('type' => 'INT')
+				'course_grade' => array('type' => 'INT'),
+				'visualized' => array('type' => 'Boolean',
+									  'default' => 'FALSE')
 		));
 		
 		$this->dbforge->add_key('id_avaliation', TRUE);

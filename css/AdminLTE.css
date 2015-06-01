@@ -163,6 +163,7 @@ img {
 /* Background colors */
 .bg-red,
 .bg-yellow,
+.bg-news,
 .bg-aqua,
 .bg-blue,
 .bg-light-blue,
@@ -177,6 +178,10 @@ img {
 .bg-maroon,
 .bg-black {
   color: #f9f9f9 !important;
+}
+
+.bg-news{
+	background-color: #0097bc !important;
 }
 .bg-gray {
   background-color: #dad9dc!important;
