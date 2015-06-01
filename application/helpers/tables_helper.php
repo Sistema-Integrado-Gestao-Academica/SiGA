@@ -106,6 +106,55 @@ echo "</div>";
 
 }
 
+function showCapesAvaliationsNews($atualizations){
+	$courseController = new Course();
+	
+	if ($atualizations){
+		echo "<div class='panel panel-primary'>";
+	  
+			echo "<div class='panel-heading'><h4> Ultimas atualizações de avaliações <i>CAPES</i> </h4></div>";
+		
+			foreach ($atualizations as $new => $courseAtualization){
+				
+				$course = $courseController->getCourseById($courseAtualization['id_course']);
+				
+				echo "<div class='panel-body'>";
+					echo "<div class='modal-info'>";
+						echo "<div class='modal-content'>";
+							echo "<div class='modal-header bg-news'";
+								echo "<h4 class='model-title'>". $course['course_name'] ."</h4>";
+							echo "</div>";
+							echo "<div class='modal-body'>";
+								echo "<h3>";
+									echo "<label class='label label-info'>";
+										echo "Nota Obtida: ". $courseAtualization['course_grade']. "";
+									echo "</label>";
+									echo "               ".anchor("capesavaliation/checkAsVisualized/{$courseAtualization['id_avaliation']}", "<span class='fa fa-check'></span>", "class='btn btn-success'");
+								echo "</h3>";
+								
+							echo "</div>";
+						echo "</div>";
+					echo "</div>";
+				echo "</div>";
+			}
+			echo "<div class='panel-footer' align='center'><i>Clique em <span class='fa fa-check'></span> para marcar como vizualizada</i></div>";
+	
+		echo "</div>"; 
+	}else{
+		echo "<div class='panel panel-primary'>";
+		 
+		echo "<div class='panel-heading'><h4> Ultimas atualizações de avaliações <i>CAPES</i> </h4></div>";
+			echo "<h3>";
+				echo "<label class='label label-info'>";
+					echo "Não existem atualizações até o momento.";
+				echo "</label>";
+			echo "</h3>";
+		echo "</div>";
+	}
+}
+
+
+
 function courseTableToSecretaryCheckMastermind($courses){
 $courseController = new Course();
 
