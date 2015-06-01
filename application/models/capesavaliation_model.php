@@ -10,5 +10,16 @@ class CapesAvaliation_model extends CI_Model {
 		return $notVisualized;
 	}
 	
+	public function changeToVisualized($avaliationId){
+		
+		define("VISUALIZED", 1);
+		$update = array('visualized'=>VISUALIZED);
+		
+		$this->db->where('id_avaliation',$avaliationId);
+		$updated = $this->db->update('capes_avaliation', $update);
+		
+		return $updated;
+	}
+	
 }
 ?>
