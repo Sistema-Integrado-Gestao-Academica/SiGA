@@ -140,6 +140,8 @@ class Course extends CI_Controller {
 			foreach ($registeredPrograms as $currentProgram){
 				$registeredProgramsForm[$currentProgram['id_program']] = $currentProgram['program_name'];
 			}
+		}else{
+			$registeredProgramsForm = FALSE;	
 		}
 
 		$data = array(
