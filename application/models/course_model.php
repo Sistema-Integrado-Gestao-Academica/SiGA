@@ -67,6 +67,17 @@ class Course_model extends CI_Model {
 		return $courseType;
 	}
 
+	public function getCoursesToProgram($programId){
+
+		$this->db->where('id_program', $programId);
+		$this->db->or_where('id_program', NULL);
+		$coursesToProgram = $this->db->get('course')->result_array();
+
+		$coursesToProgram = checkArray($coursesToProgram);
+
+		return $coursesToProgram;
+	}
+
 	/**
 	 * Get all courses registered on database
 	 * @return An array with the courses. Each position is a tuple of the relation.

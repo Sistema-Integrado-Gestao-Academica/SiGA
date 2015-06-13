@@ -52,6 +52,16 @@ $submitBtn = array(
 		"type" => "sumbit",
 		"content" => "Cadastrar"
 );
+
+if($registeredPrograms !== FALSE){
+	// Nothing to do because there are programs to associate to a course
+	$thereAreNoPrograms = FALSE;
+}else{
+	$thereAreNoPrograms = TRUE;
+
+	$submitBtn['disabled'] = TRUE;
+	$registeredPrograms = array("Nenhum programa cadastrado.");
+}
 ?>
 
 <div class="form-box" id="login-box">
@@ -69,6 +79,12 @@ $submitBtn = array(
 				<?= form_label("Tipo de Curso", "courseType") ?>
 				<?= form_dropdown("courseType", $form_course_types, '', "id='courseType'") ?>
 				<?= form_error("courseType") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Programa do curso", "courseProgram") ?>
+				<?= form_dropdown("courseProgram", $registeredPrograms, '', "id='courseProgram'") ?>
+				<?= form_error("courseProgram") ?>
 			</div>
 
 			<div class="form-group">
@@ -123,4 +139,10 @@ $submitBtn = array(
 			</div>
 		</div>
 	<?= form_close() ?>
+
+	<?php if($thereAreNoPrograms){ ?>
+		<div class="callout callout-danger">
+			<h4>Não é possível cadastrar um curso sem um programa.</h4>
+		</div>
+	<?php } ?>
 </div>

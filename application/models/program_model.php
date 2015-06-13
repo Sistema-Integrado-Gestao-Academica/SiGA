@@ -13,6 +13,34 @@ class Program_model extends CI_Model {
 		return $allPrograms;
 	}
 
+	public function getCoordinatorPrograms($coodinatorId){
+
+		$programs = $this->db->get_where('program', array('coordinator' => $coodinatorId))->result_array();
+
+		$programs = checkArray($programs);
+
+		return $programs;
+	}
+
+	public function getProgramEvaluations($programId){
+
+		$this->db->order_by("start_year", "asc");
+		$evaluations = $this->db->get_where('program_evaluation', array('id_program' => $programId))->result_array();
+
+		$evaluations = checkArray($evaluations);
+
+		return $evaluations;
+	}
+
+	public function getProgramEvaluation($programEvaluationId){
+
+		$evaluation = $this->db->get_where('program_evaluation', array('id_program_evaluation' => $programEvaluationId))->row_array();
+
+		$evaluation = checkArray($evaluation);
+
+		return $evaluation;
+	}
+
 	public function addCourseToProgram($courseId, $programId){
 
 		$course = new Course;
@@ -24,17 +52,14 @@ class Program_model extends CI_Model {
 
 		if($dataIsOk){
 
-			$programCourse = array(
-				'id_program' => $programId,
-				'id_course' => $courseId
-			);
+			$this->db->where('id_course', $courseId);
+			$this->db->update('course', array('id_program' => $programId));
 
-			$this->db->insert('program_course', $programCourse);
+			$course = new Course();
+			$foundCourse = $course->getCourseById($courseId);
 
-			$foundProgramCourse = $this->getProgramCourse($programId, $courseId);
-
-			if($foundProgramCourse !== FALSE){
-				$wasAdded = TRUE;	
+			if($foundCourse['id_program'] == $programId){
+				$wasAdded = TRUE;
 			}else{
 				$wasAdded = FALSE;
 			}
@@ -57,17 +82,14 @@ class Program_model extends CI_Model {
 
 		if($dataIsOk){
 
-			$programCourse = array(
-				'id_program' => $programId,
-				'id_course' => $courseId
-			);
+			$this->db->where('id_course', $courseId);
+			$this->db->update('course', array('id_program' => NULL));
 
-			$this->db->delete('program_course', $programCourse);
+			$course = new Course();
+			$foundCourse = $course->getCourseById($courseId);
 
-			$foundProgramCourse = $this->getProgramCourse($programId, $courseId);
-
-			if($foundProgramCourse !== FALSE){
-				$wasRemoved = FALSE;	
+			if($foundCourse['id_program'] == $programId){
+				$wasRemoved = FALSE;
 			}else{
 				$wasRemoved = TRUE;
 			}
@@ -77,19 +99,6 @@ class Program_model extends CI_Model {
 		}
 
 		return $wasRemoved;
-	}
-
-	public function checkIfCourseIsOnProgram($programId, $courseId){
-
-		$programCourse = $this->getProgramCourse($programId, $courseId);
-
-		if($programCourse !== FALSE){
-			$isOnProgram = TRUE;
-		}else{
-			$isOnProgram = FALSE;
-		}
-
-		return $isOnProgram;
 	}
 
 	private function getProgramCourse($programId, $courseId){
@@ -129,7 +138,7 @@ class Program_model extends CI_Model {
 
 	private function dissociateCoursesOfProgram($programId){
 
-		$this->db->delete('program_course', array('id_program' => $programId));
+		$this->db->delete('program', array('id_program' => $programId));
 	}
 
 	public function checkIfProgramExists($programId){

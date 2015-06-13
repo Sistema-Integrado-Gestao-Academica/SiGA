@@ -106,6 +106,55 @@ echo "</div>";
 
 }
 
+function showCapesAvaliationsNews($atualizations){
+	$courseController = new Course();
+	
+	if ($atualizations){
+		echo "<div class='panel panel-primary'>";
+	  
+			echo "<div class='panel-heading'><h4> Ultimas atualizações de avaliações <i>CAPES</i> </h4></div>";
+		
+			foreach ($atualizations as $new => $courseAtualization){
+				
+				$course = $courseController->getCourseById($courseAtualization['id_course']);
+				
+				echo "<div class='panel-body'>";
+					echo "<div class='modal-info'>";
+						echo "<div class='modal-content'>";
+							echo "<div class='modal-header bg-news'";
+								echo "<h4 class='model-title'>". $course['course_name'] ."</h4>";
+							echo "</div>";
+							echo "<div class='modal-body'>";
+								echo "<h3>";
+									echo "<label class='label label-info'>";
+										echo "Nota Obtida: ". $courseAtualization['course_grade']. "";
+									echo "</label>";
+									echo "               ".anchor("capesavaliation/checkAsVisualized/{$courseAtualization['id_avaliation']}", "<span class='fa fa-check'></span>", "class='btn btn-success'");
+								echo "</h3>";
+								
+							echo "</div>";
+						echo "</div>";
+					echo "</div>";
+				echo "</div>";
+			}
+			echo "<div class='panel-footer' align='center'><i>Clique em <span class='fa fa-check'></span> para marcar como vizualizada</i></div>";
+	
+		echo "</div>"; 
+	}else{
+		echo "<div class='panel panel-primary'>";
+		 
+		echo "<div class='panel-heading'><h4> Ultimas atualizações de avaliações <i>CAPES</i> </h4></div>";
+			echo "<h3>";
+				echo "<label class='label label-info'>";
+					echo "Não existem atualizações até o momento.";
+				echo "</label>";
+			echo "</h3>";
+		echo "</div>";
+	}
+}
+
+
+
 function courseTableToSecretaryCheckMastermind($courses){
 $courseController = new Course();
 
@@ -1366,7 +1415,8 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 
 				    foreach($courses as $course){
 				    	
-				    	$courseAlreadyExistsOnProgram = $program->checkIfCourseIsOnProgram($programId, $course['id_course']);
+				    	$courseIsOnProgram = $course['id_program'] == $programId;
+				    	$courseIsOnNoneProgram = $course['id_program'] == NULL;
 				    	
 				    	echo "<tr>";
 
@@ -1379,10 +1429,12 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 			    			echo "</td>";
 
 			    			echo "<td>";
-			    				if($courseAlreadyExistsOnProgram){
+			    				if($courseIsOnProgram){
 		    						echo anchor("program/removeCourseFromProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
-			    				}else{
+			    				}else if($courseIsOnNoneProgram){
 		    						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
+			    				}else{
+		    						echo anchor("","Sem ação.", "class='btn btn-primary' disabled='true'");
 			    				}
 			    			echo "</td>";
 
@@ -2211,4 +2263,32 @@ function displayUsersOfGroup($idGroup, $usersOfGroup){
 			echo "</tbody>";
 		echo "</table>";
 	echo "</div>";
+}
+
+function displayRegisteredCourses($courses){
+
+	echo "<table class='table table-striped table-bordered'>";
+		echo "<tr>";
+			echo "<td><h3 class='text-center'>Cursos Cadastrados</h3></td>";
+			echo "<td><h3 class='text-center'>Ações</h3></td>";
+		echo "</tr>";
+		if ($courses !== FALSE){
+			foreach($courses as $course){
+				echo "<tr>";
+					echo "<td class='text-center'>";
+					 echo $course['course_name'];
+					echo "</td>";
+	
+					echo "<td>";
+						echo anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'");
+						echo anchor("course/deleteCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger'");
+					echo "</td>";
+				echo "</tr>";
+			}
+		}else{
+			echo "<tr>";
+				echo "<td><h3><label class='label label-default'> Não existem cursos cadastrados</label></h3></td>";
+			echo "</tr>";
+		}
+	echo "</table>";
 }

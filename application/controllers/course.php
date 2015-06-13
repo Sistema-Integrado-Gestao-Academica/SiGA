@@ -132,8 +132,21 @@ class Course extends CI_Controller {
 			$formCourseTypes = array('Nenhum tipo de curso cadastrado.');
 		}
 
+		$program = new Program();
+		$registeredPrograms = $program->getAllPrograms();
+
+		if($registeredPrograms !== FALSE){
+
+			foreach ($registeredPrograms as $currentProgram){
+				$registeredProgramsForm[$currentProgram['id_program']] = $currentProgram['program_name'];
+			}
+		}else{
+			$registeredProgramsForm = FALSE;	
+		}
+
 		$data = array(
-			'form_course_types' => $formCourseTypes
+			'form_course_types' => $formCourseTypes,
+			'registeredPrograms' => $registeredProgramsForm
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
@@ -166,13 +179,24 @@ class Course extends CI_Controller {
 		$originalCourseType = $this->course_model->getCourseTypeByCourseId($courseId);
 		$originalCourseTypeId = $originalCourseType['id'];
 		
+		$program = new Program();
+		$registeredPrograms = $program->getAllPrograms();
+
+		if($registeredPrograms !== FALSE){
+
+			foreach ($registeredPrograms as $currentProgram){
+				$registeredProgramsForm[$currentProgram['id_program']] = $currentProgram['program_name'];
+			}
+		}
+
 		$data = array(
 			'course' => $course,
 			'form_groups' => $formGroups,
 			'form_user_secretary' => $formUserSecretary,
 			'secretary_registered' => $secretaryRegistered,
 			'form_course_types' => $formCourseType,
-			'original_course_type' => $originalCourseTypeId
+			'original_course_type' => $originalCourseTypeId,
+			'registeredPrograms' => $registeredProgramsForm
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/update_course', $data);
@@ -189,6 +213,7 @@ class Course extends CI_Controller {
 
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
+			$courseProgram = $this->input->post('courseProgram');
 			$courseDuration = $this->input->post('course_duration');
 			$totalCredits = $this->input->post('course_total_credits');
 			$courseHours = $this->input->post('course_hours');
@@ -202,7 +227,8 @@ class Course extends CI_Controller {
 				'total_credits' => $totalCredits,
 				'workload' => $courseHours,
 				'start_class' => $courseClass,
-				'description' => $courseDescription
+				'description' => $courseDescription,
+				'id_program' => $courseProgram
 			);
 
 			$this->load->model('course_model');
@@ -288,6 +314,7 @@ class Course extends CI_Controller {
 			$idCourse = $this->input->post('id_course');
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
+			$courseProgram = $this->input->post('courseProgram');
 			$courseDuration = $this->input->post('course_duration');
 			$totalCredits = $this->input->post('course_total_credits');
 			$courseHours = $this->input->post('course_hours');
@@ -301,7 +328,8 @@ class Course extends CI_Controller {
 				'total_credits' => $totalCredits,
 				'workload' => $courseHours,
 				'start_class' => $courseClass,
-				'description' => $courseDescription
+				'description' => $courseDescription,
+				'id_program' => $courseProgram
 			);
 
 			$this->load->model('course_model');
@@ -576,6 +604,15 @@ class Course extends CI_Controller {
 		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
 
 		return $courseType;
+	}
+
+	public function getCoursesToProgram($programId){
+
+		$this->load->model('course_model');
+
+		$programCourses = $this->course_model->getCoursesToProgram($programId);
+
+		return $programCourses;
 	}
 
 	/**
