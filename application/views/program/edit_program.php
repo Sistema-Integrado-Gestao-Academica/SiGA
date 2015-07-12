@@ -35,7 +35,7 @@ $openingYear = array();
 $currentYear = getCurrentYear();
 if($currentYear !== FALSE){
 
-	for($i = $currentYear; $i < $currentYear + 100; $i++ ){
+	for($i = 1990; $i <= $currentYear + 2; $i++ ){
 		$openingYear[$i] = $i;
 	}
 }else{

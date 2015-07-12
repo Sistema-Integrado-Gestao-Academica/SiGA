@@ -31,7 +31,7 @@ $openingYear = array();
 $currentYear = getCurrentYear();
 if($currentYear !== FALSE){
 
-	for($i = $currentYear; $i < $currentYear + 100; $i++ ){
+	for($i = 1990; $i <= $currentYear + 2; $i++ ){
 		$openingYear[$i] = $i;
 	}
 }else{
@@ -72,7 +72,7 @@ if($currentYear !== FALSE){
 
 			<div class="form-group">	
 				<?= form_label("Ano de abertura", "opening_year") ?>
-				<?= form_dropdown("opening_year", $openingYear) ?>
+				<?= form_dropdown("opening_year", $openingYear, $currentYear) ?>
 				<?= form_error("opening_year") ?>
 			</div>
 
