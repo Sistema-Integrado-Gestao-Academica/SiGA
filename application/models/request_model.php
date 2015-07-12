@@ -58,40 +58,68 @@ class Request_model extends CI_Model {
 
 	public function approveAllRequest($requestId){
 
-		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::ENROLLED_STATUS);
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
-		return $wasApproved;
-	}
-	
-	public function mastermindApproveAllCurrentStudentRequest($studentId, $currentSemester, $requestId){
-		
-		$wasApproved = $this->changeStudentRequestsStatus($studentId, $currentSemester, EnrollmentConstants::ENROLLED_STATUS, $requestId);
-		
 		return $wasApproved;
 	}
 
 	public function refuseAllRequest($requestId){
 
-		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS);
+		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
 		return $wasRefused;
 	}
-
-	public function mastermindRefuseAllCurrentStudentRequest($studentId, $currentSemester, $requestId){
 	
-		$wasRefused = $this->changeStudentRequestsStatus($studentId, $currentSemester, EnrollmentConstants::REFUSED_STATUS, $requestId);
+	public function mastermindApproveAllCurrentStudentRequest($requestId){
+		
+		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+		
+		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, TRUE, $requestId);
+
+		return $wasApproved;
+	}
+
+	public function mastermindRefuseAllCurrentStudentRequest($requestId){
+	
+		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+		
+		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, FALSE, $requestId);
 	
 		return $wasRefused;
 	}
-	private function changeAllRequest($requestId, $newStatus){
 
-		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+	private function changeAllRequest($requestId, $newStatus, $requestingArea){
+
+		switch($requestingArea){
+			case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
+				$disciplinesConditions = array(
+					'id_request' => $requestId,
+					'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
+				);
+				break;
+	
+			default:
+				$disciplinesConditions = array(
+					'id_request' => $requestId
+				);
+				break;
+		}
+
+		$requestDisciplines = $this->getRequestDisciplines($disciplinesConditions);
 
 		if($requestDisciplines !== FALSE){
 
 			foreach($requestDisciplines as $requestedDiscipline){
 				
 				$this->changeRequestDisciplineStatus($requestId, $requestedDiscipline['discipline_class'], $newStatus);
+
+				if($newStatus === EnrollmentConstants::APPROVED_STATUS){
+					$isToApprove = TRUE;
+				}else{
+					$isToApprove = FALSE;
+				}
+
+				$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_SECRETARY, $isToApprove, $requestId, $requestedDiscipline['discipline_class']);
 			}
 
 			$this->checkRequestGeneralStatus($requestId);
@@ -105,7 +133,40 @@ class Request_model extends CI_Model {
 		return $wasChanged;
 	}
 
-	private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
+	public function finalizeRequestToMastermind($requestId){
+
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('mastermind_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND));
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId, 'mastermind_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND));
+
+		$wasFinalized = $foundRequest !== FALSE;
+
+		return $wasFinalized;
+	}
+
+	public function finalizeRequestSecretary($requestId){
+
+		$wasApproved = $this->secretaryApproval($requestId);
+
+		$this->checkRequestGeneralStatus($requestId);
+
+		return $wasApproved;
+	}
+
+	private function secretaryApproval($requestId){
+
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('secretary_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY));
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId, 'secretary_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY));
+
+		$wasFinalized = $foundRequest !== FALSE;
+
+		return $wasFinalized;	
+	}
+
+	/*private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
 		$hasRequests = $this->checkStudentHasRequest($studentId);
 		
 		if ($hasRequests ==! FALSE){
@@ -124,14 +185,14 @@ class Request_model extends CI_Model {
 		}
 		
 		return $wasChanged;
-	}
+	}*/
 	
-	private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
+	/*private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
 		$where = array('id_student'=>$studentId, 'id_semester'=> $currentSemester);
 		$change = array('request_status'=>$newStatus);
 		$this->db->where($where);
 		$this->db->update('student_request', $change);
-	}
+	}*/
 
 	private function checkStudentHasRequest($studentId){
 		$this->db->select('id_request');
@@ -143,41 +204,106 @@ class Request_model extends CI_Model {
 		
 		return $hasRequest;
 	}
-	public function approveRequestedDiscipline($requestId, $idOfferDiscipline){
 
-		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::ENROLLED_STATUS);
+	private function requestDisciplineApproval($requestingArea, $isToApprove, $requestId, $idOfferDiscipline = FALSE){
+
+		if($idOfferDiscipline !== FALSE){
+
+			$whereClause = array(
+				'id_request' => $requestId,
+				'discipline_class' => $idOfferDiscipline
+			);
+		}else{
+			// In this case is to update all the disciplines of a request
+			$whereClause = array(
+				'id_request' => $requestId
+			);
+		}
+
+		switch($requestingArea){
+			case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
+				if($isToApprove){
+					$toUpdate = array(
+						'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
+					);
+				}else{
+					$toUpdate = array(
+						'mastermind_approval' => EnrollmentConstants::DISCIPLINE_REFUSED_BY_MASTERMIND
+					);
+				}
+				break;
+
+			case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
+				if($isToApprove){
+					$toUpdate = array(
+						'secretary_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_SECRETARY
+					);
+				}else{
+					$toUpdate = array(
+						'secretary_approval' => EnrollmentConstants::DISCIPLINE_REFUSED_BY_SECRETARY
+					);
+				}
+				break;
+
+			default:
+				$toUpdate = array();
+				break;
+		}
+
+		$this->db->where($whereClause);
+		$this->db->update('request_discipline', $toUpdate);	
+	}
+
+	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
+
+		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::APPROVED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
 
+		$this->requestDisciplineApproval($requestingArea, TRUE, $requestId, $idOfferDiscipline);
+		
 		return $wasApproved;
 	}
 
-	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline){
+	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 
 		$wasRefused = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::REFUSED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
+		
+		$this->requestDisciplineApproval($requestingArea, FALSE, $requestId, $idOfferDiscipline);
 
 		return $wasRefused;
 	}
 
 	private function checkRequestGeneralStatus($requestId){
 
-		$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::ENROLLED_STATUS);
-		$wasAllRefused = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::REFUSED_STATUS);
-		$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
+		$foundRequest = $this->getRequest(array('id_request' => $requestId));
 
-		if($wasAllApproved){
-			$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
-		}else if($wasAllRefused){
-			$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
-		}else if($hasPreEnrolled){
-			$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
-		}else{
-			$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
+		if($foundRequest !== FALSE){
+
+			$wasAllApproved = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::APPROVED_STATUS);
+			$wasAllRefused = $this->checkIfRequestWasAllApprovedOrRefused($requestId, EnrollmentConstants::REFUSED_STATUS);
+			$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
+
+			$requestIsFinalizedBySecretary = $foundRequest['secretary_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
+			
+			if($wasAllApproved){
+				if($requestIsFinalizedBySecretary){
+					$status = EnrollmentConstants::ENROLLED_STATUS;
+				}else{
+					$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
+				}
+			}else if($wasAllRefused){
+				$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
+			}else if($hasPreEnrolled){
+				$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
+			}else{
+				$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
+			}
+			
+			$this->changeRequestGeneralStatus($requestId, $status);
 		}
-		
-		$this->changeRequestGeneralStatus($requestId, $status);
 	}
 
 	private function changeRequestGeneralStatus($requestId, $newStatus){
@@ -367,7 +493,7 @@ class Request_model extends CI_Model {
 
 	public function getRequestDisciplinesClasses($requestId){
 
-		$this->db->select('offer_discipline.*, request_discipline.status');
+		$this->db->select('offer_discipline.*, request_discipline.*');
 		$this->db->from('request_discipline');
 		$this->db->join('offer_discipline', "request_discipline.discipline_class = offer_discipline.id_offer_discipline");
 		$this->db->where('request_discipline.id_request', $requestId);
@@ -416,6 +542,7 @@ class Request_model extends CI_Model {
 		$this->db->order_by("request_status", "asc");
 		
 		$foundRequest = $this->db->get()->result_array();
+
 		$foundRequest = checkArray($foundRequest);
 		
 		return $foundRequest;
@@ -423,7 +550,8 @@ class Request_model extends CI_Model {
 	
 	public function getMastermindStudentRequest($studentId, $semesterId){
 	
-		$this->db->select("student_request.*, request_discipline.*");
+		$this->db->select("student_request.*");
+		$this->db->distinct();
 		$this->db->from("student_request");
 		$this->db->join("request_discipline", "student_request.id_request = request_discipline.id_request");
 		$this->db->where("student_request.id_student", $studentId);

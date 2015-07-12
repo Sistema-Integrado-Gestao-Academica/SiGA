@@ -49,6 +49,16 @@ class Program extends CI_Controller {
 		$programs = $this->program_model->getProgramById($programId);
 
 		return $programs;	
+
+	}
+
+	public function getProgramCourses($programId){
+
+		$this->load->model('program_model');
+
+		$programCourses = $this->program_model->getProgramCourses($programId);
+
+		return $programCourses;
 	}
 
 	public function addCourseToProgram($courseId, $programId){

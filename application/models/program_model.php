@@ -13,15 +13,6 @@ class Program_model extends CI_Model {
 		return $allPrograms;
 	}
 
-	public function getCoordinatorPrograms($coodinatorId){
-
-		$programs = $this->db->get_where('program', array('coordinator' => $coodinatorId))->result_array();
-
-		$programs = checkArray($programs);
-
-		return $programs;
-	}
-
 	public function getProgramEvaluations($programId){
 
 		$this->db->order_by("start_year", "asc");
@@ -39,6 +30,28 @@ class Program_model extends CI_Model {
 		$evaluation = checkArray($evaluation);
 
 		return $evaluation;
+	}
+
+	public function getCoordinatorPrograms($coordinatorId){
+
+		$coordinatorPrograms = $this->db->get_where('program', array('coordinator' => $coordinatorId))->result_array();
+
+		$coordinatorPrograms = checkArray($coordinatorPrograms);
+
+		return $coordinatorPrograms;
+	}
+
+	public function getProgramCourses($programId){
+
+		$this->db->select('*');
+		$this->db->from('course');
+		$this->db->join('program_course', "program_course.id_course = course.id_course");
+		$this->db->where('program_course.id_program', $programId);
+		$programCourses = $this->db->get()->result_array();
+
+		$programCourses = checkArray($programCourses);
+
+		return $programCourses;
 	}
 
 	public function addCourseToProgram($courseId, $programId){

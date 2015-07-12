@@ -9,6 +9,19 @@ class Course_model extends CI_Model {
 		$this->db->query($enrollment);
 	}
 
+	public function getCourseStudents($courseId){
+
+		$this->db->select("users.name, users.id, users.email");
+		$this->db->from('users');
+		$this->db->join("course_student", "course_student.id_user = users.id");
+		$this->db->where("course_student.id_course", $courseId);
+		$students = $this->db->get()->result_array();
+
+		$students = checkArray($students);
+
+		return $students;
+	}
+
 	public function getCourseName($courseId){
 		$courseName = $this->getCourseNameForThisCourseId($courseId);
 
