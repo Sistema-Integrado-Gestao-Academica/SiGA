@@ -74,7 +74,7 @@
 							</div>
 						</div>
 				<?php else: ?>
-						<div class="footer">
+						<div class="footer body bg-gray">
 							<?= anchor('planoorcamentario', 'Voltar', "class='btn bg-olive btn-block'") ?>
 						</div>
 				<?php endif ?>

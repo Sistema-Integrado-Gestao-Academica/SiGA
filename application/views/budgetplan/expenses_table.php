@@ -1,16 +1,20 @@
-<?= anchor("planoorcamentario/{$budgetplan['id']}/novadespesa", "<span class='glyphicon glyphicon-plus-sign'>Adicionar</span>", "class='btn-lg'") ?>
+<?= anchor("planoorcamentario/{$budgetplan['id']}/novadespesa", "<i class='fa fa-plus-circle'></i> Adicionar despesa", "class='btn-lg'") ?>
 
 <?php if ($expenses): ?>
-
-	<table class="table table-striped table-bordered">
+	<br>
+	<br>
+	<div class="box-body table-responsive no-padding">
+	<table class="table table-bordered table-hover">
 		<?php $i=0 ?>
+		<tbody>
+			
 		<tr>
-			<td><h4 class="text-center">Despesas</h4></td>
-			<td><h4 class="text-center">Ano</h4></td>
-			<td><h4 class="text-center">Natureza da despesa</h4></td>
-			<td><h4 class="text-center">Mês da liberação</h4></td>
-			<td><h4 class="text-center">Valor</h4></td>
-			<td></td>
+			<th class="text-center">Despesas</th>
+			<th class="text-center">Ano</th>
+			<th class="text-center">Natureza da despesa</th>
+			<th class="text-center">Mês da liberação</th>
+			<th class="text-center">Valor</th>
+			<th class="text-center">Ações</th>
 		</tr>
 
 
@@ -32,7 +36,13 @@
 			</td>
 		</tr>
 	<?php endforeach ?>
+		</tbody>
 	</table>
+	</div>
 <?php else: ?>
-	<td><h3><label class="label label-default"> Sem despesas até o momento</label></h3></td>
+	<br>
+	<br>
+	<div class="callout callout-info">
+		<h4>Sem despesas até o momento.</h4>
+	</div>
 <?php endif ?>

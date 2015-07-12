@@ -49,10 +49,10 @@ class Expense extends CI_Controller {
 		$this->load->model('expense_model');
 
 		if ($this->expense_model->save($expense) && $this->budgetplan_model->update($budgetplan)) {
-			$this->session->set_flashdata("success", "Nova despesa adicionada com sucesso");
+			$this->session->set_flashdata("success", "Nova despesa adicionada com sucesso.");
 			redirect("planoorcamentario/{$id}");
 		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
+			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente.");
 			redirect("planoorcamentario/{$id}/novadespesa");
 		}
 	}

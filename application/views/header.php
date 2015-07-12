@@ -105,11 +105,11 @@
 		                            	<?php 
 		                            		foreach($session['user_groups'] as $group){
 		                            			echo "<li>";
-		                            			if($group['group_name'] == "secretario"){
-													continue;
-												}else{
+		          //                   			if($group['group_name'] == "secretario"){
+												// 	continue;
+												// }else{
 		                            				echo anchor($group['profile_route'], ucfirst($group['group_name']));
-		                            			}
+		                            			// }
 		                            			echo "</li>";
 		                            		}
 		                            	?>
