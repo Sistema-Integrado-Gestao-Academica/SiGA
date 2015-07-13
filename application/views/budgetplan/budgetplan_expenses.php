@@ -42,9 +42,8 @@
 					$expenseHasPayment = $expense['expense_type_id'] == "339036" || $expense['expense_type_id'] == "339039";
 
 					if($expenseHasPayment){
-
 						echo anchor(
-							'payment/expensePayments',
+							"payment/expensePayments/{$expense['id']}",
 							"<i class='fa fa-dollar'> Pagamentos</i>",
 							"class='btn btn-primary btn-sm' style='margin-top:5%;'"
 						);

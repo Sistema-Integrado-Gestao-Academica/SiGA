@@ -2,9 +2,17 @@
 
 class Payment extends CI_Controller {
 
-	public function expensePayments(){
+	public function expensePayments($expenseId){
 		
-		loadTemplateSafelyByGroup('secretario', 'payment/new_payment');
+		$this->load->model('payment_model');
+		
+		$payments = $this->payment_model->getExpensePayments($expenseId);
+
+		$data = array(
+			'payments' => $payments
+		);
+
+		loadTemplateSafelyByGroup('secretario', 'payment/new_payment', $data);
 	}
 
 }
