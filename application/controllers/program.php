@@ -231,7 +231,9 @@ class Program extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($insertStatus, $insertMessage);
-		redirect('coordinator_home');
+
+		redirect('coordinator/coordinator_programs');
+
 	}
 
 	public function removeProgram($programId){
