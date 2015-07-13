@@ -1,6 +1,7 @@
 
 <?php 
-	
+require_once APPPATH.'controllers/program.php';
+
 $programName = array(
 	"name" => "program_name",
 	"id" => "program_name",
@@ -26,6 +27,10 @@ $submitBtn = array(
 	"content" => "Cadastrar programa",
 	"type" => "submit"
 );
+
+$program = new Program();
+
+$programArea = $program->getAllProgramAreas();
 
 $openingYear = array();
 $currentYear = getCurrentYear();
@@ -74,6 +79,12 @@ if($currentYear !== FALSE){
 				<?= form_label("Ano de abertura", "opening_year") ?>
 				<?= form_dropdown("opening_year", $openingYear, $currentYear) ?>
 				<?= form_error("opening_year") ?>
+			</div>
+			
+			<div class="form-group">	
+				<?= form_label("Área do programa", "program_area") ?>
+				<?= form_dropdown("program_area", $programArea) ?>
+				<?= form_error("program_area") ?>
 			</div>
 
 		</div>

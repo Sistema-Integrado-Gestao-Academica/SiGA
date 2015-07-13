@@ -15,6 +15,25 @@ class Program extends CI_Controller {
 		return $programs;
 	}
 
+	public function getAllProgramAreas(){
+		$this->load->model('program_model');
+		
+		$programAreas = $this->program_model->getAllProgramAreas();
+		
+		$areasIds = array();
+		$areasNames = array();
+		$i = 0;
+		foreach ($programAreas as $keys => $areas){
+			$areasIds[$i] = $areas['id_program_area'];
+			$areasNames[$i] = $areas['area_name'];
+			$i++;
+		}
+		
+		$areasResult = array_combine($areasIds,$areasNames);
+		
+		return $areasResult;
+	}
+	
 	public function getCoordinatorPrograms($coordinatorId){
 
 		$this->load->model('program_model');
@@ -244,12 +263,14 @@ class Program extends CI_Controller {
 			$programAcronym = $this->input->post('program_acronym');
 			$programCoordinator = $this->input->post('program_coordinator');
 			$openingYear = $this->input->post('opening_year');
-
+			$programArea = $this->input->post('program_area');
+			
 			$programData = array(
 				'program_name' => $programName,
 				'acronym' => $programAcronym,
 				'coordinator' => $programCoordinator,
-				'opening_year' =>$openingYear
+				'opening_year' =>$openingYear,
+				'id_area' => $programArea
 			);
 
 			$this->load->model('program_model');

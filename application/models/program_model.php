@@ -13,6 +13,16 @@ class Program_model extends CI_Model {
 		return $allPrograms;
 	}
 
+	public function getAllProgramAreas(){
+		
+		$allProgramAreas = $this->db->get('program_area')->result_array();
+		
+		$allProgramAreas = checkArray($allProgramAreas);
+		
+		return $allProgramAreas;
+		
+	}
+	
 	public function getProgramEvaluations($programId){
 
 		$this->db->order_by("start_year", "asc");
