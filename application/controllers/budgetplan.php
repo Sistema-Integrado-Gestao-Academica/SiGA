@@ -155,7 +155,8 @@ class Budgetplan extends CI_Controller {
 		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
 		foreach ($expenses as $key => $expense) {
 			$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
-			$expenses[$key]['expense_type'] = $type['id'] . " - " . $type['description'];
+			$expenses[$key]['expense_type_id'] = $type['id'];
+			$expenses[$key]['expense_type_description'] = $type['description'];
 		}
 
 		$this->load->helper(array("currency"));

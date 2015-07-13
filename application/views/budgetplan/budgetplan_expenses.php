@@ -24,20 +24,34 @@
 		<tr>
 			<td><?=++$i?></td>
 			<td><?=$expense['year']?></td>
-			<td><?=$expense['expense_type']?></td>
+			<td><?=$expense['expense_type_id']." - ".$expense['expense_type_description']?></td>
 			<td><?=$expense['month']?></td>
 			<td><?=currencyBR($expense['value'])?></td>
-			<td>	
+			<td>
+				
 				<?= form_open('expense/delete') ?>
 					<?= form_hidden('expense_id', $expense['id']) ?>
 					<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
-					<button type="submit" class="btn btn-danger btn-xs">
-						<span class="glyphicon glyphicon-remove"></span>
+					<button type="submit" class="btn btn-danger btn-sm">
+						<i class="fa fa-remove"> Remover despesa</i>
 					</button>
 				<?= form_close() ?>
-				
-				<?= anchor('payment/newPayment', "<i class='fa fa-dollar'></i>", "class='btn btn-primary'"); ?>
 
+				<?php
+					
+					$expenseHasPayment = $expense['expense_type_id'] == "339036" || $expense['expense_type_id'] == "339039";
+
+					if($expenseHasPayment){
+
+						echo anchor(
+							'payment/expensePayments',
+							"<i class='fa fa-dollar'> Pagamentos</i>",
+							"class='btn btn-primary btn-sm' style='margin-top:5%;'"
+						);
+					}
+
+				?>
+			
 			</td>
 		</tr>
 	<?php endforeach ?>

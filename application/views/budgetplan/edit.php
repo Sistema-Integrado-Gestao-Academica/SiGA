@@ -1,6 +1,5 @@
 <br>
 <div class="row">
-	<!-- <div class="col-lg-6"> -->
 		<div class="form-box-logged" id="login-box">
 			<div class="header">Alterar um P.O.</div>
 
@@ -82,10 +81,6 @@
 			</div>
 		</div>
 		<br><br>
-	<!-- </div> -->
-
-	<!-- <div class="col-lg-6"> -->
-	<!-- </div> -->
 </div>
 
 <script>

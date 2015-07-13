@@ -2,7 +2,7 @@
 
 class Payment extends CI_Controller {
 
-	public function newPayment(){
+	public function expensePayments(){
 		
 		loadTemplateSafelyByGroup('secretario', 'payment/new_payment');
 	}
