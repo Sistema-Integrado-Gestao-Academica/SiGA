@@ -14,4 +14,16 @@ class Utils extends CI_Controller {
 	public function loadSecretaria(){
 		$this->load->template('secretary/index_secretary');
 	}
+	
+	public function loadCapesAvaliationAreas(){
+		$this->load->model("capesavaliation_model");
+		
+		$lines = file(base_url("area_avaliacao.txt"));
+		foreach ($lines as $lineID => $areaName){
+			$this->capesavaliation_model->saveNewAvaliationArea($areaName);
+		}
+		
+	}
+	
+	
 }
