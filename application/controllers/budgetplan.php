@@ -75,10 +75,8 @@ class Budgetplan extends CI_Controller {
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
-			array_push($courses, $c['course_name']);
+			$courses[$c['id_course']] =  $c['course_name'];
 		}
-
-		var_dump($courses);exit;
 
 		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
