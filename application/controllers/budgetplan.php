@@ -75,17 +75,11 @@ class Budgetplan extends CI_Controller {
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
-			array_push($courses, $c['course_name']);
+			$courses[$c['id_course']] =  $c['course_name'];
 		}
 
 		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
-
-		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
-		foreach ($expenses as $key => $expense) {
-			$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
-			$expenses[$key]['expense_type'] = $type['id'] . " - " . $type['description'];
-		}
 
 		$this->load->helper(array("currency"));
 		$data = array(
@@ -93,8 +87,7 @@ class Budgetplan extends CI_Controller {
 			'status' => $status,
 			'courses' => $courses,
 			'disable_amount' => $disable_amount,
-			'disable_spending' => $disable_spending,
-			'expenses' => $expenses
+			'disable_spending' => $disable_spending
 		);
 		$this->load->template("budgetplan/edit", $data);
 	}
@@ -150,6 +143,30 @@ class Budgetplan extends CI_Controller {
 		}
 
 		redirect("planoorcamentario");
+	}
+
+	public function budgetplanExpenses($budgetplanId){
+		
+		$this->load->model("budgetplan_model");
+		$this->load->model('expense_model');
+
+		$budgetplan = $this->budgetplan_model->get('id', $budgetplanId);
+
+		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
+		foreach ($expenses as $key => $expense) {
+			$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
+			$expenses[$key]['expense_type_id'] = $type['id'];
+			$expenses[$key]['expense_type_description'] = $type['description'];
+		}
+
+		$this->load->helper(array("currency"));
+
+		$data = array(
+			'budgetplan' => $budgetplan,
+			'expenses' => $expenses
+		);
+
+		loadTemplateSafelyByGroup('secretario', 'budgetplan/budgetplan_expenses', $data);
 	}
 
 	public function deleteBudgetplanByCourseId($courseId){
