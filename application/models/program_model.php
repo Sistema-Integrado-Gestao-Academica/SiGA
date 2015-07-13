@@ -54,6 +54,12 @@ class Program_model extends CI_Model {
 		return $programCourses;
 	}
 
+	public function parseProgramAreas($areaName){
+	
+		return $this->db->insert("program_area",array("area_name"=>$areaName));
+	
+	}
+	
 	public function addCourseToProgram($courseId, $programId){
 
 		$course = new Course;
