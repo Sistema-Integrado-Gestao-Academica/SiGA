@@ -20,7 +20,10 @@ class Utils extends CI_Controller {
 		
 		$lines = file(base_url("area_avaliacao.txt"));
 		foreach ($lines as $lineID => $areaName){
-			$this->capesavaliation_model->saveNewAvaliationArea($areaName);
+			$saved = $this->capesavaliation_model->saveNewAvaliationArea($areaName);
+			if ($saved){
+				echo "Área : " . $areaName . " salva com sucesso! <br>";
+			}
 		}
 		
 	}

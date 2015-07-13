@@ -23,7 +23,7 @@ class CapesAvaliation_model extends CI_Model {
 	
 	public function saveNewAvaliationArea($areaName){
 		
-		$this->db->insert("capes_avaliation_areas",array("area_name"=>$areaName));
+		return $this->db->insert("capes_avaliation_areas",array("area_name"=>$areaName));
 		
 	}
 	
