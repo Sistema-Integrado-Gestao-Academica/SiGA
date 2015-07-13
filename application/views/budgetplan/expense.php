@@ -75,14 +75,6 @@
 </div>
 </div>
 
-<div class="col-lg-6">
-	
-	<br>
-	<br>
-	<?php echo anchor('payment/newPayment', "Via de pagamento", "class='btn btn-primary'"); ?>
-
-</div>
-
 </div>
 
 <script>

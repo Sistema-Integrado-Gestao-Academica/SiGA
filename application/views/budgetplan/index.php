@@ -23,7 +23,8 @@
 			<td class="text-center"><?=$budgetplan['status']?></td>
 
 			<td>
-				<?= anchor("planoorcamentario/{$budgetplan['id']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
+				<?= anchor("budgetplan/budgetplanExpenses/{$budgetplan['id']}", "<i class='fa fa-dollar'></i>", "class='btn btn-warning btn-editar btn-sm' style='margin-right:2%;'") ?>
+				<?= anchor("planoorcamentario/{$budgetplan['id']}", "<i class='fa fa-edit'></i>", "class='btn btn-primary btn-editar btn-sm' style='margin-right:10%;'") ?>
 				<?= form_open('/budgetplan/delete') ?>
 					<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
 					<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
@@ -67,7 +68,7 @@
 			<?= form_dropdown('status', $status) ?>
 		</div>
 
-		<div class="footer">
+		<div class="footer body bg-gray">
 			<?= form_button(array(
 				"class" => "btn bg-olive btn-block",
 				"type" => "sumbit",
