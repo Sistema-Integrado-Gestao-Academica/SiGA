@@ -179,6 +179,22 @@ class Coordinator extends CI_Controller {
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/new_program_evaluation", $data);
 	}
+	
+	public function updateProgramArea($programId){
+		$program = new Program();
+		
+		$areas = $program->getAllProgramAreas();
+		$programArea = $program->getProgramAreaByProgramId($programId);
+		$programData = $program->getProgramById($programId);
+		
+		$data = array(
+			'areas' => $areas,
+			'currentArea' => $programArea,
+			'programData' => $programData
+		);
+		
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/edit_program_area", $data);
+	}
 
 	public function newEvaluation(){
 

@@ -70,6 +70,15 @@ class Program extends CI_Controller {
 		return $programs;	
 
 	}
+	
+	public function getProgramAreaByProgramId($programId){
+		$this->load->model('program_model');
+		
+		$programArea = $this->program_model->getProgramAreaByProgramId($programId);
+		
+		return $programArea;
+		
+	}
 
 	public function getProgramCourses($programId){
 
@@ -200,6 +209,29 @@ class Program extends CI_Controller {
 			$this->session->set_flashdata($insertStatus, $insertMessage);
 			redirect("program/editProgram/{$programId}");
 		}
+	}
+	
+	public function updateProgramArea(){
+		$programId = $this->input->post('programId');
+		
+		$programArea = $this->input->post('new_program_area');
+		
+		$programData = array('id_area'=>$programArea);
+		
+		$this->load->model('program_model');
+		
+		$wasUpdated = $this->program_model->editProgram($programId, $programData);
+		
+		if($wasUpdated){
+			$insertStatus = "success";
+			$insertMessage = "Programa atualizado com sucesso!";
+		}else{
+			$insertStatus = "danger";
+			$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($insertStatus, $insertMessage);
+		redirect('coordinator_home');
 	}
 
 	public function removeProgram($programId){

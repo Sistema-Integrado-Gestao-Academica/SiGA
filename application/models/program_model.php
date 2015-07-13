@@ -215,6 +215,17 @@ class Program_model extends CI_Model {
 
 		return $program;
 	}
+	
+	public function getProgramAreaByProgramId($programId){
+
+		$program = $this->getProgram(array('id_program' => $programId));
+		
+		$areaId = $program['id_area'];
+		
+		$programArea = $this->getArea(array('id_program_area' => $areaId));
+		
+		return $programArea;
+	}
 
 	private function insertProgram($program){
 		
@@ -238,5 +249,14 @@ class Program_model extends CI_Model {
 		$foundProgram = checkArray($foundProgram);
 
 		return $foundProgram;
+	}
+	
+	private function getArea($areaToSearch){
+		$this->db->select('area_name');
+		$foundArea = $this->db->get_where('program_area', $areaToSearch)->row_array();
+	
+		$foundArea = checkArray($foundArea);
+	
+		return $foundArea;
 	}
 }
