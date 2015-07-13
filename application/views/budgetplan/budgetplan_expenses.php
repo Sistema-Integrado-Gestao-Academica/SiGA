@@ -43,7 +43,7 @@
 
 					if($expenseHasPayment){
 						echo anchor(
-							"payment/expensePayments/{$expense['id']}",
+							"payment/expensePayments/{$expense['id']}/{$budgetplan['id']}",
 							"<i class='fa fa-dollar'> Pagamentos</i>",
 							"class='btn btn-primary btn-sm' style='margin-top:5%;'"
 						);

@@ -13,3 +13,5 @@
 <?php
 	}
 ?>
+
+<?php echo anchor("budgetplan/budgetplanExpenses/{$budgetplanId}", 'Voltar', "class='btn btn-danger'");?>
