@@ -237,6 +237,17 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
 	}
 
+	public function secretary_coursesStudents(){
+		
+		$courses = $this->loadCourses();
+
+		$courseData = array(
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_courses_students', $courseData);
+	}
+
 	public function secretary_enrollStudent(){
 
 		$courses = $this->loadCourses();

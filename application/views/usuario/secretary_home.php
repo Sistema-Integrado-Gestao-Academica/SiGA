@@ -19,6 +19,7 @@
 				    <p>
 					    <div class="list-group" align='center'>
 							<?=anchor('usuario/secretary_enrollStudent', "Matricular Alunos", "class='list-group-item' style='width:70%;'");?>
+							<?=anchor('usuario/secretary_coursesStudents', "Lista de Alunos", "class='list-group-item' style='width:70%;'");?>
 							<?=anchor('usuario/secretary_requestReport', "Relatório de Solicitações", "class='list-group-item' style='width:70%;'");?>
 							<?=anchor('usuario/secretary_offerList', "Listas de Oferta", "class='list-group-item' style='width:70%;'");?>
 							<?=anchor('usuario/secretary_courseSyllabus', "Currículos de cursos", "class='list-group-item' style='width:70%;'");?>
