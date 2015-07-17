@@ -53,3 +53,5 @@
 		<h4>Nenhum curso cadastrado no momento para sua secretaria.</h4>
 	</div>
 <?php }?>
+
+<?= anchor('secretary_home', 'Voltar', "class='btn btn-danger'")?>
