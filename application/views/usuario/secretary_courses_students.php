@@ -37,7 +37,7 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor("","<i class='fa fa-list'> Lista de alunos</i>", "class='btn btn-primary'");
+				    		echo anchor("course/courseStudents/{$courseId}","<i class='fa fa-list'> Lista de alunos</i>", "class='btn btn-primary'");
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}

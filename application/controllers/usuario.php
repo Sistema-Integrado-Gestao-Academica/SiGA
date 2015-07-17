@@ -171,6 +171,15 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 	
+	public function getUserStatus($userId){
+
+		$this->load->model('usuarios_model');
+		
+		$userStatus = $this->usuarios_model->getUserStatus($userId);
+
+		return $userStatus;
+	}
+
 	public function studentInformationsForm(){
 		$loggedUserData = $this->session->userdata("current_user");
 		$userId = $loggedUserData['user']['id'];

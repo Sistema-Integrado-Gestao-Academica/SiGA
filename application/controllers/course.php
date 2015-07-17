@@ -25,6 +25,19 @@ class Course extends CI_Controller {
 		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
 	}
 
+	public function courseStudents($courseId){
+
+		$students = $this->getCourseStudents($courseId);
+		$courseData = $this->getCourseById($courseId);
+
+		$data = array(
+			'students' => $students,
+			'course' => $courseData
+		);
+
+		loadTemplateSafelyByGroup("secretario", 'secretary/course_students', $data);
+	}
+
 	public function enrollStudentToCourse($courseId){
 
 		$this->load->model('course_model');
