@@ -521,11 +521,11 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 							echo "<td>";
 
-							$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
+							$requestIsNotFinalizedBySecretary = $disciplineClass['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
 
 							if($requestIsNotFinalizedBySecretary){
 								
-								$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+								$requestIsApprovedByMastermind = $disciplineClass['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
 								// Depends of the area that are treating the request
 								switch($requestingArea){

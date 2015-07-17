@@ -533,7 +533,7 @@ class Request_model extends CI_Model {
 
 	public function getCourseRequests($courseId, $semesterId){
 
-		$this->db->select("student_request.*");
+		$this->db->select("student_request.*, request_discipline.mastermind_approval, request_discipline.secretary_approval");
 		$this->db->distinct();
 		$this->db->from("student_request");
 		$this->db->join("request_discipline", "student_request.id_request = request_discipline.id_request");
