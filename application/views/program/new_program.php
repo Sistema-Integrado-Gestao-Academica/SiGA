@@ -32,6 +32,10 @@ $program = new Program();
 
 $programArea = $program->getAllProgramAreas();
 
+if($programArea === FALSE){
+	$programArea =  array("Nenhuma área cadastrada.");
+}
+
 $openingYear = array();
 $currentYear = getCurrentYear();
 if($currentYear !== FALSE){

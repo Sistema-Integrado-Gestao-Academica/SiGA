@@ -16,21 +16,20 @@ class Program extends CI_Controller {
 	}
 
 	public function getAllProgramAreas(){
+		
 		$this->load->model('program_model');
 		
 		$programAreas = $this->program_model->getAllProgramAreas();
 		
-		$areasIds = array();
-		$areasNames = array();
-		$i = 0;
-		foreach ($programAreas as $keys => $areas){
-			$areasIds[$i] = $areas['id_program_area'];
-			$areasNames[$i] = $areas['area_name'];
-			$i++;
+		if($programAreas !== FALSE){
+			foreach ($programAreas as $areas){
+
+				$areasResult[$areas['id_program_area']] = $areas['area_name'];
+			}
+		}else{
+			$areasResult = FALSE;			
 		}
-		
-		$areasResult = array_combine($areasIds,$areasNames);
-		
+
 		return $areasResult;
 	}
 	
