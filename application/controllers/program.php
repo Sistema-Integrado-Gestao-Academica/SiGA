@@ -6,6 +6,10 @@ require_once('course.php');
 
 class Program extends CI_Controller {
 
+	public function index(){
+		
+	}
+
 	public function getAllPrograms(){
 
 		$this->load->model('program_model');
