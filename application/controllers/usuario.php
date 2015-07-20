@@ -6,6 +6,7 @@ require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class Usuario extends CI_Controller {
 	
@@ -296,7 +297,7 @@ class Usuario extends CI_Controller {
 
 		// Check if the logged user have admin permission
 		$group = new Module();
-		$isAdmin = $group->checkUserGroup('administrador');
+		$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
 
 		// Get the current user id
 		$logged_user_data = $this->session->userdata("current_user");

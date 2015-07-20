@@ -12,10 +12,24 @@ class Course extends CI_Controller {
 
 	public function index() {
 		
-		$courses = $this->listAllCourses();
+		$this->load->model('course_model');
+
+		$session = $this->session->userdata("current_user");
+		$user = $session['user'];
+		$userId = $user['id'];
+
+		$group = new Module();
+		$userIsAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
+
+		if($userIsAdmin){
+			$courses = $this->listAllCourses();
+		}else{
+			$courses = $this->getCoursesOfSecretary($userId);
+		}
 
 		$data = array(
-			'courses' => $courses
+			'courses' => $courses,
+			'userData' => $user
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
