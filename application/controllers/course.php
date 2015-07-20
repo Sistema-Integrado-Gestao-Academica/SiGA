@@ -271,18 +271,52 @@ class Course extends CI_Controller {
 		redirect('cursos');
 	}
 	
-	public function saveSecretary(){
+	public function saveAcademicSecretary(){
 		
-		$financialSecretary = $this->input->post('financial_secretary');
 		$academicSecretary = $this->input->post('academic_secretary');
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
 		
 		$this->load->model('course_model');
 		try{
-			$savedSecretaries = $this->course_model->saveCourseSecretaries($financialSecretary, $academicSecretary, $idCourse, $courseName);
-			$saveStatus = "success";
-			$saveMessage = "Secretários salvos com sucesso";
+			$wasSaved = $this->course_model->saveCourseAcademicSecretary($academicSecretary, $idCourse, $courseName);
+			
+			if($wasSaved){
+				$saveStatus = "success";
+				$saveMessage = "Secretário acadêmico salvo com sucesso.";
+			}else{
+				$saveStatus = "danger";
+				$saveMessage = "Não foi possível salvar o secretário informado. Tente novamente.";
+			}
+
+		}catch(SecretaryException $caughtException){
+			$saveStatus = "danger";
+			$saveMessage = $caughtException->getMessage();
+		}
+		
+		$this->session->set_flashdata($saveStatus, $saveMessage);
+		redirect('/course/formToEditCourse/'.$idCourse);
+	}
+
+	public function saveFinancialSecretary(){
+		
+		$financialSecretary = $this->input->post('financial_secretary');
+		$idCourse = $this->input->post('id_course');
+		$courseName = $this->input->post('course_name');
+
+		$this->load->model('course_model');
+
+		try{
+			$wasSaved = $this->course_model->saveCourseFinancialSecretary($financialSecretary, $idCourse, $courseName);
+			
+			if($wasSaved){
+				$saveStatus = "success";
+				$saveMessage = "Secretário financeiro salvo com sucesso.";
+			}else{
+				$saveStatus = "danger";
+				$saveMessage = "Não foi possível salvar o secretário informado. Tente novamente.";
+			}
+
 		}catch(SecretaryException $caughtException){
 			$saveStatus = "danger";
 			$saveMessage = $caughtException->getMessage();

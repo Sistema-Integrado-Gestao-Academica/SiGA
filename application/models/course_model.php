@@ -156,54 +156,46 @@ class Course_model extends CI_Model {
 	 * @throws SecretaryException
 	 * @return boolean
 	 */
-	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse, $courseName){
-		/**
-		 * LINES 157 -> 165  ARE DEPRECATED CODE
-		 * 
-		 * $this->load->model('module_model');
-		 * $courseName = strtolower($courseName);
-		 * $separatedName = explode(' ', $courseName);
-		 * if ($separatedName){
-		 * $groupsNames = $this->module_model->prepareGroupName($separatedName);
-		 * }else {
-		 * $groupsNames = $this->module_model->prepareGroupName($courseName,TRUE);
-		 * }
-		 * $groupsIds = $this->module_model->getGroupIdByName($groupsNames);
-		 *
-		 */
+	public function saveCourseFinancialSecretary($financialSecretaryUserId, $idCourse, $courseName){
+
 		define("FINANCIAL_SECRETARY_GROUP", 10);
-		define("ACADEMIC_SECRETARY_GROUP", 11);
 		
 		$financialSecretaryToSave = array("id_user"  => $financialSecretaryUserId,
 										  "id_group" => FINANCIAL_SECRETARY_GROUP,
 										  "id_course"=> $idCourse);
 		
-		$academicSecretaryToSave = array("id_user"  => $academicSecretaryUserId,
-										 "id_group" => ACADEMIC_SECRETARY_GROUP,
-										 "id_course"=> $idCourse);
-		
-		/**
-		 * DEPRECATED CODE
-		 *$this->db->select('course_name');
-		 *$this->db->where('id_course',$idCourse);
-		 *$courseName = $this->db->get('course')->row_array();
-		 */
 		try{
 			
 			$savedFinancial = $this->saveSecretary($financialSecretaryToSave);
+			
+		}catch (SecretaryException $caughtException){
+			throw $caughtException;
+		}
+		
+		return $savedFinancial;
+	}
+
+	public function saveCourseAcademicSecretary($academicSecretaryUserId, $idCourse, $courseName){
+
+		define("ACADEMIC_SECRETARY_GROUP", 11);
+
+		$academicSecretaryToSave = array(
+			"id_user"  => $academicSecretaryUserId,
+			"id_group" => ACADEMIC_SECRETARY_GROUP,
+			"id_course"=> $idCourse
+		);
+		
+		try{
+			
 			$savedAcademic  = $this->saveSecretary($academicSecretaryToSave);
 			
 		}catch (SecretaryException $caughtException){
 			throw $caughtException;
 		}
 		
-		$savedSecretaries = $savedAcademic && $savedFinancial;
-		if ($savedSecretaries){
-			return TRUE;
-		}else {
-			return FALSE;
-		}
+		return $savedAcademic;
 	}
+
 	
 	/**
 	 * Function to save a secretary in the database
