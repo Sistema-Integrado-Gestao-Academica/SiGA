@@ -90,7 +90,7 @@ if($currentYear !== FALSE){
 					<?= form_button($submitBtn) ?>
 				</div>
 				<div class="col-xs-6">
-					<?= anchor('cursos', 'Voltar', "class='btn bg-olive btn-block'") ?>
+					<?= anchor('program', 'Voltar', "class='btn bg-olive btn-block'") ?>
 				</div>
 			</div>
 		</div>

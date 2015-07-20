@@ -49,10 +49,3 @@ else :
 	<br>
 	<br>
 <?php endif;?>
-
-
-<?= anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'") ?>
-
-<br><br>
-
-<?php displayRegisteredPrograms($programs); ?>

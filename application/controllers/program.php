@@ -7,7 +7,14 @@ require_once('course.php');
 class Program extends CI_Controller {
 
 	public function index(){
-		
+
+		$programs = $this->getAllPrograms();
+
+		$data = array(
+			'programs' => $programs
+		);
+
+		loadTemplateSafelyByPermission("program",'program/index', $data);
 	}
 
 	public function getAllPrograms(){
@@ -254,7 +261,7 @@ class Program extends CI_Controller {
 		}
 
 		$this->session->set_flashdata($deleteStatus, $deleteMessage);
-		redirect('cursos');
+		redirect('program');
 	}
 
 	public function registerNewProgram(){
@@ -323,7 +330,7 @@ class Program extends CI_Controller {
 			}
 
 			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('cursos');
+			redirect('program');
 
 		}else{
 

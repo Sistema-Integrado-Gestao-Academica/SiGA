@@ -14,12 +14,8 @@ class Course extends CI_Controller {
 		
 		$courses = $this->listAllCourses();
 
-		$program = new Program();
-		$programs = $program->getAllPrograms();
-
 		$data = array(
-			'courses' => $courses,
-			'programs' => $programs
+			'courses' => $courses
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
