@@ -15,7 +15,7 @@ class Utils extends CI_Controller {
 		$this->load->template('secretary/index_secretary');
 	}
 	
-	public function loadCapesAvaliationAreas(){
+	public function loadAvaliationAreas(){
 		$this->load->model("program_model");
 		
 		$lines = file(base_url("area_avaliacao.txt"));
@@ -27,6 +27,5 @@ class Utils extends CI_Controller {
 		}
 		
 	}
-	
 	
 }

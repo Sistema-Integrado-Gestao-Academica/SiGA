@@ -92,6 +92,12 @@ class MasterMind extends CI_Controller {
 		loadTemplateSafelyByPermission("cursos",'mastermind/check_mastermind.php',$data);
 	}
 	
+	public function index(){
+		
+		loadTemplateSafelyByPermission("mastermind",'mastermind/index.php');
+		
+	}
+	
 	public function displayMastermindStudents(){
 		
 		$session = $this->session->userdata("current_user");
