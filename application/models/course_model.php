@@ -230,6 +230,7 @@ class Course_model extends CI_Model {
 				$saveUserGroup = TRUE;
 			}
 			
+			/*Código que adiciona o grupo 'secretario' a um usuário*/
 			if(!$alreadySavedSecretaryGroup){
 					
 				try{
@@ -242,6 +243,7 @@ class Course_model extends CI_Model {
 				// If the group is already saved, we dont need to save it again, so it's true that it's saved
 				$saveUserSecretary = TRUE;
 			}
+			/**/
 			
 			$groupsWhereSaved = $saveUserGroup && $saveUserSecretary;
 			

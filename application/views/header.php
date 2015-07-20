@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<?php  $session = $this->session->userdata("current_user");
+<?php  
+	require_once(APPPATH."/constants/GroupConstants.php");
+	
+	$session = $this->session->userdata("current_user");
 ?>
 <html>
 <head>
@@ -52,7 +55,18 @@
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
                                         	foreach($session['user_groups'] as $group){
-                                        		echo ucfirst($group['group_name']);
+                                        		switch ($group['group_name']) {
+                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria acadêmica";
+                                        				break;
+                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria financeira";
+                                        				break;
+                                        			default:
+                                        				$groupNameToDisplay = $group['group_name'];
+                                        				break;
+                                        		}
+                                        		echo ucfirst($groupNameToDisplay);
                                         		echo "<br>";
                                         	}
                                         ?>
@@ -105,11 +119,22 @@
 		                            	<?php 
 		                            		foreach($session['user_groups'] as $group){
 		                            			echo "<li>";
-		          //                   			if($group['group_name'] == "secretario"){
-												// 	continue;
-												// }else{
-		                            				echo anchor($group['profile_route'], ucfirst($group['group_name']));
-		                            			// }
+		                            			switch ($group['group_name']) {
+                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria acadêmica";
+                                        				break;
+                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria financeira";
+                                        				break;
+                                        			default:
+                                        				$groupNameToDisplay = $group['group_name'];
+                                        				break;
+                                        		}
+		                            			if($group['group_name'] == "secretario"){
+													continue;
+												}else{
+		                            				echo anchor($group['profile_route'], ucfirst($groupNameToDisplay));
+		                            			}
 		                            			echo "</li>";
 		                            		}
 		                            	?>
@@ -138,6 +163,17 @@
 							}else{
 								echo "<li class='treeview'>";
 								
+								switch ($groupName) {
+                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                        				$groupName = "Secretaria acadêmica";
+                        				break;
+                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                        				$groupName = "Secretaria financeira";
+                        				break;
+                        			default:
+                        				$groupName = $group['group_name'];
+                        				break;
+                        		}
 								echo anchor("", ucfirst($groupName),"class='fa fa-folder-o'");
 								echo "<ul class='treeview-menu'>";
 								
