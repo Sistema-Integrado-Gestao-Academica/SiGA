@@ -72,7 +72,7 @@
 				    					echo anchor("coordinator/createProgramEvaluation/{$program['id_program']}", "Criar Avaliação", "class='btn btn-primary btn-flat'");
 				    				echo "</div>";
 				    			}
-				    		
+				    			echo anchor("coordinator/updateProgramArea/{$program['id_program']}", "Atualizar área do programa", "class='btn btn-primary btn-flat'");
 				    		echo "</td>";
 			    		echo "</tr>";	
 			    	}

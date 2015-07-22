@@ -171,6 +171,15 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 	
+	public function getUserStatus($userId){
+
+		$this->load->model('usuarios_model');
+		
+		$userStatus = $this->usuarios_model->getUserStatus($userId);
+
+		return $userStatus;
+	}
+
 	public function studentInformationsForm(){
 		$loggedUserData = $this->session->userdata("current_user");
 		$userId = $loggedUserData['user']['id'];
@@ -235,6 +244,17 @@ class Usuario extends CI_Controller {
 	public function secretary_index(){
 
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
+	}
+
+	public function secretary_coursesStudents(){
+		
+		$courses = $this->loadCourses();
+
+		$courseData = array(
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByGroup("secretario",'usuario/secretary_courses_students', $courseData);
 	}
 
 	public function secretary_enrollStudent(){

@@ -26,13 +26,30 @@ class Request extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect("request/courseRequests/{$courseId}");		
 	}
+	
+	public function refuseAllRequest($requestId, $courseId){
 
-	public function approveAllStudentRequestsByMastermind(){
-		define("APPROVE_MESSAGE", 'aproved');
 		$this->load->model("request_model");
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-		
+
+		$wasRefused = $this->request_model->refuseAllRequest($requestId);
+
+		if($wasRefused){
+			$status = "success";
+			$message = "Toda a solicitação foi recusada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Toda a solicitação não pôde ser recusada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");	
+	}
+
+
+	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
+
+		$this->load->model("request_model");
+
 		$message = $this->input->post('mastermind_message');
 		$requestId = $this->input->post('idRequest');
 		$studentId = $this->input->post('idStudent');
@@ -54,15 +71,15 @@ class Request extends CI_Controller {
 			$message = "Toda a solicitação não pôde ser aprovada.";
 		}
 		
-		$this->redirectToCurrentUserRequests($status, $message);
-		
+		// $this->redirectToCurrentUserRequests($status, $message);
+		$this->session->set_flashdata($status, $message);
+		redirect('mastermind');
 	}
 	
-	public function refuseAllStudentRequestsByMastermind(){
+
+	public function refuseAllStudentRequestsByMastermind($requestId, $studentId){
+
 		$this->load->model("request_model");
-		
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
 		
 		$message = $this->input->post('mastermind_message');
 		$requestId = $this->input->post('idRequest');
@@ -77,7 +94,7 @@ class Request extends CI_Controller {
 			$savedMessage = TRUE;
 		}
 		
-		if($wasApproved && $savedMessage){
+		if($wasApproved && $savedMessage){		
 			$status = "success";
 			$message = "Toda a solicitação foi reprovada com sucesso.";
 		}else{
@@ -85,33 +102,44 @@ class Request extends CI_Controller {
 			$message = "Toda a solicitação não pôde ser reprovada.";
 		}
 		
-		$this->redirectToCurrentUserRequests($status, $message);
+		// $this->redirectToCurrentUserRequests($status, $message);
+		$this->session->set_flashdata($status, $message);
+		redirect('mastermind');
+	}
+
+	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
+
+		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 		
+		redirect("request/courseRequests/{$courseId}");
 	}
 	
-	public function refuseAllRequest($requestId, $courseId){
+	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
 
-		$this->load->model("request_model");
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
-		$wasRefused = $this->request_model->refuseAllRequest($requestId);
-
-		if($wasRefused){
-			$status = "success";
-			$message = "Toda a solicitação foi recusada com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Toda a solicitação não pôde ser recusada.";
-		}
-
-		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");		
+		redirect("request/courseRequests/{$courseId}");
 	}
 
-	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
+
+		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+		
+		redirect("mastermind");
+	}
+
+	public function refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
+
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+
+		redirect("mastermind");
+	}
+
+	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 		
 		$this->load->model("request_model");
 
-		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline);
+		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasApproved){
 			$status = "success";
@@ -121,14 +149,13 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		$this->redirectToCurrentUserRequests($status, $message, $courseId);
+		$this->session->set_flashdata($status, $message);			
 	}
 
-	public function approveRequestedDisciplineByMastermind(){
+/*	public function approveRequestedDisciplineByMastermind(){
 	
 		$this->load->model("request_model");
-	
-		
+			
 		$message = $this->input->post('mastermind_message');
 		$requestId = $this->input->post('idRequest');
 		$studentId = $this->input->post('idStudent');
@@ -153,9 +180,9 @@ class Request extends CI_Controller {
 		}
 	
 		$this->redirectToCurrentUserRequests($status, $message, $courseId);
-	}
+	}*/
 	
-	public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
+/*	public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
 		$session = $this->session->userdata("current_user");
 		$user_groups = array();
 		
@@ -178,13 +205,13 @@ class Request extends CI_Controller {
 				break;
 			default:  break;
 		}
-	}
+	}*/
 	
-	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId){
+	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea){
 
 		$this->load->model("request_model");
 
-		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline);
+		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasRefused){
 			$status = "success";
@@ -194,10 +221,39 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser recusada.";
 		}
 
-		$this->redirectToCurrentUserRequests($status, $message, $courseId);
+		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
+		$this->session->set_flashdata($status, $message);
+		// redirect('mastermind');
 	}
 
-	public function refuseRequestedDisciplineByMastermind(){
+	public function finalizeRequestToMastermind($requestId){
+
+		$this->load->model('request_model');
+
+		$wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
+
+		return $wasFinalized;
+	}
+
+	public function finalizeRequestSecretary($requestId, $courseId){
+
+		$this->load->model('request_model');
+
+		$wasFinalized = $this->request_model->finalizeRequestSecretary($requestId);
+
+		if($wasFinalized){
+			$status = "success";
+			$message = "Solicitação finalizada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "A solicitação não pôde ser finalizada.";
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("request/courseRequests/{$courseId}");	
+	}
+
+	/*public function refuseRequestedDisciplineByMastermind(){
 	
 		$this->load->model("request_model");
 	
@@ -226,7 +282,32 @@ class Request extends CI_Controller {
 		}
 	
 		$this->redirectToCurrentUserRequests($status, $message, $courseId);
-	}
+	}*/
+	
+	// public function redirectToCurrentUserRequests($status, $message, $courseId=NULL){
+	// 	$session = $this->session->userdata("current_user");
+	// 	$user_groups = array();
+		
+	// 	foreach ($session['user_groups'] as $key => $group){
+	// 		if($group['group_name'] == 'docente' || $group['group_name'] == 'secretario'){
+	// 			$user_groups = array_merge_recursive($user_groups, $group);
+	// 		}
+	// 	}
+
+	// 	switch ($user_groups['group_name']){
+			
+	// 		case 'secretario':
+	// 			$this->session->set_flashdata($status, $message);
+	// 			$this->courseRequests($courseId);
+	// 			break;
+	// 		case 'docente':
+	// 			$mastermind = new MasterMind();
+	// 			$this->session->set_flashdata($status, $message);
+	// 			$mastermind->displayMastermindStudents();
+	// 			break;
+	// 		default:  break;
+	// 	}
+	// }
 	
 	public function courseRequests($courseId){
 
@@ -401,6 +482,13 @@ class Request extends CI_Controller {
 		$mastermindMessage = $this->request_model->getMastermindMessage($userId, $courseId, $semesterId);
 		
 		return $mastermindMessage;
+	}
+
+	public function getRequestById($requestId){
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId));
+
+		return $foundRequest;
 	}
 
 	private function getRequest($requestData){

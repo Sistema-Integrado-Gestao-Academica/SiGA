@@ -1,15 +1,18 @@
 <h2 class="principal">Plano orçamentário</h2>
 
-<table class="table table-striped table-bordered">
+<div class="box-body table-responsive no-padding">
+<table class="table table-bordered table-hover">
+<tbody>
+		
 	<tr>
-		<td><h3 class="text-center">P.O. cadastrados</h3></td>
+		<th class="text-center">P.O. cadastrados</th>
 	<?php if($budgetplans): ?>
-		<td><h3 class="text-center">Curso</h3></td>
-		<td><h3 class="text-center">Montante</h3></td>
-		<td><h3 class="text-center">Gastos</h3></td>
-		<td><h3 class="text-center">Saldo</h3></td>
-		<td><h3 class="text-center">Status</h3></td>
-		<td><h3 class="text-center">Ações</h3></td>
+		<th class="text-center">Curso</th>
+		<th class="text-center">Montante</th>
+		<th class="text-center">Gastos</th>
+		<th class="text-center">Saldo</th>
+		<th class="text-center">Status</th>
+		<th class="text-center">Ações</th>
 	</tr>
 
 	<?php $i=0; ?>
@@ -23,7 +26,8 @@
 			<td class="text-center"><?=$budgetplan['status']?></td>
 
 			<td>
-				<?= anchor("planoorcamentario/{$budgetplan['id']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary btn-editar btn-sm'") ?>
+				<?= anchor("budgetplan/budgetplanExpenses/{$budgetplan['id']}", "<i class='fa fa-dollar'></i>", "class='btn btn-warning btn-editar btn-sm' style='margin-right:2%;'") ?>
+				<?= anchor("planoorcamentario/{$budgetplan['id']}", "<i class='fa fa-edit'></i>", "class='btn btn-primary btn-editar btn-sm' style='margin-right:10%;'") ?>
 				<?= form_open('/budgetplan/delete') ?>
 					<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
 					<button type="submit" class="btn btn-danger btn-remover btn-sm" style="margin: -20px auto auto 100px;">
@@ -39,7 +43,9 @@
 			<td><h3><label class="label label-default"> Não existem planos orçamentários cadastrados</label></h3></td>
 		</tr>
 	<?php endif ?>
+</tbody>
 </table>
+</div>
 
 <div class="form-box-logged" id="login-box"> 
 	<div class="header">Cadastrar um novo P.O.</div>
@@ -67,7 +73,7 @@
 			<?= form_dropdown('status', $status) ?>
 		</div>
 
-		<div class="footer">
+		<div class="footer body bg-gray">
 			<?= form_button(array(
 				"class" => "btn bg-olive btn-block",
 				"type" => "sumbit",

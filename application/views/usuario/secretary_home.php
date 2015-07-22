@@ -6,7 +6,8 @@
 <br>
 <br>
 <br>
-<?php if ($userIsAcademicSecretary && $userIsFinancialSecretary){?>
+<?php if (TRUE){?>
+<?php// if ($userIsAcademicSecretary && $userIsFinancialSecretary){?>
 <div class="col-lg-12 col-xs-6">
 	<div class="small-box bg-blue">
 		<div class="inner">
@@ -18,6 +19,7 @@
 				    <p>
 					    <div class="list-group" align='center'>
 							<?=anchor('usuario/secretary_enrollStudent', "Matricular Alunos", "class='list-group-item' style='width:70%;'");?>
+							<?=anchor('usuario/secretary_coursesStudents', "Lista de Alunos", "class='list-group-item' style='width:70%;'");?>
 							<?=anchor('usuario/secretary_requestReport', "Relatório de Solicitações", "class='list-group-item' style='width:70%;'");?>
 							<?=anchor('usuario/secretary_offerList', "Listas de Oferta", "class='list-group-item' style='width:70%;'");?>
 							<?=anchor('usuario/secretary_courseSyllabus', "Currículos de cursos", "class='list-group-item' style='width:70%;'");?>
@@ -30,7 +32,7 @@
 					<h4 align='center'> Menu Secretaria Financeira </h4>
 				    <p>
 					    <div class="list-group" align='center'>
-							<?=anchor('planoorcamentario', "Cadastrar Plano Orçmentário", "class='list-group-item' style='width:70%;'");?>
+							<?=anchor('planoorcamentario', "Cadastrar Plano Orçamentário", "class='list-group-item' style='width:70%;'");?>
 						</div>
 		        	</p>
 			    </div>

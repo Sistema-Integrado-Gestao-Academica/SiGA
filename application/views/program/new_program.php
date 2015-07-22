@@ -1,6 +1,7 @@
 
 <?php 
-	
+require_once APPPATH.'controllers/program.php';
+
 $programName = array(
 	"name" => "program_name",
 	"id" => "program_name",
@@ -27,11 +28,19 @@ $submitBtn = array(
 	"type" => "submit"
 );
 
+$program = new Program();
+
+$programArea = $program->getAllProgramAreas();
+
+if($programArea === FALSE){
+	$programArea =  array("Nenhuma área cadastrada.");
+}
+
 $openingYear = array();
 $currentYear = getCurrentYear();
 if($currentYear !== FALSE){
 
-	for($i = $currentYear; $i < $currentYear + 100; $i++ ){
+	for($i = 1990; $i <= $currentYear + 2; $i++ ){
 		$openingYear[$i] = $i;
 	}
 }else{
@@ -72,8 +81,14 @@ if($currentYear !== FALSE){
 
 			<div class="form-group">	
 				<?= form_label("Ano de abertura", "opening_year") ?>
-				<?= form_dropdown("opening_year", $openingYear) ?>
+				<?= form_dropdown("opening_year", $openingYear, $currentYear) ?>
 				<?= form_error("opening_year") ?>
+			</div>
+			
+			<div class="form-group">	
+				<?= form_label("Área do programa", "program_area") ?>
+				<?= form_dropdown("program_area", $programArea) ?>
+				<?= form_error("program_area") ?>
 			</div>
 
 		</div>
@@ -84,7 +99,7 @@ if($currentYear !== FALSE){
 					<?= form_button($submitBtn) ?>
 				</div>
 				<div class="col-xs-6">
-					<?= anchor('cursos', 'Voltar', "class='btn bg-olive btn-block'") ?>
+					<?= anchor('program', 'Voltar', "class='btn bg-olive btn-block'") ?>
 				</div>
 			</div>
 		</div>

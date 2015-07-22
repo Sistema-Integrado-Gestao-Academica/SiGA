@@ -1,7 +1,5 @@
-<h2 class="principal">Plano Orçamentário</h2>
-
+<br>
 <div class="row">
-	<div class="col-xs-6">
 		<div class="form-box-logged" id="login-box">
 			<div class="header">Alterar um P.O.</div>
 
@@ -59,7 +57,7 @@
 						<?= form_dropdown('status', $status, $budgetplan['status']-1, 'id="status"') ?>
 					</div>
 
-					<div class="footer">
+					<div class="footer body bg-gray">
 						<div class="row">
 							<div class="col-xs-6">
 								<?= form_button(array(
@@ -74,7 +72,7 @@
 							</div>
 						</div>
 				<?php else: ?>
-						<div class="footer">
+						<div class="footer body bg-gray">
 							<?= anchor('planoorcamentario', 'Voltar', "class='btn bg-olive btn-block'") ?>
 						</div>
 				<?php endif ?>
@@ -83,11 +81,6 @@
 			</div>
 		</div>
 		<br><br>
-	</div>
-
-	<div class="col-xs-6">
-		<?php include 'expenses_table.php'; ?>
-	</div>
 </div>
 
 <script>
