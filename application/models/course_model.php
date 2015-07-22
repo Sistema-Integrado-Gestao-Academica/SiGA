@@ -2,6 +2,8 @@
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
 require_once(APPPATH."/exception/SecretaryException.php");
+require_once(APPPATH."/constants/GroupConstants.php");
+
 class Course_model extends CI_Model {
 
 	public function enrollStudentIntoCourse($enrollment){
@@ -157,12 +159,12 @@ class Course_model extends CI_Model {
 	 * @return boolean
 	 */
 	public function saveCourseFinancialSecretary($financialSecretaryUserId, $idCourse, $courseName){
-
-		define("FINANCIAL_SECRETARY_GROUP", 10);
 		
-		$financialSecretaryToSave = array("id_user"  => $financialSecretaryUserId,
-										  "id_group" => FINANCIAL_SECRETARY_GROUP,
-										  "id_course"=> $idCourse);
+		$financialSecretaryToSave = array(
+			"id_user"  => $financialSecretaryUserId,
+			"id_group" => GroupConstants::FINANCIAL_SECRETARY_GROUP_ID,
+			"id_course"=> $idCourse
+		);
 		
 		try{
 			
@@ -177,11 +179,9 @@ class Course_model extends CI_Model {
 
 	public function saveCourseAcademicSecretary($academicSecretaryUserId, $idCourse, $courseName){
 
-		define("ACADEMIC_SECRETARY_GROUP", 11);
-
 		$academicSecretaryToSave = array(
 			"id_user"  => $academicSecretaryUserId,
-			"id_group" => ACADEMIC_SECRETARY_GROUP,
+			"id_group" => GroupConstants::ACADEMIC_SECRETARY_GROUP_ID,
 			"id_course"=> $idCourse
 		);
 		
@@ -203,11 +203,11 @@ class Course_model extends CI_Model {
 	 * @return boolean
 	 */
 	private function saveSecretary($secretary){
-		define("SECRETARY", 6);
 		
 		$alreadySavedSecretary = $this->checkExistingSecretary($secretary);
 		
 		if(!$alreadySavedSecretary){
+			
 			try{
 				$save = $this->db->insert("secretary_course", $secretary);
 			}catch (SecretaryException $caughtException){
@@ -215,7 +215,6 @@ class Course_model extends CI_Model {
 			}
 		
 			$alreadySavedUserGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], $secretary['id_group']);
-			$alreadySavedSecretaryGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], SECRETARY);
 			
 			if(!$alreadySavedUserGroup){
 					
@@ -229,25 +228,8 @@ class Course_model extends CI_Model {
 				// If the group is already saved, we dont need to save it again, so it's true that it's saved
 				$saveUserGroup = TRUE;
 			}
-			
-			/*Código que adiciona o grupo 'secretario' a um usuário*/
-			if(!$alreadySavedSecretaryGroup){
 					
-				try{
-					$saveUserSecretary = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>SECRETARY));
-				}catch (SecretaryException $caughtException){
-					throw new SecretaryException('Não foi possível atribuir este grupo ao usuário. Verifique a existência do mesmo.');
-				}
-					
-			}else{
-				// If the group is already saved, we dont need to save it again, so it's true that it's saved
-				$saveUserSecretary = TRUE;
-			}
-			/**/
-			
-			$groupsWhereSaved = $saveUserGroup && $saveUserSecretary;
-			
-			if($save && $groupsWhereSaved){
+			if($save && $saveUserGroup){
 				$insertionStatus = TRUE;
 			}else{
 				$insertionStatus = FALSE;
@@ -259,7 +241,6 @@ class Course_model extends CI_Model {
 		}
 		
 		return $insertionStatus;
-		
 	}
 	
 	/**
