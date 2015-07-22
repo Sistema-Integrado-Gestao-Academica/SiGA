@@ -78,6 +78,18 @@ $submitButtonAcademic = array(
 	"type" => "submit"
 );
 
+
+if($formUserSecretary === FALSE){
+	
+	$thereIsNoSecretaries = TRUE;
+	$formUserSecretary = array("Nenhum secretário cadastrado.");
+
+	$submitButtonAcademic['disabled'] = TRUE;
+	$submitButtonFinancial['disabled'] = TRUE;
+}else{
+	$thereIsNoSecretaries = FALSE;
+}
+
 if($registeredPrograms !== FALSE){
 	// Nothing to do because there are programs to associate to a course
 	$thereAreNoPrograms = FALSE;
@@ -87,6 +99,7 @@ if($registeredPrograms !== FALSE){
 	$submitBtn['disabled'] = TRUE;
 	$registeredPrograms = array("Nenhum programa cadastrado.");
 }
+
 
 ?>
 
@@ -247,7 +260,7 @@ if($registeredPrograms !== FALSE){
 						echo form_open("course/saveFinancialSecretary",'',$hidden);
 						
 						echo form_label("Secretaria Financeira", "financial_secretary") . "<br>";
-						echo form_dropdown("financial_secretary", $form_user_secretary, '', "id='financial_secretary'");
+						echo form_dropdown("financial_secretary", $formUserSecretary, '', "id='financial_secretary'");
 						echo form_error("financial_secretary");
 						echo "<br>";
 						echo "<br>";
@@ -261,7 +274,7 @@ if($registeredPrograms !== FALSE){
 						echo form_open("course/saveAcademicSecretary",'',$hidden);
 						 
 						echo form_label("Secretaria Acadêmica", "academic_secretary") . "<br>";
-						echo form_dropdown("academic_secretary", $form_user_secretary, '', "id='academic_secretary'");
+						echo form_dropdown("academic_secretary", $formUserSecretary, '', "id='academic_secretary'");
 						echo form_error("academic_secretary");
 						echo "<br>";
 						echo "<br>";
@@ -270,7 +283,15 @@ if($registeredPrograms !== FALSE){
 						echo form_close();
 						?>
 					</div>
-							
+					
+					<div class="footer body bg-gray">
+						<?php if($thereIsNoSecretaries){?>
+						<div class="callout callout-danger">
+							<h4>Não há secretários cadastrados no sistema.</h4>
+						</div>
+						<?php } ?>
+					</div>
+				</div>
 				</div>
 			</div>
 		</div>

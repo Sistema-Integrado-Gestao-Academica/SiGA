@@ -184,11 +184,17 @@ class Course extends CI_Controller {
 		$this->load->model('course_model');
 		$course = $this->course_model->getCourseById($courseId);
 
-		$group = new Module();
-		$formGroups = $group->getExistingModules();
-
 		$user = new Usuario();
-		$formUserSecretary = $user->getUsersToBeSecretaries();
+		$userToBeSecretaries = $user->getUsersToBeSecretaries();
+
+		if($userToBeSecretaries !== FALSE){
+
+			foreach($userToBeSecretaries as $user){
+				$formUserSecretary[$user['id']] = $user['name'];
+			}
+		}else{
+			$formUserSecretary = FALSE;
+		}
 
 		$course_controller = new Course();
 		$secretaryRegistered = $course_controller->getCourseSecrecretary($course['id_course']);
@@ -214,8 +220,7 @@ class Course extends CI_Controller {
 
 		$data = array(
 			'course' => $course,
-			'form_groups' => $formGroups,
-			'form_user_secretary' => $formUserSecretary,
+			'formUserSecretary' => $formUserSecretary,
 			'secretary_registered' => $secretaryRegistered,
 			'form_course_types' => $formCourseType,
 			'original_course_type' => $originalCourseTypeId,

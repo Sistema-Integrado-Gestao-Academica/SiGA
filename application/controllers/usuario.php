@@ -142,11 +142,16 @@ class Usuario extends CI_Controller {
 	}
 	
 	public function getUsersToBeSecretaries(){
+		
 		$this->load->model('usuarios_model');
-		
-		$allUsers = $this->usuarios_model->buscaTodos();
-		
-		return $allUsers;
+
+		$group = new Module();
+		$groupData = $group->getGroupByName(GroupConstants::SECRETARY_GROUP);
+		$idGroup = $groupData['id_group'];
+
+		$users = $this->usuarios_model->getUsersOfGroup($idGroup);
+
+		return $users;
 	}
 
 	public function student_index(){
