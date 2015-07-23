@@ -47,6 +47,8 @@ $submit_button_array_to_form = array(
 		"content" => "Cadastrar",
 		"type" => "submit"
 );
+
+var_dump($courses);
 ?>
 
 <div class="form-box" id="login-box"> 
@@ -55,6 +57,13 @@ $submit_button_array_to_form = array(
 	echo form_open("discipline/newDiscipline");
 	?>
 	<div class="body bg-gray">
+		
+		<div class="form-group">	
+				<?= form_label("Curso pertencente", "course_prolongs") ?>
+				<?= form_dropdown("course_prolongs", $courses) ?>
+				<?= form_error("course_prolongs") ?>
+		</div>
+		
 		<div class="form-group">
 				<?php 
 				// Name field
@@ -62,7 +71,7 @@ $submit_button_array_to_form = array(
 				echo form_input($discipline_name_to_form);
 				echo form_error("discipline_name");
 				?>
-			</div>	
+		</div>	
 		
 		<div class="form-group">
 			<?php 
@@ -90,6 +99,7 @@ $submit_button_array_to_form = array(
 			echo form_error("credits");
 			?>
 		</div>	
+		
 				
 	</div>
 	<div class="footer">
