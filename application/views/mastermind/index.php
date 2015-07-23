@@ -10,7 +10,7 @@
 				<div class="col-lg-6">
 				    <p>
 					    <div class="list-group" align='center'>
-							<?php echo anchor('mastermind/titling_area', "Atualize sua titulacao", "class='list-group-item' style='width:70%;'");?>
+							<?php echo anchor('mastermind/titlingArea', "Atualize sua titulação", "class='list-group-item' style='width:70%;'");?>
 						</div>
 		        	</p>
 			    </div>
