@@ -122,9 +122,36 @@ class MasterMind extends CI_Controller {
 		
 	}
 	
-	private function getMastermindTitlingArea(){
-		$session = $this->session->userdata("current_user");
-		$userId = $session['user']['id'];
+	public function titlingAreaUpdateBySecretary($mastermindId){
+		$this->load->model("program_model");
+		
+		$areas = $this->program_model->getAllProgramAreas();
+		if($areas !== FALSE){
+			foreach ($areas as $area){
+		
+				$areasResult[$area['id_program_area']] = $area['area_name'];
+			}
+		}else{
+			$areasResult = FALSE;
+		}
+		$areasResult = array_merge(array(0=>"Escolha uma área"),$areasResult);
+		
+		$mastermindTitlingArea = $this->getMastermindTitlingArea($mastermindId);
+		
+		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
+		
+		loadTemplateSafelyByGroup("courseSecretaryAcademic", "mastermind/titling.php", $data);
+		
+	}
+	
+	private function getMastermindTitlingArea($mastermindId=NULL){
+		if($mastermindId){
+			$userId = $mastermindId;
+		}else{
+			$session = $this->session->userdata("current_user");
+			$userId = $session['user']['id'];
+		}
+		
 		$this->load->model("mastermind_model");
 		
 		$currentArea = $this->mastermind_model->getCurrentArea($userId);
@@ -152,7 +179,7 @@ class MasterMind extends CI_Controller {
 		}
 		
 		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect('mastermind_home');
+		redirect('/');
 		
 	}
 	
