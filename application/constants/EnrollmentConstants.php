@@ -29,5 +29,7 @@ class EnrollmentConstants extends Constants{
 
 	const REQUESTING_AREA_SECRETARY = "secretary_requesting";
 	const REQUESTING_AREA_MASTERMIND = "mastermind_requesting";
+	
+	const ADMINID = 1;
 
 }
