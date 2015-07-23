@@ -166,8 +166,8 @@ class Program_model extends CI_Model {
 	}
 
 	private function dissociateCoursesOfProgram($programId){
-
-		$this->db->delete('program', array('id_program' => $programId));
+		$this->db->where('id_program',$programId);
+		$this->db->update('course', array('id_program' => NULL));
 	}
 
 	public function checkIfProgramExists($programId){
