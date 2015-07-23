@@ -39,6 +39,15 @@ class Discipline extends CI_Controller {
 		
 		return $registeredDisciplines;
 	}
+	
+	public function getDisciplinesBySecretary($userId){
+		
+		$this->load->model('discipline_model');
+		
+		$disciplines = $this->discipline_model->getDisciplinesBySecretary($userId);
+		
+		return $disciplines;
+	}
 
 	public function getCourseSyllabusDisciplines($courseId){
 
