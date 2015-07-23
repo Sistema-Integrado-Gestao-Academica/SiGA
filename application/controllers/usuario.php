@@ -498,7 +498,7 @@ class Usuario extends CI_Controller {
 		$usuarioLogado = session();
 
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "alpha");
+		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
