@@ -200,14 +200,15 @@ $courseController = new Course();
 
 function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 	
-	echo anchor("enrollMastermind/{$courseId}","<i class='fa fa-plus-square'>Cadastrar Orientador</i>", "class='btn btn-primary'");
+	echo anchor("enrollMastermind/{$courseId}","<i class='fa fa-plus-circle'></i> Cadastrar Orientador", "class='btn-lg'");
 	echo "<br>";
 	echo "<br>";
 	
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
-				if ($relationsToTable){
+			
+				if ($relationsToTable !== FALSE){
 					echo "<tr>";
 					echo "<th class=\"text-center\">Orientador</th>";
 					echo "<th class=\"text-center\">Estudante</th>";
@@ -229,11 +230,11 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 								echo "</td>";
 							echo "</tr>";
 						}
-				}else {
-						echo "<tr>";
-							echo "<td><h3><label class='label label-default'> Não existem orientadores designados no momento</label></h3></td>";
-						echo "</tr>";
-					}
+				}else{
+					echo "<div class='callout callout-info'>";
+					echo "<h4>Não existem orientadores designados no momento.</h4>";
+					echo "</div>";
+				}
 			echo "</tbody>";
 		echo "</table>";
 	echo "</div>";

@@ -29,11 +29,14 @@ class Mastermind_model extends CI_Model {
 	}
 	
 	public function getMastermindStudentRelations(){
-		$this->db->select('id_mastermind,id_student');
-		$masermindsAndStudants = $this->db->get('mastermind_student')->result_array();
-		$masermindsAndStudants = checkArray($masermindsAndStudants);
-		return $masermindsAndStudants;
 		
+		$this->db->select('id_mastermind,id_student');
+		
+		$mastermindStudents = $this->db->get('mastermind_student')->result_array();
+		
+		$mastermindStudents = checkArray($mastermindStudents);
+		
+		return $mastermindStudents;
 	}
 	
 	public function getStutentsByIdMastermind($idMastermind){

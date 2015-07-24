@@ -9,6 +9,7 @@ class GroupConstants extends Constants{
 	const ACADEMIC_SECRETARY_GROUP = "courseSecretaryAcademic";
 	const FINANCIAL_SECRETARY_GROUP = "courseSecretaryFinancial";
 
+	const TEACHER_GROUP_ID = 5;
 	const FINANCIAL_SECRETARY_GROUP_ID = 10;
 	const ACADEMIC_SECRETARY_GROUP_ID = 11;
 }

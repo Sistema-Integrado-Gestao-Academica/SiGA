@@ -1,7 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('course.php');
 require_once('semester.php');
 require_once('request.php');
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class MasterMind extends CI_Controller {
 	
@@ -56,40 +58,59 @@ class MasterMind extends CI_Controller {
 	}
 	
 	public function enrollMastermindToStudent($courseId){
-		define("STUDENT", 7);
-		define("TEACHERS", 5);
+		
 		$this->load->model('usuarios_model');
-	
-		$students = $this->usuarios_model->getUsersOfGroup(STUDENT);
-		$masterminds = $this->usuarios_model->getUsersOfGroup(TEACHERS);
-	
-		$courseStudents = $this->getCourseStudents($students, $courseId);
-		$courseStudentsToForm = $this->changeStudentsArrayToFormMode($courseStudents);
-		$mastermindsToForm = $this->changeMasterMindsArrayToFormMode($masterminds);
+
+		$course = new Course();
+		$courseStudents = $course->getCourseStudents($courseId);
+
+		if($courseStudents !== FALSE){
+
+			foreach($courseStudents as $student){
+				$courseStudentsToForm[$student['id']] = ucfirst($student['name']);
+			}
+		}else{
+			$courseStudentsToForm = FALSE;
+		}
+
+		$masterminds = $this->usuarios_model->getUsersOfGroup(GroupConstants::TEACHER_GROUP_ID);
+		
+		if($masterminds !== FALSE){
+			
+			foreach($masterminds as $mastermind){
+				$mastermindsToForm[$mastermind['id']] = $mastermind['name'];
+			}
+		}else{
+			$mastermindsToForm = FALSE;
+		}
 	
 		$courseData = array(
-				'students' => $courseStudentsToForm,
-				'masterminds' => $mastermindsToForm,
-				'course_id' => $courseId
+			'students' => $courseStudentsToForm,
+			'masterminds' => $mastermindsToForm,
+			'courseId' => $courseId
 		);
 	
 		loadTemplateSafelyByPermission("cursos",'mastermind/enroll_mastermind_to_student.php', $courseData);
 	}
-	
-	
+		
 	public function displayMastermindPage($courseId){
+		
 		$this->load->model('mastermind_model');
+		
 		$existingRelations = $this->mastermind_model->getMastermindStudentRelations();
-		if($existingRelations){
+		
+		if($existingRelations !== FALSE){
 			$relationsToTable = $this->getMasterminsAndStudentNames($existingRelations);
 		}else{
 			$relationsToTable = FALSE;
 		}
+
 		$data = array(
 				'relationsToTable' => $relationsToTable,
 				'courseId' => $courseId
 		);
-		loadTemplateSafelyByPermission("cursos",'mastermind/check_mastermind.php',$data);
+
+		loadTemplateSafelyByPermission("cursos", 'mastermind/check_mastermind.php', $data);
 	}
 	
 	public function displayMastermindStudents(){
@@ -192,32 +213,6 @@ class MasterMind extends CI_Controller {
 		}
 		
 		return $courseStudent;
-	}
-	
-	private function changeStudentsArrayToFormMode($students){
-		$studentsTorecursiveArray = array();
-		$studentsTorecursiveArray = array_merge_recursive($studentsTorecursiveArray,  $students);
-		
-		$limit = sizeof($studentsTorecursiveArray);
-		
-		for ($i=0 ; $i < $limit; $i++){
-			$studentsToForm[$studentsTorecursiveArray[$i]['id']] = ucfirst($studentsTorecursiveArray[$i]['name']);
-		}
-		
-		return $studentsToForm;
-	}
-	
-	private function changeMasterMindsArrayToFormMode($masterminds){
-		$mastermindsToRecursiveArray = array();
-		$mastermindsToRecursiveArray = array_merge_recursive($mastermindsToRecursiveArray,  $masterminds);
-	
-		$limit = sizeof($mastermindsToRecursiveArray);
-	
-		for ($i=0 ; $i < $limit; $i++){
-			$mastermindsToForm[$mastermindsToRecursiveArray[$i]['id']] = ucfirst($mastermindsToRecursiveArray[$i]['name']);
-		}
-	
-		return $mastermindsToForm;
 	}
 	
 }

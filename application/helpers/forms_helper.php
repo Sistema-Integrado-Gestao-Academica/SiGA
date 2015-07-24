@@ -89,12 +89,29 @@ function displayEnrollStudentForm(){
 }
 
 function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId){
-	$submit_button_array_to_form = array(
+	
+	$submitBtn = array(
 		"class" => "btn bg-olive btn-block",
 		"content" => "Relacionar",
 		"type" => "submit"
 	);
 	
+	if($students === FALSE){
+		$thereIsNoStudents = TRUE;
+		$students = array("Nenhum aluno neste curso.");
+		$submitBtn['disabled'] = TRUE;
+	}else{
+		$thereIsNoStudents = FALSE;
+	}
+
+	if($masterminds === FALSE){
+		$thereIsNoMasterminds = TRUE;
+		$masterminds = array("Nenhum orientador cadastrado.");
+		$submitBtn['disabled'] = TRUE;
+	}else{
+		$thereIsNoMasterminds = FALSE;
+	}
+
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Relacionar Orientador a Aluno</div>";
 		
@@ -115,9 +132,21 @@ function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId
 				echo "<br>";
 			echo "</div>";
 		echo "</div>";
-		echo "<div class='footer'>";
-			echo form_button($submit_button_array_to_form);
+		echo "<div class='footer body bg-gray'>";
+			echo form_button($submitBtn);
 		echo "</div>";
+		
+		if($thereIsNoStudents){
+			echo "<div class='callout callout-danger'>";
+				echo "<h4>Não é possível relacionar orientadores sem alunos.</h4>";
+			echo "</div>";
+		}
+		if($thereIsNoMasterminds){
+			echo "<div class='callout callout-danger'>";
+				echo "<h4>Não é possível relacionar orientadores sem orientadores.</h4>";
+			echo "</div>";	
+		}
+
 		echo form_close();
 	echo "</div>";
 	
