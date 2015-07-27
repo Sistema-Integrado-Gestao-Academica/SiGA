@@ -4,7 +4,7 @@ class Migration_Altera_tabela_disciplinas extends CI_Migration {
 
 	public function up() {
 
-		$addConstraint = "ALTER TABLE discipline ADD id_course_discipline INT NOT NULL AFTER workload, ADD INDEX (id_course_discipline) ";
+		$addConstraint = "ALTER TABLE discipline ADD id_course_discipline INT AFTER workload, ADD INDEX (id_course_discipline) ";
 		$this->db->query($addConstraint);
 		
 		$addConstraint = "ALTER TABLE discipline ADD FOREIGN KEY (id_course_discipline) REFERENCES course(id_course) ON DELETE CASCADE ON UPDATE RESTRICT;";

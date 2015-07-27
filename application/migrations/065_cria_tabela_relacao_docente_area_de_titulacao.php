@@ -12,7 +12,6 @@ class Migration_Cria_tabela_relacao_docente_area_de_titulacao extends CI_Migrati
 		));
 		
 		$this->dbforge->add_key('id_mastermind', TRUE);
-		$this->dbforge->add_key('id_program_area', TRUE);
 		$this->dbforge->create_table('mastermind_titling_area', TRUE);
 
 		$addConstraint = "ALTER TABLE mastermind_titling_area ADD CONSTRAINT IDTITLINGAREA_FK FOREIGN KEY (id_program_area) REFERENCES program_area(id_program_area) ON DELETE CASCADE ON UPDATE RESTRICT";

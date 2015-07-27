@@ -40,8 +40,7 @@ class Discipline_model extends CI_Model {
 	
 	private function getCourseDisciplines($courseId){
 		
-		$disciplines = $this->db->get_where('discipline',
-				array('id_course_discipline'=>$courseId))->result_array();
+		$disciplines = $this->db->get_where('discipline', array('id_course_discipline'=>$courseId))->result_array();
 		
 		return $disciplines;
 		
