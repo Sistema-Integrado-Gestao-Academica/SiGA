@@ -39,6 +39,15 @@ class Discipline extends CI_Controller {
 		
 		return $registeredDisciplines;
 	}
+	
+	public function getDisciplinesBySecretary($userId){
+		
+		$this->load->model('discipline_model');
+		
+		$disciplines = $this->discipline_model->getDisciplinesBySecretary($userId);
+		
+		return $disciplines;
+	}
 
 	public function getCourseSyllabusDisciplines($courseId){
 
@@ -72,6 +81,7 @@ class Discipline extends CI_Controller {
 			$disciplineCode = $this->input->post('discipline_code');
 			$acronym 		 = $this->input->post('name_abbreviation');
 			$credits		 = $this->input->post('credits');
+			$disciplineCourse = $this->input->post('course_prolongs');
 			$workload 		 = $credits * WORKLOAD_PER_CREDIT;
 			
 			$disciplineToRegister = array(
@@ -79,7 +89,8 @@ class Discipline extends CI_Controller {
 				'discipline_name'   => $disciplineName,
 				'name_abbreviation' => $acronym,
 				'credits'			=> $credits,
-				'workload' 		    => $workload
+				'workload' 		    => $workload,
+				'id_course_discipline' => $disciplineCourse
 			);
 			
 			$this->load->model('discipline_model');
@@ -172,7 +183,19 @@ class Discipline extends CI_Controller {
 	
 	// Function to load a view form to register a discipline
 	public function formToRegisterNewDiscipline(){
-		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline");
+		$this->load->model('course_model');
+		
+		$courses = $this->course_model->getAllCourses();
+		if($courses !== FALSE){
+			foreach ($courses as $course){
+		
+				$coursesResult[$course['id_course']] = $course['course_name'];
+			}
+		}else{
+			$coursesResult = FALSE;
+		}
+		
+		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline", array('courses'=>$coursesResult));
 	}
 	
 	public function getDisciplineByCode($disciplineCode){

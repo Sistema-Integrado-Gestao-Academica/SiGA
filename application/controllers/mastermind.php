@@ -113,6 +113,97 @@ class MasterMind extends CI_Controller {
 		loadTemplateSafelyByPermission("cursos", 'mastermind/check_mastermind.php', $data);
 	}
 	
+	public function index(){
+		
+		loadTemplateSafelyByPermission("mastermind",'mastermind/index.php');
+		
+	}
+	
+	public function titlingArea(){
+		
+		$this->load->model("program_model");
+		
+		$areas = $this->program_model->getAllProgramAreas();
+		if($areas !== FALSE){
+			foreach ($areas as $area){
+		
+				$areasResult[$area['id_program_area']] = $area['area_name'];
+			}
+		}else{
+			$areasResult = FALSE;
+		}
+		$areasResult = array_merge(array(0=>"Escolha uma área"),$areasResult);
+		
+		$mastermindTitlingArea = $this->getMastermindTitlingArea();
+		
+		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
+		
+		loadTemplateSafelyByPermission("mastermind", "mastermind/titling.php", $data);
+		
+		
+	}
+	
+	public function titlingAreaUpdateBySecretary($mastermindId){
+		$this->load->model("program_model");
+		
+		$areas = $this->program_model->getAllProgramAreas();
+		if($areas !== FALSE){
+			foreach ($areas as $area){
+		
+				$areasResult[$area['id_program_area']] = $area['area_name'];
+			}
+		}else{
+			$areasResult = FALSE;
+		}
+		$areasResult = array_merge(array(0=>"Escolha uma área"),$areasResult);
+		
+		$mastermindTitlingArea = $this->getMastermindTitlingArea($mastermindId);
+		
+		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
+		
+		loadTemplateSafelyByGroup("courseSecretaryAcademic", "mastermind/titling.php", $data);
+		
+	}
+	
+	private function getMastermindTitlingArea($mastermindId=NULL){
+		if($mastermindId){
+			$userId = $mastermindId;
+		}else{
+			$session = $this->session->userdata("current_user");
+			$userId = $session['user']['id'];
+		}
+		
+		$this->load->model("mastermind_model");
+		
+		$currentArea = $this->mastermind_model->getCurrentArea($userId);
+		
+		return $currentArea;
+	}
+	
+	public function UpdateTitlingArea(){
+		$session = $this->session->userdata("current_user");
+		$userId = $session['user']['id'];
+		
+		$titlingArea = $this->input->post("titling_area");
+		$tiling_thesis = $this->input->post("titling_thesis");
+		
+		$this->load->model("mastermind_model");
+		
+		$updated = $this->mastermind_model->updateTitlingArea($userId, $titlingArea, $tiling_thesis);
+		
+		if($updated){
+			$updateStatus = "success";
+			$updateMessage = "Titulação alterada com sucesso";
+		}else{
+			$updateStatus = "danger";
+			$updateMessage = "Não foi possível alterar sua titulação. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+		redirect('/');
+		
+	}
+	
 	public function displayMastermindStudents(){
 		
 		$session = $this->session->userdata("current_user");

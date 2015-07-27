@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH."/controllers/utils.php");
 
 class Migration_Cria_tabela_area_avaliacao extends CI_Migration {
 
@@ -17,6 +18,9 @@ class Migration_Cria_tabela_area_avaliacao extends CI_Migration {
 		$this->db->query($addColumn);
 		$addConstraint = "ALTER TABLE program ADD CONSTRAINT PROGRAM_AREAID_FK FOREIGN KEY (id_area) REFERENCES program_area(id_program_area) ON DELETE RESTRICT ON UPDATE RESTRICT";
 		$this->db->query($addConstraint);
+		
+		$populate = new Utils();
+		$populate->loadAvaliationAreas();
 		
 	}
 

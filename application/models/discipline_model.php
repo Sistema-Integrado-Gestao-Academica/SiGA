@@ -16,6 +16,38 @@ class Discipline_model extends CI_Model {
 		return $registeredDisciplines;
 	}
 
+	public function getDisciplinesBySecretary($secretaryUserId){
+		
+		$secretaryCourses = $this->getSecreteryCourses($secretaryUserId);
+		
+		foreach ($secretaryCourses as $course){
+			$disciplines[$course['id_course']] = $this->getCourseDisciplines($course['id_course']);
+		}
+		
+		return $disciplines;
+		
+	}
+	
+	private function getSecreteryCourses($secretaryUserId){
+		define('ACADEMICSECRETARYGROUP', 11);
+		$this->db->select('id_course');
+		$courses = $this->db->get_where('secretary_course',
+					 array('id_user'=>$secretaryUserId, 'id_group'=>ACADEMICSECRETARYGROUP))->result_array();
+		
+		return $courses;
+		
+	}
+	
+	private function getCourseDisciplines($courseId){
+		
+		$disciplines = $this->db->get_where('discipline',
+				array('id_course_discipline'=>$courseId))->result_array();
+		
+		return $disciplines;
+		
+		
+	}
+	
 	public function getCourseSyllabusDisciplines($syllabusId){
 
 		$this->db->select('discipline.*');
