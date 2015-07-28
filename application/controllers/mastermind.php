@@ -4,6 +4,7 @@ require_once('course.php');
 require_once('semester.php');
 require_once('request.php');
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 
 class MasterMind extends CI_Controller {
 	
@@ -115,7 +116,7 @@ class MasterMind extends CI_Controller {
 	
 	public function index(){
 		
-		loadTemplateSafelyByPermission("mastermind",'mastermind/index.php');
+		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, 'mastermind/index');
 	}
 	
 	public function titlingArea(){
