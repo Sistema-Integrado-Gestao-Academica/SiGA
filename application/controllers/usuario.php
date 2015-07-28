@@ -7,6 +7,7 @@ require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Usuario extends CI_Controller {
 	
@@ -260,7 +261,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_courses_students', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'usuario/secretary_courses_students', $courseData);
 	}
 
 	public function secretary_enrollStudent(){
@@ -271,7 +272,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'usuario/secretary_enroll_student', $courseData);
 	}
 	
 	public function secretary_enrollMasterMinds(){
@@ -281,7 +282,7 @@ class Usuario extends CI_Controller {
 				'courses' => $courses
 		);
 		
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_master_mind', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::DEFINE_MASTERMIND_PERMISSION, 'usuario/secretary_enroll_master_mind', $courseData);
 	}
 
 	public function secretary_requestReport(){
@@ -292,7 +293,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'request/secretary_courses_request', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::REQUEST_REPORT_PERMISSION, 'request/secretary_courses_request', $courseData);
 	}
 
 	public function secretary_offerList(){
@@ -333,7 +334,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::OFFER_LIST_PERMISSION, 'usuario/secretary_offer_list', $data);
 	}
 
 	public function secretary_courseSyllabus(){
@@ -366,7 +367,7 @@ class Usuario extends CI_Controller {
 			'syllabus' => $coursesSyllabus
 		);
 		
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_course_syllabus', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSE_SYLLABUS_PERMISSION,'usuario/secretary_course_syllabus', $data);
 	}
 
 	private function loadCourses(){

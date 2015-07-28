@@ -156,7 +156,6 @@
                     <ul class="sidebar-menu">
 	                <?php
 	                
-						
 						foreach($session['user_permissions'] as $groupName => $groupPermissions){
                 			if($groupName == GroupConstants::SECRETARY_GROUP){
 								continue;
@@ -165,29 +164,30 @@
 								
 								switch ($groupName) {
                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-                        				$groupName = "Secretaria acadêmica";
+                        				$groupNameToShow = "Secretaria acadêmica";
                         				break;
                         			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-                        				$groupName = "Secretaria financeira";
+                        				$groupNameToShow = "Secretaria financeira";
                         				break;
                         			default:
-                        				$groupName = $group['group_name'];
+                        				$groupNameToShow = $groupName;
                         				break;
                         		}
-								echo anchor("", ucfirst($groupName),"class='fa fa-folder-o'");
-								echo "<ul class='treeview-menu'>";
+								echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
 								
-								if($groupPermissions !== FALSE){
+									echo "<ul class='treeview-menu'>";
 									
-									foreach($groupPermissions as $permission){
-									
-										echo "<li>";
-										echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-										echo "</li>";
+									if($groupPermissions !== FALSE){
+										
+										foreach($groupPermissions as $permission){
+										
+											echo "<li>";
+											echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+											echo "</li>";
+										}
 									}
-								}
-	
-								echo "</ul>";
+		
+									echo "</ul>";
 								
 								echo "</li>";
 							}
@@ -201,7 +201,7 @@
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-			
+            					
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>

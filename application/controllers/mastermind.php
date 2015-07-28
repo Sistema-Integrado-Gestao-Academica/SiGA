@@ -116,7 +116,6 @@ class MasterMind extends CI_Controller {
 	public function index(){
 		
 		loadTemplateSafelyByPermission("mastermind",'mastermind/index.php');
-		
 	}
 	
 	public function titlingArea(){
