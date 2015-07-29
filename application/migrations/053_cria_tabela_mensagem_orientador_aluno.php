@@ -11,15 +11,12 @@ class Migration_Cria_tabela_mensagem_orientador_aluno extends CI_Migration {
 				'message' => array('type' => 'varchar(500)')
 		));
 		
-		$this->dbforge->add_key('id_mastermind', TRUE);
-		$this->dbforge->add_key('id_student', TRUE);
-		$this->dbforge->add_key('id_request', TRUE);
 		$this->dbforge->create_table('mastermind_message', TRUE);
 
-		$addConstraint = "ALTER TABLE mastermind_message ADD CONSTRAINT IDMASTERMIND_FK FOREIGN KEY (id_mastermind) REFERENCES mastermind_student(id_mastermind) ON DELETE CASCADE ON UPDATE RESTRICT";
-		$this->db->query($addConstraint);
+		// $addConstraint = "ALTER TABLE mastermind_message ADD CONSTRAINT IDMASTERMIND_FK FOREIGN KEY (id_mastermind) REFERENCES mastermind_student(id_mastermind) ON DELETE CASCADE ON UPDATE RESTRICT";
+		// $this->db->query($addConstraint);
 		
-		$addConstraint = "ALTER TABLE mastermind_message ADD CONSTRAINT IDREQUEST_FK FOREIGN KEY (id_request) REFERENCES student_request(id_request) ON DELETE CASCADE ON UPDATE RESTRICT";
+		$addConstraint = "ALTER TABLE mastermind_message ADD CONSTRAINT IDREQUEST_MASTERMIND_FK FOREIGN KEY (id_request) REFERENCES student_request(id_request) ON DELETE CASCADE ON UPDATE RESTRICT";
 		$this->db->query($addConstraint);
 	}
 
