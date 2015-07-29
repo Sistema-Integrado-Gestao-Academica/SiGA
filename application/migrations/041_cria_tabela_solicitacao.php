@@ -36,6 +36,9 @@ class Migration_Cria_tabela_solicitacao extends CI_Migration {
 		$class_uk = "ALTER TABLE request_discipline ADD CONSTRAINT CLASS_REQUEST_UK UNIQUE (id_offer, id_discipline, discipline_class)";
 		$this->db->query($class_uk);
 
+		$fk = "ALTER TABLE request_discipline ADD CONSTRAINT IDREQUEST_FK FOREIGN KEY (id_request) REFERENCES student_request(id_request)";
+		$this->db->query($fk);
+
 		$offer_fk = "ALTER TABLE request_discipline ADD CONSTRAINT OFFER_REQUEST_FK FOREIGN KEY (id_offer) REFERENCES offer(id_offer)";
 		$this->db->query($offer_fk);
 
@@ -44,6 +47,9 @@ class Migration_Cria_tabela_solicitacao extends CI_Migration {
 	}
 
 	public function down() {
+
+		$fk = "ALTER TABLE request_discipline DROP FOREIGN KEY IDREQUEST_FK";
+		$this->db->query($fk);
 
 		$offer_fk = "ALTER TABLE request_discipline DROP FOREIGN KEY OFFER_REQUEST_FK";
 		$this->db->query($offer_fk);
