@@ -12,6 +12,6 @@ class Migration_adiciona_coluna_status_em_request_discipline extends CI_Migratio
 
 	public function down() {
 
-		$this->db->drop_column('request_discipline', 'status');
+		$this->dbforge->drop_column('request_discipline', 'status');
 	}
 }

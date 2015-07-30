@@ -46,6 +46,17 @@ class Mastermind_model extends CI_Model {
 		$students = checkArray($students);
 		return $students;
 	}
+
+	public function getMastermindByStudent($studentId){
+		
+		$this->db->select('id_mastermind');
+		$this->db->where('id_student', $studentId);
+		$mastermind = $this->db->get('mastermind_student')->row_array();
+		
+		$mastermind = checkArray($mastermind);
+		
+		return $mastermind;
+	}
 	
 	public function updateTitlingArea($userId, $titlingArea, $tiling_thesis){
 		
@@ -109,6 +120,21 @@ class Mastermind_model extends CI_Model {
 		
 		return $inserted;
 		
+	}
+
+	public function getMastermindMessage($mastermindId, $requestId){
+
+		$messageData = array(
+			'id_mastermind' => $mastermindId,
+			'id_request' => $requestId
+		);
+
+		$message = $this->db->get_where('mastermind_message', $messageData)->row_array();
+
+		$message = checkArray($message);
+
+		return $message;
+
 	}
 	
 }

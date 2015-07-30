@@ -217,22 +217,52 @@ class MasterMind extends CI_Controller {
 		
 		$studentsRequests = $this->getStudentsRequests($students,$currentSemester['id_semester']);
 		
-
 		$requestData = array('requests' => $studentsRequests, 'idMastermind' => $session['user']['id']);
 				
 		loadTemplateSafelyByPermission("mastermind", 'mastermind/display_mastermind_students', $requestData);
-
 	}
-	
-	public function finalizeRequest($requestId){
+
+	public function getMastermindMessage($mastermindId, $requestId){
+
+		$this->load->model('mastermind_model');
+
+		$foundMessage = $this->mastermind_model->getMastermindMessage($mastermindId, $requestId);
+
+		if($foundMessage !== FALSE){
+			if($foundMessage['message'] !== NULL){
+				$message = $foundMessage['message'];
+			}else{
+				$message = FALSE;
+			}
+		}else{
+			$message = FALSE;
+		}
+
+		return $message;
+	}
+
+	public function finalizeRequest(){
+
+		$requestId = $this->input->post('requestId');
+		$mastermindId = $this->input->post('mastermindId');
+		$mastermindMessage = $this->input->post('mastermind_message');
 
 		$request = new Request();
-		
 		$wasFinalized = $request->finalizeRequestToMastermind($requestId);
 
 		if($wasFinalized){
-			$status = "success";
-			$message = "Solicitação finalizada com sucesso.";
+			
+			$messageSaved = $request->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
+			
+			if($messageSaved){
+
+				$status = "success";
+				$message = "Solicitação finalizada e mensagem salva com sucesso.";
+			}else{
+				$status = "success";
+				$message = "Solicitação finalizada com sucesso, mas não foi possível salvar a mensagem.";
+			}
+
 		}else{
 			$status = "danger";
 			$message = "A solicitação não pôde ser finalizada.";
@@ -240,6 +270,21 @@ class MasterMind extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
+	}
+
+	public function getMastermindByStudent($studentId){
+
+		$this->load->model('mastermind_model');
+
+		$mastermind = $this->mastermind_model->getMastermindByStudent($studentId);
+
+		if($mastermind !== FALSE){
+			$mastermind = $mastermind['id_mastermind'];
+		}else{
+			$mastermind = FALSE;
+		}
+
+		return $mastermind;
 	}
 
 	private function getStudentsRequests($students, $currentSemester){
