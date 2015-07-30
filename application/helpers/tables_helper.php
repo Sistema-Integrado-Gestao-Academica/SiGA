@@ -523,11 +523,11 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 							echo "<td>";
 
-							$requestIsNotFinalizedBySecretary = $disciplineClass['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
+							$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
 
 							if($requestIsNotFinalizedBySecretary){
 								
-								$requestIsApprovedByMastermind = $disciplineClass['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+								$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
 								// Depends of the area that are treating the request
 								switch($requestingArea){
@@ -728,9 +728,8 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 					echo "<th class=\"text-center\">Aluno requerente</th>";
 					echo "<th class=\"text-center\">Matrícula aluno</th>";
 					echo "<th class=\"text-center\">Status da solicitação</th>";
-					echo "<th class=\"text-center\">Vizualização</th>";
-					echo "<th class=\"text-center\">Aprovação</th>";
-					echo "<th class=\"text-center\">Rejeição</th>";
+					echo "<th class=\"text-center\">Ações</th>";
+					echo "<th class=\"text-center\">Finalizar</th>";
 				echo "</tr>";
 				
 				if($requests !== FALSE){
@@ -836,33 +835,32 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 									// Disable buttons
 									echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
 									echo "<br>";
-									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
-									echo "<br>";
-									echo anchor("", "Já Finalizada!", "class='btn bg-olive btn-flat' style='margin-top:10%;' disabled='true'");
+									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");									
 								}else{
 									echo "<br>";
 									echo anchor("request/approveAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
 									echo "<br>";
 									echo anchor("request/refuseAllStudentRequestsByMastermind/{$studentRequest['id_request']}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
-									echo "<br>";
-									echo "<div class=\"callout callout-info\">";
-										echo anchor("mastermind/finalizeRequest/{$studentRequest['id_request']}", "Finalizar solicitação", "class='btn btn-primary btn-flat'");
-										echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
-									echo "</div>";
 								}
 
+								echo "</td>";
+								
+								echo "<td rowspan=2>";
+									if($requestIsApprovedByMastermind){
+										echo anchor("", "Já Finalizada!", "class='btn bg-olive btn-flat' style='margin-top:10%;' disabled='true'");
+									}else{
+										echo "<div class=\"callout callout-info\">";
+											mastermindMessageForm($studentRequest['id_request'], $idMastermind);
+											// echo anchor("mastermind/finalizeRequest/{$studentRequest['id_request']}", "Finalizar solicitação", "class='btn btn-primary btn-flat'");
+											echo "<p><i>Finaliza a solicitação com o status atual das disciplinas.</i></p>";
+										echo "</div>";	
+									}
 								echo "</td>";
 
 								echo "</tr>";
 
 								echo "<tr>";
-/*<<<<<<< HEAD
-								
-									echo "<td colspan=9>";
-										echo "<div class='collapse' id='solicitation_details_".$studentRequest['id_request']."'>";
-										requestedDisciplineClassesForMastermind($studentRequest['id_request'], $idMastermind, $studentRequest['id_student']);
-=======*/
-									echo "<td colspan=4>";
+									echo "<td colspan=5>";
 										echo "<div class='collapse' id='solicitation_details_".$studentRequest['id_request']."'>";
 										requestedDisciplineClasses($studentRequest['id_request'], EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 										echo "</div>";

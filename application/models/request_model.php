@@ -565,46 +565,66 @@ class Request_model extends CI_Model {
 		return $foundRequest;
 	}
 	
-	public function saveMasterindMessage($message, $requestId=NULL, $studentId, $mastermindId, $idOfferDiscipline=NULL){
+	public function saveMastermindMessage($mastermindId, $requestId, $message){
+		
 		$messageData = array(
-				'id_mastermind' => $mastermindId,
-				'id_student' => $studentId,
-				'id_request' => $requestId,
-				'id_offer_discipline' => $idOfferDiscipline,
-				'message' => $message
+			'id_mastermind' => $mastermindId,
+			'id_request' => $requestId,
+			'message' => $message
 		);
 			
-		$messageExist = $this->checkExistingMessage($messageData);
+		$messageExist = $this->checkExistingMessage($mastermindId, $requestId);
 		
-		if ($messageExist){
+		if($messageExist){
 			$savedMessage = $this->updateMessageInDb($messageData);
 		}else{
 			$savedMessage = $this->insertMessageInDb($messageData);
 		}
+		
 		return $savedMessage;
 	}
 	
-	private function checkExistingMessage($messageData){
+	private function checkExistingMessage($mastermindId, $requestId){
+
+		$messageData = array(
+			'id_mastermind' => $mastermindId,
+			'id_request' => $requestId
+		);
+
+		$existingMessage = $this->db->get_where('mastermind_message', $messageData)->row_array();
+
+		$existingMessage = checkArray($existingMessage);
+
+		if($existingMessage !== FALSE){
+			if($existingMessage['message'] !== NULL){
+				$thereIsMessage = TRUE;
+			}else{
+				$thereIsMessage = FALSE;
+			}
+		}else{
+			$thereIsMessage = FALSE;
+		}
 		
-		$existingMessage = $this->db->get_where('mastermind_message', $messageData);
-		
-		return $existingMessage;
+		return $thereIsMessage;
 	}
 	
 	private function updateMessageInDb($messageData){
+		
 		$where = array(
-				'id_student'=>$messageData['id_student'],
-				'id_mastermind'=>$messageData['id_mastermind'],
-				'id_request'=>$messageData['id_request']
+			'id_mastermind'=> $messageData['id_mastermind'],
+			'id_request'=> $messageData['id_request']
 		);
 		
 		$this->db->where($where);
 		$updatedMessageData = $this->db->update('mastermind_message', $messageData);
+		
 		return $updatedMessageData;
 	}
 	
 	private function insertMessageInDb($messageData){
+		
 		$savedMessage = $this->db->insert('mastermind_message', $messageData);
+		
 		return $savedMessage;
 	}
 }

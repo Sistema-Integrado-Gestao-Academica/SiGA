@@ -152,111 +152,35 @@ function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId
 	
 }
 
-function displayAcceptStudentsSolicitation($idRequest, $idStudent, $idMastermind){
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-success btn-sm btn-block",
-			"content" => "Aprovar toda a solicitação",
-			"type" => "submit"
-	);
+function mastermindMessageForm($requestId, $mastermindId){
 	
-	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest, 'idMastermind'=>$idMastermind);
-	$message = array(
-			'name' => 'mastermind_message',
-			'id' => 'mastermind_message',
-			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
-			'rows' => '20',
-			"class" => "form-control",
-			'style' => 'height: 70px; margin-top:-15%;'
-	);
-	
-	echo form_open('request/approveAllStudentRequestsByMastermind','',$hidden);
-		echo form_label('', 'mastermind_message');
-		echo form_textarea($message);
-		echo form_button($submit_button_array_to_form);
-	echo form_close();
-}
-
-function displayRefuseStudentsSolicitation($idRequest, $idStudent, $idMastermind){
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-danger btn-sm btn-block",
-			"content" => "Rejeitar toda a solicitação",
-			"type" => "submit"
-	);
-
-	$hidden = array('idStudent'=>$idStudent, 'idRequest'=>$idRequest, 'idMastermind'=>$idMastermind);
-	$message = array(
-			'name' => 'mastermind_message',
-			'id' => 'mastermind_message',
-			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
-			'rows' => '20',
-			"class" => "form-control",
-			'style' => 'height: 70px; margin-top:-15%;'
-	);
-
-	echo form_open('request/refuseAllStudentRequestsByMastermind','',$hidden);
-		echo form_label('', 'mastermind_message');
-		echo form_textarea($message);
-		echo form_button($submit_button_array_to_form);
-	echo form_close();
-}
-
-function displayAcceptStudentDisciplineSolicitation($requestId, $idOfferDiscipline, $courseId, $idMastermind, $idStudent){
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-success btn-sm btn-block btn-flat",
-			"content" => "Aprovar",
-			"type" => "submit"
+	$submitBtn = array(
+		"class" => "btn btn-primary btn-flat",
+		"content" => "Finalizar solicitação",
+		"type" => "submit"
 	);
 	
 	$hidden = array(
-			'idStudent'=>$idStudent, 
-			'idRequest'=>$requestId, 
-			'idMastermind'=>$idMastermind, 
-			'idCourse'=>$courseId,
-			'idOfferDiscipline' => $idOfferDiscipline
+		'requestId' => $requestId,
+		'mastermindId' => $mastermindId
 	);
+
 	$message = array(
-			'name' => 'mastermind_message',
-			'id' => 'mastermind_message',
-			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
-			'rows' => '20',
-			"class" => "form-control",
-			'style' => 'height: 70px; margin-top:-10%;'
+		'name' => 'mastermind_message',
+		'id' => 'mastermind_message',
+		'placeholder' => 'Deixe aqui sua mensagem para o aluno.',
+		'rows' => '20',
+		"class" => "form-control",
+		'style' => 'height: 70px; margin-top:-10%;'
 	);
-	
-	echo form_open('request/approveRequestedDisciplineByMastermind','',$hidden);
-	echo form_label('', 'mastermind_message');
+
+
+	echo form_open('mastermind/finalizeRequest','',$hidden);
+	echo form_label('Mensagem:', 'mastermind_message');
+	echo "<br>";
+	echo "<br>";
 	echo form_textarea($message);
-	echo form_button($submit_button_array_to_form);
-	echo form_close();
-}
-
-function displayRefuseStudentDisciplineSolicitation($requestId, $idOfferDiscipline, $courseId, $idMastermind, $idStudent){
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-danger btn-sm btn-block btn-flat",
-			"content" => "Recusar",
-			"type" => "submit"
-	);
-
-	$hidden = array(
-			'idStudent'=>$idStudent,
-			'idRequest'=>$requestId,
-			'idMastermind'=>$idMastermind,
-			'idCourse'=>$courseId,
-			'idOfferDiscipline' => $idOfferDiscipline
-	);
-	$message = array(
-			'name' => 'mastermind_message',
-			'id' => 'mastermind_message',
-			'placeholder' => 'Deixe aqui sua mensagem para o aluno',
-			'rows' => '20',
-			"class" => "form-control",
-			'style' => 'height: 70px; margin-top:-10%;'
-	);
-
-	echo form_open('request/refuseRequestedDisciplineByMastermind','',$hidden);
-	echo form_label('', 'mastermind_message');
-	echo form_textarea($message);
-	echo form_button($submit_button_array_to_form);
+	echo form_button($submitBtn);
 	echo form_close();
 }
 

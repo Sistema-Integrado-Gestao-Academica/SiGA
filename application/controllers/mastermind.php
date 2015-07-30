@@ -223,16 +223,29 @@ class MasterMind extends CI_Controller {
 		loadTemplateSafelyByPermission("mastermind", 'mastermind/display_mastermind_students', $requestData);
 
 	}
-	
-	public function finalizeRequest($requestId){
+
+	public function finalizeRequest(){
+
+		$requestId = $this->input->post('requestId');
+		$mastermindId = $this->input->post('mastermindId');
+		$mastermindMessage = $this->input->post('mastermind_message');
 
 		$request = new Request();
-		
 		$wasFinalized = $request->finalizeRequestToMastermind($requestId);
 
 		if($wasFinalized){
-			$status = "success";
-			$message = "Solicitação finalizada com sucesso.";
+			
+			$messageSaved = $request->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
+			
+			if($messageSaved){
+
+				$status = "success";
+				$message = "Solicitação finalizada com sucesso.";
+			}else{
+				$status = "success";
+				$message = "Solicitação finalizada com sucesso, mas não foi possível salvar a mensagem.";
+			}
+
 		}else{
 			$status = "danger";
 			$message = "A solicitação não pôde ser finalizada.";
