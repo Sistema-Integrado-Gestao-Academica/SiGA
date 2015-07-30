@@ -329,17 +329,28 @@ class Request extends CI_Controller {
 					$requestStatus = "-";
 					break;
 			}
-
 			$data['requestStatus'] = $requestStatus;
+
+			$request = $this->getRequest(array(
+				'id_student' => $userId,
+				'id_course' => $courseId,
+				'id_semester' => $currentSemester['id_semester']
+			));
+
+			$requestId = $request['id_request'];
+
+			$mastermind = new MasterMind();
+			$mastermindId = $mastermind->getMastermindByStudent($userId);
+
+			$mastermindMessage = $mastermind->getMastermindMessage($mastermindId, $requestId);
+
+			$data['mastermindMessage'] = $mastermindMessage;
+		
 		}else{
 			$data['requestDisciplinesClasses'] = FALSE;
 			$data['requestStatus'] = FALSE;
 		}
-		
-		$mastermindMessage = $this->getMastermindMessage($userId, $courseId, $currentSemester['id_semester']);
 
-		$data['mastermind_message'] = $mastermindMessage;
-		
 		loadTemplateSafelyByGroup("estudante", 'request/enrollment_request', $data);
 	}
 

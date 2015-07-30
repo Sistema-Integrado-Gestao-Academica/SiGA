@@ -46,6 +46,17 @@ class Mastermind_model extends CI_Model {
 		$students = checkArray($students);
 		return $students;
 	}
+
+	public function getMastermindByStudent($studentId){
+		
+		$this->db->select('id_mastermind');
+		$this->db->where('id_student', $studentId);
+		$mastermind = $this->db->get('mastermind_student')->row_array();
+		
+		$mastermind = checkArray($mastermind);
+		
+		return $mastermind;
+	}
 	
 	public function updateTitlingArea($userId, $titlingArea, $tiling_thesis){
 		

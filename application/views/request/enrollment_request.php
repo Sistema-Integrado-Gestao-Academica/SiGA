@@ -45,7 +45,20 @@
 		</div>
 
 		<div class="panel-body">
-			<?php displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses, $mastermind_message); ?>
+			<?php displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses); ?>
+
+			<div class="callout callout-info">
+				<h4>Mensagem do orientador:</h4>
+				<p><b>
+					<?php 
+						if($mastermindMessage !== FALSE){
+							echo "\"".$mastermindMessage."\"";
+						}else{
+							echo "Sem mensagem no momento.";
+						}
+					?>
+				</b><p>
+			</div>
 		</div>
 		
 		<div class="panel-footer" align="left">

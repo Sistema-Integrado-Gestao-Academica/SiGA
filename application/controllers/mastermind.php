@@ -272,6 +272,21 @@ class MasterMind extends CI_Controller {
 		redirect('mastermind');
 	}
 
+	public function getMastermindByStudent($studentId){
+
+		$this->load->model('mastermind_model');
+
+		$mastermind = $this->mastermind_model->getMastermindByStudent($studentId);
+
+		if($mastermind !== FALSE){
+			$mastermind = $mastermind['id_mastermind'];
+		}else{
+			$mastermind = FALSE;
+		}
+
+		return $mastermind;
+	}
+
 	private function getStudentsRequests($students, $currentSemester){
 		$stutendArraySize = sizeof($students);
 		$this->load->model('request_model');
