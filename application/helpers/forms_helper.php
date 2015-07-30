@@ -152,13 +152,7 @@ function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId
 	
 }
 
-function mastermindMessageForm($requestId, $mastermindId){
-	
-	$submitBtn = array(
-		"class" => "btn btn-primary btn-flat",
-		"content" => "Finalizar solicitação",
-		"type" => "submit"
-	);
+function mastermindMessageForm($requestId, $mastermindId, $isFinalized, $mastermindMessage = ""){
 	
 	$hidden = array(
 		'requestId' => $requestId,
@@ -174,6 +168,23 @@ function mastermindMessageForm($requestId, $mastermindId){
 		'style' => 'height: 70px; margin-top:-10%;'
 	);
 
+	if($isFinalized){
+		
+		$message['value'] = $mastermindMessage;
+
+		$submitBtn = array(
+			"class" => "btn btn-warning btn-flat",
+			"content" => "Alterar mensagem",
+			"type" => "submit"
+		);
+
+	}else{
+		$submitBtn = array(
+			"class" => "btn btn-primary btn-flat",
+			"content" => "Finalizar solicitação",
+			"type" => "submit"
+		);
+	}
 
 	echo form_open('mastermind/finalizeRequest','',$hidden);
 	echo form_label('Mensagem:', 'mastermind_message');

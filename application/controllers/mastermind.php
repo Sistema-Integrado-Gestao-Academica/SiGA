@@ -217,11 +217,28 @@ class MasterMind extends CI_Controller {
 		
 		$studentsRequests = $this->getStudentsRequests($students,$currentSemester['id_semester']);
 		
-
 		$requestData = array('requests' => $studentsRequests, 'idMastermind' => $session['user']['id']);
 				
 		loadTemplateSafelyByPermission("mastermind", 'mastermind/display_mastermind_students', $requestData);
+	}
 
+	public function getMastermindMessage($mastermindId, $requestId){
+
+		$this->load->model('mastermind_model');
+
+		$foundMessage = $this->mastermind_model->getMastermindMessage($mastermindId, $requestId);
+
+		if($foundMessage !== FALSE){
+			if($foundMessage['message'] !== NULL){
+				$message = $foundMessage['message'];
+			}else{
+				$message = FALSE;
+			}
+		}else{
+			$message = FALSE;
+		}
+
+		return $message;
 	}
 
 	public function finalizeRequest(){
@@ -240,7 +257,7 @@ class MasterMind extends CI_Controller {
 			if($messageSaved){
 
 				$status = "success";
-				$message = "Solicitação finalizada com sucesso.";
+				$message = "Solicitação finalizada e mensagem salva com sucesso.";
 			}else{
 				$status = "success";
 				$message = "Solicitação finalizada com sucesso, mas não foi possível salvar a mensagem.";

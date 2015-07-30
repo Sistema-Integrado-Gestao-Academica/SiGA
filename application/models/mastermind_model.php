@@ -110,5 +110,20 @@ class Mastermind_model extends CI_Model {
 		return $inserted;
 		
 	}
+
+	public function getMastermindMessage($mastermindId, $requestId){
+
+		$messageData = array(
+			'id_mastermind' => $mastermindId,
+			'id_request' => $requestId
+		);
+
+		$message = $this->db->get_where('mastermind_message', $messageData)->row_array();
+
+		$message = checkArray($message);
+
+		return $message;
+
+	}
 	
 }
