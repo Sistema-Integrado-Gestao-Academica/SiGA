@@ -7,6 +7,7 @@
 	</div>
 
 	<div class='col-md-6'>
+	<?php searchForDisciplineByNameForm($syllabusId, $courseId); ?>
 	</div>
 </div>
 

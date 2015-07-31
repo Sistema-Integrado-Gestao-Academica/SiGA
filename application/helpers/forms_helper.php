@@ -1,6 +1,42 @@
 
 <?php
 
+function searchForDisciplineByNameForm($syllabusId, $courseId){
+
+	$discipline = array(
+		"name" => "discipline_to_search",
+		"id" => "discipline_to_search",
+		"type" => "text",
+		"class" => "form-campo form-control",
+		"placeholder" => "Informe o nome da disciplina...",
+		"maxlength" => "50",
+		'style' => "width:80%;"
+	);
+
+	$searchForDisciplineBtn = array(
+		"id" => "search_student_request_btn",
+		"class" => "btn bg-primary btn-flat",
+		"content" => "Pesquisar por nome da disciplina",
+		"type" => "submit"
+	);
+
+	define("SEARCH_BY_NAME", "by_name");
+
+	echo "<h4><i class='fa fa-search'></i> Pesquisar por nome da disciplina</h4>";
+	echo form_open("syllabus/searchForDiscipline");
+		echo form_hidden('searchType', SEARCH_BY_NAME); 
+		echo form_hidden('syllabusId', $syllabusId);
+		echo form_hidden('courseId', $courseId);
+		
+		echo "<div class='form-group'>";
+			echo form_label("Informe o nome da disciplina para pesquisar:", "discipline_to_search");
+			echo form_input($discipline);
+		echo "</div>";
+		
+		echo form_button($searchForDisciplineBtn);
+	echo form_close();
+}
+
 function searchForDisciplineByIdForm($syllabusId, $courseId){
 
 	$discipline = array(
@@ -22,7 +58,7 @@ function searchForDisciplineByIdForm($syllabusId, $courseId){
 
 	define("SEARCH_BY_ID", "by_id");
 
-	echo "<h4><i class='fa fa-search'></i> Pesquisar por Código da disciplina</h4>";
+	echo "<h4><i class='fa fa-search'></i> Pesquisar por código da disciplina</h4>";
 	echo form_open("syllabus/searchForDiscipline");
 		echo form_hidden('searchType', SEARCH_BY_ID); 
 		echo form_hidden('syllabusId', $syllabusId);

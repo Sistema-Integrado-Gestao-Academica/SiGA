@@ -28,6 +28,16 @@ class Discipline_model extends CI_Model {
 		
 	}
 	
+	public function getDisciplineByPartialName($disciplineName){
+
+		$this->db->like('discipline_name', $disciplineName);
+		$disciplines = $this->db->get('discipline')->result_array();
+
+		$disciplines = checkArray($disciplines);
+
+		return $disciplines;
+	}
+
 	private function getSecreteryCourses($secretaryUserId){
 		define('ACADEMICSECRETARYGROUP', 11);
 		$this->db->select('id_course');
