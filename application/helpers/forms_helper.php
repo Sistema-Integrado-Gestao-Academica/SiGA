@@ -1,6 +1,114 @@
 
 <?php
 
+function searchForDisciplineByIdForm($syllabusId, $courseId){
+
+	$discipline = array(
+		"name" => "discipline_to_search",
+		"id" => "discipline_to_search",
+		"type" => "text",
+		"class" => "form-campo form-control",
+		"placeholder" => "Informe o código da disciplina...",
+		"maxlength" => "10",
+		'style' => "width:80%;"
+	);
+
+	$searchForDisciplineBtn = array(
+		"id" => "search_student_request_btn",
+		"class" => "btn bg-primary btn-flat",
+		"content" => "Pesquisar por código da disciplina",
+		"type" => "submit"
+	);
+
+	define("SEARCH_BY_ID", "by_id");
+
+	echo "<h4><i class='fa fa-search'></i> Pesquisar por Código da disciplina</h4>";
+	echo form_open("syllabus/searchForDiscipline");
+		echo form_hidden('searchType', SEARCH_BY_ID); 
+		echo form_hidden('syllabusId', $syllabusId);
+		echo form_hidden('courseId', $courseId);
+		
+		echo "<div class='form-group'>";
+			echo form_label("Informe o código da disciplina para pesquisar:", "discipline_to_search");
+			echo form_input($discipline);
+		echo "</div>";
+		
+		echo form_button($searchForDisciplineBtn);
+	echo form_close();
+}
+
+function searchForStudentRequestByIdForm($courseId){
+
+	$student = array(
+		"name" => "student_identifier",
+		"id" => "student_identifier",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"placeholder" => "Informe a matrícula do aluno...",
+		"maxlength" => "50",
+		'style' => "width:80%;"
+	);
+
+	$searchForStudentBtn = array(
+		"id" => "search_student_request_btn",
+		"class" => "btn bg-primary btn-flat",
+		"content" => "Pesquisar por matrícula",
+		"type" => "submit"
+	);
+
+	define("SEARCH_BY_ID", "by_id");
+
+	echo "<h4><i class='fa fa-search'></i> Pesquisar por matrícula do aluno</h4>";
+	echo form_open("request/searchForStudentRequest");
+		echo form_hidden('searchType', SEARCH_BY_ID); 
+		echo form_hidden('courseId', $courseId);
+		
+		echo "<div class='form-group'>";
+			echo form_label("Informe a matrícula do aluno para pesquisar:", "student_identifier");
+			echo form_input($student);
+		echo "</div>";
+		
+		echo form_button($searchForStudentBtn);
+	echo form_close();
+}
+
+function searchForStudentRequestByNameForm($courseId){
+
+	$student = array(
+		"name" => "student_identifier",
+		"id" => "student_identifier",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"placeholder" => "Informe o nome do aluno...",
+		"maxlength" => "50",
+		'style' => "width:80%;"
+	);
+
+	$searchForStudentBtn = array(
+		"id" => "search_student_request_btn",
+		"class" => "btn bg-primary btn-flat",
+		"content" => "Pesquisar por nome",
+		"type" => "submit"
+	);
+
+	define("SEARCH_BY_NAME", "by_name");
+
+	echo "<h4><i class='fa fa-search'></i> Pesquisar por nome do aluno</h4>";
+	echo form_open("request/searchForStudentRequest");
+		echo form_hidden('searchType', SEARCH_BY_NAME); 
+		echo form_hidden('courseId', $courseId);
+		
+		echo "<div class='form-group'>";
+			echo form_label("Informe o nome do aluno para pesquisar:", "student_identifier");
+			echo form_input($student);
+		echo "</div>";
+		
+		echo form_button($searchForStudentBtn);
+	echo form_close();
+}
+
 function addDisciplinesToRequestForm($courseId, $userId, $semesterId){
 	
 	$disciplineCode = array(

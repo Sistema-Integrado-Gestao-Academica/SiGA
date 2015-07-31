@@ -1,8 +1,16 @@
 
-<br>
-<br>
+<h2 class='principal'>Adicionar disciplinas ao currículo</h2>
 
-<h3>Adicionar disciplinas ao currículo</h3>
+<div class='row'>
+	<div class='col-md-6'>
+	<?php searchForDisciplineByIdForm($syllabusId, $courseId); ?>
+	</div>
+
+	<div class='col-md-6'>
+	</div>
+</div>
+
+<br>
 <br>
 
 <?php

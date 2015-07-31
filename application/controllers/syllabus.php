@@ -92,6 +92,16 @@ class Syllabus extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
 	}
 
+	public function searchForDiscipline(){
+
+		$searchType = $this->input->post('searchType');
+		$courseId = $this->input->post('courseId');
+		$syllabusId = $this->input->post('syllabusId');
+		$disciplineToSearch = $this->input->post('discipline_to_search');
+
+		
+	}
+
 	public function addDisciplineToSyllabus($syllabusId, $disciplineId, $courseId){
 		
 		$this->load->model('syllabus_model');
