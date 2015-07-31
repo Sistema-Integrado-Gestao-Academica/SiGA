@@ -31,6 +31,7 @@ class Discipline_model extends CI_Model {
 	public function getDisciplineByPartialName($disciplineName){
 
 		$this->db->like('discipline_name', $disciplineName);
+		$this->db->order_by('discipline_name', "asc");
 		$disciplines = $this->db->get('discipline')->result_array();
 
 		$disciplines = checkArray($disciplines);

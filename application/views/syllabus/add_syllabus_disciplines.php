@@ -14,7 +14,10 @@
 <br>
 <br>
 
+	<h4>Lista de disciplinas:</h4>
+	<?=anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Visualizar todas", "class='btn bg-olive btn-flat'");?>
 <?php
+	
 
 	displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId);
 

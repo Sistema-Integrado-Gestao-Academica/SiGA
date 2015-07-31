@@ -1830,13 +1830,12 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId
 
 function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 
-	echo "<h4>Lista de disciplinas:</h4>";
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
 
 			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código: </th>";
+			        echo "<th class=\"text-center\">Código </th>";
 			        echo "<th class=\"text-center\">Sigla</th>";
 			        echo "<th class=\"text-center\">Disciplina</th>";
 			        echo "<th class=\"text-center\">Créditos</th>";
