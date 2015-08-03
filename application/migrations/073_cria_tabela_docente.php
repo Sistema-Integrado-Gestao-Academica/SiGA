@@ -8,7 +8,7 @@ class Migration_cria_tabela_docente extends CI_Migration {
 			// 'id_teacher_course' => array('type' => 'INT', 'auto_increment' => TRUE),
 			'id_user' => array('type' => 'INT'),
 			'id_course' => array('type' => 'INT'),
-			'situation' => array('type' => 'varchar(30)')
+			'situation' => array('type' => 'varchar(30)', 'null' => TRUE)
 		));
 		$this->dbforge->create_table('teacher_course', TRUE);
 		
@@ -17,6 +17,9 @@ class Migration_cria_tabela_docente extends CI_Migration {
 
 		$addConstraint = "ALTER TABLE teacher_course ADD CONSTRAINT COURSE_TEACHER_COURSE_FK FOREIGN KEY (id_course) REFERENCES course(id_course) ON DELETE CASCADE ON UPDATE RESTRICT";
 		$this->db->query($addConstraint);
+
+		$uk = "ALTER TABLE teacher_course ADD CONSTRAINT TEACHER_USER_COURSE_UK UNIQUE (id_user, id_course)";
+		$this->db->query($uk);
 	}
 
 	public function down(){

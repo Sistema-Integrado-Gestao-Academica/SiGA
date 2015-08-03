@@ -38,10 +38,10 @@
  	} else{
 ?>
 	<div class="callout callout-info">
-		<h4>Nenhum docente vinculado a este curso.</h4>
+		<h4>Nenhum docente vinculado a este curso.<p> Vincule no formulário abaixo.</h4>
 	</div>
 <?php }?>
 
+<?php formToEnrollTeacherToCourse($teachers, $allTeachers, $course['id_course']); ?>
 
-
-<?= anchor('enroll_teacher', 'Voltar', "class='btn btn-danger'	")?>
+<?= anchor('enroll_teacher', 'Voltar', "class='btn btn-danger'")?>

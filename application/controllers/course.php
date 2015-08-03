@@ -44,6 +44,15 @@ class Course extends CI_Controller {
 		return $teachers;
 	}
 
+	public function enrollTeacherToCourse($teacherId, $courseId){
+
+		$this->load->model('course_model');
+
+		$wasEnrolled = $this->course_model->enrollTeacherToCourse($teacherId, $courseId);
+
+		return $wasEnrolled;
+	}
+
 	public function courseStudents($courseId){
 
 		$students = $this->getCourseStudents($courseId);

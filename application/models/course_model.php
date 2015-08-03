@@ -19,6 +19,31 @@ class Course_model extends CI_Model {
 		return $teachers;
 	}
 
+	public function enrollTeacherToCourse($teacherId, $courseId){
+
+		$teacherToEnroll = array(
+			'id_user' => $teacherId,
+			'id_course' => $courseId
+		);
+
+		$this->db->insert('teacher_course', $teacherToEnroll);
+
+		$teacherCourse = $this->getTeacherCourse($teacherToEnroll);
+
+		$wasEnrolled = $teacherCourse !== FALSE;
+
+		return $wasEnrolled;
+	}
+
+	private function getTeacherCourse($dataToSearch){
+
+		$teacherCourse = $this->db->get_where('teacher_course', $dataToSearch)->row_array();
+
+		$teacherCourse = checkArray($teacherCourse);
+
+		return $teacherCourse;
+	}
+
 	public function enrollStudentIntoCourse($enrollment){
 
 		$this->db->query($enrollment);

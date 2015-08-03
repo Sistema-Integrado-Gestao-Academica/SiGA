@@ -497,6 +497,157 @@ function updateStudentBasicInformationForm($studentData,$hidden){
 
 
 }
+
+function formToEnrollTeacherToCourse($courseTeachers, $teachers, $courseId){
+	
+	$submitBtn = array(
+		"class" => "btn bg-olive btn-block",
+		"type" => "submit",
+		"content" => "Vincular docente"
+	);
+
+	if($teachers !== FALSE){
+
+		$thereIsTeachers = TRUE;
+
+		// Just a copy of the array '$teachers'
+		$t = $teachers;
+
+		if($courseTeachers !== FALSE){
+
+			foreach($t as $userId => $teacher){
+				foreach($courseTeachers as $courseTeacher){
+					if($courseTeacher['id_user'] == $userId){
+						
+						unset($teachers[$userId]);
+
+						if(sizeof($teachers) === 0){
+							$submitBtn['disabled'] = TRUE;
+							$teachers = array("Docentes do sistema já vinculados ao curso");
+						}
+					}
+				}
+			}
+		}
+
+	}else{
+		$thereIsTeachers = FALSE;
+		$submitBtn['disabled'] = TRUE;
+		$teachers = array('Nenhum docente cadastrado.');
+	}
+
+	echo form_open("secretary/enrollTeacherToCourse");
+		echo form_hidden('courseId', $courseId);
+		echo "<div class='form-box'>";
+			echo"<div class='header'>Vincular docente ao curso</div>";
+			echo "<div class='body bg-gray'>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Docente:", "teacher");
+						echo form_dropdown("teacher", $teachers, '', "class='form-control'");
+					echo form_error("teacher");
+				echo "</div>";
+		
+			echo "</div>";
+			echo "<div class='footer bg-gray'>";
+				echo form_button($submitBtn);
+			echo "</div>";
+			
+			if(!$thereIsTeachers){
+				echo "<div class='callout callout-danger'>";
+					echo "<h4>Não há docentes cadastrados no sistema.</h4>";
+				echo "</div>";
+			}
+		echo "</div>";
+
+	echo form_close();
+}
+
+function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
+
+	$disciplineClass = array(
+		"name" => "disciplineClass",
+		"id" => "disciplineClass",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "3"
+	);
+
+	$totalVacancies = array(
+		"name" => "totalVacancies",
+		"id" => "totalVacancies",
+		"type" => "number",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"min" => "0",
+		"value" => "0"
+	);
+
+	$submitBtn = array(
+		"class" => "btn bg-olive btn-block",
+		"type" => "submit",
+		"content" => "Cadastrar turma"
+	);
+
+	echo form_open("offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}");
+
+		echo "<div class='form-box'>";
+			echo"<div class='header'>Nova turma para oferta</div>";
+			echo "<div class='body bg-gray'>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Turma", "disciplineClass");
+					echo form_input($disciplineClass);
+					echo form_error("disciplineClass");
+				echo "</div>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Vagas totais", "totalVacancies");
+					echo form_input($totalVacancies);
+					echo form_error("disciplineClass");
+				echo "</div>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Professor principal", "mainTeacher");
+					if($teachers !== FALSE){
+						echo form_dropdown("mainTeacher", $teachers, '', "class='form-control'");
+					}else{
+						$submitBtn['disabled'] = TRUE;
+						echo form_dropdown("mainTeacher", array('Nenhum professor cadastrado.'), '', "class='form-control'");
+					}
+					echo form_error("mainTeacher");
+				echo "</div>";
+
+				echo "<div class='form-group'>";
+					echo form_label("Professor secundário", "secondaryTeacher");
+					if($teachers !== FALSE){
+						define("NONE_TEACHER", 0);
+						$teachers[NONE_TEACHER] = "Nenhum";
+						echo form_dropdown("secondaryTeacher", $teachers, NONE_TEACHER, "class='form-control'");
+					}else{
+						echo form_dropdown("secondaryTeacher", array('Nenhum professor cadastrado.'), '', "class='form-control'");
+					}
+					echo form_error("secondaryTeacher");
+				echo "</div>";
+		
+			echo "</div>";
+			echo "<div class='footer bg-gray'>";
+				echo form_button($submitBtn);
+			echo "</div>";
+		echo "</div>";
+
+	echo form_close();
+
+	if($teachers === FALSE){
+
+		echo "<div class='callout callout-danger'>";
+			echo "<h4>Não é possível cadastrar uma turma para oferta sem um professor principal.</h4>";
+			echo "<p>Contate o administrador.</p>";
+		echo "</div>";
+	}
+}
+
 function emptyDiv(){
 	echo "";
 }
