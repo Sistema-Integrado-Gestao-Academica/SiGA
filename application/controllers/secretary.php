@@ -66,5 +66,21 @@ class Secretary extends CI_Controller {
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
 
+	public function removeTeacherFromCourse($teacherId, $courseId){
+
+		$course = new Course();
+		$wasRemoved = $course->removeTeacherFromCourse($teacherId, $courseId);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Docente removido do curso com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o docente ao curso.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("secretary/courseTeachers/{$courseId}");
+	}
 }
 

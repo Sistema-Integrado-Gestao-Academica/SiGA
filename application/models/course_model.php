@@ -35,6 +35,22 @@ class Course_model extends CI_Model {
 		return $wasEnrolled;
 	}
 
+	public function removeTeacherFromCourse($teacherId, $courseId){
+
+		$teacherToRemove = array(
+			'id_user' => $teacherId,
+			'id_course' => $courseId
+		);
+
+		$this->db->delete('teacher_course', $teacherToRemove);
+
+		$teacherCourse = $this->getTeacherCourse($teacherToRemove);
+
+		$wasRemoved = $teacherCourse === FALSE;
+
+		return $wasRemoved;
+	}
+
 	private function getTeacherCourse($dataToSearch){
 
 		$teacherCourse = $this->db->get_where('teacher_course', $dataToSearch)->row_array();

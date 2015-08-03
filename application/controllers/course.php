@@ -53,6 +53,15 @@ class Course extends CI_Controller {
 		return $wasEnrolled;
 	}
 
+	public function removeTeacherFromCourse($teacherId, $courseId){
+
+		$this->load->model('course_model');
+
+		$wasRemoved = $this->course_model->removeTeacherFromCourse($teacherId, $courseId);
+
+		return $wasRemoved;
+	}
+
 	public function courseStudents($courseId){
 
 		$students = $this->getCourseStudents($courseId);
