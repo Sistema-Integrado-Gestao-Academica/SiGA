@@ -26,7 +26,7 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor("secretary/courseTeachers/{course['id_course']}", "Docentes do curso", "class='btn btn-primary'");
+				    		echo anchor("secretary/courseTeachers/{$course['id_course']}", "Docentes do curso", "class='btn btn-primary'");
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}

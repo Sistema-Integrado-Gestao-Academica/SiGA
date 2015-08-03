@@ -1,0 +1,47 @@
+
+<h2 class="principal">Docentes do curso <b><i><?php echo $course['course_name'];?></i></b></h2>
+
+
+<?php if($teachers !== FALSE){ ?>
+<h4>Docentes cadastrados para o curso:</h4>
+
+		<div class="box-body table-responsive no-padding">
+		<table class="table table-bordered table-hover">
+			<tbody>
+				<tr>
+			        <th class="text-center">Código</th>
+			        <th class="text-center">Docente</th>
+			        <th class="text-center">Ações</th>
+			    </tr>
+<?php
+			    	foreach($teachers as $teacher){
+
+						echo "<tr>";
+				    		echo "<td>";
+				    		echo $teacher['id_user'];
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    		echo $teacher['name'];
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    		echo "</td>";
+			    		echo "</tr>";
+			    	}
+?>			    
+			</tbody>
+		</table>
+		</div>
+
+<?php
+ 	} else{
+?>
+	<div class="callout callout-info">
+		<h4>Nenhum docente vinculado a este curso.</h4>
+	</div>
+<?php }?>
+
+
+
+<?= anchor('enroll_teacher', 'Voltar', "class='btn btn-danger'	")?>

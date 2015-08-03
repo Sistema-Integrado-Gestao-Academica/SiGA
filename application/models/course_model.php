@@ -6,6 +6,19 @@ require_once(APPPATH."/constants/GroupConstants.php");
 
 class Course_model extends CI_Model {
 
+	public function getCourseTeachers($courseId){
+
+		$this->db->select('users.name, teacher_course.*');
+		$this->db->from('users');
+		$this->db->join("teacher_course", "users.id = teacher_course.id_user");
+		$this->db->where("teacher_course.id_course", $courseId);
+		$teachers = $this->db->get()->result_array();
+
+		$teachers = checkArray($teachers);
+
+		return $teachers;
+	}
+
 	public function enrollStudentIntoCourse($enrollment){
 
 		$this->db->query($enrollment);
