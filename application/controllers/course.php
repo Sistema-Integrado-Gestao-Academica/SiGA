@@ -62,6 +62,15 @@ class Course extends CI_Controller {
 		return $wasRemoved;
 	}
 
+	public function defineTeacherSituation($courseId, $teacherId, $situation){
+
+		$this->load->model('course_model');
+
+		$defined = $this->course_model->defineTeacherSituation($courseId, $teacherId, $situation);
+
+		return $defined;
+	}
+
 	public function courseStudents($courseId){
 
 		$students = $this->getCourseStudents($courseId);

@@ -11,6 +11,7 @@
 				<tr>
 			        <th class="text-center">Código</th>
 			        <th class="text-center">Docente</th>
+			        <th class="text-center">Situação</th>
 			        <th class="text-center">Ações</th>
 			    </tr>
 <?php
@@ -23,6 +24,17 @@
 
 				    		echo "<td>";
 				    		echo $teacher['name'];
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    		$teacherSituation = $teacher['situation'];
+				    		if($teacherSituation !== NULL){
+				    			echo "<b>Situação atual: </b>".$teacherSituation.".<br><br>";
+				    			formToDefineTeacherSituation($teacher['id_user'], $teacher['id_course'], $teacher['situation']);
+				    		}else{
+				    			echo "<b>Situação atual: </b> Não definida.<br><br>";
+				    			formToDefineTeacherSituation($teacher['id_user'], $teacher['id_course'], FALSE);
+				    		}
 				    		echo "</td>";
 
 				    		echo "<td>";

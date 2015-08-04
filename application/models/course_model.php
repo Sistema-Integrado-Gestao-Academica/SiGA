@@ -60,6 +60,25 @@ class Course_model extends CI_Model {
 		return $teacherCourse;
 	}
 
+	public function defineTeacherSituation($courseId, $teacherId, $situation){
+
+		$where = array(
+			'id_user' => $teacherId,
+			'id_course' => $courseId
+		);
+
+		$this->db->where($where);
+		$this->db->update('teacher_course', array('situation' => $situation));
+
+		$where['situation'] = $situation;
+
+		$teacherCourse = $this->getTeacherCourse($where);
+
+		$wasDefined = $teacherCourse !== FALSE;
+
+		return $wasDefined;
+	}
+
 	public function enrollStudentIntoCourse($enrollment){
 
 		$this->db->query($enrollment);

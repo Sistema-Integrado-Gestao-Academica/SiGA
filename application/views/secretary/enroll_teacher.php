@@ -1,6 +1,6 @@
 <?php  $session = $this->session->userdata("current_user"); ?>
 
-<h2 class="principal">Vincular docentes aos cursos</h2>
+<h2 class="principal">Docentes dos cursos</h2>
 
 <h4>Cursos para o(a) secretário(a) <b><i><?php echo $session['user']['name']?></i></b>:</h4>
 <?php if($courses !== FALSE){ ?>
@@ -26,7 +26,7 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor("secretary/courseTeachers/{$course['id_course']}", "Docentes do curso", "class='btn btn-primary'");
+				    		echo anchor("secretary/courseTeachers/{$course['id_course']}", "Visualizar docentes do curso", "class='btn btn-primary'");
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}

@@ -1,5 +1,6 @@
 
 <?php
+require_once(APPPATH."/constants/TeacherConstants.php");
 
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
@@ -560,6 +561,34 @@ function formToEnrollTeacherToCourse($courseTeachers, $teachers, $courseId){
 			}
 		echo "</div>";
 
+	echo form_close();
+}
+
+function formToDefineTeacherSituation($teacherId, $courseId, $oldSituation){
+
+	$submitBtn = array(
+		"class" => "btn btn-primary btn-flat",
+		"type" => "submit",
+		"content" => "Definir situação"
+	);
+
+	$teacherConstants = new TeacherConstants();
+	$situations = $teacherConstants->getSituations();
+
+	echo form_open("secretary/defineTeacherSituation");
+		echo form_hidden("teacherId", $teacherId);
+		echo form_hidden("courseId", $courseId);
+
+		if($oldSituation !== FALSE){
+			echo form_label("Atualizar situação do docente:", "situation");
+			echo form_dropdown("situation", $situations, $oldSituation, "class='form-control'");
+		}else{
+			echo form_label("Situação do docente:", "situation");
+			echo form_dropdown("situation", $situations, '', "class='form-control'");
+		}
+		echo form_error("situation");
+
+		echo form_button($submitBtn);
 	echo form_close();
 }
 

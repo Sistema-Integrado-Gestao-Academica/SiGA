@@ -6,7 +6,7 @@ class Migration_Cria_permissao_vincular_docente_a_curso extends CI_Migration {
 
 		$this->db->insert('permission', array(
 			'id_permission' => 22,
-			'permission_name' => "Vincular docente a cursos",
+			'permission_name' => "Docentes dos cursos",
 			'route' => "enroll_teacher"
 		));
 

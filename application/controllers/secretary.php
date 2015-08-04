@@ -82,5 +82,26 @@ class Secretary extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
+
+	public function defineTeacherSituation(){
+
+		$courseId = $this->input->post('courseId');
+		$teacherId = $this->input->post('teacherId');
+		$situation = $this->input->post('situation');
+
+		$course = new Course();
+		$wasDefined = $course->defineTeacherSituation($courseId, $teacherId, $situation);
+
+		if($wasDefined){
+			$status = "success";
+			$message = "Situação do docente definida com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível definir a situação do docente.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("secretary/courseTeachers/{$courseId}");
+	}
 }
 
