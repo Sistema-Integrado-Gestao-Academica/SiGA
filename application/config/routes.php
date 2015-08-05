@@ -65,7 +65,6 @@ $route['secretaria'] = 'utils/loadSecretaria';
 $route['secretary_home'] = 'usuario/secretary_index';
 $route['setores'] = 'setor/formulario';
 $route['setores/(:num)'] = 'setor/formulario_altera/$1';
-$route['student'] = 'usuario/student_index';
 $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
 $route['user_report'] = 'usuario/usersReport';
 $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
@@ -94,6 +93,7 @@ $route['titling_area'] = 'mastermind/titlingArea';
 /*
  * Student functionalities routes
  */
+$route['student'] = 'usuario/student_index';
 $route['student_information'] = 'usuario/studentInformationsForm';
 $route['documents_request'] = "documentrequest/index";
 

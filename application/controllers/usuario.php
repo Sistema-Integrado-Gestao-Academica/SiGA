@@ -155,6 +155,15 @@ class Usuario extends CI_Controller {
 		return $users;
 	}
 
+	public function getUserCourses($userId){
+
+		$this->load->model('usuarios_model');
+
+		$userCourses = $this->usuarios_model->getUserCourse($userId);
+
+		return $userCourses;
+	}
+
 	public function student_index(){
 
 		$loggedUserData = $this->session->userdata("current_user");
