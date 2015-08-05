@@ -134,11 +134,41 @@ class DocumentRequest extends CI_Controller {
 
 				$otherDocumentName = $this->input->post('other_document_request');
 
+				$requestData = array(
+					'id_student' =>	$studentId,
+					'id_course' => $courseId,
+					'document_type' => $documentType,
+					'status' => DocumentConstants::REQUEST_OPEN,
+					'other_name' => $otherDocumentName
+				);
+
+				$wasSaved = $this->saveDocumentRequest($requestData);
+
+				if($wasSaved){
+					$status = "success";
+					$message = "Solicitação de documento enviada com sucesso.";
+				}else{
+					$status = "danger";
+					$message = "Não foi possível enviar a solicitação de documento informada.";
+				}
+
+				$this->session->set_flashdata($status, $message);
+				redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
+
 				break;
 
 			default:
 				break;
 		}
+	}
+
+	private function saveDocumentRequest($documentRequestData){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
+
+		return $wasSaved;
 	}
 
 }

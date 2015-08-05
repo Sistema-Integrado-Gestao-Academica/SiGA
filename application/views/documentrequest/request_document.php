@@ -1,5 +1,7 @@
 <h2 class="principal">Solicitação de Documentos</h2>
 
+
+
 <?= form_open('documentrequest/newDocumentRequest') ?>
 	
 	<?= form_hidden("courseId", $courseId)?>

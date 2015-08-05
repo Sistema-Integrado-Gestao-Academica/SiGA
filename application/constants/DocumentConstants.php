@@ -4,6 +4,9 @@ require_once('constants.php');
 
 class DocumentConstants extends Constants{
 	
+	// Document request status
+	const REQUEST_OPEN = "open";
+
 	// Doc names
 	const QUALIFICATION_JURY_NAME = "Solicitação de Banca de Qualificação";
 	const DEFENSE_JURY_NAME = "Solicitação de Banca de Defesa";

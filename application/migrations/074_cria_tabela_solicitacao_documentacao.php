@@ -19,8 +19,9 @@ class Migration_cria_tabela_solicitacao_documentacao extends CI_Migration {
 			'id_request' => array('type' => 'INT', 'auto_increment' => TRUE),
 			'id_student' => array('type' => 'INT'),
 			'id_course' => array('type' => 'INT'),
-			'document_type' => array('type' => 'INT')
-			'status' => array('type' => 'varchar(20)')
+			'document_type' => array('type' => 'INT'),
+			'status' => array('type' => 'varchar(20)'),
+			'other_name' => array('type' => 'varchar(50)', "null" => TRUE)
 		));
 		$this->dbforge->add_key('id_request', TRUE);
 		$this->dbforge->create_table('document_request', TRUE);
