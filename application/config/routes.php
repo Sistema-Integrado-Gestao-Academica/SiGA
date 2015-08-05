@@ -71,7 +71,6 @@ $route['user_report'] = 'usuario/usersReport';
 $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
 $route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
 $route['mastermind_home'] = 'mastermind/index';
-$route['student_information'] = 'usuario/studentInformationsForm';
 $route['coordinator_home'] = 'coordinator/index';
 $route['program'] = 'program/index';
 
@@ -91,6 +90,12 @@ $route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
  */
 $route['mastermind'] = 'mastermind/displayMastermindStudents';
 $route['titling_area'] = 'mastermind/titlingArea';
+
+/*
+ * Student functionalities routes
+ */
+$route['student_information'] = 'usuario/studentInformationsForm';
+$route['documents_request'] = "documentrequest/index";
 
 /*
  * Test report routes
