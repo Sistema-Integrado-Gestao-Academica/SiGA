@@ -12,6 +12,7 @@ class PermissionConstants extends Constants{
 	const COURSE_SYLLABUS_PERMISSION = "course_syllabus";
 	const DEFINE_MASTERMIND_PERMISSION = "enroll_mastermind";
 	const ENROLL_TEACHER_PERMISSION = "enroll_teacher";
+	const DOCUMENT_REQUEST_REPORT_PERMISSION = "documents_report";
 
 	// Student functionalities permissions
 	const DOCUMENT_REQUEST_PERMISSION = "documents_request";

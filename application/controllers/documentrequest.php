@@ -1,10 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once("usuario.php");
+require_once("course.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/constants/DocumentConstants.php");
 
 class DocumentRequest extends CI_Controller {
+
+	// Functions to student //
 
 	public function index(){
 
@@ -190,5 +193,24 @@ class DocumentRequest extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
+	}
+
+	// Functions to secretary //
+
+	public function documentRequestSecretary(){
+
+		$loggedUserData = $this->session->userdata("current_user");
+		$currentUser = $loggedUserData['user'];
+		$userId = $currentUser['id'];
+
+		$course = new Course();
+		$courses = $course->getCoursesOfSecretary($userId);
+
+		$data = array(
+			'courses' => $courses,
+			'userData' => $currentUser
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request", $data);
 	}
 }

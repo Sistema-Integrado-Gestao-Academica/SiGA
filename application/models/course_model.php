@@ -542,6 +542,7 @@ class Course_model extends CI_Model {
 	 */
 	public function getCoursesOfSecretary($userId){
 		
+		$this->db->distinct();
 		$this->db->select('course.*');
 		$this->db->from('course');
 		$this->db->join('secretary_course','course.id_course = secretary_course.id_course');

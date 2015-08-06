@@ -83,6 +83,7 @@ $route['offer_list'] = 'usuario/secretary_offerList';
 $route['course_syllabus'] = 'usuario/secretary_courseSyllabus';
 $route['enroll_mastermind'] = 'usuario/secretary_enrollMasterMinds';
 $route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
+$route['documents_report'] = 'documentrequest/documentRequestSecretary';
 
 /*
  * Mastermind functionalities routes

@@ -243,7 +243,6 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 	
 function secretaryCoursesToRequestReport($courses){
 
-
 	$courseController = new Course();
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
@@ -282,7 +281,7 @@ function secretaryCoursesToRequestReport($courses){
 		    
 		echo "</tbody>";
 	echo "</table>";
-echo "</div>";
+	echo "</div>";
 
 }
 
