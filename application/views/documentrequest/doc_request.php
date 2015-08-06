@@ -36,7 +36,7 @@
 
 			    		echo "<td>";
 			    		echo anchor(
-			    			"",
+			    			"documentrequest/documentRequestReport/{$courseId}",
 			    			"<i class='fa fa-list'></i> Visualizar Solicitações",
 			    			"class='btn-lg'"
 			    		);

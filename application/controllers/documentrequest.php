@@ -213,4 +213,39 @@ class DocumentRequest extends CI_Controller {
 
 		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request", $data);
 	}
+
+	public function documentRequestReport($courseId){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$courseRequests = $this->doc_request_model->getCourseRequests($courseId);
+
+		$course = new Course();
+		$courseData = $course->getCourseById($courseId);
+
+		$data = array(
+			'courseRequests' => $courseRequests,
+			'courseData' => $courseData
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);		
+	}
+
+	public function documentReady($requestId, $courseId){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$documentIsReady = $this->doc_request_model->setDocumentReady($requestId);
+
+		if($documentIsReady){
+			$status = "success";
+			$message = "Status do documento atualizado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível atualizar o status do documento.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("documentrequest/documentRequestReport/{$courseId}");
+	}
 }
