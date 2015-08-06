@@ -6,6 +6,7 @@ class DocumentConstants extends Constants{
 	
 	// Document request status
 	const REQUEST_OPEN = "open";
+	const REQUEST_READY = "ready";
 
 	// Doc names
 	const QUALIFICATION_JURY_NAME = "Solicitação de Banca de Qualificação";
@@ -24,4 +25,18 @@ class DocumentConstants extends Constants{
 	const TRANSFER_DOCS = 5;
 	const SCHEDULE = 6;
 	const OTHER_DOCS = 7;
+
+	private $documentTypes = array(
+		self::QUALIFICATION_JURY => self::QUALIFICATION_JURY_NAME,
+		self::DEFENSE_JURY => self::DEFENSE_JURY_NAME,
+		self::PASSAGE_SOLICITATION => self::PASSAGE_SOLICITATION_NAME,
+		self::TRANSCRIPT => self::TRANSCRIPT_NAME,
+		self::TRANSFER_DOCS => self::TRANSFER_DOCS_NAME,
+		self::SCHEDULE => self::SCHEDULE_NAME,
+		self::OTHER_DOCS => self::OTHER_DOCS_NAME
+	);
+
+	public function getAllTypes(){
+		return $this->documentTypes;
+	}
 }

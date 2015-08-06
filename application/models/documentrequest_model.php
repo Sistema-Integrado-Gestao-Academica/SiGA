@@ -22,6 +22,16 @@ class DocumentRequest_model extends CI_Model {
 		return $wasSaved;
 	}
 
+	public function getStudentsRequestOfCourse($studentId, $courseId){
+
+		$requests = $this->getDocumentRequest(array(
+			'id_student' => $studentId,
+			'id_course' => $courseId
+		));
+
+		return $requests;
+	}
+
 	private function getDocumentRequest($requestData){
 
 		$documentRequest = $this->db->get_where('document_request', $requestData)->result_array();

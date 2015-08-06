@@ -26,6 +26,8 @@ class DocumentRequest extends CI_Controller {
 
 		$this->load->model('documentrequest_model', "doc_request_model");
 
+		$studentRequests = $this->doc_request_model->getStudentsRequestOfCourse($userId, $courseId);
+
 		$types = $this->doc_request_model->allDocumentTypes();
 
 		if($types !== FALSE){
@@ -38,6 +40,7 @@ class DocumentRequest extends CI_Controller {
 
 		$data = array(
 			'documentTypes' => $documentTypes,
+			'documentRequests' => $studentRequests,
 			'courseId' => $courseId,
 			'userId' => $userId
 		);
