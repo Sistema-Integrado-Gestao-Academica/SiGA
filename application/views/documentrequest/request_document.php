@@ -57,11 +57,15 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor(
-				    			"documentrequest/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
-					    		"<i class='fa fa-remove'></i>",
-					    		"class='btn btn-danger'"
-				    		);
+				    		if($request['status'] === DocumentConstants::REQUEST_READY){
+				    			echo "<i class='fa fa-check'></i>";
+				    		}else{
+					    		echo anchor(
+					    			"documentrequest/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
+						    		"<i class='fa fa-remove'></i>",
+						    		"class='btn btn-danger'"
+					    		);
+				    		}
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
