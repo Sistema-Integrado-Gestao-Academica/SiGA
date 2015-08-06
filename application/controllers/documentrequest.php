@@ -174,4 +174,21 @@ class DocumentRequest extends CI_Controller {
 		return $wasSaved;
 	}
 
+	public function cancelRequest($requestId, $courseId, $studentId){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$wasDeleted = $this->doc_request_model->deleteRequest($requestId);
+
+		if($wasDeleted){
+			$status = "success";
+			$message = "Solicitação de documento cancelada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível cancelar a solicitação de documento informada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
+	}
 }

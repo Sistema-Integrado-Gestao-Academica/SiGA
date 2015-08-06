@@ -57,6 +57,11 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
+				    		echo anchor(
+				    			"documentrequest/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
+					    		"<i class='fa fa-remove'></i>",
+					    		"class='btn btn-danger'"
+				    		);
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
