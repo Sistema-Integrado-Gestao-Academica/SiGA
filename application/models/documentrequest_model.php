@@ -24,6 +24,7 @@ class DocumentRequest_model extends CI_Model {
 
 	public function getStudentsRequestOfCourse($studentId, $courseId){
 
+		$this->db->order_by('status', "asc");
 		$requests = $this->getDocumentRequest(array(
 			'id_student' => $studentId,
 			'id_course' => $courseId
