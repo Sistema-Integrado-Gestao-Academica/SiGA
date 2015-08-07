@@ -4,15 +4,15 @@ class Migration_altera_dados_tabela_tipo_documento extends CI_Migration {
 
 	public function up() {
 
-		// // Changing the size of the document_type column
-		// $this->dbforge->modify_column('document_type', array(
-		// 	'document_type' => array('type' => 'varchar(60)')
-		// ));
+		// Changing the size of the document_type column
+		$this->dbforge->modify_column('document_type', array(
+			'document_type' => array('type' => 'varchar(60)')
+		));
 
-		// // Create declaration column to tell apart the declararion types from the others
-		// $this->dbforge->add_column('document_type', array(
-		// 	'declaration' => array('type' => 'TINYINT', 'default' => 0)
-		// ));
+		// Create declaration column to tell apart the declararion types from the others
+		$this->dbforge->add_column('document_type', array(
+			'declaration' => array('type' => 'TINYINT', 'default' => 0)
+		));
 
 		// Disable constraint
 		$disableConstraint = "SET FOREIGN_KEY_CHECKS = 0";
