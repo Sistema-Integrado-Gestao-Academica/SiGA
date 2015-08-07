@@ -4,13 +4,22 @@ require_once(APPPATH."/constants/DocumentConstants.php");
 
 class DocumentRequest_model extends CI_Model {
 
-	public function allDocumentTypes(){
+	public function allNonDeclarationTypes(){
 
-		$types = $this->db->get('document_type')->result_array();
+		$types = $this->db->get_where('document_type', array('declaration' => DocumentConstants::NON_DECLARATION))->result_array();
 
 		$types = checkArray($types);
 
 		return $types;
+	}
+
+	public function allDeclarationTypes(){
+
+		$types = $this->db->get_where('document_type', array('declaration' => DocumentConstants::DECLARATION))->result_array();
+
+		$types = checkArray($types);
+
+		return $types;		
 	}
 
 	public function saveDocumentRequest($documentRequestData){

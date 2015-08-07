@@ -34,7 +34,12 @@
 				    		echo "<td>";
 					    		$docConstants = new DocumentConstants();
 					    		$allTypes = $docConstants->getAllTypes();
-					    		echo $allTypes[$request['document_type']];
+					    		
+					    		if($allTypes !== FALSE){
+					    			echo $allTypes[$request['document_type']];
+					    		}else{
+					    			echo "-";
+					    		}
 				    		echo "</td>";
 
 				    		echo "<td>";
@@ -54,7 +59,7 @@
 				    		echo "<td>";
 				    		switch($request['document_type']){
 				    			case DocumentConstants::OTHER_DOCS:
-				    				echo "<b>Documento solicitado: </b>".$request['other_name'];
+				    				echo "<b>Solicitação: </b>".$request['other_name'];
 				    				break;
 				    			
 				    			default:

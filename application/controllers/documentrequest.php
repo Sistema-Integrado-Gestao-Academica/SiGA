@@ -31,7 +31,7 @@ class DocumentRequest extends CI_Controller {
 
 		$studentRequests = $this->doc_request_model->getStudentsRequestOfCourse($userId, $courseId);
 
-		$types = $this->doc_request_model->allDocumentTypes();
+		$types = $this->doc_request_model->allNonDeclarationTypes();
 
 		if($types !== FALSE){
 			foreach($types as $type){
@@ -66,13 +66,19 @@ class DocumentRequest extends CI_Controller {
 			case DocumentConstants::PASSAGE_SOLICITATION:
 				break;
 
-			case DocumentConstants::TRANSCRIPT:
-				break;
-
 			case DocumentConstants::TRANSFER_DOCS:
 				break;
 
-			case DocumentConstants::SCHEDULE:
+			case DocumentConstants::DECLARATIONS:
+
+				$docRequest = new DocumentConstants();
+				$declarationTypes = $docRequest->getDeclarationTypes();
+
+				echo "<div class='form-group'>";
+				echo form_label("Escolha o tipo de declaração:", "declarationTypes");
+				echo form_dropdown("documentType", $declarationTypes, '', "id='declarationTypes' class='form-control' style='width:40%;'");
+				echo"</div>";
+
 				break;
 
 			case DocumentConstants::OTHER_DOCS:
@@ -127,13 +133,7 @@ class DocumentRequest extends CI_Controller {
 			case DocumentConstants::PASSAGE_SOLICITATION:
 				break;
 
-			case DocumentConstants::TRANSCRIPT:
-				break;
-
 			case DocumentConstants::TRANSFER_DOCS:
-				break;
-
-			case DocumentConstants::SCHEDULE:
 				break;
 
 			case DocumentConstants::OTHER_DOCS:
@@ -280,5 +280,25 @@ class DocumentRequest extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 		redirect("documentrequest/documentRequestReport/{$courseId}");
+	}
+
+	// Other methods
+
+	public function allNonDeclarationTypes(){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$types = $this->doc_request_model->allNonDeclarationTypes();		
+
+		return $types;
+	}
+
+	public function allDeclarationTypes(){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$types = $this->doc_request_model->allDeclarationTypes();		
+
+		return $types;
 	}
 }

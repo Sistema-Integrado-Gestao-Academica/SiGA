@@ -1,45 +1,102 @@
 <?php
 
 require_once('constants.php');
+require_once(APPPATH.'/controllers/documentrequest.php');
 
 class DocumentConstants extends Constants{
 	
 	const REQUEST_ARCHIVED = 1;
 	const REQUEST_NON_ARCHIVED = 0;
 
+	const DECLARATION = 1;
+	const NON_DECLARATION = 0;
+
 	// Document request status
 	const REQUEST_OPEN = "open";
 	const REQUEST_READY = "ready";
 
-	// Doc names
-	const QUALIFICATION_JURY_NAME = "Solicitação de Banca de Qualificação";
-	const DEFENSE_JURY_NAME = "Solicitação de Banca de Defesa";
-	const PASSAGE_SOLICITATION_NAME = "Solicitação de Passagem";
-	const TRANSCRIPT_NAME = "Histórico Escolar";
-	const TRANSFER_DOCS_NAME = "Documentos para Transferência";
-	const SCHEDULE_NAME = "Grade Horária";
-	const OTHER_DOCS_NAME = "Outro";
-
-	// Docs ids
+	// Non declaration Docs ids
 	const QUALIFICATION_JURY = 1;
 	const DEFENSE_JURY = 2;
 	const PASSAGE_SOLICITATION = 3;
-	const TRANSCRIPT = 4;
-	const TRANSFER_DOCS = 5;
-	const SCHEDULE = 6;
-	const OTHER_DOCS = 7;
+	const TRANSFER_DOCS = 4;
+	const DECLARATIONS = 5;
+	const OTHER_DOCS = 18;
 
-	private $documentTypes = array(
-		self::QUALIFICATION_JURY => self::QUALIFICATION_JURY_NAME,
-		self::DEFENSE_JURY => self::DEFENSE_JURY_NAME,
-		self::PASSAGE_SOLICITATION => self::PASSAGE_SOLICITATION_NAME,
-		self::TRANSCRIPT => self::TRANSCRIPT_NAME,
-		self::TRANSFER_DOCS => self::TRANSFER_DOCS_NAME,
-		self::SCHEDULE => self::SCHEDULE_NAME,
-		self::OTHER_DOCS => self::OTHER_DOCS_NAME
-	);
+	// Declaration Docs ids
+	const REGULAR_STUDENT_DECLARATION = 6;
+	const TGM_DECLARATION = 7;
+	const PROBABLE_GRADUATING_DECLARATION = 8;
+	const DISCIPLINE_ENROLLMENT_DECLARATION = 9;
+	const SCHEDULE_DECLARATION = 10;
+	const GRADUATED_DECLARATION = 11;
+	const ACADEMIC_BEHAVIOR_REGULAR_STUDENT_DECLARATION = 12;
+	const ACADEMIC_BEHAVIOR_EX_STUDENT_DECLARATION = 13;
+	const MONITORING_DECLARATION = 14;
+	const COURSE_PERIOD_DECLARATION = 15;
+	const DONE_DISCISPLINES_DECLARATION = 16;
+	const PERIOD_GRADUATED_DECLARATION = 17;
+	
+
+	private $nonDeclarationTypes;
+	private $declarationTypes;
+
+	public function __construct(){
+		$this->setDeclarationTypes();
+		$this->setNonDeclarationTypes();
+	}
+
+	private function setDeclarationTypes(){
+		
+		$docRequest = new DocumentRequest();
+		$types = $docRequest->allDeclarationTypes();
+
+		if($types !== FALSE){
+			foreach($types as $type){
+				$declarationTypes[$type['id_type']] = $type['document_type'];
+			}
+		}else{
+			$declarationTypes = FALSE;
+		}
+
+		$this->declarationTypes = $declarationTypes;
+	}
+
+	private function setNonDeclarationTypes(){
+
+		$docRequest = new DocumentRequest();
+		$types = $docRequest->allNonDeclarationTypes();
+
+		if($types !== FALSE){
+			foreach($types as $type){
+				$nonDeclarationTypes[$type['id_type']] = $type['document_type'];
+			}
+		}else{
+			$nonDeclarationTypes = FALSE;
+		}
+
+		$this->nonDeclarationTypes = $nonDeclarationTypes;
+	}
+
+	public function getDeclarationTypes(){
+		return $this->declarationTypes;
+	}
+
+	public function getNonDeclarationTypes(){
+		return $this->nonDeclarationTypes;
+	}
 
 	public function getAllTypes(){
-		return $this->documentTypes;
+		
+		$declarationTypes = $this->declarationTypes;
+		$nonDeclarationTypes = $this->nonDeclarationTypes;
+
+		if($declarationTypes !== FALSE && $nonDeclarationTypes !== FALSE){
+			$allTypes = $nonDeclarationTypes + $declarationTypes;
+		}else{
+			$allTypes = FALSE;
+		}
+
+		return $allTypes;
 	}
 }

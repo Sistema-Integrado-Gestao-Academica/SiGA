@@ -33,8 +33,13 @@
 				    		echo "<td>";
 					    		$docConstants = new DocumentConstants();
 					    		$allTypes = $docConstants->getAllTypes();
-					    		echo $allTypes[$request['document_type']];
-				    		echo "</td>";
+					    		
+					    		if($allTypes !== FALSE){
+					    			echo $allTypes[$request['document_type']];
+					    		}else{
+					    			echo "-";
+					    		}
+					    	echo "</td>";
 
 				    		echo "<td>";
 				    		switch($request['status']){
@@ -53,7 +58,7 @@
 				    		echo "<td>";
 				    		switch($request['document_type']){
 				    			case DocumentConstants::OTHER_DOCS:
-				    				echo "<b>Documento solicitado: </b>".$request['other_name'];
+				    				echo "<b>Solicitação: </b>".$request['other_name'];
 				    				break;
 				    			
 				    			default:
@@ -106,10 +111,10 @@
 	</div>
 
 	<br>
-	<br>
 	<div id="document_request_data"></div>
 
 <?= form_close() ?>
 
+<br>
 <br>
 <?= anchor('documents_request', 'Voltar', "class='btn btn-danger'")?>
