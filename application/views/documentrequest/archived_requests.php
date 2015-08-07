@@ -1,16 +1,10 @@
 <?php require_once(APPPATH."/constants/DocumentConstants.php"); ?>
 
-<h2 class="principal">Solicitação de Documentos</h2>
+<h2 class="principal">Solicitação de Documentos arquivadas</h2>
 
-<h3><i class="fa fa-list"></i> Documentos já solicitados</h3>
-<?php 
-	echo anchor(
-		"documentrequest/displayArchivedRequests/{$courseId}/{$userId}",
-		"Solicitações arquivadas",
-		"class='btn btn-success'"
-	); 
-?>
-<?php if($documentRequests !== FALSE){ ?>
+<h3><i class="fa fa-archive"></i> Solicitações arquivadas</h3>
+
+<?php if($archivedRequests !== FALSE){ ?>
 
 		<div class="box-body table-responsive no-padding">
 		<table class="table table-bordered table-hover">
@@ -23,7 +17,7 @@
 			        <th class="text-center">Ações</th>
 			    </tr>
 <?php
-			    	foreach($documentRequests as $request){
+			    	foreach($archivedRequests as $request){
 
 						echo "<tr>";
 				    		echo "<td>";
@@ -63,19 +57,6 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		if($request['status'] === DocumentConstants::REQUEST_READY){
-				    			echo anchor(
-					    			"documentrequest/archiveRequest/{$request['id_request']}/{$courseId}/{$userId}",
-						    		"<i class='fa fa-archive'></i> Arquivar",
-						    		"class='btn btn-success'"
-					    		);
-				    		}else{
-					    		echo anchor(
-					    			"documentrequest/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
-						    		"<i class='fa fa-remove'></i>",
-						    		"class='btn btn-danger'"
-					    		);
-				    		}
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
@@ -88,28 +69,8 @@
  	} else{
 ?>
 	<div class="callout callout-info">
-		<h4>Nenhuma solicitação de documentos feita pelo aluno.</h4>
+		<h4>Nenhuma solicitação de documentos arquivada pelo aluno.</h4>
 	</div>
 <?php }?>
 
-<br>
-<h3><i class="fa fa-plus-circle"></i> Nova solicitação</h3>
-<br>
-<?= form_open('documentrequest/newDocumentRequest') ?>
-	
-	<?= form_hidden("courseId", $courseId)?>
-	<?= form_hidden("studentId", $userId)?>
-	
-	<div class='form-group'>
-		<?= form_label("Escolha o tipo de documento:", "documentTypes") ?>
-		<?= form_dropdown("documentType", $documentTypes, '', "id='documentType' class='form-control' style='width:40%;'"); ?>
-	</div>
-
-	<br>
-	<br>
-	<div id="document_request_data"></div>
-
-<?= form_close() ?>
-
-<br>
-<?= anchor('documents_request', 'Voltar', "class='btn btn-danger'")?>
+<?= anchor("documentrequest/requestDocument/{$courseId}/{$studentId}", 'Voltar', "class='btn btn-danger'")?>

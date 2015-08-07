@@ -213,6 +213,21 @@ class DocumentRequest extends CI_Controller {
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 	}
 
+	public function displayArchivedRequests($courseId, $studentId){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$archivedRequests = $this->doc_request_model->getStudentArchivedRequests($studentId, $courseId);
+
+		$data = array(
+			'archivedRequests' => $archivedRequests,
+			'courseId' => $courseId,
+			'studentId' => $studentId
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/archived_requests", $data);
+	}
+
 	// Functions to secretary //
 
 	public function documentRequestSecretary(){

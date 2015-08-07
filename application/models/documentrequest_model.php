@@ -36,6 +36,18 @@ class DocumentRequest_model extends CI_Model {
 		return $requests;
 	}
 
+	public function getStudentArchivedRequests($studentId, $courseId){
+
+		$this->db->order_by('status', "asc");
+		$requests = $this->getDocumentRequest(array(
+			'id_student' => $studentId,
+			'id_course' => $courseId,
+			'disabled' => DocumentConstants::REQUEST_ARCHIVED
+		));
+
+		return $requests;
+	}
+
 	public function deleteRequest($requestId){
 
 		$this->db->delete('document_request', array('id_request' => $requestId));
