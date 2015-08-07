@@ -4,6 +4,9 @@ require_once('constants.php');
 
 class DocumentConstants extends Constants{
 	
+	const REQUEST_ARCHIVED = 1;
+	const REQUEST_NON_ARCHIVED = 0;
+
 	// Document request status
 	const REQUEST_OPEN = "open";
 	const REQUEST_READY = "ready";

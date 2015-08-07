@@ -195,6 +195,24 @@ class DocumentRequest extends CI_Controller {
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 	}
 
+	public function archiveRequest($requestId, $courseId, $studentId){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$wasArchived = $this->doc_request_model->archiveRequest($requestId);
+
+		if($wasArchived){
+			$status = "success";
+			$message = "Solicitação de documento arquivada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível arquivar a solicitação de documento informada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
+	}
+
 	// Functions to secretary //
 
 	public function documentRequestSecretary(){

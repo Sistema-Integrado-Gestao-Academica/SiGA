@@ -58,7 +58,11 @@
 
 				    		echo "<td>";
 				    		if($request['status'] === DocumentConstants::REQUEST_READY){
-				    			echo "<i class='fa fa-check'></i>";
+				    			echo anchor(
+					    			"documentrequest/archiveRequest/{$request['id_request']}/{$courseId}/{$userId}",
+						    		"<i class='fa fa-archive'></i> Arquivar",
+						    		"class='btn btn-success'"
+					    		);
 				    		}else{
 					    		echo anchor(
 					    			"documentrequest/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
