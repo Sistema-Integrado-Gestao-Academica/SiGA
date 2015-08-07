@@ -2343,3 +2343,32 @@ function displayUsersOfGroup($idGroup, $usersOfGroup){
 		echo "</table>";
 	echo "</div>";
 }
+
+function displayGuestUsers(){
+	define("GUEST_GROUP_ID", 8);
+	$users = new Usuario();
+	$guests = $users->getUsersOfGroup(GUEST_GROUP_ID);
+	
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+			echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
+			echo "<tr>";
+				echo "<th class=\"text-center\">Nome: </th>";
+				echo "<th class=\"text-center\">Email: </th>";
+			echo "</tr>";
+		 foreach ($guests as $keys => $user){	
+			echo "<tr>";
+				echo "<td>";
+					echo $user['name'];		
+				echo "</td>";
+				echo "<td>";
+					echo $user['email'];
+				echo "</td>";
+				
+			echo "</tr>";
+		 }
+		echo "</tbody>";
+	echo "</table>";	
+	
+}
+
