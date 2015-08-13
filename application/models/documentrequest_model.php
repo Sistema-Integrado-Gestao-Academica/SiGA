@@ -72,7 +72,18 @@ class DocumentRequest_model extends CI_Model {
 
 		$this->db->order_by('status', "asc");
 		$requests = $this->getDocumentRequest(array(
-			'id_course' => $courseId
+			'id_course' => $courseId,
+			'answered' => DocumentConstants::NOT_ANSWERED
+		));
+
+		return $requests;
+	}
+
+	public function getAnsweredRequests($courseId){
+
+		$requests = $this->getDocumentRequest(array(
+			'id_course' => $courseId,
+			'answered' => DocumentConstants::ANSWERED
 		));
 
 		return $requests;
@@ -81,7 +92,10 @@ class DocumentRequest_model extends CI_Model {
 	public function setDocumentReady($requestId){
 
 		$this->db->where('id_request', $requestId);
-		$this->db->update('document_request', array('status' => DocumentConstants::REQUEST_READY));
+		$this->db->update(
+			'document_request',
+			array('status' => DocumentConstants::REQUEST_READY, 'answered' => DocumentConstants::ANSWERED)
+		);
 
 		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId));
 

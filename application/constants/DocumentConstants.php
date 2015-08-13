@@ -11,6 +11,9 @@ class DocumentConstants extends Constants{
 	const DECLARATION = 1;
 	const NON_DECLARATION = 0;
 
+	const ANSWERED = 1;
+	const NOT_ANSWERED = 0;
+
 	// Document request status
 	const REQUEST_OPEN = "open";
 	const REQUEST_READY = "ready";

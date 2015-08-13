@@ -317,6 +317,20 @@ class DocumentRequest extends CI_Controller {
 		redirect("documentrequest/documentRequestReport/{$courseId}");
 	}
 
+	public function displayAnsweredRequests($courseId){
+
+		$this->load->model('documentrequest_model', "doc_request_model");
+
+		$answeredRequests = $this->doc_request_model->getAnsweredRequests($courseId);
+
+		$data = array(
+			'answeredRequests' => $answeredRequests,
+			'courseId' => $courseId
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/answered_requests", $data);
+	}
+
 	// Other methods
 
 	public function allNonDeclarationTypes(){

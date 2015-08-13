@@ -3,6 +3,13 @@
 <h2 class="principal">Solicitação de documentos para o curso <i><b><?php echo $courseData['course_name']?></b></i></h2>
 
 <h3><i class="fa fa-list"></i> Documentos solicitados pelos alunos:</h3>
+<?php 
+	echo anchor(
+		"documentrequest/displayAnsweredRequests/{$courseData['id_course']}",
+		"Solicitações atendidas",
+		"class='btn btn-success'"
+	); 
+?>
 <?php if($courseRequests !== FALSE){ ?>
 
 		<div class="box-body table-responsive no-padding">
@@ -97,3 +104,5 @@
 		<h4>Nenhum solicitação de documentos feita para o curso.</h4>
 	</div>
 <?php }?>
+
+<?= anchor('documents_report', 'Voltar', "class='btn btn-danger'")?>
