@@ -24,6 +24,10 @@ class DocumentRequest_model extends CI_Model {
 
 	public function saveDocumentRequest($documentRequestData){
 
+		$solicitationDate = $this->db->query("SELECT NOW()")->row_array();
+		
+		$documentRequestData['date'] = $solicitationDate['NOW()'];
+
 		$this->db->insert("document_request", $documentRequestData);
 
 		$foundRequest = $this->getDocumentRequest($documentRequestData);

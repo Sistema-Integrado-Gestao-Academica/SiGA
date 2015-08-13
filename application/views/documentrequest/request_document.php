@@ -18,6 +18,7 @@
 				<tr>
 			        <th class="text-center">Código</th>
 			        <th class="text-center">Tipo do documento</th>
+			        <th class="text-center">Data da solicitação</th>
 			        <th class="text-center">Status</th>
 			        <th class="text-center">Dados adicionais</th>
 			        <th class="text-center">Ações</th>
@@ -40,6 +41,10 @@
 					    			echo "-";
 					    		}
 					    	echo "</td>";
+
+				    		echo "<td>";
+				    			echo $request['date'];
+				    		echo "</td>";
 
 				    		echo "<td>";
 				    		switch($request['status']){

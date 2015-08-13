@@ -11,13 +11,13 @@
 			<tbody>
 				<tr>
 			        <th class="text-center">Código</th>
-			        <th class="text-center">Tipo do documento</th>
+			        <th class="text-center">Matrícula</th>
 			        <th class="text-center">Status</th>
 			        <th class="text-center">Dados adicionais</th>
 			        <th class="text-center">Ações</th>
 			    </tr>
 <?php
-			    	foreach($archivedRequests as $request){
+					foreach($archivedRequests as $request){
 
 						echo "<tr>";
 				    		echo "<td>";

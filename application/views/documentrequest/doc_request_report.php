@@ -18,7 +18,9 @@
 				<tr>
 			        <th class="text-center">Código</th>
 			        <th class="text-center">Aluno</th>
+			        <th class="text-center">Matrícula</th>
 			        <th class="text-center">Tipo do documento</th>
+			        <th class="text-center">Data da socilicitação</th>
 			        <th class="text-center">Status</th>
 			        <th class="text-center">Dados adicionais</th>
 			        <th class="text-center">Ações</th>
@@ -39,6 +41,10 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
+				    			echo $studentId;
+				    		echo "</td>";
+
+				    		echo "<td>";
 					    		$docConstants = new DocumentConstants();
 					    		$allTypes = $docConstants->getAllTypes();
 					    		
@@ -47,6 +53,10 @@
 					    		}else{
 					    			echo "-";
 					    		}
+				    		echo "</td>";
+
+				    		echo "<td>";
+				    			echo $request['date'];
 				    		echo "</td>";
 
 				    		echo "<td>";
