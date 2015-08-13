@@ -71,13 +71,22 @@ class DocumentRequest extends CI_Controller {
 
 			case DocumentConstants::DECLARATIONS:
 
+				$submitBtn = array(
+					"id" => "request_document_btn",
+					"class" => "btn bg-primary btn-flat",
+					"content" => "Solicitar documento",
+					"type" => "submit"
+				);
+
 				$docRequest = new DocumentConstants();
 				$declarationTypes = $docRequest->getDeclarationTypes();
 
 				echo "<div class='form-group'>";
-				echo form_label("Escolha o tipo de declaração:", "declarationTypes");
-				echo form_dropdown("documentType", $declarationTypes, '', "id='declarationTypes' class='form-control' style='width:40%;'");
+				echo form_label("Escolha o tipo de declaração:", "declarationType");
+				echo form_dropdown("declarationType", $declarationTypes, '', "id='declarationType' class='form-control' style='width:40%;'");
 				echo"</div>";
+
+				echo form_button($submitBtn);
 
 				break;
 
@@ -134,6 +143,32 @@ class DocumentRequest extends CI_Controller {
 				break;
 
 			case DocumentConstants::TRANSFER_DOCS:
+				break;
+
+			case DocumentConstants::DECLARATIONS:
+				
+				$declarationType = $this->input->post('declarationType');
+
+				$requestData = array(
+					'id_student' =>	$studentId,
+					'id_course' => $courseId,
+					'document_type' => $declarationType,
+					'status' => DocumentConstants::REQUEST_OPEN
+				);
+
+				$wasSaved = $this->saveDocumentRequest($requestData);
+
+				if($wasSaved){
+					$status = "success";
+					$message = "Solicitação de documento enviada com sucesso.";
+				}else{
+					$status = "danger";
+					$message = "Não foi possível enviar a solicitação de documento informada.";
+				}
+
+				$this->session->set_flashdata($status, $message);
+				redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
+
 				break;
 
 			case DocumentConstants::OTHER_DOCS:
