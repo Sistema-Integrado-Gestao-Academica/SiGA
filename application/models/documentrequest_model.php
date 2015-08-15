@@ -24,6 +24,10 @@ class DocumentRequest_model extends CI_Model {
 
 	public function saveDocumentRequest($documentRequestData){
 
+		$solicitationDate = $this->db->query("SELECT NOW()")->row_array();
+		
+		$documentRequestData['date'] = $solicitationDate['NOW()'];
+
 		$this->db->insert("document_request", $documentRequestData);
 
 		$foundRequest = $this->getDocumentRequest($documentRequestData);
@@ -71,8 +75,20 @@ class DocumentRequest_model extends CI_Model {
 	public function getCourseRequests($courseId){
 
 		$this->db->order_by('status', "asc");
+		$this->db->order_by('date', "asc");
 		$requests = $this->getDocumentRequest(array(
-			'id_course' => $courseId
+			'id_course' => $courseId,
+			'answered' => DocumentConstants::NOT_ANSWERED
+		));
+
+		return $requests;
+	}
+
+	public function getAnsweredRequests($courseId){
+
+		$requests = $this->getDocumentRequest(array(
+			'id_course' => $courseId,
+			'answered' => DocumentConstants::ANSWERED
 		));
 
 		return $requests;
@@ -81,7 +97,10 @@ class DocumentRequest_model extends CI_Model {
 	public function setDocumentReady($requestId){
 
 		$this->db->where('id_request', $requestId);
-		$this->db->update('document_request', array('status' => DocumentConstants::REQUEST_READY));
+		$this->db->update(
+			'document_request',
+			array('status' => DocumentConstants::REQUEST_READY, 'answered' => DocumentConstants::ANSWERED)
+		);
 
 		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId));
 
