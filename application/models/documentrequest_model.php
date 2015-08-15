@@ -75,6 +75,7 @@ class DocumentRequest_model extends CI_Model {
 	public function getCourseRequests($courseId){
 
 		$this->db->order_by('status', "asc");
+		$this->db->order_by('date', "asc");
 		$requests = $this->getDocumentRequest(array(
 			'id_course' => $courseId,
 			'answered' => DocumentConstants::NOT_ANSWERED
