@@ -752,6 +752,14 @@ class Usuario extends CI_Controller {
 
 		return $foundUser;
 	}
+	
+	public function getUserGroupNameByIdGroup($groupId){
+		$this->load->model('usuarios_model');
+		
+		$groupName = $this->usuarios_model->getUserGroupNameByIdGroup($groupId);
+		
+		return $groupName;
+	}
 
 	/**
 	 * Get all the user types from database into an array.
