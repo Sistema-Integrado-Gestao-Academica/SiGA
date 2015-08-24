@@ -11,6 +11,11 @@ class Coordinator extends CI_Controller {
 		
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/coordinator_home");
 	}
+	
+	public function course_report(){
+		
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/course_reports");
+	}
 
 	public function manageDimensions(){
 
