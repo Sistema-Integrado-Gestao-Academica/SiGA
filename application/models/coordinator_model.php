@@ -38,6 +38,19 @@ class Coordinator_model extends CI_Model {
 		return $masterminds;
 	}
 	
+
+	public function getCoordinatorCourse($idCoordinator){
+	
+		$program = $this->db->get_where('program',array('coordinator'=>$idCoordinator))->row_array();
+	
+		$course = $this->db->get_where('course',array('id_program'=>$program['id_program']))->row_array();
+	
+		$course = checkArray($course);
+	
+		return $course['id_course'];
+	}
+	
+	
 	private function getCourseMasterminds($idCourse){
 		
 		$masterminds = $this->db->get_where('teacher_course', array('id_course'=>$idCourse))->result_array();
@@ -67,17 +80,6 @@ class Coordinator_model extends CI_Model {
 		$quantity = sizeof($enroled);
 		
 		return $quantity;
-	}
-	
-	private function getCoordinatorCourse($idCoordinator){
-		
-		$program = $this->db->get_where('program',array('coordinator'=>$idCoordinator))->row_array();
-		
-		$course = $this->db->get_where('course',array('id_program'=>$program['id_program']))->row_array();
-		
-		$course = checkArray($course);
-		
-		return $course['id_course'];
 	}
 	
 	private function getCourseStudents($idCourse){
