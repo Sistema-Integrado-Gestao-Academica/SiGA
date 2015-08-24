@@ -203,9 +203,52 @@ function mastermindReportsTable($idCoordinator){
 						echo "Existem no momento " . sizeof($totalMasterminds) . " professores cadastrados para este curso.";
 					echo "</h4>";
 				echo "</div>";
+			echo "</div>";
 		echo "</div>";		
 	echo "</div>";
+	echo "<br><br><br>";
+	showMastermindsStudents($totalMasterminds);
 	
+}
+
+function showMastermindsStudents($masterminds){
+	
+	$coordinator = new Coordinator();
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+		echo "<div class='panel panel-primary'>";
+			echo "<div class='panel-heading'><h4>Relação de Alunos por Professores: </h4></div>";
+			echo "<div class='panel-body'>";
+				echo "<div class=\"modal-info\">";
+					echo "<div class=\"modal-content\">";
+	foreach ($masterminds as $key => $mastermind){
+		$students = $coordinator->getMastermindStudents($mastermind['id_user']);
+		
+		$userData = new Usuario();
+		$mastermindData = $userData->getUserById($mastermind['id_user']);
+		
+						echo "<div class=\"modal-header bg-news\">";
+							echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
+						echo "</div>";
+		foreach ($students as $singleStudent){
+			$studentData = $userData->getUserById($singleStudent['id_student']);
+			
+						echo "<div class=\"modal-body\">";
+							echo "<h4>";
+								echo ucfirst($studentData['name']);
+							echo "</h4>";
+						echo "</div>";
+			
+		}
+		
+	}
+	
+					echo "</div>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div>";
+		
 	
 }
 

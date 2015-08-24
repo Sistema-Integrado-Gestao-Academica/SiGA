@@ -49,6 +49,14 @@ class Coordinator extends CI_Controller {
 		
 	}
 	
+	public function getMastermindStudents($mastermindId){
+		$this->load->model('mastermind_model');
+
+		$students = $this->mastermind_model->getStutentsByIdMastermind($mastermindId);
+		
+		return $students;
+	}
+	
 	public function getEnroledStudents($idCoordinator){
 		$this->load->model("coordinator_model");
 		
