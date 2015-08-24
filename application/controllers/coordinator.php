@@ -17,6 +17,21 @@ class Coordinator extends CI_Controller {
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/course_reports");
 	}
 
+	public function students_report(){
+		
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/students_reports");
+	}
+	
+	public function mastermind_report(){
+	
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_report");
+	}
+	
+	public function secretary_report(){
+	
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_report");
+	}
+	
 	public function manageDimensions(){
 
 		$this->load->model('program_evaluation_model', 'evaluation');
