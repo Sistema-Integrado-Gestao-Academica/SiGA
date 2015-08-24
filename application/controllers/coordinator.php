@@ -24,12 +24,12 @@ class Coordinator extends CI_Controller {
 	
 	public function mastermind_report(){
 	
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_report");
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_reports");
 	}
 	
 	public function secretary_report(){
 	
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_report");
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_reports");
 	}
 	
 	public function getTotalStudents($idCoordinator){
@@ -38,6 +38,15 @@ class Coordinator extends CI_Controller {
 		$students = $this->coordinator_model->getTotalCourseStudents($idCoordinator);
 		
 		return $students;
+	}
+	
+	public function getTotalMasterminds($idCoordinator){
+		$this->load->model("coordinator_model");
+		
+		$masterminds = $this->coordinator_model->getTotalCourseMasterminds($idCoordinator);
+		
+		return $masterminds;
+		
 	}
 	
 	public function getEnroledStudents($idCoordinator){

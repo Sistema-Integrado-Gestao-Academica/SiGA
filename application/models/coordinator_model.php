@@ -29,6 +29,24 @@ class Coordinator_model extends CI_Model {
 		return $students;
 	}
 	
+	public function getTotalCourseMasterminds($idCoordinator){
+		
+		$idCourse = $this->getCoordinatorCourse($idCoordinator);
+		
+		$masterminds = $this->getCourseMasterminds($idCourse);
+		
+		return $masterminds;
+	}
+	
+	private function getCourseMasterminds($idCourse){
+		
+		$masterminds = $this->db->get_where('teacher_course', array('id_course'=>$idCourse))->result_array();
+		
+		$masterminds = checkArray($masterminds);
+		
+		return $masterminds;
+	}
+	
 	private function getNotEnroledStudents($idCourse){
 		$this->db->where('id_course', $idCourse);
 		$this->db->where('request_status !=', "all_approved");
