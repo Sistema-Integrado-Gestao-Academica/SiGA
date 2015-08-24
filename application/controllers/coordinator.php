@@ -32,6 +32,25 @@ class Coordinator extends CI_Controller {
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_reports");
 	}
 	
+	public function getCoordinatorCourseData($idCoordinator){
+		$this->load->model("coordinator_model");
+		
+		$courseId = $this->coordinator_model->getCoordinatorCourse($idCoordinator);
+		
+		$this->load->model("course_model");
+		$course = $this->course_model->getCourseById($courseId);
+		
+		return $course;
+	}
+	
+	public function getCourseSecretaries($courseId){
+		$this->load->model("course_model");
+		
+		$secretaries = $this->course_model->getCourseSecretaries($courseId);
+		
+		return $secretaries;
+	}
+	
 	public function getTotalStudents($idCoordinator){
 		$this->load->model("coordinator_model");
 		
