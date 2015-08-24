@@ -10,6 +10,7 @@ require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
 require_once(APPPATH."/controllers/mastermind.php");
+require_once(APPPATH."/controllers/coordinator.php");
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 
@@ -153,7 +154,38 @@ function showCapesAvaliationsNews($atualizations){
 	}
 }
 
-
+function studentsReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$totalStudent = $coordinator->getTotalStudents($idCoordinator);
+	$enroledStudents = $coordinator->getEnroledStudents($idCoordinator);
+	$notEnroledStudents = $coordinator->getNotEnroledStudents($idCoordinator);
+	echo "<h4> Painel de quantidades de alunos </h4>";
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+				echo "<tr>";
+					echo "<th class=\"text-center\">Total de estudantes</th>";
+					echo "<th class=\"text-center\">Total de Matriculados</th>";
+					echo "<th class=\"text-center\">Total de Atrazados</th>";
+				echo "</tr>";
+					
+				echo "<tr>";
+					echo "<td>";
+					echo $totalStudent;
+					echo "</td>";				
+					echo "<td>";
+					echo $enroledStudents;
+					echo "</td>";
+					echo "<td>";
+					echo $notEnroledStudents;
+					echo "</td>";
+				echo "</tr>";
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
 
 function courseTableToSecretaryCheckMastermind($courses){
 $courseController = new Course();
