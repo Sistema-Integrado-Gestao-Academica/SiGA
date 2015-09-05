@@ -109,13 +109,27 @@ class Budgetplan extends CI_Controller {
 		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
 
+		$user = new Usuario();
+		$teachers = $user->getUsersOfGroup(GroupConstants::TEACHER_GROUP_ID);
+
+		if($teachers !== FALSE){
+
+			foreach($teachers as $teacher){
+				$managers[$teacher['id']] = $teacher['name'];
+			}
+		}else{
+
+			$managers = FALSE;
+		}
+
 		$this->load->helper(array("currency"));
 		$data = array(
 			'budgetplan' => $budgetplan,
 			'status' => $status,
 			'courses' => $courses,
 			'disable_amount' => $disable_amount,
-			'disable_spending' => $disable_spending
+			'disable_spending' => $disable_spending,
+			'managers' => $managers
 		);
 		$this->load->template("budgetplan/edit", $data);
 	}
@@ -123,6 +137,8 @@ class Budgetplan extends CI_Controller {
 	public function update() {
 		session();
 		$id = $this->input->post("budgetplan_id");
+		$budgetplanName = $this->input->post("budgetplan_name");
+		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
 		$status = $this->input->post("status") + 1;
@@ -138,11 +154,16 @@ class Budgetplan extends CI_Controller {
 			'amount' => $amount,
 			'status' => $status,
 			'spending' => $spending,
-			'balance' => $amount - $spending
+			'balance' => $amount - $spending,
+			'budgetplan_name' => $budgetplanName
 		);
 
 		if ($course) {
 			$budgetplan['course_id'] = $course;
+		}
+
+		if($manager !== 0){
+			$budgetplan['manager'] = $manager;
 		}
 
 		$this->load->model('budgetplan_model');

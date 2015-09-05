@@ -9,9 +9,34 @@
 					<?= form_hidden("continue", "ok") ?>
 
 					<div class="form-group">
+						<?= form_label('Nome do P.O.', 'budgetplan_name') ?>
+						<?= form_input(array(
+							"name" => "budgetplan_name",
+							"id" => "budgetplan_name",
+							"type" => "text",
+							"maxlength" => 20,
+							"value" => $budgetplan['budgetplan_name'],
+							"class" => "form-campo form-control"
+						)) ?>
+					</div>
+
+					<div class="form-group">
 						<?= form_label("Curso", "course") ?>
 						<br>
 						<?= form_dropdown('course', $courses, $budgetplan['course_id']) ?>
+					</div>
+
+					<?php
+						if($managers !== FALSE){
+							$managers[0] = "Nenhum";
+						}else{
+							$managers = array(0 => "Nenhum gestor cadastrado no sistema");
+						}
+					?>
+
+					<div class="form-group">
+						<?= form_label("Gestor", "manager") ?><br>
+						<?= form_dropdown('manager', $managers, $budgetplan['manager']) ?>
 					</div>
 
 					<div class="form-group">
