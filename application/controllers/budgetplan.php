@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once("usuario.php");
+require_once(APPPATH."/constants/GroupConstants.php");
+
 class Budgetplan extends CI_Controller {
 
 	public function index() {
@@ -26,25 +29,50 @@ class Budgetplan extends CI_Controller {
 			$courses[$c['id_course']] = $c['course_name'];
 		}
 
+		$user = new Usuario();
+		$teachers = $user->getUsersOfGroup(GroupConstants::TEACHER_GROUP_ID);
+
+		if($teachers !== FALSE){
+
+			foreach($teachers as $teacher){
+				$managers[$teacher['id']] = $teacher['name'];
+			}
+		}else{
+
+			$managers = FALSE;
+		}
+
 		$this->load->helper(array("currency"));
 		$data = array(
 			"budgetplans" => $budgetplans,
 			"status" => $status,
-			"courses" => $courses
+			"courses" => $courses,
+			"managers" => $managers
 		);
 		$this->load->template('budgetplan/index', $data);
 	}
 
 	public function save() {
 		session();
+		$budgetplanName = $this->input->post("budgetplan_name");
+		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
 		$status = $this->input->post("status") + 1;
 
-		$budgetplan = array('amount' => $amount, 'status' => $status, 'balance' => $amount);
+		$budgetplan = array(
+			'amount' => $amount,
+			'status' => $status,
+			'balance' => $amount,
+			'budgetplan_name' => $budgetplanName
+		);
 
 		if ($course) {
 			$budgetplan['course_id'] = $course;
+		}
+
+		if($manager !== 0){
+			$budgetplan['manager'] = $manager;
 		}
 
 		$this->load->model('budgetplan_model');
