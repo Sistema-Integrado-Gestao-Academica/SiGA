@@ -29,6 +29,7 @@
 					"name" => "value",
 					"id" => "value",
 					"type" => "number",
+					"step" => 0.01, 
 					"class" => "form-campo",
 					"required" => "required"
 				)) ?>
