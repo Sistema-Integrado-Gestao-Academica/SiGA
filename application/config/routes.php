@@ -71,6 +71,7 @@ $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
 $route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
 $route['mastermind_home'] = 'mastermind/index';
 $route['coordinator_home'] = 'coordinator/index';
+$route['course_report'] = 'coordinator/course_report';
 $route['program'] = 'program/index';
 
 /*

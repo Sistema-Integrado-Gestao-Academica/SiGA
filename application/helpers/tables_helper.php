@@ -10,9 +10,10 @@ require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
 require_once(APPPATH."/controllers/mastermind.php");
+require_once(APPPATH."/controllers/coordinator.php");
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
-
+require_once(APPPATH."/constants/GroupConstants.php");
 
 function displayStudentSpecificDataPage($idUser){
 
@@ -153,7 +154,147 @@ function showCapesAvaliationsNews($atualizations){
 	}
 }
 
+function studentsReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$totalStudent = $coordinator->getTotalStudents($idCoordinator);
+	$enroledStudents = $coordinator->getEnroledStudents($idCoordinator);
+	$notEnroledStudents = $coordinator->getNotEnroledStudents($idCoordinator);
+	echo "<h4> Painel de quantidades de alunos </h4>";
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+				echo "<tr>";
+					echo "<th class=\"text-center\">Total de estudantes</th>";
+					echo "<th class=\"text-center\">Total de Matriculados</th>";
+					echo "<th class=\"text-center\">Total de Atrazados</th>";
+				echo "</tr>";
+					
+				echo "<tr>";
+					echo "<td>";
+					echo $totalStudent;
+					echo "</td>";				
+					echo "<td>";
+					echo $enroledStudents;
+					echo "</td>";
+					echo "<td>";
+					echo $notEnroledStudents;
+					echo "</td>";
+				echo "</tr>";
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
 
+function secretaryReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$course = $coordinator->getCoordinatorCourseData($idCoordinator);
+	$secretaries = $coordinator->getCourseSecretaries($course['id_course']);
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+	echo "<div class='panel panel-primary'>";
+	echo "<div class='panel-heading'><h4>Relação de secretários do curso: ". $course['course_name'] ." </h4></div>";
+	echo "<div class='panel-body'>";
+	echo "<div class=\"modal-info\">";
+	echo "<div class=\"modal-content\">";
+	
+	foreach ($secretaries as $key => $secretary){
+		$userData = new Usuario();
+		$secretaryData = $userData->getUserById($secretary['id_user']);
+		$secretaryGroup = $userData->getUserGroupNameByIdGroup($secretary['id_group']);
+		echo "<div class=\"modal-header bg-news\">";
+			echo "<h4 class=\"model-title\"> Secretário : ". ucfirst($secretaryData['name']) ."</h4>";
+		echo "</div>";	
+		echo "<div class=\"modal-body\">";
+			echo "<h4>";
+				switch ($secretaryGroup) {
+					case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+						echo "Secretaria acadêmica";
+						break;
+					case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+						echo "Secretaria financeira";
+						break;
+					default:
+						break;
+				}
+			echo "</h4>";
+		echo "</div>";
+				
+	}
+	
+					echo "</div>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div>";
+	
+}
+
+function mastermindReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$totalMasterminds = $coordinator->getTotalMasterminds($idCoordinator);
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+		echo "<div class=\"modal-info\">";
+			echo "<div class=\"modal-content\">";
+				echo "<div class=\"modal-header bg-news\">";
+					echo "<h4 class=\"model-title\">Total de Professores do Curso: </h4>";
+				echo "</div>";
+				echo "<div class=\"modal-body\">";
+					echo "<h4>";
+						echo "Existem no momento " . sizeof($totalMasterminds) . " professores cadastrados para este curso.";
+					echo "</h4>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";		
+	echo "</div>";
+	showMastermindsStudents($totalMasterminds);
+	
+}
+
+function showMastermindsStudents($masterminds){
+	
+	$coordinator = new Coordinator();
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+		echo "<div class='panel panel-primary'>";
+			echo "<div class='panel-heading'><h4>Relação de Alunos por Professores: </h4></div>";
+			echo "<div class='panel-body'>";
+				echo "<div class=\"modal-info\">";
+					echo "<div class=\"modal-content\">";
+	foreach ($masterminds as $key => $mastermind){
+		$students = $coordinator->getMastermindStudents($mastermind['id_user']);
+		
+		$userData = new Usuario();
+		$mastermindData = $userData->getUserById($mastermind['id_user']);
+		
+						echo "<div class=\"modal-header bg-news\">";
+							echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
+						echo "</div>";
+		foreach ($students as $singleStudent){
+			$studentData = $userData->getUserById($singleStudent['id_student']);
+			
+						echo "<div class=\"modal-body\">";
+							echo "<h4>";
+								echo ucfirst($studentData['name']);
+							echo "</h4>";
+						echo "</div>";
+			
+		}
+		
+	}
+	
+					echo "</div>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div>";
+		
+	
+}
 
 function courseTableToSecretaryCheckMastermind($courses){
 $courseController = new Course();

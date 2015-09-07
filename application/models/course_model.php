@@ -564,6 +564,13 @@ class Course_model extends CI_Model {
 		$secretaryId = $this->getSecretaryIdByCourseId($idCourseToUpdate);
 		$this->updateSecretary($secretaryId, $newSecretary);
 	}
+	
+	public function getCourseSecretaries($courseId){
+		
+		$secretaries = $this->db->get_where('secretary_course', array('id_course'=>$courseId))->result_array();
+		
+		return $secretaries;
+	}
 
 	private function getSecretaryIdByCourseId($courseId){
 		$this->db->select('id_secretary');

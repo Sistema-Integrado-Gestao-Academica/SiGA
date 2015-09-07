@@ -385,6 +385,15 @@ class Usuarios_model extends CI_Model {
 		return $return_secretary;
 	}
 	
+	public function getUserGroupNameByIdGroup($groupId){
+		$this->db->select('group_name');
+		$group = $this->db->get_where('group', array('id_group'=>$groupId))->row_array();
+		$group = checkArray($group);
+		
+		$groupName = $group['group_name'];
+		return $groupName;
+	}
+	
 	public function buscaTodos() {
 		$this->db->select('id, name');
 		$this->db->where('name !=', 'admin');
