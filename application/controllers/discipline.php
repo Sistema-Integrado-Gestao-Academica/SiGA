@@ -225,6 +225,22 @@ class Discipline extends CI_Controller {
 		return $disciplineExists;
 	}
 	
+	public function getDisciplineResearchLines($disciplineCode){
+		
+		$this->load->model('discipline_model');
+		
+		$disciplineResearchLines = $this->discipline_model->getDisciplineResearchLines($disciplineCode);
+		
+		return $disciplineResearchLines;		
+	}
+	
+	public function saveDisciplineResearchRelation($relationToSave){
+		$this->load->model('discipline_model');
+		
+		$saved = $this->discipline_model->saveDisciplineResearchLine($relationToSave);
+		return $saved;
+	}
+	
 	/**
 	 * Function to drop a discipline from the database
 	 * @param int $code - Code of the discipline

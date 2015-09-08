@@ -766,6 +766,44 @@ function updateResearchLineForm($researchId, $description, $actualCourseForm, $c
 	echo "</div>";
 }
 
+function relateDisciplineToResearchLineForm($researchLines, $discipline, $syllabusId, $courseId){
+	
+	$submitBtn = array(
+			"class" => "btn bg-olive btn-block",
+			"content" => "Salvar",
+			"type" => "submit"
+	);
+	
+	$hidden = array(
+			'discipline_code'=>$discipline['discipline_code'],
+			'syllabusId' => $syllabusId,
+			'courseId' => $courseId
+	);
+		
+			echo "<div class='form-box' id='login-box'>";
+				echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
+				
+				echo form_open('syllabus/saveDisciplineResearchLine','',$hidden);
+				echo "<div class='body bg-gray'>";
+					echo "<div class='form-group'>";
+						echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
+					echo "</div>";
+					echo "<div class='form-group'>";
+						echo form_label("Linha de Pesquisa da Disciplina", "research_line");
+						echo form_dropdown("research_line", $researchLines, "id='research_line'");
+						echo form_error("research_line");
+					echo "</div>";
+			echo "</div>";
+			
+			echo "<div class='footer body bg-gray'>";
+				echo form_button($submitBtn);
+			echo "</div>";
+			
+			echo form_close();
+		
+}
+
+
 function emptyDiv(){
 	echo "";
 }

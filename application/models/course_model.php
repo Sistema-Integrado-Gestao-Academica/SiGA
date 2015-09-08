@@ -631,6 +631,14 @@ class Course_model extends CI_Model {
 		return $description['description'];
 	}
 	
+	public function getAllResearchLines(){
+		$researchLines = $this->db->get("research_lines")->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
+	}
+	
 	/**
 	 * Update a course on DB
 	 * @param String $id_course - The course id to be updated

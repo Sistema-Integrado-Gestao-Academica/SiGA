@@ -223,4 +223,20 @@ class Discipline_model extends CI_Model {
 		$exists = array('code'=>$existsCode,'name'=>$existsName);
 		return $exists;
 	}
+	
+	public function getDisciplineResearchLines($disciplineCode){
+		
+		$researchLines = $this->db->get_where("discipline_research_line", array('discipline_code'=>$disciplineCode))->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
+	}
+	
+	public function saveDisciplineResearchLine($saveData){
+		
+		$saved = $this->db->insert("discipline_research_line", $saveData);
+		return $saved;
+	}
+	
 }
