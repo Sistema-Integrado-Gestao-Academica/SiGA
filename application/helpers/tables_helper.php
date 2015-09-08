@@ -2519,7 +2519,7 @@ function displayResearchLinesByCourse($research_lines,$courses){
 		echo "<tbody>";
 			echo "<h3>Linhas de pesquisa por curso</h3>";
 			echo "<br>";
-			echo anchor("secretary/newCourseResearchLine/","<i class='fa fa-check'></i>   Criar Linha de Pesquisa", "class='btn btn-success'");
+			echo anchor("usuario/createCourseResearchLine/","<i class='fa fa-check'></i>   Criar Linha de Pesquisa", "class='btn btn-success'");
 			echo "<br><br>";
 			echo "<tr>";
 				echo "<th class=\"text-center\">Curso: </th>";

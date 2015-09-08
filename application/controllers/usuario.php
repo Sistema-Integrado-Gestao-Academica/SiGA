@@ -55,6 +55,23 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
 	}
 	
+	public function createCourseResearchLine(){
+		$this->load->model("course_model");
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+		
+		$data = array('courses'=> $course);
+		
+		loadTemplateSafelyByPermission('research_lines', 'secretary/create_research_line', $data);
+	}
+	
 	public function secretary_research_lines(){
 		$this->load->model("course_model");
 		

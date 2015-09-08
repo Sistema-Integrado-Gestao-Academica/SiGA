@@ -603,6 +603,13 @@ class Course_model extends CI_Model {
 		return $researchLines;
 	}
 	
+	public function saveResearchLine($newResearchLine){
+		
+		$wasSaved = $this->db->insert("research_lines", $newResearchLine);
+		
+		return $wasSaved;
+	}
+	
 	public function removeCourseResearchLine($researchLineId){
 		
 		$removed = $this->db->delete("research_lines", array('id_research_line'=>$researchLineId));
