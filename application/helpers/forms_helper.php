@@ -704,20 +704,62 @@ function createResearchLineForm($courses){
 			echo form_label("Linha de Pesquisa", "research_line");
 				echo form_input($researchLine);
 			echo form_error("research_line");
-			echo "<br>";
-			echo "<br>";
 		echo "</div>";
 		echo "<div class='form-group'>";
 			echo form_label("Curso da Linha de Pesquisa", "research_course");
 			echo form_dropdown("research_course", $courses, '', "id='research_course'");
 			echo form_error("research_course");
-			echo "<br>";
-			echo "<br>";
 		echo "</div>";
 	echo "</div>";
 	
 	echo "<div class='footer body bg-gray'>";
 		echo form_button($submitBtn);
+	echo "</div>";
+	
+	echo form_close();
+	echo "</div>";
+}
+
+function updateResearchLineForm($researchId, $description, $actualCourseForm, $courses){
+	
+	
+	$submitBtn = array(
+			"class" => "btn bg-olive btn-block",
+			"content" => "Salvar",
+			"type" => "submit"
+	);
+	
+	$researchLine = array(
+			"name" => "researchLine",
+			"id" => "researchLine",
+			"type" => "text",
+			"class" => "form-campo",
+			"class" => "form-control",
+			"maxlength" => "80",
+			"value" => $description
+	);
+	
+	$hidden = array('id_research_line'=>$researchId);
+	
+	echo "<div class='form-box' id='login-box'>";
+		echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
+	
+		echo form_open('secretary/updateResearchLine','',$hidden);
+		echo "<div class='body bg-gray'>";
+			echo "<div class='form-group'>";
+				echo form_label("Linha de Pesquisa", "research_line");
+				echo form_input($researchLine);
+				echo form_error("research_line");
+			echo "</div>";
+			echo "<div class='form-group'>";
+				echo form_label("Curso da Linha de Pesquisa", "research_course");
+				echo form_dropdown("research_course", $courses, $actualCourseForm, "id='research_course'");
+				echo form_error("research_course");
+		echo "</div>";
+	echo "</div>";
+	
+	echo "<div class='footer body bg-gray'>";
+	echo form_button($submitBtn);
 	echo "</div>";
 	
 	echo form_close();

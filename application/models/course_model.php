@@ -610,11 +610,25 @@ class Course_model extends CI_Model {
 		return $wasSaved;
 	}
 	
+	public function updateResearchLine($newResearchLine, $researchLineId){
+		$this->db->where('id_research_line', $researchLineId);
+		$wasUpdated = $this->db->update("research_lines", $newResearchLine);
+	
+		return $wasUpdated;
+	}
+	
 	public function removeCourseResearchLine($researchLineId){
 		
 		$removed = $this->db->delete("research_lines", array('id_research_line'=>$researchLineId));
 		
 		return $removed;
+	}
+	
+	public function getResearchDescription($researchId,$courseId){
+		$this->db->select('description');
+		$description = $this->db->get_where("research_lines",array('id_research_line'=>$researchId, 'id_course'=>$courseId))->row_array();
+		
+		return $description['description'];
 	}
 	
 	/**

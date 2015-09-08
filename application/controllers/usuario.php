@@ -72,6 +72,34 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByPermission('research_lines', 'secretary/create_research_line', $data);
 	}
 	
+
+	public function updateCourseResearchLine($researchId, $courseId){
+		$this->load->model("course_model");
+		
+		$actualCourse = $this->course_model->getCourseById($courseId);
+		$actualCourseForm = $actualCourse['id_course'];
+		
+		$description = $this->course_model->getResearchDescription($researchId,$courseId);
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+		
+		$data = array(
+			'researchId' => $researchId,
+			'description' => $description,
+			'actualCourse' => $actualCourseForm,
+			'courses' => $course
+		);
+		
+		loadTemplateSafelyByPermission('research_lines', 'secretary/update_research_line', $data);
+	}
+	
 	public function secretary_research_lines(){
 		$this->load->model("course_model");
 		
@@ -89,7 +117,7 @@ class Usuario extends CI_Controller {
 		foreach ($secretaryCourses as $key => $course){
 			
 			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
-			$courses[$key] = $course['course_name'];
+			$courses[$key] = $course;
 		} 
 		
 		$data = array(

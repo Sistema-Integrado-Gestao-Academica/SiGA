@@ -2531,14 +2531,14 @@ function displayResearchLinesByCourse($research_lines,$courses){
 					foreach ($researchs as $researchData){
 						echo "<tr>";
 							echo "<td>";
-								echo $courses[$keys];
+								echo $courses[$keys]['course_name'];
 							echo "</td>";
 							echo "<td>";
 								echo $researchData['description'];
 							echo "</td>";
 							echo "<td>";
-								echo anchor("secretary/updateCourseResearchLine/{$researchData['id_research_line']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
-								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+								echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
+								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
 							echo "</td>";
 						echo "</tr>";
 					}
