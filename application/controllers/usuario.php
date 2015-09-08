@@ -73,7 +73,6 @@ class Usuario extends CI_Controller {
 			
 			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
 			$courses[$key] = $course['course_name'];
-			
 		} 
 		
 		$data = array(

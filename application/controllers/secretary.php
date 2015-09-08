@@ -82,6 +82,25 @@ class Secretary extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
+	
+	public function removeCourseResearchLine($researchLineId,$course){
+		
+		$this->load->model("course_model");
+		
+		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
+		
+		if($wasRemoved){
+			$status = "success";
+			$message = "Linha de pesquisa removida do curso ".$course." com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("research_lines/");
+		
+	}
 
 	public function defineTeacherSituation(){
 

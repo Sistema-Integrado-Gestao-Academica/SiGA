@@ -603,6 +603,13 @@ class Course_model extends CI_Model {
 		return $researchLines;
 	}
 	
+	public function removeCourseResearchLine($researchLineId){
+		
+		$removed = $this->db->delete("research_lines", array('id_research_line'=>$researchLineId));
+		
+		return $removed;
+	}
+	
 	/**
 	 * Update a course on DB
 	 * @param String $id_course - The course id to be updated

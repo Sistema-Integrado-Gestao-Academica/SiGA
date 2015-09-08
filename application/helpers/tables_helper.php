@@ -2520,6 +2520,7 @@ function displayResearchLinesByCourse($research_lines,$courses){
 			echo "<h3>Linhas de pesquisa por curso</h3>";
 			echo "<br>";
 			echo anchor("secretary/newCourseResearchLine/","<i class='fa fa-check'></i>   Criar Linha de Pesquisa", "class='btn btn-success'");
+			echo "<br><br>";
 			echo "<tr>";
 				echo "<th class=\"text-center\">Curso: </th>";
 				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
@@ -2537,7 +2538,7 @@ function displayResearchLinesByCourse($research_lines,$courses){
 							echo "</td>";
 							echo "<td>";
 								echo anchor("secretary/updateCourseResearchLine/{$researchData['id_research_line']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
-								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
 							echo "</td>";
 						echo "</tr>";
 					}
