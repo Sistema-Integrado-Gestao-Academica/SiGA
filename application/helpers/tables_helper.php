@@ -2513,3 +2513,50 @@ function displayGuestUsers(){
 	
 }
 
+function displayResearchLinesByCourse($research_lines,$courses){
+	echo "<br><br>";
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+			echo "<h3>Linhas de pesquisa por curso</h3>";
+			echo "<br>";
+			echo anchor("secretary/newCourseResearchLine/","<i class='fa fa-check'></i>   Criar Linha de Pesquisa", "class='btn btn-success'");
+			echo "<tr>";
+				echo "<th class=\"text-center\">Curso: </th>";
+				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
+				echo "<th class=\"text-center\">Ações: </th>";
+			echo "</tr>";
+			foreach ($research_lines as $keys => $researchs){
+				if($researchs){ 
+					foreach ($researchs as $researchData){
+						echo "<tr>";
+							echo "<td>";
+								echo $courses[$keys];
+							echo "</td>";
+							echo "<td>";
+								echo $researchData['description'];
+							echo "</td>";
+							echo "<td>";
+								echo anchor("secretary/updateCourseResearchLine/{$researchData['id_research_line']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
+								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+							echo "</td>";
+						echo "</tr>";
+					}
+				}else{
+					echo "<tr>";
+						echo "<td>";
+							echo $courses[$keys];
+						echo "</td>";
+						echo "<td>";
+							echo "Não existem linhas de pesquisa cadastradas para este curso";
+						echo "</td>";
+						echo "<td>";
+							echo "Não existem ações possíveis.";
+						echo "</td>";
+					echo "</tr>";
+				}
+			}
+		echo "</tbody>";
+	echo "</table>";
+	
+}
+

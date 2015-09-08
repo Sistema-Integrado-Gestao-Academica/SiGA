@@ -594,6 +594,15 @@ class Course_model extends CI_Model {
 		$this->db->update('secretary_course', $newSecretary);
 	}
 	
+	public function getCourseResearchLines($idCourse){
+		
+		$researchLines = $this->db->get_where("research_lines", array('id_course'=>$idCourse))->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
+	}
+	
 	/**
 	 * Update a course on DB
 	 * @param String $id_course - The course id to be updated

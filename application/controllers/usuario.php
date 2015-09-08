@@ -54,6 +54,35 @@ class Usuario extends CI_Controller {
 
 		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
 	}
+	
+	public function secretary_research_lines(){
+		$this->load->model("course_model");
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		$this->loadResearchLinesPage($secretaryCourses);
+	}
+	
+	public function loadResearchLinesPage($secretaryCourses){
+		$this->load->model("course_model");
+		
+		foreach ($secretaryCourses as $key => $course){
+			
+			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
+			$courses[$key] = $course['course_name'];
+			
+		} 
+		
+		$data = array(
+			'research_lines' => $researchLines,
+			'courses' => $courses
+		);
+		
+		loadTemplateSafelyByPermission('research_lines', 'usuario/secretary_research_lines', $data);
+	}
 
 	public function removeAllUsersOfGroup($idGroup){
 		
