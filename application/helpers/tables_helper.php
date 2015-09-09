@@ -1855,14 +1855,20 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId
 
 			    	foreach($syllabusDisciplines as $discipline){
 			    		$disciplineController = new Discipline();
-			    		$disciplineResearchLines = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+			    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+			    		
+			    		$syllabus = new Syllabus();
+			    		$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
+			    		
 				    	echo "<tr>";
 					    	echo "<td>";
 					    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
 					    	echo "</td>";
 					    	echo "<td>";
-					    	if ($disciplineResearchLines){
-					    		
+					    	if ($disciplineResearchLinesNames){
+					    		foreach ($disciplineResearchLinesNames as $names){
+					    			echo $names."<br>";
+					    		}
 					    	}else{
 					    		echo "Não relacionada a nenhuma linha de pesquisa.";
 					    	}
@@ -2604,7 +2610,5 @@ function displayDisciplineToResearchLineTable($researchLines, $disciplines){
 			}
 		echo "</tbody>";
 	echo "</table>";
-	
-	
 	
 }

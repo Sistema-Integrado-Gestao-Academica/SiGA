@@ -101,7 +101,7 @@ class Syllabus extends CI_Controller {
 		
 		$disciplineResearchLinesIds = $this->getDiscipineResearchLinesIds($disciplineCode);
 		
-		$disciplineResearchLines = $this->getDiscipineResearchLines($disciplineResearchLinesIds);
+		$disciplineResearchLines = $this->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
 		
 		$data = array(
 			'researchLines' => $researchLines,
@@ -122,7 +122,7 @@ class Syllabus extends CI_Controller {
 		return $disciplineResearchLines;
 	}
 	
-	private function getDiscipineResearchLines($disciplineResearchLinesIds){
+	public function getDiscipineResearchLinesNames($disciplineResearchLinesIds){
 		$course = new Course();
 		
 		foreach ($disciplineResearchLinesIds as $quantity => $researchLines){
