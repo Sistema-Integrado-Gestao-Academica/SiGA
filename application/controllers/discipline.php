@@ -241,6 +241,14 @@ class Discipline extends CI_Controller {
 		return $saved;
 	}
 	
+	public function deleteDisciplineResearchRelation($researchRelation){
+		$this->load->model('discipline_model');
+		
+		$deleted = $this->discipline_model->deleteDisciplineResearchLine($researchRelation);
+		return $deleted;
+		
+	}
+	
 	/**
 	 * Function to drop a discipline from the database
 	 * @param int $code - Code of the discipline

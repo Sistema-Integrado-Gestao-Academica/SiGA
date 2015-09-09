@@ -239,4 +239,11 @@ class Discipline_model extends CI_Model {
 		return $saved;
 	}
 	
+	public function deleteDisciplineResearchLine($researchRelation){
+		
+		$deleted = $this->db->delete("discipline_research_line", $researchRelation);
+		return $deleted;
+	}
+	
+	
 }

@@ -2591,13 +2591,16 @@ function displayResearchLinesByCourse($research_lines,$courses){
 	
 }
 
-function displayDisciplineToResearchLineTable($researchLines, $disciplines){
+function displayDisciplineToResearchLineTable($researchLines, $disciplines, $syllabusId, $courseId){
 	
 	echo "<table class=\"table table-bordered table-hover\">";
 		echo "<tbody>";
 			echo "<h3>Linhas de pesquisa da disciplina ". $disciplines['discipline_name']."</h3>";
 			echo "<tr>";
 				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
+				if ($researchLines){
+					echo "<th class=\"text-center\">Ações: </th>";
+				}
 			echo "</tr>";
 			if (!$researchLines){
 				echo "<tr>";
@@ -2611,6 +2614,10 @@ function displayDisciplineToResearchLineTable($researchLines, $disciplines){
 						echo "<td>";
 							echo $line;
 						echo "</td>";
+						echo "<td>";
+						echo anchor("syllabus/removeDisciplineResearchLine/{$key}/{$disciplines['discipline_code']}/{$syllabusId}/{$courseId}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+						echo "</td>";
+						
 					echo "</tr>";
 				}
 			}

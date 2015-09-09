@@ -191,6 +191,27 @@ class Syllabus extends CI_Controller {
 		}
 	}
 	
+	public function removeDisciplineResearchLine($researchLineId, $disciplineCode, $syllabusId, $courseId){
+		$discipline = new Discipline();
+		
+		$researchRelation = array(
+				'id_research_line' => $researchLineId,
+				'discipline_code' => $disciplineCode
+		);
+		
+		$deleted = $discipline->deleteDisciplineResearchRelation($researchRelation);
+		if ($deleted){
+			$status = "success";
+			$message = "Disciplina desrelacionada com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Disciplina não pode ser desrelacionada.";
+		}
+			
+		$this->session->set_flashdata($status, $message);
+		redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
+	}
+	
 	private function saveDisciplineResearchRelation($relationToSave){
 		$discipline = new Discipline();
 		
