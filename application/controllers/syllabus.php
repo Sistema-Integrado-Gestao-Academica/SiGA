@@ -168,18 +168,8 @@ class Syllabus extends CI_Controller {
 				$message = "Disciplina não pode ser relacionada.";
 			}
 			
-			
-			$research = $this->getResearchLines();
-			$currentDiscipline = $this->getCurrentDiscipline($disciplineCode);
-			$data = array(
-					'researchLines' => $research,
-					'discipline' => $currentDiscipline,
-					'syllabusId' => $syllabusId,
-					'courseId' => $courseId
-			);
-			
 			$this->session->set_flashdata($status, $message);
-			loadTemplateSafelyByGroup("secretario",'syllabus/disciplines_research_line', $data);
+			redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 		}
 	}
 	
