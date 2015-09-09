@@ -2579,3 +2579,32 @@ function displayResearchLinesByCourse($research_lines,$courses){
 	
 }
 
+function displayDisciplineToResearchLineTable($researchLines, $disciplines){
+	
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+			echo "<h3>Linhas de pesquisa da disciplina ". $disciplines['discipline_name']."</h3>";
+			echo "<tr>";
+				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
+			echo "</tr>";
+			if (!$researchLines){
+				echo "<tr>";
+					echo "<td>";
+						echo "Não foi relacionada nenhuma linha de pesquisa";
+					echo "</td>";
+				echo "</tr>";
+			}else{
+				foreach ($researchLines as $key => $line){
+					echo "<tr>";
+						echo "<td>";
+							echo $line;
+						echo "</td>";
+					echo "</tr>";
+				}
+			}
+		echo "</tbody>";
+	echo "</table>";
+	
+	
+	
+}

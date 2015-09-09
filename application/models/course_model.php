@@ -603,6 +603,15 @@ class Course_model extends CI_Model {
 		return $researchLines;
 	}
 	
+	public function getResearchLineNameById($researchLinesId){
+		$this->db->select("description");
+		$researchLinesName = $this->db->get_where("research_lines", array('id_research_line'=>$researchLinesId))->row_array();
+		
+		$researchLinesName = checkArray($researchLinesName);
+		
+		return $researchLinesName;
+	}
+	
 	public function saveResearchLine($newResearchLine){
 		
 		$wasSaved = $this->db->insert("research_lines", $newResearchLine);

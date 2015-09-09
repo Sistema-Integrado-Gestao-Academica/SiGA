@@ -2,6 +2,7 @@
 
 require_once('discipline.php');
 
+
 class Syllabus extends CI_Controller {
 
 	public function courseSyllabus($courseId){
@@ -98,14 +99,39 @@ class Syllabus extends CI_Controller {
 		
 		$currentDiscipline = $this->getCurrentDiscipline($disciplineCode);
 		
+		$disciplineResearchLinesIds = $this->getDiscipineResearchLinesIds($disciplineCode);
+		
+		$disciplineResearchLines = $this->getDiscipineResearchLines($disciplineResearchLinesIds);
+		
 		$data = array(
 			'researchLines' => $researchLines,
 			'discipline' => $currentDiscipline,
 			'syllabusId' => $syllabusId,
-			'courseId' => $courseId
+			'courseId' => $courseId,
+			'disciplineResearchLines' => $disciplineResearchLines
 		);
 		
 		loadTemplateSafelyByGroup("secretario",'syllabus/disciplines_research_line', $data);
+	}
+	
+	private function getDiscipineResearchLinesIds($disciplineCode){
+		$discipline = new Discipline();
+		
+		$disciplineResearchLines = $discipline->getDisciplineResearchLines($disciplineCode);
+		
+		return $disciplineResearchLines;
+	}
+	
+	private function getDiscipineResearchLines($disciplineResearchLinesIds){
+		$course = new Course();
+		
+		foreach ($disciplineResearchLinesIds as $quantity => $researchLines){
+			
+			$disciplinesResearchLines[$researchLines['id_research_line']] = $course->getResearchLineNameById($researchLines['id_research_line']); 
+			
+		}
+		
+		return $disciplinesResearchLines;
 	}
 	
 	private function getCurrentDiscipline($disciplineCode){
@@ -138,18 +164,10 @@ class Syllabus extends CI_Controller {
 		$syllabusId = $this->input->post('syllabusId');
 		
 		if ($researchLineId == NO_RESEARCH_LINE_CHOICE){
-			$research = $this->getResearchLines();
-			$currentDiscipline = $this->getCurrentDiscipline($disciplineCode);
-			$data = array(
-					'researchLines' => $research,
-					'discipline' => $currentDiscipline,
-					'syllabusId' => $syllabusId,
-					'courseId' => $courseId
-			);
 			$status = "danger";
 			$message = "Não foi escolhida nenhuma linha de pesquisa";
 			$this->session->set_flashdata($status, $message);
-			loadTemplateSafelyByGroup("secretario",'syllabus/disciplines_research_line', $data);
+			redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 		
 		}else{
 
