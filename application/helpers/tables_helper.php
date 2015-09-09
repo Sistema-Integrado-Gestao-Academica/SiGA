@@ -1918,7 +1918,12 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 			    		$disciplineAlreadyExistsInSyllabus = $syllabus->disciplineExistsInSyllabus($discipline['discipline_code'], $syllabusId);
 						
 			    		$disciplineController = new Discipline();
-			    		$disciplineResearchLines = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+			    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+			    		if ($disciplineResearchLinesIds){
+			    			$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
+			    		}else{
+			    			$disciplineResearchLinesNames = FALSE;
+			    		}
 					    echo "<tr>";
 					    	echo "<td>";
 				    			echo $discipline['discipline_code'];
@@ -1937,8 +1942,10 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 					    	echo "</td>";
 					    	
 					    	echo "<td>";
-					    		if ($disciplineResearchLines){
-					    			
+					    		if ($disciplineResearchLinesNames){
+					    			foreach ($disciplineResearchLinesNames as $names){
+					    				echo $names."<br>";
+					    			}
 					    		}else{
 					    			echo "Não relacionada a nenhuma linha de pesquisa.";
 					    		}
@@ -1950,7 +1957,6 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 					    		}else{
 					    			echo anchor("syllabus/addDisciplineToSyllabus/{$syllabusId}/{$discipline['discipline_code']}/{$courseId}", "Adicionar disciplina", "class='btn btn-primary'");
 					    		}
-					    		echo anchor("syllabus/relateDisciplineToResearchLine/{$discipline['discipline_code']}/{$syllabusId}/{$courseId}", "Editar Linha de Pesquisa", "class='btn btn-success'");
 					    	echo "</td>";
 
 					    echo "</tr>";
