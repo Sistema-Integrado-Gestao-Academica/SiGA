@@ -10,9 +10,10 @@ require_once(APPPATH."/controllers/syllabus.php");
 require_once(APPPATH."/controllers/usuario.php");
 require_once(APPPATH."/controllers/module.php");
 require_once(APPPATH."/controllers/mastermind.php");
+require_once(APPPATH."/controllers/coordinator.php");
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
-
+require_once(APPPATH."/constants/GroupConstants.php");
 
 function displayStudentSpecificDataPage($idUser){
 
@@ -153,7 +154,147 @@ function showCapesAvaliationsNews($atualizations){
 	}
 }
 
+function studentsReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$totalStudent = $coordinator->getTotalStudents($idCoordinator);
+	$enroledStudents = $coordinator->getEnroledStudents($idCoordinator);
+	$notEnroledStudents = $coordinator->getNotEnroledStudents($idCoordinator);
+	echo "<h4> Painel de quantidades de alunos </h4>";
+	echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+				echo "<tr>";
+					echo "<th class=\"text-center\">Total de estudantes</th>";
+					echo "<th class=\"text-center\">Total de Matriculados</th>";
+					echo "<th class=\"text-center\">Total de Atrazados</th>";
+				echo "</tr>";
+					
+				echo "<tr>";
+					echo "<td>";
+					echo $totalStudent;
+					echo "</td>";				
+					echo "<td>";
+					echo $enroledStudents;
+					echo "</td>";
+					echo "<td>";
+					echo $notEnroledStudents;
+					echo "</td>";
+				echo "</tr>";
+		
+			echo "</tbody>";
+		echo "</table>";
+	echo "</div>";
+}
 
+function secretaryReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$course = $coordinator->getCoordinatorCourseData($idCoordinator);
+	$secretaries = $coordinator->getCourseSecretaries($course['id_course']);
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+	echo "<div class='panel panel-primary'>";
+	echo "<div class='panel-heading'><h4>Relação de secretários do curso: ". $course['course_name'] ." </h4></div>";
+	echo "<div class='panel-body'>";
+	echo "<div class=\"modal-info\">";
+	echo "<div class=\"modal-content\">";
+	
+	foreach ($secretaries as $key => $secretary){
+		$userData = new Usuario();
+		$secretaryData = $userData->getUserById($secretary['id_user']);
+		$secretaryGroup = $userData->getUserGroupNameByIdGroup($secretary['id_group']);
+		echo "<div class=\"modal-header bg-news\">";
+			echo "<h4 class=\"model-title\"> Secretário : ". ucfirst($secretaryData['name']) ."</h4>";
+		echo "</div>";	
+		echo "<div class=\"modal-body\">";
+			echo "<h4>";
+				switch ($secretaryGroup) {
+					case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+						echo "Secretaria acadêmica";
+						break;
+					case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+						echo "Secretaria financeira";
+						break;
+					default:
+						break;
+				}
+			echo "</h4>";
+		echo "</div>";
+				
+	}
+	
+					echo "</div>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div>";
+	
+}
+
+function mastermindReportsTable($idCoordinator){
+	$coordinator = new Coordinator();
+	
+	$totalMasterminds = $coordinator->getTotalMasterminds($idCoordinator);
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+		echo "<div class=\"modal-info\">";
+			echo "<div class=\"modal-content\">";
+				echo "<div class=\"modal-header bg-news\">";
+					echo "<h4 class=\"model-title\">Total de Professores do Curso: </h4>";
+				echo "</div>";
+				echo "<div class=\"modal-body\">";
+					echo "<h4>";
+						echo "Existem no momento " . sizeof($totalMasterminds) . " professores cadastrados para este curso.";
+					echo "</h4>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";		
+	echo "</div>";
+	showMastermindsStudents($totalMasterminds);
+	
+}
+
+function showMastermindsStudents($masterminds){
+	
+	$coordinator = new Coordinator();
+	
+	echo "<div class=\"col-lg-12 col-xs-6\">";
+		echo "<div class='panel panel-primary'>";
+			echo "<div class='panel-heading'><h4>Relação de Alunos por Professores: </h4></div>";
+			echo "<div class='panel-body'>";
+				echo "<div class=\"modal-info\">";
+					echo "<div class=\"modal-content\">";
+	foreach ($masterminds as $key => $mastermind){
+		$students = $coordinator->getMastermindStudents($mastermind['id_user']);
+		
+		$userData = new Usuario();
+		$mastermindData = $userData->getUserById($mastermind['id_user']);
+		
+						echo "<div class=\"modal-header bg-news\">";
+							echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
+						echo "</div>";
+		foreach ($students as $singleStudent){
+			$studentData = $userData->getUserById($singleStudent['id_student']);
+			
+						echo "<div class=\"modal-body\">";
+							echo "<h4>";
+								echo ucfirst($studentData['name']);
+							echo "</h4>";
+						echo "</div>";
+			
+		}
+		
+	}
+	
+					echo "</div>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div>";
+		
+	
+}
 
 function courseTableToSecretaryCheckMastermind($courses){
 $courseController = new Course();
@@ -1703,28 +1844,40 @@ function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
-
+			echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
 			    echo "<tr>";
 			        echo "<th class=\"text-center\">Disciplinas</th>";
+			        echo "<th class=\"text-center\">Linhas de Pesquisa</th>";
+			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
 			    if($syllabusDisciplines !== FALSE){
 
 			    	foreach($syllabusDisciplines as $discipline){
-				    	
+			    		$disciplineController = new Discipline();
+			    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+			    		
+			    		$syllabus = new Syllabus();
+			    		$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
+			    		
 				    	echo "<tr>";
 					    	echo "<td>";
 					    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
 					    	echo "</td>";
+					    	echo "<td>";
+					    	if ($disciplineResearchLinesNames){
+					    		foreach ($disciplineResearchLinesNames as $names){
+					    			echo $names."<br>";
+					    		}
+					    	}else{
+					    		echo "Não relacionada a nenhuma linha de pesquisa.";
+					    	}
+					    	echo "</td>";
+					    	echo "<td>";
+					    	echo anchor("syllabus/relateDisciplineToResearchLine/{$discipline['discipline_code']}/{$syllabusId}/{$courseId}", "Relacionar Linha de Pesquisa", "class='btn btn-success'");
+					    	echo "</td>";
 				    	echo "</tr>";
 			    	}
-
-			    	echo "<tr>";
-			    		echo "<td>";
-							echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
-			    		echo "</td>";
-			    	echo "</tr>";
-
 			    }else{
 
 			    	echo "<tr>";
@@ -1753,6 +1906,7 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 			        echo "<th class=\"text-center\">Sigla</th>";
 			        echo "<th class=\"text-center\">Disciplina</th>";
 			        echo "<th class=\"text-center\">Créditos</th>";
+			        echo "<th class=\"text-center\">Linhas de Pesquisa</th>";
 			        echo "<th class=\"text-center\">Ações</th>";
 			    echo "</tr>";
 
@@ -1762,7 +1916,14 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 					    
 					    $syllabus = new Syllabus();
 			    		$disciplineAlreadyExistsInSyllabus = $syllabus->disciplineExistsInSyllabus($discipline['discipline_code'], $syllabusId);
-
+						
+			    		$disciplineController = new Discipline();
+			    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+			    		if ($disciplineResearchLinesIds){
+			    			$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
+			    		}else{
+			    			$disciplineResearchLinesNames = FALSE;
+			    		}
 					    echo "<tr>";
 					    	echo "<td>";
 				    			echo $discipline['discipline_code'];
@@ -1778,6 +1939,16 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 					    	
 					    	echo "<td>";
 					    		echo $discipline['credits'];
+					    	echo "</td>";
+					    	
+					    	echo "<td>";
+					    		if ($disciplineResearchLinesNames){
+					    			foreach ($disciplineResearchLinesNames as $names){
+					    				echo $names."<br>";
+					    			}
+					    		}else{
+					    			echo "Não relacionada a nenhuma linha de pesquisa.";
+					    		}
 					    	echo "</td>";
 
 					    	echo "<td>";
@@ -2372,3 +2543,85 @@ function displayGuestUsers(){
 	
 }
 
+function displayResearchLinesByCourse($research_lines,$courses){
+	echo "<br><br>";
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+			echo "<h3>Linhas de pesquisa por curso</h3>";
+			echo "<br>";
+			echo anchor("usuario/createCourseResearchLine/","<i class='fa fa-check'></i>   Criar Linha de Pesquisa", "class='btn btn-success'");
+			echo "<br><br>";
+			echo "<tr>";
+				echo "<th class=\"text-center\">Curso: </th>";
+				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
+				echo "<th class=\"text-center\">Ações: </th>";
+			echo "</tr>";
+			foreach ($research_lines as $keys => $researchs){
+				if($researchs){ 
+					foreach ($researchs as $researchData){
+						echo "<tr>";
+							echo "<td>";
+								echo $courses[$keys]['course_name'];
+							echo "</td>";
+							echo "<td>";
+								echo $researchData['description'];
+							echo "</td>";
+							echo "<td>";
+								echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
+								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+							echo "</td>";
+						echo "</tr>";
+					}
+				}else{
+					echo "<tr>";
+						echo "<td>";
+							echo $courses[$keys];
+						echo "</td>";
+						echo "<td>";
+							echo "Não existem linhas de pesquisa cadastradas para este curso";
+						echo "</td>";
+						echo "<td>";
+							echo "Não existem ações possíveis.";
+						echo "</td>";
+					echo "</tr>";
+				}
+			}
+		echo "</tbody>";
+	echo "</table>";
+	
+}
+
+function displayDisciplineToResearchLineTable($researchLines, $disciplines, $syllabusId, $courseId){
+	
+	echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+			echo "<h3>Linhas de pesquisa da disciplina ". $disciplines['discipline_name']."</h3>";
+			echo "<tr>";
+				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
+				if ($researchLines){
+					echo "<th class=\"text-center\">Ações: </th>";
+				}
+			echo "</tr>";
+			if (!$researchLines){
+				echo "<tr>";
+					echo "<td>";
+						echo "Não foi relacionada nenhuma linha de pesquisa";
+					echo "</td>";
+				echo "</tr>";
+			}else{
+				foreach ($researchLines as $key => $line){
+					echo "<tr>";
+						echo "<td>";
+							echo $line;
+						echo "</td>";
+						echo "<td>";
+						echo anchor("syllabus/removeDisciplineResearchLine/{$key}/{$disciplines['discipline_code']}/{$syllabusId}/{$courseId}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+						echo "</td>";
+						
+					echo "</tr>";
+				}
+			}
+		echo "</tbody>";
+	echo "</table>";
+	
+}

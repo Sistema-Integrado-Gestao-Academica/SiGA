@@ -182,7 +182,11 @@
 										foreach($groupPermissions as $permission){
 										
 											echo "<li>";
-											echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+												if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
+													continue;
+												}else{
+													echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+												}
 											echo "</li>";
 										}
 									}

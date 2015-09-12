@@ -11,7 +11,89 @@ class Coordinator extends CI_Controller {
 		
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/coordinator_home");
 	}
+	
+	public function course_report(){
+		
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/course_reports");
+	}
 
+	public function students_report(){
+		
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/students_reports");
+	}
+	
+	public function mastermind_report(){
+	
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_reports");
+	}
+	
+	public function secretary_report(){
+	
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_reports");
+	}
+	
+	public function getCoordinatorCourseData($idCoordinator){
+		$this->load->model("coordinator_model");
+		
+		$courseId = $this->coordinator_model->getCoordinatorCourse($idCoordinator);
+		
+		$this->load->model("course_model");
+		$course = $this->course_model->getCourseById($courseId);
+		
+		return $course;
+	}
+	
+	public function getCourseSecretaries($courseId){
+		$this->load->model("course_model");
+		
+		$secretaries = $this->course_model->getCourseSecretaries($courseId);
+		
+		return $secretaries;
+	}
+	
+	public function getTotalStudents($idCoordinator){
+		$this->load->model("coordinator_model");
+		
+		$students = $this->coordinator_model->getTotalCourseStudents($idCoordinator);
+		
+		return $students;
+	}
+	
+	public function getTotalMasterminds($idCoordinator){
+		$this->load->model("coordinator_model");
+		
+		$masterminds = $this->coordinator_model->getTotalCourseMasterminds($idCoordinator);
+		
+		return $masterminds;
+		
+	}
+	
+	public function getMastermindStudents($mastermindId){
+		$this->load->model('mastermind_model');
+
+		$students = $this->mastermind_model->getStutentsByIdMastermind($mastermindId);
+		
+		return $students;
+	}
+	
+	public function getEnroledStudents($idCoordinator){
+		$this->load->model("coordinator_model");
+		
+		$students = $this->coordinator_model->getTotalEnroledStudents($idCoordinator);
+		
+		return $students;
+		
+	}
+	
+	public function getNotEnroledStudents($idCoordinator){
+		$this->load->model("coordinator_model");
+	
+		$students = $this->coordinator_model->getTotalNotEnroledStudents($idCoordinator);
+	
+		return $students;
+	
+	}
+	
 	public function manageDimensions(){
 
 		$this->load->model('program_evaluation_model', 'evaluation');

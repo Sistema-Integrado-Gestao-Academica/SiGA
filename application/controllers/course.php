@@ -458,6 +458,14 @@ class Course extends CI_Controller {
 		redirect('cursos');
 	}
 	
+	public function getResearchLineNameById($researchLinesId){
+		$this->load->model('course_model');
+		
+		$researchLinesName = $this->course_model->getResearchLineNameById($researchLinesId);
+		
+		return $researchLinesName['description'];
+	}
+	
 	private function cleanUpOldCourseData($idCourse, $oldCourseType){
 
 		// define("GRADUATION", "graduation");

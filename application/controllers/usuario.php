@@ -54,6 +54,79 @@ class Usuario extends CI_Controller {
 
 		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
 	}
+	
+	public function createCourseResearchLine(){
+		$this->load->model("course_model");
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+		
+		$data = array('courses'=> $course);
+		
+		loadTemplateSafelyByPermission('research_lines', 'secretary/create_research_line', $data);
+	}
+	
+
+	public function updateCourseResearchLine($researchId, $courseId){
+		$this->load->model("course_model");
+		
+		$actualCourse = $this->course_model->getCourseById($courseId);
+		$actualCourseForm = $actualCourse['id_course'];
+		
+		$description = $this->course_model->getResearchDescription($researchId,$courseId);
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+		
+		$data = array(
+			'researchId' => $researchId,
+			'description' => $description,
+			'actualCourse' => $actualCourseForm,
+			'courses' => $course
+		);
+		
+		loadTemplateSafelyByPermission('research_lines', 'secretary/update_research_line', $data);
+	}
+	
+	public function secretary_research_lines(){
+		$this->load->model("course_model");
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		$this->loadResearchLinesPage($secretaryCourses);
+	}
+	
+	public function loadResearchLinesPage($secretaryCourses){
+		$this->load->model("course_model");
+		
+		foreach ($secretaryCourses as $key => $course){
+			
+			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
+			$courses[$key] = $course;
+		} 
+		
+		$data = array(
+			'research_lines' => $researchLines,
+			'courses' => $courses
+		);
+		
+		loadTemplateSafelyByPermission('research_lines', 'usuario/secretary_research_lines', $data);
+	}
 
 	public function removeAllUsersOfGroup($idGroup){
 		
@@ -751,6 +824,14 @@ class Usuario extends CI_Controller {
 		$foundUser = $this->usuarios_model->getUserById($userId);
 
 		return $foundUser;
+	}
+	
+	public function getUserGroupNameByIdGroup($groupId){
+		$this->load->model('usuarios_model');
+		
+		$groupName = $this->usuarios_model->getUserGroupNameByIdGroup($groupId);
+		
+		return $groupName;
 	}
 
 	/**

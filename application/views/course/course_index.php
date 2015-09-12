@@ -33,7 +33,7 @@ require_once(APPPATH."/constants/GroupConstants.php");
 
 				<td>
 					<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
-
+					
 					<?php
 						if($isAdmin){
 							echo anchor(
@@ -48,4 +48,5 @@ require_once(APPPATH."/constants/GroupConstants.php");
 		<?php endforeach ?>
 	</tbody>
 	</table>
+	<?= anchor("usuario/secretary_research_lines/", "<i class='fa fa-eraser'></i> Gerenciar Linhas de Pesquisa", "class='btn btn-success' style='margin-right:5%;'") ?>
 </div>

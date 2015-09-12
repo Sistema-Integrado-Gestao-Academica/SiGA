@@ -71,6 +71,7 @@ $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
 $route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
 $route['mastermind_home'] = 'mastermind/index';
 $route['coordinator_home'] = 'coordinator/index';
+$route['course_report'] = 'coordinator/course_report';
 $route['program'] = 'program/index';
 
 /*
@@ -84,6 +85,7 @@ $route['course_syllabus'] = 'usuario/secretary_courseSyllabus';
 $route['enroll_mastermind'] = 'usuario/secretary_enrollMasterMinds';
 $route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
 $route['documents_report'] = 'documentrequest/documentRequestSecretary';
+$route['research_lines'] = 'usuario/secretary_research_lines';
 
 /*
  * Mastermind functionalities routes

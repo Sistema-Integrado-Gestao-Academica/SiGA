@@ -564,6 +564,13 @@ class Course_model extends CI_Model {
 		$secretaryId = $this->getSecretaryIdByCourseId($idCourseToUpdate);
 		$this->updateSecretary($secretaryId, $newSecretary);
 	}
+	
+	public function getCourseSecretaries($courseId){
+		
+		$secretaries = $this->db->get_where('secretary_course', array('id_course'=>$courseId))->result_array();
+		
+		return $secretaries;
+	}
 
 	private function getSecretaryIdByCourseId($courseId){
 		$this->db->select('id_secretary');
@@ -585,6 +592,60 @@ class Course_model extends CI_Model {
 	public function updateSecretary($secretaryId, $newSecretary){
 		$this->db->where('id_secretary', $secretaryId);
 		$this->db->update('secretary_course', $newSecretary);
+	}
+	
+	public function getCourseResearchLines($idCourse){
+		
+		$researchLines = $this->db->get_where("research_lines", array('id_course'=>$idCourse))->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
+	}
+	
+	public function getResearchLineNameById($researchLinesId){
+		$this->db->select("description");
+		$researchLinesName = $this->db->get_where("research_lines", array('id_research_line'=>$researchLinesId))->row_array();
+		
+		$researchLinesName = checkArray($researchLinesName);
+		
+		return $researchLinesName;
+	}
+	
+	public function saveResearchLine($newResearchLine){
+		
+		$wasSaved = $this->db->insert("research_lines", $newResearchLine);
+		
+		return $wasSaved;
+	}
+	
+	public function updateResearchLine($newResearchLine, $researchLineId){
+		$this->db->where('id_research_line', $researchLineId);
+		$wasUpdated = $this->db->update("research_lines", $newResearchLine);
+	
+		return $wasUpdated;
+	}
+	
+	public function removeCourseResearchLine($researchLineId){
+		
+		$removed = $this->db->delete("research_lines", array('id_research_line'=>$researchLineId));
+		
+		return $removed;
+	}
+	
+	public function getResearchDescription($researchId,$courseId){
+		$this->db->select('description');
+		$description = $this->db->get_where("research_lines",array('id_research_line'=>$researchId, 'id_course'=>$courseId))->row_array();
+		
+		return $description['description'];
+	}
+	
+	public function getAllResearchLines(){
+		$researchLines = $this->db->get("research_lines")->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
 	}
 	
 	/**

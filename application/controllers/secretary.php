@@ -82,6 +82,102 @@ class Secretary extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
+	
+	public function saveResearchLine(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("researchLine", "Linha de Pesquisa", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+		
+		if ($success) {
+			$researchLine  = $this->input->post("researchLine");
+			$researchCourse   = $this->input->post("research_course");
+				
+			$newResearchLine = array(
+					'description'    => $researchLine,
+					'id_course' => $researchCourse
+			);
+		
+			$this->load->model("course_model");
+		
+			$wasSaved = $this->course_model->saveResearchLine($newResearchLine);
+			if ($wasSaved){
+				$status = "success";
+				$message = "Linha de pesquisa salva do curso ".$course." com sucesso.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível salvar o linha de pesquisa do curso ". $course;
+			}
+			
+			$this->session->set_flashdata($status,$message);
+			redirect("research_lines/");
+		} else {
+			$status = "danger";
+			$message = "Não foi possível salvar o linha de pesquisa. Tente Novamente";
+				
+			$this->session->set_flashdata($status,$message);
+			redirect("research_lines/");
+			
+		}
+	}
+	
+	public function updateResearchLine(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("researchLine", "Linha de Pesquisa", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+	
+		if ($success) {
+			$researchLine  = $this->input->post("researchLine");
+			$researchCourse   = $this->input->post("research_course");
+			$researchLineId = $this->input->post("id_research_line");
+			
+			$updateResearchLine = array(
+					'description'    => $researchLine,
+					'id_course' => $researchCourse
+			);
+	
+			$this->load->model("course_model");
+	
+			$wasSaved = $this->course_model->updateResearchLine($updateResearchLine, $researchLineId);
+			if ($wasSaved){
+				$status = "success";
+				$message = "Linha de pesquisa alterada com sucesso.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível alterar o linha de pesquisa.";
+			}
+				
+			$this->session->set_flashdata($status,$message);
+			redirect("research_lines/");
+		} else {
+			$status = "danger";
+			$message = "Não foi possível alterar o linha de pesquisa. Tente Novamente";
+	
+			$this->session->set_flashdata($status,$message);
+			redirect("research_lines/");
+				
+		}
+	}
+	
+	public function removeCourseResearchLine($researchLineId,$course){
+		
+		$this->load->model("course_model");
+		
+		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
+		
+		if($wasRemoved){
+			$status = "success";
+			$message = "Linha de pesquisa removida do curso ".$course." com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
+		}
+		
+		$this->session->set_flashdata($status, $message);
+		redirect("research_lines/");
+		
+	}
 
 	public function defineTeacherSituation(){
 
