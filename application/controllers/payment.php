@@ -63,6 +63,8 @@ class Payment extends CI_Controller {
 			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $address, $projectDenomination, $bank,
 			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription);
 
+		$spreadsheet->generateSheet();
+
 	}
 
 }
