@@ -94,10 +94,10 @@ class Spreadsheet{
 
 		$activeSheet->getStyle('A1:G48')->applyFromArray($styleArray);
 
-		$activeSheet->getColumnDimension('A')->setWidth(12);
+		$activeSheet->getColumnDimension('A')->setWidth(20);
 		$activeSheet->getColumnDimension('B')->setWidth(11);
 		$activeSheet->getColumnDimension('C')->setWidth(8);
-		$activeSheet->getColumnDimension('D')->setWidth(13);
+		$activeSheet->getColumnDimension('D')->setWidth(20);
 		$activeSheet->getColumnDimension('E')->setWidth(2);
 		$activeSheet->getColumnDimension('F')->setWidth(8);
 		$activeSheet->getColumnDimension('G')->setWidth(9);
@@ -105,6 +105,7 @@ class Spreadsheet{
 		$activeSheet->setCellValue('A1', 'Logo UnB');
 		$activeSheet->mergeCells('A1:B3');
 
+	// Header
 		$activeSheet->getStyle('C1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);;
 		$activeSheet->getStyle('C1')->getFont()->setBold(true);
@@ -145,6 +146,53 @@ class Spreadsheet{
 		$activeSheet->setCellValue('B6', $this->legalSupport());
 		$activeSheet->mergeCells('B6:G8');
 
+
+	// Finantial source identification
+		$activeSheet->getStyle('A9')->getFont()->setBold(true)->setSize(12);
+		$activeSheet->setCellValue('A9', '3 - IDENTIFICAÇÃO DA FONTE FINANCIADORA');
+		$activeSheet->mergeCells('A9:G9');
+
+		// Resource source
+		$activeSheet->getStyle('A10')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A10')->getAlignment()
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A10', 'FONTE DE RECURSO:');
+		$activeSheet->mergeCells('A10:A11');
+
+		$activeSheet->getStyle('B10')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B10')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B10', $this->resourseSource());
+		$activeSheet->mergeCells('B10:G11');
+
+		// Cost center
+		$activeSheet->getStyle('A12')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A12')->getAlignment()
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A12', 'CENTRO DE CUSTO:');
+		$activeSheet->mergeCells('A12:A13');
+
+		$activeSheet->getStyle('B12')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B12')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B12', $this->costCenter());
+		$activeSheet->mergeCells('B12:G13');
+
+		// Dotation note
+		$activeSheet->getStyle('A14')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A14')->getAlignment()
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A14', 'NOTA DE DOTAÇÃO - (INFORMAR O NÚMERO OU ANEXAR CÓPIA):');
+		$activeSheet->mergeCells('A14:D14');
+
+		$activeSheet->getStyle('E14')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('E14')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('E14', $this->dotationNote());
+		$activeSheet->mergeCells('E14:G14');
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
