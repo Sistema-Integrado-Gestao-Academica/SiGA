@@ -5,6 +5,7 @@ include(APPPATH."/phpexcel/PHPExcel.php");
 class Spreadsheet{
 
 	const FILE_NAME = "proposta.xls";
+	const COMMITMENT_TERM = "Declaro-me de acordo com o valor total da proposta e forma de pagamento, nos termos que diciplinam as normas internas vigente na FUB.";
 	
 	private $userType;
 	private $legalSupport;
@@ -94,7 +95,7 @@ class Spreadsheet{
 			)
 		);
 
-		$activeSheet->getStyle('A1:G48')->applyFromArray($styleArray);
+		$activeSheet->getStyle('A1:G47')->applyFromArray($styleArray);
 
 		$activeSheet->getColumnDimension('A')->setWidth(18);
 		$activeSheet->getColumnDimension('B')->setWidth(10);
@@ -408,7 +409,7 @@ class Spreadsheet{
 		$activeSheet->getStyle('A26')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('A26', $this->totalValue());
+		$activeSheet->setCellValue('A26', "R$".$this->totalValue());
 		
 		// Period
 		$activeSheet->getStyle('B25')->getFont()->setBold(false)->setSize(9);
@@ -518,7 +519,7 @@ class Spreadsheet{
 			$activeSheet->mergeCells('E33:G33');
 
 		// Service description
-		$activeSheet->getStyle('A34')->getFont()->setBold(true)->setSize(9);
+		$activeSheet->getStyle('A34')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('A34')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -532,7 +533,87 @@ class Spreadsheet{
 		$activeSheet->setCellValue('A35', $this->serviceDescription());
 		$activeSheet->mergeCells('A35:G38');
 
-		
+// COMMITMENT TERM
+
+		$activeSheet->getStyle('A39')->getFont()->setBold(true)->setSize(12);
+		$activeSheet->getStyle('A39')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A39', "6 - TERMO DE COMPROMISSO (Prestador de Serviço):");
+		$activeSheet->mergeCells('A39:G39');
+
+		$activeSheet->getStyle('A40')->getFont()->setBold(false)->setSize(10);
+		$activeSheet->getStyle('A40')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->getStyle('A40')->getAlignment()->setWrapText(true);
+		$activeSheet->setCellValue('A40', self::COMMITMENT_TERM);
+		$activeSheet->mergeCells('A40:G41');
+
+		$activeSheet->getStyle('A42')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('A42')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A42', "DATA: ");
+		$activeSheet->mergeCells('A42:B42');
+
+		$activeSheet->getStyle('C42')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('C42')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('C42', "ASSINATURA: ");
+		$activeSheet->mergeCells('C42:G42');
+
+// APROVEMENT
+
+		$activeSheet->getStyle('A43')->getFont()->setBold(true)->setSize(12);
+		$activeSheet->getStyle('A43')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A43', "7 - APROVAÇÃO (Gestor e Titular da Unidade):");
+		$activeSheet->mergeCells('A43:G43');
+
+		$activeSheet->getStyle('A44')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A44')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A44', "GESTOR DO PROJETO:");
+		$activeSheet->mergeCells('A44:C44');
+
+		$activeSheet->getStyle('D44')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D44')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D44', "TITULAR DA UNIDADE:");
+		$activeSheet->mergeCells('D44:G44');
+
+		$activeSheet->getStyle('A45')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A45')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A45', "DATA:");
+		$activeSheet->mergeCells('A45:C45');
+
+		$activeSheet->getStyle('D45')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D45')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D45', "DATA:");
+		$activeSheet->mergeCells('D45:G45');
+
+		$activeSheet->getStyle('A46')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A46')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		$activeSheet->setCellValue('A46', "ASSINATURA/CARIMBO:");
+		$activeSheet->mergeCells('A46:C47');
+
+		$activeSheet->getStyle('D46')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D46')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+		$activeSheet->setCellValue('D46', "ASSINATURA/CARIMBO:");
+		$activeSheet->mergeCells('D46:G47');
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
