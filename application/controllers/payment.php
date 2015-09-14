@@ -46,6 +46,7 @@ class Payment extends CI_Controller {
 		$enrollmentNumber = $this->input->post("enrollmentNumber");
 		$arrivalInBrazil = $this->input->post("arrivalInBrazil");
 		$phone = $this->input->post("phone");
+		$email = $this->input->post("email");
 		$address = $this->input->post("address");
 		$projectDenomination = $this->input->post("projectDenomination");
 		$bank = $this->input->post("bank");
@@ -60,7 +61,7 @@ class Payment extends CI_Controller {
 		$serviceDescription = $this->input->post("serviceDescription");
 
 		$spreadsheet = new Spreadsheet($userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
-			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $address, $projectDenomination, $bank,
+			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
 			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription);
 
 		$spreadsheet->generateSheet();

@@ -22,6 +22,7 @@ class Spreadsheet{
 	private $enrollmentNumber;
 	private $arrivalInBrazil;
 	private $phone;
+	private $email;
 	private $address;
 	private $projectDenomination;
 	private $bank;
@@ -38,7 +39,7 @@ class Spreadsheet{
 
 
 	public function __construct($userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
-		$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $address, $projectDenomination, $bank,
+		$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
 		$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription){
 
 		$this->userType = $userType;
@@ -55,6 +56,7 @@ class Spreadsheet{
 		$this->enrollmentNumber = $enrollmentNumber;
 		$this->arrivalInBrazil = $arrivalInBrazil;
 		$this->phone = $phone;
+		$this->email = $email;
 		$this->address = $address;
 		$this->projectDenomination = $projectDenomination;
 		$this->bank = $bank;
@@ -287,6 +289,106 @@ class Spreadsheet{
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('G19', $this->arrivalInBrazil());
+		
+		// User phone
+		$activeSheet->getStyle('A20')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A20')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A20', "TELEFONE:");
+
+		$activeSheet->getStyle('B20')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B20')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B20', $this->phone());
+		$activeSheet->mergeCells('B20:C20');
+		
+		// User bank
+		$activeSheet->getStyle('D20')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D20')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D20', "BANCO:");
+
+		$activeSheet->getStyle('E20')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('E20')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('E20', $this->bank());
+		$activeSheet->mergeCells('E20:G20');
+		
+		// User email
+		$activeSheet->getStyle('A21')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A21')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A21', "EMAIL:");
+
+		$activeSheet->getStyle('B21')->getFont()->setBold(false)->setSize(10);
+		$activeSheet->getStyle('B21')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B21', $this->email());
+		$activeSheet->mergeCells('B21:C21');
+
+		// User agency
+		$activeSheet->getStyle('D21')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D21')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D21', "AGÊNCIA:");
+
+		$activeSheet->getStyle('E21')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('E21')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('E21', $this->agency());
+		$activeSheet->mergeCells('E21:G21');
+		
+		// User address
+		$activeSheet->getStyle('A22')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A22')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A22', "ENDEREÇO:");
+
+		$activeSheet->getStyle('B22')->getFont()->setBold(false)->setSize(10);
+		$activeSheet->getStyle('B22')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B22', $this->address());
+		$activeSheet->mergeCells('B22:C22');
+
+		// User account number
+		$activeSheet->getStyle('D22')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D22')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D22', "N. DA CONTA:");
+
+		$activeSheet->getStyle('E22')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('E22')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('E22', $this->accountNumber());
+		$activeSheet->mergeCells('E22:G22');
+
+		// Project denomination
+		$activeSheet->getStyle('A23')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A23')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A23', "Denominaçãodo Projeto:");
+
+		$activeSheet->getStyle('B23')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B23')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B23', $this->projectDenomination());
+		$activeSheet->mergeCells('B23:G23');
+
+
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
@@ -346,6 +448,10 @@ class Spreadsheet{
 
 	public function phone(){
 		return $this->phone;
+	}
+
+	public function email(){
+		return $this->email;
 	}
 
 	public function address(){
