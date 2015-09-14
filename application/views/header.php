@@ -23,6 +23,7 @@
 	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.mask.min.js")?>></script>
+	<script src=<?=base_url("js/jquery.tablesorter.min.js")?>></script>
 </head>
 
 <body class="skin-blue">
