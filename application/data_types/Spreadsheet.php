@@ -6,6 +6,8 @@ class Spreadsheet{
 
 	const FILE_NAME = "proposta.xls";
 	const COMMITMENT_TERM = "Declaro-me de acordo com o valor total da proposta e forma de pagamento, nos termos que diciplinam as normas internas vigente na FUB.";
+
+	private $sheet;
 	
 	private $userType;
 	private $legalSupport;
@@ -615,17 +617,28 @@ class Spreadsheet{
 		$activeSheet->setCellValue('D46', "ASSINATURA/CARIMBO:");
 		$activeSheet->mergeCells('D46:G47');
 
+		$this->sheet = $sheet;
+
+		$this->downloadSheet();
+	}
+
+	public function downloadSheet(){
+
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
 		header('Cache-Control: max-age=0');
 
-		$objWriter = PHPExcel_IOFactory::createWriter($sheet, 'Excel2007');
+		$objWriter = PHPExcel_IOFactory::createWriter($this->sheet(), 'Excel2007');
 
 		ob_end_clean();
-		$objWriter->save('php://output');
+		$objWriter->save('php://output');		
 	}
 
 /* Getters */
+	
+	private function sheet(){
+		return $this->sheet;
+	}
 
 	public function userType(){
 		return $this->userType;
