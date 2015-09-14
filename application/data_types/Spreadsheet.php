@@ -94,13 +94,13 @@ class Spreadsheet{
 
 		$activeSheet->getStyle('A1:G48')->applyFromArray($styleArray);
 
-		$activeSheet->getColumnDimension('A')->setWidth(20);
-		$activeSheet->getColumnDimension('B')->setWidth(11);
-		$activeSheet->getColumnDimension('C')->setWidth(8);
-		$activeSheet->getColumnDimension('D')->setWidth(20);
+		$activeSheet->getColumnDimension('A')->setWidth(18);
+		$activeSheet->getColumnDimension('B')->setWidth(10);
+		$activeSheet->getColumnDimension('C')->setWidth(12);
+		$activeSheet->getColumnDimension('D')->setWidth(15);
 		$activeSheet->getColumnDimension('E')->setWidth(2);
-		$activeSheet->getColumnDimension('F')->setWidth(8);
-		$activeSheet->getColumnDimension('G')->setWidth(9);
+		$activeSheet->getColumnDimension('F')->setWidth(14);
+		$activeSheet->getColumnDimension('G')->setWidth(20);
 
 		$activeSheet->setCellValue('A1', 'Logo UnB');
 		$activeSheet->mergeCells('A1:B3');
@@ -108,17 +108,17 @@ class Spreadsheet{
 	// Header
 		$activeSheet->getStyle('C1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);;
-		$activeSheet->getStyle('C1')->getFont()->setBold(true);
+		$activeSheet->getStyle('C1')->getFont()->setBold(true)->setName('Arial')->setSize(14);
 		$activeSheet->setCellValue('C1', "Fundação Universidade de Brasília - UnB");
 		$activeSheet->mergeCells('C1:G2');
 
 		$activeSheet->getStyle('C3')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-		$activeSheet->getStyle('C3')->getFont()->setBold(true)->setSize(10);
+		$activeSheet->getStyle('C3')->getFont()->setBold(true)->setName('Arial')->setSize(10);
 		$activeSheet->setCellValue('C3', "CGC - 00.038.174/0001-43");
 		$activeSheet->mergeCells('C3:G3');
 
 		$activeSheet->getStyle('A4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$activeSheet->getStyle('A4')->getFont()->setSize(12);
+		$activeSheet->getStyle('A4')->getFont()->setSize(12)->setName('Arial');
 		$activeSheet->setCellValue('A4', "PROPOSTA SIMPLIFICADA DE PRESTAÇÃO DE SERVIÇOS");
 		$activeSheet->mergeCells('A4:G4');
 
@@ -148,6 +148,7 @@ class Spreadsheet{
 
 
 	// Finantial source identification
+
 		$activeSheet->getStyle('A9')->getFont()->setBold(true)->setSize(12);
 		$activeSheet->setCellValue('A9', '3 - IDENTIFICAÇÃO DA FONTE FINANCIADORA');
 		$activeSheet->mergeCells('A9:G9');
@@ -193,6 +194,99 @@ class Spreadsheet{
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('E14', $this->dotationNote());
 		$activeSheet->mergeCells('E14:G14');
+
+	// User identification
+
+		$activeSheet->getStyle('A15')->getFont()->setBold(true)->setSize(12);
+		$activeSheet->getStyle('A15')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A15', "4 - IDENTIFICAÇÃO DO USUÁRIO:");
+		$activeSheet->mergeCells('A15:G15');
+
+		// User name
+		$activeSheet->getStyle('A16')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A16')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A16', "NOME COMPLETO:");
+		$activeSheet->mergeCells('A16:A17');
+
+		$activeSheet->getStyle('B16')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B16')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B16', $this->name());
+		$activeSheet->mergeCells('B16:G17');
+
+		// User id
+		$activeSheet->getStyle('A18')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A18')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A18', "CART. IDENT.");
+
+		$activeSheet->getStyle('A19')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('A19')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A19', $this->id());
+
+		// User PIS PASEP
+		$activeSheet->getStyle('B18')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('B18')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B18', "INSCRIÇÃO: PIS e/ou INSS");
+		$activeSheet->mergeCells('B18:C18');
+
+		$activeSheet->getStyle('B19')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B19')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B19', $this->pisPasep());
+		$activeSheet->mergeCells('B19:C19');
+		
+		// User CPF
+		$activeSheet->getStyle('D18')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D18')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D18', "CPF");
+		$activeSheet->mergeCells('D18:E18');
+
+		$activeSheet->getStyle('D19')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('D19')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D19', $this->cpf());
+		$activeSheet->mergeCells('D19:E19');
+		
+		// User enrollment
+		$activeSheet->getStyle('F18')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('F18')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('F18', "MATRÍCULA");
+
+		$activeSheet->getStyle('F19')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('F19')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('F19', $this->enrollmentNumber());
+
+		// User arrival in Brazil
+		$activeSheet->getStyle('G18')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('G18')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('G18', "CHEGADA AO BRASIL");
+
+		$activeSheet->getStyle('G19')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('G19')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('G19', $this->arrivalInBrazil());
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
