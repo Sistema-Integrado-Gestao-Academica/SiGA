@@ -388,7 +388,151 @@ class Spreadsheet{
 		$activeSheet->setCellValue('B23', $this->projectDenomination());
 		$activeSheet->mergeCells('B23:G23');
 
+	// Propose data
 
+		$activeSheet->getStyle('A24')->getFont()->setBold(true)->setSize(12);
+		$activeSheet->getStyle('A24')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A24', "5 - DADOS DA PROPOSTA:");
+		$activeSheet->mergeCells('A24:G24');
+
+		// Total value
+		$activeSheet->getStyle('A25')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('A25')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A25', "VALOR TOTAL:");
+
+		$activeSheet->getStyle('A26')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('A26')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A26', $this->totalValue());
+		
+		// Period
+		$activeSheet->getStyle('B25')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('B25')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B25', "PERÍODO:");
+		$activeSheet->mergeCells('B25:C25');
+
+		$activeSheet->getStyle('B26')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('B26')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('B26', $this->period());
+		$activeSheet->mergeCells('B26:C26');
+
+		// Week hours
+		$activeSheet->getStyle('D25')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('D25')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D25', "H. SEMANAIS:");
+
+		$activeSheet->getStyle('D26')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('D26')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('D26', $this->weekHours());
+		
+		// Weeks
+		$activeSheet->getStyle('E25')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('E25')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('E25', "SEMANAS:");
+		$activeSheet->mergeCells('E25:F25');
+
+		$activeSheet->getStyle('E26')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('E26')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('E26', $this->weeks());
+		$activeSheet->mergeCells('E26:F26');
+		
+		// Total hours
+		$activeSheet->getStyle('G25')->getFont()->setBold(false)->setSize(9);
+		$activeSheet->getStyle('G25')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('G25', "TOTAL HORAS:");
+
+		$activeSheet->getStyle('G26')->getFont()->setBold(false)->setSize(12);
+		$activeSheet->getStyle('G26')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('G26', $this->totalHours());
+
+		// Installment
+		$activeSheet->getStyle('A27')->getFont()->setBold(true)->setSize(9);
+		$activeSheet->getStyle('A27')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A27', "PARCELAMENTO");
+		$activeSheet->mergeCells('A27:G27');
+
+			// Installment number
+			$activeSheet->getStyle('A28')->getFont()->setBold(false)->setSize(9);
+			$activeSheet->getStyle('A28')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('A28', "N. DA PARCELA");
+			
+			// Date
+			$activeSheet->getStyle('B28')->getFont()->setBold(false)->setSize(9);
+			$activeSheet->getStyle('B28')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('B28', "DATA");
+
+			// Value
+			$activeSheet->getStyle('C28')->getFont()->setBold(false)->setSize(9);
+			$activeSheet->getStyle('C28')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('C28', "VALOR");
+			$activeSheet->mergeCells('C28:D28');
+			
+			// Worked hours
+			$activeSheet->getStyle('E28')->getFont()->setBold(false)->setSize(9);
+			$activeSheet->getStyle('E28')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('E28', "HORAS TRABALHADAS");
+			$activeSheet->mergeCells('E28:G28');
+		
+			// Blank space for installment
+			$activeSheet->mergeCells('C29:D29');	
+			$activeSheet->mergeCells('C30:D30');
+			$activeSheet->mergeCells('C31:D31');
+			$activeSheet->mergeCells('C32:D32');
+			$activeSheet->mergeCells('C33:D33');
+
+			$activeSheet->mergeCells('E29:G29');
+			$activeSheet->mergeCells('E30:G30');
+			$activeSheet->mergeCells('E31:G31');
+			$activeSheet->mergeCells('E32:G32');
+			$activeSheet->mergeCells('E33:G33');
+
+		// Service description
+		$activeSheet->getStyle('A34')->getFont()->setBold(true)->setSize(9);
+		$activeSheet->getStyle('A34')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A34', "DESCRIÇÃO DETALHADA DOS SERVIÇOS - (Anexar folha complementar, se necessário):");
+		$activeSheet->mergeCells('A34:G34');
+
+		$activeSheet->getStyle('A35')->getFont()->setBold(false)->setSize(10);
+		$activeSheet->getStyle('A35')->getAlignment()
+					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$activeSheet->setCellValue('A35', $this->serviceDescription());
+		$activeSheet->mergeCells('A35:G38');
+
+		
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
