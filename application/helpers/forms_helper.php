@@ -2,6 +2,10 @@
 <?php
 require_once(APPPATH."/constants/TeacherConstants.php");
 
+function bold($string){
+	return "<b>".$string."</b>";
+}
+
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
 	$discipline = array(

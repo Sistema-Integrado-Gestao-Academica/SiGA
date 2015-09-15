@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/constants/PermissionConstants.php");
-require_once(APPPATH."/data_types/Spreadsheet.php");
+require_once(APPPATH."/data_types/ServicePayment.php");
 
 class Payment extends CI_Controller {
 
@@ -30,7 +30,10 @@ class Payment extends CI_Controller {
 		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'payment/new_payment', $data);
 	}
 
-	public function newPropose(){
+	public function registerPayment(){
+
+		$expense = $this->input->post("expenseId");
+		$budgetplan = $this->input->post("budgetplanId");
 
 		$userType = $this->input->post("userType");
 		$legalSupport = $this->input->post("legalSupport");
@@ -60,12 +63,66 @@ class Payment extends CI_Controller {
 		$totalHours = $this->input->post("totalHours");
 		$serviceDescription = $this->input->post("serviceDescription");
 
-		$spreadsheet = new Spreadsheet($userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
+		$payment = new ServicePayment(
+			$userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
-			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription);
+			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription
+		);
 
-		$spreadsheet->generateSheet();
+		$this->load->model("payment_model");
+		$wasSaved = $this->payment_model->savePayment($expense, $payment);
 
+		if($wasSaved){
+			$status = "success";
+			$message = "Pagamento registrado com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível registrar o pagamento informado.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("payment/expensePayments/{$expense}/{$budgetplan}");
 	}
 
+	public function generateSpreadsheet($paymentId){
+
+		$this->load->model("payment_model");
+		$paymentData = $this->payment_model->getPayment($paymentId);
+
+		$userType = $paymentData["userType"];
+		$legalSupport = $paymentData["legalSupport"];
+
+		$resourseSource = $paymentData["resourseSource"];
+		$costCenter = $paymentData["costCenter"];
+		$dotationNote = $paymentData["dotationNote"];
+		
+		$name = $paymentData["name"];
+		$id = $paymentData["id"];
+		$pisPasep = $paymentData["pisPasep"];
+		$cpf = $paymentData["cpf"];
+		$enrollmentNumber = $paymentData["enrollmentNumber"];
+		$arrivalInBrazil = $paymentData["arrivalInBrazil"];
+		$phone = $paymentData["phone"];
+		$email = $paymentData["email"];
+		$address = $paymentData["address"];
+		$projectDenomination = $paymentData["projectDenomination"];
+		$bank = $paymentData["bank"];
+		$agency = $paymentData["agency"];
+		$accountNumber = $paymentData["accountNumber"];
+
+		$totalValue = $paymentData["totalValue"];
+		$period = $paymentData["period"];
+		$weekHours = $paymentData["weekHours"];
+		$weeks = $paymentData["weeks"];
+		$totalHours = $paymentData["totalHours"];
+		$serviceDescription = $paymentData["serviceDescription"];
+
+		$payment = new ServicePayment(
+			$userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
+			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
+			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription
+		);
+
+		$payment->downloadSheet();
+	}
 }

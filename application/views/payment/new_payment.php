@@ -227,9 +227,10 @@ $submitBtn = array(
 
 ?>
 
-	<?= form_open("payment/newPropose") ?>
+	<?= form_open("payment/registerPayment") ?>
 		
 		<?= form_hidden("expenseId", $expenseId)?>
+		<?= form_hidden("budgetplanId", $budgetplanId)?>
 
 		<h3> <b>Proposta simplificada de prestação de serviços</b> </h3>
 		<br>

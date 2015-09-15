@@ -2,7 +2,7 @@
 
 include(APPPATH."/phpexcel/PHPExcel.php");
 
-class Spreadsheet{
+class ServicePayment{
 
 	const FILE_NAME = "proposta.xls";
 	const COMMITMENT_TERM = "Declaro-me de acordo com o valor total da proposta e forma de pagamento, nos termos que diciplinam as normas internas vigente na FUB.";
@@ -74,7 +74,7 @@ class Spreadsheet{
 		$this->serviceDescription = $serviceDescription;
 	}
 
-	public function generateSheet(){
+	private function generateSheet(){
 
 		$sheet = new PHPExcel();
 
@@ -618,11 +618,11 @@ class Spreadsheet{
 		$activeSheet->mergeCells('D46:G47');
 
 		$this->sheet = $sheet;
-
-		$this->downloadSheet();
 	}
 
 	public function downloadSheet(){
+
+		$this->generateSheet();
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
