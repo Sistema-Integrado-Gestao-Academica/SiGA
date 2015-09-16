@@ -13,7 +13,9 @@ class PermissionConstants extends Constants{
 	const DEFINE_MASTERMIND_PERMISSION = "enroll_mastermind";
 	const ENROLL_TEACHER_PERMISSION = "enroll_teacher";
 	const DOCUMENT_REQUEST_REPORT_PERMISSION = "documents_report";
+	const BUDGETPLAN_PERMISSION = "planoorcamentario";
 	const RESEARCH_LINES_PERMISSION = "research_lines";
+
 	// Student functionalities permissions
 	const DOCUMENT_REQUEST_PERMISSION = "documents_request";
 
