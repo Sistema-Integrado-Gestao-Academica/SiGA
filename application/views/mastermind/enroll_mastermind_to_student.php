@@ -1,2 +1,2 @@
 <?php
-	displayEnrollMastermindToStudentForm($students, $masterminds, $course_id); 
+	displayEnrollMastermindToStudentForm($students, $masterminds, $courseId); 

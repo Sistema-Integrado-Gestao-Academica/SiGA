@@ -13,15 +13,16 @@ class Program_model extends CI_Model {
 		return $allPrograms;
 	}
 
-	public function getCoordinatorPrograms($coodinatorId){
-
-		$programs = $this->db->get_where('program', array('coordinator' => $coodinatorId))->result_array();
-
-		$programs = checkArray($programs);
-
-		return $programs;
+	public function getAllProgramAreas(){
+		
+		$allProgramAreas = $this->db->get('program_area')->result_array();
+		
+		$allProgramAreas = checkArray($allProgramAreas);
+		
+		return $allProgramAreas;
+		
 	}
-
+	
 	public function getProgramEvaluations($programId){
 
 		$this->db->order_by("start_year", "asc");
@@ -41,6 +42,34 @@ class Program_model extends CI_Model {
 		return $evaluation;
 	}
 
+	public function getCoordinatorPrograms($coordinatorId){
+
+		$coordinatorPrograms = $this->db->get_where('program', array('coordinator' => $coordinatorId))->result_array();
+
+		$coordinatorPrograms = checkArray($coordinatorPrograms);
+
+		return $coordinatorPrograms;
+	}
+
+	public function getProgramCourses($programId){
+
+		$this->db->select('*');
+		$this->db->from('course');
+		$this->db->join('program_course', "program_course.id_course = course.id_course");
+		$this->db->where('program_course.id_program', $programId);
+		$programCourses = $this->db->get()->result_array();
+
+		$programCourses = checkArray($programCourses);
+
+		return $programCourses;
+	}
+
+	public function parseProgramAreas($areaName){
+	
+		return $this->db->insert("program_area",array("area_name"=>$areaName));
+	
+	}
+	
 	public function addCourseToProgram($courseId, $programId){
 
 		$course = new Course;
@@ -137,8 +166,8 @@ class Program_model extends CI_Model {
 	}
 
 	private function dissociateCoursesOfProgram($programId){
-
-		$this->db->delete('program', array('id_program' => $programId));
+		$this->db->where('id_program',$programId);
+		$this->db->update('course', array('id_program' => NULL));
 	}
 
 	public function checkIfProgramExists($programId){
@@ -186,6 +215,17 @@ class Program_model extends CI_Model {
 
 		return $program;
 	}
+	
+	public function getProgramAreaByProgramId($programId){
+
+		$program = $this->getProgram(array('id_program' => $programId));
+		
+		$areaId = $program['id_area'];
+		
+		$programArea = $this->getArea(array('id_program_area' => $areaId));
+		
+		return $programArea;
+	}
 
 	private function insertProgram($program){
 		
@@ -209,5 +249,14 @@ class Program_model extends CI_Model {
 		$foundProgram = checkArray($foundProgram);
 
 		return $foundProgram;
+	}
+	
+	private function getArea($areaToSearch){
+		$this->db->select('area_name');
+		$foundArea = $this->db->get_where('program_area', $areaToSearch)->row_array();
+	
+		$foundArea = checkArray($foundArea);
+	
+		return $foundArea;
 	}
 }

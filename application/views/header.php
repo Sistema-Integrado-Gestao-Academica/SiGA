@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<?php  $session = $this->session->userdata("current_user");
+<?php  
+	require_once(APPPATH."/constants/GroupConstants.php");
+	
+	$session = $this->session->userdata("current_user");
 ?>
 <html>
 <head>
@@ -20,6 +23,7 @@
 	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.mask.min.js")?>></script>
+	<script src=<?=base_url("js/jquery.tablesorter.min.js")?>></script>
 </head>
 
 <body class="skin-blue">
@@ -52,7 +56,18 @@
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
                                         	foreach($session['user_groups'] as $group){
-                                        		echo ucfirst($group['group_name']);
+                                        		switch ($group['group_name']) {
+                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria acadêmica";
+                                        				break;
+                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria financeira";
+                                        				break;
+                                        			default:
+                                        				$groupNameToDisplay = $group['group_name'];
+                                        				break;
+                                        		}
+                                        		echo ucfirst($groupNameToDisplay);
                                         		echo "<br>";
                                         	}
                                         ?>
@@ -105,10 +120,21 @@
 		                            	<?php 
 		                            		foreach($session['user_groups'] as $group){
 		                            			echo "<li>";
-		                            			if($group['group_name'] == "secretario"){
+		                            			switch ($group['group_name']) {
+                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria acadêmica";
+                                        				break;
+                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria financeira";
+                                        				break;
+                                        			default:
+                                        				$groupNameToDisplay = $group['group_name'];
+                                        				break;
+                                        		}
+		                            			if($group['group_name'] == GroupConstants::SECRETARY_GROUP){
 													continue;
 												}else{
-		                            				echo anchor($group['profile_route'], ucfirst($group['group_name']));
+		                            				echo anchor($group['profile_route'], ucfirst($groupNameToDisplay));
 		                            			}
 		                            			echo "</li>";
 		                            		}
@@ -118,54 +144,69 @@
 	                        </div>
 	                    </div>
 	                    <!-- search form -->
-	                    <form action="#" method="get" class="sidebar-form">
+<!-- 	                    <form action="#" method="get" class="sidebar-form">
 	                        <div class="input-group">
 	                            <input type="text" name="q" class="form-control" placeholder="Search..."/>
 	                            <span class="input-group-btn">
 	                                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
 	                            </span>
 	                        </div>
-	                    </form>
+	                    </form> -->
 	                    <!-- /.search form -->
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
-	                    <ul class="sidebar-menu">
+                    <ul class="sidebar-menu">
 	                <?php
 	                
-						
 						foreach($session['user_permissions'] as $groupName => $groupPermissions){
-                			if($groupName == "secretario"){
+                			if($groupName == GroupConstants::SECRETARY_GROUP){
 								continue;
 							}else{
 								echo "<li class='treeview'>";
 								
-								echo anchor("", ucfirst($groupName),"class='fa fa-folder-o'");
-								echo "<ul class='treeview-menu'>";
+								switch ($groupName) {
+                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                        				$groupNameToShow = "Secretaria acadêmica";
+                        				break;
+                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                        				$groupNameToShow = "Secretaria financeira";
+                        				break;
+                        			default:
+                        				$groupNameToShow = $groupName;
+                        				break;
+                        		}
+								echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
 								
-								if($groupPermissions !== FALSE){
+									echo "<ul class='treeview-menu'>";
 									
-									foreach($groupPermissions as $permission){
-									
-										echo "<li>";
-										echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-										echo "</li>";
+									if($groupPermissions !== FALSE){
+										
+										foreach($groupPermissions as $permission){
+										
+											echo "<li>";
+												if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
+													continue;
+												}else{
+													echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+												}
+											echo "</li>";
+										}
 									}
-								}
-	
-								echo "</ul>";
+		
+									echo "</ul>";
 								
 								echo "</li>";
 							}
 						}
 
 					?>
-	                  	</ul>
-	                  	</section>
+                  	</ul>
+	                </section>
 	                <!-- /.sidebar -->
 	            </aside>
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-			
+            					
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>

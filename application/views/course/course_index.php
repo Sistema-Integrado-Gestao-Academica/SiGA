@@ -1,58 +1,52 @@
-<?php 
-	$session = $this->session->userdata("current_user");
-	require_once APPPATH.'controllers/course.php';
-?>
-
 <?php
-$userIsAcademicSecretary = array_key_exists('courseSecretaryAcademic', $session['user_permissions']);
+require_once(APPPATH."/constants/GroupConstants.php");
 
-if ($userIsAcademicSecretary):
-	$courseController = new Course();
-	
-	$coursesForSecretary = $courseController->getCoursesOfSecretary($session['user']['id']);
+	$group = new Module();
+	$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
 ?>
-<h2 class="principal">Meus cursos</h2>
+
+<h2 class="principal">Cursos para o secretário(a) <i><b><?php echo $userData['name'];?></b></i></h2>
 <br><br>
 	
-	<table class="table table-striped table-bordered">
+	<?php 
+		if($isAdmin){
+			echo anchor(
+				"course/formToRegisterNewCourse",
+				"<i class='fa fa-plus-circle'></i> Cadastrar Curso",
+				"class='btn-lg'"
+			);
+			echo "<br><br>";
+		}
+	?>
+<div class="box-body table-responsive no-padding">
+	<table class="table table-bordered table-hover">
+	<tbody>
 		<tr>
-			<td><h3 class="text-center">Cursos Cadastrados</h3></td>
-			<td><h3 class="text-center">Ações</h3></td>
+			<th class="text-center">Cursos Cadastrados</th>
+			<th class="text-center">Ações</th>
 		</tr>
-			<?php foreach($coursesForSecretary as $course): ?>
-				<tr>
-					<td class="text-center"><?= $course['course_name'] ?></td>
-	
-					<td>
-						<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
-					</td>
-				</tr>
-			<?php endforeach ?>
+		<?php foreach($courses as $course): ?>
+			<tr>
+				<td class="text-center">
+					<?= $course['course_name'] ?>
+				</td>
+
+				<td>
+					<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+					
+					<?php
+						if($isAdmin){
+							echo anchor(
+								"course/deleteCourse/{$course['id_course']}",
+								"<span class='glyphicon glyphicon-remove'></span>",
+								"class='btn btn-danger'"
+							);
+						}
+					?>
+				</td>
+			</tr>
+		<?php endforeach ?>
+	</tbody>
 	</table>
-	
-	<br>
-	<br>
-<?php 
-else :
-?>
-<h2 class="principal">Menu de cursos</h2>
-	<?= anchor("course/formToRegisterNewCourse", "Cadastrar Curso", array(
-		"class" => "btn btn-primary",
-		"type" => "submit",
-		"content" => "newCourse"
-	)) ?>
-	
-	<br><br>
-	
-	<?php displayRegisteredCourses($courses); ?>
-	
-	<br>
-	<br>
-<?php endif;?>
-
-
-<?= anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'") ?>
-
-<br><br>
-
-<?php displayRegisteredPrograms($programs); ?>
+	<?= anchor("usuario/secretary_research_lines/", "<i class='fa fa-eraser'></i> Gerenciar Linhas de Pesquisa", "class='btn btn-success' style='margin-right:5%;'") ?>
+</div>

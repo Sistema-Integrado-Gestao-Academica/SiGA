@@ -2,11 +2,99 @@
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
 require_once(APPPATH."/exception/SecretaryException.php");
+require_once(APPPATH."/constants/GroupConstants.php");
+
 class Course_model extends CI_Model {
+
+	public function getCourseTeachers($courseId){
+
+		$this->db->select('users.name, teacher_course.*');
+		$this->db->from('users');
+		$this->db->join("teacher_course", "users.id = teacher_course.id_user");
+		$this->db->where("teacher_course.id_course", $courseId);
+		$teachers = $this->db->get()->result_array();
+
+		$teachers = checkArray($teachers);
+
+		return $teachers;
+	}
+
+	public function enrollTeacherToCourse($teacherId, $courseId){
+
+		$teacherToEnroll = array(
+			'id_user' => $teacherId,
+			'id_course' => $courseId
+		);
+
+		$this->db->insert('teacher_course', $teacherToEnroll);
+
+		$teacherCourse = $this->getTeacherCourse($teacherToEnroll);
+
+		$wasEnrolled = $teacherCourse !== FALSE;
+
+		return $wasEnrolled;
+	}
+
+	public function removeTeacherFromCourse($teacherId, $courseId){
+
+		$teacherToRemove = array(
+			'id_user' => $teacherId,
+			'id_course' => $courseId
+		);
+
+		$this->db->delete('teacher_course', $teacherToRemove);
+
+		$teacherCourse = $this->getTeacherCourse($teacherToRemove);
+
+		$wasRemoved = $teacherCourse === FALSE;
+
+		return $wasRemoved;
+	}
+
+	private function getTeacherCourse($dataToSearch){
+
+		$teacherCourse = $this->db->get_where('teacher_course', $dataToSearch)->row_array();
+
+		$teacherCourse = checkArray($teacherCourse);
+
+		return $teacherCourse;
+	}
+
+	public function defineTeacherSituation($courseId, $teacherId, $situation){
+
+		$where = array(
+			'id_user' => $teacherId,
+			'id_course' => $courseId
+		);
+
+		$this->db->where($where);
+		$this->db->update('teacher_course', array('situation' => $situation));
+
+		$where['situation'] = $situation;
+
+		$teacherCourse = $this->getTeacherCourse($where);
+
+		$wasDefined = $teacherCourse !== FALSE;
+
+		return $wasDefined;
+	}
 
 	public function enrollStudentIntoCourse($enrollment){
 
 		$this->db->query($enrollment);
+	}
+
+	public function getCourseStudents($courseId){
+
+		$this->db->select("users.name, users.id, users.email, course_student.enroll_date");
+		$this->db->from('users');
+		$this->db->join("course_student", "course_student.id_user = users.id");
+		$this->db->where("course_student.id_course", $courseId);
+		$students = $this->db->get()->result_array();
+
+		$students = checkArray($students);
+
+		return $students;
 	}
 
 	public function getCourseName($courseId){
@@ -143,54 +231,44 @@ class Course_model extends CI_Model {
 	 * @throws SecretaryException
 	 * @return boolean
 	 */
-	public function saveCourseSecretaries($financialSecretaryUserId, $academicSecretaryUserId, $idCourse, $courseName){
-		/**
-		 * LINES 157 -> 165  ARE DEPRECATED CODE
-		 * 
-		 * $this->load->model('module_model');
-		 * $courseName = strtolower($courseName);
-		 * $separatedName = explode(' ', $courseName);
-		 * if ($separatedName){
-		 * $groupsNames = $this->module_model->prepareGroupName($separatedName);
-		 * }else {
-		 * $groupsNames = $this->module_model->prepareGroupName($courseName,TRUE);
-		 * }
-		 * $groupsIds = $this->module_model->getGroupIdByName($groupsNames);
-		 *
-		 */
-		define("FINANCIAL_SECRETARY_GROUP", 10);
-		define("ACADEMIC_SECRETARY_GROUP", 11);
+	public function saveCourseFinancialSecretary($financialSecretaryUserId, $idCourse, $courseName){
 		
-		$financialSecretaryToSave = array("id_user"  => $financialSecretaryUserId,
-										  "id_group" => FINANCIAL_SECRETARY_GROUP,
-										  "id_course"=> $idCourse);
+		$financialSecretaryToSave = array(
+			"id_user"  => $financialSecretaryUserId,
+			"id_group" => GroupConstants::FINANCIAL_SECRETARY_GROUP_ID,
+			"id_course"=> $idCourse
+		);
 		
-		$academicSecretaryToSave = array("id_user"  => $academicSecretaryUserId,
-										 "id_group" => ACADEMIC_SECRETARY_GROUP,
-										 "id_course"=> $idCourse);
-		
-		/**
-		 * DEPRECATED CODE
-		 *$this->db->select('course_name');
-		 *$this->db->where('id_course',$idCourse);
-		 *$courseName = $this->db->get('course')->row_array();
-		 */
 		try{
 			
 			$savedFinancial = $this->saveSecretary($financialSecretaryToSave);
+			
+		}catch (SecretaryException $caughtException){
+			throw $caughtException;
+		}
+		
+		return $savedFinancial;
+	}
+
+	public function saveCourseAcademicSecretary($academicSecretaryUserId, $idCourse, $courseName){
+
+		$academicSecretaryToSave = array(
+			"id_user"  => $academicSecretaryUserId,
+			"id_group" => GroupConstants::ACADEMIC_SECRETARY_GROUP_ID,
+			"id_course"=> $idCourse
+		);
+		
+		try{
+			
 			$savedAcademic  = $this->saveSecretary($academicSecretaryToSave);
 			
 		}catch (SecretaryException $caughtException){
 			throw $caughtException;
 		}
 		
-		$savedSecretaries = $savedAcademic && $savedFinancial;
-		if ($savedSecretaries){
-			return TRUE;
-		}else {
-			return FALSE;
-		}
+		return $savedAcademic;
 	}
+
 	
 	/**
 	 * Function to save a secretary in the database
@@ -198,11 +276,11 @@ class Course_model extends CI_Model {
 	 * @return boolean
 	 */
 	private function saveSecretary($secretary){
-		define("SECRETARY", 6);
 		
 		$alreadySavedSecretary = $this->checkExistingSecretary($secretary);
 		
 		if(!$alreadySavedSecretary){
+			
 			try{
 				$save = $this->db->insert("secretary_course", $secretary);
 			}catch (SecretaryException $caughtException){
@@ -210,7 +288,6 @@ class Course_model extends CI_Model {
 			}
 		
 			$alreadySavedUserGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], $secretary['id_group']);
-			$alreadySavedSecretaryGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], SECRETARY);
 			
 			if(!$alreadySavedUserGroup){
 					
@@ -224,23 +301,8 @@ class Course_model extends CI_Model {
 				// If the group is already saved, we dont need to save it again, so it's true that it's saved
 				$saveUserGroup = TRUE;
 			}
-			
-			if(!$alreadySavedSecretaryGroup){
 					
-				try{
-					$saveUserSecretary = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>SECRETARY));
-				}catch (SecretaryException $caughtException){
-					throw new SecretaryException('Não foi possível atribuir este grupo ao usuário. Verifique a existência do mesmo.');
-				}
-					
-			}else{
-				// If the group is already saved, we dont need to save it again, so it's true that it's saved
-				$saveUserSecretary = TRUE;
-			}
-			
-			$groupsWhereSaved = $saveUserGroup && $saveUserSecretary;
-			
-			if($save && $groupsWhereSaved){
+			if($save && $saveUserGroup){
 				$insertionStatus = TRUE;
 			}else{
 				$insertionStatus = FALSE;
@@ -252,7 +314,6 @@ class Course_model extends CI_Model {
 		}
 		
 		return $insertionStatus;
-		
 	}
 	
 	/**
@@ -481,6 +542,7 @@ class Course_model extends CI_Model {
 	 */
 	public function getCoursesOfSecretary($userId){
 		
+		$this->db->distinct();
 		$this->db->select('course.*');
 		$this->db->from('course');
 		$this->db->join('secretary_course','course.id_course = secretary_course.id_course');
@@ -501,6 +563,13 @@ class Course_model extends CI_Model {
 		// Validate attributes
 		$secretaryId = $this->getSecretaryIdByCourseId($idCourseToUpdate);
 		$this->updateSecretary($secretaryId, $newSecretary);
+	}
+	
+	public function getCourseSecretaries($courseId){
+		
+		$secretaries = $this->db->get_where('secretary_course', array('id_course'=>$courseId))->result_array();
+		
+		return $secretaries;
 	}
 
 	private function getSecretaryIdByCourseId($courseId){
@@ -523,6 +592,60 @@ class Course_model extends CI_Model {
 	public function updateSecretary($secretaryId, $newSecretary){
 		$this->db->where('id_secretary', $secretaryId);
 		$this->db->update('secretary_course', $newSecretary);
+	}
+	
+	public function getCourseResearchLines($idCourse){
+		
+		$researchLines = $this->db->get_where("research_lines", array('id_course'=>$idCourse))->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
+	}
+	
+	public function getResearchLineNameById($researchLinesId){
+		$this->db->select("description");
+		$researchLinesName = $this->db->get_where("research_lines", array('id_research_line'=>$researchLinesId))->row_array();
+		
+		$researchLinesName = checkArray($researchLinesName);
+		
+		return $researchLinesName;
+	}
+	
+	public function saveResearchLine($newResearchLine){
+		
+		$wasSaved = $this->db->insert("research_lines", $newResearchLine);
+		
+		return $wasSaved;
+	}
+	
+	public function updateResearchLine($newResearchLine, $researchLineId){
+		$this->db->where('id_research_line', $researchLineId);
+		$wasUpdated = $this->db->update("research_lines", $newResearchLine);
+	
+		return $wasUpdated;
+	}
+	
+	public function removeCourseResearchLine($researchLineId){
+		
+		$removed = $this->db->delete("research_lines", array('id_research_line'=>$researchLineId));
+		
+		return $removed;
+	}
+	
+	public function getResearchDescription($researchId,$courseId){
+		$this->db->select('description');
+		$description = $this->db->get_where("research_lines",array('id_research_line'=>$researchId, 'id_course'=>$courseId))->row_array();
+		
+		return $description['description'];
+	}
+	
+	public function getAllResearchLines(){
+		$researchLines = $this->db->get("research_lines")->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
 	}
 	
 	/**

@@ -6,6 +6,7 @@ require_once('discipline.php');
 require_once('module.php');
 require_once('usuario.php');
 require_once('schedule.php');
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class Offer extends CI_Controller {
 
@@ -168,10 +169,8 @@ class Offer extends CI_Controller {
 		$disciplineData = $discipline->getDisciplineByCode($idDiscipline);
 
 		// Get all teachers
-		define("TEACHER_GROUP", "docente");
-
 		$group = new Module();
-		$foundGroup = $group->getGroupByName(TEACHER_GROUP);
+		$foundGroup = $group->getGroupByName(GroupConstants::TEACHER_GROUP);
 
 		if($foundGroup !== FALSE){
 			$user = new Usuario();

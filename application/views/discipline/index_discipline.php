@@ -5,10 +5,18 @@
 	"type" => "submit",
 	"content" => "newDiscipline"
 ))?>
-<?php 
-	$disciplines = new Discipline();
-	$registered = $disciplines->getAllDisciplines();
+<?php
+	define("ADMINID", 1);
+	$session = $this->session->userdata("current_user");
+	$userId = $session['user']['id']; 
 	
+	$disciplines = new Discipline();
+	if ($userId == ADMINID){
+		$registered = $disciplines->getAllDisciplines();
+	}else{
+
+		$registered = $disciplines->getDisciplinesBySecretary($userId);
+	}
 	?>
 <br>
 <table class="table table-bordered">
@@ -32,41 +40,82 @@
 	</tr>
 	<?php
 	if($registered){
-		foreach($registered as $discipline => $indexes){
-			
-			echo "<tr>";
-
-				echo "<td>";
-				echo $indexes['discipline_name'] . " (". $indexes['name_abbreviation'] . ")";
-				echo "</td>";
+		if ($userId == ADMINID){
+			foreach($registered as $discipline => $indexes){
 				
-				echo "<td>";
-				echo $indexes['discipline_code'];
-				echo "</td>";
-				
-				echo "<td>";
-				echo $indexes['workload']." h";
-				echo "</td>";
-				
-				echo "<td>";
+				echo "<tr>";
+	
+					echo "<td>";
+					echo $indexes['discipline_name'] . " (". $indexes['name_abbreviation'] . ")";
+					echo "</td>";
 					
+					echo "<td>";
+					echo $indexes['discipline_code'];
+					echo "</td>";
+					
+					echo "<td>";
+					echo $indexes['workload']." h";
+					echo "</td>";
+					
+					echo "<td>";
+						
+						echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
+						"class" => "btn btn-primary btn-editar",
+						"type" => "submit",
+						"content" => "Editar"
+						));
+	
+						echo form_open("discipline/deleteDiscipline");
+						echo form_hidden("discipline_code", $indexes['discipline_code']);
+						echo form_button(array(
+							"class" => "btn btn-danger btn-remover",
+							"type" => "submit",
+							"content" => "Remover"
+						));
+						echo form_close();
+					echo "</td>";
+	
+				echo "</tr>";
+			}
+		}else{
+			foreach ($registered as $courses){
+				foreach($courses as $discipline => $indexes){
+	
+					echo "<tr>";
+				
+					echo "<td>";
+					echo $indexes['discipline_name'] . " (". $indexes['name_abbreviation'] . ")";
+					echo "</td>";
+						
+					echo "<td>";
+					echo $indexes['discipline_code'];
+					echo "</td>";
+						
+					echo "<td>";
+					echo $indexes['workload']." h";
+					echo "</td>";
+						
+					echo "<td>";
+				
 					echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
-					"class" => "btn btn-primary btn-editar",
-					"type" => "submit",
-					"content" => "Editar"
+							"class" => "btn btn-primary btn-editar",
+							"type" => "submit",
+							"content" => "Editar"
 					));
-
+				
 					echo form_open("discipline/deleteDiscipline");
 					echo form_hidden("discipline_code", $indexes['discipline_code']);
 					echo form_button(array(
-						"class" => "btn btn-danger btn-remover",
-						"type" => "submit",
-						"content" => "Remover"
+							"class" => "btn btn-danger btn-remover",
+							"type" => "submit",
+							"content" => "Remover"
 					));
 					echo form_close();
-				echo "</td>";
-
-			echo "</tr>";
+					echo "</td>";
+				
+					echo "</tr>";
+				}
+			}
 		}
 	}else{ ?>
 		<tr>

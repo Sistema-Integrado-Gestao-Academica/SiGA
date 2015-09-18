@@ -16,6 +16,48 @@ class Discipline_model extends CI_Model {
 		return $registeredDisciplines;
 	}
 
+	public function getDisciplinesBySecretary($secretaryUserId){
+		
+		$secretaryCourses = $this->getSecreteryCourses($secretaryUserId);
+		
+		foreach ($secretaryCourses as $course){
+			$disciplines[$course['id_course']] = $this->getCourseDisciplines($course['id_course']);
+		}
+		
+		return $disciplines;
+		
+	}
+	
+	public function getDisciplineByPartialName($disciplineName){
+
+		$this->db->like('discipline_name', $disciplineName);
+		$this->db->order_by('discipline_name', "asc");
+		$disciplines = $this->db->get('discipline')->result_array();
+
+		$disciplines = checkArray($disciplines);
+
+		return $disciplines;
+	}
+
+	private function getSecreteryCourses($secretaryUserId){
+		define('ACADEMICSECRETARYGROUP', 11);
+		$this->db->select('id_course');
+		$courses = $this->db->get_where('secretary_course',
+					 array('id_user'=>$secretaryUserId, 'id_group'=>ACADEMICSECRETARYGROUP))->result_array();
+		
+		return $courses;
+		
+	}
+	
+	private function getCourseDisciplines($courseId){
+		
+		$disciplines = $this->db->get_where('discipline', array('id_course_discipline'=>$courseId))->result_array();
+		
+		return $disciplines;
+		
+		
+	}
+	
 	public function getCourseSyllabusDisciplines($syllabusId){
 
 		$this->db->select('discipline.*');
@@ -181,4 +223,27 @@ class Discipline_model extends CI_Model {
 		$exists = array('code'=>$existsCode,'name'=>$existsName);
 		return $exists;
 	}
+	
+	public function getDisciplineResearchLines($disciplineCode){
+		
+		$researchLines = $this->db->get_where("discipline_research_line", array('discipline_code'=>$disciplineCode))->result_array();
+		
+		$researchLines = checkArray($researchLines);
+		
+		return $researchLines;
+	}
+	
+	public function saveDisciplineResearchLine($saveData){
+		
+		$saved = $this->db->insert("discipline_research_line", $saveData);
+		return $saved;
+	}
+	
+	public function deleteDisciplineResearchLine($researchRelation){
+		
+		$deleted = $this->db->delete("discipline_research_line", $researchRelation);
+		return $deleted;
+	}
+	
+	
 }

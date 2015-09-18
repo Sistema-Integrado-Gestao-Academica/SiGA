@@ -35,7 +35,7 @@ $openingYear = array();
 $currentYear = getCurrentYear();
 if($currentYear !== FALSE){
 
-	for($i = $currentYear; $i < $currentYear + 100; $i++ ){
+	for($i = 1990; $i <= $currentYear + 2; $i++ ){
 		$openingYear[$i] = $i;
 	}
 }else{
@@ -90,7 +90,7 @@ if($currentYear !== FALSE){
 					<?= form_button($submitBtn) ?>
 				</div>
 				<div class="col-xs-6">
-					<?= anchor('cursos', 'Voltar', "class='btn bg-olive btn-block'") ?>
+					<?= anchor('program', 'Voltar', "class='btn bg-olive btn-block'") ?>
 				</div>
 			</div>
 		</div>

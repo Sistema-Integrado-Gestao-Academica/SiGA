@@ -1,5 +1,8 @@
 <h2 class="principal">Adicionar uma despesa</h2>
 
+<div class="row">
+<div class="col-lg-6">
+
 <div class="form-box-logged" id="login-box">
 	<div class="header" style="background-color: #3c8dbc">Adicionar despesa</div>
 
@@ -26,6 +29,7 @@
 					"name" => "value",
 					"id" => "value",
 					"type" => "number",
+					"step" => 0.01, 
 					"class" => "form-campo",
 					"required" => "required"
 				)) ?>
@@ -43,7 +47,7 @@
 					"id" => "year",
 					"type" => "number",
 					"class" => "form-campo",
-					"value" => "2015"
+					"value" => getCurrentYear()
 				)) ?>
 			</div>
 
@@ -52,7 +56,7 @@
 				<?= form_dropdown('month', $months) ?>
 			</div>
 
-			<div class="footer">
+			<div class="footer body bg-gray">
 				<div class="row">
 					<div class="col-xs-6">
 						<?= form_button(array(
@@ -70,6 +74,9 @@
 		<?= form_close() ?>
 	</div>
 </div>
+</div>
+
+</div>
 
 <script>
 	function confirmation() {
@@ -77,7 +84,7 @@
 		var balance = parseInt(document.getElementById("balance").value);
 
 		if (value >= balance) {
-			if (!confirm("Atenção! Este plano não tem saldo insuficiente para esta despesa. Deseja continuar?")) {
+			if (!confirm("Atenção! Este plano não tem saldo suficiente para esta despesa. Deseja continuar?")) {
 				document.getElementsByName("continue")[0].value = "";
 			}
 		}

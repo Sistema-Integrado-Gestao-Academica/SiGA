@@ -1,6 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('course.php');
 require_once('semester.php');
+require_once('request.php');
+require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
+
 class MasterMind extends CI_Controller {
 	
 	public function saveMastermindToStudent(){
@@ -54,40 +59,149 @@ class MasterMind extends CI_Controller {
 	}
 	
 	public function enrollMastermindToStudent($courseId){
-		define("STUDENT", 7);
-		define("TEACHERS", 5);
+		
 		$this->load->model('usuarios_model');
-	
-		$students = $this->usuarios_model->getUsersOfGroup(STUDENT);
-		$masterminds = $this->usuarios_model->getUsersOfGroup(TEACHERS);
-	
-		$courseStudents = $this->getCourseStudents($students, $courseId);
-		$courseStudentsToForm = $this->changeStudentsArrayToFormMode($courseStudents);
-		$mastermindsToForm = $this->changeMasterMindsArrayToFormMode($masterminds);
+
+		$course = new Course();
+		$courseStudents = $course->getCourseStudents($courseId);
+
+		if($courseStudents !== FALSE){
+
+			foreach($courseStudents as $student){
+				$courseStudentsToForm[$student['id']] = ucfirst($student['name']);
+			}
+		}else{
+			$courseStudentsToForm = FALSE;
+		}
+
+		$masterminds = $this->usuarios_model->getUsersOfGroup(GroupConstants::TEACHER_GROUP_ID);
+		
+		if($masterminds !== FALSE){
+			
+			foreach($masterminds as $mastermind){
+				$mastermindsToForm[$mastermind['id']] = $mastermind['name'];
+			}
+		}else{
+			$mastermindsToForm = FALSE;
+		}
 	
 		$courseData = array(
-				'students' => $courseStudentsToForm,
-				'masterminds' => $mastermindsToForm,
-				'course_id' => $courseId
+			'students' => $courseStudentsToForm,
+			'masterminds' => $mastermindsToForm,
+			'courseId' => $courseId
 		);
 	
 		loadTemplateSafelyByPermission("cursos",'mastermind/enroll_mastermind_to_student.php', $courseData);
 	}
-	
-	
+		
 	public function displayMastermindPage($courseId){
+		
 		$this->load->model('mastermind_model');
+		
 		$existingRelations = $this->mastermind_model->getMastermindStudentRelations();
-		if($existingRelations){
+		
+		if($existingRelations !== FALSE){
 			$relationsToTable = $this->getMasterminsAndStudentNames($existingRelations);
 		}else{
 			$relationsToTable = FALSE;
 		}
+
 		$data = array(
 				'relationsToTable' => $relationsToTable,
 				'courseId' => $courseId
 		);
-		loadTemplateSafelyByPermission("cursos",'mastermind/check_mastermind.php',$data);
+
+		loadTemplateSafelyByPermission("cursos", 'mastermind/check_mastermind.php', $data);
+	}
+	
+	public function index(){
+		
+		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, 'mastermind/index');
+	}
+	
+	public function titlingArea(){
+		
+		$this->load->model("program_model");
+		
+		$areas = $this->program_model->getAllProgramAreas();
+		if($areas !== FALSE){
+			foreach ($areas as $area){
+		
+				$areasResult[$area['id_program_area']] = $area['area_name'];
+			}
+		}else{
+			$areasResult = FALSE;
+		}
+		$areasResult = array_merge(array(0=>"Escolha uma área"),$areasResult);
+		
+		$mastermindTitlingArea = $this->getMastermindTitlingArea();
+		
+		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
+		
+		loadTemplateSafelyByPermission("mastermind", "mastermind/titling.php", $data);
+		
+		
+	}
+	
+	public function titlingAreaUpdateBySecretary($mastermindId){
+		$this->load->model("program_model");
+		
+		$areas = $this->program_model->getAllProgramAreas();
+		if($areas !== FALSE){
+			foreach ($areas as $area){
+		
+				$areasResult[$area['id_program_area']] = $area['area_name'];
+			}
+		}else{
+			$areasResult = FALSE;
+		}
+		$areasResult = array_merge(array(0=>"Escolha uma área"),$areasResult);
+		
+		$mastermindTitlingArea = $this->getMastermindTitlingArea($mastermindId);
+		
+		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
+		
+		loadTemplateSafelyByGroup("courseSecretaryAcademic", "mastermind/titling.php", $data);
+		
+	}
+	
+	private function getMastermindTitlingArea($mastermindId=NULL){
+		if($mastermindId){
+			$userId = $mastermindId;
+		}else{
+			$session = $this->session->userdata("current_user");
+			$userId = $session['user']['id'];
+		}
+		
+		$this->load->model("mastermind_model");
+		
+		$currentArea = $this->mastermind_model->getCurrentArea($userId);
+		
+		return $currentArea;
+	}
+	
+	public function UpdateTitlingArea(){
+		$session = $this->session->userdata("current_user");
+		$userId = $session['user']['id'];
+		
+		$titlingArea = $this->input->post("titling_area");
+		$tiling_thesis = $this->input->post("titling_thesis");
+		
+		$this->load->model("mastermind_model");
+		
+		$updated = $this->mastermind_model->updateTitlingArea($userId, $titlingArea, $tiling_thesis);
+		
+		if($updated){
+			$updateStatus = "success";
+			$updateMessage = "Titulação alterada com sucesso";
+		}else{
+			$updateStatus = "danger";
+			$updateMessage = "Não foi possível alterar sua titulação. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+		redirect('/');
+		
 	}
 	
 	public function displayMastermindStudents(){
@@ -104,11 +218,75 @@ class MasterMind extends CI_Controller {
 		$studentsRequests = $this->getStudentsRequests($students,$currentSemester['id_semester']);
 		
 		$requestData = array('requests' => $studentsRequests, 'idMastermind' => $session['user']['id']);
-		
-		
-		loadTemplateSafelyByPermission("mastermind",'mastermind/display_mastermind_students.php',$requestData);
+				
+		loadTemplateSafelyByPermission("mastermind", 'mastermind/display_mastermind_students', $requestData);
 	}
-	
+
+	public function getMastermindMessage($mastermindId, $requestId){
+
+		$this->load->model('mastermind_model');
+
+		$foundMessage = $this->mastermind_model->getMastermindMessage($mastermindId, $requestId);
+
+		if($foundMessage !== FALSE){
+			if($foundMessage['message'] !== NULL){
+				$message = $foundMessage['message'];
+			}else{
+				$message = FALSE;
+			}
+		}else{
+			$message = FALSE;
+		}
+
+		return $message;
+	}
+
+	public function finalizeRequest(){
+
+		$requestId = $this->input->post('requestId');
+		$mastermindId = $this->input->post('mastermindId');
+		$mastermindMessage = $this->input->post('mastermind_message');
+
+		$request = new Request();
+		$wasFinalized = $request->finalizeRequestToMastermind($requestId);
+
+		if($wasFinalized){
+			
+			$messageSaved = $request->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
+			
+			if($messageSaved){
+
+				$status = "success";
+				$message = "Solicitação finalizada e mensagem salva com sucesso.";
+			}else{
+				$status = "success";
+				$message = "Solicitação finalizada com sucesso, mas não foi possível salvar a mensagem.";
+			}
+
+		}else{
+			$status = "danger";
+			$message = "A solicitação não pôde ser finalizada.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect('mastermind');
+	}
+
+	public function getMastermindByStudent($studentId){
+
+		$this->load->model('mastermind_model');
+
+		$mastermind = $this->mastermind_model->getMastermindByStudent($studentId);
+
+		if($mastermind !== FALSE){
+			$mastermind = $mastermind['id_mastermind'];
+		}else{
+			$mastermind = FALSE;
+		}
+
+		return $mastermind;
+	}
+
 	private function getStudentsRequests($students, $currentSemester){
 		$stutendArraySize = sizeof($students);
 		$this->load->model('request_model');
@@ -171,32 +349,6 @@ class MasterMind extends CI_Controller {
 		}
 		
 		return $courseStudent;
-	}
-	
-	private function changeStudentsArrayToFormMode($students){
-		$studentsTorecursiveArray = array();
-		$studentsTorecursiveArray = array_merge_recursive($studentsTorecursiveArray,  $students);
-		
-		$limit = sizeof($studentsTorecursiveArray);
-		
-		for ($i=0 ; $i < $limit; $i++){
-			$studentsToForm[$studentsTorecursiveArray[$i]['id']] = ucfirst($studentsTorecursiveArray[$i]['name']);
-		}
-		
-		return $studentsToForm;
-	}
-	
-	private function changeMasterMindsArrayToFormMode($masterminds){
-		$mastermindsToRecursiveArray = array();
-		$mastermindsToRecursiveArray = array_merge_recursive($mastermindsToRecursiveArray,  $masterminds);
-	
-		$limit = sizeof($mastermindsToRecursiveArray);
-	
-		for ($i=0 ; $i < $limit; $i++){
-			$mastermindsToForm[$mastermindsToRecursiveArray[$i]['id']] = ucfirst($mastermindsToRecursiveArray[$i]['name']);
-		}
-	
-		return $mastermindsToForm;
 	}
 	
 }

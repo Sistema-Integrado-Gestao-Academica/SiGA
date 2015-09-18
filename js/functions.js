@@ -1,6 +1,10 @@
 
 $(document).ready(function(){
 
+	$("#documentType").change(function(){
+		checkDocumentType();
+	});
+
 	$("#search_student_btn").click(function(){
 		searchForStudent();
 	});
@@ -24,6 +28,22 @@ $(document).ready(function(){
 	});
 
 });
+
+function checkDocumentType(){
+
+	var currentType = $("#documentType").val();
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/documentrequest/checkDocumentType";
+
+	$.post(
+		urlToPost,
+		{documentType: currentType},
+		function(data){
+			$("#document_request_data").html(data);
+		}
+	);
+}
 
 // Student functions
 function searchForStudent(){

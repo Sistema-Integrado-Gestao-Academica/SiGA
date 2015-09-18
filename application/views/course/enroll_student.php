@@ -29,3 +29,9 @@ displayEnrollStudentForm();
 	echo form_close();
 	?>
 </div>
+
+<div class='col-xs-8'>
+	<div class="box-body table-responsive no-padding">
+		<?php displayGuestUsers();?>
+	</div>
+</div>

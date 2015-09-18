@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once("usuario.php");
+require_once(APPPATH."/constants/GroupConstants.php");
+
 class Budgetplan extends CI_Controller {
 
 	public function index() {
@@ -26,25 +29,50 @@ class Budgetplan extends CI_Controller {
 			$courses[$c['id_course']] = $c['course_name'];
 		}
 
+		$user = new Usuario();
+		$teachers = $user->getUsersOfGroup(GroupConstants::TEACHER_GROUP_ID);
+
+		if($teachers !== FALSE){
+
+			foreach($teachers as $teacher){
+				$managers[$teacher['id']] = $teacher['name'];
+			}
+		}else{
+
+			$managers = FALSE;
+		}
+
 		$this->load->helper(array("currency"));
 		$data = array(
 			"budgetplans" => $budgetplans,
 			"status" => $status,
-			"courses" => $courses
+			"courses" => $courses,
+			"managers" => $managers
 		);
 		$this->load->template('budgetplan/index', $data);
 	}
 
 	public function save() {
 		session();
+		$budgetplanName = $this->input->post("budgetplan_name");
+		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
 		$status = $this->input->post("status") + 1;
 
-		$budgetplan = array('amount' => $amount, 'status' => $status, 'balance' => $amount);
+		$budgetplan = array(
+			'amount' => $amount,
+			'status' => $status,
+			'balance' => $amount,
+			'budgetplan_name' => $budgetplanName
+		);
 
 		if ($course) {
 			$budgetplan['course_id'] = $course;
+		}
+
+		if($manager !== 0){
+			$budgetplan['manager'] = $manager;
 		}
 
 		$this->load->model('budgetplan_model');
@@ -75,16 +103,23 @@ class Budgetplan extends CI_Controller {
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array("Nenhum");
 		foreach ($courses_options as $c) {
-			array_push($courses, $c['course_name']);
+			$courses[$c['id_course']] =  $c['course_name'];
 		}
 
 		$disable_amount   = $budgetplan['status'] == 3 || $budgetplan['status'] == 4 ? "readonly" : "";
 		$disable_spending = $budgetplan['status'] == 4 ? "readonly" : "";
 
-		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
-		foreach ($expenses as $key => $expense) {
-			$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
-			$expenses[$key]['expense_type'] = $type['id'] . " - " . $type['description'];
+		$user = new Usuario();
+		$teachers = $user->getUsersOfGroup(GroupConstants::TEACHER_GROUP_ID);
+
+		if($teachers !== FALSE){
+
+			foreach($teachers as $teacher){
+				$managers[$teacher['id']] = $teacher['name'];
+			}
+		}else{
+
+			$managers = FALSE;
 		}
 
 		$this->load->helper(array("currency"));
@@ -94,7 +129,7 @@ class Budgetplan extends CI_Controller {
 			'courses' => $courses,
 			'disable_amount' => $disable_amount,
 			'disable_spending' => $disable_spending,
-			'expenses' => $expenses
+			'managers' => $managers
 		);
 		$this->load->template("budgetplan/edit", $data);
 	}
@@ -102,6 +137,8 @@ class Budgetplan extends CI_Controller {
 	public function update() {
 		session();
 		$id = $this->input->post("budgetplan_id");
+		$budgetplanName = $this->input->post("budgetplan_name");
+		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");
 		$amount = $this->input->post("amount");
 		$status = $this->input->post("status") + 1;
@@ -117,11 +154,16 @@ class Budgetplan extends CI_Controller {
 			'amount' => $amount,
 			'status' => $status,
 			'spending' => $spending,
-			'balance' => $amount - $spending
+			'balance' => $amount - $spending,
+			'budgetplan_name' => $budgetplanName
 		);
 
 		if ($course) {
 			$budgetplan['course_id'] = $course;
+		}
+
+		if($manager !== 0){
+			$budgetplan['manager'] = $manager;
 		}
 
 		$this->load->model('budgetplan_model');
@@ -150,6 +192,30 @@ class Budgetplan extends CI_Controller {
 		}
 
 		redirect("planoorcamentario");
+	}
+
+	public function budgetplanExpenses($budgetplanId){
+		
+		$this->load->model("budgetplan_model");
+		$this->load->model('expense_model');
+
+		$budgetplan = $this->budgetplan_model->get('id', $budgetplanId);
+
+		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
+		foreach ($expenses as $key => $expense) {
+			$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
+			$expenses[$key]['expense_type_id'] = $type['id'];
+			$expenses[$key]['expense_type_description'] = $type['description'];
+		}
+
+		$this->load->helper(array("currency"));
+
+		$data = array(
+			'budgetplan' => $budgetplan,
+			'expenses' => $expenses
+		);
+
+		loadTemplateSafelyByGroup('secretario', 'budgetplan/budgetplan_expenses', $data);
 	}
 
 	public function deleteBudgetplanByCourseId($courseId){

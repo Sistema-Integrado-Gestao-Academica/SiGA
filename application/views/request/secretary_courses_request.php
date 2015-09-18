@@ -1,7 +1,8 @@
-<br>
-<h4 align="left"><b>Visualizar relatório de solicitações de matrícula</b></h4>
-<br>
-<h5><b>Lista de cursos:</b></h5>
+<?php $session = $this->session->userdata("current_user"); ?>
+
+<h2 class="principal">Relatório de solicitações de matrícula</h2>
+
+<h4>Cursos para o(a) secretário(a) <b><?php echo $session['user']['name']?></b>:</h4>
 <?php 
 
 	if($courses !== FALSE){

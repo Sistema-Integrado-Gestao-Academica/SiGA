@@ -12,17 +12,76 @@ class Course extends CI_Controller {
 
 	public function index() {
 		
-		$courses = $this->listAllCourses();
+		$this->load->model('course_model');
 
-		$program = new Program();
-		$programs = $program->getAllPrograms();
+		$session = $this->session->userdata("current_user");
+		$user = $session['user'];
+		$userId = $user['id'];
+
+		$group = new Module();
+		$userIsAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
+
+		if($userIsAdmin){
+			$courses = $this->listAllCourses();
+		}else{
+			$courses = $this->getCoursesOfSecretary($userId);
+		}
 
 		$data = array(
 			'courses' => $courses,
-			'programs' => $programs
+			'userData' => $user
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
+	}
+
+	public function getCourseTeachers($courseId){
+
+		$this->load->model('course_model');
+
+		$teachers = $this->course_model->getCourseTeachers($courseId);
+
+		return $teachers;
+	}
+
+	public function enrollTeacherToCourse($teacherId, $courseId){
+
+		$this->load->model('course_model');
+
+		$wasEnrolled = $this->course_model->enrollTeacherToCourse($teacherId, $courseId);
+
+		return $wasEnrolled;
+	}
+
+	public function removeTeacherFromCourse($teacherId, $courseId){
+
+		$this->load->model('course_model');
+
+		$wasRemoved = $this->course_model->removeTeacherFromCourse($teacherId, $courseId);
+
+		return $wasRemoved;
+	}
+
+	public function defineTeacherSituation($courseId, $teacherId, $situation){
+
+		$this->load->model('course_model');
+
+		$defined = $this->course_model->defineTeacherSituation($courseId, $teacherId, $situation);
+
+		return $defined;
+	}
+
+	public function courseStudents($courseId){
+
+		$students = $this->getCourseStudents($courseId);
+		$courseData = $this->getCourseById($courseId);
+
+		$data = array(
+			'students' => $students,
+			'course' => $courseData
+		);
+
+		loadTemplateSafelyByGroup("secretario", 'secretary/course_students', $data);
 	}
 
 	public function enrollStudentToCourse($courseId){
@@ -161,11 +220,17 @@ class Course extends CI_Controller {
 		$this->load->model('course_model');
 		$course = $this->course_model->getCourseById($courseId);
 
-		$group = new Module();
-		$formGroups = $group->getExistingModules();
-
 		$user = new Usuario();
-		$formUserSecretary = $user->getUsersToBeSecretaries();
+		$userToBeSecretaries = $user->getUsersToBeSecretaries();
+
+		if($userToBeSecretaries !== FALSE){
+
+			foreach($userToBeSecretaries as $user){
+				$formUserSecretary[$user['id']] = $user['name'];
+			}
+		}else{
+			$formUserSecretary = FALSE;
+		}
 
 		$course_controller = new Course();
 		$secretaryRegistered = $course_controller->getCourseSecrecretary($course['id_course']);
@@ -191,8 +256,7 @@ class Course extends CI_Controller {
 
 		$data = array(
 			'course' => $course,
-			'form_groups' => $formGroups,
-			'form_user_secretary' => $formUserSecretary,
+			'formUserSecretary' => $formUserSecretary,
 			'secretary_registered' => $secretaryRegistered,
 			'form_course_types' => $formCourseType,
 			'original_course_type' => $originalCourseTypeId,
@@ -262,18 +326,52 @@ class Course extends CI_Controller {
 		redirect('cursos');
 	}
 	
-	public function saveSecretary(){
+	public function saveAcademicSecretary(){
 		
-		$financialSecretary = $this->input->post('financial_secretary');
 		$academicSecretary = $this->input->post('academic_secretary');
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
 		
 		$this->load->model('course_model');
 		try{
-			$savedSecretaries = $this->course_model->saveCourseSecretaries($financialSecretary, $academicSecretary, $idCourse, $courseName);
-			$saveStatus = "success";
-			$saveMessage = "Secretários salvos com sucesso";
+			$wasSaved = $this->course_model->saveCourseAcademicSecretary($academicSecretary, $idCourse, $courseName);
+			
+			if($wasSaved){
+				$saveStatus = "success";
+				$saveMessage = "Secretário acadêmico salvo com sucesso.";
+			}else{
+				$saveStatus = "danger";
+				$saveMessage = "Não foi possível salvar o secretário informado. Tente novamente.";
+			}
+
+		}catch(SecretaryException $caughtException){
+			$saveStatus = "danger";
+			$saveMessage = $caughtException->getMessage();
+		}
+		
+		$this->session->set_flashdata($saveStatus, $saveMessage);
+		redirect('/course/formToEditCourse/'.$idCourse);
+	}
+
+	public function saveFinancialSecretary(){
+		
+		$financialSecretary = $this->input->post('financial_secretary');
+		$idCourse = $this->input->post('id_course');
+		$courseName = $this->input->post('course_name');
+
+		$this->load->model('course_model');
+
+		try{
+			$wasSaved = $this->course_model->saveCourseFinancialSecretary($financialSecretary, $idCourse, $courseName);
+			
+			if($wasSaved){
+				$saveStatus = "success";
+				$saveMessage = "Secretário financeiro salvo com sucesso.";
+			}else{
+				$saveStatus = "danger";
+				$saveMessage = "Não foi possível salvar o secretário informado. Tente novamente.";
+			}
+
 		}catch(SecretaryException $caughtException){
 			$saveStatus = "danger";
 			$saveMessage = $caughtException->getMessage();
@@ -358,6 +456,14 @@ class Course extends CI_Controller {
 		
 		$this->session->set_flashdata($updateStatus, $updateMessage);
 		redirect('cursos');
+	}
+	
+	public function getResearchLineNameById($researchLinesId){
+		$this->load->model('course_model');
+		
+		$researchLinesName = $this->course_model->getResearchLineNameById($researchLinesId);
+		
+		return $researchLinesName['description'];
 	}
 	
 	private function cleanUpOldCourseData($idCourse, $oldCourseType){
@@ -554,6 +660,15 @@ class Course extends CI_Controller {
 		$courses = $this->course_model->getCoursesOfSecretary($userId);
 
 		return $courses;
+	}
+
+	public function getCourseStudents($courseId){
+
+		$this->load->model('course_model');
+		
+		$courseStudents = $this->course_model->getCourseStudents($courseId);
+
+		return $courseStudents;
 	}
 
 	public function getCourseByName($courseName){

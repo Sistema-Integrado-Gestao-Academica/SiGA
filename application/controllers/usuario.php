@@ -6,6 +6,8 @@ require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
+require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Usuario extends CI_Controller {
 	
@@ -51,6 +53,79 @@ class Usuario extends CI_Controller {
 		);
 
 		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
+	}
+	
+	public function createCourseResearchLine(){
+		$this->load->model("course_model");
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+		
+		$data = array('courses'=> $course);
+		
+		loadTemplateSafelyByPermission('research_lines', 'secretary/create_research_line', $data);
+	}
+	
+
+	public function updateCourseResearchLine($researchId, $courseId){
+		$this->load->model("course_model");
+		
+		$actualCourse = $this->course_model->getCourseById($courseId);
+		$actualCourseForm = $actualCourse['id_course'];
+		
+		$description = $this->course_model->getResearchDescription($researchId,$courseId);
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+		
+		$data = array(
+			'researchId' => $researchId,
+			'description' => $description,
+			'actualCourse' => $actualCourseForm,
+			'courses' => $course
+		);
+		
+		loadTemplateSafelyByPermission('research_lines', 'secretary/update_research_line', $data);
+	}
+	
+	public function secretary_research_lines(){
+		$this->load->model("course_model");
+		
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+		
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+		
+		$this->loadResearchLinesPage($secretaryCourses);
+	}
+	
+	public function loadResearchLinesPage($secretaryCourses){
+		$this->load->model("course_model");
+		
+		foreach ($secretaryCourses as $key => $course){
+			
+			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
+			$courses[$key] = $course;
+		} 
+		
+		$data = array(
+			'research_lines' => $researchLines,
+			'courses' => $courses
+		);
+		
+		loadTemplateSafelyByPermission('research_lines', 'usuario/secretary_research_lines', $data);
 	}
 
 	public function removeAllUsersOfGroup($idGroup){
@@ -141,11 +216,25 @@ class Usuario extends CI_Controller {
 	}
 	
 	public function getUsersToBeSecretaries(){
+		
 		$this->load->model('usuarios_model');
-		
-		$allUsers = $this->usuarios_model->buscaTodos();
-		
-		return $allUsers;
+
+		$group = new Module();
+		$groupData = $group->getGroupByName(GroupConstants::SECRETARY_GROUP);
+		$idGroup = $groupData['id_group'];
+
+		$users = $this->usuarios_model->getUsersOfGroup($idGroup);
+
+		return $users;
+	}
+
+	public function getUserCourses($userId){
+
+		$this->load->model('usuarios_model');
+
+		$userCourses = $this->usuarios_model->getUserCourse($userId);
+
+		return $userCourses;
 	}
 
 	public function student_index(){
@@ -171,6 +260,15 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 	
+	public function getUserStatus($userId){
+
+		$this->load->model('usuarios_model');
+		
+		$userStatus = $this->usuarios_model->getUserStatus($userId);
+
+		return $userStatus;
+	}
+
 	public function studentInformationsForm(){
 		$loggedUserData = $this->session->userdata("current_user");
 		$userId = $loggedUserData['user']['id'];
@@ -237,6 +335,17 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
 	}
 
+	public function secretary_coursesStudents(){
+		
+		$courses = $this->loadCourses();
+
+		$courseData = array(
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'usuario/secretary_courses_students', $courseData);
+	}
+
 	public function secretary_enrollStudent(){
 
 		$courses = $this->loadCourses();
@@ -245,7 +354,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_student', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'usuario/secretary_enroll_student', $courseData);
 	}
 	
 	public function secretary_enrollMasterMinds(){
@@ -255,7 +364,18 @@ class Usuario extends CI_Controller {
 				'courses' => $courses
 		);
 		
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_enroll_master_mind', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::DEFINE_MASTERMIND_PERMISSION, 'usuario/secretary_enroll_master_mind', $courseData);
+	}
+
+	public function secretary_enrollTeacher(){
+		
+		$courses = $this->loadCourses();
+		
+		$courseData = array(
+			'courses' => $courses
+		);
+		
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/enroll_teacher', $courseData);
 	}
 
 	public function secretary_requestReport(){
@@ -266,7 +386,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'request/secretary_courses_request', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::REQUEST_REPORT_PERMISSION, 'request/secretary_courses_request', $courseData);
 	}
 
 	public function secretary_offerList(){
@@ -276,7 +396,7 @@ class Usuario extends CI_Controller {
 
 		// Check if the logged user have admin permission
 		$group = new Module();
-		$isAdmin = $group->checkUserGroup('administrador');
+		$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
 
 		// Get the current user id
 		$logged_user_data = $this->session->userdata("current_user");
@@ -307,7 +427,7 @@ class Usuario extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_offer_list', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::OFFER_LIST_PERMISSION, 'usuario/secretary_offer_list', $data);
 	}
 
 	public function secretary_courseSyllabus(){
@@ -340,7 +460,7 @@ class Usuario extends CI_Controller {
 			'syllabus' => $coursesSyllabus
 		);
 		
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_course_syllabus', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSE_SYLLABUS_PERMISSION,'usuario/secretary_course_syllabus', $data);
 	}
 
 	private function loadCourses(){
@@ -472,7 +592,7 @@ class Usuario extends CI_Controller {
 		$usuarioLogado = session();
 
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "alpha");
+		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
@@ -704,6 +824,14 @@ class Usuario extends CI_Controller {
 		$foundUser = $this->usuarios_model->getUserById($userId);
 
 		return $foundUser;
+	}
+	
+	public function getUserGroupNameByIdGroup($groupId){
+		$this->load->model('usuarios_model');
+		
+		$groupName = $this->usuarios_model->getUserGroupNameByIdGroup($groupId);
+		
+		return $groupName;
 	}
 
 	/**
