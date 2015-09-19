@@ -453,6 +453,80 @@ $submitBtn = array(
 			</div>
 		</div>
 
+		<h4>Parcelamento</h4>
+
+		<div class="row">
+
+			<div class="box-body table-responsive no-padding">
+			<table class="table table-bordered table-hover">
+				<tbody>
+					<tr>
+				        <th class="text-center">Nº da parcela</th>
+				        <th class="text-center">Data</th>
+				        <th class="text-center">Valor</th>
+				        <th class="text-center">Horas trabalhadas</th>
+				    </tr>
+				<?php
+						for($installment = 1; $installment <= 5; $installment++){
+
+							echo "<tr>";
+
+					    		echo "<td>";
+					    		echo $installment;
+					    		echo "</td>";
+
+								$installmentDate = array(
+									"name" => "installment_date_".$installment,
+									"id" => "installment_date_".$installment,
+									"type" => "date",
+									"class" => "form-campo",
+									"class" => "form-control"
+								);
+
+					    		echo "<td>";
+					    		echo form_input($installmentDate);
+					    		echo "</td>";
+
+								$installmentValue = array(
+									"name" => "installment_value_".$installment,
+									"id" => "installment_value_".$installment,
+									"type" => "number",
+									"class" => "form-campo",
+									"class" => "form-control",
+									"value" => 0,
+									"min" => 0,
+									"step" => 0.01
+								);
+
+					    		echo "<td>";
+					    		echo form_input($installmentValue);
+					    		echo "</td>";
+
+					    		$installmentHours = array(
+									"name" => "installment_hour_".$installment,
+									"id" => "installment_hour_".$installment,
+									"type" => "number",
+									"class" => "form-campo",
+									"class" => "form-control",
+									"min" => 0,
+									"step" => 1
+								);
+
+					    		echo "<td>";
+					    		echo form_input($installmentHours);
+					    		echo "</td>";
+					    	
+				    		echo "</tr>";
+				    	}
+				?>			    
+				</tbody>
+			</table>
+			</div>
+			
+			<div id="check_installment_result"></div>
+
+		</div>
+
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="form-group">	
