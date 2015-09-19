@@ -40,12 +40,12 @@ class Payment extends CI_Controller {
 
 		$resourseSource = $this->input->post("resourseSource");
 		$costCenter = $this->input->post("costCenter");
-		$dotationNote = $this->input->post("dotationNote");
+		$dotationNote = (string) $this->input->post("dotationNote");
 		
 		$name = $this->input->post("name");
 		$id = $this->input->post("id");
 		$pisPasep = $this->input->post("pisPasep");
-		$cpf = $this->input->post("cpf");
+		$cpf = (string) $this->input->post("cpf");
 		$enrollmentNumber = $this->input->post("enrollmentNumber");
 		$arrivalInBrazil = $this->input->post("arrivalInBrazil");
 		$phone = $this->input->post("phone");
@@ -53,8 +53,8 @@ class Payment extends CI_Controller {
 		$address = $this->input->post("address");
 		$projectDenomination = $this->input->post("projectDenomination");
 		$bank = $this->input->post("bank");
-		$agency = $this->input->post("agency");
-		$accountNumber = $this->input->post("accountNumber");
+		$agency = (string) $this->input->post("agency");
+		$accountNumber = (string) $this->input->post("accountNumber");
 
 		$totalValue = $this->input->post("totalValue");
 		$period = $this->input->post("period");
@@ -160,7 +160,7 @@ class Payment extends CI_Controller {
 
 			$result = "<div class='callout callout-info'>";
 			$result .= "<h4>";
-			$result .= "O valor das parcelas estão ok!";
+			$result .= "O valor das parcelas estão OK!";
 			$result .= "</h4>";
 			$result .= "</div>";
 		}

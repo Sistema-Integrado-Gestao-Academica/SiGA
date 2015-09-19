@@ -49,12 +49,12 @@ class ServicePayment{
 
 		$this->resourseSource = $resourseSource;
 		$this->costCenter = $costCenter;
-		$this->dotationNote = $dotationNote;
+		$this->dotationNote = (string) $dotationNote;
 		
 		$this->name = $name;
 		$this->id = $id;
 		$this->pisPasep = $pisPasep;
-		$this->cpf = $cpf;
+		$this->cpf = (string) $cpf;
 		$this->enrollmentNumber = $enrollmentNumber;
 		$this->arrivalInBrazil = $arrivalInBrazil;
 		$this->phone = $phone;
@@ -62,8 +62,8 @@ class ServicePayment{
 		$this->address = $address;
 		$this->projectDenomination = $projectDenomination;
 		$this->bank = $bank;
-		$this->agency = $agency;
-		$this->accountNumber = $accountNumber;
+		$this->agency = (string) $agency;
+		$this->accountNumber = (string) $accountNumber;
 
 		$this->totalValue = $totalValue;
 		$this->period = $period;
@@ -196,7 +196,7 @@ class ServicePayment{
 		$activeSheet->getStyle('E14')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('E14', $this->dotationNote());
+		$activeSheet->getCell('E14')->setValueExplicit($this->dotationNote(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('E14:G14');
 
 	// User identification
@@ -248,7 +248,7 @@ class ServicePayment{
 		$activeSheet->getStyle('B19')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('B19', $this->pisPasep());
+		$activeSheet->getCell('B19')->setValueExplicit($this->pisPasep(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('B19:C19');
 		
 		// User CPF
@@ -263,7 +263,7 @@ class ServicePayment{
 		$activeSheet->getStyle('D19')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('D19', $this->cpf());
+		$activeSheet->getCell('D19')->setValueExplicit($this->cpf(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('D19:E19');
 		
 		// User enrollment
@@ -345,7 +345,7 @@ class ServicePayment{
 		$activeSheet->getStyle('E21')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('E21', $this->agency());
+		$activeSheet->getCell('E21')->setValueExplicit($this->agency(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('E21:G21');
 		
 		// User address
@@ -373,7 +373,7 @@ class ServicePayment{
 		$activeSheet->getStyle('E22')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('E22', $this->accountNumber());
+		$activeSheet->getCell('E22')->setValueExplicit($this->accountNumber(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('E22:G22');
 
 		// Project denomination
