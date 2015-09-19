@@ -453,7 +453,7 @@ $submitBtn = array(
 			</div>
 		</div>
 
-		<h4>Parcelamento</h4>
+		<h3>Parcelamento <p><small> Coloque o valor total na primeira parcela se for parcela única.</small></h3>
 
 		<div class="row">
 

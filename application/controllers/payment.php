@@ -125,4 +125,47 @@ class Payment extends CI_Controller {
 
 		$payment->downloadSheet();
 	}
+
+	// Used in an ajax post
+	public function checkInstallmentValues(){
+
+		$totalValue = (float) $this->input->post("totalValue");
+		$installment1 = (float) $this->input->post("installment1");
+		$installment2 = (float) $this->input->post("installment2");
+		$installment3 = (float) $this->input->post("installment3");
+		$installment4 = (float) $this->input->post("installment4");
+		$installment5 = (float) $this->input->post("installment5");
+		
+		$installmentTotal = $installment1 + $installment2 + $installment3 + $installment4 + $installment5;
+
+		if($installmentTotal > $totalValue){
+
+			$result = "<div class='callout callout-danger'>";
+			$result .= "<h4>";
+			$result .= "O total das parcelas <b>está excendo</b> o valor total do serviço.";
+			$result .= "</h4>";
+			$result .= "<p>Valor total das parcelas atual: <b> R$ ".$installmentTotal."</b></p>";
+			$result .= "<p>Valor total atual do serviço: <b> R$ ".$totalValue."</b></p>";
+			$result .= "</div>";
+		}elseif($installmentTotal < $totalValue){
+
+			$result = "<div class='callout callout-danger'>";
+			$result .= "<h4>";
+			$result .= "O total das parcelas <b>está menor</b> que o valor total do serviço.";
+			$result .= "</h4>";
+			$result .= "<p>Valor total das parcelas atual: <b> R$ ".$installmentTotal."</b></p>";
+			$result .= "<p>Valor total atual do serviço: <b> R$ ".$totalValue."</b></p>";
+			$result .= "</div>";
+		}else{
+
+			$result = "<div class='callout callout-info'>";
+			$result .= "<h4>";
+			$result .= "O valor das parcelas estão ok!";
+			$result .= "</h4>";
+			$result .= "</div>";
+		}
+
+		echo $result;
+	}
+
 }

@@ -27,7 +27,59 @@ $(document).ready(function(){
 		$("#edit_program_btn").popover('hide');
 	});
 
+	$("#totalValue").change(function(){
+		checkInstallmentValue();
+	});
+
+	$("#installment_value_1").change(function(){
+		checkInstallmentValue();
+	});
+
+	$("#installment_value_2").change(function(){
+		checkInstallmentValue();
+	});
+
+	$("#installment_value_3").change(function(){
+		checkInstallmentValue();
+	});
+
+	$("#installment_value_4").change(function(){
+		checkInstallmentValue();
+	});
+
+	$("#installment_value_5").change(function(){
+		checkInstallmentValue();
+	});
+
 });
+
+function checkInstallmentValue(){
+
+	var totalValue = $("#totalValue").val();
+	var installment_value_1 = $("#installment_value_1").val();
+	var installment_value_2 = $("#installment_value_2").val();
+	var installment_value_3 = $("#installment_value_3").val();
+	var installment_value_4 = $("#installment_value_4").val();
+	var installment_value_5 = $("#installment_value_5").val();
+
+	var siteUrl = $("#site_url").val();	
+	var urlToPost = siteUrl + "/payment/checkInstallmentValues";
+
+	$.post(
+		urlToPost,
+		{
+			totalValue: totalValue,
+			installment1: installment_value_1,
+			installment2: installment_value_2,
+			installment3: installment_value_3,
+			installment4: installment_value_4,
+			installment5: installment_value_5
+		},
+		function(data){
+			$("#check_installment_result").html(data);
+		}
+	);
+}
 
 function checkDocumentType(){
 

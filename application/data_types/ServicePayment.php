@@ -40,7 +40,6 @@ class ServicePayment{
 	private $totalHours;
 	private $serviceDescription;
 
-
 	public function __construct($userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 		$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
 		$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription){
