@@ -55,6 +55,7 @@ class Payment extends CI_Controller {
 		$bank = $this->input->post("bank");
 		$agency = (string) $this->input->post("agency");
 		$accountNumber = (string) $this->input->post("accountNumber");
+		$installment_date_5 = $this->input->post("installment_date_5");
 
 		$totalValue = $this->input->post("totalValue");
 		$period = $this->input->post("period");
@@ -63,10 +64,59 @@ class Payment extends CI_Controller {
 		$totalHours = $this->input->post("totalHours");
 		$serviceDescription = $this->input->post("serviceDescription");
 
+		$installment_date_1 = $this->input->post("installment_date_1");
+		$installment_date_2 = $this->input->post("installment_date_2");
+		$installment_date_3 = $this->input->post("installment_date_3");
+		$installment_date_4 = $this->input->post("installment_date_4");
+		$installment_date_5 = $this->input->post("installment_date_5");
+	
+		$installment_value_1 = $this->input->post("installment_value_1");  
+		$installment_value_2 = $this->input->post("installment_value_2");  
+		$installment_value_3 = $this->input->post("installment_value_3");  
+		$installment_value_4 = $this->input->post("installment_value_4");  
+		$installment_value_5 = $this->input->post("installment_value_5");  
+		
+		$installment_hour_1 = $this->input->post("installment_hour_1");  
+		$installment_hour_2 = $this->input->post("installment_hour_2");  
+		$installment_hour_3 = $this->input->post("installment_hour_3");  
+		$installment_hour_4 = $this->input->post("installment_hour_4");  
+		$installment_hour_5 = $this->input->post("installment_hour_5");
+
+		$installment1 = array(
+			'date' => $installment_date_1,
+			'value' => $installment_value_1,
+			'hour' => $installment_hour_1
+		);
+
+		$installment2 = array(
+			'date' => $installment_date_2,
+			'value' => $installment_value_2,
+			'hour' => $installment_hour_2
+		);
+
+		$installment3 = array(
+			'date' => $installment_date_3,
+			'value' => $installment_value_3,
+			'hour' => $installment_hour_3
+		);
+
+		$installment4 = array(
+			'date' => $installment_date_4,
+			'value' => $installment_value_4,
+			'hour' => $installment_hour_4
+		);
+
+		$installment5 = array(
+			'date' => $installment_date_5,
+			'value' => $installment_value_5,
+			'hour' => $installment_hour_5
+		);
+
 		$payment = new ServicePayment(
 			$userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
-			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription
+			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription,
+			$installment1, $installment2, $installment3, $installment4, $installment5
 		);
 
 		$this->load->model("payment_model");
@@ -117,10 +167,59 @@ class Payment extends CI_Controller {
 		$totalHours = $paymentData["totalHours"];
 		$serviceDescription = $paymentData["serviceDescription"];
 
+		$installment_date_1 = $paymentData["installment_date_1"];
+		$installment_date_2 = $paymentData["installment_date_2"];
+		$installment_date_3 = $paymentData["installment_date_3"];
+		$installment_date_4 = $paymentData["installment_date_4"];
+		$installment_date_5 = $paymentData["installment_date_5"];
+	
+		$installment_value_1 = $paymentData["installment_value_1"];  
+		$installment_value_2 = $paymentData["installment_value_2"];  
+		$installment_value_3 = $paymentData["installment_value_3"];  
+		$installment_value_4 = $paymentData["installment_value_4"];  
+		$installment_value_5 = $paymentData["installment_value_5"];
+		
+		$installment_hour_1 = $paymentData["installment_hour_1"];  
+		$installment_hour_2 = $paymentData["installment_hour_2"];  
+		$installment_hour_3 = $paymentData["installment_hour_3"];  
+		$installment_hour_4 = $paymentData["installment_hour_4"];  
+		$installment_hour_5 = $paymentData["installment_hour_5"];
+
+		$installment1 = array(
+			'date' => $installment_date_1,
+			'value' => $installment_value_1,
+			'hour' => $installment_hour_1
+		);
+
+		$installment2 = array(
+			'date' => $installment_date_2,
+			'value' => $installment_value_2,
+			'hour' => $installment_hour_2
+		);
+
+		$installment3 = array(
+			'date' => $installment_date_3,
+			'value' => $installment_value_3,
+			'hour' => $installment_hour_3
+		);
+
+		$installment4 = array(
+			'date' => $installment_date_4,
+			'value' => $installment_value_4,
+			'hour' => $installment_hour_4
+		);
+
+		$installment5 = array(
+			'date' => $installment_date_5,
+			'value' => $installment_value_5,
+			'hour' => $installment_hour_5
+		);
+
 		$payment = new ServicePayment(
 			$userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
-			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription
+			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription,
+			$installment1, $installment2, $installment3, $installment4, $installment5
 		);
 
 		$payment->downloadSheet();

@@ -17,8 +17,8 @@ class Migration_arruma_tabela_mastermind_message extends CI_Migration {
 			'message' => array('type' => 'TEXT', 'null' => TRUE)
 		));
 
-		$drop_fk = "ALTER TABLE mastermind_message DROP FOREIGN KEY IDMASTERMIND_FK";
-		$this->db->query($drop_fk);
+		//$drop_fk = "ALTER TABLE mastermind_message DROP FOREIGN KEY IDMASTERMIND_FK";
+		//$this->db->query($drop_fk);
 	}
 
 	public function down() {
