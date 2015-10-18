@@ -14,7 +14,10 @@
 	<link rel="stylesheet" href=<?=base_url("css/estilo.css")?>>
 	<link rel="stylesheet" href=<?=base_url("font-awesome-4.2/css/font-awesome.min.css")?>>
 	<link rel="stylesheet" href=<?=base_url("css/AdminLTE.css")?>>
-	
+	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.min.css")?>>
+	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.structure.min.css")?>>
+	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.theme.min.css")?>>
+
 	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
 	<script src=<?=base_url("js/bootstrap.min.js")?>></script>
 	<script src=<?=base_url("js/AdminLTE/app.js")?>></script>
@@ -24,6 +27,8 @@
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.mask.min.js")?>></script>
 	<script src=<?=base_url("js/jquery.tablesorter.min.js")?>></script>
+	<script src=<?=base_url("js/jquery-ui.min.js")?>></script>
+	<script src=<?=base_url("js/datepicker-pt-BR.js")?>></script>
 </head>
 
 <body class="skin-blue">

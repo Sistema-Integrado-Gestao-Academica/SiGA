@@ -5,6 +5,8 @@ require_once(APPPATH."/data_types/ServicePayment.php");
 
 class Payment extends CI_Controller {
 
+	const MAX_INSTALLMENTS = 5;
+
 	public function expensePayments($expenseId, $budgetplanId){
 		
 		$this->load->model('payment_model');
@@ -58,7 +60,7 @@ class Payment extends CI_Controller {
 		$installment_date_5 = $this->input->post("installment_date_5");
 
 		$totalValue = $this->input->post("totalValue");
-		$period = $this->input->post("period");
+		$period = $this->input->post("start_period");
 		$weekHours = $this->input->post("weekHours");
 		$weeks = $this->input->post("weeks");
 		$totalHours = $this->input->post("totalHours");
@@ -223,6 +225,93 @@ class Payment extends CI_Controller {
 		);
 
 		$payment->downloadSheet();
+	}
+
+	// Used in an ajax post
+	public function checkInstallmentQuantity(){
+
+		$totalValue = (float) $this->input->post("totalValue");
+		$installments = (float) $this->input->post("installments");
+
+		if($installments != 0){
+
+			// Max of installments is 5
+			if($installments > self::MAX_INSTALLMENTS){
+				$installments = self::MAX_INSTALLMENTS;
+			}
+
+			$installmentsValue = $totalValue / $installments;
+			$installmentsValue = round($installmentsValue, 2);
+		}else{
+			$installmentsValue = $totalValue;
+			$installmentsValue = round($installmentsValue, 2);
+		}
+
+		echo "<div class='box-body table-responsive no-padding'>";
+			echo "<table class='table table-bordered table-hover'>";
+				echo "<tbody>";
+					echo "<tr>";
+				        echo "<th class='text-center'>Nº da parcela</th>";
+				        echo "<th class='text-center'>Data</th>";
+				        echo "<th class='text-center'>Valor</th>";
+				        echo "<th class='text-center'>Horas trabalhadas</th>";
+				    echo "</tr>";
+
+				for($installment = 1; $installment <= $installments; $installment++){
+
+					echo "<tr>";
+
+			    		echo "<td>";
+			    		echo $installment;
+			    		echo "</td>";
+
+						$installmentDate = array(
+							"name" => "installment_date_".$installment,
+							"id" => "installment_date_".$installment,
+							"type" => "text",
+							"class" => "form-campo",
+							"class" => "form-control"
+						);
+
+			    		echo "<td>";
+			    		echo form_input($installmentDate);
+			    		echo "</td>";
+
+						$installmentValue = array(
+							"name" => "installment_value_".$installment,
+							"id" => "installment_value_".$installment,
+							"type" => "number",
+							"class" => "form-campo",
+							"class" => "form-control",
+							"value" => $installmentsValue,
+							"min" => 0,
+							"step" => 0.01
+						);
+
+			    		echo "<td>";
+			    		echo form_input($installmentValue);
+			    		echo "</td>";
+
+			    		$installmentHours = array(
+							"name" => "installment_hour_".$installment,
+							"id" => "installment_hour_".$installment,
+							"type" => "number",
+							"class" => "form-campo",
+							"class" => "form-control",
+							"min" => 0,
+							"step" => 1
+						);
+
+			    		echo "<td>";
+			    		echo form_input($installmentHours);
+			    		echo "</td>";
+			    	
+		    		echo "</tr>";
+		    	}
+
+		    	echo "</tbody>";
+			echo "</table>";
+		echo "</div>";
 	}
 
 	// Used in an ajax post

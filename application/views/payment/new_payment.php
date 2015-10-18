@@ -162,6 +162,8 @@ $accountNumber = array(
 	"maxlength" => "15"
 );
 
+$maxValue = 8000;
+
 $totalValue = array(
 	"name" => "totalValue",
 	"id" => "totalValue",
@@ -169,16 +171,35 @@ $totalValue = array(
 	"class" => "form-campo",
 	"class" => "form-control",
 	"min" => 0,
-	"step" => 0.01
+	"step" => 0.01,
+	"max" => $maxValue
 );
 
-$period = array(
-	"name" => "period",
-	"id" => "period",
-	"type" => "text",
+$installmentsQuantity = array(
+	"name" => "installments_quantity",
+	"id" => "installments_quantity",
+	"type" => "number",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "10"
+	"min" => 1,
+	"step" => 1,
+	"max" => 5
+);
+
+$start_period = array(
+	"name" => "start_period",
+	"id" => "start_period",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control"
+);
+
+$end_period = array(
+	"name" => "end_period",
+	"id" => "end_period",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control"
 );
 
 $weekHours = array(
@@ -412,19 +433,30 @@ $submitBtn = array(
 		<br>
 
 		<div class="row">
-			<div class="col-lg-3">
+			<div class="col-lg-12">
 				<div class="form-group">	
-					<?= form_label("Valor total", "totalValue") ?>
-					<?= form_input($totalValue) ?>
-					<?= form_error("totalValue") ?>
+					<?= form_label("Descrição detalhada dos serviços", "serviceDescription") ?>
+					<?= form_textarea($serviceDescription) ?>
+					<?= form_error("serviceDescription") ?>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+
+			<div class="col-lg-2">
+				<div class="form-group">	
+					<?= form_label("Período de início", "start_period") ?>
+					<?= form_input($start_period) ?>
+					<?= form_error("start_period") ?>
 				</div>
 			</div>
 
 			<div class="col-lg-2">
 				<div class="form-group">	
-					<?= form_label("Período", "period") ?>
-					<?= form_input($period) ?>
-					<?= form_error("period") ?>
+					<?= form_label("Período de fim", "end_period") ?>
+					<?= form_input($end_period) ?>
+					<?= form_error("end_period") ?>
 				</div>
 			</div>
 
@@ -453,88 +485,31 @@ $submitBtn = array(
 			</div>
 		</div>
 
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="form-group">	
+					<?= form_label("Valor total", "totalValue") ?>
+					<?= form_input($totalValue) ?>
+					<?= form_error("totalValue") ?>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="form-group">	
+					<?= form_label("Quantidade de parcelas", "installments_quantity") ?>
+					<?= form_input($installmentsQuantity) ?>
+					<?= form_error("installments_quantity") ?>
+				</div>
+			</div>
+		</div>
+
 		<h3>Parcelamento <p><small> Coloque o valor total na primeira parcela se for parcela única.</small></h3>
 
 		<div class="row">
 
-			<div class="box-body table-responsive no-padding">
-			<table class="table table-bordered table-hover">
-				<tbody>
-					<tr>
-				        <th class="text-center">Nº da parcela</th>
-				        <th class="text-center">Data</th>
-				        <th class="text-center">Valor</th>
-				        <th class="text-center">Horas trabalhadas</th>
-				    </tr>
-				<?php
-						for($installment = 1; $installment <= 5; $installment++){
-
-							echo "<tr>";
-
-					    		echo "<td>";
-					    		echo $installment;
-					    		echo "</td>";
-
-								$installmentDate = array(
-									"name" => "installment_date_".$installment,
-									"id" => "installment_date_".$installment,
-									"type" => "date",
-									"class" => "form-campo",
-									"class" => "form-control"
-								);
-
-					    		echo "<td>";
-					    		echo form_input($installmentDate);
-					    		echo "</td>";
-
-								$installmentValue = array(
-									"name" => "installment_value_".$installment,
-									"id" => "installment_value_".$installment,
-									"type" => "number",
-									"class" => "form-campo",
-									"class" => "form-control",
-									"value" => 0,
-									"min" => 0,
-									"step" => 0.01
-								);
-
-					    		echo "<td>";
-					    		echo form_input($installmentValue);
-					    		echo "</td>";
-
-					    		$installmentHours = array(
-									"name" => "installment_hour_".$installment,
-									"id" => "installment_hour_".$installment,
-									"type" => "number",
-									"class" => "form-campo",
-									"class" => "form-control",
-									"min" => 0,
-									"step" => 1
-								);
-
-					    		echo "<td>";
-					    		echo form_input($installmentHours);
-					    		echo "</td>";
-					    	
-				    		echo "</tr>";
-				    	}
-				?>			    
-				</tbody>
-			</table>
-			</div>
+		    <div id="installments_data"></div>
 			
 			<div id="check_installment_result"></div>
 
-		</div>
-
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="form-group">	
-					<?= form_label("Descrição detalhada dos serviços", "serviceDescription") ?>
-					<?= form_textarea($serviceDescription) ?>
-					<?= form_error("serviceDescription") ?>
-				</div>
-			</div>
 		</div>
 
 		<div class="row">
