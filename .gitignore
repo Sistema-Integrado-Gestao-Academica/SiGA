@@ -6,3 +6,4 @@ user_guide
 .project
 .settings/
 application/config/*.php
+siga.sublime-workspace
