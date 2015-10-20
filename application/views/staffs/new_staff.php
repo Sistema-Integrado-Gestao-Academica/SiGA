@@ -3,13 +3,13 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Funcionários cadastrados</h3></td>
-		<?php if ($funcionarios): ?>
+		<?php if ($staffs): ?>
 			<td><h3 class="text-center">Ações</h3></td>
 		<?php endif ?>
 	</tr>
 
-	<?php if ($funcionarios): ?>
-		<?php foreach ($funcionarios as $funcionario): ?>
+	<?php if ($staffs): ?>
+		<?php foreach ($staffs as $funcionario): ?>
 			<tr>
 				<td><?=$funcionario['nome']?></td>
 
