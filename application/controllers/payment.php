@@ -6,11 +6,12 @@ require_once(APPPATH."/data_types/ServicePayment.php");
 class Payment extends CI_Controller {
 
 	const MAX_INSTALLMENTS = 5;
+	const MAX_TOTAL_VALUE = 8000;
 
 	public function expensePayments($expenseId, $budgetplanId){
-		
+
 		$this->load->model('payment_model');
-		
+
 		$payments = $this->payment_model->getExpensePayments($expenseId);
 
 		$data = array(
@@ -43,7 +44,7 @@ class Payment extends CI_Controller {
 		$resourseSource = $this->input->post("resourseSource");
 		$costCenter = $this->input->post("costCenter");
 		$dotationNote = (string) $this->input->post("dotationNote");
-		
+
 		$name = $this->input->post("name");
 		$id = $this->input->post("id");
 		$pisPasep = $this->input->post("pisPasep");
@@ -61,6 +62,7 @@ class Payment extends CI_Controller {
 
 		$totalValue = $this->input->post("totalValue");
 		$period = $this->input->post("start_period");
+		$endPeriod = $this->input->post("end_period");
 		$weekHours = $this->input->post("weekHours");
 		$weeks = $this->input->post("weeks");
 		$totalHours = $this->input->post("totalHours");
@@ -71,17 +73,17 @@ class Payment extends CI_Controller {
 		$installment_date_3 = $this->input->post("installment_date_3");
 		$installment_date_4 = $this->input->post("installment_date_4");
 		$installment_date_5 = $this->input->post("installment_date_5");
-	
-		$installment_value_1 = $this->input->post("installment_value_1");  
-		$installment_value_2 = $this->input->post("installment_value_2");  
-		$installment_value_3 = $this->input->post("installment_value_3");  
-		$installment_value_4 = $this->input->post("installment_value_4");  
-		$installment_value_5 = $this->input->post("installment_value_5");  
-		
-		$installment_hour_1 = $this->input->post("installment_hour_1");  
-		$installment_hour_2 = $this->input->post("installment_hour_2");  
-		$installment_hour_3 = $this->input->post("installment_hour_3");  
-		$installment_hour_4 = $this->input->post("installment_hour_4");  
+
+		$installment_value_1 = $this->input->post("installment_value_1");
+		$installment_value_2 = $this->input->post("installment_value_2");
+		$installment_value_3 = $this->input->post("installment_value_3");
+		$installment_value_4 = $this->input->post("installment_value_4");
+		$installment_value_5 = $this->input->post("installment_value_5");
+
+		$installment_hour_1 = $this->input->post("installment_hour_1");
+		$installment_hour_2 = $this->input->post("installment_hour_2");
+		$installment_hour_3 = $this->input->post("installment_hour_3");
+		$installment_hour_4 = $this->input->post("installment_hour_4");
 		$installment_hour_5 = $this->input->post("installment_hour_5");
 
 		$installment1 = array(
@@ -117,7 +119,7 @@ class Payment extends CI_Controller {
 		$payment = new ServicePayment(
 			$userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
-			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription,
+			$agency, $accountNumber, $totalValue, $period, $endPeriod, $weekHours, $weeks, $totalHours, $serviceDescription,
 			$installment1, $installment2, $installment3, $installment4, $installment5
 		);
 
@@ -147,7 +149,7 @@ class Payment extends CI_Controller {
 		$resourseSource = $paymentData["resourseSource"];
 		$costCenter = $paymentData["costCenter"];
 		$dotationNote = $paymentData["dotationNote"];
-		
+
 		$name = $paymentData["name"];
 		$id = $paymentData["id"];
 		$pisPasep = $paymentData["pisPasep"];
@@ -164,6 +166,7 @@ class Payment extends CI_Controller {
 
 		$totalValue = $paymentData["totalValue"];
 		$period = $paymentData["period"];
+		$endPeriod = $paymentData["end_period"];
 		$weekHours = $paymentData["weekHours"];
 		$weeks = $paymentData["weeks"];
 		$totalHours = $paymentData["totalHours"];
@@ -174,17 +177,17 @@ class Payment extends CI_Controller {
 		$installment_date_3 = $paymentData["installment_date_3"];
 		$installment_date_4 = $paymentData["installment_date_4"];
 		$installment_date_5 = $paymentData["installment_date_5"];
-	
-		$installment_value_1 = $paymentData["installment_value_1"];  
-		$installment_value_2 = $paymentData["installment_value_2"];  
-		$installment_value_3 = $paymentData["installment_value_3"];  
-		$installment_value_4 = $paymentData["installment_value_4"];  
+
+		$installment_value_1 = $paymentData["installment_value_1"];
+		$installment_value_2 = $paymentData["installment_value_2"];
+		$installment_value_3 = $paymentData["installment_value_3"];
+		$installment_value_4 = $paymentData["installment_value_4"];
 		$installment_value_5 = $paymentData["installment_value_5"];
-		
-		$installment_hour_1 = $paymentData["installment_hour_1"];  
-		$installment_hour_2 = $paymentData["installment_hour_2"];  
-		$installment_hour_3 = $paymentData["installment_hour_3"];  
-		$installment_hour_4 = $paymentData["installment_hour_4"];  
+
+		$installment_hour_1 = $paymentData["installment_hour_1"];
+		$installment_hour_2 = $paymentData["installment_hour_2"];
+		$installment_hour_3 = $paymentData["installment_hour_3"];
+		$installment_hour_4 = $paymentData["installment_hour_4"];
 		$installment_hour_5 = $paymentData["installment_hour_5"];
 
 		$installment1 = array(
@@ -220,7 +223,7 @@ class Payment extends CI_Controller {
 		$payment = new ServicePayment(
 			$userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 			$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
-			$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription,
+			$agency, $accountNumber, $totalValue, $period, $endPeriod, $weekHours, $weeks, $totalHours, $serviceDescription,
 			$installment1, $installment2, $installment3, $installment4, $installment5
 		);
 
@@ -305,7 +308,7 @@ class Payment extends CI_Controller {
 			    		echo "<td>";
 			    		echo form_input($installmentHours);
 			    		echo "</td>";
-			    	
+
 		    		echo "</tr>";
 		    	}
 
@@ -318,13 +321,17 @@ class Payment extends CI_Controller {
 	public function checkInstallmentValues(){
 
 		$totalValue = (float) $this->input->post("totalValue");
+		$totalValue = round($totalValue, 2);
+
 		$installment1 = (float) $this->input->post("installment1");
 		$installment2 = (float) $this->input->post("installment2");
 		$installment3 = (float) $this->input->post("installment3");
 		$installment4 = (float) $this->input->post("installment4");
 		$installment5 = (float) $this->input->post("installment5");
-		
+
 		$installmentTotal = $installment1 + $installment2 + $installment3 + $installment4 + $installment5;
+
+		$installmentTotal = round($installmentTotal, 2);
 
 		if($installmentTotal > $totalValue){
 
@@ -346,10 +353,25 @@ class Payment extends CI_Controller {
 			$result .= "</div>";
 		}else{
 
+			$submitBtn = array(
+				"id" => "new_payment",
+				"class" => "btn bg-olive btn-block",
+				"content" => "Cadastrar pagamento",
+				"type" => "submit"
+			);
+
 			$result = "<div class='callout callout-info'>";
 			$result .= "<h4>";
 			$result .= "O valor das parcelas estão OK!";
 			$result .= "</h4>";
+			$result .= "</div>";
+
+			$result .= "<div class='row'>";
+				$result .= "<div class='col-lg-9'>";
+				$result .= "</div>";
+				$result .= "<div class='col-lg-3'>";
+					$result .= form_button($submitBtn);
+				$result .= "</div>";
 			$result .= "</div>";
 		}
 

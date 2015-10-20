@@ -40,7 +40,7 @@ class Payment_model extends CI_Model {
 			'resourseSource' => $servicePayment->resourseSource(),
 			'costCenter' => $servicePayment->costCenter(),
 			'dotationNote' => $servicePayment->dotationNote(),
-			
+
 			'name' => $servicePayment->name(),
 			'id' => $servicePayment->id(),
 			'pisPasep' => $servicePayment->pisPasep(),
@@ -57,6 +57,7 @@ class Payment_model extends CI_Model {
 
 			'totalValue' => $servicePayment->totalValue(),
 			'period' => $servicePayment->period(),
+			'end_period' => $servicePayment->endPeriod(),
 			'weekHours' => $servicePayment->weekHours(),
 			'weeks' => $servicePayment->weeks(),
 			'totalHours' => $servicePayment->totalHours(),

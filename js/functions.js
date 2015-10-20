@@ -27,6 +27,10 @@ $(document).ready(function(){
 		$("#edit_program_btn").popover('hide');
 	});
 
+	$("#arrivalInBrazil").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
 	$("#start_period").datepicker($.datepicker.regional["pt-BR"], {
 		dateFormat: "dd-mm-yy"
 	});
@@ -35,43 +39,22 @@ $(document).ready(function(){
 		dateFormat: "dd-mm-yy"
 	});
 
+	$("#totalValue").change(function(){
+		checkInstallments();
+	});
 
 	$("#installments_quantity").change(function(){
 		checkInstallments();
 	});
 
-	$("#totalValue").change(function(){
-		checkInstallments();
-	});
-
-	$("#installment_value_1").change(function(){
-		checkInstallmentValue();
-	});
-
-	$("#installment_value_2").change(function(){
-		checkInstallmentValue();
-	});
-
-	$("#installment_value_3").change(function(){
-		checkInstallmentValue();
-	});
-
-	$("#installment_value_4").change(function(){
-		checkInstallmentValue();
-	});
-
-	$("#installment_value_5").change(function(){
-		checkInstallmentValue();
-	});
-
 });
 
 function checkInstallments(){
-	
+
 	var totalValue = $("#totalValue").val();
 	var quantityOfInstallments = $("#installments_quantity").val();
 
-	var siteUrl = $("#site_url").val();	
+	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/payment/checkInstallmentQuantity";
 
 	$.post(
@@ -91,35 +74,55 @@ function checkInstallments(){
 				dateFormat: "dd-mm-yy"
 			});
 
-			
 			$("#installment_date_3").datepicker($.datepicker.regional["pt-BR"], {
 				dateFormat: "dd-mm-yy"
 			});
 
-			
+
 			$("#installment_date_4").datepicker($.datepicker.regional["pt-BR"], {
 				dateFormat: "dd-mm-yy"
 			});
 
-
 			$("#installment_date_5").datepicker($.datepicker.regional["pt-BR"], {
 				dateFormat: "dd-mm-yy"
 			});
+
+			checkInstallmentValue();
+
+			$("#installment_value_1").change(function(){
+				checkInstallmentValue();
+			});
+
+			$("#installment_value_2").change(function(){
+				checkInstallmentValue();
+			});
+
+			$("#installment_value_3").change(function(){
+				checkInstallmentValue();
+			});
+
+			$("#installment_value_4").change(function(){
+				checkInstallmentValue();
+			});
+
+			$("#installment_value_5").change(function(){
+				checkInstallmentValue();
+			});
 		}
-	);	
+	);
 }
 
 function checkInstallmentValue(){
 
 	var totalValue = $("#totalValue").val();
-	var quantityOfInstallments = $("#installments_quantity").val();
+
 	var installment_value_1 = $("#installment_value_1").val();
 	var installment_value_2 = $("#installment_value_2").val();
 	var installment_value_3 = $("#installment_value_3").val();
 	var installment_value_4 = $("#installment_value_4").val();
 	var installment_value_5 = $("#installment_value_5").val();
 
-	var siteUrl = $("#site_url").val();	
+	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/payment/checkInstallmentValues";
 
 	$.post(
