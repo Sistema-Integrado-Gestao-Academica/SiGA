@@ -30,9 +30,12 @@ class staffs_model extends CI_Model {
 		return $res;
 	}
 
-	public function remove($id) {
-		$res = $this->db->delete("staffs", array('id' => $id));
-		var_dump($this->db->last_query());
+	public function remove($staff) {
+		$res = $this->db->delete("staffs", $staff);
+		if($res){
+			$this->db->where('id_user', $staff['id_user']);
+			$this->db->update('user_group', array('id_group' => GroupConstants::GUEST_USER_GROUP_ID));
+		}
 		return $res;
 	}
 }

@@ -77,13 +77,15 @@ class Staff extends CI_Controller {
 
 	public function remove() {
 		session();
-		$id = $this->input->post("funcionario_id");
+		$staff_id = $this->input->post("staff_id");
+		$user_id = $this->input->post("id_user");
 		$this->load->model("staffs_model");
-		$staff = array("id" => $id);
-		$staff = $this->staffs_model->busca("id", $staff);
+		$staff = array("id_staff" => $staff_id, "id_user" => $user_id);
 
-		if ($this->staffs_model->remove($id)) {
-			$this->session->set_flashdata("success", "Funcionário \"{$staff['nome']}\" foi removido");
+		if ($this->staffs_model->remove($staff)) {
+			$this->session->set_flashdata("success", "Funcionário foi removido");
+		}else{
+			$this->session->set_flashdata("danger", "Funcionário não foi removido. Tente novamente");
 		}
 
 		redirect("staffs");
@@ -123,8 +125,11 @@ class Staff extends CI_Controller {
 		$user = new Usuario();
 
 		$staffsReturn = array();
-		foreach ($stagedStaffs as $key => $staff) {
-			$staffsReturn[$staff['id_staff']] = $user->getUserById($staff['id_user']);
+
+		if ($stagedStaffs) {
+			foreach ($stagedStaffs as $key => $staff) {
+				$staffsReturn[$staff['id_staff']] = $user->getUserById($staff['id_user']);
+			}
 		}
 
 		return $staffsReturn;

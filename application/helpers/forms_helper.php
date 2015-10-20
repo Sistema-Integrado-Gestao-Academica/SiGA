@@ -834,7 +834,8 @@ function loadStaffRegistrationForm($users){
 			"class" => "form-campo",
 			"class" => "form-control",
 			"maxlength" => "10",
-			"placeholder" => "Opcional"
+			"placeholder" => "Opcional",
+			"value" => NULL
 	);
 
 	$landingDate = array(
@@ -843,7 +844,8 @@ function loadStaffRegistrationForm($users){
 			"type" => "text",
 			"class" => "form-campo",
 			"class" => "form-control",
-			"placeholder" => "Opcional"
+			"placeholder" => "Opcional",
+			"value" => NULL
 	);
 
 	$address = array(
@@ -874,7 +876,8 @@ function loadStaffRegistrationForm($users){
 			"type" => "text",
 			"class" => "form-campo",
 			"class" => "form-control",
-			"maxlength" => "25"
+			"maxlength" => "25",
+			"value" => NULL
 	);
 
 	$agency = array(
@@ -883,7 +886,8 @@ function loadStaffRegistrationForm($users){
 			"type" => "text",
 			"class" => "form-campo",
 			"class" => "form-control",
-			"maxlength" => "10"
+			"maxlength" => "10",
+			"value" => NULL
 	);
 
 	$checkingAccount = array(
@@ -892,7 +896,8 @@ function loadStaffRegistrationForm($users){
 			"type" => "text",
 			"class" => "form-campo",
 			"class" => "form-control",
-			"maxlength" => "15"
+			"maxlength" => "15",
+			"value" => NULL
 	);
 	
 	echo "<div class='form-box' id='login-box'>";
