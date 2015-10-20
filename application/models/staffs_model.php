@@ -24,9 +24,10 @@ class staffs_model extends CI_Model {
 		return $saved;
 	}
 
-	public function altera($id, $nome) {
-		$this->db->where('id', $id);
-		$res = $this->db->update("staffs", array('nome' => $nome));
+	public function updateStaffData($staff,$where) {
+		
+		$res = $this->db->update("staffs", $staff, $where);
+		
 		return $res;
 	}
 

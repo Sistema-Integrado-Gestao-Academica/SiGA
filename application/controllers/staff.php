@@ -11,13 +11,11 @@ class Staff extends CI_Controller {
 		$this->load->template('staffs/new_staff', $data);
 	}
 
-	public function formulario_altera($id) {
-		session();
+	public function editStaff($id) {
 		$this->load->model('staffs_model');
-		$staff = array('id' => $id);
-		$staff = $this->staffs_model->busca('id', $staff);
-		$data = array('funcionario' => $staff);
-		$this->load->template('funcionarios/funcionario_altera', $data);
+		$staff = @$this->staffs_model->getStaff('id_staff', $id);
+		$data = array('staff' => $staff);
+		$this->load->template('staffs/edit_staff', $data);
 	}
 
 	public function newStaff() {
@@ -60,18 +58,46 @@ class Staff extends CI_Controller {
 		redirect("staffs");
 	}
 
-	public function altera() {
-		session();
-		$id = $this->input->post("funcionario_id");
-		$nome = $this->input->post("nome");
-		$this->load->model("staffs_model");
+	public function updateStaff() {
+		
+		$success = $this->validatesStaffData();
 
-		if ($this->staffs_model->altera($id, $nome)) {			
-			$this->session->set_flashdata("success", "Funcionário alterado para \"$nome\".");
-			redirect("staffs");
-		} else {
-			$this->session->set_flashdata("danger", "Este funcionário não pôde ser alterado.");
-			redirect("funcionarios/{$id}");
+		if ($success) {
+
+			$pis = $this->input->post('pis');
+			$idUser = $this->input->post('user_id');
+			$idStaff = $this->input->post('staff_id');
+			$registration = $this->input->post('registration');
+			$landingDate = $this->input->post('landingDate');
+			$address = $this->input->post('address');
+			$phone = $this->input->post('telephone');
+			$bank = $this->input->post('bank');
+			$agency = $this->input->post('agency');
+			$accountNumber = $this->input->post('accountNumber');
+
+			$updateData = array(
+				'pisPasep' => $pis,
+				'registration' => $registration,
+				'brazil_landing' => $landingDate,
+				'address' => $address,
+				'telephone' => $phone,
+				'bank' => $bank,
+				'agency' => $agency,
+				'account_number' => $accountNumber
+			);
+
+			$where = array('id_staff' => $idStaff, 'id_user' => $idUser);
+
+			$this->load->model("staffs_model");
+			$updated = $this->staffs_model->updateStaffData($updateData, $where);
+
+			if ($updated) {			
+				$this->session->set_flashdata("success", "Funcionário alterado.");
+				redirect("staffs");
+			} else {
+				$this->session->set_flashdata("danger", "Este funcionário não pôde ser alterado.");
+				redirect("staffs");
+			}
 		}
 	}
 
