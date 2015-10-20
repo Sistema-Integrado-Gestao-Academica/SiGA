@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class staffs_model extends CI_Model {
 
@@ -16,7 +17,10 @@ class staffs_model extends CI_Model {
 
 	public function saveNewStaff($saveData) {
 		$saved = $this->db->insert("staffs", $saveData);
-
+		if($saved){
+			$this->db->where('id_user', $saveData['id_user']);
+			$this->db->update('user_group', array('id_group' => GroupConstants::STAFF_GROUP_ID));
+		}
 		return $saved;
 	}
 

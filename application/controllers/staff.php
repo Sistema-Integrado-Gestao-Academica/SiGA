@@ -5,10 +5,9 @@ class Staff extends CI_Controller {
 
 	public function staffsLoadPage() {
 		session();
-		$this->load->model('staffs_model');
-		$staffs = $this->staffs_model->getAllStaffs();
-		$users = $this->getGuestUsers();
-		$data = array('staffs' => $staffs, 'users'=>$users);
+		$staffs = $this->getRegisteredStaffs();
+		$guests = $this->getGuestUsers();
+		$data = array('staffs' => $staffs, 'guestUsers'=>$guests);
 		$this->load->template('staffs/new_staff', $data);
 	}
 
@@ -116,7 +115,19 @@ class Staff extends CI_Controller {
 
 	}
 
-}
+	private function getRegisteredStaffs(){
 
-/* End of file funcionario.php */
-/* Location: ./application/controllers/funcionario.php */ 
+		$this->load->model('staffs_model');
+		$stagedStaffs = $this->staffs_model->getAllStaffs();
+
+		$user = new Usuario();
+
+		$staffsReturn = array();
+		foreach ($stagedStaffs as $key => $staff) {
+			$staffsReturn[$staff['id_staff']] = $user->getUserById($staff['id_user']);
+		}
+
+		return $staffsReturn;
+	}
+
+}
