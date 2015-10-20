@@ -26,6 +26,13 @@ class Migration_Altera_tabela_funcionarios extends CI_Migration {
 		$this->db->query($addConstraint);
 		
 
+		/**
+		 *	Updating staffs rote in permissions table
+		 */
+
+		$this->db->where('id_permission', 2);
+		$this->db->update('permission', array('route' => "staffs"));
+
 	}
 
 	public function down(){
