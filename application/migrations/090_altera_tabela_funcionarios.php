@@ -13,7 +13,7 @@ class Migration_Altera_tabela_funcionarios extends CI_Migration {
 			'id_staff' => array('type' => 'INT','auto_increment' => true),
 			'id_user' => array('type' => 'INT'),
 			'pisPasep' => array('type' => 'INT',  'null' => FALSE),
-			'registration' => array('type' => 'INT(10)',  'null' => TRUE),
+			'registration' => array('type' => 'varchar(10)',  'null' => TRUE),
 			'brazil_landing' => array('type' => 'varchar(10)',  'null' => TRUE),
 			'address' => array('type' => 'varchar(50)'),
 			'telephone' => array('type' => 'varchar(15)'),
