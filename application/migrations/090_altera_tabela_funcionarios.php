@@ -9,14 +9,14 @@ class Migration_Altera_tabela_funcionarios extends CI_Migration {
 		$this->dbforge->add_field(array(
 			'id_staff' => array('type' => 'INT','auto_increment' => true),
 			'id_user' => array('type' => 'INT'),
-			'pis' => array('type' => 'INT',  'null' => FALSE),
-			'registration' => array('type' => 'INT',  'null' => TRUE),
-			'brazil_landing' => array('type' => 'DATETIME',  'null' => TRUE),
-			'address' => array('type' => 'varchar(100)'),
-			'telephone' => array('type' => 'varchar(9)'),
+			'pisPasep' => array('type' => 'INT',  'null' => FALSE),
+			'registration' => array('type' => 'INT(10)',  'null' => TRUE),
+			'brazil_landing' => array('type' => 'varchar(10)',  'null' => TRUE),
+			'address' => array('type' => 'varchar(50)'),
+			'telephone' => array('type' => 'varchar(15)'),
 			'bank' => array('type' => 'varchar(25)', 'null' => TRUE),
-			'agency' => array('type' => 'varchar(6)', 'null' => TRUE),
-			'checking_account' => array('type' => 'varchar(6)','null' => TRUE)
+			'agency' => array('type' => 'varchar(10)', 'null' => TRUE),
+			'checking_account' => array('type' => 'varchar(15)','null' => TRUE)
 		));
 
 		$this->dbforge->add_key('id_staff', true);
