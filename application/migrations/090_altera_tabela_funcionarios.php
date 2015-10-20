@@ -4,8 +4,11 @@ class Migration_Altera_tabela_funcionarios extends CI_Migration {
 
 	public function up() {
 
+		$dropConstraint = "ALTER TABLE setores_funcionarios DROP FOREIGN KEY IDEMPLOYEE_SECTOREMPLOYEE";
+		$this->db->query($dropConstraint);
 		$this->dbforge->drop_table('funcionarios');
 
+		
 		$this->dbforge->add_field(array(
 			'id_staff' => array('type' => 'INT','auto_increment' => true),
 			'id_user' => array('type' => 'INT'),
@@ -16,7 +19,7 @@ class Migration_Altera_tabela_funcionarios extends CI_Migration {
 			'telephone' => array('type' => 'varchar(15)'),
 			'bank' => array('type' => 'varchar(25)', 'null' => TRUE),
 			'agency' => array('type' => 'varchar(10)', 'null' => TRUE),
-			'checking_account' => array('type' => 'varchar(15)','null' => TRUE)
+			'account_number' => array('type' => 'varchar(15)','null' => TRUE)
 		));
 
 		$this->dbforge->add_key('id_staff', true);
@@ -43,6 +46,9 @@ class Migration_Altera_tabela_funcionarios extends CI_Migration {
 		));
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('funcionarios', true);
+
+		$addConstraint = "ALTER TABLE setores_funcionarios ADD CONSTRAINT IDEMPLOYEE_SECTOREMPLOYEE FOREIGN KEY (funcionarios_id) REFERENCES funcionarios(id) ON DELETE CASCADE ON UPDATE RESTRICT";
+		$this->db->query($addConstraint);
 
 		$dropConstraint = "ALTER TABLE staffs DROP FOREIGN KEY IDUSER_STAFF_FK";
 		$this->db->query($dropConstraint);
