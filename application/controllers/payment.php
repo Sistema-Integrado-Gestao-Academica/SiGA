@@ -236,85 +236,90 @@ class Payment extends CI_Controller {
 		$totalValue = (float) $this->input->post("totalValue");
 		$installments = (float) $this->input->post("installments");
 
-		if($installments != 0){
+		if($totalValue <= self::MAX_TOTAL_VALUE){
 
-			// Max of installments is 5
-			if($installments > self::MAX_INSTALLMENTS){
-				$installments = self::MAX_INSTALLMENTS;
+			if($installments != 0){
+
+				// Max of installments is 5
+				if($installments > self::MAX_INSTALLMENTS){
+					$installments = self::MAX_INSTALLMENTS;
+				}
+
+				$installmentsValue = $totalValue / $installments;
+				$installmentsValue = round($installmentsValue, 2);
+			}else{
+				$installmentsValue = $totalValue;
+				$installmentsValue = round($installmentsValue, 2);
 			}
 
-			$installmentsValue = $totalValue / $installments;
-			$installmentsValue = round($installmentsValue, 2);
+			echo "<div class='box-body table-responsive no-padding'>";
+				echo "<table class='table table-bordered table-hover'>";
+					echo "<tbody>";
+						echo "<tr>";
+					        echo "<th class='text-center'>Nº da parcela</th>";
+					        echo "<th class='text-center'>Data</th>";
+					        echo "<th class='text-center'>Valor</th>";
+					        echo "<th class='text-center'>Horas trabalhadas</th>";
+					    echo "</tr>";
+
+					for($installment = 1; $installment <= $installments; $installment++){
+
+						echo "<tr>";
+
+				    		echo "<td>";
+				    		echo $installment;
+				    		echo "</td>";
+
+							$installmentDate = array(
+								"name" => "installment_date_".$installment,
+								"id" => "installment_date_".$installment,
+								"type" => "text",
+								"class" => "form-campo",
+								"class" => "form-control"
+							);
+
+				    		echo "<td>";
+				    		echo form_input($installmentDate);
+				    		echo "</td>";
+
+							$installmentValue = array(
+								"name" => "installment_value_".$installment,
+								"id" => "installment_value_".$installment,
+								"type" => "number",
+								"class" => "form-campo",
+								"class" => "form-control",
+								"value" => $installmentsValue,
+								"min" => 0,
+								"step" => 0.01
+							);
+
+				    		echo "<td>";
+				    		echo form_input($installmentValue);
+				    		echo "</td>";
+
+				    		$installmentHours = array(
+								"name" => "installment_hour_".$installment,
+								"id" => "installment_hour_".$installment,
+								"type" => "number",
+								"class" => "form-campo",
+								"class" => "form-control",
+								"min" => 0,
+								"step" => 1
+							);
+
+				    		echo "<td>";
+				    		echo form_input($installmentHours);
+				    		echo "</td>";
+
+			    		echo "</tr>";
+			    	}
+
+			    	echo "</tbody>";
+				echo "</table>";
+			echo "</div>";
 		}else{
-			$installmentsValue = $totalValue;
-			$installmentsValue = round($installmentsValue, 2);
+
 		}
-
-		echo "<div class='box-body table-responsive no-padding'>";
-			echo "<table class='table table-bordered table-hover'>";
-				echo "<tbody>";
-					echo "<tr>";
-				        echo "<th class='text-center'>Nº da parcela</th>";
-				        echo "<th class='text-center'>Data</th>";
-				        echo "<th class='text-center'>Valor</th>";
-				        echo "<th class='text-center'>Horas trabalhadas</th>";
-				    echo "</tr>";
-
-				for($installment = 1; $installment <= $installments; $installment++){
-
-					echo "<tr>";
-
-			    		echo "<td>";
-			    		echo $installment;
-			    		echo "</td>";
-
-						$installmentDate = array(
-							"name" => "installment_date_".$installment,
-							"id" => "installment_date_".$installment,
-							"type" => "text",
-							"class" => "form-campo",
-							"class" => "form-control"
-						);
-
-			    		echo "<td>";
-			    		echo form_input($installmentDate);
-			    		echo "</td>";
-
-						$installmentValue = array(
-							"name" => "installment_value_".$installment,
-							"id" => "installment_value_".$installment,
-							"type" => "number",
-							"class" => "form-campo",
-							"class" => "form-control",
-							"value" => $installmentsValue,
-							"min" => 0,
-							"step" => 0.01
-						);
-
-			    		echo "<td>";
-			    		echo form_input($installmentValue);
-			    		echo "</td>";
-
-			    		$installmentHours = array(
-							"name" => "installment_hour_".$installment,
-							"id" => "installment_hour_".$installment,
-							"type" => "number",
-							"class" => "form-campo",
-							"class" => "form-control",
-							"min" => 0,
-							"step" => 1
-						);
-
-			    		echo "<td>";
-			    		echo form_input($installmentHours);
-			    		echo "</td>";
-
-		    		echo "</tr>";
-		    	}
-
-		    	echo "</tbody>";
-			echo "</table>";
-		echo "</div>";
 	}
 
 	// Used in an ajax post
@@ -333,45 +338,56 @@ class Payment extends CI_Controller {
 
 		$installmentTotal = round($installmentTotal, 2);
 
-		if($installmentTotal > $totalValue){
+		if($totalValue <= self::MAX_TOTAL_VALUE){
 
-			$result = "<div class='callout callout-danger'>";
-			$result .= "<h4>";
-			$result .= "O total das parcelas <b>está excendo</b> o valor total do serviço.";
-			$result .= "</h4>";
-			$result .= "<p>Valor total das parcelas atual: <b> R$ ".$installmentTotal."</b></p>";
-			$result .= "<p>Valor total atual do serviço: <b> R$ ".$totalValue."</b></p>";
-			$result .= "</div>";
-		}elseif($installmentTotal < $totalValue){
+			if($installmentTotal > $totalValue){
 
-			$result = "<div class='callout callout-danger'>";
-			$result .= "<h4>";
-			$result .= "O total das parcelas <b>está menor</b> que o valor total do serviço.";
-			$result .= "</h4>";
-			$result .= "<p>Valor total das parcelas atual: <b> R$ ".$installmentTotal."</b></p>";
-			$result .= "<p>Valor total atual do serviço: <b> R$ ".$totalValue."</b></p>";
-			$result .= "</div>";
+				$result = "<div class='callout callout-danger'>";
+				$result .= "<h4>";
+				$result .= "O total das parcelas <b>está excendo</b> o valor total do serviço.";
+				$result .= "</h4>";
+				$result .= "<p>Valor total das parcelas atual: <b> R$ ".$installmentTotal."</b></p>";
+				$result .= "<p>Valor total atual do serviço: <b> R$ ".$totalValue."</b></p>";
+				$result .= "</div>";
+			}elseif($installmentTotal < $totalValue){
+
+				$result = "<div class='callout callout-danger'>";
+				$result .= "<h4>";
+				$result .= "O total das parcelas <b>está menor</b> que o valor total do serviço.";
+				$result .= "</h4>";
+				$result .= "<p>Valor total das parcelas atual: <b> R$ ".$installmentTotal."</b></p>";
+				$result .= "<p>Valor total atual do serviço: <b> R$ ".$totalValue."</b></p>";
+				$result .= "</div>";
+			}else{
+
+				$submitBtn = array(
+					"id" => "new_payment",
+					"class" => "btn bg-olive btn-block",
+					"content" => "Cadastrar pagamento",
+					"type" => "submit"
+				);
+
+				$result = "<div class='callout callout-info'>";
+				$result .= "<h4>";
+				$result .= "O valor das parcelas estão OK!";
+				$result .= "</h4>";
+				$result .= "</div>";
+
+				$result .= "<div class='row'>";
+					$result .= "<div class='col-lg-9'>";
+					$result .= "</div>";
+					$result .= "<div class='col-lg-3'>";
+						$result .= form_button($submitBtn);
+					$result .= "</div>";
+				$result .= "</div>";
+			}
 		}else{
 
-			$submitBtn = array(
-				"id" => "new_payment",
-				"class" => "btn bg-olive btn-block",
-				"content" => "Cadastrar pagamento",
-				"type" => "submit"
-			);
-
-			$result = "<div class='callout callout-info'>";
+			$result = "<div class='callout callout-danger'>";
 			$result .= "<h4>";
-			$result .= "O valor das parcelas estão OK!";
+			$result .= "O valor total não pode exceder R$ 8000,00.";
 			$result .= "</h4>";
-			$result .= "</div>";
-
-			$result .= "<div class='row'>";
-				$result .= "<div class='col-lg-9'>";
-				$result .= "</div>";
-				$result .= "<div class='col-lg-3'>";
-					$result .= form_button($submitBtn);
-				$result .= "</div>";
+			$result .= "<p>Valor total atual: <b>R$ ".$totalValue."</b></p>";
 			$result .= "</div>";
 		}
 
