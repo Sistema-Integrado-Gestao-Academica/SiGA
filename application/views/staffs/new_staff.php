@@ -32,6 +32,10 @@
 	<?php endif ?>
 </table>
 
+<?php 
+	loadStaffRegistrationForm($users);
+?>
+<!-- 
 <div class="form-box-logged" id="login-box"> 
 	<div class="header">Cadastrar um novo funcionário</div>
 	<?= form_open("funcionario/novo") ?>
@@ -59,3 +63,4 @@
 		</div>
 	<?= form_close() ?>
 </div>
+ -->

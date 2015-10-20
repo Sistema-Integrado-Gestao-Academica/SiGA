@@ -2,7 +2,7 @@
 
 class staffs_model extends CI_Model {
 
-	public function busca($atributo, $setor) {
+	public function getStaff($atributo, $setor) {
 		$res = $this->db->get_where("staffs", array($atributo => $setor[$atributo]))->row_array();
 		$res = checkArray($res);
 		return $res;
@@ -14,8 +14,10 @@ class staffs_model extends CI_Model {
 		return $allStaffs;
 	}
 
-	public function salva($setor) {
-		$this->db->insert("staffs", $setor);
+	public function saveNewStaff($saveData) {
+		$saved = $this->db->insert("staffs", $saveData);
+
+		return $saved;
 	}
 
 	public function altera($id, $nome) {
