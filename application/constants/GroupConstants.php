@@ -3,7 +3,9 @@
 require_once('constants.php');
 
 class GroupConstants extends Constants{
-	
+
+    const STUDENT_GROUP = "estudante";
+    const GUEST_GROUP = "convidado";
 	const ADMIN_GROUP = "administrador";
 	const SECRETARY_GROUP = "secretario";
 	const TEACHER_GROUP = "docente";
