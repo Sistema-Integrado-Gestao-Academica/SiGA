@@ -12,6 +12,8 @@ class GroupConstants extends Constants{
 	const ACADEMIC_SECRETARY_GROUP = "courseSecretaryAcademic";
 	const FINANCIAL_SECRETARY_GROUP = "courseSecretaryFinancial";
 
+	const STAFF_GROUP_ID = 12;
+	const GUEST_USER_GROUP_ID = 8;
 	const TEACHER_GROUP_ID = 5;
 	const FINANCIAL_SECRETARY_GROUP_ID = 10;
 	const ACADEMIC_SECRETARY_GROUP_ID = 11;
