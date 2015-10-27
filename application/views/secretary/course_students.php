@@ -7,7 +7,7 @@
 		<table class="table table-bordered table-hover">
 			<tbody>
 				<tr>
-			        <th class="text-center">Código</th>
+			        <th class="text-center">Matrícula</th>
 			        <th class="text-center">Aluno</th>
 			        <th class="text-center">E-mail</th>
 			        <th class="text-center">Data de matrícula</th>
@@ -22,7 +22,7 @@
 
 						echo "<tr>";
 				    		echo "<td>";
-				    		echo $student['id'];
+				    		echo $student['enrollment'];
 				    		echo "</td>";
 
 				    		echo "<td>";
@@ -45,7 +45,7 @@
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
-?>			    
+?>
 			</tbody>
 		</table>
 		</div>
