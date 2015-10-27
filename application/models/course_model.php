@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
 require_once(APPPATH."/exception/SecretaryException.php");
@@ -86,7 +86,7 @@ class Course_model extends CI_Model {
 
 	public function getCourseStudents($courseId){
 
-		$this->db->select("users.name, users.id, users.email, course_student.enroll_date");
+		$this->db->select("users.name, users.id, users.email, course_student.enroll_date, course_student.enrollment");
 		$this->db->from('users');
 		$this->db->join("course_student", "course_student.id_user = users.id");
 		$this->db->where("course_student.id_course", $courseId);
@@ -106,7 +106,7 @@ class Course_model extends CI_Model {
 	public function getCourseIdByCourseName($courseName){
 
 		$course = $this->getCourseForThisCourseName($courseName);
-		
+
 		if($course !== FALSE){
 			$courseId = $course['id_course'];
 		}else{
@@ -124,7 +124,7 @@ class Course_model extends CI_Model {
 	}
 
 	private function getCourseForThisCourseName($courseName){
-		
+
 		$searchResult = $this->db->get_where('course', array('course_name' => $courseName));
 		$foundCourse = $searchResult->row_array();
 
@@ -134,7 +134,7 @@ class Course_model extends CI_Model {
 	}
 
 	public function checkExistingCourseTypeId($courseTypeId){
-		
+
 		$foundCourseType = $this->db->get_where('course_type', array('id' => $courseTypeId))->row_array();
 
 		$foundCourseType = checkArray($foundCourseType);
@@ -145,7 +145,7 @@ class Course_model extends CI_Model {
 	}
 
 	public function getCourseTypeByCourseId($courseId){
-		
+
 		$courseTypeId = $this->getCourseTypeForThisCourseId($courseId);
 
 		$courseType = $this->db->get_where('course_type', array('id' => $courseTypeId))->row_array();
@@ -171,10 +171,10 @@ class Course_model extends CI_Model {
 	 * @return An array with the courses. Each position is a tuple of the relation.
 	 */
 	public function getAllCourses(){
-		
+
 		$this->db->select('*');
 		$this->db->from('course');
-		$this->db->order_by("course_name", "asc"); 
+		$this->db->order_by("course_name", "asc");
 		$registeredCourses = $this->db->get()->result_array();
 
 		$registeredCourses = checkArray($registeredCourses);
@@ -183,7 +183,7 @@ class Course_model extends CI_Model {
 	}
 
 	public function getAllCourseTypes(){
-		
+
 		$courseTypes = $this->db->get('course_type')->result_array();
 
 		$courseTypes = checkArray($courseTypes);
@@ -197,16 +197,16 @@ class Course_model extends CI_Model {
 	 * @return TRUE if the insertion was made or FALSE if it does not
 	 */
 	public function saveCourse($courseToSave){
-		
+
 		$courseNameToSave = $courseToSave['course_name'];
 		$courseNameAlreadyExists = $this->courseNameAlreadyExists($courseNameToSave);
-	
+
 		$insertionStatus = FALSE;
 
 		if($courseNameAlreadyExists === FALSE){
-			
+
 			$this->db->insert("course", $courseToSave);
-			
+
 			$foundCourse = $this->getCourse($courseToSave);
 
 			if($foundCourse !== FALSE){
@@ -221,7 +221,7 @@ class Course_model extends CI_Model {
 
 		return $insertionStatus;
 	}
-	
+
 	/**
 	 * Function to manipulate secretary data to save it on database
 	 * @param int $financialSecretaryUserId
@@ -232,21 +232,21 @@ class Course_model extends CI_Model {
 	 * @return boolean
 	 */
 	public function saveCourseFinancialSecretary($financialSecretaryUserId, $idCourse, $courseName){
-		
+
 		$financialSecretaryToSave = array(
 			"id_user"  => $financialSecretaryUserId,
 			"id_group" => GroupConstants::FINANCIAL_SECRETARY_GROUP_ID,
 			"id_course"=> $idCourse
 		);
-		
+
 		try{
-			
+
 			$savedFinancial = $this->saveSecretary($financialSecretaryToSave);
-			
+
 		}catch (SecretaryException $caughtException){
 			throw $caughtException;
 		}
-		
+
 		return $savedFinancial;
 	}
 
@@ -257,65 +257,65 @@ class Course_model extends CI_Model {
 			"id_group" => GroupConstants::ACADEMIC_SECRETARY_GROUP_ID,
 			"id_course"=> $idCourse
 		);
-		
+
 		try{
-			
+
 			$savedAcademic  = $this->saveSecretary($academicSecretaryToSave);
-			
+
 		}catch (SecretaryException $caughtException){
 			throw $caughtException;
 		}
-		
+
 		return $savedAcademic;
 	}
 
-	
+
 	/**
 	 * Function to save a secretary in the database
 	 * @param array $secretary
 	 * @return boolean
 	 */
 	private function saveSecretary($secretary){
-		
+
 		$alreadySavedSecretary = $this->checkExistingSecretary($secretary);
-		
+
 		if(!$alreadySavedSecretary){
-			
+
 			try{
 				$save = $this->db->insert("secretary_course", $secretary);
 			}catch (SecretaryException $caughtException){
 				throw new SecretaryException('Não foi possível salvar este secretário.');
 			}
-		
+
 			$alreadySavedUserGroup = $this->checkExistingSavedUserGroup($secretary['id_user'], $secretary['id_group']);
-			
+
 			if(!$alreadySavedUserGroup){
-					
+
 				try{
 					$saveUserGroup  = $this->db->insert('user_group', array('id_user'=>$secretary['id_user'], 'id_group'=>$secretary['id_group']));
 				}catch (SecretaryException $caughtException){
 					throw new SecretaryException('Não foi possível atribuir este grupo ao usuário. Verifique a existência do mesmo.');
 				}
-					
+
 			}else{
 				// If the group is already saved, we dont need to save it again, so it's true that it's saved
 				$saveUserGroup = TRUE;
 			}
-					
+
 			if($save && $saveUserGroup){
 				$insertionStatus = TRUE;
 			}else{
 				$insertionStatus = FALSE;
 			}
-				
-		
+
+
 		}else{
 			$insertionStatus = FALSE;
 		}
-		
+
 		return $insertionStatus;
 	}
-	
+
 	/**
 	 * Function to check in user_group table if one row of user and group id is already saved
 	 * @param int $userId
@@ -325,18 +325,18 @@ class Course_model extends CI_Model {
 	private function checkExistingSavedUserGroup($userId, $groupId){
 		$check = array('id_user'=>$userId, 'id_group'=>$groupId);
 		$savedRelation = $this->db->get_where('user_group', $check)->row_array();
-		
+
 		$exists = count($savedRelation);
-		
+
 		if($exists > 0){
 			$relationAlreadyExists = TRUE;
 		}else{
 			$relationAlreadyExists = FALSE;
 		}
-		
+
 		return $relationAlreadyExists;
 	}
-	
+
 	/**
 	 * Function to check if a secretary is already saved in the database
 	 * @param array $secretary
@@ -344,18 +344,18 @@ class Course_model extends CI_Model {
 	 */
 	private function checkExistingSecretary($secretary){
 		$savedSecretary = $this->db->get_where('secretary_course', $secretary)->row_array();
-		
+
 		$exists = count($savedSecretary);
-		
+
 		if($exists > 0){
 			$secretaryAlreadyExists = TRUE;
 		}else{
 			$secretaryAlreadyExists = FALSE;
 		}
-		
+
 		return $secretaryAlreadyExists;
 	}
-	
+
 	/**
 	 * Delete a course by its id
 	 * @param int $id_course - The course id to be deleted
@@ -368,7 +368,7 @@ class Course_model extends CI_Model {
 		$courseWasDeleted = FALSE;
 		if($idExists){
 			$this->db->delete('course', array('id_course' => $id_course));
-			
+
 			$foundCourse = $this->getCourse(array('id_course' => $id_course));
 
 			if($foundCourse !== FALSE){
@@ -383,11 +383,11 @@ class Course_model extends CI_Model {
 
 		return $courseWasDeleted;
 	}
-	
+
 	public function deleteSecretary($id_course, $id_secretary){
 		$idCourseExists = $this->checkExistingId($id_course);
 		$idSecretaryExists = $this->checkExistingSecretaryId($id_secretary);
-		
+
 		$secretaryWasDeleted = FALSE;
 		if($idCourseExists && $idSecretaryExists){
 			$this->db->delete('secretary_course', array('id_course' => $id_course, 'id_secretary'=>$id_secretary));
@@ -395,9 +395,9 @@ class Course_model extends CI_Model {
 		}else{
 			$secretaryWasDeleted = FALSE;
 		}
-		
+
 		return $secretaryWasDeleted;
-		
+
 	}
 
 	public function cleanEnrolledStudents($idCourse){
@@ -410,27 +410,27 @@ class Course_model extends CI_Model {
 	 * @return TRUE if the id exists or FALSE if does not
 	 */
 	public function checkExistingId($course_id){
-		
+
 		$foundCourse = $this->getCourseById($course_id);
 
 		$idExists = $foundCourse !== FALSE;
 
 		return $idExists;
 	}
-	
+
 	public function checkExistingSecretaryId($secretary_id){
 		$foundSecretary = $this->getSecretaryById($secretary_id);
-		
+
 		$idExists = FALSE;
 		if(sizeof($foundSecretary) === 0){
 			$idExists = FALSE;
 		}else{
 			$idExists = TRUE;
 		}
-		
+
 		return $idExists;
 	}
-	
+
 	private function getSecretaryById($secretary_id){
 
 		$this->db->where('id_secretary',$secretary_id);
@@ -439,7 +439,7 @@ class Course_model extends CI_Model {
 
 		return $secretaryAsked;
 	}
-	
+
 	/**
 	 * Function to select one course by its unique id
 	 * @param int $id
@@ -459,10 +459,10 @@ class Course_model extends CI_Model {
 	public function getCourse($courseAttributes){
 
 		$course = $this->db->get_where('course', $courseAttributes)->row_array();
-		
+
 		$course = checkArray($course);
 
-		return $course;	
+		return $course;
 	}
 
 	public function checkIfCourseExists($courseId){
@@ -473,7 +473,7 @@ class Course_model extends CI_Model {
 
 		return $courseExists;
 	}
-	
+
 	/**
 	 * Update course attributes
 	 * @param String $id_course - The course id to be updated
@@ -485,7 +485,7 @@ class Course_model extends CI_Model {
 		$idExists = $this->checkExistingId($idCourse);
 
 		if($idExists){
-			$newCourseName = $courseToUpdate['course_name'];			
+			$newCourseName = $courseToUpdate['course_name'];
 			$courseNameHasChange = $this->checkIfCourseNameHasChanged($idCourse, $newCourseName);
 			$courseNameAlreadyExists = $this->courseNameAlreadyExists($newCourseName);
 
@@ -493,7 +493,7 @@ class Course_model extends CI_Model {
 			$courseNameIsOk = ($courseNameAlreadyExists && !$courseNameHasChange) || (!$courseNameAlreadyExists && $courseNameHasChange);
 
 			if($courseNameIsOk){
-				
+
 				$this->updateCourseOnDb($idCourse, $courseToUpdate);
 
 				$courseToUpdate['id_course'] = $idCourse;
@@ -509,13 +509,13 @@ class Course_model extends CI_Model {
 				$wasUpdated = FALSE;
 			}
 		}else{
-			
+
 			$wasUpdated = FALSE;
 		}
 
 		return $wasUpdated;
 	}
-	
+
 	public function getSecretaryByCourseId($id_course){
 
 		$secretary = $this->db->get_where("secretary_course", array('id_course' => $id_course))->result_array();
@@ -526,13 +526,13 @@ class Course_model extends CI_Model {
 	}
 
 	public function getSecretaryByUserId($id_user){
-		
+
 		$this->db->select('id_secretary, id_group, id_course');
 		$secretary = $this->db->get_where('secretary_course', array('id_user'=>$id_user))->result_array();
-			
+
 		$secretary = checkArray($secretary);
 
-		return $secretary;	
+		return $secretary;
 	}
 
 	/**
@@ -541,7 +541,7 @@ class Course_model extends CI_Model {
 	 * @return an array with the found courses or FALSE if none course is found
 	 */
 	public function getCoursesOfSecretary($userId){
-		
+
 		$this->db->distinct();
 		$this->db->select('course.*');
 		$this->db->from('course');
@@ -564,11 +564,11 @@ class Course_model extends CI_Model {
 		$secretaryId = $this->getSecretaryIdByCourseId($idCourseToUpdate);
 		$this->updateSecretary($secretaryId, $newSecretary);
 	}
-	
+
 	public function getCourseSecretaries($courseId){
-		
+
 		$secretaries = $this->db->get_where('secretary_course', array('id_course'=>$courseId))->result_array();
-		
+
 		return $secretaries;
 	}
 
@@ -593,61 +593,61 @@ class Course_model extends CI_Model {
 		$this->db->where('id_secretary', $secretaryId);
 		$this->db->update('secretary_course', $newSecretary);
 	}
-	
+
 	public function getCourseResearchLines($idCourse){
-		
+
 		$researchLines = $this->db->get_where("research_lines", array('id_course'=>$idCourse))->result_array();
-		
+
 		$researchLines = checkArray($researchLines);
-		
+
 		return $researchLines;
 	}
-	
+
 	public function getResearchLineNameById($researchLinesId){
 		$this->db->select("description");
 		$researchLinesName = $this->db->get_where("research_lines", array('id_research_line'=>$researchLinesId))->row_array();
-		
+
 		$researchLinesName = checkArray($researchLinesName);
-		
+
 		return $researchLinesName;
 	}
-	
+
 	public function saveResearchLine($newResearchLine){
-		
+
 		$wasSaved = $this->db->insert("research_lines", $newResearchLine);
-		
+
 		return $wasSaved;
 	}
-	
+
 	public function updateResearchLine($newResearchLine, $researchLineId){
 		$this->db->where('id_research_line', $researchLineId);
 		$wasUpdated = $this->db->update("research_lines", $newResearchLine);
-	
+
 		return $wasUpdated;
 	}
-	
+
 	public function removeCourseResearchLine($researchLineId){
-		
+
 		$removed = $this->db->delete("research_lines", array('id_research_line'=>$researchLineId));
-		
+
 		return $removed;
 	}
-	
+
 	public function getResearchDescription($researchId,$courseId){
 		$this->db->select('description');
 		$description = $this->db->get_where("research_lines",array('id_research_line'=>$researchId, 'id_course'=>$courseId))->row_array();
-		
+
 		return $description['description'];
 	}
-	
+
 	public function getAllResearchLines(){
 		$researchLines = $this->db->get("research_lines")->result_array();
-		
+
 		$researchLines = checkArray($researchLines);
-		
+
 		return $researchLines;
 	}
-	
+
 	/**
 	 * Update a course on DB
 	 * @param String $id_course - The course id to be updated
@@ -679,7 +679,7 @@ class Course_model extends CI_Model {
 
 	/**
 	 * Get the course name registered for a given course id
-	 * @param $id_course - The course id to look for the course name 
+	 * @param $id_course - The course id to look for the course name
 	 * @return a String with the registered course name for the given course id if found, or FALSE if does not
 	 */
 	private function getCourseNameForThisCourseId($id_course){
@@ -689,7 +689,7 @@ class Course_model extends CI_Model {
 		$foundCourseName = $searchResult->row_array();
 
 		$foundCourseName = checkArray($foundCourseName);
-		
+
 		if($foundCourseName !== FALSE){
 			$foundCourseName = $foundCourseName['course_name'];
 		}else{
@@ -719,7 +719,7 @@ class Course_model extends CI_Model {
 
 	/**
 	 * Get the course type id registered for a given course id
-	 * @param $id_course - The course id to look for the course type 
+	 * @param $id_course - The course id to look for the course type
 	 * @return a String with the registered course type for the given course id if found, or FALSE if does not
 	 */
 	private function getCourseTypeForThisCourseId($id_course){
@@ -738,7 +738,7 @@ class Course_model extends CI_Model {
 
 		return $foundCourseType;
 	}
-	
+
 	/**
 	 * Check if the given course name already exists on database
 	 * @param $courseName - The course name to check
@@ -750,7 +750,7 @@ class Course_model extends CI_Model {
 		$this->db->from('course');
 		$this->db->where('course_name', $courseName);
 		$searchResult = $this->db->get();
-		
+
 		$courseNameAlreadyExists = FALSE;
 
 		if($searchResult->num_rows() > 0){
@@ -761,5 +761,5 @@ class Course_model extends CI_Model {
 
 		return $courseNameAlreadyExists;
 	}
-	
+
 }

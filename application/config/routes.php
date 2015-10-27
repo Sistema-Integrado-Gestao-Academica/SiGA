@@ -52,8 +52,8 @@ $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
 $route['discipline'] = 'discipline/discipline_index';
 $route['discipline/(:num)'] = 'discipline/formToEditDiscipline/$1';
 $route['enrollStudent/(:num)'] = 'course/enrollStudentToCourse/$1';
-$route['funcionarios'] = 'funcionario/formulario';
-$route['funcionarios/(:num)'] = 'funcionario/formulario_altera/$1';
+$route['staffs'] = 'staff/staffsLoadPage';
+$route['staffs/(:num)'] = 'staff/editStaff/$1';
 $route['funcoes'] = 'funcao/formulario';
 $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
 $route['guest_home'] = 'usuario/guest_index';
@@ -114,6 +114,7 @@ $route['permission_test'] = 'tests/permission_test';
 $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
 $route['classHour_test'] = 'tests/ClassHour_test';
+$route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */

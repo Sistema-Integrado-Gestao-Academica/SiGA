@@ -2,7 +2,7 @@
 <h2 class="principal">Novo pagamento para Prestação de Serviços</h2>
 <hr>
 
-<?php 
+<?php
 
 $userTypes = array(
 	"Interno" => "Interno",
@@ -18,7 +18,7 @@ $legalSupport = array(
 	'style' => 'height: 70px;',
 	"maxlength" => "200",
 );
-	
+
 $resourseSource = array(
 	"name" => "resourseSource",
 	"id" => "resourseSource",
@@ -94,7 +94,7 @@ $enrollmentNumber = array(
 $arrivalInBrazil = array(
 	"name" => "arrivalInBrazil",
 	"id" => "arrivalInBrazil",
-	"type" => "date",
+	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control"
 );
@@ -162,6 +162,8 @@ $accountNumber = array(
 	"maxlength" => "15"
 );
 
+$maxValue = 8000;
+
 $totalValue = array(
 	"name" => "totalValue",
 	"id" => "totalValue",
@@ -169,16 +171,35 @@ $totalValue = array(
 	"class" => "form-campo",
 	"class" => "form-control",
 	"min" => 0,
-	"step" => 0.01
+	"step" => 0.01,
+	"max" => $maxValue
 );
 
-$period = array(
-	"name" => "period",
-	"id" => "period",
-	"type" => "text",
+$installmentsQuantity = array(
+	"name" => "installments_quantity",
+	"id" => "installments_quantity",
+	"type" => "number",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "10"
+	"min" => 1,
+	"step" => 1,
+	"max" => 5
+);
+
+$start_period = array(
+	"name" => "start_period",
+	"id" => "start_period",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control"
+);
+
+$end_period = array(
+	"name" => "end_period",
+	"id" => "end_period",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control"
 );
 
 $weekHours = array(
@@ -218,17 +239,10 @@ $serviceDescription = array(
 	"maxlength" => "300",
 );
 
-$submitBtn = array(
-	"id" => "new_payment",
-	"class" => "btn bg-olive btn-block",
-	"content" => "Cadastrar pagamento",
-	"type" => "submit"
-);
-
 ?>
 
 	<?= form_open("payment/registerPayment") ?>
-		
+
 		<?= form_hidden("expenseId", $expenseId)?>
 		<?= form_hidden("budgetplanId", $budgetplanId)?>
 
@@ -238,7 +252,7 @@ $submitBtn = array(
 
 		<div class="row">
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Tipo do usuário:", "userType") ?>
 					<?= form_dropdown("userType", $userTypes) ?>
 					<?= form_error("userType") ?>
@@ -246,7 +260,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-8">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Amparo legal (Até 200 caracteres):", "legalSupport") ?>
 					<?= form_textarea($legalSupport) ?>
 					<?= form_error("legalSupport") ?>
@@ -261,7 +275,7 @@ $submitBtn = array(
 
 		<div class="row">
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Fonte de recurso", "resourseSource") ?>
 					<?= form_input($resourseSource) ?>
 					<?= form_error("resourseSource") ?>
@@ -269,7 +283,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Centro de custo", "costCenter") ?>
 					<?= form_input($costCenter) ?>
 					<?= form_error("costCenter") ?>
@@ -277,7 +291,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Nota de dotação", "dotationNote") ?>
 					<?= form_input($dotationNote) ?>
 					<?= form_error("dotationNote") ?>
@@ -292,7 +306,7 @@ $submitBtn = array(
 
 		<div class="row">
 			<div class="col-lg-8">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Nome", "name") ?>
 					<?= form_input($name) ?>
 					<?= form_error("name") ?>
@@ -300,7 +314,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("CPF", "cpf") ?>
 					<?= form_input($cpf) ?>
 					<?= form_error("cpf") ?>
@@ -310,7 +324,7 @@ $submitBtn = array(
 
 		<div class="row">
 			<div class="col-lg-3">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Carteira de identidade", "id") ?>
 					<?= form_input($id) ?>
 					<?= form_error("id") ?>
@@ -318,7 +332,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-3">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("PIS e/ou INSS", "pisPasep") ?>
 					<?= form_input($pisPasep) ?>
 					<?= form_error("pisPasep") ?>
@@ -326,7 +340,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-3">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Matrícula", "enrollmentNumber") ?>
 					<?= form_input($enrollmentNumber) ?>
 					<?= form_error("enrollmentNumber") ?>
@@ -334,7 +348,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-3">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Chegada ao Brasil", "arrivalInBrazil") ?>
 					<?= form_input($arrivalInBrazil) ?>
 					<?= form_error("arrivalInBrazil") ?>
@@ -344,7 +358,7 @@ $submitBtn = array(
 
 		<div class="row">
 			<div class="col-lg-5">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Endereço", "address") ?>
 					<?= form_input($address) ?>
 					<?= form_error("address") ?>
@@ -352,7 +366,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("E-mail", "email") ?>
 					<?= form_input($email) ?>
 					<?= form_error("email") ?>
@@ -360,7 +374,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-3">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Telefone", "phone") ?>
 					<?= form_input($phone) ?>
 					<?= form_error("phone") ?>
@@ -398,7 +412,7 @@ $submitBtn = array(
 			</div>
 
 			<div class="col-lg-4">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Número da conta", "accountNumber") ?>
 					<?= form_input($accountNumber) ?>
 					<?= form_error("accountNumber") ?>
@@ -412,50 +426,8 @@ $submitBtn = array(
 		<br>
 
 		<div class="row">
-			<div class="col-lg-3">
-				<div class="form-group">	
-					<?= form_label("Valor total", "totalValue") ?>
-					<?= form_input($totalValue) ?>
-					<?= form_error("totalValue") ?>
-				</div>
-			</div>
-
-			<div class="col-lg-2">
-				<div class="form-group">	
-					<?= form_label("Período", "period") ?>
-					<?= form_input($period) ?>
-					<?= form_error("period") ?>
-				</div>
-			</div>
-
-			<div class="col-lg-2">
-				<div class="form-group">	
-					<?= form_label("Horas semanais", "weekHours") ?>
-					<?= form_input($weekHours) ?>
-					<?= form_error("weekHours") ?>
-				</div>
-			</div>
-
-			<div class="col-lg-2">
-				<div class="form-group">	
-					<?= form_label("Semanas", "weeks") ?>
-					<?= form_input($weeks) ?>
-					<?= form_error("weeks") ?>
-				</div>
-			</div>
-
-			<div class="col-lg-3">
-				<div class="form-group">	
-					<?= form_label("Total de horas", "totalHours") ?>
-					<?= form_input($totalHours) ?>
-					<?= form_error("totalHours") ?>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
 			<div class="col-lg-12">
-				<div class="form-group">	
+				<div class="form-group">
 					<?= form_label("Descrição detalhada dos serviços", "serviceDescription") ?>
 					<?= form_textarea($serviceDescription) ?>
 					<?= form_error("serviceDescription") ?>
@@ -464,12 +436,75 @@ $submitBtn = array(
 		</div>
 
 		<div class="row">
-			<div class="col-lg-9">
+
+			<div class="col-lg-2">
+				<div class="form-group">
+					<?= form_label("Período de início", "start_period") ?>
+					<?= form_input($start_period) ?>
+					<?= form_error("start_period") ?>
+				</div>
 			</div>
+
+			<div class="col-lg-2">
+				<div class="form-group">
+					<?= form_label("Período de fim", "end_period") ?>
+					<?= form_input($end_period) ?>
+					<?= form_error("end_period") ?>
+				</div>
+			</div>
+
+			<div class="col-lg-2">
+				<div class="form-group">
+					<?= form_label("Horas semanais", "weekHours") ?>
+					<?= form_input($weekHours) ?>
+					<?= form_error("weekHours") ?>
+				</div>
+			</div>
+
+			<div class="col-lg-2">
+				<div class="form-group">
+					<?= form_label("Semanas", "weeks") ?>
+					<?= form_input($weeks) ?>
+					<?= form_error("weeks") ?>
+				</div>
+			</div>
+
 			<div class="col-lg-3">
-				<?= form_button($submitBtn) ?>
+				<div class="form-group">
+					<?= form_label("Total de horas", "totalHours") ?>
+					<?= form_input($totalHours) ?>
+					<?= form_error("totalHours") ?>
+				</div>
 			</div>
 		</div>
+
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="form-group">
+					<?= form_label("Valor total", "totalValue") ?>
+					<?= form_input($totalValue) ?>
+					<?= form_error("totalValue") ?>
+				</div>
+			</div>
+			<div class="col-lg-3">
+				<div class="form-group">
+					<?= form_label("Quantidade de parcelas", "installments_quantity") ?>
+					<?= form_input($installmentsQuantity) ?>
+					<?= form_error("installments_quantity") ?>
+				</div>
+			</div>
+		</div>
+
+		<h3>Parcelamento <p><small> Coloque o valor total na primeira parcela se for parcela única.</small></h3>
+
+		<div class="row">
+
+		    <div id="installments_data"></div>
+
+			<div id="check_installment_result"></div>
+
+		</div>
+
 	<?= form_close() ?>
 
 <br>

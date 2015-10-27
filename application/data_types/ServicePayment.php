@@ -8,7 +8,7 @@ class ServicePayment{
 	const COMMITMENT_TERM = "Declaro-me de acordo com o valor total da proposta e forma de pagamento, nos termos que diciplinam as normas internas vigente na FUB.";
 
 	private $sheet;
-	
+
 	private $userType;
 	private $legalSupport;
 
@@ -16,7 +16,7 @@ class ServicePayment{
 	private $resourseSource;
 	private $costCenter;
 	private $dotationNote;
-	
+
 	// User identification attributes
 	private $name;
 	private $id;
@@ -35,27 +35,34 @@ class ServicePayment{
 	// Propose data
 	private $totalValue;
 	private $period;
+	private $endPeriod;
 	private $weekHours;
 	private $weeks;
 	private $totalHours;
 	private $serviceDescription;
 
+	private $installment1;
+	private $installment2;
+	private $installment3;
+	private $installment4;
+	private $installment5;
 
 	public function __construct($userType, $legalSupport, $resourseSource, $costCenter, $dotationNote, $name,
 		$id, $pisPasep, $cpf, $enrollmentNumber, $arrivalInBrazil, $phone, $email, $address, $projectDenomination, $bank,
-		$agency, $accountNumber, $totalValue, $period, $weekHours, $weeks, $totalHours, $serviceDescription){
+		$agency, $accountNumber, $totalValue, $period, $endPeriod, $weekHours, $weeks, $totalHours, $serviceDescription,
+		$installment1, $installment2, $installment3, $installment4, $installment5){
 
 		$this->userType = $userType;
 		$this->legalSupport = $legalSupport;
 
 		$this->resourseSource = $resourseSource;
 		$this->costCenter = $costCenter;
-		$this->dotationNote = $dotationNote;
-		
+		$this->dotationNote = (string) $dotationNote;
+
 		$this->name = $name;
 		$this->id = $id;
 		$this->pisPasep = $pisPasep;
-		$this->cpf = $cpf;
+		$this->cpf = (string) $cpf;
 		$this->enrollmentNumber = $enrollmentNumber;
 		$this->arrivalInBrazil = $arrivalInBrazil;
 		$this->phone = $phone;
@@ -63,15 +70,22 @@ class ServicePayment{
 		$this->address = $address;
 		$this->projectDenomination = $projectDenomination;
 		$this->bank = $bank;
-		$this->agency = $agency;
-		$this->accountNumber = $accountNumber;
+		$this->agency = (string) $agency;
+		$this->accountNumber = (string) $accountNumber;
 
 		$this->totalValue = $totalValue;
 		$this->period = $period;
+		$this->endPeriod = $endPeriod;
 		$this->weekHours = $weekHours;
 		$this->weeks = $weeks;
 		$this->totalHours = $totalHours;
 		$this->serviceDescription = $serviceDescription;
+
+		$this->installment1 = $installment1;
+		$this->installment2 = $installment2;
+		$this->installment3 = $installment3;
+		$this->installment4 = $installment4;
+		$this->installment5 = $installment5;
 	}
 
 	private function generateSheet(){
@@ -197,7 +211,7 @@ class ServicePayment{
 		$activeSheet->getStyle('E14')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('E14', $this->dotationNote());
+		$activeSheet->getCell('E14')->setValueExplicit($this->dotationNote(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('E14:G14');
 
 	// User identification
@@ -249,9 +263,9 @@ class ServicePayment{
 		$activeSheet->getStyle('B19')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('B19', $this->pisPasep());
+		$activeSheet->getCell('B19')->setValueExplicit($this->pisPasep(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('B19:C19');
-		
+
 		// User CPF
 		$activeSheet->getStyle('D18')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('D18')->getAlignment()
@@ -264,9 +278,9 @@ class ServicePayment{
 		$activeSheet->getStyle('D19')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('D19', $this->cpf());
+		$activeSheet->getCell('D19')->setValueExplicit($this->cpf(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('D19:E19');
-		
+
 		// User enrollment
 		$activeSheet->getStyle('F18')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('F18')->getAlignment()
@@ -292,7 +306,7 @@ class ServicePayment{
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('G19', $this->arrivalInBrazil());
-		
+
 		// User phone
 		$activeSheet->getStyle('A20')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('A20')->getAlignment()
@@ -306,7 +320,7 @@ class ServicePayment{
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('B20', $this->phone());
 		$activeSheet->mergeCells('B20:C20');
-		
+
 		// User bank
 		$activeSheet->getStyle('D20')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('D20')->getAlignment()
@@ -320,7 +334,7 @@ class ServicePayment{
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('E20', $this->bank());
 		$activeSheet->mergeCells('E20:G20');
-		
+
 		// User email
 		$activeSheet->getStyle('A21')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('A21')->getAlignment()
@@ -346,9 +360,9 @@ class ServicePayment{
 		$activeSheet->getStyle('E21')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('E21', $this->agency());
+		$activeSheet->getCell('E21')->setValueExplicit($this->agency(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('E21:G21');
-		
+
 		// User address
 		$activeSheet->getStyle('A22')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('A22')->getAlignment()
@@ -374,7 +388,7 @@ class ServicePayment{
 		$activeSheet->getStyle('E22')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('E22', $this->accountNumber());
+		$activeSheet->getCell('E22')->setValueExplicit($this->accountNumber(), PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->mergeCells('E22:G22');
 
 		// Project denomination
@@ -412,7 +426,7 @@ class ServicePayment{
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('A26', "R$".$this->totalValue());
-		
+
 		// Period
 		$activeSheet->getStyle('B25')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('B25')->getAlignment()
@@ -425,7 +439,7 @@ class ServicePayment{
 		$activeSheet->getStyle('B26')->getAlignment()
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-		$activeSheet->setCellValue('B26', $this->period());
+		$activeSheet->setCellValue('B26', $this->period()." - ".$this->endPeriod());
 		$activeSheet->mergeCells('B26:C26');
 
 		// Week hours
@@ -440,7 +454,7 @@ class ServicePayment{
 					->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('D26', $this->weekHours());
-		
+
 		// Weeks
 		$activeSheet->getStyle('E25')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('E25')->getAlignment()
@@ -455,7 +469,7 @@ class ServicePayment{
 					->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$activeSheet->setCellValue('E26', $this->weeks());
 		$activeSheet->mergeCells('E26:F26');
-		
+
 		// Total hours
 		$activeSheet->getStyle('G25')->getFont()->setBold(false)->setSize(9);
 		$activeSheet->getStyle('G25')->getAlignment()
@@ -483,7 +497,7 @@ class ServicePayment{
 						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
 						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 			$activeSheet->setCellValue('A28', "N. DA PARCELA");
-			
+
 			// Date
 			$activeSheet->getStyle('B28')->getFont()->setBold(false)->setSize(9);
 			$activeSheet->getStyle('B28')->getAlignment()
@@ -498,7 +512,7 @@ class ServicePayment{
 						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 			$activeSheet->setCellValue('C28', "VALOR");
 			$activeSheet->mergeCells('C28:D28');
-			
+
 			// Worked hours
 			$activeSheet->getStyle('E28')->getFont()->setBold(false)->setSize(9);
 			$activeSheet->getStyle('E28')->getAlignment()
@@ -506,18 +520,147 @@ class ServicePayment{
 						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 			$activeSheet->setCellValue('E28', "HORAS TRABALHADAS");
 			$activeSheet->mergeCells('E28:G28');
-		
-			// Blank space for installment
-			$activeSheet->mergeCells('C29:D29');	
+
+			// Installment number
+
+			$activeSheet->getStyle('A29')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('A29')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('A29', "1");
+
+
+			$activeSheet->getStyle('A30')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('A30')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('A30', "2");
+
+			$activeSheet->getStyle('A31')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('A31')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('A31', "3");
+
+			$activeSheet->getStyle('A32')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('A32')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('A32', "4");
+
+			$activeSheet->getStyle('A33')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('A33')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('A33', "5");
+
+			// Instalment 1
+			$activeSheet->getStyle('B29')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('B29')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('B29', $this->installment1()['date']);
+
+			$activeSheet->getStyle('C29')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('C29')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('C29', $this->installment1()['value']);
+			$activeSheet->mergeCells('C29:D29');
+
+			$activeSheet->getStyle('E29')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('E29')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('E29', $this->installment1()['hour']);
+			$activeSheet->mergeCells('E29:G29');
+
+			// Installment 2
+
+			$activeSheet->getStyle('B30')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('B30')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('B30', $this->installment2()['date']);
+
+			$activeSheet->getStyle('C30')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('C30')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('C30', $this->installment2()['value']);
 			$activeSheet->mergeCells('C30:D30');
+
+			$activeSheet->getStyle('E30')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('E30')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('E30', $this->installment2()['hour']);
+			$activeSheet->mergeCells('E30:G30');
+
+			// Installment 3
+
+			$activeSheet->getStyle('B31')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('B31')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('B31', $this->installment3()['date']);
+
+			$activeSheet->getStyle('C31')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('C31')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('C31', $this->installment3()['value']);
 			$activeSheet->mergeCells('C31:D31');
+
+			$activeSheet->getStyle('E31')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('E31')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('E31', $this->installment3()['hour']);
+			$activeSheet->mergeCells('E31:G31');
+
+			// Installment 4
+
+			$activeSheet->getStyle('B32')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('B32')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('B32', $this->installment4()['date']);
+
+			$activeSheet->getStyle('C32')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('C32')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('C32', $this->installment4()['value']);
 			$activeSheet->mergeCells('C32:D32');
+
+			$activeSheet->getStyle('E32')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('E32')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('E32', $this->installment4()['hour']);
+			$activeSheet->mergeCells('E32:G32');
+
+			// Installment 5
+
+			$activeSheet->getStyle('B33')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('B33')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('B33', $this->installment5()['date']);
+
+			$activeSheet->getStyle('C33')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('C33')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('C33', $this->installment5()['value']);
 			$activeSheet->mergeCells('C33:D33');
 
-			$activeSheet->mergeCells('E29:G29');
-			$activeSheet->mergeCells('E30:G30');
-			$activeSheet->mergeCells('E31:G31');
-			$activeSheet->mergeCells('E32:G32');
+			$activeSheet->getStyle('E33')->getFont()->setBold(false)->setSize(10);
+			$activeSheet->getStyle('E33')->getAlignment()
+						->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+						->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+			$activeSheet->setCellValue('E33', $this->installment5()['hour']);
 			$activeSheet->mergeCells('E33:G33');
 
 		// Service description
@@ -631,11 +774,11 @@ class ServicePayment{
 		$objWriter = PHPExcel_IOFactory::createWriter($this->sheet(), 'Excel2007');
 
 		ob_end_clean();
-		$objWriter->save('php://output');		
+		$objWriter->save('php://output');
 	}
 
 /* Getters */
-	
+
 	private function sheet(){
 		return $this->sheet;
 	}
@@ -720,6 +863,10 @@ class ServicePayment{
 		return $this->period;
 	}
 
+	public function endPeriod(){
+		return $this->endPeriod;
+	}
+
 	public function weekHours(){
 		return $this->weekHours;
 	}
@@ -734,6 +881,26 @@ class ServicePayment{
 
 	public function serviceDescription(){
 		return $this->serviceDescription;
+	}
+
+	public function installment1(){
+		return $this->installment1;
+	}
+
+	public function installment2(){
+		return $this->installment2;
+	}
+
+	public function installment3(){
+		return $this->installment3;
+	}
+
+	public function installment4(){
+		return $this->installment4;
+	}
+
+	public function installment5(){
+		return $this->installment5;
 	}
 /**/
 }

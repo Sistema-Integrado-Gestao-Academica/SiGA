@@ -40,7 +40,7 @@ class Payment_model extends CI_Model {
 			'resourseSource' => $servicePayment->resourseSource(),
 			'costCenter' => $servicePayment->costCenter(),
 			'dotationNote' => $servicePayment->dotationNote(),
-			
+
 			'name' => $servicePayment->name(),
 			'id' => $servicePayment->id(),
 			'pisPasep' => $servicePayment->pisPasep(),
@@ -57,10 +57,29 @@ class Payment_model extends CI_Model {
 
 			'totalValue' => $servicePayment->totalValue(),
 			'period' => $servicePayment->period(),
+			'end_period' => $servicePayment->endPeriod(),
 			'weekHours' => $servicePayment->weekHours(),
 			'weeks' => $servicePayment->weeks(),
 			'totalHours' => $servicePayment->totalHours(),
-			'serviceDescription' => $servicePayment->serviceDescription()
+			'serviceDescription' => $servicePayment->serviceDescription(),
+
+			'installment_date_1' => $servicePayment->installment1()['date'],
+			'installment_date_2' => $servicePayment->installment2()['date'],
+			'installment_date_3' => $servicePayment->installment3()['date'],
+			'installment_date_4' => $servicePayment->installment4()['date'],
+			'installment_date_5' => $servicePayment->installment5()['date'],
+
+			'installment_value_1' => $servicePayment->installment1()['value'],
+			'installment_value_2' => $servicePayment->installment2()['value'],
+			'installment_value_3' => $servicePayment->installment3()['value'],
+			'installment_value_4' => $servicePayment->installment4()['value'],
+			'installment_value_5' => $servicePayment->installment5()['value'],
+
+			'installment_hour_1' => $servicePayment->installment1()['hour'],
+			'installment_hour_2' => $servicePayment->installment2()['hour'],
+			'installment_hour_3' => $servicePayment->installment3()['hour'],
+			'installment_hour_4' => $servicePayment->installment4()['hour'],
+			'installment_hour_5' => $servicePayment->installment5()['hour']
 		);
 
 		$wasSaved = $this->db->insert(self::TABLE_NAME, $payment);

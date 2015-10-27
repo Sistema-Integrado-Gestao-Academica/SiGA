@@ -632,6 +632,9 @@ body > .header .logo .icon {
     Component: Sidebar
 --------------------------
 */
+.sidebar-fixed{
+	position: fixed;
+}
 .sidebar {
   margin-bottom: 5px;
 }

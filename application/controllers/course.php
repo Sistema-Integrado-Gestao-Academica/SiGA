@@ -6,12 +6,16 @@ require_once('program.php');
 require_once('graduation.php');
 require_once('ead.php');
 require_once('budgetplan.php');
+require_once('enrollment.php');
+require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/exception/CourseNameException.php");
+require_once(APPPATH."/data_types/StudentRegistration.php");
+require_once(APPPATH."/exception/StudentRegistrationException.php");
 
 class Course extends CI_Controller {
 
 	public function index() {
-		
+
 		$this->load->model('course_model');
 
 		$session = $this->session->userdata("current_user");
@@ -87,7 +91,7 @@ class Course extends CI_Controller {
 	public function enrollStudentToCourse($courseId){
 
 		$this->load->model('course_model');
-		
+
 		$course = $this->course_model->getCourseById($courseId);
 		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
 
@@ -102,29 +106,41 @@ class Course extends CI_Controller {
 	}
 
 	public function enrollStudent(){
-		
+
 		$this->load->model('course_model');
 
 		$courseId = $this->input->post('courseId');
 		$userToEnroll = $this->input->post('user_to_enroll');
-		
-		$enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date) VALUES ({$courseId}, {$userToEnroll}, NOW())";
 
-		$this->course_model->enrollStudentIntoCourse($enrollment);
-		$this->addStudentGroupToNewStudent($userToEnroll);
+		try{
+			$enrollmentController = new Enrollment();
+			$studentRegistration = $enrollmentController->newStudentEnrollmentNumber();
+			$registration = $studentRegistration->getRegistration();
 
-		$this->session->set_flashdata("success", "Aluno matriculado com sucesso");
+			$enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date, enrollment) VALUES ({$courseId}, {$userToEnroll}, NOW(), {$registration})";
+
+			$this->course_model->enrollStudentIntoCourse($enrollment);
+			$this->addStudentGroupToNewStudent($userToEnroll);
+
+			$status = "success";
+			$message = "Aluno matriculado com sucesso. Matrícula Nº <b>".$studentRegistration->getFormattedRegistration()."</b>.";
+		}catch(StudentRegistrationException $e){
+			$status = "danger";
+			$message = $e->getMessage();
+		}
+
+		$this->session->set_flashdata($status, $message);
 		redirect("secretary_home");
 	}
 
 	private function addStudentGroupToNewStudent($userId){
-		
+
 		$group = new Module();
 
-		$studentGroup = "estudante";
+		$studentGroup = GroupConstants::STUDENT_GROUP;
 		$group->addGroupToUser($studentGroup, $userId);
-		
-		$guestGroup = "convidado";
+
+		$guestGroup = GroupConstants::GUEST_GROUP;
 		$group->deleteGroupOfUser($guestGroup, $userId);
 	}
 
@@ -145,7 +161,7 @@ class Course extends CI_Controller {
 				// Code to the graduation specificities
 				break;
 			case DISTANCE_EDUCATION:
-				// Code to the EAD specificities 
+				// Code to the EAD specificities
 				break;
 			default:
 				// Function located on the helper 'forms' - Loaded by autoload
@@ -200,7 +216,7 @@ class Course extends CI_Controller {
 				$registeredProgramsForm[$currentProgram['id_program']] = $currentProgram['program_name'];
 			}
 		}else{
-			$registeredProgramsForm = FALSE;	
+			$registeredProgramsForm = FALSE;
 		}
 
 		$data = array(
@@ -210,13 +226,13 @@ class Course extends CI_Controller {
 
 		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
 	}
-	
+
 	/**
 	 * Function to load the page of a course that will be updated
 	 * @param int $id
 	 */
 	public function formToEditCourse($courseId){
-		
+
 		$this->load->model('course_model');
 		$course = $this->course_model->getCourseById($courseId);
 
@@ -234,16 +250,16 @@ class Course extends CI_Controller {
 
 		$course_controller = new Course();
 		$secretaryRegistered = $course_controller->getCourseSecrecretary($course['id_course']);
-		
+
 		$course_types = $this->db->get('course_type')->result_array();
-		
+
 		foreach ($course_types as $ct) {
 			$formCourseType[$ct['id']] = $ct['description'];
 		}
 
 		$originalCourseType = $this->course_model->getCourseTypeByCourseId($courseId);
 		$originalCourseTypeId = $originalCourseType['id'];
-		
+
 		$program = new Program();
 		$registeredPrograms = $program->getAllPrograms();
 
@@ -265,7 +281,7 @@ class Course extends CI_Controller {
 
 		loadTemplateSafelyByPermission("cursos",'course/update_course', $data);
 	}
-	
+
 	/**
 	 * Register a new course
 	 */
@@ -282,7 +298,7 @@ class Course extends CI_Controller {
 			$totalCredits = $this->input->post('course_total_credits');
 			$courseHours = $this->input->post('course_hours');
 			$courseClass = $this->input->post('course_class');
-			$courseDescription = $this->input->post('course_description');	
+			$courseDescription = $this->input->post('course_description');
 
 			$course = array(
 				'course_name' => $courseName,
@@ -306,7 +322,7 @@ class Course extends CI_Controller {
 			 * $groupsWereSaved = $this->module_model->saveNewCourseGroups($courseName);
 			 * }
 			 */
-			
+
 			if($wasSaved){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
@@ -314,28 +330,28 @@ class Course extends CI_Controller {
 				$insertStatus = "danger";
 				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
-			
+
 		}else{
 
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
 		}
-		
+
 		$this->session->set_flashdata($insertStatus, $insertMessage);
 
 		redirect('cursos');
 	}
-	
+
 	public function saveAcademicSecretary(){
-		
+
 		$academicSecretary = $this->input->post('academic_secretary');
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
-		
+
 		$this->load->model('course_model');
 		try{
 			$wasSaved = $this->course_model->saveCourseAcademicSecretary($academicSecretary, $idCourse, $courseName);
-			
+
 			if($wasSaved){
 				$saveStatus = "success";
 				$saveMessage = "Secretário acadêmico salvo com sucesso.";
@@ -348,13 +364,13 @@ class Course extends CI_Controller {
 			$saveStatus = "danger";
 			$saveMessage = $caughtException->getMessage();
 		}
-		
+
 		$this->session->set_flashdata($saveStatus, $saveMessage);
 		redirect('/course/formToEditCourse/'.$idCourse);
 	}
 
 	public function saveFinancialSecretary(){
-		
+
 		$financialSecretary = $this->input->post('financial_secretary');
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
@@ -363,7 +379,7 @@ class Course extends CI_Controller {
 
 		try{
 			$wasSaved = $this->course_model->saveCourseFinancialSecretary($financialSecretary, $idCourse, $courseName);
-			
+
 			if($wasSaved){
 				$saveStatus = "success";
 				$saveMessage = "Secretário financeiro salvo com sucesso.";
@@ -376,7 +392,7 @@ class Course extends CI_Controller {
 			$saveStatus = "danger";
 			$saveMessage = $caughtException->getMessage();
 		}
-		
+
 		$this->session->set_flashdata($saveStatus, $saveMessage);
 		redirect('/course/formToEditCourse/'.$idCourse);
 	}
@@ -406,7 +422,7 @@ class Course extends CI_Controller {
 	public function updateCourse(){
 
 		$courseDataIsOk = $this->validatesNewCourseData();
-		
+
 		if ($courseDataIsOk) {
 
 			$idCourse = $this->input->post('id_course');
@@ -418,7 +434,7 @@ class Course extends CI_Controller {
 			$courseHours = $this->input->post('course_hours');
 			$courseClass = $this->input->post('course_class');
 			$courseDescription = $this->input->post('course_description');
-		
+
 			$course = array(
 				'course_name' => $courseName,
 				'course_type_id' => $courseType,
@@ -437,7 +453,7 @@ class Course extends CI_Controller {
 			 * DEPRECATED CODE
 			 * $secretaryWasUpdated = $this->course_model->updateSecretary($secretaryToRegister['id_secretary'], $secretaryToUpdate);
 			 */
-			
+
 
 			// $dataIsOk = $courseWasUpdated && $secretaryWasUpdated;
 
@@ -453,19 +469,19 @@ class Course extends CI_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Dados na forma incorreta.";
 		}
-		
+
 		$this->session->set_flashdata($updateStatus, $updateMessage);
 		redirect('cursos');
 	}
-	
+
 	public function getResearchLineNameById($researchLinesId){
 		$this->load->model('course_model');
-		
+
 		$researchLinesName = $this->course_model->getResearchLineNameById($researchLinesId);
-		
+
 		return $researchLinesName['description'];
 	}
-	
+
 	private function cleanUpOldCourseData($idCourse, $oldCourseType){
 
 		// define("GRADUATION", "graduation");
@@ -476,26 +492,26 @@ class Course extends CI_Controller {
 		$this->load->model('course_model');
 		switch($oldCourseType){
 			case GRADUATION:
-				
+
 				$this->cleanCourseDependencies($idCourse);
 				$this->course_model->deleteCourseById($idCourse);
 				break;
-			
+
 			case EAD:
-				
+
 				$this->cleanCourseDependencies($idCourse);
 				$this->course_model->deleteCourseById($idCourse);
 				break;
-				
+
 			default:
-				
+
 				break;
 		}
 
 	}
 
 	private function cleanCourseDependencies($idCourse){
-		
+
 		// Clean all course dependencies
 		$this->cleanBudgetplan($idCourse);
 		$this->cleanEnrolledStudents($idCourse);
@@ -508,7 +524,7 @@ class Course extends CI_Controller {
 	}
 
 	private function cleanBudgetplan($idCourse){
-		
+
 		$budgetplan = new Budgetplan();
 
 		$budgetplan->deleteBudgetplanByCourseId($idCourse);
@@ -524,24 +540,24 @@ class Course extends CI_Controller {
 	 * @param string $post_graduation_type
 	 */
 	private function updateCourseToOtherCourseType($id_course, $courseType, $courseToUpdate, $commonAttributes=NULL, $post_graduation_type=NULL){
-		
+
 		switch ($courseType){
-			case GRADUATION: 
+			case GRADUATION:
 				try{
 
 					$graduation = new Graduation();
 					$insertionWasMade = $graduation->saveGraduationCourse($courseToUpdate);
 					$updateStatus = "success";
 					$updateMessage = "Curso \"{$courseToUpdate['course_name']}\" alterado com sucesso";
-					
+
 				}catch(CourseNameException $caughtException){
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
 				}
 				$this->session->set_flashdata($updateStatus, $updateMessage);
-				
+
 				break;
-			
+
 			case EAD:
 				try{
 
@@ -549,31 +565,31 @@ class Course extends CI_Controller {
 					$insertionWasMade = $ead->saveEadCourse($courseToUpdate);
 					$updateStatus = "success";
 					$updateMessage = "Curso \"{$courseToUpdate['course_name']}\" alterado com sucesso";
-					
+
 				}catch(CourseNameException $caughtException){
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
 				}
 				$this->session->set_flashdata($updateStatus, $updateMessage);
-				
+
 				break;
-			
+
 			case POST_GRADUATION:
-				try{ 
+				try{
 					$post_graduation = new PostGraduation();
 					$insertionWasMade = $post_graduation->savePostGraduationCourse($post_graduation_type, $commonAttributes, $courseToUpdate);
 					$updateStatus = "success";
 					$updateMessage = "Curso \"{$commonAttributes['course_name']}\" alterado com sucesso";
-						
+
 				}catch(CourseNameException $caughtException){
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
 				}
 				$this->session->set_flashdata($updateStatus, $updateMessage);
-				
+
 				break;
-			
-			default: 
+
+			default:
 				break;
 		}
 
@@ -618,20 +634,20 @@ class Course extends CI_Controller {
 
 		redirect('cursos');
 	}
-	
+
 	public function getCourseSecrecretary($id_course){
-		
+
 		$this->load->model('course_model');
 		$secretary = $this->course_model->getSecretaryByCourseId($id_course);
-		
+
 		return $secretary;
 	}
-	
+
 	public function deleteSecretary(){
 		$course_id = $this->input->post('id_course');
 		$secretary_id = $this->input->post('id_secretary');
 		$secretaryWasDeleted = $this->deleteSecretaryFromDb($course_id, $secretary_id);
-		
+
 		if($secretaryWasDeleted){
 			$deleteStatus = "success";
 			$deleteMessage = "Secretário excluído com sucesso.";
@@ -639,18 +655,18 @@ class Course extends CI_Controller {
 			$deleteStatus = "danger";
 			$deleteMessage = "Não foi possível excluir este secretário.";
 		}
-		
+
 		$this->session->set_flashdata($deleteStatus, $deleteMessage);
-		
+
 		redirect('/course/formToEditCourse/'.$course_id);
-		
-		
+
+
 	}
-	
+
 	private function deleteSecretaryFromDb($course_id, $secretary_id){
 		$this->load->model('course_model');
 		$deletedSecretary = $this->course_model->deleteSecretary($course_id,$secretary_id);
-		
+
 		return $deletedSecretary;
 	}
 
@@ -665,16 +681,16 @@ class Course extends CI_Controller {
 	public function getCourseStudents($courseId){
 
 		$this->load->model('course_model');
-		
+
 		$courseStudents = $this->course_model->getCourseStudents($courseId);
 
 		return $courseStudents;
 	}
 
 	public function getCourseByName($courseName){
-		
+
 		$this->load->model('course_model');
-		
+
 		$course = $this->course_model->getCourseByName($courseName);
 
 		return $course;
@@ -683,19 +699,19 @@ class Course extends CI_Controller {
 	public function getCourseById($courseId){
 
 		$this->load->model('course_model');
-		
+
 		$course = $this->course_model->getCourse(array('id_course' => $courseId));
 
 		return $course;
 	}
 
 	public function checkIfCourseExists($courseId){
-		
+
 		$this->load->model('course_model');
 
 		$courseExists = $this->course_model->checkIfCourseExists($courseId);
-		
-		return $courseExists;	
+
+		return $courseExists;
 	}
 
 	/**
@@ -704,14 +720,14 @@ class Course extends CI_Controller {
 	 * @return true if the exclusion was made right and false if does not
 	 */
 	public function deleteCourseFromDb($course_id){
-		
+
 		$this->load->model('course_model');
 
 		$deletedCourse = $this->course_model->deleteCourseById($course_id);
-		
+
 		return $deletedCourse;
 	}
-	
+
 	public function getCourseTypeByCourseId($courseId){
 
 		$this->load->model('course_model');
@@ -744,7 +760,7 @@ class Course extends CI_Controller {
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
-	
+
 	/**
 	 * Join the id's and names of course types into an array as key => value.
 	 * Used to the course type form
@@ -754,14 +770,14 @@ class Course extends CI_Controller {
 	private function turnCourseTypesToArray($course_types){
 		// Quantity of course types registered
 		$quantity_of_course_types = sizeof($course_types);
-	
+
 		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
 			$keys[$cont] = $course_types[$cont]['id_course_type'];
 			$values[$cont] = ucfirst($course_types[$cont]['course_type_name']);
 		}
-	
+
 		$form_course_types = array_combine($keys, $values);
-	
+
 		return $form_course_types;
 	}
 
