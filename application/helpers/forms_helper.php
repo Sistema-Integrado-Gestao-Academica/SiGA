@@ -596,7 +596,7 @@ function formToDefineTeacherSituation($teacherId, $courseId, $oldSituation){
 	echo form_close();
 }
 
-function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
+function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse){
 
 	$disciplineClass = array(
 		"name" => "disciplineClass",
@@ -623,7 +623,7 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers){
 		"content" => "Cadastrar turma"
 	);
 
-	echo form_open("offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}");
+	echo form_open("offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}/{$idCourse}");
 
 		echo "<div class='form-box'>";
 			echo"<div class='header'>Nova turma para oferta</div>";

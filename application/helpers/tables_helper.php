@@ -1246,7 +1246,7 @@ echo "</div>";
 
 }
 
-function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers){
+function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers, $idCourse){
 
 	if($offerDisciplineClasses !== FALSE){
 
@@ -1303,8 +1303,8 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				    	echo "</td>";
 
 				    	echo "<td>";
-		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
-		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
+		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
+		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
 				    	echo "</td>";
 
 				    echo "</tr>";
@@ -1314,7 +1314,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			echo "</div>";
 		}
 
-		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse);
 
 	}else{
 		echo "<div class=\"callout callout-info\">";
@@ -1322,7 +1322,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			echo "<p>Cadastre logo abaixo.</p>";
 		echo "</div>";
 
-		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse);
 	}
 }
 
@@ -1370,14 +1370,14 @@ function displayDisciplineHours($idOfferDiscipline){
 	}
 }
 
-function drawFullScheduleTable($offerDiscipline){
+function drawFullScheduleTable($offerDiscipline, $idCourse){
 
 	$schedule = new Schedule();
 
-	$schedule->drawFullSchedule($offerDiscipline);
+	$schedule->drawFullSchedule($offerDiscipline, $idCourse);
 }
 
-function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass){
+function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass, $idCourse){
 
 	$disciplineClass = array(
 		"name" => "disciplineClass",
@@ -1406,6 +1406,8 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	);
 
 	echo form_open("offer/updateOfferDisciplineClass/{$disciplineId}/{$idOffer}/{$offerDisciplineClass['class']}");
+
+	echo form_hidden('course', $idCourse);
 
 	echo "<div class='form-box'>";
 	echo"<div class='header'>Editar turma para oferta</div>";
@@ -1457,7 +1459,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 
 		echo "<div class='col-lg-6'>";
 		echo anchor(
-			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}",
+			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}/{$idCourse}",
 			"Voltar",
 			"class='btn bg-olive btn-block'"
 		);
@@ -1481,7 +1483,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo "<br>";
 	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
 	echo "<br>";
-	drawFullScheduleTable($offerDisciplineClass);
+	drawFullScheduleTable($offerDisciplineClass, $idCourse);
 }
 
 function displayRegisteredCoursesToProgram($programId, $courses){
@@ -2177,7 +2179,7 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    		// }else{
 				    			// 	echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar à lista de oferta de ".$course['course_name'], "class='btn btn-primary'");
 					    		// }
-								echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
+								echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
 					    	echo "</td>";
 
 					    echo "</tr>";

@@ -9,7 +9,7 @@
 <br>
 
 <?php
-		displayOfferDisciplineClasses($disciplineData['discipline_code'], $idOffer, $offerDisciplineData, $teachers);
+		displayOfferDisciplineClasses($disciplineData['discipline_code'], $idOffer, $offerDisciplineData, $teachers, $idCourse);
 
 	}else{
 ?>
@@ -19,3 +19,5 @@
 <?php
 	}
 ?>
+
+<?= anchor("offer/addDisciplines/{$idOffer}/{$idCourse}", 'Voltar', "class='btn btn-danger'")?>

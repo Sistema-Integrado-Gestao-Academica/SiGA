@@ -1,20 +1,20 @@
 
 <br>
 
-<?php 
-	
+<?php
+
 	if($disciplineData !== FALSE){
 		if($offerDisciplineData !== FALSE){
-			formToUpdateOfferDisciplineClass($disciplineData['discipline_code'], $idOffer, $teachers, $offerDisciplineData);
+			formToUpdateOfferDisciplineClass($disciplineData['discipline_code'], $idOffer, $teachers, $offerDisciplineData, $idCourse);
 		}else{
 			$status = "danger";
 			$message = "Não foi possível recuperar os dados desta turma. Tente novamente.";
 			$this->session->set_flashdata($status, $message);
-			redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}");
+			redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}");
 		}
 
 		echo anchor(
-			"offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}",
+			"offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}",
 			"Voltar",
 			"class='btn btn-danger'"
 		);
@@ -25,6 +25,6 @@
 	</div>
 <?php
 	}
-?> 
+?>
 
 

@@ -14,7 +14,7 @@ class Offer extends CI_Controller {
 	 * Used to solve problems of instance of objects in other files
 	 */
 	public function loadModel(){
-		
+
 		$this->load->model('offer_model');
 	}
 
@@ -40,13 +40,13 @@ class Offer extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível criar a lista de oferta. Tente novamente.";
 		}
-		
-		$this->session->set_flashdata($status, $message);	
+
+		$this->session->set_flashdata($status, $message);
 		redirect('usuario/secretary_offerList');
 	}
 
 	public function approveOfferList($idOffer){
-		
+
 		$this->load->model('offer_model');
 		$wasApproved = $this->offer_model->approveOfferList($idOffer);
 
@@ -61,11 +61,11 @@ class Offer extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect('usuario/secretary_offerList');
 	}
-	
-	public function deleteDisciplineClass($idOffer, $idDiscipline, $class){
+
+	public function deleteDisciplineClass($idOffer, $idDiscipline, $class, $idCourse){
 		$this->load->model('offer_model');
 		$deletedDisciplineOffer = $this->offer_model->deleteDisciplineClassOffer($idOffer, $idDiscipline,$class);
-		
+
 		if($deletedDisciplineOffer){
 			$status = "success";
 			$message = "Turma apagada da oferta.";
@@ -73,79 +73,80 @@ class Offer extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível apagar essa turma da lista de ofertas.";
 		}
-		
+
 		$this->session->set_flashdata($status, $message);
-		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}/{$idCourse}");
 	}
-	
-	public function formToUpdateDisciplineClass($idOffer, $idDiscipline, $class){
-	
+
+	public function formToUpdateDisciplineClass($idOffer, $idDiscipline, $class, $idCourse){
+
 		// Get the classe of a discipline in an offer
 		$offerDisciplineClass = $this->getCourseOfferDisciplineByClass($idDiscipline, $idOffer, $class);
-	
+
 		// Get discipline data
 		$discipline = new Discipline();
 		$disciplineData = $discipline->getDisciplineByCode($idDiscipline);
-	
+
 		// Get all teachers
 		define("TEACHER_GROUP", "docente");
-	
+
 		$group = new Module();
 		$foundGroup = $group->getGroupByName(TEACHER_GROUP);
-	
+
 		if($foundGroup !== FALSE){
 			$user = new Usuario();
 			$teachers = $user->getUsersOfGroup($foundGroup['id_group']);
-	
+
 			if($teachers !== FALSE){
-	
+
 				$allTeachers = array();
-	
+
 				foreach($teachers as $teacher){
 					$allTeachers[$teacher['id']] = $teacher['name'];
 				}
 			}else{
 				$allTeachers = FALSE;
 			}
-	
+
 		}else{
 			$allTeachers = FALSE;
 		}
-	
+
 		$data = array(
 				'disciplineData'      => $disciplineData,
 				'offerDisciplineData' => $offerDisciplineClass,
 				'idOffer'             => $idOffer,
 				'teachers'            => $allTeachers,
-				'class'               => $class
+				'class'               => $class,
+				'idCourse'			  => $idCourse
 		);
-	
+
 		loadTemplateSafelyByGroup('secretario', 'offer/offer_update_discipline_classes', $data);
-	
+
 	}
-	
+
 	public function displayOfferedDisciplines($courseId){
-		
+
 		$this->load->model('offer_model');
 
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
 
 		$offer = $this->offer_model->getOfferByCourseId($courseId, $currentSemester['id_semester']);
-		
+
 		if($offer !== FALSE){
-			$disciplines = $this->getOfferDisciplines($offer['id_offer']);	
+			$disciplines = $this->getOfferDisciplines($offer['id_offer']);
 		}else{
 			$disciplines = FALSE;
 		}
-		
+
 		return $disciplines;
 	}
 
 	public function displayDisciplines($idOffer, $courseId){
-		
+
 		$disciplines = $this->getOfferDisciplines($idOffer);
-		
+
 		$course = new Course();
 		$offerCourse = $course->getCourseById($courseId);
 
@@ -157,8 +158,8 @@ class Offer extends CI_Controller {
 
 		loadTemplateSafelyByGroup('secretario', 'offer/new_offer', $offerData);
 	}
-	
-	public function displayDisciplineClasses($idDiscipline, $idOffer){
+
+	public function displayDisciplineClasses($idDiscipline, $idOffer, $idCourse){
 
 		// Get the classes of a discipline in an offer
 		$this->load->model('offer_model');
@@ -195,13 +196,14 @@ class Offer extends CI_Controller {
 			'disciplineData' => $disciplineData,
 			'offerDisciplineData' => $offerDisciplineClasses,
 			'idOffer' => $idOffer,
-			'teachers' => $allTeachers
+			'teachers' => $allTeachers,
+			'idCourse' => $idCourse
 		);
 
 		loadTemplateSafelyByGroup('secretario', 'offer/offer_discipline_classes', $data);
 	}
 
-	public function newOfferDisciplineClass($idDiscipline, $idOffer){
+	public function newOfferDisciplineClass($idDiscipline, $idOffer, $idCourse){
 
 		$dataIsOk = $this->validateDisciplineClassData();
 
@@ -235,7 +237,7 @@ class Offer extends CI_Controller {
 			}else{
 				// Nothing to do because was not chosen a secondary teacher
 			}
-			
+
 			$this->load->model('offer_model');
 			$wasSaved = $this->offer_model->addOfferDisciplineClass($classData);
 
@@ -251,25 +253,26 @@ class Offer extends CI_Controller {
 			$status = "danger";
 			$message = "Dados na forma incorreta.";
 		}
-		
+
 		$this->session->set_flashdata($status, $message);
 
-		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}/{$idCourse}");
 	}
-	
+
 	public function updateOfferDisciplineClass($idDiscipline, $idOffer, $oldClass){
-		
+
+		$idCourse = $this->input->post('course');
 		$dataIsOk = $this->validateDisciplineClassData();
-		
+
 		if($dataIsOk){
 			$disciplineClass = $this->input->post('disciplineClass');
 			$totalVacancies = $this->input->post('totalVacancies');
 			$mainTeacher = $this->input->post('mainTeacher');
 			$secondaryTeacher = $this->input->post('secondaryTeacher');
-			
+
 			// As this code is only reached when the offer list is proposed, the current vacancies does not change
 			$currentVacancies = $totalVacancies;
-			
+
 			$classData = array(
 				'id_offer' => $idOffer,
 				'id_discipline' => $idDiscipline,
@@ -278,7 +281,7 @@ class Offer extends CI_Controller {
 				'current_vacancies' => $currentVacancies,
 				'main_teacher' => $mainTeacher
 			);
-				
+
 			define("NONE_TEACHER_OPTION", 0);
 
 			if($secondaryTeacher != NONE_TEACHER_OPTION){
@@ -290,10 +293,10 @@ class Offer extends CI_Controller {
 			}else{
 				$classData['secondary_teacher'] = NULL;
 			}
-			
+
 			$this->load->model('offer_model');
 			$wasUpdated = $this->offer_model->updateOfferDisciplineClass($classData, $oldClass);
-			
+
 		if($wasUpdated){
 				$status = "success";
 				$message = "Turma alterada com sucesso.";
@@ -301,17 +304,17 @@ class Offer extends CI_Controller {
 				$status = "danger";
 				$message = "Não foi possível alterar essa turma. Cheque os dados informados, não é possível cadastrar uma turma que já existe.";
 			}
-			
+
 		}else{
 			$status = "danger";
 			$message = "Dados na forma incorreta. Cheque os dados informados.<br> Informe apenas letras para a turma.";
 		}
-		
+
 		$this->session->set_flashdata($status, $message);
-		
-		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}");
+
+		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}/{$idCourse}");
 	}
-	
+
 	private function validateDisciplineClassData(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("disciplineClass", "Turma", "required|alpha");
@@ -325,9 +328,9 @@ class Offer extends CI_Controller {
 	}
 
 	public function removeDisciplineFromOffer($idDiscipline, $idOffer, $idCourse){
-		
+
 		$this->load->model('offer_model');
-		
+
 		$wasRemoved = $this->offer_model->removeDisciplineFromOffer($idDiscipline, $idOffer);
 
 		if($wasRemoved){
@@ -338,7 +341,7 @@ class Offer extends CI_Controller {
 			$message = "Não foi possível retirar essa disciplina. Cheque os códigos informados.";
 		}
 
-		$this->session->set_flashdata($status, $message);	
+		$this->session->set_flashdata($status, $message);
 		redirect("offer/addDisciplines/{$idOffer}/{$idCourse}");
 	}
 
@@ -378,7 +381,7 @@ class Offer extends CI_Controller {
 	}
 
 	public function getOfferDisciplineById($idOfferDiscipline){
-		
+
 		$this->load->model('offer_model');
 
 		$foundOfferDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
@@ -414,7 +417,7 @@ class Offer extends CI_Controller {
 	}
 
 	private function getOfferDisciplines($idOffer){
-		
+
 		$this->load->model('offer_model');
 
 		$disciplines = $this->offer_model->getOfferDisciplines($idOffer);
@@ -423,7 +426,7 @@ class Offer extends CI_Controller {
 	}
 
 	public function getCourseOfferList($courseId, $semester){
-		
+
 		$this->load->model('offer_model');
 
 		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
@@ -434,7 +437,7 @@ class Offer extends CI_Controller {
 	public function getOfferBySemesterAndCourse($semesterId, $courseId){
 
 		$this->load->model('offer_model');
-		
+
 		$offer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
 
 		return $offer;
