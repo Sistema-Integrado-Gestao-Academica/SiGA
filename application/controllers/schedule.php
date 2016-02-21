@@ -170,7 +170,7 @@ class Schedule extends CI_Controller {
 		echo form_close();
 		/*DO NOT REMOVE IT*/
 
-		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<div id='class_hour_table' class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
 			    echo "<tr>";
@@ -183,10 +183,9 @@ class Schedule extends CI_Controller {
 			        echo "<th class=\"text-center\">Sábado</th>";
 			    echo "</tr>";
 
-			    define("MAX_COLUMN", 6);
-			    define("MAX_ROW", 9);
+			    define("MAX_COLUMN", ClassHour::MAX_DAY);
+			    define("MAX_ROW", ClassHour::MAX_HOUR);
 			    define("HOUR_INTERVAL_OF_CLASS", 2);
-			    $hour = 6;
 
 			    // Consider 'i x j' as 'line x column'
 			    for($i = 1; $i <= MAX_ROW; $i++){
@@ -197,10 +196,11 @@ class Schedule extends CI_Controller {
 					    	// First column
 					    	if($j === 0){
 
+					    		$currentClassHour = new ClassHour($i, $j+1);
+
 							    echo "<td>";
-							    echo $hour."-".($hour + HOUR_INTERVAL_OF_CLASS);
+							    echo $currentClassHour->getHourPair();
 							    echo "</td>";
-							    $hour = $hour + 2;
 					    	}else{
 							    echo "<td>";
 

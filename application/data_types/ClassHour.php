@@ -14,7 +14,7 @@ class ClassHour{
 	private $day; // Day of the week that this class happens (References the column 'j')
 	private $local; // Local where class happens
 
-	const MAX_HOUR = 9;
+	const MAX_HOUR = 6;
 	const MIN_HOUR = 1;
 	const MAX_DAY = 6;
 	const MIN_DAY = 1;
@@ -26,7 +26,7 @@ class ClassHour{
 	const FRIDAY = "Sexta";
 	const SATURDAY = "Sábado";
 
-	const ERR_INVALID_HOUR = "Hour out of range 1-9";
+	const ERR_INVALID_HOUR = "Hour out of range 1-7";
 	const ERR_INVALID_DAY = "Day out of range 1-6";
 	const ERR_INVALID_LOCAL = "Local of class must be a string or NULL";
 
@@ -117,6 +117,21 @@ class ClassHour{
 		return $dayHourPair;
 	}
 
+	public function getHourPair(){
+
+		$hour = $this->getHour();
+
+		try{
+
+			$hourPair = $this->convertHour($hour);
+		}catch(ClassHourException $caughException){
+
+			$hourPair = "";
+		}
+
+		return $hourPair;
+	}
+
 	private function convertToDayHourPair($hour, $day){
 
 		try{
@@ -140,39 +155,27 @@ class ClassHour{
 
 		switch($hour){
 			case 1:
-				$convertedHour = "06h-07:50h";
-				break;
-
-			case 2:
 				$convertedHour = "08h-09:50h";
 				break;
 
-			case 3:
+			case 2:
 				$convertedHour = "10h-11:50h";
 				break;
 
-			case 4:
-				$convertedHour = "12h-13:50h";
-				break;
-
-			case 5:
+			case 3:
 				$convertedHour = "14h-15:50h";
 				break;
 
-			case 6:
+			case 4:
 				$convertedHour = "16h-17:50h";
 				break;
 
-			case 7:
-				$convertedHour = "18h-19:50h";
+			case 5:
+				$convertedHour = "19h-20:50h";
 				break;
 
-			case 8:
-				$convertedHour = "20h-21:50h";
-				break;
-
-			case 9:
-				$convertedHour = "22h-23:50h";
+			case 6:
+				$convertedHour = "21h-22:50h";
 				break;
 
 			default:
