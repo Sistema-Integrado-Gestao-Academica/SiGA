@@ -61,7 +61,7 @@ class TemporaryRequest extends CI_Controller {
 			$message = "Não foi possível confirmar sua matrícula, tente novamente.";
 			$status = "danger";
 		}
-		
+
 		$this->session->set_flashdata($status, $message);
 
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
@@ -73,8 +73,8 @@ class TemporaryRequest extends CI_Controller {
 
 		$wasCleaned = $this->temporaryrequest_model->cleanUserTempRequest($userId, $courseId, $semesterId);
 
-		return $wasCleaned;		
-	}	
+		return $wasCleaned;
+	}
 
 	public function getUserTempRequest($userId, $courseId, $semesterId){
 
@@ -85,132 +85,148 @@ class TemporaryRequest extends CI_Controller {
 		return $request;
 	}
 
-	public function addTempDisciplinesToRequest(){
+	// Used by ajax request
+	public function searchDisciplinesToRequest(){
 
-		$this->load->model('temporaryrequest_model');
-
+		$disciplineName = $this->input->post('disciplineName');
 		$courseId = $this->input->post('courseId');
 		$userId = $this->input->post('userId');
 
-		$dataIsOk = $this->validateTempDisciplineData();
+		// Semester data
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+		$semesterId = $currentSemester['id_semester'];
 
-		if($dataIsOk){
+		// Offer data
+		$offer = new Offer();
+		$courseOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
 
-			$disciplineCode = $this->input->post('discipline_code_search');
-			$semesterId = $this->input->post('semesterId');
+		if($courseOffer !== FALSE){
 
-			$offer = new Offer();
-			$courseOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+			$offerId = $courseOffer['id_offer'];
 
-			if($courseOffer !== FALSE){
-				$disciplineExistsInOfferList = $offer->disciplineExistsInOffer($disciplineCode, $courseOffer['id_offer']);
-			}else{
-				$disciplineExistsInOfferList = FALSE;
-			}
-
-			if($disciplineExistsInOfferList){
-
-				$disciplineClass = $this->input->post('discipline_class_search');
-
-				$classExists = $offer->checkIfClassExistsInDiscipline($courseOffer['id_offer'], $disciplineCode, $disciplineClass);
-
-				if($classExists){
-					
-					$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineCode, $courseOffer['id_offer'], $disciplineClass);
-					
-					if($offerDiscipline !== FALSE){
-
-						$idOfferDiscipline = $offerDiscipline['id_offer_discipline'];
-
-						$userTempRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);
-
-						$tryToSave = FALSE;
-						if($userTempRequest !== FALSE){
-
-							// Get the requested discipline hours
-							$schedule = new Schedule();
-							$schedule->getDisciplineHours($idOfferDiscipline);
-							$requestedDisciplineSchedule = $schedule->getDisciplineSchedule();
-
-							// Get disciplines hours from already inserted to resquest disciplines
-							$insertedDisciplines = array();
-							foreach($userTempRequest as $registeredRequest){
-								
-								$schedule = new Schedule();
-								$schedule->getDisciplineHours($registeredRequest['discipline_class']);
-								$disciplineSchedule = $schedule->getDisciplineSchedule();
-
-								$insertedDisciplines[] = $disciplineSchedule;
-							}
-
-							$conflicts = $schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
-
-							$tryToSave = FALSE;
-							if($conflicts !== FALSE){
-								$status = "danger";
-								$message = "Não foi possível adicionar a disciplina pedida porque houve conflito de horários com disciplinas já adicionadas.<br>
-								<i>Conflito no horário <b>".$conflicts->getDayHourPair()."</b>.</i>";
-							}else{
-								$tryToSave = TRUE;
-							}
-						}else{
-							// In this case there is no discipline added to temp request, so is not a problem to add
-							$tryToSave = TRUE;
-						}
-
-						if($tryToSave){
-							$requestWasSaved = $this->saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $idOfferDiscipline);
-
-							if($requestWasSaved){
-								$status = "success";
-								$message = "Disciplina adicionada com sucesso à solicitação";
-							}else{
-								$status = "danger";
-								$message = "Não foi possível adicionar a disciplina informada.
-											 Cheque os dados informados e tente novamente.<br>	
-											 Não é possível adicionar a mesma turma de uma disciplina várias vezes.";
-							}
-						}
-
-					}else{
-						$status = "danger";
-						$message = "Não foi possível adicionar a disciplina informada.
-									 Cheque os dados informados e tente novamente.<br>	
-									 Não é possível adicionar a mesma turma de uma disciplina várias vezes.";
-					}
-
-				}else{
-					$status = "danger";
-					$message = "Turma não encontrada para disciplina informada.";
-				}
-
-			}else{
-				$status = "danger";
-				$message = "Disciplina não encontrada na lista de oferta do seu curso.";
-			}
+			$discipline = new Discipline();
+			$disciplinesClasses = $discipline->getClassesByDisciplineName($disciplineName, $offerId);
 
 		}else{
-			$status = "danger";
-			$message = "Dados na forma incorreta. Informe apenas números para o código e letras para a turma.";
+			$disciplineClasses = FALSE;
 		}
-		
+
+		if($disciplinesClasses !== FALSE){
+
+			echo "<div class=\"box-body table-responsive no-padding\">";
+			echo "<table class=\"table table-bordered table-hover\">";
+			echo "<tbody>";
+
+				echo "<tr>";
+				echo "<th class=\"text-center\">Código</th>";
+				echo "<th class=\"text-center\">Disciplina</th>";
+				echo "<th class=\"text-center\">Turma</th>";
+				echo "<th class=\"text-center\">Vagas restantes</th>";
+				echo "<th class=\"text-center\">Ações</th>";
+				echo "</tr>";
+
+					foreach($disciplinesClasses as $class){
+						echo "<tr>";
+							echo "<td>";
+							echo $class['id_offer_discipline'];
+							echo "</td>";
+
+							echo "<td>";
+							echo $class['discipline_name']."-".$class["name_abbreviation"];
+							echo "</td>";
+
+							echo "<td>";
+							echo $class['class'];
+							echo "</td>";
+
+							echo "<td>";
+							echo $class['current_vacancies'];
+							echo "</td>";
+
+							echo "<td>";
+							echo anchor("temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}","Adicionar à matrícula", "class='btn btn-primary'");
+							echo "</td>";
+						echo "</tr>";
+					}
+
+			echo "</tbody>";
+			echo "</table>";
+			echo "</div>";
+
+		}else{
+
+			echo "<div class='callout callout-info'>";
+			echo "<h4>Não foram encontradas disciplinas com o nome '".$disciplineName."' para a oferta do semestre atual.</h4>";
+			echo "</div>";
+		}
+	}
+
+	public function addTempDisciplineToRequest($idOfferDiscipline, $courseId, $userId){
+
+		$this->load->model('temporaryrequest_model');
+
+		// Semester data
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+		$semesterId = $currentSemester['id_semester'];
+
+		$userTempRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);
+
+		$tryToSave = FALSE;
+		if($userTempRequest !== FALSE){
+
+			// Get the requested discipline hours
+			$schedule = new Schedule();
+			$schedule->getDisciplineHours($idOfferDiscipline);
+			$requestedDisciplineSchedule = $schedule->getDisciplineSchedule();
+
+			// Get disciplines hours from already inserted to resquest disciplines
+			$insertedDisciplines = array();
+			foreach($userTempRequest as $registeredRequest){
+
+				$schedule = new Schedule();
+				$schedule->getDisciplineHours($registeredRequest['discipline_class']);
+				$disciplineSchedule = $schedule->getDisciplineSchedule();
+
+				$insertedDisciplines[] = $disciplineSchedule;
+			}
+
+			$conflicts = $schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
+
+			$tryToSave = FALSE;
+			if($conflicts !== FALSE){
+				$status = "danger";
+				$message = "Não foi possível adicionar a disciplina pedida porque houve conflito de horários com disciplinas já adicionadas.<br>
+				<i>Conflito no horário <b>".$conflicts->getDayHourPair()."</b>.</i>";
+			}else{
+				$tryToSave = TRUE;
+			}
+		}else{
+			// In this case there is no discipline added to temp request, so is not a problem to add
+			$tryToSave = TRUE;
+		}
+
+		if($tryToSave){
+			$requestWasSaved = $this->saveTempRequest($userId, $courseId, $semesterId, $idOfferDiscipline);
+
+			if($requestWasSaved){
+				$status = "success";
+				$message = "Disciplina adicionada com sucesso à solicitação";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível adicionar a disciplina informada.
+							 Cheque os dados informados e tente novamente.<br>
+							 Não é possível adicionar a mesma turma de uma disciplina várias vezes.";
+			}
+		}
+
 		$this->session->set_flashdata($status, $message);
 
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}
 
-	private function validateTempDisciplineData(){
-
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("discipline_code_search", "Código da disciplina", "required");
-		$this->form_validation->set_rules("discipline_class_search", "Turma da disciplina", "required|alpha");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$status = $this->form_validation->run();
-
-		return $status;
-	}
-
-	private function saveTempRequest($userId, $courseId, $semesterId, $disciplineCode, $idOfferDiscipline){
+	private function saveTempRequest($userId, $courseId, $semesterId, $idOfferDiscipline){
 
 		$this->load->model('temporaryrequest_model');
 
@@ -229,12 +245,12 @@ class TemporaryRequest extends CI_Controller {
 		}else{
 			$requestWasSaved = FALSE;
 		}
-		
+
 		return $requestWasSaved;
 	}
 
 	public function removeDisciplineFromTempRequest($userId, $courseId, $semesterId, $disciplineId, $disciplineClass){
-		
+
 		$this->load->model('temporaryrequest_model');
 
 		$offer = new Offer();
@@ -247,7 +263,7 @@ class TemporaryRequest extends CI_Controller {
 		}
 
 		if($offerDiscipline !== FALSE){
-			
+
 			$idOfferDiscipline = $offerDiscipline['id_offer_discipline'];
 
 			$requestToRemove = array(
@@ -282,7 +298,7 @@ class TemporaryRequest extends CI_Controller {
 		$this->load->model('temporaryrequest_model');
 
 		$requestWasRemoved = $this->temporaryrequest_model->removeTempRequest($requestToRemove);
-		
+
 		return $requestWasRemoved;
 	}
 }
