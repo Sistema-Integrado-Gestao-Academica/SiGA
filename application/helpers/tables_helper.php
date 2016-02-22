@@ -857,6 +857,7 @@ function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idS
 function displayMastermindStudentRequest($requests, $idMastermind){
 
 	$user = new Usuario();
+	$user->loadModel();
 
 	echo "<br>";
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
@@ -876,6 +877,8 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 
 				if($requests !== FALSE){
 
+					$offer = new Offer();
+
 					foreach($requests as $request){
 
 						if ($request !== FALSE){
@@ -883,6 +886,17 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 							foreach ($request as $studentRequest){
 
 								$requestId = $studentRequest['id_request'];
+
+								$semesterId = $studentRequest['id_semester'];
+								$courseId = $studentRequest['id_course'];
+								$requestedOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+								if($requestedOffer !== FALSE){
+									$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
+								}else{
+									// Assume that is true
+									$needsMastermindApproval = TRUE;
+								}
 
 								$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
@@ -906,7 +920,11 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 								$status = switchRequestGeneralStatus($studentRequest['request_status']);
 
 								if($requestIsApprovedByMastermind){
-									$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
+									if($needsMastermindApproval){
+										$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
+									}else{
+										$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
+									}
 									echo $status;
 								}else{
 									echo $status;
@@ -943,15 +961,22 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 								echo "<td rowspan=2>";
 									if($requestIsApprovedByMastermind){
 
-										$mastermind = new MasterMind();
+										if($needsMastermindApproval){
 
-										$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
+											$mastermind = new MasterMind();
 
-										$isFinalized = TRUE;
-										echo "<div class=\"callout callout-warning\">";
-											mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
-											echo "<p><i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i></p>";
-										echo "</div>";
+											$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
+
+											$isFinalized = TRUE;
+											echo "<div class=\"callout callout-warning\">";
+												mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
+												echo "<p><i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i></p>";
+											echo "</div>";
+										}else{
+											echo "<div class=\"callout callout-warning\">";
+												echo "<p><i>O tipo da oferta não permite a ação do orientador.</i></p>";
+											echo "</div>";
+										}
 
 									}else{
 										$isFinalized = FALSE;
