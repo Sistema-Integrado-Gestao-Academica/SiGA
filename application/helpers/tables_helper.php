@@ -2116,9 +2116,20 @@ function displayOffersList($offers){
 
 function displayOfferDisciplines($idOffer, $course, $disciplines){
 
+	$offer = new Offer();
+	$offerData = $offer->getOffer($idOffer);
+
 	echo "<h2 class='principal'>Lista de Oferta</h2>";
 	echo "<h3><b>Curso</b>: ".$course['course_name']."</h3>";
 
+	if($offerData['needs_mastermind_approval'] === EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL){
+		$needsMastermindApproval = "Sim";
+	}else{
+		$needsMastermindApproval = "Não";
+	}
+	echo "<h4><b>Necessita de aprovação do orientador?</b>: ".$needsMastermindApproval."</h3>";
+
+	echo "<br>";
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";

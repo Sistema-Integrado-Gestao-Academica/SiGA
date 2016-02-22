@@ -16,13 +16,13 @@ class Offer_model extends CI_Model {
 
 		return $wasSaved;
 	}
-	
+
 	public function deleteDisciplineClassOffer($idOffer, $idDiscipline, $class){
-		$disciplineOfferToDelete = array('id_offer' => $idOffer, 'id_discipline' => $idDiscipline, 'class' => $class); 
+		$disciplineOfferToDelete = array('id_offer' => $idOffer, 'id_discipline' => $idDiscipline, 'class' => $class);
 		$deletedDisciplineOffer = $this->db->delete('offer_discipline', $disciplineOfferToDelete);
 		return $deletedDisciplineOffer;
 	}
-	
+
 	public function approveOfferList($idOffer){
 
 		define("APPROVED", "approved");
@@ -56,7 +56,7 @@ class Offer_model extends CI_Model {
 	}
 
 	private function changeOfferStatus($idOffer, $newStatus){
-		
+
 		$this->db->where('id_offer', $idOffer);
 		$this->db->update('offer', array('offer_status' => $newStatus));
 	}
@@ -87,6 +87,17 @@ class Offer_model extends CI_Model {
 		return $status;
 	}
 
+	public function getOffer($idOffer){
+
+		$searchResult = $this->db->get_where('offer', array('id_offer' => $idOffer));
+
+		$foundOffer = $searchResult->row_array();
+
+		$foundOffer = checkArray($foundOffer);
+
+		return $foundOffer;
+	}
+
 	public function getOfferBySemesterAndCourse($semester, $course){
 		$searchResult = $this->db->get_where('offer', array('semester' => $semester, 'course' => $course));
 		$foundOffer = $searchResult->row_array();
@@ -101,7 +112,7 @@ class Offer_model extends CI_Model {
 		$offerDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
 
 		if($offerDiscipline !== FALSE){
-			
+
 			define("MIN_VACANCY_QUANTITY_TO_ENROLL", 1);
 
 			$currentVacancies = $offerDiscipline['current_vacancies'];
@@ -132,7 +143,7 @@ class Offer_model extends CI_Model {
 			if($currentVacancies != NO_VACANCY){
 
 				$newQuantityOfVacancies = $currentVacancies - 1;
-				
+
 				$this->updateOfferDiscipline($idOfferDiscipline, array('current_vacancies' => $newQuantityOfVacancies));
 
 				// At this point, the offer_discipline exists because was checked on the firs 'if'
@@ -174,14 +185,14 @@ class Offer_model extends CI_Model {
 	}
 
 	public function getCourseOfferDisciplineByClass($disciplineId, $offerId, $disciplineClass){
-	
+
 		$offerDiscipline = $this->getClass($disciplineId, $offerId, $disciplineClass);
 
 		return $offerDiscipline;
 	}
 
 	public function getOfferDisciplineById($idOfferDiscipline){
-		
+
 		$searchResult = $this->db->get_where('offer_discipline', array('id_offer_discipline' => $idOfferDiscipline));
 		$foundOfferDiscipline = $searchResult->row_array();
 
@@ -212,13 +223,13 @@ class Offer_model extends CI_Model {
 	}
 
 	public function getOfferByCourseId($courseId, $semester){
-		
+
 		$this->db->select('id_offer');
 		$this->db->from('offer');
 		$this->db->where('course', $courseId);
 		$this->db->where('semester', $semester);
 		$offer = $this->db->get()->row_array();
-		
+
 		$offer = checkArray($offer);
 
 		return $offer;
@@ -226,7 +237,7 @@ class Offer_model extends CI_Model {
 
 	public function getOfferDisciplineClasses($idDiscipline, $idOffer){
 
-		$disciplineClasses = $this->getOfferDiscipline($idDiscipline, $idOffer);	
+		$disciplineClasses = $this->getOfferDiscipline($idDiscipline, $idOffer);
 
 		return $disciplineClasses;
 	}
@@ -242,7 +253,7 @@ class Offer_model extends CI_Model {
 		$dataIsOk = $offerExists && $disciplineExists && (!$classAlreadyExists);
 
 		if($dataIsOk){
-			
+
 			$this->saveOfferDisciplineClass($classData);
 
 			$registeredClass = $this->getOfferDisciplineClass($classData);
@@ -252,21 +263,21 @@ class Offer_model extends CI_Model {
 			}else{
 				$wasSaved = FALSE;
 			}
-			
+
 		}else{
 			$wasSaved = FALSE;
 		}
 
 		return $wasSaved;
 	}
-	
+
 	public function updateOfferDisciplineClass($classData, $oldClass){
 
 		$offerExists = $this->checkIfOfferExists($classData['id_offer']);
-		
+
 		$this->load->model('discipline_model');
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
-		
+
 		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
 		$classHasChanged = $classData['class'] !== $oldClass;
 
@@ -274,9 +285,9 @@ class Offer_model extends CI_Model {
 		$classIsOk = ($classAlreadyExists && !$classHasChanged) || (!$classAlreadyExists && $classHasChanged);
 
 		$dataIsOk = $offerExists && $disciplineExists && $classIsOk;
-		
+
 		if($dataIsOk){
-			$updated = $this->updateOfferDisciplineClassOnDb($classData, $oldClass);	
+			$updated = $this->updateOfferDisciplineClassOnDb($classData, $oldClass);
 
 			if ($updated !== FALSE){
 				$wasUpdatedSafely = TRUE;
@@ -286,26 +297,26 @@ class Offer_model extends CI_Model {
 		}else{
 			$wasUpdatedSafely = FALSE;
 		}
-		
+
 		return $wasUpdatedSafely;
 	}
-	
+
 	private function updateOfferDisciplineClassOnDb($classData, $oldClass){
 		$where = array('id_offer' => $classData['id_offer'], 'id_discipline' => $classData['id_discipline'], 'class' => $oldClass);
-		
+
 		$this->db->where($where);
 		$updated = $this->db->update('offer_discipline', $classData);
-		
+
 		return $updated;
 	}
-	
+
 	public function checkIfClassExistsInDiscipline($offerId, $disciplineId, $classToCheck){
-	
+
 		$classExists = $this->checkIfClassExists($offerId, $disciplineId, $classToCheck);
-	
+
 		return $classExists;
 	}
-	
+
 	private function checkIfClassExists($idOffer, $idDiscipline, $classToCheck){
 
 		$foundClass = $this->getClass($idDiscipline, $idOffer, $classToCheck);
@@ -433,7 +444,7 @@ class Offer_model extends CI_Model {
 	}
 
 	private function getProposedOffers(){
-		
+
 		$searchResult = $this->db->get_where('offer', array('offer_status' => "proposed"));
 		$foundOffer = $searchResult->row_array();
 
@@ -453,9 +464,9 @@ class Offer_model extends CI_Model {
 	}
 
 	public function getOfferSemester($offerId){
-		
+
 		$offerExists = $this->checkIfOfferExists($offerId);
-		
+
 		if($offerExists){
 
 			$searchResult = $this->db->get_where('semester', array('offer' => $offerId));

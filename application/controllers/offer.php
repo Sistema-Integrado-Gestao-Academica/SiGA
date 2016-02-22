@@ -392,9 +392,9 @@ class Offer extends CI_Controller {
 
 		$this->load->model('offer_model');
 
-		$foundOfferDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
+		$foundOffer = $this->offer_model->getOffer($idOffer);
 
-		return $foundOfferDiscipline;
+		return $foundOffer;
 	}
 
 	public function getOfferDisciplineById($idOfferDiscipline){
