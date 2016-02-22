@@ -24,9 +24,9 @@ class Request extends CI_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");		
+		redirect("request/courseRequests/{$courseId}");
 	}
-	
+
 	public function refuseAllRequest($requestId, $courseId){
 
 		$this->load->model("request_model");
@@ -42,16 +42,16 @@ class Request extends CI_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");	
+		redirect("request/courseRequests/{$courseId}");
 	}
 
 
 	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
 
 		$this->load->model("request_model");
-		
+
 		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($requestId);
-		
+
 		if($wasApproved){
 			$status = "success";
 			$message = "Toda a solicitação foi aprovada com sucesso.";
@@ -59,19 +59,19 @@ class Request extends CI_Controller {
 			$status = "danger";
 			$message = "Toda a solicitação não pôde ser aprovada.";
 		}
-		
+
 		// $this->redirectToCurrentUserRequests($status, $message);
 		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
 	}
-	
+
 
 	public function refuseAllStudentRequestsByMastermind($requestId, $studentId){
 
 		$this->load->model("request_model");
-		
+
 		$wasRefused = $this->request_model->mastermindRefuseAllCurrentStudentRequest($requestId);
-		
+
 		if($wasRefused){
 			$status = "success";
 			$message = "Toda a solicitação foi reprovada com sucesso.";
@@ -79,7 +79,7 @@ class Request extends CI_Controller {
 			$status = "danger";
 			$message = "Toda a solicitação não pôde ser reprovada.";
 		}
-		
+
 		// $this->redirectToCurrentUserRequests($status, $message);
 		$this->session->set_flashdata($status, $message);
 		redirect('mastermind');
@@ -88,10 +88,10 @@ class Request extends CI_Controller {
 	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
-		
+
 		redirect("request/courseRequests/{$courseId}");
 	}
-	
+
 	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
 
 		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
@@ -102,7 +102,7 @@ class Request extends CI_Controller {
 	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
-		
+
 		redirect("mastermind");
 	}
 
@@ -114,7 +114,7 @@ class Request extends CI_Controller {
 	}
 
 	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
-		
+
 		$this->load->model("request_model");
 
 		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
@@ -127,9 +127,9 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		$this->session->set_flashdata($status, $message);			
+		$this->session->set_flashdata($status, $message);
 	}
-	
+
 	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea){
 
 		$this->load->model("request_model");
@@ -171,9 +171,9 @@ class Request extends CI_Controller {
 			$status = "danger";
 			$message = "A solicitação não pôde ser finalizada.";
 		}
-		
+
 		$this->session->set_flashdata($status, $message);
-		redirect("request/courseRequests/{$courseId}");	
+		redirect("request/courseRequests/{$courseId}");
 	}
 
 	public function saveMastermindMessage($mastermindId, $requestId, $message){
@@ -206,7 +206,7 @@ class Request extends CI_Controller {
 	}
 
 	public function searchForStudentRequest(){
-		
+
 		$this->load->model("request_model");
 
 		$searchType = $this->input->post('searchType');
@@ -215,7 +215,7 @@ class Request extends CI_Controller {
 
 		$semester = new Semester();
 		$currentSemester = $semester->getCurrentSemester();
-		
+
 		define("SEARCH_BY_STUDENT_ID", "by_id");
 		define("SEARCH_BY_STUDENT_NAME", "by_name");
 
@@ -238,7 +238,7 @@ class Request extends CI_Controller {
 
 				$user = new Usuario();
 				$foundUser = $user->getUserByName($studentName);
-				
+
 				if($foundUser !== FALSE){
 					$studentId = array();
 					foreach($foundUser as $student){
@@ -249,10 +249,10 @@ class Request extends CI_Controller {
 					$courseRequests = FALSE;
 				}
 				break;
-			
+
 			default:
 				break;
-		}		
+		}
 
 		$course = new Course();
 		$courseData = $course->getCourseById($courseId);
@@ -307,7 +307,7 @@ class Request extends CI_Controller {
 		if($requestForSemester !== FALSE){
 
 			$data['requestDisciplinesClasses'] = $requestForSemester['requestDisciplinesClasses'];
-			
+
 			switch($requestForSemester['requestStatus']){
 				case EnrollmentConstants::REQUEST_INCOMPLETE_STATUS:
 					$requestStatus = "Incompleta (Aguardar aprovação do coordenador)";
@@ -345,7 +345,7 @@ class Request extends CI_Controller {
 			$mastermindMessage = $mastermind->getMastermindMessage($mastermindId, $requestId);
 
 			$data['mastermindMessage'] = $mastermindMessage;
-		
+
 		}else{
 			$data['requestDisciplinesClasses'] = FALSE;
 			$data['requestStatus'] = FALSE;
@@ -357,17 +357,17 @@ class Request extends CI_Controller {
 	private function getUserRequestDisciplines($userId, $courseId, $semesterId){
 
 		$this->load->model('request_model');
-		
+
 		$requestDisciplines = $this->request_model->getUserRequestDisciplines($userId, $courseId, $semesterId);
 
 		return $requestDisciplines;
 	}
-	
+
 	private function getMastermindMessage($userId, $courseId, $semesterId){
 		$this->load->model('request_model');
-		
+
 		$mastermindMessage = $this->request_model->getMastermindMessage($userId, $courseId, $semesterId);
-		
+
 		return $mastermindMessage;
 	}
 
@@ -381,10 +381,10 @@ class Request extends CI_Controller {
 	private function getRequest($requestData){
 
 		$this->load->model('request_model');
-		
+
 		$request = $this->request_model->getRequest($requestData);
 
-		return $request;	
+		return $request;
 	}
 
 	public function receiveStudentRequest($userRequest){
@@ -396,16 +396,26 @@ class Request extends CI_Controller {
 			$course = $userRequest[0]['id_course'];
 			$semester = $userRequest[0]['id_semester'];
 
-			$requestId = $this->saveNewRequest($student, $course, $semester);
+			$this->load->model('request_model');
+
+			// Check in the offer if the request needs to be approved by mastermind first
+			$offer = new Offer();
+			$requestedOffer = $offer->getOfferBySemesterAndCourse($semester, $course);
+			$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
+
+			if($needsMastermindApproval){
+
+				$mastermindApproval = EnrollmentConstants::REQUEST_NOT_APPROVED_BY_MASTERMIND;
+			}else{
+				$mastermindApproval = EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+			}
+
+			$requestId = $this->saveNewRequest($student, $course, $semester, $mastermindApproval);
 
 			if($requestId !== FALSE){
 
-				$this->load->model('request_model');
-
-				$offer = new Offer();
-
 				foreach($userRequest as $tempRequest){
-					
+
 					$idOfferDiscipline = $tempRequest['discipline_class'];
 
 					$class = $offer->getOfferDisciplineById($idOfferDiscipline);
@@ -417,10 +427,10 @@ class Request extends CI_Controller {
 						/**
 							CHECAR RETORNO
 						 */
-						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::PRE_ENROLLED_STATUS);
+						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::PRE_ENROLLED_STATUS, $mastermindApproval);
 
 					}else{
-						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::NO_VACANCY_STATUS);
+						$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::NO_VACANCY_STATUS, $mastermindApproval);
 					}
 				}
 
@@ -433,7 +443,7 @@ class Request extends CI_Controller {
 		}else{
 			$wasReceived = FALSE;
 		}
-		
+
 		return $wasReceived;
 	}
 
@@ -449,7 +459,7 @@ class Request extends CI_Controller {
 				$idOfferDiscipline = $tempRequest['discipline_class'];
 				$wasSaved = FALSE;
 				foreach($savedRequestDisciplines as $requestDiscipline){
-					
+
 					if($requestDiscipline['discipline_class'] === $idOfferDiscipline){
 						$wasSaved = TRUE;
 						break;
@@ -475,16 +485,16 @@ class Request extends CI_Controller {
 
 	public function getCourseIdByIdRequest($requestId){
 		$this->load->model('request_model');
-		
+
 		$courseId = $this->request_model->getRequestCourseId($requestId);
-		
+
 		return $courseId['id_course'];
 	}
-	
+
 	public function getRequestDisciplinesClasses($requestId){
 
 		$this->load->model('request_model');
-		
+
 		$disciplineClasses = $this->request_model->getRequestDisciplinesClasses($requestId);
 
 		return $disciplineClasses;
@@ -493,24 +503,24 @@ class Request extends CI_Controller {
 	private function getRequestDisciplines($requestId){
 
 		$this->load->model('request_model');
-		
+
 		$disciplines = $this->request_model->getRequestDisciplinesById($requestId);
 
 		return $disciplines;
 	}
 
-	private function saveDisciplineRequest($requestId, $idOfferDiscipline, $status){
+	private function saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval = 0){
 
 		$this->load->model('request_model');
-		
-		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline, $status);
+
+		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval);
 
 		if($wasSaved){
 
 			$canSubtract = $status !== EnrollmentConstants::NO_VACANCY_STATUS;
 
 			if($canSubtract){
-				
+
 				$offer = new Offer();
 				$wasSubtracted = $offer->subtractOneVacancy($idOfferDiscipline);
 
@@ -537,11 +547,11 @@ class Request extends CI_Controller {
 		return $disciplineWasAdded;
 	}
 
-	private function saveNewRequest($student, $course, $semester){
+	private function saveNewRequest($student, $course, $semester, $mastermindApproval = 0){
 
 		$this->load->model('request_model');
-		
-		$requisitionId = $this->request_model->saveNewRequest($student, $course, $semester);
+
+		$requisitionId = $this->request_model->saveNewRequest($student, $course, $semester, $mastermindApproval);
 
 		return $requisitionId;
 	}
