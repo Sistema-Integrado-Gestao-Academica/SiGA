@@ -1,4 +1,7 @@
 <?php
+
+require_once(APPPATH."/constants/EnrollmentConstants.php");
+
 class Discipline_model extends CI_Model {
 
 	/**
@@ -33,6 +36,8 @@ class Discipline_model extends CI_Model {
 		$this->db->select("offer_discipline.*, discipline.*");
 		$this->db->from("offer_discipline");
 		$this->db->join('discipline', 'discipline.discipline_code = offer_discipline.id_discipline');
+		$this->db->join('offer', 'offer_discipline.id_offer = offer.id_offer');
+		$this->db->where('offer.offer_status', EnrollmentConstants::APPROVED_STATUS);
 		$this->db->where('offer_discipline.id_offer', $offerId);
 		$this->db->like("discipline.discipline_name", $disciplineName);
 		$disciplineClasses = $this->db->get()->result_array();

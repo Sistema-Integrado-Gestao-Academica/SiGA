@@ -158,6 +158,7 @@ class TemporaryRequest extends CI_Controller {
 
 			echo "<div class='callout callout-info'>";
 			echo "<h4>Não foram encontradas disciplinas com o nome '".$disciplineName."' para a oferta do semestre atual.</h4>";
+			echo "<p>Confira se a lista de oferta do semestre atual já foi aprovada.</p>";
 			echo "</div>";
 		}
 	}
