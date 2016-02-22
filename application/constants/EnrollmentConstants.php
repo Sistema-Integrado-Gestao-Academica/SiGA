@@ -32,6 +32,7 @@ class EnrollmentConstants extends Constants{
 	const REQUESTING_AREA_MASTERMIND = "mastermind_requesting";
 
 	const NEEDS_MASTERMIND_APPROVAL = "1";
+	const DONT_NEED_MASTERMIND_APPROVAL = "0";
 
 	const ADMINID = 1;
 

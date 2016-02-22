@@ -7,6 +7,7 @@ require_once('module.php');
 require_once('usuario.php');
 require_once('schedule.php');
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/EnrollmentConstants.php");
 
 class Offer extends CI_Controller {
 
@@ -20,6 +21,12 @@ class Offer extends CI_Controller {
 
 	public function newOffer($courseId){
 
+		$needsMastermindApproval = $this->input->post("needs_mastermind_approval_ckbox");
+
+		if($needsMastermindApproval === FALSE){
+			$needsMastermindApproval = EnrollmentConstants::DONT_NEED_MASTERMIND_APPROVAL;
+		}
+
 		$this->load->model('offer_model');
 
 		$semester = new Semester();
@@ -28,7 +35,8 @@ class Offer extends CI_Controller {
 		$offer = array(
 			'semester' => $currentSemester['id_semester'],
 			'course' => $courseId,
-			'offer_status' => "proposed"
+			'offer_status' => "proposed",
+			'needs_mastermind_approval' => $needsMastermindApproval
 		);
 
 		$wasSaved = $this->offer_model->newOffer($offer);
@@ -378,6 +386,15 @@ class Offer extends CI_Controller {
 		$wasSubtracted = $this->offer_model->subtractOneVacancy($idOfferDiscipline);
 
 		return $wasSubtracted;
+	}
+
+	public function getOffer($idOffer){
+
+		$this->load->model('offer_model');
+
+		$foundOfferDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
+
+		return $foundOfferDiscipline;
 	}
 
 	public function getOfferDisciplineById($idOfferDiscipline){

@@ -2074,10 +2074,33 @@ function displayOffersList($offers){
 
 			    		}else{
 
+			    			$newOfferBtn = array(
+								"id" => "new_offer_btn",
+								"class" => "btn btn-primary",
+								"content" => "Nova Lista de Ofertas",
+								"type" => "submit"
+							);
+
+			    			$needsMastermindApprovalCheckBox = array(
+							    'name' => 'needs_mastermind_approval_ckbox',
+							    'id' => 'needs_mastermind_approval_ckbox',
+							    'value' => EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL,
+							    'checked' => TRUE,
+							    'style' => 'margin:15px',
+						    );
+
 			    			echo "<td colspan=3>";
 		    					echo "<div class=\"callout callout-info\">";
 									echo "<h4>Nenhuma lista de ofertas proposta para o semestre atual.</h4>";
-							    	echo anchor("offer/newOffer/{$courseId}", "Nova Lista de Ofertas", "class='btn btn-primary'");
+	    						echo "<div class=\"callout callout-warning\">";
+									echo form_open("offer/newOffer/{$courseId}");
+									echo form_checkbox($needsMastermindApprovalCheckBox);
+									echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
+									echo "<br>";
+									echo form_button($newOfferBtn);
+									echo form_close();
+								echo "</div>";
+
 								    echo "<p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>";
 								echo "</div>";
 			    			echo "</td>";
@@ -2093,7 +2116,7 @@ function displayOffersList($offers){
 
 function displayOfferDisciplines($idOffer, $course, $disciplines){
 
-	echo "<h3>Lista de Oferta</h3>";
+	echo "<h2 class='principal'>Lista de Oferta</h2>";
 	echo "<h3><b>Curso</b>: ".$course['course_name']."</h3>";
 
 	echo "<div class=\"box-body table-responsive no-padding\">";
