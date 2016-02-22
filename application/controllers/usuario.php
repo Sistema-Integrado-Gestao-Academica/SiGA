@@ -11,6 +11,10 @@ require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Usuario extends CI_Controller {
 
+	public function loadModel(){
+		$this->load->model("usuarios_model");
+	}
+
 	public function usersReport(){
 
 		$allUsers = $this->getAllUsers();

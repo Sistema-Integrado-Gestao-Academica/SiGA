@@ -857,6 +857,7 @@ function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idS
 function displayMastermindStudentRequest($requests, $idMastermind){
 
 	$user = new Usuario();
+	$user->loadModel();
 
 	echo "<br>";
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
@@ -876,6 +877,8 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 
 				if($requests !== FALSE){
 
+					$offer = new Offer();
+
 					foreach($requests as $request){
 
 						if ($request !== FALSE){
@@ -883,6 +886,17 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 							foreach ($request as $studentRequest){
 
 								$requestId = $studentRequest['id_request'];
+
+								$semesterId = $studentRequest['id_semester'];
+								$courseId = $studentRequest['id_course'];
+								$requestedOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+								if($requestedOffer !== FALSE){
+									$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
+								}else{
+									// Assume that is true
+									$needsMastermindApproval = TRUE;
+								}
 
 								$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
@@ -906,7 +920,11 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 								$status = switchRequestGeneralStatus($studentRequest['request_status']);
 
 								if($requestIsApprovedByMastermind){
-									$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
+									if($needsMastermindApproval){
+										$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
+									}else{
+										$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
+									}
 									echo $status;
 								}else{
 									echo $status;
@@ -943,15 +961,22 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 								echo "<td rowspan=2>";
 									if($requestIsApprovedByMastermind){
 
-										$mastermind = new MasterMind();
+										if($needsMastermindApproval){
 
-										$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
+											$mastermind = new MasterMind();
 
-										$isFinalized = TRUE;
-										echo "<div class=\"callout callout-warning\">";
-											mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
-											echo "<p><i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i></p>";
-										echo "</div>";
+											$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
+
+											$isFinalized = TRUE;
+											echo "<div class=\"callout callout-warning\">";
+												mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
+												echo "<p><i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i></p>";
+											echo "</div>";
+										}else{
+											echo "<div class=\"callout callout-warning\">";
+												echo "<p><i>O tipo da oferta não permite a ação do orientador.</i></p>";
+											echo "</div>";
+										}
 
 									}else{
 										$isFinalized = FALSE;
@@ -1246,7 +1271,7 @@ echo "</div>";
 
 }
 
-function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers){
+function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers, $idCourse){
 
 	if($offerDisciplineClasses !== FALSE){
 
@@ -1303,8 +1328,8 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				    	echo "</td>";
 
 				    	echo "<td>";
-		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
-		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}","Remover turma", "class='btn btn-danger'");
+		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
+		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
 				    	echo "</td>";
 
 				    echo "</tr>";
@@ -1314,7 +1339,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			echo "</div>";
 		}
 
-		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse);
 
 	}else{
 		echo "<div class=\"callout callout-info\">";
@@ -1322,7 +1347,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 			echo "<p>Cadastre logo abaixo.</p>";
 		echo "</div>";
 
-		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers);
+		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse);
 	}
 }
 
@@ -1370,14 +1395,14 @@ function displayDisciplineHours($idOfferDiscipline){
 	}
 }
 
-function drawFullScheduleTable($offerDiscipline){
+function drawFullScheduleTable($offerDiscipline, $idCourse){
 
 	$schedule = new Schedule();
 
-	$schedule->drawFullSchedule($offerDiscipline);
+	$schedule->drawFullSchedule($offerDiscipline, $idCourse);
 }
 
-function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass){
+function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass, $idCourse){
 
 	$disciplineClass = array(
 		"name" => "disciplineClass",
@@ -1406,6 +1431,8 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	);
 
 	echo form_open("offer/updateOfferDisciplineClass/{$disciplineId}/{$idOffer}/{$offerDisciplineClass['class']}");
+
+	echo form_hidden('course', $idCourse);
 
 	echo "<div class='form-box'>";
 	echo"<div class='header'>Editar turma para oferta</div>";
@@ -1457,7 +1484,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 
 		echo "<div class='col-lg-6'>";
 		echo anchor(
-			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}",
+			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}/{$idCourse}",
 			"Voltar",
 			"class='btn bg-olive btn-block'"
 		);
@@ -1481,7 +1508,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo "<br>";
 	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
 	echo "<br>";
-	drawFullScheduleTable($offerDisciplineClass);
+	drawFullScheduleTable($offerDisciplineClass, $idCourse);
 }
 
 function displayRegisteredCoursesToProgram($programId, $courses){
@@ -2047,10 +2074,33 @@ function displayOffersList($offers){
 
 			    		}else{
 
+			    			$newOfferBtn = array(
+								"id" => "new_offer_btn",
+								"class" => "btn btn-primary",
+								"content" => "Nova Lista de Ofertas",
+								"type" => "submit"
+							);
+
+			    			$needsMastermindApprovalCheckBox = array(
+							    'name' => 'needs_mastermind_approval_ckbox',
+							    'id' => 'needs_mastermind_approval_ckbox',
+							    'value' => EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL,
+							    'checked' => TRUE,
+							    'style' => 'margin:15px',
+						    );
+
 			    			echo "<td colspan=3>";
 		    					echo "<div class=\"callout callout-info\">";
 									echo "<h4>Nenhuma lista de ofertas proposta para o semestre atual.</h4>";
-							    	echo anchor("offer/newOffer/{$courseId}", "Nova Lista de Ofertas", "class='btn btn-primary'");
+	    						echo "<div class=\"callout callout-warning\">";
+									echo form_open("offer/newOffer/{$courseId}");
+									echo form_checkbox($needsMastermindApprovalCheckBox);
+									echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
+									echo "<br>";
+									echo form_button($newOfferBtn);
+									echo form_close();
+								echo "</div>";
+
 								    echo "<p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>";
 								echo "</div>";
 			    			echo "</td>";
@@ -2066,9 +2116,20 @@ function displayOffersList($offers){
 
 function displayOfferDisciplines($idOffer, $course, $disciplines){
 
-	echo "<h3>Lista de Oferta</h3>";
+	$offer = new Offer();
+	$offerData = $offer->getOffer($idOffer);
+
+	echo "<h2 class='principal'>Lista de Oferta</h2>";
 	echo "<h3><b>Curso</b>: ".$course['course_name']."</h3>";
 
+	if($offerData['needs_mastermind_approval'] === EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL){
+		$needsMastermindApproval = "Sim";
+	}else{
+		$needsMastermindApproval = "Não";
+	}
+	echo "<h4><b>Necessita de aprovação do orientador?</b>: ".$needsMastermindApproval."</h3>";
+
+	echo "<br>";
 	echo "<div class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
@@ -2177,7 +2238,7 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 					    		// }else{
 				    			// 	echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar à lista de oferta de ".$course['course_name'], "class='btn btn-primary'");
 					    		// }
-								echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
+								echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
 					    	echo "</td>";
 
 					    echo "</tr>";

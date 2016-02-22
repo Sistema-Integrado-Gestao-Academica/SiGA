@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 /**
  * This class represents a unique schedule of a discipline class.
- * Is considered a bidimensional array to represent all schedule possibilities 
+ * Is considered a bidimensional array to represent all schedule possibilities
  * with the class hours (in an interval of 2 hours each) as lines and the days of week as columns (except sunday), totaling a 9x6 matrix.
  */
 
@@ -14,7 +14,7 @@ class ClassHour{
 	private $day; // Day of the week that this class happens (References the column 'j')
 	private $local; // Local where class happens
 
-	const MAX_HOUR = 9;
+	const MAX_HOUR = 6;
 	const MIN_HOUR = 1;
 	const MAX_DAY = 6;
 	const MIN_DAY = 1;
@@ -26,7 +26,7 @@ class ClassHour{
 	const FRIDAY = "Sexta";
 	const SATURDAY = "Sábado";
 
-	const ERR_INVALID_HOUR = "Hour out of range 1-9";
+	const ERR_INVALID_HOUR = "Hour out of range 1-7";
 	const ERR_INVALID_DAY = "Day out of range 1-6";
 	const ERR_INVALID_LOCAL = "Local of class must be a string or NULL";
 
@@ -77,7 +77,7 @@ class ClassHour{
 		}else{
 			throw new ClassHourException(self::ERR_INVALID_LOCAL);
 		}
-		
+
 	}
 
 	public function getClassHour(){
@@ -117,6 +117,21 @@ class ClassHour{
 		return $dayHourPair;
 	}
 
+	public function getHourPair(){
+
+		$hour = $this->getHour();
+
+		try{
+
+			$hourPair = $this->convertHour($hour);
+		}catch(ClassHourException $caughException){
+
+			$hourPair = "";
+		}
+
+		return $hourPair;
+	}
+
 	private function convertToDayHourPair($hour, $day){
 
 		try{
@@ -127,7 +142,7 @@ class ClassHour{
 			$dayHour = $convertedDay." ".$convertedHour;
 
 		}catch(ClassHourException $caughException){
-			
+
 			$dayHour = "";
 		}
 
@@ -140,39 +155,27 @@ class ClassHour{
 
 		switch($hour){
 			case 1:
-				$convertedHour = "06h-08h";
+				$convertedHour = "08h-09:50h";
 				break;
 
 			case 2:
-				$convertedHour = "08h-10h";
+				$convertedHour = "10h-11:50h";
 				break;
 
 			case 3:
-				$convertedHour = "10h-12h";
+				$convertedHour = "14h-15:50h";
 				break;
-			
+
 			case 4:
-				$convertedHour = "12h-14h";
+				$convertedHour = "16h-17:50h";
 				break;
 
 			case 5:
-				$convertedHour = "14h-16h";
+				$convertedHour = "19h-20:50h";
 				break;
 
 			case 6:
-				$convertedHour = "16h-18h";
-				break;
-
-			case 7:
-				$convertedHour = "18h-20h";
-				break;
-
-			case 8:
-				$convertedHour = "20h-22h";
-				break;
-
-			case 9:
-				$convertedHour = "22h-24h";
+				$convertedHour = "21h-22:50h";
 				break;
 
 			default:
@@ -199,7 +202,7 @@ class ClassHour{
 			case 3:
 				$convertedDay = self::WEDNESDAY;
 				break;
-			
+
 			case 4:
 				$convertedDay = self::THURSDAY;
 				break;

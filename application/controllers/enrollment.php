@@ -20,5 +20,4 @@ class Enrollment extends CI_Controller {
 
         return $studentRegistration;
     }
-
 }

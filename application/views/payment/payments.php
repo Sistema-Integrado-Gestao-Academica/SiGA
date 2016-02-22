@@ -60,11 +60,16 @@
 				    			echo anchor(
 				    				"payment/generateSpreadsheet/{$payment['id_payment']}",
 				    				"<i class='fa fa-download'></i> Gerar planilha",
-				    				"class='btn btn-success'"
+				    				"class='btn btn-success' style='margin-bottom:5%;'"
+				    			);
+
+				    			echo anchor(
+				    				"payment/repayment/{$payment['id_payment']}/{$budgetplanId}/{$expenseId}",
+				    				"<i class='fa fa-plus-square'></i> Novo Pagamento",
+				    				"class='btn btn-info'"
 				    			);
 				    		echo "</td>";
 						echo "</tr>";
-
 			    	}
 ?>
 			</tbody>

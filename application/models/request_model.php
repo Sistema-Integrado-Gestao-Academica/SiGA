@@ -4,15 +4,14 @@ require_once(APPPATH."/constants/EnrollmentConstants.php");
 
 class Request_model extends CI_Model {
 
-	public function saveNewRequest($student, $course, $semester){
-
-		define("INCOMPLETE", "incomplete");
+	public function saveNewRequest($student, $course, $semester, $mastermindApproval = 0){
 
 		$requestData = array(
 			'id_student' => $student,
 			'id_course' => $course,
 			'id_semester' => $semester,
-			'request_status' => INCOMPLETE
+			'request_status' => EnrollmentConstants::REQUEST_INCOMPLETE_STATUS,
+			'mastermind_approval' => $mastermindApproval
 		);
 
 		$registeredRequest = $this->getRequest($requestData);
@@ -35,12 +34,13 @@ class Request_model extends CI_Model {
 		return $requestId;
 	}
 
-	public function saveDisciplineRequest($requestId, $idOfferDiscipline, $status){
+	public function saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval = 0){
 
 		$requestDiscipline = array(
 			'id_request' => $requestId,
 			'discipline_class' => $idOfferDiscipline,
-			'status' => $status
+			'status' => $status,
+			'mastermind_approval' => $mastermindApproval
 		);
 
 		$this->db->insert('request_discipline', $requestDiscipline);
@@ -69,22 +69,22 @@ class Request_model extends CI_Model {
 
 		return $wasRefused;
 	}
-	
+
 	public function mastermindApproveAllCurrentStudentRequest($requestId){
-		
+
 		$wasApproved = $this->changeAllRequest($requestId, EnrollmentConstants::APPROVED_STATUS, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
-		
+
 		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, TRUE, $requestId);
 
 		return $wasApproved;
 	}
 
 	public function mastermindRefuseAllCurrentStudentRequest($requestId){
-	
+
 		$wasRefused = $this->changeAllRequest($requestId, EnrollmentConstants::REFUSED_STATUS, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
-		
+
 		$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_MASTERMIND, FALSE, $requestId);
-	
+
 		return $wasRefused;
 	}
 
@@ -97,7 +97,7 @@ class Request_model extends CI_Model {
 					'mastermind_approval' => EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND
 				);
 				break;
-	
+
 			default:
 				$disciplinesConditions = array(
 					'id_request' => $requestId
@@ -110,7 +110,7 @@ class Request_model extends CI_Model {
 		if($requestDisciplines !== FALSE){
 
 			foreach($requestDisciplines as $requestedDiscipline){
-				
+
 				$this->changeRequestDisciplineStatus($requestId, $requestedDiscipline['discipline_class'], $newStatus);
 
 				if($newStatus === EnrollmentConstants::APPROVED_STATUS){
@@ -163,12 +163,12 @@ class Request_model extends CI_Model {
 
 		$wasFinalized = $foundRequest !== FALSE;
 
-		return $wasFinalized;	
+		return $wasFinalized;
 	}
 
 	/*private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
 		$hasRequests = $this->checkStudentHasRequest($studentId);
-		
+
 		if ($hasRequests ==! FALSE){
 			$requestDisciplines = $this->getRequestDisciplinesById($requestId);
 			if ($requestDisciplines){
@@ -183,10 +183,10 @@ class Request_model extends CI_Model {
 		}else{
 			$wasChanged = FALSE;
 		}
-		
+
 		return $wasChanged;
 	}*/
-	
+
 	/*private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
 		$where = array('id_student'=>$studentId, 'id_semester'=> $currentSemester);
 		$change = array('request_status'=>$newStatus);
@@ -199,9 +199,9 @@ class Request_model extends CI_Model {
 		$this->db->where('id_student', $studentId);
 		$this->db->from('student_request');
 		$hasRequest = $this->db->get()->result_array();
-		
+
 		$hasRequest = checkArray($hasRequest);
-		
+
 		return $hasRequest;
 	}
 
@@ -251,7 +251,7 @@ class Request_model extends CI_Model {
 		}
 
 		$this->db->where($whereClause);
-		$this->db->update('request_discipline', $toUpdate);	
+		$this->db->update('request_discipline', $toUpdate);
 	}
 
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
@@ -261,7 +261,7 @@ class Request_model extends CI_Model {
 		$this->checkRequestGeneralStatus($requestId);
 
 		$this->requestDisciplineApproval($requestingArea, TRUE, $requestId, $idOfferDiscipline);
-		
+
 		return $wasApproved;
 	}
 
@@ -270,7 +270,7 @@ class Request_model extends CI_Model {
 		$wasRefused = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::REFUSED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
-		
+
 		$this->requestDisciplineApproval($requestingArea, FALSE, $requestId, $idOfferDiscipline);
 
 		return $wasRefused;
@@ -287,7 +287,7 @@ class Request_model extends CI_Model {
 			$hasPreEnrolled = $this->checkIfRequestHasPreEnrolled($requestId);
 
 			$requestIsFinalizedBySecretary = $foundRequest['secretary_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
-			
+
 			if($wasAllApproved){
 				if($requestIsFinalizedBySecretary){
 					$status = EnrollmentConstants::ENROLLED_STATUS;
@@ -301,7 +301,7 @@ class Request_model extends CI_Model {
 			}else{
 				$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
 			}
-			
+
 			$this->changeRequestGeneralStatus($requestId, $status);
 		}
 	}
@@ -320,7 +320,7 @@ class Request_model extends CI_Model {
 
 			$hasPreEnrolled = FALSE;
 			foreach($requestDisciplines as $requestedDiscipline){
-				
+
 				if($requestedDiscipline['status'] === EnrollmentConstants::PRE_ENROLLED_STATUS){
 					$hasPreEnrolled = TRUE;
 					break;
@@ -343,7 +343,7 @@ class Request_model extends CI_Model {
 
 			// Check if all disciplines has the given status
 			foreach($requestDisciplines as $requestedDiscipline){
-				
+
 				if($requestedDiscipline['status'] === $statusToCheck){
 					$disciplinesWithStatus++;
 				}
@@ -392,12 +392,12 @@ class Request_model extends CI_Model {
 		$this->db->join("request_discipline", "student_request.id_request = request_discipline.id_request");
 		$this->db->where("student_request.id_course", $courseId);
 		$this->db->where("student_request.id_semester", $semesterId);
-		
+
 		$ids = $studentIds;
 
 		$whereClause = "(";
 		foreach($studentIds as $key => $studentId){
-			
+
 			if(hasNext($ids)){
 				unset($ids[$key]);
 				$whereClause = $whereClause."student_request.id_student = {$studentId} OR ";
@@ -432,17 +432,17 @@ class Request_model extends CI_Model {
 
 		return $foundRequestDiscipline;
 	}
-	
+
 	public function getRequestCourseId($requestId){
-		
+
 		$this->db->select('id_course');
 		$this->db->from('student_request');
 		$this->db->where('id_request', $requestId);
 		$course_id = $this->db->get()->row_array();
 		$course_id = checkArray($course_id);
-		
+
 		return $course_id;
-		
+
 	}
 
 	public function getUserRequestDisciplines($userId, $courseId, $semesterId){
@@ -465,29 +465,29 @@ class Request_model extends CI_Model {
 				'requestStatus' => $requestStatus,
 				'requestDisciplinesClasses' => $classes
 			);
-			
+
 		}else{
 			$requestDisciplinesClasses = FALSE;
 		}
 
 		return $requestDisciplinesClasses;
 	}
-	
+
 	public function getMastermindMessage($studentId, $courseId, $semesterId){
 		$requestData = array(
 				'id_student' => $studentId,
 				'id_course' => $courseId,
 				'id_semester' => $semesterId
 		);
-		
+
 		$request = $this->request_model->getRequest($requestData);
-		
+
 		if($request !== FALSE){
 			$message = $this->getMastermindMessageForStudent($studentId, $request['id_request']);
 		}else{
 			$message = 'Seu Orientador não deixou mensagem.';
 		}
-		
+
 		return $message;
 	}
 
@@ -510,18 +510,18 @@ class Request_model extends CI_Model {
 			'id_student' => $studentId
 		);
 		$mastermindMessage = $this->db->get_where('mastermind_message', $where)->row_array();
-		
+
 		$mastermindMessage = checkArray($mastermindMessage);
-		
+
 		if ($mastermindMessage){
 			$message = $mastermindMessage['message'];
 		}else{
 			$message = 'Seu Orientador não deixou mensagem.';
 		}
-		
+
 		return $message;
 	}
-	
+
 	public function getRequest($requestData){
 
 		$foundRequest = $this->db->get_where('student_request', $requestData)->row_array();
@@ -540,16 +540,16 @@ class Request_model extends CI_Model {
 		$this->db->where("student_request.id_course", $courseId);
 		$this->db->where("student_request.id_semester", $semesterId);
 		$this->db->order_by("request_status", "asc");
-		
+
 		$foundRequest = $this->db->get()->result_array();
 
 		$foundRequest = checkArray($foundRequest);
-		
+
 		return $foundRequest;
 	}
-	
+
 	public function getMastermindStudentRequest($studentId, $semesterId){
-	
+
 		$this->db->select("student_request.*");
 		$this->db->distinct();
 		$this->db->from("student_request");
@@ -557,24 +557,24 @@ class Request_model extends CI_Model {
 		$this->db->where("student_request.id_student", $studentId);
 		$this->db->where("student_request.id_semester", $semesterId);
 		$this->db->order_by("request_status", "asc");
-	
+
 		$foundRequest = $this->db->get()->result_array();
-	
+
 		$foundRequest = checkArray($foundRequest);
-	
+
 		return $foundRequest;
 	}
-	
+
 	public function saveMastermindMessage($mastermindId, $requestId, $message){
-		
+
 		$messageData = array(
 			'id_mastermind' => $mastermindId,
 			'id_request' => $requestId,
 			'message' => $message
 		);
-			
+
 		$messageExist = $this->checkExistingMessage($mastermindId, $requestId);
-		
+
 		if($messageExist){
 			$savedMessage = $this->updateMessageInDb($messageData);
 		}else{
@@ -583,7 +583,7 @@ class Request_model extends CI_Model {
 
 		return $savedMessage;
 	}
-	
+
 	private function checkExistingMessage($mastermindId, $requestId){
 
 		$messageData = array(
@@ -604,27 +604,27 @@ class Request_model extends CI_Model {
 		}else{
 			$thereIsMessage = FALSE;
 		}
-		
+
 		return $thereIsMessage;
 	}
-	
+
 	private function updateMessageInDb($messageData){
-		
+
 		$where = array(
 			'id_mastermind'=> $messageData['id_mastermind'],
 			'id_request'=> $messageData['id_request']
 		);
-		
+
 		$this->db->where($where);
 		$updatedMessageData = $this->db->update('mastermind_message', $messageData);
-		
+
 		return $updatedMessageData;
 	}
-	
+
 	private function insertMessageInDb($messageData){
-		
+
 		$savedMessage = $this->db->insert('mastermind_message', $messageData);
-		
+
 		return $savedMessage;
 	}
 }

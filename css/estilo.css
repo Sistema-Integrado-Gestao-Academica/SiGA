@@ -1,6 +1,9 @@
 body {
 	padding-top: 50px;
 }
+#class_hour_table{
+    overflow-x : scroll;
+}
 
 .principal {
 	padding: 40px 15px;

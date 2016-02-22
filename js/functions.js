@@ -1,6 +1,10 @@
 
 $(document).ready(function(){
 
+	$("#discipline_search_btn").click(function(){
+		searchDisciplineClasses();
+	});
+
 	$("#documentType").change(function(){
 		checkDocumentType();
 	});
@@ -48,6 +52,28 @@ $(document).ready(function(){
 	});
 
 });
+
+function searchDisciplineClasses(){
+
+	var disciplineName = $("#discipline_name_search").val();
+	var courseId = $("#courseId").val();
+	var userId = $("#userId").val();
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/temporaryrequest/searchDisciplinesToRequest";
+
+	$.post(
+		urlToPost,
+		{
+			disciplineName: disciplineName,
+			courseId: courseId,
+			userId: userId
+		},
+		function(data){
+			$("#discipline_search_result").html(data);
+		}
+	);
+}
 
 function checkInstallments(){
 

@@ -9,7 +9,7 @@ class Schedule extends CI_Controller {
 	private $disciplineSchedule;
 
 	const HOUR_CONFLICT = "Occurred an hour conflict with the day hour pair passed";
-	
+
 	const ERR_INVALID_OBJECT = "Required an ClassHour object as param";
 
 	public function __construct(){
@@ -77,13 +77,13 @@ class Schedule extends CI_Controller {
 	public function checkHourConflits($requestedDisciplineSchedule, $registeredDisciplinesSchedules){
 
 		$fullSchedule = $this->createFullSchedule();
-		
+
 		// At first time fill the schedule with the disciplines already added to request
 		$fullSchedule = $this->fillWithRegisteredDisciplines($fullSchedule, $registeredDisciplinesSchedules);
-		
+
 		$conflict = FALSE;
 		foreach($requestedDisciplineSchedule as $classHour){
-			
+
 			try{
 				$fullSchedule = $this->fillSchedule($fullSchedule, $classHour);
 			}catch(ScheduleException $caughtException){
@@ -99,12 +99,12 @@ class Schedule extends CI_Controller {
 	private function fillWithRegisteredDisciplines($fullSchedule, $disciplinesSchedules){
 
 		foreach($disciplinesSchedules as $schedule){
-			
+
 			foreach($schedule as $classHour){
 
 				try{
 
-					$fullSchedule = $this->fillSchedule($fullSchedule, $classHour);	
+					$fullSchedule = $this->fillSchedule($fullSchedule, $classHour);
 				}catch(ScheduleException $caughtException){
 					// In this case occured an error because the system accepted an hour conflict (What should not be done)
 					continue;
@@ -131,7 +131,7 @@ class Schedule extends CI_Controller {
 		// Correcting indexes numbers because the full schedule starts at 0
 		$hour--;
 		$day--;
-		
+
 		$isNotFilled = $fullSchedule[$hour][$day] == 0;
 
 		if($isNotFilled){
@@ -162,7 +162,7 @@ class Schedule extends CI_Controller {
 		return $schedule;
 	}
 
-	public function drawFullSchedule($offerDiscipline){
+	public function drawFullSchedule($offerDiscipline, $idCourse){
 
 		/* FIXING BUG*/
 		/*This form tags was inserted because the first form inserted on the table was not being accepted*/
@@ -170,7 +170,7 @@ class Schedule extends CI_Controller {
 		echo form_close();
 		/*DO NOT REMOVE IT*/
 
-		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<div id='class_hour_table' class=\"box-body table-responsive no-padding\">";
 		echo "<table class=\"table table-bordered table-hover\">";
 			echo "<tbody>";
 			    echo "<tr>";
@@ -183,29 +183,29 @@ class Schedule extends CI_Controller {
 			        echo "<th class=\"text-center\">Sábado</th>";
 			    echo "</tr>";
 
-			    define("MAX_COLUMN", 6);
-			    define("MAX_ROW", 9);
+			    define("MAX_COLUMN", ClassHour::MAX_DAY);
+			    define("MAX_ROW", ClassHour::MAX_HOUR);
 			    define("HOUR_INTERVAL_OF_CLASS", 2);
-			    $hour = 6;
 
 			    // Consider 'i x j' as 'line x column'
 			    for($i = 1; $i <= MAX_ROW; $i++){
-			    	
+
 				    echo "<tr>";
 
 					    for($j = 0; $j <= MAX_COLUMN; $j++){
 					    	// First column
 					    	if($j === 0){
-					    		
-							    echo "<td>";	
-							    echo $hour."-".($hour + HOUR_INTERVAL_OF_CLASS);
+
+					    		$currentClassHour = new ClassHour($i, $j+1);
+
+							    echo "<td>";
+							    echo $currentClassHour->getHourPair();
 							    echo "</td>";
-							    $hour = $hour + 2;
 					    	}else{
 							    echo "<td>";
 
 							    	$foundClassHour = $this->getClassHourInSchedule($offerDiscipline['id_offer_discipline'], $i, $j);
-							    	
+
 							    	$classHourIsOnSchedule = $foundClassHour !== FALSE;
 							    	if($classHourIsOnSchedule){
 
@@ -226,7 +226,8 @@ class Schedule extends CI_Controller {
 										    	'idClassHour' => $idClassHour,
 										    	'discipline' => $offerDiscipline['id_discipline'],
 										    	'offer' => $offerDiscipline['id_offer'],
-										    	'class' => $offerDiscipline['class']
+										    	'class' => $offerDiscipline['class'],
+										    	'course' => $idCourse
 										    );
 
 										    $localClassInput = array(
@@ -249,13 +250,13 @@ class Schedule extends CI_Controller {
 
 										    echo form_label("Local adicionado:", "classLocal");
 										    echo form_input($localClassInput);
-										
+
 											echo form_button(array(
 												"class" => "btn bg-navy btn-flat",
 												"type" => "submit",
 												"content" => "Alterar local"
 											));
-											    
+
 										echo form_close();
 
 							    	}else{
@@ -267,7 +268,8 @@ class Schedule extends CI_Controller {
 										    	'idOfferDiscipline' => $offerDiscipline['id_offer_discipline'],
 										    	'discipline' => $offerDiscipline['id_discipline'],
 										    	'offer' => $offerDiscipline['id_offer'],
-										    	'class' => $offerDiscipline['class']
+										    	'class' => $offerDiscipline['class'],
+										    	'course' => $idCourse
 										    );
 										    echo form_hidden($hidden);
 
@@ -281,13 +283,13 @@ class Schedule extends CI_Controller {
 												"maxlength" => "15",
 												"placeholder" => "Informe o local"
 										    ));
-										
+
 											echo form_button(array(
 												"class" => "btn btn-info btn-flat",
 												"type" => "submit",
 												"content" => "Adicionar horário"
 											));
-											    
+
 										echo form_close();
 							    	}
 
@@ -296,7 +298,7 @@ class Schedule extends CI_Controller {
 					    }
 				    echo "</tr>";
 			    }
-		    
+
 			echo "</tbody>";
 		echo "</table>";
 		echo "</div>";
@@ -311,6 +313,7 @@ class Schedule extends CI_Controller {
 		$discipline = $this->input->post('discipline');
 		$offer = $this->input->post('offer');
 		$class = $this->input->post('class');
+		$idCourse = $this->input->post('course');
 
 		$wasUpdated = $this->updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal);
 
@@ -324,7 +327,7 @@ class Schedule extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 
-		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}");
+		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
 	}
 
 	private function updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal){
@@ -365,13 +368,14 @@ class Schedule extends CI_Controller {
 		$discipline = $this->input->post('discipline');
 		$offer = $this->input->post('offer');
 		$class = $this->input->post('class');
+		$idCourse = $this->input->post('course');
 
 		try{
-			
+
 			$classHour = new ClassHour($hour, $day, $local);
 
 			$wasSaved = $this->saveClassHour($classHour, $idOfferDiscipline);
-			
+
 			if($wasSaved){
 				$status = "success";
 				$message = "Horário adicionado.";
@@ -394,7 +398,7 @@ class Schedule extends CI_Controller {
 				case ClassHour::ERR_INVALID_LOCAL:
 					$message = "O local informado não é válido.";
 					break;
-				
+
 				default:
 					$message = "Ocorreu um erro. Contate o administrador.";
 					break;
@@ -403,7 +407,7 @@ class Schedule extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 
-		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}");
+		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
 	}
 
 	private function saveClassHour($classHour, $idOfferDiscipline){

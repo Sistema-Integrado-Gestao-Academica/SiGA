@@ -769,9 +769,8 @@ class ServicePayment{
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="'.self::FILE_NAME.'"');
-		header('Cache-Control: max-age=0');
 
-		$objWriter = PHPExcel_IOFactory::createWriter($this->sheet(), 'Excel2007');
+		$objWriter = PHPExcel_IOFactory::createWriter($this->sheet(), 'Excel5');
 
 		ob_end_clean();
 		$objWriter->save('php://output');

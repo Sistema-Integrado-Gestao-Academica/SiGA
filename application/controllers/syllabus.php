@@ -27,9 +27,9 @@ class Syllabus extends CI_Controller {
 	}
 
 	public function getCourseSyllabus($courseId){
-		
+
 		$this->load->model('syllabus_model');
-		
+
 		$courseSyllabus = $this->syllabus_model->getCourseSyllabus($courseId);
 
 		return $courseSyllabus;
@@ -38,10 +38,10 @@ class Syllabus extends CI_Controller {
 	public function getSyllabusCourse($syllabusId){
 
 		$this->load->model('syllabus_model');
-		
+
 		$syllabusCourse = $this->syllabus_model->getSyllabusCourse($syllabusId);
 
-		return $syllabusCourse;	
+		return $syllabusCourse;
 	}
 
 	public function newSyllabus($courseId){
@@ -57,8 +57,8 @@ class Syllabus extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível criar o currículo para o curso informado. Tente novamente.";
 		}
-		
-		$this->session->set_flashdata($status, $message);	
+
+		$this->session->set_flashdata($status, $message);
 		redirect('usuario/secretary_courseSyllabus');
 	}
 
@@ -83,7 +83,7 @@ class Syllabus extends CI_Controller {
 		$discipline = new Discipline();
 
 		$allDisciplines = $discipline->getAllDisciplines();
-		
+
 		$data = array(
 			'allDisciplines' => $allDisciplines,
 			'syllabusId' => $syllabusId,
@@ -92,17 +92,17 @@ class Syllabus extends CI_Controller {
 
 		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
 	}
-	
+
 	public function relateDisciplineToResearchLine($disciplineCode,$syllabusId, $courseId){
-		
+
 		$researchLines = $this->getResearchLines();
-		
+
 		$currentDiscipline = $this->getCurrentDiscipline($disciplineCode);
-		
+
 		$disciplineResearchLinesIds = $this->getDiscipineResearchLinesIds($disciplineCode);
-		
+
 		$disciplineResearchLines = $this->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
-		
+
 		$data = array(
 			'researchLines' => $researchLines,
 			'discipline' => $currentDiscipline,
@@ -110,74 +110,82 @@ class Syllabus extends CI_Controller {
 			'courseId' => $courseId,
 			'disciplineResearchLines' => $disciplineResearchLines
 		);
-		
+
 		loadTemplateSafelyByGroup("secretario",'syllabus/disciplines_research_line', $data);
 	}
-	
+
 	private function getDiscipineResearchLinesIds($disciplineCode){
 		$discipline = new Discipline();
-		
+
 		$disciplineResearchLines = $discipline->getDisciplineResearchLines($disciplineCode);
-		
+
 		return $disciplineResearchLines;
 	}
-	
+
 	public function getDiscipineResearchLinesNames($disciplineResearchLinesIds){
+
 		$course = new Course();
-		
-		foreach ($disciplineResearchLinesIds as $quantity => $researchLines){
-			
-			$disciplinesResearchLines[$researchLines['id_research_line']] = $course->getResearchLineNameById($researchLines['id_research_line']); 
-			
+
+		if($disciplineResearchLinesIds !== FALSE){
+			foreach ($disciplineResearchLinesIds as $quantity => $researchLines){
+
+				$disciplinesResearchLines[$researchLines['id_research_line']] = $course->getResearchLineNameById($researchLines['id_research_line']);
+			}
+		}else{
+			$disciplinesResearchLines = FALSE;
 		}
-		
+
 		return $disciplinesResearchLines;
 	}
-	
+
 	private function getCurrentDiscipline($disciplineCode){
 		$discipline = new Discipline();
-		
+
 		$currentDiscipline = $discipline->getDisciplineByCode($disciplineCode);
-		
+
 		return $currentDiscipline;
 	}
-	
+
 	private function getResearchLines(){
 		$this->load->model("course_model");
-		
+
 		$researchLines = $this->course_model->getAllResearchLines();
-		
+
 		$research[0] = "Escolha uma Linha de Pesquisa";
-		foreach ($researchLines as $key => $lines){
-			$research[$lines['id_research_line']] = $lines['description'];
+		if($researchLines !== FALSE){
+			foreach ($researchLines as $key => $lines){
+				$research[$lines['id_research_line']] = $lines['description'];
+			}
+		}else{
+			$research[0] = "Nenhuma Linha de Pesquisa cadastrada";
 		}
-		
+
 		return $research;
 	}
-	
+
 	public function saveDisciplineResearchLine(){
 		define("NO_RESEARCH_LINE_CHOICE", 0);
-		
+
 		$disciplineCode = $this->input->post('discipline_code');
 		$researchLineId = $this->input->post('research_line');
 		$courseId = $this->input->post('courseId');
 		$syllabusId = $this->input->post('syllabusId');
-		
+
 		if ($researchLineId == NO_RESEARCH_LINE_CHOICE){
 			$status = "danger";
 			$message = "Não foi escolhida nenhuma linha de pesquisa";
 			$this->session->set_flashdata($status, $message);
 			redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
-		
+
 		}else{
 
 			$saveData = array(
 				'discipline_code' => $disciplineCode,
 				'id_research_line' => $researchLineId
 			);
-			
+
 			$saved = $this->saveDisciplineResearchRelation($saveData);
-			
+
 			if ($saved){
 				$status = "success";
 				$message = "Disciplina relacionada com sucesso.";
@@ -185,20 +193,20 @@ class Syllabus extends CI_Controller {
 				$status = "danger";
 				$message = "Disciplina não pode ser relacionada.";
 			}
-			
+
 			$this->session->set_flashdata($status, $message);
 			redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 		}
 	}
-	
+
 	public function removeDisciplineResearchLine($researchLineId, $disciplineCode, $syllabusId, $courseId){
 		$discipline = new Discipline();
-		
+
 		$researchRelation = array(
 				'id_research_line' => $researchLineId,
 				'discipline_code' => $disciplineCode
 		);
-		
+
 		$deleted = $discipline->deleteDisciplineResearchRelation($researchRelation);
 		if ($deleted){
 			$status = "success";
@@ -207,16 +215,16 @@ class Syllabus extends CI_Controller {
 			$status = "danger";
 			$message = "Disciplina não pode ser desrelacionada.";
 		}
-			
+
 		$this->session->set_flashdata($status, $message);
 		redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 	}
-	
+
 	private function saveDisciplineResearchRelation($relationToSave){
 		$discipline = new Discipline();
-		
+
 		$saved = $discipline->saveDisciplineResearchRelation($relationToSave);
-		
+
 		return $saved;
 	}
 
@@ -241,7 +249,7 @@ class Syllabus extends CI_Controller {
 					$disciplines = FALSE;
 				}
 				break;
-			
+
 			case SEARCH_FOR_DISCIPLINE_NAME:
 				$disciplineName = $this->input->post('discipline_to_search');
 				$disciplines = $discipline->getDisciplineByPartialName($disciplineName);
@@ -262,7 +270,7 @@ class Syllabus extends CI_Controller {
 	}
 
 	public function addDisciplineToSyllabus($syllabusId, $disciplineId, $courseId){
-		
+
 		$this->load->model('syllabus_model');
 
 		$wasSaved = $this->syllabus_model->addDisciplineToSyllabus($syllabusId, $disciplineId);
@@ -274,8 +282,8 @@ class Syllabus extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível adicionar a disciplina ao currículo informado. Tente novamente.";
 		}
-		
-		$this->session->set_flashdata($status, $message);	
+
+		$this->session->set_flashdata($status, $message);
 		redirect("syllabus/addDisciplines/{$syllabusId}/{$courseId}");
 	}
 
@@ -292,13 +300,13 @@ class Syllabus extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível remover a disciplina do currículo informado. Tente novamente.";
 		}
-		
-		$this->session->set_flashdata($status, $message);	
+
+		$this->session->set_flashdata($status, $message);
 		redirect("syllabus/addDisciplines/{$syllabusId}/{$courseId}");
 	}
 
 	public function disciplineExistsInSyllabus($idDiscipline, $syllabusId){
-		
+
 		$this->load->model('syllabus_model');
 
 		$disciplineExists = $this->syllabus_model->disciplineExistsInSyllabus($idDiscipline, $syllabusId);
