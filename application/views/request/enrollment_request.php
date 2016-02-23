@@ -30,8 +30,6 @@
 		</div>
 	</div>
 
-	<?php// addDisciplinesToRequestForm($courseId, $userId, $semester['id_semester']); ?>
-
 	<?php
 		$disciplineSearch = array(
 			"name" => "discipline_name_search",
@@ -83,6 +81,9 @@
 			<?= form_button($searchBtn); ?>
 		</div>
 	</div>
+
+	<br>
+	<h4><i class='fa fa-list'> </i> Turmas disponíveis</h4>
 
 	<div id='discipline_search_result'>
 
