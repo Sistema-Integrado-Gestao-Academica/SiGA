@@ -3,6 +3,8 @@
 require_once('usuario.php');
 require_once('module.php');
 require_once('course.php');
+require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Program extends CI_Controller {
 
@@ -140,10 +142,8 @@ class Program extends CI_Controller {
 		$this->load->model('program_model');
 		$program = $this->program_model->getProgramById($programId);
 		
-		define("COORDINATOR_GROUP", "coordenador");
-
 		$group = new Module();
-		$foundGroup = $group->getGroupByName(COORDINATOR_GROUP);
+		$foundGroup = $group->getGroupByName(GroupConstants::COORDINATOR_GROUP);
 
 		if($foundGroup !== FALSE){
 
@@ -174,7 +174,7 @@ class Program extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByPermission('cursos', "program/edit_program", $data);
+		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, "program/edit_program", $data);
 	}
 
 	public function updateProgram(){
