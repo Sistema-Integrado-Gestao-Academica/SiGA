@@ -189,12 +189,21 @@ class Program extends CI_Controller {
 			$programAcronym = $this->input->post('program_acronym');
 			$programCoordinator = $this->input->post('program_coordinator');
 			$openingYear = $this->input->post('opening_year');
+			$programContact = $this->input->post('program_contact');
+			$programHistory = $this->input->post('program_history');
+			$programSummary = $this->input->post('program_summary');
+			$programResearchLine = $this->input->post('program_research_lines');
+
 
 			$programData = array(
 				'program_name' => $programName,
 				'acronym' => $programAcronym,
 				'coordinator' => $programCoordinator,
-				'opening_year' => $openingYear
+				'opening_year' => $openingYear,
+				'contact' => $programContact,
+				'history' => $programHistory,
+				'summary' => $programSummary,
+				'research_line' => $programResearchLine
 			);
 
 			$this->load->model('program_model');

@@ -25,8 +25,11 @@ $programContact = array(
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "6"
-);
+	"maxlength" => "300",
+	"placeholder" => "Máximo de 300 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
+);	
 
 $programSummary = array(
 	"name" => "program_summary",
@@ -34,7 +37,10 @@ $programSummary = array(
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "6"
+	"maxlength" => "1500",
+	"placeholder" => "Máximo de 1500 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
 );
 
 
@@ -44,7 +50,10 @@ $programResearchLines = array(
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "6"
+	"maxlength" => "1500",
+	"placeholder" => "Máximo de 1500 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
 );
 
 $programHistory = array(
@@ -53,12 +62,20 @@ $programHistory = array(
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "6"
+	"maxlength" => "1500",
+	"placeholder" => "Máximo de 1500 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
 );
 
 if($programData !== FALSE){
 	$programName['value'] = $programData['program_name'];
 	$programAcronym['value'] = $programData['acronym'];
+	$programContact['value'] = $programData['contact'];
+	$programSummary['value'] = $programData['summary'];
+	$programHistory['value'] = $programData['history'];
+	$programResearchLines['value'] = $programData['research_line'];
+	
 }
 
 $submitBtn = array(
@@ -121,25 +138,25 @@ if($currentYear !== FALSE){
 
 			<div class="form-group">	
 				<?= form_label("Contato", "program_contact") ?>
-				<?= form_input($programContact)?>
+				<?= form_textarea($programContact)?>
 				<?= form_error("program_contact") ?>
 			</div>
 
 			<div class="form-group">	
 				<?= form_label("Resumo", "program_summary") ?>
-				<?= form_input($programSummary)?>
+				<?= form_textarea($programSummary)?>
 				<?= form_error("program_summary") ?>
 			</div>
 
 			<div class="form-group">	
 				<?= form_label("Histórico", "program_history") ?>
-				<?= form_input($programHistory)?>
+				<?= form_textarea($programHistory)?>
 				<?= form_error("program_history") ?>
 			</div>
 
 			<div class="form-group">	
 				<?= form_label("Linhas de Pesquisa", "program_research_lines") ?>
-				<?= form_input($programResearchLines)?>
+				<?= form_textarea($programResearchLines)?>
 				<?= form_error("program_research_lines") ?>
 			</div>
 		</div>
