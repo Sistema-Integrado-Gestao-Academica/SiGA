@@ -15,38 +15,74 @@ require_once(APPPATH."/controllers/coordinator.php");
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(APPPATH."/constants/GroupConstants.php");
 
+/**
+ * Builds the table declaration html code with the standard css class
+ * @param $tableId - The html ID for the table
+ */
+function buildTableDeclaration($tableId = FALSE){
+
+	if($tableId !== FALSE){
+		echo "<div id='".$tableId."' class=\"box-body table-responsive no-padding\">";
+	}else{
+		echo "<div class=\"box-body table-responsive no-padding\">";
+	}
+		echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+}
+
+/**
+ * Builds the table headers html code
+ * @param $headersName - The headers names of the table
+ */
+function buildTableHeaders($headersNames){
+
+	echo "<tr>";
+	foreach($headersNames as $headerName){
+		echo "<th class=\"text-center\">".$headerName."</th>";
+	}
+	echo "</tr>";
+}
+
+/**
+ * Builds the table end declaration html code
+ */
+function buildTableEndDeclaration(){
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
+}
+
 function displayStudentSpecificDataPage($idUser){
 
 	$user = new Usuario();
 
 	$studentData = $user->getStudentBasicInformation($idUser);
 	echo "<h4>Dados Pessoais:</h4>";
-	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-	echo "<tbody>";
 
-	echo "<tr>";
-	echo "<th class=\"text-center\">Matrícula</th>";
-	echo "<th class=\"text-center\">Email</th>";
-	echo "<th class=\"text-center\">Telefone (residência)</th>";
-	echo "<th class=\"text-center\">Telefone (celular)</th>";
-	echo "</tr>";
+	buildTableDeclaration();
+
+	buildTableHeaders(array(
+		'Matrícula',
+		'E-mail',
+		'Telefone (Residência)',
+		'Telefone (Celular)'
+	));
 
 	if($studentData !== FALSE){
-			echo "<tr>";
-				echo "<td>";
-					echo $studentData['student_registration'];
-				echo "</td>";
-				echo "<td>";
-					echo $studentData['email'];
-				echo "</td>";
-				echo "<td>";
-					echo $studentData['home_phone_number'];
-				echo "</td>";
-				echo "<td>";
-					echo $studentData['cell_phone_number'];
-				echo "</td>";
-			echo "</tr>";
+		echo "<tr>";
+			echo "<td>";
+				echo $studentData['student_registration'];
+			echo "</td>";
+			echo "<td>";
+				echo $studentData['email'];
+			echo "</td>";
+			echo "<td>";
+				echo $studentData['home_phone_number'];
+			echo "</td>";
+			echo "<td>";
+				echo $studentData['cell_phone_number'];
+			echo "</td>";
+		echo "</tr>";
 	}else{
 
 		echo "<tr>";
@@ -58,53 +94,49 @@ function displayStudentSpecificDataPage($idUser){
 		echo "</tr>";
 	}
 
-	echo "</tbody>";
-	echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function courseTableToSecretaryPage($courses){
 
 	$courseController = new Course();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
-		    echo "<tr>";
-		        echo "<th class=\"text-center\">Código</th>";
-		        echo "<th class=\"text-center\">Curso</th>";
-		        echo "<th class=\"text-center\">Tipo</th>";
-		        echo "<th class=\"text-center\">Ações</th>";
-		    echo "</tr>";
+	buildTableDeclaration();
 
-		    	foreach($courses as $courseData){
+	buildTableHeaders(array(
+		'Código',
+		'Curso',
+		'Tipo',
+		'Ações'
+	));
 
-		    		$courseId = $courseData['id_course'];
-		    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
+	if($courses !== FALSE){
+    	foreach($courses as $courseData){
 
-					echo "<tr>";
-			    		echo "<td>";
-			    		echo $courseId;
-			    		echo "</td>";
+    		$courseId = $courseData['id_course'];
+    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
 
-			    		echo "<td>";
-			    		echo $courseData['course_name'];
-			    		echo "</td>";
+			echo "<tr>";
+	    		echo "<td>";
+	    		echo $courseId;
+	    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo $courseType['description'];
-			    		echo "</td>";
+	    		echo "<td>";
+	    		echo $courseData['course_name'];
+	    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-			    		echo "</td>";
-		    		echo "</tr>";
-		    	}
+	    		echo "<td>";
+	    		echo $courseType['description'];
+	    		echo "</td>";
 
-		echo "</tbody>";
-	echo "</table>";
-echo "</div>";
+	    		echo "<td>";
+	    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+	    		echo "</td>";
+    		echo "</tr>";
+    	}
+    }
 
+    buildTableEndDeclaration();
 }
 
 function showCapesAvaliationsNews($atualizations){
