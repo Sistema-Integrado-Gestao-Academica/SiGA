@@ -52,6 +52,43 @@ function buildTableEndDeclaration(){
 	echo "</div>";
 }
 
+/**
+ * Builds a callout(from AdminLTE) hmtl code
+ * @param $calloutType - The type of the callout (Info, Warning, Danger). The default is the info callout.
+ * @param $principalMessage - The principal message on the callout. Goes in HTML 'h4' tags.
+ * @param $aditionalMessage - The aditionalMessage for the callout. Goes in HTML 'p' tags. Optional.
+ * @param $calloutId - The html id for the callout. Optional.
+ */
+function callout($calloutType = "info", $principalMessage, $aditionalMessage = FALSE, $calloutId = FALSE){
+
+	// Check available callout types
+	switch($calloutType){
+		case 'info':
+		case 'warning':
+		case 'danger':
+
+		default:
+			$calloutType = 'info';
+			break;
+	}
+
+	if($calloutId !== FALSE){
+		echo "<div id= '".$calloutId."' class=\"callout callout-".$calloutType."\">";
+	}else{
+		echo "<div class=\"callout callout-".$calloutType."\">";
+	}
+
+	echo "<h4>".$principalMessage."</h4>";
+
+	if($aditionalMessage !== FALSE){
+		echo "<p>".$aditionalMessage."</p>";
+	}else{
+		// Nothing to do because there is no aditional message
+	}
+
+	echo "</div>";
+}
+
 function displayStudentSpecificDataPage($idUser){
 
 	$user = new Usuario();
@@ -192,31 +229,30 @@ function studentsReportsTable($idCoordinator){
 	$totalStudent = $coordinator->getTotalStudents($idCoordinator);
 	$enroledStudents = $coordinator->getEnroledStudents($idCoordinator);
 	$notEnroledStudents = $coordinator->getNotEnroledStudents($idCoordinator);
+
 	echo "<h4> Painel de quantidades de alunos </h4>";
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-				echo "<tr>";
-					echo "<th class=\"text-center\">Total de estudantes</th>";
-					echo "<th class=\"text-center\">Total de Matriculados</th>";
-					echo "<th class=\"text-center\">Total de Atrazados</th>";
-				echo "</tr>";
 
-				echo "<tr>";
-					echo "<td>";
-					echo $totalStudent;
-					echo "</td>";
-					echo "<td>";
-					echo $enroledStudents;
-					echo "</td>";
-					echo "<td>";
-					echo $notEnroledStudents;
-					echo "</td>";
-				echo "</tr>";
+	buildTableDeclaration();
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableHeaders(array(
+		'Total de estudantes',
+		'Total de matriculados',
+		'Total de atrasados'
+	));
+
+	echo "<tr>";
+		echo "<td>";
+		echo $totalStudent;
+		echo "</td>";
+		echo "<td>";
+		echo $enroledStudents;
+		echo "</td>";
+		echo "<td>";
+		echo $notEnroledStudents;
+		echo "</td>";
+	echo "</tr>";
+
+	buildTableEndDeclaration();
 }
 
 function secretaryReportsTable($idCoordinator){
@@ -297,26 +333,32 @@ function showMastermindsStudents($masterminds){
 			echo "<div class='panel-body'>";
 				echo "<div class=\"modal-info\">";
 					echo "<div class=\"modal-content\">";
-	foreach ($masterminds as $key => $mastermind){
-		$students = $coordinator->getMastermindStudents($mastermind['id_user']);
+	if($masterminds !== FALSE){
+		foreach ($masterminds as $key => $mastermind){
+			$students = $coordinator->getMastermindStudents($mastermind['id_user']);
 
-		$userData = new Usuario();
-		$mastermindData = $userData->getUserById($mastermind['id_user']);
+			$userData = new Usuario();
+			$mastermindData = $userData->getUserById($mastermind['id_user']);
 
-						echo "<div class=\"modal-header bg-news\">";
-							echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
-						echo "</div>";
-		foreach ($students as $singleStudent){
-			$studentData = $userData->getUserById($singleStudent['id_student']);
+							echo "<div class=\"modal-header bg-news\">";
+								echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
+							echo "</div>";
+			foreach ($students as $singleStudent){
+				$studentData = $userData->getUserById($singleStudent['id_student']);
 
-						echo "<div class=\"modal-body\">";
-							echo "<h4>";
-								echo ucfirst($studentData['name']);
-							echo "</h4>";
-						echo "</div>";
+							echo "<div class=\"modal-body\">";
+								echo "<h4>";
+									echo ucfirst($studentData['name']);
+								echo "</h4>";
+							echo "</div>";
+
+			}
 
 		}
+	}else{
 
+		$message = "Não há alunos relacionados a nenhum professor.";
+		callout("info", $message);
 	}
 
 					echo "</div>";
