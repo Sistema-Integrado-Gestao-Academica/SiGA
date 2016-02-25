@@ -15,6 +15,9 @@ require_once(APPPATH."/controllers/coordinator.php");
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(APPPATH."/constants/GroupConstants.php");
 
+require_once(APPPATH."/data_types/view_types/AlertCallout.php");
+require_once(APPPATH."/data_types/view_types/WrapperCallout.php");
+
 /**
  * Builds the table declaration html code with the standard css class
  * @param $tableId - The html ID for the table
@@ -53,6 +56,27 @@ function buildTableEndDeclaration(){
 }
 
 /**
+ * Checks if the given callout type is one of the available
+ * @param $calloutType - The callout type to check
+ */
+function getCalloutType($calloutType){
+
+	// Check available callout types
+	switch($calloutType){
+		case "info":
+		case "warning":
+		case "danger":
+			break;
+
+		default:
+			$calloutType = 'info';
+			break;
+	}
+
+	return $calloutType;
+}
+
+/**
  * Builds a callout(from AdminLTE) hmtl code
  * @param $calloutType - The type of the callout (Info, Warning, Danger). The default is the info callout.
  * @param $principalMessage - The principal message on the callout. Goes in HTML 'h4' tags.
@@ -61,32 +85,24 @@ function buildTableEndDeclaration(){
  */
 function callout($calloutType = "info", $principalMessage, $aditionalMessage = FALSE, $calloutId = FALSE){
 
-	// Check available callout types
-	switch($calloutType){
-		case 'info':
-		case 'warning':
-		case 'danger':
+	$callout = new AlertCallout($calloutType, $principalMessage, $aditionalMessage, $calloutId);
 
-		default:
-			$calloutType = 'info';
-			break;
-	}
+	$callout->draw();
+}
 
-	if($calloutId !== FALSE){
-		echo "<div id= '".$calloutId."' class=\"callout callout-".$calloutType."\">";
-	}else{
-		echo "<div class=\"callout callout-".$calloutType."\">";
-	}
+/**
+ * Builds a callout(from AdminLTE) hmtl code
+ * @param $calloutType - The type of the callout (Info, Warning, Danger). The default is the info callout.
+ * @param $wrapperContent - The content that goes inside the callout
+ * @param $principalMessage - The principal message on the callout. Goes in HTML 'h4' tags.
+ * @param $aditionalMessage - The aditionalMessage for the callout. Goes in HTML 'p' tags. Optional.
+ * @param $calloutId - The html id for the callout. Optional.
+ */
+function wrapperCallout($calloutType = "info", $wrapperContent, $principalMessage = FALSE, $aditionalMessage = FALSE, $calloutId = FALSE){
 
-	echo "<h4>".$principalMessage."</h4>";
+	$wrapperCallout = new WrapperCallout($calloutType, $wrapperContent, $principalMessage, $aditionalMessage, $calloutId);
 
-	if($aditionalMessage !== FALSE){
-		echo "<p>".$aditionalMessage."</p>";
-	}else{
-		// Nothing to do because there is no aditional message
-	}
-
-	echo "</div>";
+	return $wrapperCallout;
 }
 
 function displayStudentSpecificDataPage($idUser){
@@ -824,99 +840,98 @@ function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idS
 
 	echo "<div class='panel-heading'>Disciplinas solicitadas</div>";
 
-	echo "<table class='table table-hover'>";
-	echo "<tbody>";
-	echo "<tr>";
-	echo "<th class=\"text-center\">Código Disciplina</th>";
-	echo "<th class=\"text-center\">Disciplina requerida</th>";
-	echo "<th class=\"text-center\">Turma requerida</th>";
-	echo "<th class=\"text-center\">Vagas totais</th>";
-	echo "<th class=\"text-center\">Vagas disponíveis</th>";
-	echo "<th class=\"text-center\">Status</th>";
-	echo "<th class=\"text-center\">Ações</th>";
-	echo "</tr>";
+	buildTableDeclaration();
 
-	foreach($requestDisciplines as $disciplineClass){
+	buildTableHeaders(array(
+		'Código Disciplina',
+		'Disciplina requerida',
+		'Turma requerida',
+		'Vagas totais',
+		'Vagas disponíveis',
+		'Status',
+		'Ações'
+	));
 
-		$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+	if($requestDisciplines !== FALSE){
+		foreach($requestDisciplines as $disciplineClass){
 
-		echo "<tr>";
+			$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
 
-		echo "<td>";
-		echo $disciplineClass['id_discipline'];
-		echo "</td>";
+			echo "<tr>";
 
-		if($foundDiscipline !== FALSE){
 			echo "<td>";
-			echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+			echo $disciplineClass['id_discipline'];
 			echo "</td>";
-		}else{
+
+			if($foundDiscipline !== FALSE){
+				echo "<td>";
+				echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+				echo "</td>";
+			}else{
+				echo "<td>";
+				echo "<div class='callout callout-info'>";
+				echo "Disciplina não encontrada.";
+				echo "</div>";
+				echo "</td>";
+			}
+
 			echo "<td>";
-			echo "<div class='callout callout-info'>";
-			echo "Disciplina não encontrada.";
-			echo "</div>";
+			echo $disciplineClass['class'];
 			echo "</td>";
+
+			echo "<td>";
+			echo $disciplineClass['total_vacancies'];
+			echo "</td>";
+
+			echo "<td>";
+			echo $disciplineClass['current_vacancies'];
+			echo "</td>";
+
+			echo "<td>";
+
+			switch($disciplineClass['status']){
+				case EnrollmentConstants::PRE_ENROLLED_STATUS:
+					$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
+					break;
+
+				case EnrollmentConstants::ENROLLED_STATUS:
+					$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
+					break;
+
+				case EnrollmentConstants::REFUSED_STATUS:
+					$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
+					break;
+
+				default:
+					$status = "-";
+					break;
+			}
+			echo $status;
+			echo "</td>";
+
+			echo "<td>";
+
+			if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
+				// In this case the request was already approved
+			}else{
+				displayAcceptStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
+				//echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+			}
+
+			if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
+				// In this case the request was already refused
+			}else{
+				displayRefuseStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
+				//echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+			}
+
+			echo "</td>";
+			echo "</tr>";
 		}
-
-		echo "<td>";
-		echo $disciplineClass['class'];
-		echo "</td>";
-
-		echo "<td>";
-		echo $disciplineClass['total_vacancies'];
-		echo "</td>";
-
-		echo "<td>";
-		echo $disciplineClass['current_vacancies'];
-		echo "</td>";
-
-		echo "<td>";
-
-		switch($disciplineClass['status']){
-			case EnrollmentConstants::PRE_ENROLLED_STATUS:
-				$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
-				break;
-
-			case EnrollmentConstants::ENROLLED_STATUS:
-				$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
-				break;
-
-			case EnrollmentConstants::REFUSED_STATUS:
-				$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
-				break;
-
-			default:
-				$status = "-";
-				break;
-		}
-		echo $status;
-		echo "</td>";
-
-		echo "<td>";
-
-		if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
-			// In this case the request was already approved
-		}else{
-			displayAcceptStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
-			//echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
-		}
-
-		if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
-			// In this case the request was already refused
-		}else{
-			displayRefuseStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
-			//echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
-		}
-
-		echo "</td>";
-		echo "</tr>";
 	}
 
-	echo "</tbody>";
-	echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
-
 
 function displayMastermindStudentRequest($requests, $idMastermind){
 
@@ -927,155 +942,156 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-				echo "<tr>";
-					echo "<th class=\"text-center\">Código da requisição</th>";
-					echo "<th class=\"text-center\">Aluno requerente</th>";
-					echo "<th class=\"text-center\">Matrícula aluno</th>";
-					echo "<th class=\"text-center\">Status da solicitação</th>";
-					echo "<th class=\"text-center\">Ações</th>";
-					echo "<th class=\"text-center\">Finalizar</th>";
-				echo "</tr>";
+	buildTableDeclaration();
 
-				if($requests !== FALSE){
+	buildTableHeaders(array(
+		'Código da requisição',
+		'Aluno requerente',
+		'Matrícula aluno',
+		'Status da solicitação',
+		'Ações',
+		'Finalizar'
+	));
 
-					$offer = new Offer();
+	if($requests !== FALSE){
 
-					foreach($requests as $request){
+		$offer = new Offer();
 
-						if ($request !== FALSE){
+		foreach($requests as $request){
 
-							foreach ($request as $studentRequest){
+			if ($request !== FALSE){
 
-								$requestId = $studentRequest['id_request'];
+				foreach ($request as $studentRequest){
 
-								$semesterId = $studentRequest['id_semester'];
-								$courseId = $studentRequest['id_course'];
-								$requestedOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+					$requestId = $studentRequest['id_request'];
 
-								if($requestedOffer !== FALSE){
-									$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
-								}else{
-									// Assume that is true
-									$needsMastermindApproval = TRUE;
-								}
+					$semesterId = $studentRequest['id_semester'];
+					$courseId = $studentRequest['id_course'];
+					$requestedOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
 
-								$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
-
-								echo "<tr>";
-
-								echo "<td>";
-								echo $requestId;
-								echo "</td>";
-
-								$foundUser = $user->getUserById($studentRequest['id_student']);
-								echo "<td>";
-								echo $foundUser['name'];
-								echo "</td>";
-
-								echo "<td>";
-								echo $foundUser['id'];
-								echo "</td>";
-
-								echo "<td>";
-
-								$status = switchRequestGeneralStatus($studentRequest['request_status']);
-
-								if($requestIsApprovedByMastermind){
-									if($needsMastermindApproval){
-										$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
-									}else{
-										$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
-									}
-									echo $status;
-								}else{
-									echo $status;
-								}
-
-								echo "</td>";
-
-								echo "<td>";
-
-								echo anchor(
-										"#solicitation_details_".$requestId,
-										"Visualizar solicitação",
-										"class='btn btn-info'
-					    				data-toggle='collapse'
-					    				aria-expanded='false'
-					    				aria-controls='solicitation_details".$requestId."'"
-									);
-
-								if($requestIsApprovedByMastermind){
-
-									// Disable buttons
-									echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
-									echo "<br>";
-									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
-								}else{
-									echo "<br>";
-									echo anchor("request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-									echo "<br>";
-									echo anchor("request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
-								}
-
-								echo "</td>";
-
-								echo "<td rowspan=2>";
-									if($requestIsApprovedByMastermind){
-
-										if($needsMastermindApproval){
-
-											$mastermind = new MasterMind();
-
-											$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
-
-											$isFinalized = TRUE;
-											echo "<div class=\"callout callout-warning\">";
-												mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
-												echo "<p><i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i></p>";
-											echo "</div>";
-										}else{
-											echo "<div class=\"callout callout-warning\">";
-												echo "<p><i>O tipo da oferta não permite a ação do orientador.</i></p>";
-											echo "</div>";
-										}
-
-									}else{
-										$isFinalized = FALSE;
-										echo "<div class=\"callout callout-info\">";
-											mastermindMessageForm($requestId, $idMastermind, $isFinalized);
-											echo "<p><i>Finaliza a solicitação com o status atual das disciplinas.</i></p>";
-										echo "</div>";
-									}
-								echo "</td>";
-
-								echo "</tr>";
-
-								echo "<tr>";
-									echo "<td colspan=5>";
-										echo "<div class='collapse' id='solicitation_details_".$requestId."'>";
-										requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
-										echo "</div>";
-									echo "</td>";
-								echo "</tr>";
-							}
-						}
+					if($requestedOffer !== FALSE){
+						$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
+					}else{
+						// Assume that is true
+						$needsMastermindApproval = TRUE;
 					}
-				}else{
+
+					$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+
 					echo "<tr>";
-						echo "<td colspan=9>";
-						echo "<div class=\"callout callout-info\">";
-						echo "<h4>Nenhuma solicitação encontrada.</h4>";
-						echo "</div>";
+
+					echo "<td>";
+					echo $requestId;
+					echo "</td>";
+
+					$foundUser = $user->getUserById($studentRequest['id_student']);
+					echo "<td>";
+					echo $foundUser['name'];
+					echo "</td>";
+
+					echo "<td>";
+					echo $foundUser['id'];
+					echo "</td>";
+
+					echo "<td>";
+
+					$status = switchRequestGeneralStatus($studentRequest['request_status']);
+
+					if($requestIsApprovedByMastermind){
+						if($needsMastermindApproval){
+							$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
+						}else{
+							$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
+						}
+						echo $status;
+					}else{
+						echo $status;
+					}
+
+					echo "</td>";
+
+					echo "<td>";
+
+					echo anchor(
+							"#solicitation_details_".$requestId,
+							"Visualizar solicitação",
+							"class='btn btn-info'
+		    				data-toggle='collapse'
+		    				aria-expanded='false'
+		    				aria-controls='solicitation_details".$requestId."'"
+						);
+
+					if($requestIsApprovedByMastermind){
+
+						// Disable buttons
+						echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
+						echo "<br>";
+						echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
+					}else{
+						echo "<br>";
+						echo anchor("request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+						echo "<br>";
+						echo anchor("request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+					}
+
+					echo "</td>";
+
+					echo "<td rowspan=2>";
+
+						if($requestIsApprovedByMastermind){
+
+							if($needsMastermindApproval){
+
+								$mastermind = new MasterMind();
+
+								$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
+
+								$isFinalized = TRUE;
+
+								$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
+
+								$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
+
+								$callout->writeCalloutDeclaration();
+								mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
+								$callout->writeCalloutEndDeclaration();
+
+							}else{
+								callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
+							}
+
+						}else{
+							$isFinalized = FALSE;
+							$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
+
+							$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
+							$callout->writeCalloutDeclaration();
+							mastermindMessageForm($requestId, $idMastermind, $isFinalized);
+							$callout->writeCalloutEndDeclaration();
+						}
+					echo "</td>";
+
+					echo "</tr>";
+
+					echo "<tr>";
+						echo "<td colspan=5>";
+							echo "<div class='collapse' id='solicitation_details_".$requestId."'>";
+							requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+							echo "</div>";
 						echo "</td>";
 					echo "</tr>";
 				}
+			}
+		}
+	}else{
+		echo "<tr>";
+			echo "<td colspan=9>";
+			callout("info", "Nenhuma solicitação encontrada.");
+			echo "</td>";
+		echo "</tr>";
+	}
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
