@@ -1,6 +1,10 @@
 
 $(document).ready(function(){
 
+	$("#discipline_search_btn").ready(function(){
+		searchDisciplineClasses();
+	});
+
 	$("#discipline_search_btn").click(function(){
 		searchDisciplineClasses();
 	});
