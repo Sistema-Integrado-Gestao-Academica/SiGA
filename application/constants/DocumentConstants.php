@@ -1,10 +1,10 @@
 <?php
 
-require_once('constants.php');
+require_once('Constants.php');
 require_once(APPPATH.'/controllers/documentrequest.php');
 
 class DocumentConstants extends Constants{
-	
+
 	const REQUEST_ARCHIVED = 1;
 	const REQUEST_NON_ARCHIVED = 0;
 
@@ -39,7 +39,7 @@ class DocumentConstants extends Constants{
 	const COURSE_PERIOD_DECLARATION = 15;
 	const DONE_DISCISPLINES_DECLARATION = 16;
 	const PERIOD_GRADUATED_DECLARATION = 17;
-	
+
 
 	private $nonDeclarationTypes;
 	private $declarationTypes;
@@ -50,7 +50,7 @@ class DocumentConstants extends Constants{
 	}
 
 	private function setDeclarationTypes(){
-		
+
 		$docRequest = new DocumentRequest();
 		$types = $docRequest->allDeclarationTypes();
 
@@ -90,7 +90,7 @@ class DocumentConstants extends Constants{
 	}
 
 	public function getAllTypes(){
-		
+
 		$declarationTypes = $this->declarationTypes;
 		$nonDeclarationTypes = $this->nonDeclarationTypes;
 
