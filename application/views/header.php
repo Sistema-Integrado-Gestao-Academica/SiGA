@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<?php  
+<?php
 	require_once(APPPATH."/constants/GroupConstants.php");
-	
+
 	$session = $this->session->userdata("current_user");
 ?>
 <html>
@@ -33,7 +33,7 @@
 
 <body class="skin-blue">
 	<header>
-		<?php 
+		<?php
 			$this->load->helper('url');
 			$site_url = site_url();
 
@@ -76,7 +76,7 @@
                                         		echo "<br>";
                                         	}
                                         ?>
-                                        <br>	
+                                        <br>
                                         <small><?php echo $session['user']['email']?></small>
                                     </p>
                                 </li>
@@ -93,14 +93,81 @@
                         </li>
 					</ul>
 				<?php } else { ?>
-						<li><?=anchor("usuario/novo", "Cadastro", "class='navbar-brand'")?></li>
-				    </ul>
+
+					<li><?=anchor("usuario/novo", "Cadastro", "class='navbar-brand'")?></li>
+					</ul>
+
+						<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown user user-menu">
+								<a href="#" class="dropdow	n-toggle" data-toggle="dropdown">
+									<i class="glyphicon glyphicon-user"></i>
+									<span>Login<i class="caret"></i></span>
+								</a>
+								<ul class="dropdown-menu">
+									<div class="bg-gray">
+									<?php
+									echo form_open("login/autenticar");
+									?>
+									<div class="header">
+										<div class="bg-olive">
+										<h4 align="center">Login</h4>
+									</div>
+									</div>
+									<li class="user-header">
+										<p>
+											<?php
+											echo form_label("Login", "login");
+											echo form_input(array(
+												"name" => "login",
+												"id" => "login",
+												"type" => "text",
+												"class" => "form-campo",
+												"maxlength" => "255",
+												"value" => set_value("login", ""),
+												"class" => "form-control",
+												"placeholder" => "Login de Usuário"
+											));
+											?>
+										</p>
+										<p>
+											<?php
+												echo form_label("Senha", "senha");
+												echo form_input(array(
+													"name" => "senha",
+													"id" => "senha",
+													"type" => "password",
+													"class" => "form-campo",
+													"maxlength" => "255",
+													"class" => "form-control",
+													"placeholder" => "Senha"
+												));
+											?>
+										</p>
+										<div class="footer">
+											<?php
+												echo form_button(array(
+													"id" => "login_btn",
+													"class" => "btn bg-olive btn-block",
+													"content" => "Entrar",
+													"type" => "submit"
+												));
+
+												echo form_close();
+												?>
+											</div>
+										</div>
+
+								</ul>
+							</li>
+						</ul>
+
+
 				<?php }?>
-					
+
 				</div>
 			</div>
 		</div>
-	
+
 	</header>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
@@ -113,7 +180,7 @@
 	                        <div class="pull-left info">
 	                            <br>
 	                            <p>Olá, <?=ucfirst($session['user']['name'])?></p>
-	
+
 	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 
 	                            <br><br>
@@ -122,7 +189,7 @@
 		                            Perfil <span class="fa fa-caret-down"></span></button>
 
 		                            <ul class="dropdown-menu">
-		                            	<?php 
+		                            	<?php
 		                            		foreach($session['user_groups'] as $group){
 		                            			echo "<li>";
 		                            			switch ($group['group_name']) {
@@ -161,13 +228,13 @@
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
 	                <?php
-	                
+
 						foreach($session['user_permissions'] as $groupName => $groupPermissions){
                 			if($groupName == GroupConstants::SECRETARY_GROUP){
 								continue;
 							}else{
 								echo "<li class='treeview'>";
-								
+
 								switch ($groupName) {
                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
                         				$groupNameToShow = "Secretaria acadêmica";
@@ -180,13 +247,13 @@
                         				break;
                         		}
 								echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
-								
+
 									echo "<ul class='treeview-menu'>";
-									
+
 									if($groupPermissions !== FALSE){
-										
+
 										foreach($groupPermissions as $permission){
-										
+
 											echo "<li>";
 												if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
 													continue;
@@ -196,9 +263,9 @@
 											echo "</li>";
 										}
 									}
-		
+
 									echo "</ul>";
-								
+
 								echo "</li>";
 							}
 						}
@@ -211,7 +278,7 @@
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-            					
+
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>
