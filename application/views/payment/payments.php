@@ -2,14 +2,24 @@
 
 <?php
 
-	echo anchor(
-		/**
-		Voltar daqui
-		//"payment/newPayment/{$budgetplanId}/{$expenseId}",
+	$budgetplan = array(
+		'id' => "budgetplanId",
+		'type' => "hidden",
+		'value' => $budgetplanId
+	);
 
-		*/
+	$expense = array(
+		'id' => "expenseId",
+		'type' => "hidden",
+		'value' => $expenseId
+	);
+
+	echo form_input($budgetplan);
+	echo form_input($expense);
+
+	echo anchor(
 		"#new_payment_form",
-		"<i class='fa fa-plus-circle'></i> Novo pagamento",
+		"<i class='fa fa-chevron-circle-down'></i> Novo pagamento",
 		"id='new_payment'
 		 class='btn-lg'
 		 data-toggle='collapse'
@@ -32,16 +42,29 @@
 
     <div class="row">
 
-	    <div class="col-xs-3">
+	    <div class="col-lg-4">
 			<h4><i class='fa fa-users'></i> Pagamento para funcionário?</h4>
 
 		    <?= form_label('Nome do funcionário', 'employee_to_search'); ?>
 		    <?= form_input($employeeNameField); ?>
 	    </div>
-	    <div class="col-xs-9">
+	    <div class="col-lg-8">
 	    	<div id="employee_search_result"></div>
 	    </div>
     </div>
+    <br>
+    <div class="row">
+		<div class="col-lg-4">
+			<h4><i class='fa fa-dollar'></i> Pagamento Convencional</h4>
+			<?= anchor(
+				"payment/newPayment/{$budgetplanId}/{$expenseId}",
+				"<i class='fa fa-plus-circle'></i> Novo pagamento",
+				"class='btn btn-primary'"
+			);?>
+    	</div>
+    </div>
+
+	<hr>
 </div>
 
 <?php

@@ -1,6 +1,11 @@
 
 $(document).ready(function(){
 
+	// Back button
+	$("#back_btn").click(function(){
+		history.go(-1);
+	});
+
 	$("#employee_to_search").keypress(function(){
 		searchEmployeeToPayment();
 	});
@@ -64,6 +69,9 @@ $(document).ready(function(){
 function searchEmployeeToPayment(){
 
 	var employeeName = $("#employee_to_search").val();
+	var budgetplanId = $("#budgetplanId").val();
+	var expenseId = $("#expenseId").val();
+
 	var siteUrl = $("#site_url").val();
 
 	var urlToPost = siteUrl + "/ajax/paymentajax/newStaffPaymentForm";
@@ -71,7 +79,9 @@ function searchEmployeeToPayment(){
 	$.post(
 		urlToPost,
 		{
-			employeeName: employeeName
+			employeeName: employeeName,
+			budgetplanId: budgetplanId,
+			expenseId: expenseId
 		},
 		function(data){
 			$("#employee_search_result").html(data);

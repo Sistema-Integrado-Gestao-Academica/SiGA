@@ -7,6 +7,8 @@ class PaymentAjax extends CI_Controller {
     public function newStaffPaymentForm(){
 
         $employeeName = $this->input->post("employeeName");
+        $budgetplanId = $this->input->post("budgetplanId");
+        $expenseId = $this->input->post("expenseId");
 
         $staff = new Staff();
         $employees = $staff->getEmployeeByPartialName($employeeName);
@@ -39,7 +41,17 @@ class PaymentAjax extends CI_Controller {
                     echo "</td>";
 
                     echo "<td>";
-                        echo anchor("", "<i class='fa fa-plus-circle'></i> Novo pagamento para <b>".$employee['name']."</b>", "class='btn btn-primary'");
+                        $submitBtn = array(
+                            "class" => "btn btn-primary",
+                            "content" => "<i class='fa fa-plus-circle'></i> Pagamento para <b>".$employee['name']."</b>",
+                            "type" => "submit"
+                        );
+                        echo form_open("payment/employeePayment");
+                            echo form_hidden("employee", $employee);
+                            echo form_hidden("budgetplanId", $budgetplanId);
+                            echo form_hidden("expenseId", $expenseId);
+                            echo form_button($submitBtn);
+                        echo form_close();
                     echo "</td>";
 
                 echo "</tr>";
