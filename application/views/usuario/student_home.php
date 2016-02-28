@@ -9,16 +9,16 @@
 <br>
 
 <div class="panel panel-primary">
-  
+
 	<div class="panel-heading"><h4>Cursos para o(a) aluno(a) <i><?php echo $userData['name'];?></i></h4></div>
 
 	<div class="panel-body">
-	
+
 		<?php
 		if($courses !== FALSE){
 
 			foreach ($courses as $course) {
-				
+
 				echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$userData['id']}", "<b>".$course['course_name']."</b>");
 				echo "<br>";
 				echo "Data matrícula: ".$course['enroll_date'];

@@ -19,58 +19,49 @@ if ($sessao != NULL) { ?>
 
 
 <?php } else { ?>
-	# Nessa página mostrar os paranaue do curso
-	<h1 class="bemvindoLogin">Bem vindo ao SiGA</h1>
+
+	<h1 class="bemvindoLogin">SiGA</h1>
+</br></br>
+</br>
+
+	<a class="nav-tabs-dropdown btn btn-block btn-primary" align="left"><h3>Sobre o Programa
+		de Pós Graduação em Educação</h3></a>
 
 
-
-	<div class="form-box" id="login-box">
-		<div class="header">Login</div>
-		<?php
-		echo form_open("login/autenticar");
-		?>
-		<div class="body bg-gray">
-			<div class="form-group">
-				<?php
-				echo form_label("Login", "login");
-				echo form_input(array(
-					"name" => "login",
-					"id" => "login",
-					"type" => "text",
-					"class" => "form-campo",
-					"maxlength" => "255",
-					"value" => set_value("login", ""),
-					"class" => "form-control",
-					"placeholder" => "Login de Usuário"
-				));
-				?>
-			</div>
-			<div class="form-group">
-				<?php
-					echo form_label("Senha", "senha");
-					echo form_input(array(
-						"name" => "senha",
-						"id" => "senha",
-						"type" => "password",
-						"class" => "form-campo",
-						"maxlength" => "255",
-						"class" => "form-control",
-						"placeholder" => "Senha"
-					));
-				?>
-			</div>
-			<br>
+	<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
+		<li class="active"><a href="#vtab1" data-toggle="collapse" data-target="#resumo">O PPGE</a></li>
+		<div id="resumo" class="collapse">
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+			sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 		</div>
-		<div class="footer">
-			<?php
-				echo form_button(array(
-					"id" => "login_btn",
-					"class" => "btn bg-olive btn-block",
-					"content" => "Entrar",
-					"type" => "submit"
-				));
 
-				echo form_close();
-			} ?>
+		<li><a href="#vtab2" data-toggle="collapse" data-target="#historico">Histórico</a></li>
+		<div id="historico" class="collapse">
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+			sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+		</div>
+
+		<li><a href="#vtab3" data-toggle="collapse" data-target="#contato">Contato</a></li>
+		<div id="contato" class="collapse">
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+			sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+		</div>
+
+
+		<li><a href="#vtab4" data-toggle="collapse" data-target="#linhasPesquisa">Linhas de Pesquisa</a></li>
+		<div id="linhasPesquisa" class="collapse">
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+			sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+		</div>
+	</ul>
+
+			<?php
+			}
+			?>
+
 		</div>
 	</div>
