@@ -15,6 +15,19 @@ class staffs_model extends CI_Model {
 		return $allStaffs;
 	}
 
+	public function getEmployeeByPartialName($employeeName){
+
+		$this->db->select("users.id, users.name, users.cpf, users.email, staffs.*");
+		$this->db->from("users");
+		$this->db->join("staffs", "staffs.id_user = users.id");
+		$this->db->like("users.name", $employeeName);
+		$foundEmployees = $this->db->get()->result_array();
+
+		$foundEmployees = checkArray($foundEmployees);
+
+		return $foundEmployees;
+	}
+
 	public function saveNewStaff($saveData) {
 		$saved = $this->db->insert("staffs", $saveData);
 		if($saved){
@@ -25,9 +38,9 @@ class staffs_model extends CI_Model {
 	}
 
 	public function updateStaffData($staff,$where) {
-		
+
 		$res = $this->db->update("staffs", $staff, $where);
-		
+
 		return $res;
 	}
 

@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH."/constants/GroupConstants.php");
+
 require_once("usuario.php");
+require_once(APPPATH."/constants/GroupConstants.php");
+
 class Staff extends CI_Controller {
 
 	public function staffsLoadPage() {
@@ -18,7 +20,17 @@ class Staff extends CI_Controller {
 		$this->load->template('staffs/edit_staff', $data);
 	}
 
+	public function getEmployeeByPartialName($employeeName){
+
+		$this->load->model('staffs_model');
+
+		$employeeName = $this->staffs_model->getEmployeeByPartialName($employeeName);
+
+		return $employeeName;
+	}
+
 	public function newStaff() {
+
 		$success = $this->validatesStaffData();
 
 		if ($success) {
@@ -34,7 +46,7 @@ class Staff extends CI_Controller {
 			$accountNumber = $this->input->post('accountNumber');
 
 			$saveData = array(
-				'id_user' => $idStaff, 
+				'id_user' => $idStaff,
 				'pisPasep' => $pis,
 				'registration' => $registration,
 				'brazil_landing' => $landingDate,
@@ -59,7 +71,7 @@ class Staff extends CI_Controller {
 	}
 
 	public function updateStaff() {
-		
+
 		$success = $this->validatesStaffData();
 
 		if ($success) {
@@ -91,7 +103,7 @@ class Staff extends CI_Controller {
 			$this->load->model("staffs_model");
 			$updated = $this->staffs_model->updateStaffData($updateData, $where);
 
-			if ($updated) {			
+			if ($updated) {
 				$this->session->set_flashdata("success", "Funcionário alterado.");
 				redirect("staffs");
 			} else {
@@ -125,7 +137,7 @@ class Staff extends CI_Controller {
 		$this->form_validation->set_rules('telephone', 'Telefone', 'required');
 		$this->form_validation->set_error_delimiters("<p class='alert alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
-		
+
 		return $success;
 	}
 
@@ -135,8 +147,12 @@ class Staff extends CI_Controller {
 
 		$guests = $user->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
 
-		foreach ($guests as $key => $guest){
-			$guestUser[$guest['id']] = $guest['name'];
+		if($guests !== FALSE){
+			foreach ($guests as $key => $guest){
+				$guestUser[$guest['id']] = $guest['name'];
+			}
+		}else{
+			$guestUser = FALSE;
 		}
 
 		return $guestUser;

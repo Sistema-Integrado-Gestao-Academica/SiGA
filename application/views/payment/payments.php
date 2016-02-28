@@ -1,6 +1,72 @@
 <h2 class="principal">Pagamentos</h2>
 
-<?= anchor("payment/newPayment/{$budgetplanId}/{$expenseId}", "<i class='fa fa-plus-circle'></i> Novo pagamento", "class='btn-lg'") ?>
+<?php
+
+	$budgetplan = array(
+		'id' => "budgetplanId",
+		'type' => "hidden",
+		'value' => $budgetplanId
+	);
+
+	$expense = array(
+		'id' => "expenseId",
+		'type' => "hidden",
+		'value' => $expenseId
+	);
+
+	echo form_input($budgetplan);
+	echo form_input($expense);
+
+	echo anchor(
+		"#new_payment_form",
+		"<i class='fa fa-chevron-circle-down'></i> Novo pagamento",
+		"id='new_payment'
+		 class='btn-lg'
+		 data-toggle='collapse'
+		 aria-expanded='false'
+		 aria-controls='new_payment_form'"
+	);
+
+	$employeeNameField = array(
+        "name" => "employee_to_search",
+        "id" => "employee_to_search",
+        "type" => "text",
+        "class" => "form-campo form-control",
+        "placeholder" => "Informe o nome do funcionário."
+    );
+?>
+
+<br>
+<br>
+<div id="new_payment_form" class="collapse">
+
+    <div class="row">
+
+	    <div class="col-lg-4">
+			<h4><i class='fa fa-users'></i> Pagamento para funcionário?</h4>
+
+		    <?= form_label('Nome do funcionário', 'employee_to_search'); ?>
+		    <?= form_input($employeeNameField); ?>
+	    </div>
+	    <div class="col-lg-8">
+	    	<div id="employee_search_result"></div>
+	    </div>
+    </div>
+    <br>
+    <div class="row">
+		<div class="col-lg-4">
+			<h4><i class='fa fa-dollar'></i> Pagamento Convencional</h4>
+			<?= anchor(
+				"payment/newPayment/{$budgetplanId}/{$expenseId}",
+				"<i class='fa fa-plus-circle'></i> Novo pagamento",
+				"class='btn btn-primary'"
+			);?>
+    	</div>
+    </div>
+
+	<hr>
+</div>
+
 <?php
 	if($payments !== FALSE){
 ?>

@@ -48,6 +48,21 @@ class Payment extends CI_Controller {
 		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "payment/repayment", $data);
 	}
 
+	public function employeePayment(){
+
+		$budgetplanId = $this->input->post("budgetplanId");
+		$expenseId = $this->input->post("expenseId");
+		$employee = $this->input->post("employee");
+
+		$data = array(
+			'budgetplanId' => $budgetplanId,
+			'expenseId' => $expenseId,
+			'employee' => $employee
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "payment/employee_payment", $data);
+	}
+
 	public function registerPayment(){
 
 		$expense = $this->input->post("expenseId");
