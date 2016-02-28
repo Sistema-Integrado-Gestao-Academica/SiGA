@@ -3,6 +3,8 @@
 require_once('usuario.php');
 require_once('module.php');
 require_once('course.php');
+require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Program extends CI_Controller {
 
@@ -140,10 +142,8 @@ class Program extends CI_Controller {
 		$this->load->model('program_model');
 		$program = $this->program_model->getProgramById($programId);
 		
-		define("COORDINATOR_GROUP", "coordenador");
-
 		$group = new Module();
-		$foundGroup = $group->getGroupByName(COORDINATOR_GROUP);
+		$foundGroup = $group->getGroupByName(GroupConstants::COORDINATOR_GROUP);
 
 		if($foundGroup !== FALSE){
 
@@ -174,7 +174,7 @@ class Program extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByPermission('cursos', "program/edit_program", $data);
+		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, "program/edit_program", $data);
 	}
 
 	public function updateProgram(){
@@ -189,12 +189,21 @@ class Program extends CI_Controller {
 			$programAcronym = $this->input->post('program_acronym');
 			$programCoordinator = $this->input->post('program_coordinator');
 			$openingYear = $this->input->post('opening_year');
+			$programContact = $this->input->post('program_contact');
+			$programHistory = $this->input->post('program_history');
+			$programSummary = $this->input->post('program_summary');
+			$programResearchLine = $this->input->post('program_research_lines');
+
 
 			$programData = array(
 				'program_name' => $programName,
 				'acronym' => $programAcronym,
 				'coordinator' => $programCoordinator,
-				'opening_year' => $openingYear
+				'opening_year' => $openingYear,
+				'contact' => $programContact,
+				'history' => $programHistory,
+				'summary' => $programSummary,
+				'research_line' => $programResearchLine
 			);
 
 			$this->load->model('program_model');

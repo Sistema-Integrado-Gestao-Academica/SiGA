@@ -51,8 +51,9 @@ class Module extends CI_Controller {
 	public function addGroupToUser($groupName, $userId){
 
 		// Validar o $groupName
+		$this->load->model("module_model");
 
-		$group = $this->getGroupByGroupName($groupName);
+		$group = $this->module_model->getGroupByGroupName($groupName);
 		
 		if($group !== FALSE){
 			$groupId = $group['id_group'];
@@ -72,8 +73,9 @@ class Module extends CI_Controller {
 	public function deleteGroupOfUser($groupName, $userId){
 
 		// Validar o $groupName
+		$this->load->model("module_model");
 
-		$group = $this->getGroupByGroupName($groupName);
+		$group = $this->module_model->getGroupByGroupName($groupName);
 		
 		if($group !== FALSE){
 			$groupId = $group['id_group'];
@@ -92,24 +94,11 @@ class Module extends CI_Controller {
 
 	public function getGroupByName($groupName){
 
-		$group = $this->getGroupByGroupName($groupName);
+		$this->load->model("module_model");
+
+		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		return $group;
-	}
-
-	private function getGroupByGroupName($groupName){
-		
-		$searchResult = $this->db->get_where("group", array('group_name' => $groupName));
-
-		$foundGroup = $searchResult->row_array();
-
-		if(sizeof($foundGroup) > 0){
-			// Nothing to do
-		}else{
-			$foundGroup = FALSE;
-		}
-
-		return $foundGroup;
 	}
 
 	/**
