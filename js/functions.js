@@ -1,6 +1,10 @@
 
 $(document).ready(function(){
 
+	$("#employee_to_search").keypress(function(){
+		searchEmployeeToPayment();
+	});
+
 	$("#discipline_search_btn").ready(function(){
 		searchDisciplineClasses();
 	});
@@ -56,6 +60,24 @@ $(document).ready(function(){
 	});
 
 });
+
+function searchEmployeeToPayment(){
+
+	var employeeName = $("#employee_to_search").val();
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/ajax/paymentajax/newStaffPaymentForm";
+
+	$.post(
+		urlToPost,
+		{
+			employeeName: employeeName
+		},
+		function(data){
+			$("#employee_search_result").html(data);
+		}
+	);
+}
 
 function searchDisciplineClasses(){
 

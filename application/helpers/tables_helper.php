@@ -57,27 +57,6 @@ function buildTableEndDeclaration(){
 }
 
 /**
- * Checks if the given callout type is one of the available
- * @param $calloutType - The callout type to check
- */
-function getCalloutType($calloutType){
-
-	// Check available callout types
-	switch($calloutType){
-		case "info":
-		case "warning":
-		case "danger":
-			break;
-
-		default:
-			$calloutType = 'info';
-			break;
-	}
-
-	return $calloutType;
-}
-
-/**
  * Builds a callout(from AdminLTE) hmtl code
  * @param $calloutType - The type of the callout (Info, Warning, Danger). The default is the info callout.
  * @param $principalMessage - The principal message on the callout. Goes in HTML 'h4' tags.

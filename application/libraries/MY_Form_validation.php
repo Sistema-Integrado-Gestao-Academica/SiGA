@@ -26,7 +26,7 @@ class MY_Form_validation extends CI_Form_validation {
     function valid_cpf($cpf)
     {
         $CI =& get_instance();
-        
+
         $CI->form_validation->set_message('valid_cpf', 'O %s informado não é válido.');
 
         $cpf = preg_replace('/[^0-9]/','',$cpf);
@@ -51,9 +51,9 @@ class MY_Form_validation extends CI_Form_validation {
             $summod11 = $sum % 11;
             $digit[$j-1] = $summod11 < 2 ? 0 : 11 - $summod11;
         }
-        
+
         return $digit[9] == ((int)$cpf[9]) && $digit[10] == ((int)$cpf[10]);
     }
-    
-     
+
+
 }
