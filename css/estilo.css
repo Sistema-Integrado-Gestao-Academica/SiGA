@@ -10,6 +10,8 @@ body {
 	text-align: center;
 }
 
+.img-center {margin:0 auto;}
+
 .btn-remover {
 	margin: -20px auto auto 200px;
 }
