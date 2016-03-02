@@ -1,4 +1,5 @@
 <?php
+
 $sessao = $this->session->userdata("current_user");
 require_once APPPATH.'controllers/capesavaliation.php';
 if ($sessao != NULL) { ?>
