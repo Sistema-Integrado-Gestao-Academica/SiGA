@@ -1,6 +1,10 @@
-<?php const MAX_QUANTITY_OF_TABS = 10; ?>
+<?php const MAX_QUANTITY_OF_TABS = 20; ?>
 
-<h1 class="bemvindoLogin">SiGA</h1>
+</div></aside>
+<div class="container">
+</br></br>
+</br>
+<img src="<?php echo base_url('img/base_logo_siga.png'); ?>" alt="Logo SiGA" class="img-responsive img-center" style="width:240px;height:110px;" />
 </br></br>
 </br>
 

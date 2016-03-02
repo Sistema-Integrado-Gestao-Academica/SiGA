@@ -17,7 +17,6 @@ if ($sessao != NULL) { ?>
 		?>
 
 
-
 <?php } 
 else { 
 	if ($programs !== FALSE) { 
@@ -26,6 +25,3 @@ else {
 		<?php include("_program_information.php");
 	}
 }?>
-
-		</div>
-	</div>
