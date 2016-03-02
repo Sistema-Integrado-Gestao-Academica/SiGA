@@ -1,9 +1,9 @@
 <?php
 
-require_once('constants.php');
+require_once('Constants.php');
 
 class TeacherConstants extends Constants{
-	
+
 	// Teacher possible situations
 	const PERMANENT_SITUATION = "Permanente";
 	const COLLABORATOR_SITUATION = "Colaborador";

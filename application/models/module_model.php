@@ -172,6 +172,19 @@ class Module_model extends CI_Model {
 		return $savedPermissions;
 	}
 	*/
+	
+	public function getGroupByGroupName($groupName){
+		
+		$searchResult = $this->db->get_where("group", array('group_name' => $groupName));
+
+		$foundGroup = $searchResult->row_array();
+
+		$foundGroup = checkArray($foundGroup);
+
+		return $foundGroup;
+	}
+
+
 	public function getGroupIdByName($groupsNames){
 		$academicGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['academic']))->row_array();
 		$financialGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['financial']))->row_array();

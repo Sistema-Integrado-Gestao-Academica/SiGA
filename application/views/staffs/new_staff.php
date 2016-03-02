@@ -8,7 +8,7 @@
 		<?php } ?>
 	</tr>
 
-	<?php if ($staffs){ ?>
+	<?php if ($staffs !== FALSE){ ?>
 		<?php foreach ($staffs as $staffId => $staff){ ?>
 			<tr>
 				<td><?=$staff['name']?></td>
@@ -32,6 +32,6 @@
 	<?php } ?>
 </table>
 
-<?php 
+<?php
 	loadStaffRegistrationForm($guestUsers);
 ?>

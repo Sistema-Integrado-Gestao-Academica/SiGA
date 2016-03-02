@@ -14,6 +14,76 @@ require_once(APPPATH."/controllers/coordinator.php");
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/OfferConstants.php");
+
+require_once(APPPATH."/data_types/view_types/AlertCallout.php");
+require_once(APPPATH."/data_types/view_types/WrapperCallout.php");
+
+/**
+ * Builds the table declaration html code with the standard css class
+ * @param $tableId - The html ID for the table
+ */
+function buildTableDeclaration($tableId = FALSE){
+
+	if($tableId !== FALSE){
+		echo "<div id='".$tableId."' class=\"box-body table-responsive no-padding\">";
+	}else{
+		echo "<div class=\"box-body table-responsive no-padding\">";
+	}
+		echo "<table class=\"table table-bordered table-hover\">";
+		echo "<tbody>";
+}
+
+/**
+ * Builds the table headers html code
+ * @param $headersName - The headers names of the table
+ */
+function buildTableHeaders($headersNames){
+
+	echo "<tr>";
+	foreach($headersNames as $headerName){
+		echo "<th class=\"text-center\">".$headerName."</th>";
+	}
+	echo "</tr>";
+}
+
+/**
+ * Builds the table end declaration html code
+ */
+function buildTableEndDeclaration(){
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
+}
+
+/**
+ * Builds a callout(from AdminLTE) hmtl code
+ * @param $calloutType - The type of the callout (Info, Warning, Danger). The default is the info callout.
+ * @param $principalMessage - The principal message on the callout. Goes in HTML 'h4' tags.
+ * @param $aditionalMessage - The aditionalMessage for the callout. Goes in HTML 'p' tags. Optional.
+ * @param $calloutId - The html id for the callout. Optional.
+ */
+function callout($calloutType = "info", $principalMessage, $aditionalMessage = FALSE, $calloutId = FALSE){
+
+	$callout = new AlertCallout($calloutType, $principalMessage, $aditionalMessage, $calloutId);
+
+	$callout->draw();
+}
+
+/**
+ * Builds a callout(from AdminLTE) hmtl code
+ * @param $calloutType - The type of the callout (Info, Warning, Danger). The default is the info callout.
+ * @param $wrapperContent - The content that goes inside the callout
+ * @param $principalMessage - The principal message on the callout. Goes in HTML 'h4' tags.
+ * @param $aditionalMessage - The aditionalMessage for the callout. Goes in HTML 'p' tags. Optional.
+ * @param $calloutId - The html id for the callout. Optional.
+ */
+function wrapperCallout($calloutType = "info", $wrapperContent = FALSE, $principalMessage = FALSE, $aditionalMessage = FALSE, $calloutId = FALSE){
+
+	$wrapperCallout = new WrapperCallout($calloutType, $wrapperContent, $principalMessage, $aditionalMessage, $calloutId);
+
+	return $wrapperCallout;
+}
 
 function displayStudentSpecificDataPage($idUser){
 
@@ -21,32 +91,31 @@ function displayStudentSpecificDataPage($idUser){
 
 	$studentData = $user->getStudentBasicInformation($idUser);
 	echo "<h4>Dados Pessoais:</h4>";
-	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-	echo "<tbody>";
 
-	echo "<tr>";
-	echo "<th class=\"text-center\">Matrícula</th>";
-	echo "<th class=\"text-center\">Email</th>";
-	echo "<th class=\"text-center\">Telefone (residência)</th>";
-	echo "<th class=\"text-center\">Telefone (celular)</th>";
-	echo "</tr>";
+	buildTableDeclaration();
+
+	buildTableHeaders(array(
+		'Matrícula',
+		'E-mail',
+		'Telefone (Residência)',
+		'Telefone (Celular)'
+	));
 
 	if($studentData !== FALSE){
-			echo "<tr>";
-				echo "<td>";
-					echo $studentData['student_registration'];
-				echo "</td>";
-				echo "<td>";
-					echo $studentData['email'];
-				echo "</td>";
-				echo "<td>";
-					echo $studentData['home_phone_number'];
-				echo "</td>";
-				echo "<td>";
-					echo $studentData['cell_phone_number'];
-				echo "</td>";
-			echo "</tr>";
+		echo "<tr>";
+			echo "<td>";
+				echo $studentData['student_registration'];
+			echo "</td>";
+			echo "<td>";
+				echo $studentData['email'];
+			echo "</td>";
+			echo "<td>";
+				echo $studentData['home_phone_number'];
+			echo "</td>";
+			echo "<td>";
+				echo $studentData['cell_phone_number'];
+			echo "</td>";
+		echo "</tr>";
 	}else{
 
 		echo "<tr>";
@@ -58,53 +127,49 @@ function displayStudentSpecificDataPage($idUser){
 		echo "</tr>";
 	}
 
-	echo "</tbody>";
-	echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function courseTableToSecretaryPage($courses){
 
 	$courseController = new Course();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
-		    echo "<tr>";
-		        echo "<th class=\"text-center\">Código</th>";
-		        echo "<th class=\"text-center\">Curso</th>";
-		        echo "<th class=\"text-center\">Tipo</th>";
-		        echo "<th class=\"text-center\">Ações</th>";
-		    echo "</tr>";
+	buildTableDeclaration();
 
-		    	foreach($courses as $courseData){
+	buildTableHeaders(array(
+		'Código',
+		'Curso',
+		'Tipo',
+		'Ações'
+	));
 
-		    		$courseId = $courseData['id_course'];
-		    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
+	if($courses !== FALSE){
+    	foreach($courses as $courseData){
 
-					echo "<tr>";
-			    		echo "<td>";
-			    		echo $courseId;
-			    		echo "</td>";
+    		$courseId = $courseData['id_course'];
+    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
 
-			    		echo "<td>";
-			    		echo $courseData['course_name'];
-			    		echo "</td>";
+			echo "<tr>";
+	    		echo "<td>";
+	    		echo $courseId;
+	    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo $courseType['description'];
-			    		echo "</td>";
+	    		echo "<td>";
+	    		echo $courseData['course_name'];
+	    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-			    		echo "</td>";
-		    		echo "</tr>";
-		    	}
+	    		echo "<td>";
+	    		echo $courseType['description'];
+	    		echo "</td>";
 
-		echo "</tbody>";
-	echo "</table>";
-echo "</div>";
+	    		echo "<td>";
+	    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
+	    		echo "</td>";
+    		echo "</tr>";
+    	}
+    }
 
+    buildTableEndDeclaration();
 }
 
 function showCapesAvaliationsNews($atualizations){
@@ -160,31 +225,30 @@ function studentsReportsTable($idCoordinator){
 	$totalStudent = $coordinator->getTotalStudents($idCoordinator);
 	$enroledStudents = $coordinator->getEnroledStudents($idCoordinator);
 	$notEnroledStudents = $coordinator->getNotEnroledStudents($idCoordinator);
+
 	echo "<h4> Painel de quantidades de alunos </h4>";
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-				echo "<tr>";
-					echo "<th class=\"text-center\">Total de estudantes</th>";
-					echo "<th class=\"text-center\">Total de Matriculados</th>";
-					echo "<th class=\"text-center\">Total de Atrazados</th>";
-				echo "</tr>";
 
-				echo "<tr>";
-					echo "<td>";
-					echo $totalStudent;
-					echo "</td>";
-					echo "<td>";
-					echo $enroledStudents;
-					echo "</td>";
-					echo "<td>";
-					echo $notEnroledStudents;
-					echo "</td>";
-				echo "</tr>";
+	buildTableDeclaration();
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableHeaders(array(
+		'Total de estudantes',
+		'Total de matriculados',
+		'Total de atrasados'
+	));
+
+	echo "<tr>";
+		echo "<td>";
+		echo $totalStudent;
+		echo "</td>";
+		echo "<td>";
+		echo $enroledStudents;
+		echo "</td>";
+		echo "<td>";
+		echo $notEnroledStudents;
+		echo "</td>";
+	echo "</tr>";
+
+	buildTableEndDeclaration();
 }
 
 function secretaryReportsTable($idCoordinator){
@@ -265,26 +329,32 @@ function showMastermindsStudents($masterminds){
 			echo "<div class='panel-body'>";
 				echo "<div class=\"modal-info\">";
 					echo "<div class=\"modal-content\">";
-	foreach ($masterminds as $key => $mastermind){
-		$students = $coordinator->getMastermindStudents($mastermind['id_user']);
+	if($masterminds !== FALSE){
+		foreach ($masterminds as $key => $mastermind){
+			$students = $coordinator->getMastermindStudents($mastermind['id_user']);
 
-		$userData = new Usuario();
-		$mastermindData = $userData->getUserById($mastermind['id_user']);
+			$userData = new Usuario();
+			$mastermindData = $userData->getUserById($mastermind['id_user']);
 
-						echo "<div class=\"modal-header bg-news\">";
-							echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
-						echo "</div>";
-		foreach ($students as $singleStudent){
-			$studentData = $userData->getUserById($singleStudent['id_student']);
+							echo "<div class=\"modal-header bg-news\">";
+								echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
+							echo "</div>";
+			foreach ($students as $singleStudent){
+				$studentData = $userData->getUserById($singleStudent['id_student']);
 
-						echo "<div class=\"modal-body\">";
-							echo "<h4>";
-								echo ucfirst($studentData['name']);
-							echo "</h4>";
-						echo "</div>";
+							echo "<div class=\"modal-body\">";
+								echo "<h4>";
+									echo ucfirst($studentData['name']);
+								echo "</h4>";
+							echo "</div>";
+
+			}
 
 		}
+	}else{
 
+		$message = "Não há alunos relacionados a nenhum professor.";
+		callout("info", $message);
 	}
 
 					echo "</div>";
@@ -299,44 +369,40 @@ function showMastermindsStudents($masterminds){
 function courseTableToSecretaryCheckMastermind($courses){
 $courseController = new Course();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-				echo "<tr>";
-					echo "<th class=\"text-center\">Código</th>";
-					echo "<th class=\"text-center\">Curso</th>";
-					echo "<th class=\"text-center\">Tipo</th>";
-					echo "<th class=\"text-center\">Ações</th>";
-				echo "</tr>";
+	buildTableDeclaration();
 
-				foreach($courses as $courseData){
+	buildTableHeaders(array(
+		'Código',
+		'Curso',
+		'Tipo',
+		'Ações'
+	));
 
-					$courseId = $courseData['id_course'];
-					$courseType = $courseController->getCourseTypeByCourseId($courseId);
+	foreach($courses as $courseData){
 
-					echo "<tr>";
-						echo "<td>";
-						echo $courseId;
-						echo "</td>";
+		$courseId = $courseData['id_course'];
+		$courseType = $courseController->getCourseTypeByCourseId($courseId);
 
-						echo "<td>";
-						echo $courseData['course_name'];
-						echo "</td>";
+		echo "<tr>";
+			echo "<td>";
+			echo $courseId;
+			echo "</td>";
 
-						echo "<td>";
-						echo $courseType['description'];
-						echo "</td>";
+			echo "<td>";
+			echo $courseData['course_name'];
+			echo "</td>";
 
-						echo "<td>";
-						echo anchor("checkMastermind/{$courseId}","<i class='fa fa-plus-square'>Checar Orientadores do Curso</i>", "class='btn btn-primary'");
-						echo "</td>";
-					echo "</tr>";
-				}
+			echo "<td>";
+			echo $courseType['description'];
+			echo "</td>";
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+			echo "<td>";
+			echo anchor("checkMastermind/{$courseId}","<i class='fa fa-plus-square'>Checar Orientadores do Curso</i>", "class='btn btn-primary'");
+			echo "</td>";
+		echo "</tr>";
+	}
 
+	buildTableEndDeclaration();
 }
 
 function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
@@ -345,85 +411,89 @@ function showExistingMastermindStudentsRelations($relationsToTable, $courseId){
 	echo "<br>";
 	echo "<br>";
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-				if ($relationsToTable !== FALSE){
-					echo "<tr>";
-					echo "<th class=\"text-center\">Orientador</th>";
-					echo "<th class=\"text-center\">Estudante</th>";
-					echo "<th class=\"text-center\">Ações</th>";
-					echo "</tr>";
+	if ($relationsToTable !== FALSE){
 
-						foreach ($relationsToTable as $mastermindAndStudent){
-							echo "<tr>";
-								echo "<td>";
-								echo $mastermindAndStudent['mastermind_name'];
-								echo "</td>";
+		buildTableHeaders(array(
+			'Orientador',
+			'Estudante',
+			'Ações'
+		));
 
-								echo "<td>";
-								echo $mastermindAndStudent['student_name'];
-								echo "</td>";
+		foreach ($relationsToTable as $mastermindAndStudent){
+			echo "<tr>";
+				echo "<td>";
+				echo $mastermindAndStudent['mastermind_name'];
+				echo "</td>";
 
-								echo "<td>";
-								echo anchor("mastermind/deleteMastermindStudentRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}/{$courseId}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
-								echo anchor("mastermind/titlingAreaUpdateBySecretary/{$mastermindAndStudent['mastermind_id']}","<i class='fa fa-pencil'>Editar area de titulação</i>", "class='btn btn-default'");
-								echo "</td>";
-							echo "</tr>";
-						}
-				}else{
-					echo "<div class='callout callout-info'>";
-					echo "<h4>Não existem orientadores designados no momento.</h4>";
-					echo "</div>";
-				}
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+				echo "<td>";
+				echo $mastermindAndStudent['student_name'];
+				echo "</td>";
+
+				echo "<td>";
+				echo anchor("mastermind/deleteMastermindStudentRelation/{$mastermindAndStudent['mastermind_id']}/{$mastermindAndStudent['student_id']}/{$courseId}","<i class='glyphicon glyphicon-remove'></i>", "class='btn btn-danger'");
+				echo anchor("mastermind/titlingAreaUpdateBySecretary/{$mastermindAndStudent['mastermind_id']}","<i class='fa fa-pencil'>Editar area de titulação</i>", "class='btn btn-default'");
+				echo "</td>";
+			echo "</tr>";
+		}
+	}else{
+
+		$message = "Não existem orientadores designados no momento.";
+		callout("info", $message);
+	}
+
+	buildTableEndDeclaration();
 }
 
 function secretaryCoursesToRequestReport($courses){
 
 	$courseController = new Course();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
-		    echo "<tr>";
-		        echo "<th class=\"text-center\">Código</th>";
-		        echo "<th class=\"text-center\">Curso</th>";
-		        echo "<th class=\"text-center\">Tipo</th>";
-		        echo "<th class=\"text-center\">Ações</th>";
-		    echo "</tr>";
+	buildTableDeclaration();
 
-		    	foreach($courses as $courseData){
+	buildTableHeaders(array(
+		'Código',
+		'Curso',
+		'Tipo',
+		'Ações'
+	));
 
-		    		$courseId = $courseData['id_course'];
-		    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
+	if($courses !== FALSE){
 
-					echo "<tr>";
-			    		echo "<td>";
-			    		echo $courseId;
-			    		echo "</td>";
+		foreach($courses as $courseData){
 
-			    		echo "<td>";
-			    		echo $courseData['course_name'];
-			    		echo "</td>";
+			$courseId = $courseData['id_course'];
+			$courseType = $courseController->getCourseTypeByCourseId($courseId);
 
-			    		echo "<td>";
-			    		echo $courseType['description'];
-			    		echo "</td>";
+			echo "<tr>";
+	    		echo "<td>";
+	    		echo $courseId;
+	    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo anchor("request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
-			    		echo "</td>";
-		    		echo "</tr>";
-		    	}
+	    		echo "<td>";
+	    		echo $courseData['course_name'];
+	    		echo "</td>";
 
-		echo "</tbody>";
-	echo "</table>";
-	echo "</div>";
+	    		echo "<td>";
+	    		echo $courseType['description'];
+	    		echo "</td>";
 
+	    		echo "<td>";
+	    		echo anchor("request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
+	    		echo "</td>";
+			echo "</tr>";
+		}
+	}else{
+		echo "<tr>";
+		echo "<td colspan=4>";
+			$message = "Não há cursos cadastrados para este secretário.";
+			callout("info", $message);
+		echo "</td>";
+		echo "</tr>";
+	}
+
+	buildTableEndDeclaration();
 }
 
 function switchRequestGeneralStatus($requestStatus){
@@ -477,121 +547,117 @@ function displayCourseRequests($requests, $courseId){
 
 	$user = new Usuario();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código da requisição</th>";
-			        echo "<th class=\"text-center\">Aluno requerente</th>";
-			        echo "<th class=\"text-center\">Matrícula aluno</th>";
-			        echo "<th class=\"text-center\">Status da solicitação</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableDeclaration();
 
-			    if($requests !== FALSE){
+	buildTableHeaders(array(
+		'Código da requisição',
+		'Aluno requerente',
+		'Matrícula aluno',
+		'Status da solicitação',
+		'Ações'
+	));
 
-			    	foreach($requests as $request){
+    if($requests !== FALSE){
 
-			    		echo "<tr>";
+    	foreach($requests as $request){
 
-			    		echo "<td>";
-			    		echo $request['id_request'];
-			    		echo "</td>";
+    		echo "<tr>";
 
-			    		$foundUser = $user->getUserById($request['id_student']);
-			    		echo "<td>";
-			    		echo $foundUser['name'];
-			    		echo "</td>";
+    		echo "<td>";
+    		echo $request['id_request'];
+    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo $foundUser['id'];
-			    		echo "</td>";
+    		$foundUser = $user->getUserById($request['id_student']);
+    		echo "<td>";
+    		echo $foundUser['name'];
+    		echo "</td>";
 
-			    		echo "<td>";
-			    			$status = switchRequestGeneralStatus($request['request_status']);
-			    			echo $status;
-			    		echo "</td>";
+    		echo "<td>";
+    		echo $foundUser['id'];
+    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo anchor(
-			    				"#solicitation_details_".$request['id_request'],
-			    				"Visualizar solicitação",
-			    				"class='btn btn-info'
-			    				data-toggle='collapse'
-			    				aria-expanded='false'
-			    				aria-controls='solicitation_details".$request['id_request']."'"
-			    			);
+    		echo "<td>";
+    			$status = switchRequestGeneralStatus($request['request_status']);
+    			echo $status;
+    		echo "</td>";
 
-			    		$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
-			    		$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
+    		echo "<td>";
+    		echo anchor(
+    				"#solicitation_details_".$request['id_request'],
+    				"Visualizar solicitação",
+    				"class='btn btn-info'
+    				data-toggle='collapse'
+    				aria-expanded='false'
+    				aria-controls='solicitation_details".$request['id_request']."'"
+    			);
 
-			    		if($requestIsApprovedByMastermind){
+    		$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+    		$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
 
-			    			if($requestIsNotFinalizedBySecretary){
+    		if($requestIsApprovedByMastermind){
 
-					    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS){
-					    			// In this case all request is already approved
-					    		}else{
-					    			echo "<br>";
-					    			echo anchor("request/approveAllRequest/{$request['id_request']}/{$courseId}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-					    		}
+    			if($requestIsNotFinalizedBySecretary){
 
-					    		echo "<br>";
+		    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS){
+		    			// In this case all request is already approved
+		    		}else{
+		    			echo "<br>";
+		    			echo anchor("request/approveAllRequest/{$request['id_request']}/{$courseId}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+		    		}
 
-					    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS){
-					    			// In this case all request is already refused
-					    		}else{
-					    			echo "<br>";
-					    			echo anchor("request/refuseAllRequest/{$request['id_request']}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger'");
-					    		}
+		    		echo "<br>";
 
-					    		echo "<br>";
-					    		echo "<div class=\"callout callout-info\">";
-					    			echo anchor("request/finalizeRequestSecretary/{$request['id_request']}/{$courseId}", "Finalizar solicitação", "class='btn btn-primary btn-flat' style='margin-top: 5%;'");
-									echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
-								echo "</div>";
-			    			}else{
-			    				echo "<div class=\"callout callout-info\">";
-								echo "<h4>Solicitação já finalizada.</h4>";
-								echo "<p>Essa solicitação já foi aprovada pela secretária.</p>";
-								echo "</div>";
-			    			}
+		    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS){
+		    			// In this case all request is already refused
+		    		}else{
+		    			echo "<br>";
+		    			echo anchor("request/refuseAllRequest/{$request['id_request']}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger'");
+		    		}
 
-			    		}else{
+		    		echo "<br>";
+		    		echo "<div class=\"callout callout-info\">";
+		    			echo anchor("request/finalizeRequestSecretary/{$request['id_request']}/{$courseId}", "Finalizar solicitação", "class='btn btn-primary btn-flat' style='margin-top: 5%;'");
+						echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
+					echo "</div>";
+    			}else{
+    				echo "<div class=\"callout callout-info\">";
+					echo "<h4>Solicitação já finalizada.</h4>";
+					echo "<p>Essa solicitação já foi aprovada pela secretária.</p>";
+					echo "</div>";
+    			}
 
-			    			echo "<div class=\"callout callout-info\">";
-							echo "<h4>Solicitação não aprovada pelo orientador.</h4>";
-							echo "<p>Apenas as solicitações já aprovadas pelo orientador podem ser editadas.</p>";
-							echo "</div>";
-			    		}
+    		}else{
 
-			    		echo "</td>";
+    			echo "<div class=\"callout callout-info\">";
+				echo "<h4>Solicitação não aprovada pelo orientador.</h4>";
+				echo "<p>Apenas as solicitações já aprovadas pelo orientador podem ser editadas.</p>";
+				echo "</div>";
+    		}
 
-			    		echo "</tr>";
+    		echo "</td>";
 
-			    		echo "<tr>";
+    		echo "</tr>";
 
-			    		echo "<td colspan=4>";
-				    		echo "<div class='collapse' id='solicitation_details_".$request['id_request']."'>";
-							requestedDisciplineClasses($request['id_request'], EnrollmentConstants::REQUESTING_AREA_SECRETARY);
-				    		echo "</div>";
-			    		echo "</td>";
+    		echo "<tr>";
 
-			    		echo "</tr>";
-			    	}
-			    }else{
-					echo "<tr>";
-			    	echo "<td colspan=5>";
-						echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhuma solicitação encontrada.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-					echo "</tr>";
-			    }
+    		echo "<td colspan=4>";
+	    		echo "<div class='collapse' id='solicitation_details_".$request['id_request']."'>";
+				requestedDisciplineClasses($request['id_request'], EnrollmentConstants::REQUESTING_AREA_SECRETARY);
+	    		echo "</div>";
+    		echo "</td>";
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    		echo "</tr>";
+    	}
+    }else{
+		echo "<tr>";
+    	echo "<td colspan=5>";
+    		$message = "Nenhuma solicitação encontrada.";
+			callout("info", $message);
+		echo "</td>";
+		echo "</tr>";
+    }
+
+	buildTableEndDeclaration();
 }
 
 function requestedDisciplineClasses($requestId, $requestingArea){
@@ -608,145 +674,139 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 		echo "<div class='panel-heading'>Disciplinas solicitadas</div>";
 
-		echo "<table class='table table-hover'>";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código Disciplina</th>";
-			        echo "<th class=\"text-center\">Disciplina requerida</th>";
-			        echo "<th class=\"text-center\">Turma requerida</th>";
-			        echo "<th class=\"text-center\">Vagas totais</th>";
-			        echo "<th class=\"text-center\">Vagas disponíveis</th>";
-			        echo "<th class=\"text-center\">Status</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+		buildTableDeclaration();
 
-			    if($requestDisciplines !== FALSE){
+		buildTableHeaders(array(
+			'Código Disciplina',
+			'Disciplina requerida',
+			'Turma requerida',
+			'Vagas totais',
+			'Vagas disponíveis',
+			'Status',
+			'Ações'
+		));
 
-		    		foreach($requestDisciplines as $disciplineClass){
+	    if($requestDisciplines !== FALSE){
 
-						$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+			foreach($requestDisciplines as $disciplineClass){
 
-						echo "<tr>";
+				$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
 
-							echo "<td>";
-							echo $disciplineClass['id_discipline'];
-							echo "</td>";
+				echo "<tr>";
 
-							if($foundDiscipline !== FALSE){
-								echo "<td>";
-								echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
-								echo "</td>";
-							}else{
-								echo "<td>";
-									echo "<div class='callout callout-info'>";
-									echo "Disciplina não encontrada.";
-									echo "</div>";
-								echo "</td>";
-							}
-
-							echo "<td>";
-							echo $disciplineClass['class'];
-							echo "</td>";
-
-							echo "<td>";
-							echo $disciplineClass['total_vacancies'];
-							echo "</td>";
-
-							echo "<td>";
-							echo $disciplineClass['current_vacancies'];
-							echo "</td>";
-
-							echo "<td>";
-								$status = switchRequestDisciplineStatus($disciplineClass['status']);
-								echo $status;
-							echo "</td>";
-
-							echo "<td>";
-
-							$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
-
-							if($requestIsNotFinalizedBySecretary){
-
-								$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
-
-								// Depends of the area that are treating the request
-								switch($requestingArea){
-
-									case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
-
-										if($requestIsApprovedByMastermind){
-
-											if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
-												// In this case the request was already approved
-											}else{
-												if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
-													echo anchor("request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
-												}else{
-													echo "<div class=\"callout callout-danger\">";
-													echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
-													echo "</div>";
-												}
-											}
-
-											if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
-												// In this case the request was already refused
-											}else{
-												echo anchor("request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
-											}
-										}else{
-											echo "<div class=\"callout callout-info\">";
-											echo "<h6>Não aprovado pelo orientador. Sem ações.</h6>";
-											echo "</div>";
-										}
-
-										break;
-
-									case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
-
-										if($requestIsApprovedByMastermind){
-
-											echo "<div class=\"callout callout-warning\">";
-											echo "<h6>Solicitação finalizada. Sem ações.</h6>";
-											echo "</div>";
-										}else{
-											if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
-												// In this case the request was already approved
-											}else{
-												echo anchor("request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
-											}
-
-											if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
-												// In this case the request was already refused
-											}else{
-												echo anchor("request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
-											}
-										}
-										break;
-
-									default:
-										echo "Sem ações.";
-										break;
-								}
-							}else{
-								echo "<div class=\"callout callout-info\">";
-								echo "<h6>Solicitação já finalizada. Sem ações.</h6>";
-								echo "</div>";
-							}
-
-							echo "</td>";
-						echo "</tr>";
-					}
-				}else{
-					echo "<td colspan=7>";
-						echo "<div class=\"callout callout-warning\">";
-						echo "<h4>Não foram encontradas disciplinas para essa solicitação</h4>";
-						echo "</div>";
+					echo "<td>";
+					echo $disciplineClass['id_discipline'];
 					echo "</td>";
-				}
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+					if($foundDiscipline !== FALSE){
+						echo "<td>";
+						echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+						echo "</td>";
+					}else{
+						echo "<td>";
+							callout("info", "Disciplina não encontrada.");
+						echo "</td>";
+					}
+
+					echo "<td>";
+					echo $disciplineClass['class'];
+					echo "</td>";
+
+					echo "<td>";
+					echo $disciplineClass['total_vacancies'];
+					echo "</td>";
+
+					echo "<td>";
+					echo $disciplineClass['current_vacancies'];
+					echo "</td>";
+
+					echo "<td>";
+						$status = switchRequestDisciplineStatus($disciplineClass['status']);
+						echo $status;
+					echo "</td>";
+
+					echo "<td>";
+
+					$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
+
+					if($requestIsNotFinalizedBySecretary){
+
+						$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+
+						// Depends of the area that are treating the request
+						switch($requestingArea){
+
+							case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
+
+								if($requestIsApprovedByMastermind){
+
+									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
+										// In this case the request was already approved
+									}else{
+										if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
+											echo anchor("request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+										}else{
+											echo "<div class=\"callout callout-danger\">";
+											echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
+											echo "</div>";
+										}
+									}
+
+									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
+										// In this case the request was already refused
+									}else{
+										echo anchor("request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+									}
+								}else{
+									echo "<div class=\"callout callout-info\">";
+									echo "<h6>Não aprovado pelo orientador. Sem ações.</h6>";
+									echo "</div>";
+								}
+
+								break;
+
+							case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
+
+								if($requestIsApprovedByMastermind){
+
+									echo "<div class=\"callout callout-warning\">";
+									echo "<h6>Solicitação finalizada. Sem ações.</h6>";
+									echo "</div>";
+								}else{
+									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
+										// In this case the request was already approved
+									}else{
+										echo anchor("request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+									}
+
+									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
+										// In this case the request was already refused
+									}else{
+										echo anchor("request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+									}
+								}
+								break;
+
+							default:
+								echo "Sem ações.";
+								break;
+						}
+					}else{
+						echo "<div class=\"callout callout-info\">";
+						echo "<h6>Solicitação já finalizada. Sem ações.</h6>";
+						echo "</div>";
+					}
+
+					echo "</td>";
+				echo "</tr>";
+			}
+		}else{
+			echo "<td colspan=7>";
+				callout("warning", "Não foram encontradas disciplinas para essa solicitação.");
+			echo "</td>";
+		}
+
+	buildTableEndDeclaration();
 }
 
 function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idStudent){
@@ -760,99 +820,98 @@ function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idS
 
 	echo "<div class='panel-heading'>Disciplinas solicitadas</div>";
 
-	echo "<table class='table table-hover'>";
-	echo "<tbody>";
-	echo "<tr>";
-	echo "<th class=\"text-center\">Código Disciplina</th>";
-	echo "<th class=\"text-center\">Disciplina requerida</th>";
-	echo "<th class=\"text-center\">Turma requerida</th>";
-	echo "<th class=\"text-center\">Vagas totais</th>";
-	echo "<th class=\"text-center\">Vagas disponíveis</th>";
-	echo "<th class=\"text-center\">Status</th>";
-	echo "<th class=\"text-center\">Ações</th>";
-	echo "</tr>";
+	buildTableDeclaration();
 
-	foreach($requestDisciplines as $disciplineClass){
+	buildTableHeaders(array(
+		'Código Disciplina',
+		'Disciplina requerida',
+		'Turma requerida',
+		'Vagas totais',
+		'Vagas disponíveis',
+		'Status',
+		'Ações'
+	));
 
-		$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
+	if($requestDisciplines !== FALSE){
+		foreach($requestDisciplines as $disciplineClass){
 
-		echo "<tr>";
+			$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
 
-		echo "<td>";
-		echo $disciplineClass['id_discipline'];
-		echo "</td>";
+			echo "<tr>";
 
-		if($foundDiscipline !== FALSE){
 			echo "<td>";
-			echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+			echo $disciplineClass['id_discipline'];
 			echo "</td>";
-		}else{
+
+			if($foundDiscipline !== FALSE){
+				echo "<td>";
+				echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
+				echo "</td>";
+			}else{
+				echo "<td>";
+				echo "<div class='callout callout-info'>";
+				echo "Disciplina não encontrada.";
+				echo "</div>";
+				echo "</td>";
+			}
+
 			echo "<td>";
-			echo "<div class='callout callout-info'>";
-			echo "Disciplina não encontrada.";
-			echo "</div>";
+			echo $disciplineClass['class'];
 			echo "</td>";
+
+			echo "<td>";
+			echo $disciplineClass['total_vacancies'];
+			echo "</td>";
+
+			echo "<td>";
+			echo $disciplineClass['current_vacancies'];
+			echo "</td>";
+
+			echo "<td>";
+
+			switch($disciplineClass['status']){
+				case EnrollmentConstants::PRE_ENROLLED_STATUS:
+					$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
+					break;
+
+				case EnrollmentConstants::ENROLLED_STATUS:
+					$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
+					break;
+
+				case EnrollmentConstants::REFUSED_STATUS:
+					$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
+					break;
+
+				default:
+					$status = "-";
+					break;
+			}
+			echo $status;
+			echo "</td>";
+
+			echo "<td>";
+
+			if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
+				// In this case the request was already approved
+			}else{
+				displayAcceptStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
+				//echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+			}
+
+			if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
+				// In this case the request was already refused
+			}else{
+				displayRefuseStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
+				//echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+			}
+
+			echo "</td>";
+			echo "</tr>";
 		}
-
-		echo "<td>";
-		echo $disciplineClass['class'];
-		echo "</td>";
-
-		echo "<td>";
-		echo $disciplineClass['total_vacancies'];
-		echo "</td>";
-
-		echo "<td>";
-		echo $disciplineClass['current_vacancies'];
-		echo "</td>";
-
-		echo "<td>";
-
-		switch($disciplineClass['status']){
-			case EnrollmentConstants::PRE_ENROLLED_STATUS:
-				$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
-				break;
-
-			case EnrollmentConstants::ENROLLED_STATUS:
-				$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
-				break;
-
-			case EnrollmentConstants::REFUSED_STATUS:
-				$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
-				break;
-
-			default:
-				$status = "-";
-				break;
-		}
-		echo $status;
-		echo "</td>";
-
-		echo "<td>";
-
-		if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
-			// In this case the request was already approved
-		}else{
-			displayAcceptStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
-			//echo anchor("request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
-		}
-
-		if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
-			// In this case the request was already refused
-		}else{
-			displayRefuseStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
-			//echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
-		}
-
-		echo "</td>";
-		echo "</tr>";
 	}
 
-	echo "</tbody>";
-	echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
-
 
 function displayMastermindStudentRequest($requests, $idMastermind){
 
@@ -863,212 +922,208 @@ function displayMastermindStudentRequest($requests, $idMastermind){
 	echo "<h3>Solicitações dos alunos orientados:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-				echo "<tr>";
-					echo "<th class=\"text-center\">Código da requisição</th>";
-					echo "<th class=\"text-center\">Aluno requerente</th>";
-					echo "<th class=\"text-center\">Matrícula aluno</th>";
-					echo "<th class=\"text-center\">Status da solicitação</th>";
-					echo "<th class=\"text-center\">Ações</th>";
-					echo "<th class=\"text-center\">Finalizar</th>";
-				echo "</tr>";
+	buildTableDeclaration();
 
-				if($requests !== FALSE){
+	buildTableHeaders(array(
+		'Código da requisição',
+		'Aluno requerente',
+		'Matrícula aluno',
+		'Status da solicitação',
+		'Ações',
+		'Finalizar'
+	));
 
-					$offer = new Offer();
+	if($requests !== FALSE){
 
-					foreach($requests as $request){
+		$offer = new Offer();
 
-						if ($request !== FALSE){
+		foreach($requests as $request){
 
-							foreach ($request as $studentRequest){
+			if ($request !== FALSE){
 
-								$requestId = $studentRequest['id_request'];
+				foreach ($request as $studentRequest){
 
-								$semesterId = $studentRequest['id_semester'];
-								$courseId = $studentRequest['id_course'];
-								$requestedOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+					$requestId = $studentRequest['id_request'];
 
-								if($requestedOffer !== FALSE){
-									$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
-								}else{
-									// Assume that is true
-									$needsMastermindApproval = TRUE;
-								}
+					$semesterId = $studentRequest['id_semester'];
+					$courseId = $studentRequest['id_course'];
+					$requestedOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
 
-								$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
-
-								echo "<tr>";
-
-								echo "<td>";
-								echo $requestId;
-								echo "</td>";
-
-								$foundUser = $user->getUserById($studentRequest['id_student']);
-								echo "<td>";
-								echo $foundUser['name'];
-								echo "</td>";
-
-								echo "<td>";
-								echo $foundUser['id'];
-								echo "</td>";
-
-								echo "<td>";
-
-								$status = switchRequestGeneralStatus($studentRequest['request_status']);
-
-								if($requestIsApprovedByMastermind){
-									if($needsMastermindApproval){
-										$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
-									}else{
-										$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
-									}
-									echo $status;
-								}else{
-									echo $status;
-								}
-
-								echo "</td>";
-
-								echo "<td>";
-
-								echo anchor(
-										"#solicitation_details_".$requestId,
-										"Visualizar solicitação",
-										"class='btn btn-info'
-					    				data-toggle='collapse'
-					    				aria-expanded='false'
-					    				aria-controls='solicitation_details".$requestId."'"
-									);
-
-								if($requestIsApprovedByMastermind){
-
-									// Disable buttons
-									echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
-									echo "<br>";
-									echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
-								}else{
-									echo "<br>";
-									echo anchor("request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-									echo "<br>";
-									echo anchor("request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
-								}
-
-								echo "</td>";
-
-								echo "<td rowspan=2>";
-									if($requestIsApprovedByMastermind){
-
-										if($needsMastermindApproval){
-
-											$mastermind = new MasterMind();
-
-											$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
-
-											$isFinalized = TRUE;
-											echo "<div class=\"callout callout-warning\">";
-												mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
-												echo "<p><i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i></p>";
-											echo "</div>";
-										}else{
-											echo "<div class=\"callout callout-warning\">";
-												echo "<p><i>O tipo da oferta não permite a ação do orientador.</i></p>";
-											echo "</div>";
-										}
-
-									}else{
-										$isFinalized = FALSE;
-										echo "<div class=\"callout callout-info\">";
-											mastermindMessageForm($requestId, $idMastermind, $isFinalized);
-											echo "<p><i>Finaliza a solicitação com o status atual das disciplinas.</i></p>";
-										echo "</div>";
-									}
-								echo "</td>";
-
-								echo "</tr>";
-
-								echo "<tr>";
-									echo "<td colspan=5>";
-										echo "<div class='collapse' id='solicitation_details_".$requestId."'>";
-										requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
-										echo "</div>";
-									echo "</td>";
-								echo "</tr>";
-							}
-						}
+					if($requestedOffer !== FALSE){
+						$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
+					}else{
+						// Assume that is true
+						$needsMastermindApproval = TRUE;
 					}
-				}else{
+
+					$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+
 					echo "<tr>";
-						echo "<td colspan=9>";
-						echo "<div class=\"callout callout-info\">";
-						echo "<h4>Nenhuma solicitação encontrada.</h4>";
-						echo "</div>";
+
+					echo "<td>";
+					echo $requestId;
+					echo "</td>";
+
+					$foundUser = $user->getUserById($studentRequest['id_student']);
+					echo "<td>";
+					echo $foundUser['name'];
+					echo "</td>";
+
+					echo "<td>";
+					echo $foundUser['id'];
+					echo "</td>";
+
+					echo "<td>";
+
+					$status = switchRequestGeneralStatus($studentRequest['request_status']);
+
+					if($requestIsApprovedByMastermind){
+						if($needsMastermindApproval){
+							$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
+						}else{
+							$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
+						}
+						echo $status;
+					}else{
+						echo $status;
+					}
+
+					echo "</td>";
+
+					echo "<td>";
+
+					echo anchor(
+							"#solicitation_details_".$requestId,
+							"Visualizar solicitação",
+							"class='btn btn-info'
+		    				data-toggle='collapse'
+		    				aria-expanded='false'
+		    				aria-controls='solicitation_details".$requestId."'"
+						);
+
+					if($requestIsApprovedByMastermind){
+
+						// Disable buttons
+						echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
+						echo "<br>";
+						echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
+					}else{
+						echo "<br>";
+						echo anchor("request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+						echo "<br>";
+						echo anchor("request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+					}
+
+					echo "</td>";
+
+					echo "<td rowspan=2>";
+
+						if($requestIsApprovedByMastermind){
+
+							if($needsMastermindApproval){
+
+								$mastermind = new MasterMind();
+
+								$message = $mastermind->getMastermindMessage($idMastermind, $requestId);
+
+								$isFinalized = TRUE;
+
+								$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
+
+								$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
+
+								$callout->writeCalloutDeclaration();
+								mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
+								$callout->writeCalloutEndDeclaration();
+
+							}else{
+								callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
+							}
+
+						}else{
+							$isFinalized = FALSE;
+							$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
+
+							$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
+							$callout->writeCalloutDeclaration();
+							mastermindMessageForm($requestId, $idMastermind, $isFinalized);
+							$callout->writeCalloutEndDeclaration();
+						}
+					echo "</td>";
+
+					echo "</tr>";
+
+					echo "<tr>";
+						echo "<td colspan=5>";
+							echo "<div class='collapse' id='solicitation_details_".$requestId."'>";
+							requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+							echo "</div>";
 						echo "</td>";
 					echo "</tr>";
 				}
+			}
+		}
+	}else{
+		echo "<tr>";
+			echo "<td colspan=9>";
+			callout("info", "Nenhuma solicitação encontrada.");
+			echo "</td>";
+		echo "</tr>";
+	}
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 
 	$discipline = new Discipline();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código</th>";
-			        echo "<th class=\"text-center\">Disciplina</th>";
-			        echo "<th class=\"text-center\">Turma</th>";
-			        echo "<th class=\"text-center\">OBS</th>";
-			    echo "</tr>";
+	buildTableDeclaration();
 
-			    if($requestDisciplinesClasses !== FALSE){
+	buildTableHeaders(array(
+		'Código',
+		'Disciplina',
+		'Turma',
+		'OBS'
+	));
 
-			    	foreach($requestDisciplinesClasses as $class){
+    if($requestDisciplinesClasses !== FALSE){
 
-		    			$foundDiscipline = $discipline->getDisciplineByCode($class['id_discipline']);
+    	foreach($requestDisciplinesClasses as $class){
 
-		    			$disciplineRequestStatus = switchRequestDisciplineStatus($class['status']);
+			$foundDiscipline = $discipline->getDisciplineByCode($class['id_discipline']);
 
-						echo "<tr>";
-				    		echo "<td>";
-				    		echo $class['id_offer_discipline'];
-				    		echo "</td>";
+			$disciplineRequestStatus = switchRequestDisciplineStatus($class['status']);
 
-				    		echo "<td>";
-				    		echo "Cod.: ".$foundDiscipline['discipline_code']." - ".$foundDiscipline['discipline_name']." (".$foundDiscipline['name_abbreviation'].")";
-				    		echo "</td>";
+			echo "<tr>";
+	    		echo "<td>";
+	    		echo $class['id_offer_discipline'];
+	    		echo "</td>";
 
-				    		echo "<td>";
-				    		echo $class['class'];
-				    		echo "</td>";
+	    		echo "<td>";
+	    		echo "Cod.: ".$foundDiscipline['discipline_code']." - ".$foundDiscipline['discipline_name']." (".$foundDiscipline['name_abbreviation'].")";
+	    		echo "</td>";
 
-				    		echo "<td>";
-				    		echo $disciplineRequestStatus;
-				    		echo "</td>";
+	    		echo "<td>";
+	    		echo $class['class'];
+	    		echo "</td>";
 
-			    		echo "</tr>";
+	    		echo "<td>";
+	    		echo $disciplineRequestStatus;
+	    		echo "</td>";
 
-			    	}
-			    }else{
-					echo "<tr>";
-			    	echo "<td colspan=4>";
-						echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhuma disciplina adicionada para solicitação de matrícula.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-					echo "</tr>";
-			    }
+    		echo "</tr>";
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    	}
+    }else{
+		echo "<tr>";
+    	echo "<td colspan=4>";
+    		callout("info", "Nenhuma disciplina adicionada para solicitação de matrícula.");
+		echo "</td>";
+		echo "</tr>";
+    }
+
+	buildTableEndDeclaration();
 }
 
 function switchRequestDisciplineStatus($status){
@@ -1105,78 +1160,71 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 	$discipline = new Discipline();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código</th>";
-			        echo "<th class=\"text-center\">Disciplina</th>";
-			        echo "<th class=\"text-center\">Turma</th>";
-			        echo "<th class=\"text-center\">Horário</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableDeclaration();
 
-			    if($request != FALSE){
+	buildTableHeaders(array(
+		'Código',
+		'Disciplina',
+		'Turma',
+		'Horário',
+		'Ações'
+	));
 
-			    	foreach($request as $request){
+    if($request != FALSE){
 
-			    		$foundClass = $offer->getOfferDisciplineById($request['discipline_class']);
+    	foreach($request as $request){
 
-			    		if($foundClass !== FALSE){
+    		$foundClass = $offer->getOfferDisciplineById($request['discipline_class']);
 
-			    			$foundDiscipline = $discipline->getDisciplineByCode($foundClass['id_discipline']);
-							echo "<tr>";
-					    		echo "<td>";
-					    		echo $foundClass['id_offer_discipline'];
-					    		echo "</td>";
+    		if($foundClass !== FALSE){
 
-					    		echo "<td>";
-					    		echo "Cod.: ".$foundDiscipline['discipline_code']." - ".$foundDiscipline['discipline_name']." (".$foundDiscipline['name_abbreviation'].")";
-					    		echo "</td>";
+    			$foundDiscipline = $discipline->getDisciplineByCode($foundClass['id_discipline']);
+				echo "<tr>";
+		    		echo "<td>";
+		    		echo $foundClass['id_offer_discipline'];
+		    		echo "</td>";
 
-					    		echo "<td>";
-					    		echo $foundClass['class'];
-					    		echo "</td>";
+		    		echo "<td>";
+		    		echo "Cod.: ".$foundDiscipline['discipline_code']." - ".$foundDiscipline['discipline_name']." (".$foundDiscipline['name_abbreviation'].")";
+		    		echo "</td>";
 
-					    		echo "<td>";
-					    		displayDisciplineHours($foundClass['id_offer_discipline']);
-					    		echo "</td>";
+		    		echo "<td>";
+		    		echo $foundClass['class'];
+		    		echo "</td>";
 
-					    		echo "<td>";
-					    		echo anchor(
-					    				"temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
-				    					"Remover Disciplina",
-				    					"class='btn btn-danger btn-flat'"
-					    			);
-					    		echo "<td>";
-				    		echo "</tr>";
-			    		}else{
-			    			echo "<tr>";
-					    		echo "<td>";
-					    		echo $foundClass['id_offer_discipline'];
-					    		echo "</td>";
+		    		echo "<td>";
+		    		displayDisciplineHours($foundClass['id_offer_discipline']);
+		    		echo "</td>";
 
-					    		echo "<td colspan='3'>";
-					    		echo "<div class=\"callout callout-info\">";
-									echo "<h4>Não foi encontrada a turma informada.</h4>";
-								echo "</div>";
-					    		echo "</td>";
-				    		echo "</tr>";
-			    		}
-			    	}
-			    }else{
-					echo "<tr>";
-			    	echo "<td colspan=4>";
-						echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhuma disciplina adicionada para solicitação de matrícula.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-					echo "</tr>";
-			    }
+		    		echo "<td>";
+		    		echo anchor(
+		    				"temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
+	    					"Remover Disciplina",
+	    					"class='btn btn-danger btn-flat'"
+		    			);
+		    		echo "<td>";
+	    		echo "</tr>";
+    		}else{
+    			echo "<tr>";
+		    		echo "<td>";
+		    		echo $foundClass['id_offer_discipline'];
+		    		echo "</td>";
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+		    		echo "<td colspan='3'>";
+		    			callout("info", "Não foi encontrada a turma informada.");
+		    		echo "</td>";
+	    		echo "</tr>";
+    		}
+    	}
+    }else{
+		echo "<tr>";
+    	echo "<td colspan=5>";
+    		callout("info", "Nenhuma disciplina adicionada para solicitação de matrícula.");
+		echo "</td>";
+		echo "</tr>";
+    }
+
+	buildTableEndDeclaration();
 }
 
 function displayDisciplineClasses($disciplineClasses){
@@ -1219,56 +1267,47 @@ function displayDisciplineClasses($disciplineClasses){
 			echo "</div>";
 	   	}
 	}else{
-
-		echo "<div class=\"callout callout-info\">";
-			echo "<h4>Nenhuma turma cadastrada para oferta.</h4>";
-		echo "</div>";
+		callout("info", "Nenhuma turma cadastrada para oferta.");
 	}
 }
 
 function displayOfferListDisciplines($offerListDisciplines, $courseId){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-	echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
-		    echo "<tr>";
-		        echo "<th class=\"text-center\">Código</th>";
-		        echo "<th class=\"text-center\">Disciplina</th>";
-		        echo "<th class=\"text-center\">Créditos</th>";
-		    echo "</tr>";
+	buildTableDeclaration();
 
-		    if($offerListDisciplines != FALSE){
+	buildTableHeaders(array(
+		'Código',
+		'Disciplina',
+		'Créditos'
+	));
 
-		    	foreach($offerListDisciplines as $discipline){
+    if($offerListDisciplines != FALSE){
 
-					echo "<tr>";
-			    		echo "<td>";
-			    		echo $discipline['discipline_code'];
-			    		echo "</td>";
+    	foreach($offerListDisciplines as $discipline){
 
-			    		echo "<td>";
-			    		echo anchor("discipline/displayDisciplineClassesToEnroll/{$courseId}/{$discipline['discipline_code']}", "<b>".$discipline['discipline_name']." - ".$discipline['name_abbreviation']."</b>");
-			    		echo "</td>";
+			echo "<tr>";
+	    		echo "<td>";
+	    		echo $discipline['discipline_code'];
+	    		echo "</td>";
 
-			    		echo "<td>";
-			    		echo $discipline['credits'];
-			    		echo "</td>";
-		    		echo "</tr>";
-		    	}
-		    }else{
-				echo "<tr>";
-		    	echo "<td colspan=3>";
-					echo "<div class=\"callout callout-info\">";
-						echo "<h4>Nenhuma lista de oferta cadastrada para o semestre atual.</h4>";
-					echo "</div>";
-    			echo "</td>";
-				echo "</tr>";
-		    }
+	    		echo "<td>";
+	    		echo anchor("discipline/displayDisciplineClassesToEnroll/{$courseId}/{$discipline['discipline_code']}", "<b>".$discipline['discipline_name']." - ".$discipline['name_abbreviation']."</b>");
+	    		echo "</td>";
 
-		echo "</tbody>";
-	echo "</table>";
-echo "</div>";
+	    		echo "<td>";
+	    		echo $discipline['credits'];
+	    		echo "</td>";
+    		echo "</tr>";
+    	}
+    }else{
+		echo "<tr>";
+    	echo "<td colspan=3>";
+			callout("info", "Nenhuma lista de oferta cadastrada para o semestre atual.");
+		echo "</td>";
+		echo "</tr>";
+    }
 
+	buildTableEndDeclaration();
 }
 
 function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDisciplineClasses, $teachers, $idCourse){
@@ -1288,64 +1327,59 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 				$secondaryTeacher = "-";
 			}
 
-			echo "<div class=\"box-body table-responsive no-padding\">";
-			echo "<table class=\"table table-bordered table-hover\">";
-				echo "<tbody>";
-				    echo "<tr>";
-				        echo "<th class=\"text-center\">Turma</th>";
-				        echo "<th class=\"text-center\">Vagas totais</th>";
-				        echo "<th class=\"text-center\">Vagas atuais</th>";
-				        echo "<th class=\"text-center\">Professor principal</th>";
-				        echo "<th class=\"text-center\">Professor secundário</th>";
-				        echo "<th class=\"text-center\">Horários</th>";
-				        echo "<th class=\"text-center\">Ações</th>";
-				    echo "</tr>";
+			buildTableDeclaration();
 
-				    echo "<tr>";
+			buildTableHeaders(array(
+				'Turma',
+				'Vagas totais',
+				'Vagas atuais',
+				'Professor principal',
+				'Professor secundário',
+				'Horários',
+				'Ações'
+			));
 
-				    	echo "<td>";
-				    	echo $class['class'];
-				    	echo "</td>";
+		    echo "<tr>";
 
-				    	echo "<td>";
-				    	echo $class['total_vacancies'];
-				    	echo "</td>";
+		    	echo "<td>";
+		    	echo $class['class'];
+		    	echo "</td>";
 
-				    	echo "<td>";
-				    	echo $class['current_vacancies'];
-				    	echo "</td>";
+		    	echo "<td>";
+		    	echo $class['total_vacancies'];
+		    	echo "</td>";
 
-				    	echo "<td>";
-				    	echo $mainTeacher['name'];
-				    	echo "</td>";
+		    	echo "<td>";
+		    	echo $class['current_vacancies'];
+		    	echo "</td>";
 
-				    	echo "<td>";
-				    	echo $secondaryTeacher;
-				    	echo "</td>";
+		    	echo "<td>";
+		    	echo $mainTeacher['name'];
+		    	echo "</td>";
 
-				    	echo "<td>";
-						displayDisciplineHours($class['id_offer_discipline']);
-				    	echo "</td>";
+		    	echo "<td>";
+		    	echo $secondaryTeacher;
+		    	echo "</td>";
 
-				    	echo "<td>";
-		    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
-		    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
-				    	echo "</td>";
+		    	echo "<td>";
+				displayDisciplineHours($class['id_offer_discipline']);
+		    	echo "</td>";
 
-				    echo "</tr>";
+		    	echo "<td>";
+    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
+    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
+		    	echo "</td>";
 
-				echo "</tbody>";
-			echo "</table>";
-			echo "</div>";
+		    echo "</tr>";
+
+			buildTableEndDeclaration();
 		}
 
 		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse);
 
 	}else{
-		echo "<div class=\"callout callout-info\">";
-			echo "<h4>Nenhuma turma cadastrada no momento.</h4>";
-			echo "<p>Cadastre logo abaixo.</p>";
-		echo "</div>";
+
+		callout("info", "Nenhuma turma cadastrada no momento.", "Cadastre logo abaixo.");
 
 		formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCourse);
 	}
@@ -1359,39 +1393,37 @@ function displayDisciplineHours($idOfferDiscipline){
 
 	if(sizeof($disciplineSchedule) > 0){
 
-		echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Dia-Horário</th>";
-			        echo "<th class=\"text-center\">Local</th>";
-			    echo "</tr>";
-	    		foreach($disciplineSchedule as $classHour){
-	    			echo "<tr>";
+		buildTableDeclaration();
 
-	    			$classHourData = $classHour->getClassHour();
+		buildTableHeaders(array(
+			'Dia-Horário',
+			'Local'
+		));
 
-	    			echo "<td>";
-	    			echo "<b>".$classHour->getDayHourPair()."</b>";
-	    			echo "</td>";
+		foreach($disciplineSchedule as $classHour){
+			echo "<tr>";
 
-	    			echo "<td>";
-	    			if($classHourData['local'] !== NULL){
-	    				echo $classHourData['local'];
-	    			}else{
-	    				echo "<i>Não definido</i>";
-	    			}
-	    			echo "</td>";
+			$classHourData = $classHour->getClassHour();
 
-					echo "</tr>";
-	    		}
-			echo "</tbody>";
-		echo "</table>";
-		echo "</div>";
+			echo "<td>";
+			echo "<b>".$classHour->getDayHourPair()."</b>";
+			echo "</td>";
+
+			echo "<td>";
+			if($classHourData['local'] !== NULL){
+				echo $classHourData['local'];
+			}else{
+				echo "<i>Não definido</i>";
+			}
+			echo "</td>";
+
+			echo "</tr>";
+		}
+
+		buildTableEndDeclaration();
+
 	}else{
-		echo "<div class='callout callout-info'>";
-		echo "<h4>Sem horários adicionados no momento.</h4>";
-		echo "</div>";
+		callout("info", "Sem horários adicionados no momento.");
 	}
 }
 
@@ -1498,10 +1530,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 	echo form_close();
 
 	if($teachers === FALSE){
-		echo "<div class='callout callout-danger'>";
-			echo "<h4>Não é possível alterar uma turma para que fique sem um professor principal.</h4>";
-			echo "<p>Contate o administrador.</p>";
-		echo "</div>";
+		callout("danger", "Não é possível alterar uma turma para que fique sem um professor principal.", "Contate o administrador.");
 	}
 
 	echo "<br>";
@@ -1515,603 +1544,558 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 
 	$program = new Program();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código do curso</th>";
-			        echo "<th class=\"text-center\">Curso</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código do curso',
+		'Curso',
+		'Ações'
+	));
 
-			    if($courses !== FALSE){
+    if($courses !== FALSE){
 
-				    foreach($courses as $course){
+	    foreach($courses as $course){
 
-				    	$courseIsOnProgram = $course['id_program'] == $programId;
-				    	$courseIsOnNoneProgram = $course['id_program'] == NULL;
+	    	$courseIsOnProgram = $course['id_program'] == $programId;
+	    	$courseIsOnNoneProgram = $course['id_program'] == NULL;
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-				    		echo "<td>";
-				    			echo $course['id_course'];
-				    		echo "</td>";
+	    		echo "<td>";
+	    			echo $course['id_course'];
+	    		echo "</td>";
 
-			    			echo "<td>";
-			    				echo $course['course_name'];
-			    			echo "</td>";
+    			echo "<td>";
+    				echo $course['course_name'];
+    			echo "</td>";
 
-			    			echo "<td>";
-			    				if($courseIsOnProgram){
-		    						echo anchor("program/removeCourseFromProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
-			    				}else if($courseIsOnNoneProgram){
-		    						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
-			    				}else{
-		    						echo anchor("","Sem ação.", "class='btn btn-primary' disabled='true'");
-			    				}
-			    			echo "</td>";
+    			echo "<td>";
+    				if($courseIsOnProgram){
+						echo anchor("program/removeCourseFromProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Remover do programa", "class='btn btn-danger'");
+    				}else if($courseIsOnNoneProgram){
+						echo anchor("program/addCourseToProgram/{$course['id_course']}/{$programId}","<i class='fa fa-plus'></i> Adicionar ao programa", "class='btn btn-primary'");
+    				}else{
+						echo anchor("","Sem ação.", "class='btn btn-primary' disabled='true'");
+    				}
+    			echo "</td>";
 
-				    	echo "</tr>";
-				    }
-			    }else{
-					echo "<td colspan=2>";
-    					echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhum curso cadastrado.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-			    }
+	    	echo "</tr>";
+	    }
+    }else{
+		echo "<td colspan=2>";
+			callout("info", "Nenhum curso cadastrado.");
+		echo "</td>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displayRegisteredPrograms($programs){
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\"><h3>Programas cadastrados</h3></th>";
-			        echo "<th class=\"text-center\"><h3>Ações</h3></th>";
-			    echo "</tr>";
+	buildTableDeclaration();
 
-			    if($programs !== FALSE){
+	buildTableHeaders(array(
+		'Programas cadastrados',
+		'Ações'
+	));
 
-			    	foreach($programs as $program){
-			    		echo "<tr>";
+    if($programs !== FALSE){
 
-			    			echo "<td>";
-			    				echo $program['program_name']." - ".$program['acronym'];
-			    			echo "</td>";
+    	foreach($programs as $program){
+    		echo "<tr>";
 
-			    			echo "<td>";
-			    				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
-		             				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-		             				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
+    			echo "<td>";
+    				echo $program['program_name']." - ".$program['acronym'];
+    			echo "</td>";
 
-			    				echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
-		             				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-		             				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
-			    			echo "</td>";
+    			echo "<td>";
+    				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
+         				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+         				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
-			    		echo "</tr>";
-			    	}
+    				echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
+         				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+         				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
+    			echo "</td>";
 
-			    }else{
-			    	echo "<td colspan=2>";
-    					echo "<div class=\"callout callout-info\">";
-							echo "<h4>Não existem programas cadastrados</h4>";
-					    	echo anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'");
-						echo "</div>";
-	    			echo "</td>";
-			    }
+    		echo "</tr>";
+    	}
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    }else{
+    	echo "<td colspan=2>";
+    		$wrapperContent = anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'");
+    		$callout = wrapperCallout("info", $wrapperContent, "Não existem programas cadastrados.");
+    		$callout->draw();
+		echo "</td>";
+    }
+
+	buildTableEndDeclaration();
 }
 
 function displayCoordinatorPrograms($programs){
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\"><h3>Programas cadastrados</h3></th>";
-			        echo "<th class=\"text-center\"><h3>Ações</h3></th>";
-			    echo "</tr>";
+	buildTableDeclaration();
 
-			    if($programs !== FALSE){
+	buildTableHeaders(array(
+		'Programas cadastrados',
+		'Ações'
+	));
 
-			    	foreach($programs as $program){
-			    		echo "<tr>";
+    if($programs !== FALSE){
 
-			    			echo "<td>";
-			    				echo $program['program_name']." - ".$program['acronym'];
-			    			echo "</td>";
+    	foreach($programs as $program){
+    		echo "<tr>";
 
-			    			echo "<td>";
-			    			echo anchor("coordinator/displayProgramCourses/{$program['id_program']}", "Visualizar cursos", "class='btn btn-primary btn-flat'");
-			    			echo "</td>";
+    			echo "<td>";
+    				echo $program['program_name']." - ".$program['acronym'];
+    			echo "</td>";
 
-			    		echo "</tr>";
-			    	}
+    			echo "<td>";
+    			echo anchor("coordinator/displayProgramCourses/{$program['id_program']}", "Visualizar cursos", "class='btn btn-primary btn-flat'");
+    			echo "</td>";
 
-			    }else{
-			    	echo "<td colspan=2>";
-    					echo "<div class=\"callout callout-info\">";
-							echo "<h4>Não existem programas cadastrados.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-			    }
+    		echo "</tr>";
+    	}
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    }else{
+    	echo "<td colspan=2>";
+    		callout("info", "Não existem programas cadastrados.");
+		echo "</td>";
+    }
+
+	buildTableEndDeclaration();
 }
 
 function displayProgramCourses($programId, $courses){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código do curso</th>";
-			        echo "<th class=\"text-center\">Curso</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código do curso',
+		'Curso',
+		'Ações'
+	));
 
-			    if($courses !== FALSE){
+    if($courses !== FALSE){
 
-				    foreach($courses as $course){
+	    foreach($courses as $course){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-				    		echo "<td>";
-				    			echo $course['id_course'];
-				    		echo "</td>";
+	    		echo "<td>";
+	    			echo $course['id_course'];
+	    		echo "</td>";
 
-			    			echo "<td>";
-			    				echo $course['course_name'];
-			    			echo "</td>";
+    			echo "<td>";
+    				echo $course['course_name'];
+    			echo "</td>";
 
-			    			echo "<td>";
-		    				echo anchor("coordinator/displayCourseStudents/{$course['id_course']}", "Visualizar alunos do curso", "class='btn btn-primary btn-flat'");
-			    			echo "</td>";
+    			echo "<td>";
+				echo anchor("coordinator/displayCourseStudents/{$course['id_course']}", "Visualizar alunos do curso", "class='btn btn-primary btn-flat'");
+    			echo "</td>";
 
-				    	echo "</tr>";
-				    }
-			    }else{
-					echo "<td colspan=3>";
-    					echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhum curso cadastrado.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-			    }
+	    	echo "</tr>";
+	    }
+    }else{
+		echo "<td colspan=3>";
+			callout("info", "Nenhum curso cadastrado.");
+		echo "</td>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displayCourseStudents($courseId, $students){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código do aluno</th>";
-			        echo "<th class=\"text-center\">Aluno</th>";
-			        echo "<th class=\"text-center\">E-mail</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código do aluno',
+		'Aluno',
+		'E-mail',
+		'Ações'
+	));
 
-			    if($students !== FALSE){
+    if($students !== FALSE){
 
-				    foreach($students as $student){
+	    foreach($students as $student){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-				    		echo "<td>";
-				    			echo $student['id'];
-				    		echo "</td>";
+	    		echo "<td>";
+	    			echo $student['id'];
+	    		echo "</td>";
 
-			    			echo "<td>";
-			    				echo $student['name'];
-			    			echo "</td>";
+    			echo "<td>";
+    				echo $student['name'];
+    			echo "</td>";
 
-			    			echo "<td>";
-			    				echo $student['email'];
-			    			echo "</td>";
+    			echo "<td>";
+    				echo $student['email'];
+    			echo "</td>";
 
-			    			echo "<td>";
+    			echo "<td>";
 
-			    			echo "</td>";
+    			echo "</td>";
 
-				    	echo "</tr>";
-				    }
-			    }else{
-					echo "<td colspan=4>";
-    					echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhum aluno matriculado neste curso.</h4>";
-						echo "</div>";
-	    			echo "</td>";
-			    }
+	    	echo "</tr>";
+	    }
+    }else{
+		echo "<td colspan=4>";
+			callout("info", "Nenhum aluno matriculado neste curso.");
+		echo "</td>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    buildTableEndDeclaration();
 }
 
 function displayCourseSyllabus($syllabus){
 	$course = new Course();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Curso</th>";
-			        echo "<th class=\"text-center\">Código Currículo</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Curso',
+		'Código Currículo',
+		'Ações'
+	));
 
-			    if($syllabus !== FALSE){
+    if($syllabus !== FALSE){
 
-				    foreach($syllabus as $courseName => $syllabus){
+	    foreach($syllabus as $courseName => $syllabus){
 
-				    	$foundCourse = $course->getCourseByName($courseName);
-						$courseId = $foundCourse['id_course'];
+	    	$foundCourse = $course->getCourseByName($courseName);
+			$courseId = $foundCourse['id_course'];
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-				    		echo "<td>";
-				    			echo $courseName;
-				    		echo "</td>";
+	    		echo "<td>";
+	    			echo $courseName;
+	    		echo "</td>";
 
-				    		if($syllabus !== FALSE){
+	    		if($syllabus !== FALSE){
 
-				    			echo "<td>";
-				    				echo $syllabus['id_syllabus'];
-				    			echo "</td>";
-
-				    			echo "<td>";
-				    				echo "<div class=\"callout callout-info\">";
-										echo "<h4>Editar</h4>";
-				    					echo anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-									    echo "<p> <b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/></p>";
-									echo "</div>";
-				    			echo "</td>";
-
-				    		}else{
-								echo "<td colspan=2>";
-			    					echo "<div class=\"callout callout-info\">";
-										echo "<h4>Nenhum currículo cadastrado para esse curso.</h4>";
-								    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
-									echo "</div>";
-				    			echo "</td>";
-				    		}
-
-				    	echo "</tr>";
-				    }
-			    }else{
-					echo "<td colspan=2>";
-    					echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhum curso cadastrado.</h4>";
-					    	echo anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
-						echo "</div>";
+	    			echo "<td>";
+	    				echo $syllabus['id_syllabus'];
 	    			echo "</td>";
-			    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	    			echo "<td>";
+    					$content = anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+    					$principalMessage = "Editar";
+    					$aditionalMessage = "<b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/>";
+    					$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
+    					$callout->draw();
+	    			echo "</td>";
+
+	    		}else{
+					echo "<td colspan=2>";
+				    	$content = anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+						$principalMessage = "Nenhum currículo cadastrado para esse curso.";
+    					$callout = wrapperCallout("info", $content, $principalMessage);
+    					$callout->draw();
+	    			echo "</td>";
+	    		}
+
+	    	echo "</tr>";
+	    }
+    }else{
+		echo "<td colspan=3>";
+			callout("info", "Nenhum curso cadastrado para este secretário.");
+		echo "</td>";
+    }
+
+	buildTableEndDeclaration();
 }
 
 function displaySyllabusDisciplinesToStudent($syllabusDisciplines){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código da Disciplina</th>";
-			        echo "<th class=\"text-center\">Disciplina</th>";
-			        echo "<th class=\"text-center\">Créditos</th>";
-			        echo "<th class=\"text-center\">Carga-horária</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código da Disciplina',
+		'Disciplina',
+		'Créditos',
+		'Carga-horária'
+	));
 
-			    if($syllabusDisciplines !== FALSE){
+    if($syllabusDisciplines !== FALSE){
 
-			    	foreach($syllabusDisciplines as $discipline){
+    	foreach($syllabusDisciplines as $discipline){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-					    	echo "<td>";
-					    		echo $discipline['discipline_code'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['discipline_code'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['discipline_name']."  (".$discipline['name_abbreviation'].")";
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['discipline_name']."  (".$discipline['name_abbreviation'].")";
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['credits'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['credits'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['workload'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['workload'];
+		    	echo "</td>";
 
-				    	echo "</tr>";
-			    	}
+	    	echo "</tr>";
+    	}
 
-			    }else{
+    }else{
 
-			    	echo "<tr>";
-			    		echo "<td colspan='4'>";
-			    			echo "<div class=\"callout callout-info\">";
-							echo "<h4>Nenhuma disciplina no currículo deste curso.</h4>";
-						echo "</div>";
-			    		echo "</td>";
-			    	echo "</tr>";
-			    }
+    	echo "<tr>";
+		echo "<td colspan='4'>";
+			callout("info", "Nenhuma disciplina no currículo deste curso.");
+		echo "</td>";
+    	echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-			echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Disciplinas</th>";
-			        echo "<th class=\"text-center\">Linhas de Pesquisa</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "<i class='fa fa-plus-circle'></i> Adicionar disciplinas", "class='btn-lg'");
 
-			    if($syllabusDisciplines !== FALSE){
+	buildTableDeclaration();
 
-			    	foreach($syllabusDisciplines as $discipline){
-			    		$disciplineController = new Discipline();
-			    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+	buildTableHeaders(array(
+		'Disciplina',
+		'Linhas de pesquisa',
+		'Ações'
+	));
 
-			    		$syllabus = new Syllabus();
-			    		$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
+    if($syllabusDisciplines !== FALSE){
 
-				    	echo "<tr>";
-					    	echo "<td>";
-					    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
-					    	echo "</td>";
-					    	echo "<td>";
-					    	if ($disciplineResearchLinesNames){
-					    		foreach ($disciplineResearchLinesNames as $names){
-					    			echo $names."<br>";
-					    		}
-					    	}else{
-					    		echo "Não relacionada a nenhuma linha de pesquisa.";
-					    	}
-					    	echo "</td>";
-					    	echo "<td>";
-					    	echo anchor("syllabus/relateDisciplineToResearchLine/{$discipline['discipline_code']}/{$syllabusId}/{$courseId}", "Relacionar Linha de Pesquisa", "class='btn btn-success'");
-					    	echo "</td>";
-				    	echo "</tr>";
-			    	}
-			    }else{
+    	foreach($syllabusDisciplines as $discipline){
+    		$disciplineController = new Discipline();
+    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
 
-			    	echo "<tr>";
-			    		echo "<td>";
-			    			echo "<div class=\"callout callout-info\">";
-								echo "<h4>Nenhuma disciplina adicionada ao currículo.</h4>";
-							   	echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
-							echo "</div>";
-			    		echo "</td>";
-			    	echo "</tr>";
-			    }
+    		$syllabus = new Syllabus();
+    		$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	    	echo "<tr>";
+		    	echo "<td>";
+		    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
+		    	echo "</td>";
+		    	echo "<td>";
+		    	if ($disciplineResearchLinesNames){
+		    		foreach ($disciplineResearchLinesNames as $names){
+		    			echo $names."<br>";
+		    		}
+		    	}else{
+		    		echo "Não relacionada a nenhuma linha de pesquisa.";
+		    	}
+		    	echo "</td>";
+		    	echo "<td>";
+		    	echo anchor("syllabus/relateDisciplineToResearchLine/{$discipline['discipline_code']}/{$syllabusId}/{$courseId}", "Relacionar Linha de Pesquisa", "class='btn btn-success'");
+		    	echo "</td>";
+	    	echo "</tr>";
+    	}
+    }else{
+
+    	echo "<tr>";
+    		echo "<td colspan=3>";
+			   	$content = anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
+				$principalMessage = "Nenhuma disciplina adicionada ao currículo.";
+    			$callout = wrapperCallout("info", $content, $principalMessage);
+    			$callout->draw();
+    		echo "</td>";
+    	echo "</tr>";
+    }
+
+    buildTableEndDeclaration();
 }
 
 function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código </th>";
-			        echo "<th class=\"text-center\">Sigla</th>";
-			        echo "<th class=\"text-center\">Disciplina</th>";
-			        echo "<th class=\"text-center\">Créditos</th>";
-			        echo "<th class=\"text-center\">Linhas de Pesquisa</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código',
+		'Sigla',
+		'Disciplina',
+		'Créditos',
+		'Linhas de pesquisa',
+		'Ações'
+	));
 
-			    if($allDisciplines !== FALSE){
+    if($allDisciplines !== FALSE){
 
-				    foreach($allDisciplines as $discipline){
+	    foreach($allDisciplines as $discipline){
 
-					    $syllabus = new Syllabus();
-			    		$disciplineAlreadyExistsInSyllabus = $syllabus->disciplineExistsInSyllabus($discipline['discipline_code'], $syllabusId);
+		    $syllabus = new Syllabus();
+    		$disciplineAlreadyExistsInSyllabus = $syllabus->disciplineExistsInSyllabus($discipline['discipline_code'], $syllabusId);
 
-			    		$disciplineController = new Discipline();
-			    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
-			    		if ($disciplineResearchLinesIds){
-			    			$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
-			    		}else{
-			    			$disciplineResearchLinesNames = FALSE;
-			    		}
-					    echo "<tr>";
-					    	echo "<td>";
-				    			echo $discipline['discipline_code'];
-					    	echo "</td>";
+    		$disciplineController = new Discipline();
+    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
+    		if ($disciplineResearchLinesIds){
+    			$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
+    		}else{
+    			$disciplineResearchLinesNames = FALSE;
+    		}
+		    echo "<tr>";
+		    	echo "<td>";
+	    			echo $discipline['discipline_code'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['name_abbreviation'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['name_abbreviation'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['discipline_name'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['discipline_name'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['credits'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['credits'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		if ($disciplineResearchLinesNames){
-					    			foreach ($disciplineResearchLinesNames as $names){
-					    				echo $names."<br>";
-					    			}
-					    		}else{
-					    			echo "Não relacionada a nenhuma linha de pesquisa.";
-					    		}
-					    	echo "</td>";
+		    	echo "<td>";
+		    		if ($disciplineResearchLinesNames){
+		    			foreach ($disciplineResearchLinesNames as $names){
+		    				echo $names."<br>";
+		    			}
+		    		}else{
+		    			echo "Não relacionada a nenhuma linha de pesquisa.";
+		    		}
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		if($disciplineAlreadyExistsInSyllabus){
-					    			echo anchor("syllabus/removeDisciplineFromSyllabus/{$syllabusId}/{$discipline['discipline_code']}/{$courseId}", "Remover disciplina", "class='btn btn-danger'");
-					    		}else{
-					    			echo anchor("syllabus/addDisciplineToSyllabus/{$syllabusId}/{$discipline['discipline_code']}/{$courseId}", "Adicionar disciplina", "class='btn btn-primary'");
-					    		}
-					    	echo "</td>";
+		    	echo "<td>";
+		    		if($disciplineAlreadyExistsInSyllabus){
+		    			echo anchor("syllabus/removeDisciplineFromSyllabus/{$syllabusId}/{$discipline['discipline_code']}/{$courseId}", "Remover disciplina", "class='btn btn-danger'");
+		    		}else{
+		    			echo anchor("syllabus/addDisciplineToSyllabus/{$syllabusId}/{$discipline['discipline_code']}/{$courseId}", "Adicionar disciplina", "class='btn btn-primary'");
+		    		}
+		    	echo "</td>";
 
-					    echo "</tr>";
-				    }
+		    echo "</tr>";
+	    }
 
-			    }else{
+    }else{
 
-			    	echo "<tr>";
-					    	echo "<td colspan=5>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Nenhuma disciplina encontrada.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
-					echo "</tr>";
-			    }
+    	echo "<tr>";
+    	echo "<td colspan=5>";
+    		callout("warning", "Nenhuma disciplina encontrada.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    buildTableEndDeclaration();
 }
 
 function displayOffersList($offers){
 
-	define("PROPOSED", "proposed");
-	define("APPROVED", "approved");
+	define("PROPOSED", OfferConstants::PROPOSED_OFFER);
+	define("APPROVED", OfferConstants::APPROVED_OFFER);
 
 	$course = new Course();
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Curso</th>";
-			        echo "<th class=\"text-center\">Lista de Oferta</th>";
-			        echo "<th class=\"text-center\">Status</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Curso',
+		'Lista de Oferta',
+		'Status',
+		'Ações'
+	));
 
-			    foreach($offers as $courseName => $offer){
+	    foreach($offers as $courseName => $offer){
 
-			    	$foundCourse = $course->getCourseByName($courseName);
-					$courseId = $foundCourse['id_course'];
+	    	$foundCourse = $course->getCourseByName($courseName);
+			$courseId = $foundCourse['id_course'];
 
-			    	echo "<tr>";
+	    	echo "<tr>";
 
-			    		echo "<td>";
-			    			echo $courseName;
-			    		echo "</td>";
+	    		echo "<td>";
+	    			echo $courseName;
+	    		echo "</td>";
 
-			    		if($offer !== FALSE){
+	    		if($offer !== FALSE){
 
-			    			switch($offer['offer_status']){
-								case PROPOSED:
-									$status = "Proposta";
-									break;
+	    			switch($offer['offer_status']){
+						case PROPOSED:
+							$status = "Proposta";
+							break;
 
-								case APPROVED:
-									$status = "Aprovada";
-									break;
+						case APPROVED:
+							$status = "Aprovada";
+							break;
 
-								default:
-									$status = "-";
-									break;
-							}
+						default:
+							$status = "-";
+							break;
+					}
 
-				    		echo "<td>";
-				    			echo $offer['id_offer'];
-				    		echo "</td>";
+		    		echo "<td>";
+		    			echo $offer['id_offer'];
+		    		echo "</td>";
 
-				    		echo "<td>";
-				    			echo $status;
-				    		echo "</td>";
+		    		echo "<td>";
+		    			echo $status;
+		    		echo "</td>";
 
-				    		echo "<td>";
-		    					echo "<div class=\"callout callout-info\">";
-				    			if($offer['offer_status'] === PROPOSED){
-									echo "<h4>Editar</h4>";
+		    		echo "<td>";
+		    			if($offer['offer_status'] === PROPOSED){
+	    					$content = anchor("offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+							$principalMessage = "Editar";
+						    $aditionalMessage = "<b><i>Aqui é possível adicionar disciplinas a lista de oferta e aprová-la.</i><b/>";
+		    			}else{
+	    					$content = anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
+						    $principalMessage = FALSE;
+						    $aditionalMessage = "<b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/>";
+		    			}
 
-			    					echo anchor("offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-								    echo "<p> <b><i>Aqui é possível adicionar disciplinas a lista de oferta e aprová-la.</i><b/></p>";
-				    			}else{
-			    					echo anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
-								    echo "<p> <b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/></p>";
-				    			}
-								echo "</div>";
-				    		echo "</td>";
+						$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
+						$callout->draw();
+		    		echo "</td>";
 
-			    		}else{
+	    		}else{
 
-			    			$newOfferBtn = array(
-								"id" => "new_offer_btn",
-								"class" => "btn btn-primary",
-								"content" => "Nova Lista de Ofertas",
-								"type" => "submit"
-							);
+	    			$newOfferBtn = array(
+						"id" => "new_offer_btn",
+						"class" => "btn btn-primary",
+						"content" => "Nova Lista de Ofertas",
+						"type" => "submit"
+					);
 
-			    			$needsMastermindApprovalCheckBox = array(
-							    'name' => 'needs_mastermind_approval_ckbox',
-							    'id' => 'needs_mastermind_approval_ckbox',
-							    'value' => EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL,
-							    'checked' => TRUE,
-							    'style' => 'margin:15px',
-						    );
+	    			$needsMastermindApprovalCheckBox = array(
+					    'name' => 'needs_mastermind_approval_ckbox',
+					    'id' => 'needs_mastermind_approval_ckbox',
+					    'value' => EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL,
+					    'checked' => TRUE,
+					    'style' => 'margin:15px',
+				    );
 
-			    			echo "<td colspan=3>";
-		    					echo "<div class=\"callout callout-info\">";
-									echo "<h4>Nenhuma lista de ofertas proposta para o semestre atual.</h4>";
-	    						echo "<div class=\"callout callout-warning\">";
-									echo form_open("offer/newOffer/{$courseId}");
-									echo form_checkbox($needsMastermindApprovalCheckBox);
-									echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
-									echo "<br>";
-									echo form_button($newOfferBtn);
-									echo form_close();
-								echo "</div>";
+	    			echo "<td colspan=3>";
+	    				$principalMessage = "Nenhuma lista de ofertas proposta para o semestre atual.";
+	    				$aditionalMessage = "<b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/>";
+	    				$callout = wrapperCallout("info", FALSE, $principalMessage, $aditionalMessage);
 
-								    echo "<p> <b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/></p>";
-								echo "</div>";
-			    			echo "</td>";
-			    		}
+	    				$callout->writeCalloutDeclaration();
+	    				$callout->writePrincipalMessage();
 
-			    	echo "</tr>";
-			    }
+	    					$warningCallout = wrapperCallout("warning");
+	    					$warningCallout->writeCalloutDeclaration();
+								echo form_open("offer/newOffer/{$courseId}");
+								echo form_checkbox($needsMastermindApprovalCheckBox);
+								echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
+								echo "<br>";
+								echo form_button($newOfferBtn);
+								echo form_close();
+							$warningCallout->writeCalloutEndDeclaration();
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+						$callout->writeAditionalMessage();
+						$callout->writeCalloutEndDeclaration();
+	    			echo "</td>";
+	    		}
+
+	    	echo "</tr>";
+	    }
+
+	buildTableEndDeclaration();
 }
 
 function displayOfferDisciplines($idOffer, $course, $disciplines){
@@ -2123,60 +2107,54 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 	echo "<h3><b>Curso</b>: ".$course['course_name']."</h3>";
 
 	if($offerData['needs_mastermind_approval'] === EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL){
-		$needsMastermindApproval = "Sim";
+		$needsMastermindApproval = "Sim.";
 	}else{
-		$needsMastermindApproval = "Não";
+		$needsMastermindApproval = "Não.";
 	}
 	echo "<h4><b>Necessita de aprovação do orientador?</b>: ".$needsMastermindApproval."</h3>";
 
 	echo "<br>";
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código da Lista: ".$idOffer."</th>";
-			        echo "<th class=\"text-center\">Status: Proposta</th>";
-			    echo "</tr>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			    	echo "<td colspan=2>";
-			    	echo "<b>Disciplinas</b>";
-			    	echo "</td>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		"Código da Lista: ".$idOffer,
+		'Status: Proposta'
+	));
 
-			    if($disciplines !== FALSE){
+    echo "<tr>";
+    	echo "<td colspan=2> <b>Disciplinas</b> </td>";
+    echo "</tr>";
 
-				    foreach($disciplines as $discipline){
+    if($disciplines !== FALSE){
 
-					    echo "<tr>";
-					    	echo "<td colspan=2>";
-				    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']."(".$discipline['name_abbreviation'].")";
-					    	echo "</td>";
-					    echo "</tr>";
-				    }
+	    foreach($disciplines as $discipline){
 
-				    echo "<tr>";
-						echo "<td colspan=2>";
-		                echo anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
-		                echo "</td>";
-				    echo "</tr>";
-			    }else{
+		    echo "<tr>";
+		    	echo "<td colspan=2>";
+	    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']."(".$discipline['name_abbreviation'].")";
+		    	echo "</td>";
+		    echo "</tr>";
+	    }
 
-			    	echo "<tr>";
-					    	echo "<td colspan=2>";
-						    	echo "<div class=\"callout callout-info\">";
-	                            	echo "<h4>Nenhuma disciplina adicionada a essa lista de oferta no momento.</h4>";
+	    echo "<tr>";
+			echo "<td colspan=2>";
+            echo anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
+            echo "</td>";
+	    echo "</tr>";
+    }else{
 
-	                            	echo anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
-	                            echo "</div>";
-					    	echo "</td>";
-					echo "</tr>";
-			    }
+    	echo "<tr>";
+    	echo "<td colspan=2>";
+            $content = anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
+  			$principalMessage = "Nenhuma disciplina adicionada a essa lista de oferta no momento.";
+    		$callout = wrapperCallout("info", $content, $principalMessage);
+    		$callout->draw();
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 
 	echo "<div class=\"row\">";
 		echo "<div class=\"col-xs-3\">";
@@ -2199,65 +2177,53 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 
 function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código: </th>";
-			        echo "<th class=\"text-center\">Sigla</th>";
-			        echo "<th class=\"text-center\">Disciplina</th>";
-			        echo "<th class=\"text-center\">Créditos</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código',
+		'Sigla',
+		'Disciplina',
+		'Créditos',
+		'Ações'
+	));
 
-			    if($allDisciplines !== FALSE){
+    if($allDisciplines !== FALSE){
 
-				    foreach($allDisciplines as $discipline){
+	    foreach($allDisciplines as $discipline){
 
-					    echo "<tr>";
-					    	echo "<td>";
-				    			echo $discipline['discipline_code'];
-					    	echo "</td>";
+		    echo "<tr>";
+		    	echo "<td>";
+	    			echo $discipline['discipline_code'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['name_abbreviation'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['name_abbreviation'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['discipline_name'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['discipline_name'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $discipline['credits'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $discipline['credits'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		// if($disciplineAlreadyExistsInOffer){
-					    		// 	echo anchor("offer/removeDisciplineFromOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Remover disciplina da lista", "class='btn btn-danger'");
-					    		// }else{
-				    			// 	echo anchor("offer/addDisciplineToOffer/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "Adicionar à lista de oferta de ".$course['course_name'], "class='btn btn-primary'");
-					    		// }
-								echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
-					    	echo "</td>";
+		    	echo "<td>";
+					echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
+		    	echo "</td>";
+		    echo "</tr>";
+	    }
 
-					    echo "</tr>";
-				    }
+    }else{
 
-			    }else{
+    	echo "<tr>";
+    	echo "<td colspan=5>";
+    		callout("warning", "Não há disciplinas cadastradas no currículo deste curso no momento.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			    	echo "<tr>";
-				    	echo "<td colspan=5>";
-					    	echo "<div class=\"callout callout-warning\">";
-                            	echo "<h4>Não há disciplinas cadastradas no currículo deste curso no momento.</h4>";
-                            echo "</div>";
-				    	echo "</td>";
-					echo "</tr>";
-			    }
-
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displayRegisteredStudents($students, $studentNameToSearch){
@@ -2282,9 +2248,9 @@ function displayRegisteredStudents($students, $studentNameToSearch){
 		echo form_button($enrollStudentBtn);
 
 	}else{
-		echo "<div class=\"callout callout-info\">";
-			echo "<h4>Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.<br><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small></h4>";
-		echo "</div>";
+
+		$principalMessage = "Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.<br><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small>";
+		callout("info", $principalMessage);
 	}
 }
 
@@ -2293,61 +2259,55 @@ function displayRegisteredUsers($allUsers){
 	echo "<h3>Lista de Usuários:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código</th>";
-			        echo "<th class=\"text-center\">Nome</th>";
-			        echo "<th class=\"text-center\">CPF</th>";
-			        echo "<th class=\"text-center\">E-mail</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código',
+		'Nome',
+		'CPF',
+		'E-mail',
+		'Ações'
+	));
 
-			    if($allUsers !== FALSE){
+    if($allUsers !== FALSE){
 
-				    foreach($allUsers as $user){
+	    foreach($allUsers as $user){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-					    	echo "<td>";
-					    		echo $user['id'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $user['id'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $user['name'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $user['name'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $user['cpf'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $user['cpf'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    	 	echo $user['email'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    	 	echo $user['email'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo anchor("usuario/manageGroups/{$user['id']}", "<i class='fa fa-group'></i> Gerenciar Grupos", "class='btn btn-primary'");
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo anchor("usuario/manageGroups/{$user['id']}", "<i class='fa fa-group'></i> Gerenciar Grupos", "class='btn btn-primary'");
+		    	echo "</td>";
 
-				    	echo "</tr>";
-				    }
+	    	echo "</tr>";
+	    }
 
-			    }else{
+    }else{
 
-			    	echo "<tr>";
-					    	echo "<td colspan=5>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há usuários cadastradas no momento.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
-					echo "</tr>";
-			    }
+    	echo "<tr>";
+    	echo "<td colspan=5>";
+    		callout("warning", "Não há usuários cadastradas no momento.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displayUserGroups($idUser, $userGroups){
@@ -2357,45 +2317,39 @@ function displayUserGroups($idUser, $userGroups){
 	echo "<h3>Grupos pertencentes a <b>".$foundUser['name']."</b>:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Grupo</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Grupo',
+		'Ações'
+	));
 
-			    if($userGroups !== FALSE){
+    if($userGroups !== FALSE){
 
-				    foreach($userGroups as $group){
+	    foreach($userGroups as $group){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-					    	echo "<td>";
-					    		echo $group['group_name'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $group['group_name'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo anchor("usuario/removeUserGroup/{$idUser}/{$group['id_group']}", "Remover Grupo", "class='btn btn-danger'");
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo anchor("usuario/removeUserGroup/{$idUser}/{$group['id_group']}", "Remover Grupo", "class='btn btn-danger'");
+		    	echo "</td>";
 
-				    	echo "</tr>";
-				    }
+	    	echo "</tr>";
+	    }
 
-			    }else{
-			    	echo "<tr>";
-				    	echo "<td colspan=2>";
-					    	echo "<div class=\"callout callout-warning\">";
-                            	echo "<h4>Não há grupos cadastrados para esse usuário.</h4>";
-                            echo "</div>";
-				    	echo "</td>";
-					echo "</tr>";
-			    }
+    }else{
+    	echo "<tr>";
+    	echo "<td colspan=2>";
+    		callout("warning", "Não há grupos cadastrados para esse usuário.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    buildTableEndDeclaration();
 }
 
 function displayAllGroupsToUser($idUser, $allGroups, $userGroups){
@@ -2406,110 +2360,98 @@ function displayAllGroupsToUser($idUser, $allGroups, $userGroups){
 	echo "<h3>Grupos Existentes:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Grupo</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Grupo',
+		'Ações'
+	));
 
-			    if($allGroups !== FALSE){
+    if($allGroups !== FALSE){
 
-				    foreach($allGroups as $idGroup => $groupName){
+	    foreach($allGroups as $idGroup => $groupName){
 
-				    	$alreadyHaveThisGroup = FALSE;
-				    	if($userGroups !== FALSE){
+	    	$alreadyHaveThisGroup = FALSE;
+	    	if($userGroups !== FALSE){
 
-					    	foreach($userGroups as $group){
-					    		if($idGroup == $group['id_group']){
-				    				$alreadyHaveThisGroup = TRUE;
-				    				break;
-					    		}
-					    	}
-				    	}else{
-				    		$alreadyHaveThisGroup = FALSE;
-				    	}
+		    	foreach($userGroups as $group){
+		    		if($idGroup == $group['id_group']){
+	    				$alreadyHaveThisGroup = TRUE;
+	    				break;
+		    		}
+		    	}
+	    	}else{
+	    		$alreadyHaveThisGroup = FALSE;
+	    	}
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-					    	echo "<td>";
-					    		echo $groupName;
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $groupName;
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		if($alreadyHaveThisGroup){
-				    				echo anchor("", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary disabled'");
-					    		}else{
-				    				echo anchor("usuario/addGroupToUser/{$idUser}/{$idGroup}", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary'");
-					    		}
-					    	echo "</td>";
+		    	echo "<td>";
+		    		if($alreadyHaveThisGroup){
+	    				echo anchor("", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary disabled'");
+		    		}else{
+	    				echo anchor("usuario/addGroupToUser/{$idUser}/{$idGroup}", "<i class='fa fa-plus'></i> <i class='fa fa-user'></i> <b>".$foundUser['name']."</b>", "class='btn btn-primary'");
+		    		}
+		    	echo "</td>";
 
-				    	echo "</tr>";
-				    }
+	    	echo "</tr>";
+	    }
 
-			    }else{
+    }else{
 
-			    	echo "<tr>";
-					    	echo "<td colspan=2>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há grupos cadastrados no sistema no momento.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
-					echo "</tr>";
-			    }
+    	echo "<tr>";
+    	echo "<td colspan=2>";
+    		callout("warning", "Não há grupos cadastrados no sistema no momento.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    buildTableEndDeclaration();
 }
 
 function displayRegisteredGroups($allGroups){
 	echo "<h3>Grupos Cadastrados:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Grupo</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Grupo',
+		'Ações'
+	));
 
-			    if($allGroups !== FALSE){
+    if($allGroups !== FALSE){
 
-				    foreach($allGroups as $idGroup => $groupName){
+	    foreach($allGroups as $idGroup => $groupName){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-					    	echo "<td>";
-					    		echo $groupName;
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $groupName;
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo anchor("usuario/listUsersOfGroup/{$idGroup}", "<i class='fa fa-list-ol'></i> Listar usuários", "class='btn btn-primary' style='margin-right:5%;'");
-					    		echo anchor("usuario/removeAllUsersOfGroup/{$idGroup}", "<i class='fa fa-eraser'></i> Remover todos usuários do grupo", "class='btn btn-danger'");
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo anchor("usuario/listUsersOfGroup/{$idGroup}", "<i class='fa fa-list-ol'></i> Listar usuários", "class='btn btn-primary' style='margin-right:5%;'");
+		    		echo anchor("usuario/removeAllUsersOfGroup/{$idGroup}", "<i class='fa fa-eraser'></i> Remover todos usuários do grupo", "class='btn btn-danger'");
+		    	echo "</td>";
 
-				    	echo "</tr>";
-				    }
+	    	echo "</tr>";
+	    }
 
-			    }else{
+    }else{
 
-			    	echo "<tr>";
-					    	echo "<td colspan=2>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há grupos cadastrados no sistema no momento.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
-					echo "</tr>";
-			    }
+    	echo "<tr>";
+    	echo "<td colspan=2>";
+    		callout("warning", "Não há grupos cadastrados no sistema no momento.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+	buildTableEndDeclaration();
 }
 
 function displayUsersOfGroup($idGroup, $usersOfGroup){
@@ -2519,172 +2461,168 @@ function displayUsersOfGroup($idGroup, $usersOfGroup){
 	echo "<h3>Usuários do grupo <b>".$foundGroup['group_name']."</b>:</h3>";
 	echo "<br>";
 
-	echo "<div class=\"box-body table-responsive no-padding\">";
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
+	buildTableDeclaration();
 
-			    echo "<tr>";
-			        echo "<th class=\"text-center\">Código</th>";
-			        echo "<th class=\"text-center\">Nome</th>";
-			        echo "<th class=\"text-center\">CPF</th>";
-			        echo "<th class=\"text-center\">E-mail</th>";
-			        echo "<th class=\"text-center\">Ações</th>";
-			    echo "</tr>";
+	buildTableHeaders(array(
+		'Código',
+		'Nome',
+		'CPF',
+		'E-mail',
+		'Ações'
+	));
 
-			    if($usersOfGroup !== FALSE){
+    if($usersOfGroup !== FALSE){
 
-				    foreach($usersOfGroup as $user){
+	    foreach($usersOfGroup as $user){
 
-				    	echo "<tr>";
+	    	echo "<tr>";
 
-					    	echo "<td>";
-					    		echo $user['id'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $user['id'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $user['name'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $user['name'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo $user['cpf'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo $user['cpf'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    	 	echo $user['email'];
-					    	echo "</td>";
+		    	echo "<td>";
+		    	 	echo $user['email'];
+		    	echo "</td>";
 
-					    	echo "<td>";
-					    		echo anchor("usuario/removeUserFromGroup/{$user['id']}/{$idGroup}", "<i class='fa fa-eraser'></i> Remover Usuário", "class='btn btn-danger'");
-					    	echo "</td>";
+		    	echo "<td>";
+		    		echo anchor("usuario/removeUserFromGroup/{$user['id']}/{$idGroup}", "<i class='fa fa-eraser'></i> Remover Usuário", "class='btn btn-danger'");
+		    	echo "</td>";
 
-				    	echo "</tr>";
-				    }
+	    	echo "</tr>";
+	    }
 
-			    }else{
+    }else{
 
-			    	echo "<tr>";
-					    	echo "<td colspan=5>";
-						    	echo "<div class=\"callout callout-warning\">";
-	                            	echo "<h4>Não há usuários cadastrados nesse grupo no momento.</h4>";
-	                            echo "</div>";
-					    	echo "</td>";
-					echo "</tr>";
-			    }
+    	echo "<tr>";
+    	echo "<td colspan=5>";
+    		callout("warning", "Não há usuários cadastrados nesse grupo no momento.");
+    	echo "</td>";
+		echo "</tr>";
+    }
 
-			echo "</tbody>";
-		echo "</table>";
-	echo "</div>";
+    buildTableEndDeclaration();
 }
 
 function displayGuestUsers(){
-	define("GUEST_GROUP_ID", 8);
+
 	$users = new Usuario();
-	$guests = $users->getUsersOfGroup(GUEST_GROUP_ID);
+	$guests = $users->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
 
 	if($guests !== FALSE){
-		echo "<table class=\"table table-bordered table-hover\">";
-			echo "<tbody>";
-				echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
-				echo "<tr>";
-					echo "<th class=\"text-center\">Nome: </th>";
-					echo "<th class=\"text-center\">Email: </th>";
-				echo "</tr>";
-			 foreach ($guests as $keys => $user){
-				echo "<tr>";
-					echo "<td>";
-						echo $user['name'];
-					echo "</td>";
-					echo "<td>";
-						echo $user['email'];
-					echo "</td>";
+		echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
 
-				echo "</tr>";
-			 }
-			echo "</tbody>";
-		echo "</table>";
+		buildTableDeclaration();
+
+		buildTableHeaders(array(
+			'Nome',
+			'E-mail'
+		));
+
+		foreach ($guests as $keys => $user){
+			echo "<tr>";
+				echo "<td>";
+					echo $user['name'];
+				echo "</td>";
+				echo "<td>";
+					echo $user['email'];
+				echo "</td>";
+
+			echo "</tr>";
+		}
+
+		buildTableEndDeclaration();
 	}
 
 }
 
 function displayResearchLinesByCourse($research_lines,$courses){
-	echo "<br><br>";
-	echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
-			echo "<h3>Linhas de pesquisa por curso</h3>";
-			echo "<br>";
-			echo anchor("usuario/createCourseResearchLine/","<i class='fa fa-check'></i>   Criar Linha de Pesquisa", "class='btn btn-success'");
-			echo "<br><br>";
-			echo "<tr>";
-				echo "<th class=\"text-center\">Curso: </th>";
-				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
-				echo "<th class=\"text-center\">Ações: </th>";
-			echo "</tr>";
-			foreach ($research_lines as $keys => $researchs){
-				if($researchs){
-					foreach ($researchs as $researchData){
-						echo "<tr>";
-							echo "<td>";
-								echo $courses[$keys]['course_name'];
-							echo "</td>";
-							echo "<td>";
-								echo $researchData['description'];
-							echo "</td>";
-							echo "<td>";
-								echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
-								echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
-							echo "</td>";
-						echo "</tr>";
-					}
-				}else{
-					echo "<tr>";
-						echo "<td>";
-							echo $courses[$keys];
-						echo "</td>";
-						echo "<td>";
-							echo "Não existem linhas de pesquisa cadastradas para este curso";
-						echo "</td>";
-						echo "<td>";
-							echo "Não existem ações possíveis.";
-						echo "</td>";
-					echo "</tr>";
-				}
-			}
-		echo "</tbody>";
-	echo "</table>";
 
+	echo "<h3 class='principal'>Linhas de pesquisa por curso</h3>";
+
+	echo anchor("usuario/createCourseResearchLine/","<i class='fa fa-plus-circle'></i>   Criar Linha de Pesquisa", "class='btn-lg'");
+
+	buildTableDeclaration();
+
+	buildTableHeaders(array(
+		'Curso',
+		'Linhas de Pesquisa',
+		'Ações'
+	));
+	foreach ($research_lines as $keys => $researchs){
+		if($researchs){
+			foreach ($researchs as $researchData){
+				echo "<tr>";
+					echo "<td>";
+						echo $courses[$keys]['course_name'];
+					echo "</td>";
+					echo "<td>";
+						echo $researchData['description'];
+					echo "</td>";
+					echo "<td>";
+						echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
+						echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+					echo "</td>";
+				echo "</tr>";
+			}
+		}else{
+			echo "<tr>";
+				echo "<td>";
+					echo $courses[$keys]['course_name'];
+				echo "</td>";
+				echo "<td>";
+					echo "Não existem linhas de pesquisa cadastradas para este curso";
+				echo "</td>";
+				echo "<td>";
+					echo "Não existem ações possíveis.";
+				echo "</td>";
+			echo "</tr>";
+		}
+	}
+
+	buildTableEndDeclaration();
 }
 
 function displayDisciplineToResearchLineTable($researchLines, $disciplines, $syllabusId, $courseId){
 
-	echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
-			echo "<h3>Linhas de pesquisa da disciplina ". $disciplines['discipline_name']."</h3>";
+	echo "<h3>Linhas de pesquisa da disciplina ". $disciplines['discipline_name']."</h3>";
+
+	buildTableDeclaration();
+
+	$headers = array('Linha de Pesquisa');
+	if($researchLines){
+		$headers[] = "Ações";
+	}
+
+	buildTableHeaders($headers);
+
+	if (!$researchLines){
+		echo "<tr>";
+			echo "<td>";
+				echo "Não foi relacionada nenhuma linha de pesquisa";
+			echo "</td>";
+		echo "</tr>";
+	}else{
+		foreach ($researchLines as $key => $line){
 			echo "<tr>";
-				echo "<th class=\"text-center\">Linha de Pesquisa: </th>";
-				if ($researchLines){
-					echo "<th class=\"text-center\">Ações: </th>";
-				}
+				echo "<td>";
+					echo $line;
+				echo "</td>";
+				echo "<td>";
+				echo anchor("syllabus/removeDisciplineResearchLine/{$key}/{$disciplines['discipline_code']}/{$syllabusId}/{$courseId}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+				echo "</td>";
+
 			echo "</tr>";
-			if (!$researchLines){
-				echo "<tr>";
-					echo "<td>";
-						echo "Não foi relacionada nenhuma linha de pesquisa";
-					echo "</td>";
-				echo "</tr>";
-			}else{
-				foreach ($researchLines as $key => $line){
-					echo "<tr>";
-						echo "<td>";
-							echo $line;
-						echo "</td>";
-						echo "<td>";
-						echo anchor("syllabus/removeDisciplineResearchLine/{$key}/{$disciplines['discipline_code']}/{$syllabusId}/{$courseId}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
-						echo "</td>";
+		}
+	}
 
-					echo "</tr>";
-				}
-			}
-		echo "</tbody>";
-	echo "</table>";
-
+	buildTableEndDeclaration();
 }

@@ -768,7 +768,7 @@ function loadStaffRegistrationForm($users){
 			"type" => "text",
 			"class" => "form-campo",
 			"class" => "form-control",
-			"maxlength" => "20"
+			"maxlength" => "11"
 	);
 
 	$registration = array(
@@ -783,7 +783,7 @@ function loadStaffRegistrationForm($users){
 	);
 
 	$landingDate = array(
-			"name" => "landingDate",
+			"name" => "arrivalInBrazil",
 			"id" => "arrivalInBrazil",
 			"type" => "text",
 			"class" => "form-campo",
@@ -844,19 +844,36 @@ function loadStaffRegistrationForm($users){
 			"value" => NULL
 	);
 
+	if($users == FALSE){
+		$submitBtn['disabled'] = TRUE;
+		$pisNumber['disabled'] = TRUE;
+		$registration['disabled'] = TRUE;
+		$landingDate['disabled'] = TRUE;
+		$address['disabled'] = TRUE;
+		$phone['disabled'] = TRUE;
+		$bank['disabled'] = TRUE;
+		$agency['disabled'] = TRUE;
+		$checkingAccount['disabled'] = TRUE;
+	}
+
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Cadastrar novo Funcionário</div>";
 
 		echo form_open('staff/newStaff','');
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
-				echo form_label("PIS/INSS", "pis_number");
+				echo form_label("PIS/INSS", "pis");
 				echo form_input($pisNumber);
-				echo form_error("pis_number");
+				echo form_error("pis");
 			echo "</div>";
 			echo "<div class='form-group'>";
 				echo form_label("Selecione o Funcionário", "staff");
-				echo form_dropdown("staff", $users, "id='staff'");
+				if($users !== FALSE){
+
+					echo form_dropdown("staff", $users, "id='staff'");
+				}else{
+					echo form_dropdown("staff", array("Não há usuários para cadastrar como funcionário"), "id='staff'");
+				}
 				echo form_error("staff");
 			echo "</div>";
 			echo "<div class='form-group'>";
@@ -865,9 +882,9 @@ function loadStaffRegistrationForm($users){
 				echo form_error("registration");
 			echo "</div>";
 			echo "<div class='form-group'>";
-				echo form_label("Chegada ao Brasil", "landingDate");
+				echo form_label("Chegada ao Brasil", "arrivalInBrazil");
 				echo form_input($landingDate);
-				echo form_error("landingDate");
+				echo form_error("arrivalInBrazil");
 			echo "</div>";
 			echo "<div class='form-group'>";
 				echo form_label("Endereço", "address");
@@ -906,6 +923,7 @@ function loadStaffRegistrationForm($users){
 		echo "</div>";
 
 		echo form_close();
+		callout("danger", "Não há usuários para cadastrar como funcionário.", "Apenas usuários do grupo convidado podem ser cadastrados com funcionários.");
 	echo "</div>";
 
 }

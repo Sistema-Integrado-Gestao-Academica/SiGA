@@ -19,13 +19,67 @@ $programAcronym = array(
 	"maxlength" => "6"
 );
 
+$programContact = array(
+	"name" => "program_contact",
+	"id" => "program_contact",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control",
+	"maxlength" => "300",
+	"placeholder" => "Máximo de 300 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
+);	
+
+$programSummary = array(
+	"name" => "program_summary",
+	"id" => "program_summary",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control",
+	"maxlength" => "1500",
+	"placeholder" => "Máximo de 1500 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
+);
+
+
+$programResearchLines = array(
+	"name" => "program_research_lines",
+	"id" => "program_research_lines",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control",
+	"maxlength" => "1500",
+	"placeholder" => "Máximo de 1500 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
+);
+
+$programHistory = array(
+	"name" => "program_history",
+	"id" => "program_history",
+	"type" => "text",
+	"class" => "form-campo",
+	"class" => "form-control",
+	"maxlength" => "1500",
+	"placeholder" => "Máximo de 1500 caracteres",
+	"style" => "height: 70px",
+	"cols" => "10"
+);
+
 if($programData !== FALSE){
 	$programName['value'] = $programData['program_name'];
 	$programAcronym['value'] = $programData['acronym'];
+	$programContact['value'] = $programData['contact'];
+	$programSummary['value'] = $programData['summary'];
+	$programHistory['value'] = $programData['history'];
+	$programResearchLines['value'] = $programData['research_line'];
+	
 }
 
 $submitBtn = array(
-	"id" => "sregister_new_program",
+	"id" => "edit_program",
 	"class" => "btn bg-olive btn-block",
 	"content" => "Editar programa",
 	"type" => "submit"
@@ -82,6 +136,29 @@ if($currentYear !== FALSE){
 				<?= form_error("opening_year") ?>
 			</div>
 
+			<div class="form-group">	
+				<?= form_label("Contato", "program_contact") ?>
+				<?= form_textarea($programContact)?>
+				<?= form_error("program_contact") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Resumo", "program_summary") ?>
+				<?= form_textarea($programSummary)?>
+				<?= form_error("program_summary") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Histórico", "program_history") ?>
+				<?= form_textarea($programHistory)?>
+				<?= form_error("program_history") ?>
+			</div>
+
+			<div class="form-group">	
+				<?= form_label("Linhas de Pesquisa", "program_research_lines") ?>
+				<?= form_textarea($programResearchLines)?>
+				<?= form_error("program_research_lines") ?>
+			</div>
 		</div>
 
 		<div class="footer">

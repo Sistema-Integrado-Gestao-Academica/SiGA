@@ -5,6 +5,11 @@ body {
     overflow-x : scroll;
 }
 
+#employees_list_to_payment{
+    height: 150px;
+    overflow-y: scroll;
+}
+
 .principal {
 	padding: 40px 15px;
 	text-align: center;
