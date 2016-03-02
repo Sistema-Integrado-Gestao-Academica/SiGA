@@ -9,7 +9,7 @@ function bold($string){
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
 	$discipline = array(
-		"name" => "discipline_to_search",
+		"name" => "discipline_tomo_search",
 		"id" => "discipline_to_search",
 		"type" => "text",
 		"class" => "form-campo form-control",

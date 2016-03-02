@@ -95,11 +95,8 @@ class Offer extends CI_Controller {
 		$discipline = new Discipline();
 		$disciplineData = $discipline->getDisciplineByCode($idDiscipline);
 
-		// Get all teachers
-		define("TEACHER_GROUP", "docente");
-
 		$group = new Module();
-		$foundGroup = $group->getGroupByName(TEACHER_GROUP);
+		$foundGroup = $group->getGroupByName(GroupConstants::TEACHER_GROUP);
 
 		if($foundGroup !== FALSE){
 			$user = new Usuario();

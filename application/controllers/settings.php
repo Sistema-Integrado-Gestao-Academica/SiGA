@@ -33,5 +33,5 @@ class Settings extends CI_Controller {
 
 }
 
-/* End of file system.php */
+/* End of file settings.php */
 /* Location: ./application/controllers/settings.php */

@@ -9,7 +9,7 @@ class Login extends CI_Controller {
 	}
 
 	public function autenticar() {
-		
+
 		$login = $this->input->post("login");
 		$password = $this->input->post("senha");
 
@@ -17,9 +17,9 @@ class Login extends CI_Controller {
 
 			$this->load->model("usuarios_model");
 			$user = $this->usuarios_model->validateUser($login, $password);
-			
+
 			if(sizeof($user) > 0){
-				
+
 				$this->load->model("module_model");
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
 				$registeredGroups = $this->module_model->getUserGroups($user['id']);
@@ -32,7 +32,7 @@ class Login extends CI_Controller {
 
 				$this->session->set_userdata("current_user", $userData);
 				redirect('/');
-				
+
 			}else{
 				$authenticationStatus = "danger";
 				$authenticationMessage = "Ocorreu um erro ao carregar os dados. Tente Novamente.";
@@ -46,7 +46,7 @@ class Login extends CI_Controller {
 			$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
 			redirect('/');
 		}
-		
+
 	}
 
 
@@ -59,7 +59,7 @@ class Login extends CI_Controller {
 	 * @return void
 	 */
 	public function logout($messageToDisplay = "", $statusLogout = "success", $path = '/') {
-		
+
 		$thereIsMessage = !empty($messageToDisplay);
 		if($thereIsMessage){
 			$statusLogout = $this->checkStatusLogout($statusLogout);
