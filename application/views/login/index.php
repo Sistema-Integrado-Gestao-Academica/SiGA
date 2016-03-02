@@ -24,7 +24,7 @@ if ($sessao != NULL) { ?>
 </br></br>
 </br>
 
-	<a class="nav-tabs-dropdown btn btn-block btn-primary" align="left"><h3>Sobre o Programa
+	<a class="nav-tabs-dropdown btn btn-block btn-primary"><h3>Sobre o Programa
 		de Pós Graduação em Educação</h3></a>
 
 
