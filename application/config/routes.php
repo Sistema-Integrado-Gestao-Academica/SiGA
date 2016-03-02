@@ -73,7 +73,7 @@ $route['mastermind_home'] = 'mastermind/index';
 $route['coordinator_home'] = 'coordinator/index';
 $route['course_report'] = 'coordinator/course_report';
 $route['program'] = 'program/index';
-
+$route['program/(:num)'] = 'program/showProgram/$1';
 /*
  * Secretary functionalities routes
  */

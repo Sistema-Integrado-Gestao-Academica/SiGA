@@ -119,6 +119,18 @@ class Program extends CI_Controller {
 		redirect("program/editProgram/{$programId}");
 	}
 
+	public function showProgram($programId){
+
+		$program = $this->getProgramById($programId);
+
+		$data = array (
+			'program' => $program
+		);
+
+		$this->load->template("program/show_program", $data);
+		
+	}
+
 	public function removeCourseFromProgram($courseId, $programId){
 
 		$this->load->model('program_model');
