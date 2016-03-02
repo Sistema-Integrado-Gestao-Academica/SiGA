@@ -6,7 +6,8 @@ class Login extends CI_Controller {
 
 	public function index() {
 
-		$data = $this->getInformationAboutPrograms();
+		$program = new Program();
+		$data = $program->getInformationAboutPrograms();
 
 		$this->load->template('login/index', $data);
 	}
@@ -99,24 +100,5 @@ class Login extends CI_Controller {
 	private function unsetLoggedUserAndRedirectTo($pathToRedirect){
 		$this->session->unset_userdata("current_user", $usuario);
 		redirect($pathToRedirect);
-	}
-
-	/**
-	* Get the registered programs 
-	* @return the programs
-	*/
-	private function getInformationAboutPrograms(){
-		
-		$program = new Program();
-		$programs = $program->getAllPrograms();
-
-		$quantityOfPrograms = count($programs);
-
-		$data = array (
-			'programs' => $programs,
-			'quantityOfPrograms' => $quantityOfPrograms
-		);
-
-		return $data;
 	}
 }

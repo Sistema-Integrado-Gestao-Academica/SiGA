@@ -122,13 +122,26 @@ class Program extends CI_Controller {
 	public function showProgram($programId){
 
 		$program = $this->getProgramById($programId);
-
-		$data = array (
-			'program' => $program
-		);
-
+		
+		$data = $this->getInformationAboutPrograms();
+		
+		$data['program'] = $program;
+		
 		$this->load->template("program/show_program", $data);
 		
+	}
+
+	public function getInformationAboutPrograms(){
+		
+		$programs = $this->getAllPrograms();
+		$quantityOfPrograms = count($programs);
+
+		$data = array (
+			'programs' => $programs,
+			'quantityOfPrograms' => $quantityOfPrograms
+		);
+
+		return $data;
 	}
 
 	public function removeCourseFromProgram($courseId, $programId){
