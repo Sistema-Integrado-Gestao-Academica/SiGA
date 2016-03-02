@@ -131,6 +131,17 @@ class Program extends CI_Controller {
 		
 	}
 
+	public function showOtherPrograms(){
+		
+		$data = $this->getInformationAboutPrograms();
+
+		// Default id to active the tab
+		$data['id'] = 0;
+				
+		$this->load->template("program/other_programs", $data);
+		
+	}
+
 	public function getInformationAboutPrograms(){
 		
 		$programs = $this->getAllPrograms();

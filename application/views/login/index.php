@@ -20,8 +20,9 @@ if ($sessao != NULL) { ?>
 <?php } 
 else { 
 	if ($programs !== FALSE) { 
-		$program = $programs[0]; ?>
-
-		<?php include("_program_information.php");
+		$program = $programs[0]; 
+		$id = $program['id_program'];
+		include(APPPATH.'views/home/_create_tabs.php'); 
+		include(APPPATH.'views/home/_program_information.php'); 
 	}
 }?>
