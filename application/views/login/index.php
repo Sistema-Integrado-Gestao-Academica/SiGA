@@ -19,14 +19,15 @@ if ($sessao != NULL) { ?>
 
 
 <?php } else { ?>
-
-	<h1 class="bemvindoLogin">SiGA</h1>
+</div></aside>
+<div class="container">
 </br></br>
 </br>
-
+<img src="<?php echo base_url('img/base_logo_siga.png'); ?>" alt="Logo SiGA" class="img-responsive img-center" style="width:240px;height:110px;" />
+</br></br>
+</br>
 	<a class="nav-tabs-dropdown btn btn-block btn-primary"><h3>Sobre o Programa
 		de Pós Graduação em Educação</h3></a>
-
 
 	<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
 		<li class="active"><a href="#vtab1" data-toggle="collapse" data-target="#resumo">O PPGE</a></li>
@@ -58,7 +59,7 @@ if ($sessao != NULL) { ?>
 			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 		</div>
 	</ul>
-
+</div>
 			<?php
 			}
 			?>
