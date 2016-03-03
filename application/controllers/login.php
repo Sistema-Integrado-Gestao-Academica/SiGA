@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/exception/LoginException.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Login extends CI_Controller {
 
@@ -23,6 +24,15 @@ class Login extends CI_Controller {
 			$user = $this->usuarios_model->validateUser($login, $password);
 
 			if(sizeof($user) > 0){
+
+				/*
+
+
+					$session = SessionManager::getInstance();
+					$session->login($user);
+
+
+				*/
 
 				$this->load->model("module_model");
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);

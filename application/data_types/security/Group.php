@@ -6,7 +6,7 @@ class Group{
 
     const INVALID_ID = "O ID do grupo informado é inválido. O ID deve ser maior que zero.";
     const INVALID_NAME = "O nome do grupo deve ser uma String não vazia.";
-    const INVALID_PROFILE_ROUTE = "O rota do perfil do grupo deve ser uma String.";
+    const INVALID_PROFILE_ROUTE = "A rota do perfil do grupo deve ser uma String não vazia e sem espaços em branco.";
     const INVALID_PERMISSIONS = "Um grupo deve conter um array de objetos da classe Permission.";
 
     const MINIMUN_ID = 1;
