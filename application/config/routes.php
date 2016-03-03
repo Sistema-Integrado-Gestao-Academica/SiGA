@@ -111,12 +111,11 @@ $route['department_test'] = 'tests/department_test';
 $route['employee_test'] = 'tests/employee_test';
 $route['function_test'] = 'tests/function_test';
 $route['login_test'] = 'tests/login_test';
-$route['module_test'] = 'tests/module_test';
-$route['permission_test'] = 'tests/permission_test';
 $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
 $route['classHour_test'] = 'tests/ClassHour_test';
 $route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
+$route['permission_test'] = 'tests/Permission_test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */

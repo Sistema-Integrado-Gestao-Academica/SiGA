@@ -1,6 +1,6 @@
 <?php
 
-require_once(APPPATH."/security/GroupException.php");
+require_once(APPPATH."/exception/security/GroupException.php");
 
 class Group{
 

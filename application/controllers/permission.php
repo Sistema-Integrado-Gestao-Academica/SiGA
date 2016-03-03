@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Permission extends CI_Controller {
+class PermissionOld extends CI_Controller {
 
 	public function checkUserPermission($requiredPermission){
 
@@ -17,7 +17,7 @@ class Permission extends CI_Controller {
 				if($groupPermissions !== FALSE){
 
 					foreach($groupPermissions as $permission){
-						
+
 						if($permission['route'] === $requiredPermission){
 							$havePermission = TRUE;
 							break;
