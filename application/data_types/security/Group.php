@@ -5,9 +5,11 @@ require_once(APPPATH."/exception/security/GroupException.php");
 class Group{
 
     const INVALID_ID = "O ID do grupo informado é inválido. O ID deve ser maior que zero.";
-    const INVALID_NAME = "O nome do grupo deve ser uma String.";
+    const INVALID_NAME = "O nome do grupo deve ser uma String não vazia.";
     const INVALID_PROFILE_ROUTE = "O rota do perfil do grupo deve ser uma String.";
     const INVALID_PERMISSIONS = "Um grupo deve conter um array de objetos da classe Permission.";
+
+    const MINIMUN_ID = 1;
 
     private $id;
     private $name;
@@ -28,8 +30,13 @@ class Group{
      * @throws GroupException if the given permission is not a Permission object
      */
     public function addPermission($permission){
-        if(get_class($permission) == Permission::class){
-            $this->permissions[] = $permission;
+
+        if(is_object($permission)){
+            if(get_class($permission) === Permission::class){
+                $this->permissions[] = $permission;
+            }else{
+                throw new GroupException(self::INVALID_PERMISSIONS);
+            }
         }else{
             throw new GroupException(self::INVALID_PERMISSIONS);
         }
@@ -40,7 +47,7 @@ class Group{
         // Id must be a number or a string number
         if(is_numeric($id)){
             // Id must be greater than zero
-            if($id > 0){
+            if($id >= self::MINIMUN_ID){
                 $this->id = $id;
             }else{
                 throw new GroupException(self::INVALID_ID);
@@ -53,7 +60,11 @@ class Group{
     private function setName($name){
 
         if(is_string($name)){
-            $this->name = $name;
+            if(!empty($name)){
+                $this->name = $name;
+            }else{
+                throw new GroupException(self::INVALID_NAME);
+            }
         }else{
             throw new GroupException(self::INVALID_NAME);
         }
@@ -62,7 +73,18 @@ class Group{
     private function setProfileRoute($profileRoute){
 
         if(is_string($profileRoute)){
-            $this->profileRoute = $profileRoute;
+            if(!empty($profileRoute)){
+                $hasBlankSpaces = strpos($profileRoute, " ") !== FALSE;
+
+                if(!$hasBlankSpaces){
+                    $this->profileRoute = $profileRoute;
+                }else{
+                    throw new GroupException(self::INVALID_PROFILE_ROUTE);
+                }
+
+            }else{
+                throw new GroupException(self::INVALID_PROFILE_ROUTE);
+            }
         }else{
             throw new GroupException(self::INVALID_PROFILE_ROUTE);
         }
@@ -76,7 +98,13 @@ class Group{
 
                 $isAPermission = TRUE;
                 foreach ($permissions as $permission){
-                    if(!(get_class($permission) == Permission::class) ){
+                    if(is_object($permission)){
+
+                        if(!(get_class($permission) === Permission::class) ){
+                            $isAPermission = FALSE;
+                            break;
+                        }
+                    }else{
                         $isAPermission = FALSE;
                         break;
                     }
@@ -93,5 +121,22 @@ class Group{
         }else{
             $this->permissions = array();
         }
+    }
+
+    // Getters
+    public function getId(){
+        return $this->id;
+    }
+
+    public function getName(){
+        return $this->name;
+    }
+
+    public function getProfileRoute(){
+        return $this->profileRoute;
+    }
+
+    public function getPermissions(){
+        return $this->permissions;
     }
 }
