@@ -5,7 +5,11 @@ require_once(APPPATH."/exception/LoginException.php");
 class Login extends CI_Controller {
 
 	public function index() {
-		$this->load->template('login/index');
+
+		$program = new Program();
+		$data = $program->getInformationAboutPrograms();
+
+		$this->load->template('login/index', $data);
 	}
 
 	public function autenticar() {

@@ -119,6 +119,42 @@ class Program extends CI_Controller {
 		redirect("program/editProgram/{$programId}");
 	}
 
+	public function showProgram($programId){
+
+		$program = $this->getProgramById($programId);
+		
+		$data = $this->getInformationAboutPrograms();
+		
+		$data['program'] = $program;
+		
+		$this->load->template("program/show_program", $data);
+		
+	}
+
+	public function showOtherPrograms(){
+		
+		$data = $this->getInformationAboutPrograms();
+
+		// Default id to active the tab
+		$data['id'] = 0;
+				
+		$this->load->template("program/other_programs", $data);
+		
+	}
+
+	public function getInformationAboutPrograms(){
+		
+		$programs = $this->getAllPrograms();
+		$quantityOfPrograms = count($programs);
+
+		$data = array (
+			'programs' => $programs,
+			'quantityOfPrograms' => $quantityOfPrograms
+		);
+
+		return $data;
+	}
+
 	public function removeCourseFromProgram($courseId, $programId){
 
 		$this->load->model('program_model');
