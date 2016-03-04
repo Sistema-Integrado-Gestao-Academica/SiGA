@@ -242,58 +242,57 @@
 	                    <!-- /.search form -->
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-	                <?php
+                    <?php
 
-						foreach($userGroups as $group){
+                        foreach($userGroups as $group){
                             $groupName = $group->getName();
-                			if($groupName == GroupConstants::SECRETARY_GROUP){
-								continue;
-							}else{
-								echo "<li class='treeview'>";
+                            if($groupName == GroupConstants::SECRETARY_GROUP){
+                                continue;
+                            }else{
+                                echo "<li class='treeview'>";
 
-								switch ($groupName) {
-                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-                        				$groupNameToShow = "Secretaria acadêmica";
-                        				break;
-                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-                        				$groupNameToShow = "Secretaria financeira";
-                        				break;
-                        			default:
-                        				$groupNameToShow = $groupName;
-                        				break;
-                        		}
-								echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
+                                switch ($groupName) {
+                                    case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        $groupNameToShow = "Secretaria acadêmica";
+                                        break;
+                                    case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        $groupNameToShow = "Secretaria financeira";
+                                        break;
+                                    default:
+                                        $groupNameToShow = $groupName;
+                                        break;
+                                }
+                                echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
 
-									echo "<ul class='treeview-menu'>";
-
+                                    echo "<ul class='treeview-menu'>";
 
                                     $groupPermissions = $group->getPermissions();
-									foreach($groupPermissions as $permission){
+                                    foreach($groupPermissions as $permission){
 
-										echo "<li>";
-											if ($permission->getFunctionality() == PermissionConstants::RESEARCH_LINES_PERMISSION){
-												continue;
-											}else{
-												echo anchor($permission->getFunctionality(), $permission->getName(), "class='fa fa-caret-right'");
-											}
-										echo "</li>";
-									}
+                                        echo "<li>";
+                                            if ($permission->getFunctionality() == PermissionConstants::RESEARCH_LINES_PERMISSION){
+                                                continue;
+                                            }else{
+                                                echo anchor($permission->getFunctionality(), $permission->getName(), "class='fa fa-caret-right'");
+                                            }
+                                        echo "</li>";
+                                    }
 
 
-									echo "</ul>";
+                                    echo "</ul>";
 
-								echo "</li>";
-							}
-						}
+                                echo "</li>";
+                            }
+                        }
 
-					?>
-                  	</ul>
-	                </section>
-	                <!-- /.sidebar -->
-	            </aside>
+                    ?>
+                    </ul>
+                    </section>
+                    <!-- /.sidebar -->
+                </aside>
             <?php }?>
             <aside class="right-side">
-            	<div class="container">
+                <div class="container">
 
 <?php
 if ($this->session->flashdata("success")) : ?>

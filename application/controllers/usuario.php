@@ -6,8 +6,11 @@ require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
+
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
+
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 require_once(APPPATH."/data_types/User.php");
 require_once(APPPATH."/exception/UserException.php");
@@ -95,16 +98,24 @@ class Usuario extends CI_Controller {
 	public function createCourseResearchLine(){
 		$this->load->model("course_model");
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
 
-		foreach ($secretaryCourses as $key => $courses){
-			$course[$courses['id_course']] = $courses['course_name'];
+		if($secretaryCourses !== FALSE){
+
+			foreach ($secretaryCourses as $key => $courses){
+				$course[$courses['id_course']] = $courses['course_name'];
+			}
+		}else{
+			$course = FALSE;
 		}
 
-		$data = array('courses'=> $course);
+		$data = array(
+			'courses'=> $course
+		);
 
 		loadTemplateSafelyByPermission('research_lines', 'secretary/create_research_line', $data);
 	}
@@ -118,8 +129,9 @@ class Usuario extends CI_Controller {
 
 		$description = $this->course_model->getResearchDescription($researchId,$courseId);
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
 
@@ -137,13 +149,34 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByPermission('research_lines', 'secretary/update_research_line', $data);
 	}
 
+	public function removeCourseResearchLine($researchLineId,$course){
+
+		$this->load->model("course_model");
+
+		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Linha de pesquisa removida do curso ".$course." com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("research_lines/");
+
+	}
+
 	public function secretary_research_lines(){
 		$this->load->model("course_model");
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+
 
 		$this->loadResearchLinesPage($secretaryCourses);
 	}
@@ -151,10 +184,16 @@ class Usuario extends CI_Controller {
 	public function loadResearchLinesPage($secretaryCourses){
 		$this->load->model("course_model");
 
-		foreach ($secretaryCourses as $key => $course){
+		if($secretaryCourses !== FALSE){
 
-			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
-			$courses[$key] = $course;
+			foreach ($secretaryCourses as $key => $course){
+
+				$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
+				$courses[$key] = $course;
+			}
+		}else{
+			$researchLines = FALSE;
+			$courses = FALSE;
 		}
 
 		$data = array(

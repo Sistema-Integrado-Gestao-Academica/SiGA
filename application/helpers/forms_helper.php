@@ -628,6 +628,11 @@ function createResearchLineForm($courses){
 			"type" => "submit"
 	);
 
+	if($courses === FALSE){
+		$courses = array("Não há cursos para este secretário.");
+		$submitBtn['disabled'] = TRUE;
+	}
+
 	$researchLine = array(
 			"name" => "researchLine",
 			"id" => "researchLine",

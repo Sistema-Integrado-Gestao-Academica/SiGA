@@ -82,7 +82,7 @@ class SessionManager extends CI_Controller{
         $permissions = array();
 
         foreach($groups as $group){
-            $permissions[] = $group->getPermissions();
+            $permissions[$group->getName()] = $group->getPermissions();
         }
 
         return $permissions;

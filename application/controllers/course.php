@@ -7,9 +7,15 @@ require_once('graduation.php');
 require_once('ead.php');
 require_once('budgetplan.php');
 require_once('enrollment.php');
-require_once(APPPATH."/constants/GroupConstants.php");
-require_once(APPPATH."/exception/CourseNameException.php");
+
 require_once(APPPATH."/data_types/StudentRegistration.php");
+
+require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
+
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/StudentRegistrationException.php");
 
 class Course extends CI_Controller {
@@ -18,9 +24,10 @@ class Course extends CI_Controller {
 
 		$this->load->model('course_model');
 
-		$session = $this->session->userdata("current_user");
-		$user = $session['user'];
-		$userId = $user['id'];
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+
 
 		$group = new Module();
 		$userIsAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
@@ -33,10 +40,11 @@ class Course extends CI_Controller {
 
 		$data = array(
 			'courses' => $courses,
-			'userData' => $user
+			'userData' => $user,
+			'isAdmin' => $userIsAdmin
 		);
 
-		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION, 'course/course_index', $data);
 	}
 
 	public function getCourseTeachers($courseId){
