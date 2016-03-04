@@ -1,14 +1,21 @@
 <?php
 
-$sessao = $this->session->userdata("current_user");
 require_once APPPATH.'controllers/capesavaliation.php';
-if ($sessao != NULL) { ?>
-	<p class="alert alert-success text-center">Logado como "<?=$sessao['user']['login']?>"</p>
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+$session = SessionManager::getInstance();
+
+if ($session->isLogged()) {
+
+    $userData = $session->getUserData();
+
+?>
+	<p class="alert alert-success text-center">Logado como "<?=$userData->getName()?>"</p>
 	<h1 class="bemvindo">Bem vindo!</h1>
 
 	<?php
 
-	 if ($sessao['user']['login'] == 'admin'){
+	 if ($userData->getLogin() == 'admin'){
 	 	$admin = new CapesAvaliation();
 
 	 	$atualizations = $admin->getCapesAvaliationsNews();
@@ -18,12 +25,11 @@ if ($sessao != NULL) { ?>
 		?>
 
 
-<?php } 
-else { 
-	if ($programs !== FALSE) { 
-		$program = $programs[0]; 
+<?php } else {
+	if ($programs !== FALSE) {
+		$program = $programs[0];
 		$id = $program['id_program'];
-		include(APPPATH.'views/home/_create_tabs.php'); 
-		include(APPPATH.'views/home/_program_information.php'); 
+		include(APPPATH.'views/home/_create_tabs.php');
+		include(APPPATH.'views/home/_program_information.php');
 	}
 }?>

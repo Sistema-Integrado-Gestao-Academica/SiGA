@@ -1,8 +1,20 @@
 <!DOCTYPE html>
 <?php
-	require_once(APPPATH."/constants/GroupConstants.php");
+    require_once(APPPATH."/constants/GroupConstants.php");
+	require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
-	$session = $this->session->userdata("current_user");
+	$session = SessionManager::getInstance();
+
+    if($session->isLogged()){
+
+        $userData = $session->getUserData();
+
+        $userName = $userData->getName();
+        $userEmail = $userData->getEmail();
+
+        $userGroups = $session->getUserGroups();
+    }
+
 ?>
 <html>
 <head>
@@ -45,24 +57,26 @@
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
 					<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
-					<?php if ($session) { ?>
+
+                    <?php if ($session->isLogged()) {?>
+
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
-                                <span><?=ucfirst($session['user']['name'])?><i class="caret"></i></span>
+                                <span><?=ucfirst($userName)?><i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header ">
                                     <p>
                                         <?php
-                                        	echo ucfirst($session['user']['name']);
+                                        	echo ucfirst($userName);
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
-                                        	foreach($session['user_groups'] as $group){
-                                        		switch ($group['group_name']) {
+                                        	foreach($userGroups as $group){
+                                        		switch ($group->getName()) {
                                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
                                         				$groupNameToDisplay = "Secretaria acadêmica";
                                         				break;
@@ -70,7 +84,7 @@
                                         				$groupNameToDisplay = "Secretaria financeira";
                                         				break;
                                         			default:
-                                        				$groupNameToDisplay = $group['group_name'];
+                                        				$groupNameToDisplay = $group->getName();
                                         				break;
                                         		}
                                         		echo ucfirst($groupNameToDisplay);
@@ -78,7 +92,7 @@
                                         	}
                                         ?>
                                         <br>
-                                        <small><?php echo $session['user']['email']?></small>
+                                        <small><?php echo $userEmail?></small>
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
@@ -172,7 +186,7 @@
 	</header>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
-            <?php if($session){?>
+            <?php if($session->isLogged()){?>
 	            <aside class="left-side sidebar-offcanvas sidebar-fixed">
 	                <!-- sidebar: style can be found in sidebar.less -->
 	                <section class="sidebar">
@@ -180,7 +194,7 @@
 	                    <div class="user-panel">
 	                        <div class="pull-left info">
 	                            <br>
-	                            <p>Olá, <?=ucfirst($session['user']['name'])?></p>
+	                            <p>Olá, <?=ucfirst($userName)?></p>
 
 	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 
@@ -191,9 +205,9 @@
 
 		                            <ul class="dropdown-menu">
 		                            	<?php
-		                            		foreach($session['user_groups'] as $group){
+		                            		foreach($userGroups as $group){
 		                            			echo "<li>";
-		                            			switch ($group['group_name']) {
+		                            			switch ($group->getName()) {
                                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
                                         				$groupNameToDisplay = "Secretaria acadêmica";
                                         				break;
@@ -201,13 +215,13 @@
                                         				$groupNameToDisplay = "Secretaria financeira";
                                         				break;
                                         			default:
-                                        				$groupNameToDisplay = $group['group_name'];
+                                        				$groupNameToDisplay = $group->getName();
                                         				break;
                                         		}
-		                            			if($group['group_name'] == GroupConstants::SECRETARY_GROUP){
+		                            			if($group->getName() == GroupConstants::SECRETARY_GROUP){
 													continue;
 												}else{
-		                            				echo anchor($group['profile_route'], ucfirst($groupNameToDisplay));
+		                            				echo anchor($group->getProfileRoute(), ucfirst($groupNameToDisplay));
 		                            			}
 		                            			echo "</li>";
 		                            		}
@@ -230,7 +244,8 @@
                     <ul class="sidebar-menu">
 	                <?php
 
-						foreach($session['user_permissions'] as $groupName => $groupPermissions){
+						foreach($userGroups as $group){
+                            $groupName = $group->getName();
                 			if($groupName == GroupConstants::SECRETARY_GROUP){
 								continue;
 							}else{
@@ -251,19 +266,19 @@
 
 									echo "<ul class='treeview-menu'>";
 
-									if($groupPermissions !== FALSE){
 
-										foreach($groupPermissions as $permission){
+                                    $groupPermissions = $group->getPermissions();
+									foreach($groupPermissions as $permission){
 
-											echo "<li>";
-												if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
-													continue;
-												}else{
-													echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-												}
-											echo "</li>";
-										}
+										echo "<li>";
+											if ($permission->getFunctionality() == PermissionConstants::RESEARCH_LINES_PERMISSION){
+												continue;
+											}else{
+												echo anchor($permission->getFunctionality(), $permission->getName(), "class='fa fa-caret-right'");
+											}
+										echo "</li>";
 									}
+
 
 									echo "</ul>";
 

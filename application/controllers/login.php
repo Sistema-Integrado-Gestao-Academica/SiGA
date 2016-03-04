@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once("usuario.php");
 require_once(APPPATH."/exception/LoginException.php");
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
@@ -20,31 +21,14 @@ class Login extends CI_Controller {
 
 		try{
 
-			$this->load->model("usuarios_model");
-			$user = $this->usuarios_model->validateUser($login, $password);
+			$userController = new Usuario();
+			$user = $userController->validateUser($login, $password);
 
-			if(sizeof($user) > 0){
+			if($user !== FALSE){
 
-				/*
+				$session = SessionManager::getInstance();
+				$session->login($user);
 
-
-					$session = SessionManager::getInstance();
-					$session->login($user);
-
-
-				*/
-
-				$this->load->model("module_model");
-				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
-				$registeredGroups = $this->module_model->getUserGroups($user['id']);
-
-				$userData = array(
-					'user' => $user,
-					'user_permissions' => $registeredPermissions,
-					'user_groups' => $registeredGroups
-				);
-
-				$this->session->set_userdata("current_user", $userData);
 				redirect('/');
 
 			}else{
@@ -108,7 +92,9 @@ class Login extends CI_Controller {
 	 * @return void
 	 */
 	private function unsetLoggedUserAndRedirectTo($pathToRedirect){
-		$this->session->unset_userdata("current_user", $usuario);
+		//$this->session->unset_userdata("current_user", $usuario);
+		//$this->session->sess_destroy();
+		SessionManager::getInstance()->logout();
 		redirect($pathToRedirect);
 	}
 }

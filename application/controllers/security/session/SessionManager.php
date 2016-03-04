@@ -3,60 +3,45 @@
 require_once(APPPATH."/controllers/security/groupcontroller.php");
 require_once(APPPATH."/exception/security/GroupException.php");
 
-class SessionManager{
+class SessionManager extends CI_Controller{
 
     const USER_WITH_NO_GROUPS_EXCEPTION = "Usuário sem grupos no sistema. Contate o administrador.";
 
     const CURRENT_USER_LABEL = "current_user";
-    const USER_GROUPS_LABEL = "user_groups";
 
     private static $instance = NULL;
-    private $ci;
-    private $session;
-
-    private $sessionId;
-    private $ipAddress;
-    private $userAgent;
-    private $lastActivity;
 
     public static function getInstance(){
 
-        if(isset(self::$instance)){
-            $instance = self::$instance;
-        }else{
-            $instance = new SessionManager();
+        if(!isset(self::$instance)){
+            self::$instance = new SessionManager();
         }
+
+        $instance = self::$instance;
 
         return $instance;
     }
 
     public function __construct(){
-
-        // Get CI object and Session object to local variables to use throughout the class
-        $this->ci =& get_instance();
-        $this->session = $this->ci->session;
-
-        $sessionBasicData = $this->session->all_userdata();
-
-        $this->sessionId = $sessionBasicData['session_id'];
-        $this->ipAddress = $sessionBasicData['ip_address'];
-        $this->userAgent = $sessionBasicData['user_agent'];
-        $this->lastActivity = $sessionBasicData['last_activity'];
+        parent::__construct();
     }
 
     public function login($user){
 
         $groupController = new GroupController();
 
-        // PROVISÓRIO ATÉ TRANSFORMAR USUARIO EM OBJETO
-        $userId = $user['id'];
-        // PROVISÓRIO
+        $userId = $user->getId();
 
         $userGroups = $groupController->getUserGroups($userId);
 
         if($userGroups !== FALSE){
+
+            foreach($userGroups as $group){
+                $user->addGroup($group);
+            }
+
             $this->saveData(self::CURRENT_USER_LABEL, $user);
-            $this->saveData(self::USER_GROUPS_LABEL, $userGroups);
+            $this->isLogged = TRUE;
         }else{
             // User with no groups situation
             // It doesn't (cannot) happen on the system
@@ -68,16 +53,39 @@ class SessionManager{
 
     }
 
+    public function isLogged(){
+        $userData = $this->getUserData();
+
+        $isLogged = $userData !== FALSE;
+
+        return $isLogged;
+    }
+
     public function getUserData(){
         $data = $this->session->userdata(self::CURRENT_USER_LABEL);
 
         return $data;
     }
 
-    public function getUserGroupsData(){
-        $data = $this->session->userdata(self::USER_GROUPS_LABEL);
+    public function getUserGroups(){
 
-        return $data;
+        $currentUser = $this->getUserData();
+
+        $groups = $currentUser->getGroups();
+
+        return $groups;
+    }
+
+    public function getUserPermissions(){
+        $groups = $this->getUserGroups();
+
+        $permissions = array();
+
+        foreach($groups as $group){
+            $permissions[] = $group->getPermissions();
+        }
+
+        return $permissions;
     }
 
     private function saveData($label, $data){

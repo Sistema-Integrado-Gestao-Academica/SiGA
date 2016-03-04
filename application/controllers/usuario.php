@@ -9,10 +9,43 @@ require_once('request.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 
+require_once(APPPATH."/data_types/User.php");
+require_once(APPPATH."/exception/UserException.php");
+require_once(APPPATH."/exception/LoginException.php");
+
 class Usuario extends CI_Controller {
 
 	public function loadModel(){
 		$this->load->model("usuarios_model");
+	}
+
+	public function validateUser($login, $password){
+
+		$this->load->model("usuarios_model");
+
+		try{
+			$foundUser = $this->usuarios_model->validateUser($login, $password);
+		}catch(LoginException $e){
+			throw $e;
+		}
+
+		if($foundUser !== FALSE){
+			try{
+				$id = $foundUser['id'];
+				$name = $foundUser['name'];
+				$login = $foundUser['login'];
+				$email = $foundUser['email'];
+
+				$user = new User($id, $name, FALSE, $email, $login);
+
+			}catch(UserException $e){
+				$user = FALSE;
+			}
+		}else{
+			$user = FALSE;
+		}
+
+		return $user;
 	}
 
 	public function usersReport(){
