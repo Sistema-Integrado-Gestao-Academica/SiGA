@@ -1,4 +1,4 @@
-<?php 
+<?php
 $discipline_name_to_form = array(
 		"name" => "discipline_name",
 		"id" => "discipline_name",
@@ -8,7 +8,7 @@ $discipline_name_to_form = array(
 		"class" => "form-control",
 		"required" => TRUE
 );
-	
+
 $discipline_code_to_form = array(
 		"name" => "discipline_code",
 		"id" => "discipline_code",
@@ -48,49 +48,48 @@ $submit_button_array_to_form = array(
 		"type" => "submit"
 );
 
-var_dump($courses);
 ?>
 
-<div class="form-box" id="login-box"> 
+<div class="form-box" id="login-box">
 	<div class="header">Cadastrar nova Disciplina</div>
 	<?php
 	echo form_open("discipline/newDiscipline");
 	?>
 	<div class="body bg-gray">
-		
-		<div class="form-group">	
+
+		<div class="form-group">
 				<?= form_label("Curso pertencente", "course_prolongs") ?>
 				<?= form_dropdown("course_prolongs", $courses) ?>
 				<?= form_error("course_prolongs") ?>
 		</div>
-		
+
 		<div class="form-group">
-				<?php 
+				<?php
 				// Name field
 				echo form_label("Nome a disciplina", "discipline_name");
 				echo form_input($discipline_name_to_form);
 				echo form_error("discipline_name");
 				?>
-		</div>	
-		
+		</div>
+
 		<div class="form-group">
-			<?php 
+			<?php
 			// Code field
 			echo form_label("Código da disciplina", "discipline_code");
 			echo form_input($discipline_code_to_form);
 			echo form_error("discipline_code");
 			?>
-		</div>	
-			
+		</div>
+
 		<div class="form-group">
-			<?php	
+			<?php
 			// Acronym field
 			echo form_label("Abreviação", "name_abbreviation");
 			echo form_input($discipline_abbreviation_name_to_form);
 			echo form_error("name_abbreviation");
 			?>
-		</div>	
-				
+		</div>
+
 		<div class="form-group">
 			<?php
 			// Credits type field
@@ -98,16 +97,16 @@ var_dump($courses);
 			echo form_input($discipline_credits_to_form);
 			echo form_error("credits");
 			?>
-		</div>	
-		
-				
+		</div>
+
+
 	</div>
 	<div class="footer">
-		<?php 
+		<?php
 		// Submit button
 		echo form_button($submit_button_array_to_form);
 		echo form_close();
 		?>
 	</div>
-	
+
 </div>
