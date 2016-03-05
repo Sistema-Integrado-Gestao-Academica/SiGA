@@ -11,18 +11,19 @@ class DocumentRequest extends CI_Controller {
 
 	public function index(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$user = new Usuario();
 		$userCourse = $user->getUserCourses($userId);
 
 		$data = array(
-			'userData' => $loggedUserData['user'],
+			'userData' => $loggedUserData,
 			'courses' => $userCourse
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/index", $data);		
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/index", $data);
 	}
 
 	public function requestDocument($courseId, $userId){
@@ -146,7 +147,7 @@ class DocumentRequest extends CI_Controller {
 				break;
 
 			case DocumentConstants::DECLARATIONS:
-				
+
 				$declarationType = $this->input->post('declarationType');
 
 				$requestData = array(
@@ -296,7 +297,7 @@ class DocumentRequest extends CI_Controller {
 			'courseData' => $courseData
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);		
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);
 	}
 
 	public function documentReady($requestId, $courseId){
@@ -337,7 +338,7 @@ class DocumentRequest extends CI_Controller {
 
 		$this->load->model('documentrequest_model', "doc_request_model");
 
-		$types = $this->doc_request_model->allNonDeclarationTypes();		
+		$types = $this->doc_request_model->allNonDeclarationTypes();
 
 		return $types;
 	}
@@ -346,7 +347,7 @@ class DocumentRequest extends CI_Controller {
 
 		$this->load->model('documentrequest_model', "doc_request_model");
 
-		$types = $this->doc_request_model->allDeclarationTypes();		
+		$types = $this->doc_request_model->allDeclarationTypes();
 
 		return $types;
 	}

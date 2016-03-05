@@ -3,9 +3,7 @@
 <?php
 echo form_open("usuario/altera");
 
-$usuario = session();
-
-$value = $usuario['user']['name'];
+$value = $user->getName();
 echo form_label("Nome", "nome");
 echo form_input(array(
 	"name" => "nome",
@@ -17,7 +15,7 @@ echo form_input(array(
 ));
 echo form_error("nome");
 
-$value = $usuario['user']['email'];
+$value = $user->getEmail();
 echo form_label("E-mail", "email");
 echo form_input(array(
 	"name" => "email",
@@ -29,7 +27,7 @@ echo form_input(array(
 ));
 echo form_error("email");
 
-$value = $usuario['user']['login'];
+$value = $user->getLogin();
 echo form_label("Login", "login");
 echo form_input(array(
 	"disabled" => "disabled",

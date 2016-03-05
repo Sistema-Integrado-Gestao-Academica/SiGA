@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('login.php');
 require_once('course.php');
 require_once('module.php');
 require_once('semester.php');
@@ -315,10 +316,12 @@ class Usuario extends CI_Controller {
 
 	public function student_index(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
-
 		$this->load->model('usuarios_model');
+
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 		$userCourse = $this->usuarios_model->getUserCourse($userId);
 
@@ -326,14 +329,14 @@ class Usuario extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		$userData = array(
-			'userData' => $loggedUserData['user'],
+			'userData' => $loggedUserData,
 			'status' => $userStatus,
 			'courses' => $userCourse,
 			'currentSemester' => $currentSemester
 		);
 
 		// On auth_helper
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_home', $userData);
 	}
 
 	public function getUserStatus($userId){
@@ -346,10 +349,13 @@ class Usuario extends CI_Controller {
 	}
 
 	public function studentInformationsForm(){
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
 
 		$this->load->model('usuarios_model');
+
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 		$userCourse = $this->usuarios_model->getUserCourse($userId);
 
@@ -357,14 +363,14 @@ class Usuario extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		$userData = array(
-				'userData' => $loggedUserData['user'],
+				'userData' => $loggedUserData,
 				'status' => $userStatus,
 				'courses' => $userCourse,
 				'currentSemester' => $currentSemester
 		);
 
 		// On auth_helper
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_specific_data_form', $userData);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_specific_data_form', $userData);
 	}
 
 	public function studentCoursePage($courseId, $userId){
@@ -379,7 +385,7 @@ class Usuario extends CI_Controller {
 			'user' => $userData
 		);
 
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_course_page', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_course_page', $data);
 	}
 
 	public function student_offerList($courseId){
@@ -393,13 +399,18 @@ class Usuario extends CI_Controller {
 		$offer = new Offer();
 		$offerListDisciplines = $offer->getCourseApprovedOfferListDisciplines($courseId, $currentSemester['id_semester']);
 
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
 		$data = array(
 			'currentSemester' => $currentSemester,
 			'course' => $courseData,
-			'offerListDisciplines' => $offerListDisciplines
+			'offerListDisciplines' => $offerListDisciplines,
+			'userId' => $userId
 		);
 
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_offer_list', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_offer_list', $data);
 	}
 
 	public function guest_index(){
@@ -475,8 +486,10 @@ class Usuario extends CI_Controller {
 		$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
 
 		// Get the current user id
-		$logged_user_data = $this->session->userdata("current_user");
-		$currentUser = $logged_user_data['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$currentUser = $loggedUserData->getId();
+
 		// Get the courses of the secretary
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($currentUser);
@@ -512,8 +525,10 @@ class Usuario extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		// Get the current user id
-		$logged_user_data = $this->session->userdata("current_user");
-		$currentUser = $logged_user_data['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$currentUser = $loggedUserData->getId();
+
 		// Get the courses of the secretary
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($currentUser);
@@ -541,8 +556,9 @@ class Usuario extends CI_Controller {
 
 	private function loadCourses(){
 
-		$logged_user_data = $this->session->userdata("current_user");
-		$currentUser = $logged_user_data['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$currentUser = $loggedUserData->getId();
 
 		$course = new Course();
 		$allCourses = $course->listAllCourses();
@@ -594,7 +610,9 @@ class Usuario extends CI_Controller {
 		$this->load->model('usuarios_model');
 		$users = $this->usuarios_model->buscaTodos();
 
-		if ($users && !$this->session->userdata('current_user')) {
+		$session = SessionManager::getInstance();
+
+		if ($users && !$session->isLogged()) {
 			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
 		} else {
@@ -612,10 +630,14 @@ class Usuario extends CI_Controller {
 
 	}
 
-	public function conta() {
-		$usuarioLogado = session();
-		$dados = array("usuario" => $usuarioLogado);
-		$this->load->template("usuario/conta", $dados);
+	public function conta(){
+
+		$session = SessionManager::getInstance();
+		$loggedUser = $session->getUserData();
+
+		$data = array("user" => $loggedUser);
+
+		$this->load->template("usuario/conta", $data);
 	}
 
 	public function novo() {
@@ -693,15 +715,21 @@ class Usuario extends CI_Controller {
 	}
 
 	public function remove() {
-		$usuarioLogado = session();
+
 		$this->load->model("usuarios_model");
-		if ($this->usuarios_model->remove($usuarioLogado)) {
-			$this->session->unset_userdata('current_user');
-			$this->session->set_flashdata("success", "Usuário \"{$usuarioLogado['user']['login']}\" removido");
-			redirect("login");
-		} else {
-			$dados = array('usuario' => session());
-			$this->load->template("usuario/conta", $dados);
+
+		$session = SessionManager::getInstance();
+		$loggedUser = $session->getUserData();
+
+		$userWasDeleted = $this->usuarios_model->remove(array('login' => $loggedUser->getLogin()));
+		if($userWasDeleted){
+
+			$login = new Login();
+			$login->logout("Usuário \"{$loggedUser->getName()}\" removido", "success", "login");
+
+		}else{
+			$data = array('user' => $loggedUser);
+			$this->load->template("usuario/conta", $data);
 		}
 
 	}
@@ -849,7 +877,7 @@ class Usuario extends CI_Controller {
 
 	private function checkIfIsStudent($userGroups){
 
-		define("STUDENT", "estudante");
+		define("STUDENT", GroupConstants::STUDENT_GROUP);
 
 		$isStudent = FALSE;
 		foreach($userGroups as $group_name){
