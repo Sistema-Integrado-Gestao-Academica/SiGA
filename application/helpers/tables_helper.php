@@ -1609,11 +1609,16 @@ function displayRegisteredPrograms($programs){
     			echo "</td>";
 
     			echo "<td>";
-    				if ($program['summary'] == "") {
-	    				
-	    				echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-         				data-content=\"Edite o programa e complemente com os dados de resumo, contato, histórico e linhas de pesquisa.\" id='alert' ><i class='fa fa-warning'></i> Dados Incompletos </span>";
-	    			}
+
+				$summaryNonExists = isEmpty($program['summary']);
+				$historyNonExists = isEmpty($program['history']);
+				$contactNonExists = isEmpty($program['contact']);
+				$researchLineNonExists = isEmpty($program['research_line']);
+
+				if($summaryNonExists || $historyNonExists || $contactNonExists || $researchLineNonExists){			
+    				echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+         				data-content=\"Edite o programa e complemente com os dados de resumo, contato, histórico e linhas de 	pesquisa.\" id='alert' ><i class='fa fa-warning'></i> Dados Incompletos </span>";
+	    		}
 	    			echo "<br><br>";
     				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
          				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"

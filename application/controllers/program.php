@@ -121,7 +121,7 @@ class Program extends CI_Controller {
 
 	public function getInformationAboutPrograms(){
 		
-		$programs = $this->getAllPrograms();
+		$programs = $this->getProgramsWithInformation();
 		$quantityOfPrograms = count($programs);
 
 		$data = array (
@@ -412,5 +412,31 @@ class Program extends CI_Controller {
 
 		return $programNonExists;
 	}	
+
+	private function getProgramsWithInformation(){
+
+		$allPrograms = $this->getAllPrograms();
+
+		$programs = array();
+		$id = 0;
+		foreach ($allPrograms as $program) {
+		
+			$summaryNonExists = isEmpty($program['summary']);
+			$historyNonExists = isEmpty($program['history']);
+			$contactNonExists = isEmpty($program['contact']);
+			$researchLineNonExists = isEmpty($program['research_line']);
+
+			if(!$summaryNonExists && !$historyNonExists && !$contactNonExists && !$researchLineNonExists){
+				$programs[$id] = $program;
+			}	
+
+			$id++;
+		}
+
+		return $programs;
+	
+	}
+
+
 
 }
