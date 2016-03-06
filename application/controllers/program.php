@@ -121,7 +121,7 @@ class Program extends CI_Controller {
 
 	public function getInformationAboutPrograms(){
 		
-		$programs = $this->getAllPrograms();
+		$programs = $this->getProgramsWithInformation();
 		$quantityOfPrograms = count($programs);
 
 		$data = array (
@@ -338,23 +338,32 @@ class Program extends CI_Controller {
 				'opening_year' =>$openingYear,
 				'id_area' => $programArea
 			);
-
-			$this->load->model('program_model');
 			
-			$wasSaved = $this->program_model->saveProgram($programData);
+			$programExists = $this->verifyIfProgramExists($programName, $programAcronym);
+			if(!$programExists){
+				$this->load->model('program_model');
+				$wasSaved = $this->program_model->saveProgram($programData);
 
-			if($wasSaved){
-				$insertStatus = "success";
-				$insertMessage = "Programa cadastrado com sucesso!";
-			}else{
-				$insertStatus = "danger";
-				$insertMessage = "Não foi possível cadastrar o programa. Tente novamente.";
+				if($wasSaved){
+					$insertStatus = "success";
+					$insertMessage = "Programa cadastrado com sucesso!";
+				}
+				else{
+					$insertStatus = "danger";
+					$insertMessage = "Não foi possível cadastrar o programa. Tente novamente.";
+				}
+	
+				$this->session->set_flashdata($insertStatus, $insertMessage);
+				redirect('program');
 			}
-
-			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('program');
-
-		}else{
+			else{
+				$insertStatus = "danger";
+				$insertMessage = "Esse programa já está cadastrado.";
+				$this->session->set_flashdata($insertStatus, $insertMessage);
+				redirect('program/registerNewProgram');
+			}
+		}
+		else{
 
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
@@ -368,6 +377,8 @@ class Program extends CI_Controller {
 	 * Validates the data submitted on the new program form
 	 */
 	private function validatesNewProgramData(){
+
+		// form validation
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("program_name", "Nome do Programa", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("program_acronym", "Sigla do Programa", "required|alpha");
@@ -380,4 +391,52 @@ class Program extends CI_Controller {
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
+
+	private function verifyIfProgramExists($name, $acronym){
+		
+		$programExists = FALSE;
+
+		$programs = $this->getAllPrograms();
+		
+		foreach ($programs as $program) {
+
+			$nameExists = $name == $program['program_name'];
+
+			$acronymExists = $acronym == $program['acronym'];
+
+			if ($nameExists || $acronymExists){
+				$programNonExists = TRUE;
+				break;
+			}
+		}
+
+		return $programNonExists;
+	}	
+
+	private function getProgramsWithInformation(){
+
+		$allPrograms = $this->getAllPrograms();
+
+		$programs = array();
+		$id = 0;
+		foreach ($allPrograms as $program) {
+		
+			$summaryNonExists = isEmpty($program['summary']);
+			$historyNonExists = isEmpty($program['history']);
+			$contactNonExists = isEmpty($program['contact']);
+			$researchLineNonExists = isEmpty($program['research_line']);
+
+			if(!$summaryNonExists && !$historyNonExists && !$contactNonExists && !$researchLineNonExists){
+				$programs[$id] = $program;
+			}	
+
+			$id++;
+		}
+
+		return $programs;
+	
+	}
+
+
+
 }

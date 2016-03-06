@@ -39,3 +39,20 @@ function hasNext($array){
 
     return $hasNext;
 }
+
+/**
+ * Check if the attribute is empty
+ * @param $attribute - Attribute to check
+ * @return TRUE if the attribute is empty
+ */
+function isEmpty($attribute){
+    
+    if($attribute != ""){
+        $isEmpty = FALSE;
+    }
+    else{
+    	$isEmpty = TRUE;
+    }
+
+    return $isEmpty;
+}
