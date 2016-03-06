@@ -207,34 +207,44 @@ class Program extends CI_Controller {
 			$programSummary = $this->input->post('program_summary');
 			$programResearchLine = $this->input->post('program_research_lines');
 
+			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);
+			if($dataIsOk){
+		
+				$programData = array(
+					'program_name' => $programName,
+					'acronym' => $programAcronym,
+					'coordinator' => $programCoordinator,
+					'opening_year' => $openingYear,
+					'contact' => $programContact,
+					'history' => $programHistory,
+					'summary' => $programSummary,
+					'research_line' => $programResearchLine
+				);
 
-			$programData = array(
-				'program_name' => $programName,
-				'acronym' => $programAcronym,
-				'coordinator' => $programCoordinator,
-				'opening_year' => $openingYear,
-				'contact' => $programContact,
-				'history' => $programHistory,
-				'summary' => $programSummary,
-				'research_line' => $programResearchLine
-			);
+				$this->load->model('program_model');
 
-			$this->load->model('program_model');
+				$wasUpdated = $this->program_model->editProgram($programId, $programData);
 
-			$wasUpdated = $this->program_model->editProgram($programId, $programData);
+				if($wasUpdated){
+					$insertStatus = "success";
+					$insertMessage = "Programa atualizado com sucesso!";
+				}else{
+					$insertStatus = "danger";
+					$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
+				}
 
-			if($wasUpdated){
-				$insertStatus = "success";
-				$insertMessage = "Programa atualizado com sucesso!";
-			}else{
+				$this->session->set_flashdata($insertStatus, $insertMessage);
+				redirect('program');
+			}
+			else{
 				$insertStatus = "danger";
-				$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
+				$insertMessage = "Esse programa já está cadastrado.";
+				$this->session->set_flashdata($insertStatus, $insertMessage);
+				redirect("program/editProgram/{$programId}");
 			}
 
-			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('cursos');
-
-		}else{
+		}
+		else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta. Cheque os dados informados. Espaços em branco não são aceitos.";
 			
@@ -339,8 +349,9 @@ class Program extends CI_Controller {
 				'id_area' => $programArea
 			);
 			
-			$programExists = $this->verifyIfProgramExists($programName, $programAcronym);
-			if(!$programExists){
+			$programNotExists = $this->verifyIfProgramNotExists($programName, $programAcronym);
+			
+			if($programNotExists){
 				$this->load->model('program_model');
 				$wasSaved = $this->program_model->saveProgram($programData);
 
@@ -392,9 +403,9 @@ class Program extends CI_Controller {
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
 
-	private function verifyIfProgramExists($name, $acronym){
+	private function verifyIfProgramNotExists($name, $acronym){
 		
-		$programExists = FALSE;
+		$programNotExists = TRUE;
 
 		$programs = $this->getAllPrograms();
 		
@@ -405,13 +416,32 @@ class Program extends CI_Controller {
 			$acronymExists = $acronym == $program['acronym'];
 
 			if ($nameExists || $acronymExists){
-				$programNonExists = TRUE;
+				$programNotExists = FALSE;
 				break;
 			}
 		}
 
-		return $programNonExists;
+		return $programNotExists;
 	}	
+
+	// Verify if the name and acronym of the edited program already exists
+	private function verifyTheNewData($id, $name, $acronym){
+
+		$program = $this->getProgramById($id); 
+
+		$nameIsEqual = $name == $program['program_name'];
+		$acronymIsEqual = $acronym == $program['acronym'];
+
+		if($nameIsEqual && $acronymIsEqual){
+			$dataIsOk = TRUE;
+		}
+		else{
+			$dataIsOk = $this->verifyIfProgramNotExists($name, $acronym);
+		}
+
+		return $dataIsOk;
+	}
+
 
 	private function getProgramsWithInformation(){
 
@@ -436,7 +466,5 @@ class Program extends CI_Controller {
 		return $programs;
 	
 	}
-
-
 
 }
