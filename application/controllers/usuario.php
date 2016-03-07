@@ -687,24 +687,32 @@ class Usuario extends CI_Controller {
 	}
 
 	public function altera() {
-		$usuarioLogado = session();
 
 		$this->load->library("form_validation");
+		$this->load->model('usuarios_model');
+
+		$session = SessionManager::getInstance();
+		$usuarioLogado = $session->getUserData();
+
 		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
 		if ($success) {
-			$usuario = $this->getAccountForm($usuarioLogado);
 
-			$this->load->model('usuarios_model');
-			$alterado = $this->usuarios_model->altera($usuario);
+			$user = $this->getAccountForm($usuarioLogado);
 
-			if ($alterado && $usuarioLogado != $usuario) {
-				$this->session->set_userdata('current_user', $usuario);
+			$alterado = $this->usuarios_model->altera($user);
+
+			if ($alterado) {
+
+				$session->unsetUserData();
+				$session->login($user);
+
 				$this->session->set_flashdata("success", "Os dados foram alterados");
-			} else if (!$alterado){
+
+			}else{
 				$this->session->set_flashdata("danger", "Os dados não foram alterados");
 			}
 
@@ -969,7 +977,7 @@ class Usuario extends CI_Controller {
 		return $userName;
 	}
 
-	public function getStudentBasicInformation($idUser){
+		public function getStudentBasicInformation($idUser){
 		$this->load->model('usuarios_model');
 		$userData = $this->usuarios_model->getStudentBasicInformation($idUser);
 
@@ -996,38 +1004,56 @@ class Usuario extends CI_Controller {
 		return $form_user_groups;
 	}
 
-	private function getAccountForm($usuarioLogado) {
+	private function getAccountForm($loggedUser) {
+
 		$name = $this->input->post("nome");
 		$email = $this->input->post("email");
-		$login = $usuarioLogado['user']['login'];
-		$password = md5($this->input->post("senha"));
+		$login = $loggedUser->getLogin();
+		$password = $this->input->post("senha");
 		$new_password = md5($this->input->post("nova_senha"));
-		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
+
+		$blank_password = md5("");
 
 		$this->load->model('usuarios_model');
-		$user = $this->usuarios_model->busca('login', $login);
 
-		if ($new_password != $blank_password && $password != $user['password']) {
-			$this->session->set_flashdata("danger", "Senha atual incorreta");
+		try{
+			$foundUser = $this->validateUser($login, $password);
+
+			if($foundUser !== FALSE){
+
+				if ($new_password !== $blank_password) {
+
+					if (empty($name)) {
+						$name = $user->getName();
+					}
+
+					if (empty($email)) {
+						$email = $user->getEmail();
+					}
+
+					try{
+						$user = new User($foundUser->getId(), $name, FALSE, $email, $foundUser->getLogin(), $new_password);
+
+						return $user;
+
+					}catch(UserException $e){
+						$this->session->set_flashdata("danger", $e->getMessage());
+						redirect("usuario/conta");
+					}
+
+				}else{
+					$this->session->set_flashdata("danger", "A nova senha não pode estar em branco.");
+					redirect("usuario/conta");
+				}
+			}else{
+				$this->session->set_flashdata("danger", "Senha atual incorreta.");
+				redirect("usuario/conta");
+			}
+		}catch(LoginException $e){
+
+			$this->session->set_flashdata("danger", "Senha atual incorreta.");
 			redirect("usuario/conta");
-		} else if ($new_password == $blank_password) {
-			$new_password = $user['password'];
 		}
-
-		if ($name == "") {
-			$name = $user['name'];
-		}
-
-		if ($email == "") {
-			$email = $user['email'];
-		}
-
-		$user = $usuarioLogado;
-		$user['user']['name'] = $name;
-		$user['user']['email'] = $email;
-		$user['user']['password'] = $new_password;
-
-		return $user;
 	}
 
 	/**

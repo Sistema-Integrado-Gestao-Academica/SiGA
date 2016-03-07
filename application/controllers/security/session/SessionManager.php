@@ -41,7 +41,7 @@ class SessionManager extends CI_Controller{
             }
 
             $this->saveData(self::CURRENT_USER_LABEL, $user);
-            $this->isLogged = TRUE;
+
         }else{
             // User with no groups situation
             // It doesn't (cannot) happen on the system
@@ -90,6 +90,10 @@ class SessionManager extends CI_Controller{
 
     private function saveData($label, $data){
         $this->session->set_userdata($label, $data);
+    }
+
+    public function unsetUserData(){
+        $this->session->unset_userdata(self::CURRENT_USER_LABEL);
     }
 
     public function logout(){

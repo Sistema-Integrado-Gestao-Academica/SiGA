@@ -461,12 +461,12 @@ class Usuarios_model extends CI_Model {
 		return $usuario;
 	}
 
-	public function altera($usuario) {
-		$this->db->where('login', $usuario['user']['login']);
+	public function altera($user) {
+		$this->db->where('login', $user->getLogin());
 		$res = $this->db->update("users", array(
-			'name' => $usuario['user']['name'],
-			'email' => $usuario['user']['email'],
-			'password' => $usuario['user']['password']
+			'name' => $user->getName(),
+			'email' => $user->getEmail(),
+			'password' => $user->getPassword()
 		));
 
 		return $res;
