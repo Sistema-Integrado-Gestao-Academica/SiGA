@@ -1,8 +1,14 @@
-<?php $session = $this->session->userdata("current_user"); ?>
+<?php 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+$session = SessionManager::getInstance(); 
+$user = $session->getUserData();
+$userName = $user->getName();
+?>
 
 <h2 class="principal">Relatório de solicitações de matrícula</h2>
 
-<h4>Cursos para o(a) secretário(a) <b><?php echo $session['user']['name']?></b>:</h4>
+<h4>Cursos para o(a) secretário(a) <b><?php echo $userName?></b>:</h4>
 <?php 
 
 	if($courses !== FALSE){
