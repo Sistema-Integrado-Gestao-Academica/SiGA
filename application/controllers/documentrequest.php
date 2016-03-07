@@ -5,6 +5,8 @@ require_once("course.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/constants/DocumentConstants.php");
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 class DocumentRequest extends CI_Controller {
 
 	// Functions to student //
@@ -268,9 +270,9 @@ class DocumentRequest extends CI_Controller {
 
 	public function documentRequestSecretary(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$currentUser = $loggedUserData['user'];
-		$userId = $currentUser['id'];
+		$session = SessionManager::getInstance();
+		$currentUser = $session->getUserData();
+		$userId = $currentUser->getId();
 
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($userId);

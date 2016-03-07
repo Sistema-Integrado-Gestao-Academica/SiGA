@@ -88,6 +88,10 @@ class SessionManager extends CI_Controller{
         return $permissions;
     }
 
+    public function showFlashMessage($type, $message){
+        $this->session->set_flashdata($type, $message);
+    }
+
     private function saveData($label, $data){
         $this->session->set_userdata($label, $data);
     }

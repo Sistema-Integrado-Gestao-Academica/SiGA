@@ -12,7 +12,7 @@ class Module extends CI_Controller {
 
 			$session = SessionManager::getInstance();
 			$userGroups = $session->getUserGroups();
-
+		
 			$haveGroup = FALSE;
 			foreach($userGroups as $group){
 				if($group->getName() === $requiredGroup){
