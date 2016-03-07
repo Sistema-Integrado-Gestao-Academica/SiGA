@@ -44,6 +44,12 @@ $(document).ready(function(){
 		$("#edit_program_btn").popover('hide');
 	});
 
+	$("#alert").hover(function(){
+		$("#alert").popover('show');
+	},function(){
+		$("#alert").popover('hide');
+	});
+
 	$("#arrivalInBrazil").datepicker($.datepicker.regional["pt-BR"], {
 		dateFormat: "dd-mm-yy"
 	});
