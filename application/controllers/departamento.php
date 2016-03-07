@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 class Departamento extends CI_Controller {
 
 	public function formulario() {
@@ -34,10 +36,11 @@ class Departamento extends CI_Controller {
 			$this->load->model("departamentos_model");
 			$departamentoExiste = $this->departamentos_model->busca("nome", $departamento);
 
+			$session = SessionManager::getInstance();
 			if ($departamentoExiste) {
-				$this->session->set_flashdata("danger", "Este departamento já está cadastrado");
+				$session->showFlashMessage("danger", "Este departamento já está cadastrado");
 			} else if ($this->departamentos_model->salva($departamento)) {
-				$this->session->set_flashdata("success", "Departamento \"$nome\" salvo com sucesso");
+				$session->showFlashMessage("success", "Departamento \"$nome\" salvo com sucesso");
 			}
 		}
 
@@ -50,11 +53,12 @@ class Departamento extends CI_Controller {
 		$nome = $this->input->post("nome");
 		$this->load->model("departamentos_model");
 
+		$session = SessionManager::getInstance();
 		if ($this->departamentos_model->altera($id, $nome)) {			
-			$this->session->set_flashdata("success", "Departamento alterado para \"$nome\".");
+			$session->showFlashMessage("success", "Departamento alterado para \"$nome\".");
 			redirect("departamentos");
 		} else {
-			$this->session->set_flashdata("danger", "Este departamento não pôde ser alterado.");
+			$session->showFlashMessage("danger", "Este departamento não pôde ser alterado.");
 			redirect("departamentos/{$id}");
 		}
 	}
@@ -67,7 +71,8 @@ class Departamento extends CI_Controller {
 		$departamento = $this->departamentos_model->busca("id", $departamento);
 
 		if ($this->departamentos_model->remove($id)) {
-			$this->session->set_flashdata("success", "Departamento \"{$departamento['nome']}\" foi removido");
+			$session = SessionManager::getInstance();
+			$session->showFlashMessage("success", "Departamento \"{$departamento['nome']}\" foi removido");
 		}
 
 		redirect("departamentos");

@@ -2,6 +2,7 @@
 
 require_once("usuario.php");
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Budgetplan extends CI_Controller {
 
@@ -56,6 +57,7 @@ class Budgetplan extends CI_Controller {
 
 	public function save() {
 
+
 		$budgetplanName = $this->input->post("budgetplan_name");
 		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");
@@ -79,12 +81,18 @@ class Budgetplan extends CI_Controller {
 
 		$this->load->model('budgetplan_model');
 
-		if ($this->budgetplan_model->save($budgetplan)) {
-			$this->session->set_flashdata("success", "Novo Plano orçamentário cadastrado");
-		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Plano orçamentário não cadastrado");
-		}
+		if ($this->budgetplan_model->save($budgetplan)) {				
 
+			$status = "success";
+			$message = "Novo Plano orçamentário cadastrado";
+		} 
+		else {
+			$status = "danger";
+			$message = "Houve algum erro. Plano orçamentário não cadastrado";
+		}
+		
+		$session = SessionManager::getInstance(); 
+		$session->showFlashMessage($status, $message);
 		redirect(PermissionConstants::BUDGETPLAN_PERMISSION);
 	}
 
@@ -170,11 +178,18 @@ class Budgetplan extends CI_Controller {
 		}
 
 		$this->load->model('budgetplan_model');
+		
+		
 		if ($this->budgetplan_model->update($budgetplan)) {
-			$this->session->set_flashdata("success", "Plano orçamentário alterado");
+			$status = "success";
+			$message = "Plano orçamentário alterado";
 		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
+			$status = "danger";
+			$message = "Houve algum erro. Tente novamente";
 		}
+
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect(PermissionConstants::BUDGETPLAN_PERMISSION."/{$id}");
 	}
@@ -190,8 +205,10 @@ class Budgetplan extends CI_Controller {
 			$this->expense_model->delete($expense['id']);
 		}
 
+		$session = SessionManager::getInstance();
+
 		if ($this->budgetplan_model->delete($id)) {
-			$this->session->set_flashdata("danger", "Plano orçamentário foi removido");
+			$session->showFlashMessage("danger", "Plano orçamentário foi removido");
 		}
 
 		redirect(PermissionConstants::BUDGETPLAN_PERMISSION);

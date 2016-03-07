@@ -613,7 +613,8 @@ class Usuario extends CI_Controller {
 		$session = SessionManager::getInstance();
 
 		if ($users && !$session->isLogged()) {
-			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
+
+			$session->showFlashMessage("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
 		} else {
 
@@ -665,12 +666,16 @@ class Usuario extends CI_Controller {
 				'login'    => $login,
 				'password' => $senha
 			);
-
+			
 			$this->load->model("usuarios_model");
+			
+			$session = SessionManager::getInstance();
+			
 			$usuarioExiste = $this->usuarios_model->buscaPorLoginESenha($login);
 
 			if ($usuarioExiste) {
-				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
+				$status  = "danger";
+				$message =  "Usuário já existe no sistema.";
 				redirect("usuario/formulario");
 			} else {
 				$this->usuarios_model->salva($usuario);
@@ -678,6 +683,8 @@ class Usuario extends CI_Controller {
 				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
+			$session->showFlashMessage($status, $message);
+
 		} else {
 			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 

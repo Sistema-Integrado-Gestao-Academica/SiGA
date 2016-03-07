@@ -2,8 +2,12 @@
 <br>
 
 <?php 
-$session = $this->session->userdata("current_user");
 
-studentsReportsTable($session['user']['id']);
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+$session = SessionManager::getInstance(); 
+$user = $session->getUserData();
+$userId = $user->getId();
+studentsReportsTable($userId);
 
 ?>

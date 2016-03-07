@@ -6,6 +6,8 @@ require_once('request.php');
 
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
@@ -127,6 +129,7 @@ class MasterMind extends CI_Controller {
 		$this->load->model("program_model");
 
 		$areas = $this->program_model->getAllProgramAreas();
+
 		if($areas !== FALSE){
 			foreach ($areas as $area){
 
@@ -169,11 +172,15 @@ class MasterMind extends CI_Controller {
 	}
 
 	private function getMastermindTitlingArea($mastermindId=NULL){
+
+		$this->load->model("mastermind_model");
+
 		if($mastermindId){
 			$userId = $mastermindId;
 		}else{
-			$session = $this->session->userdata("current_user");
-			$userId = $session['user']['id'];
+			$session = SessionManager::getInstance();
+			$user = $session->getUserData();
+			$userId = $user->getId();
 		}
 
 		$this->load->model("mastermind_model");
@@ -184,13 +191,15 @@ class MasterMind extends CI_Controller {
 	}
 
 	public function UpdateTitlingArea(){
-		$session = $this->session->userdata("current_user");
-		$userId = $session['user']['id'];
+
+		$this->load->model("mastermind_model");
+
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+		$userId = $user->getId();
 
 		$titlingArea = $this->input->post("titling_area");
 		$tiling_thesis = $this->input->post("titling_thesis");
-
-		$this->load->model("mastermind_model");
 
 		$updated = $this->mastermind_model->updateTitlingArea($userId, $titlingArea, $tiling_thesis);
 
