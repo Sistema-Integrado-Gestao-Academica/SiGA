@@ -1,7 +1,7 @@
 <br>
 <br>
 
-<h2 align="center">Programas para o coordenador <b><i><?php echo $userData['name']; ?></i></b></h2>
+<h2 align="center">Programas para o coordenador <b><i><?php echo $userData->getName(); ?></i></b></h2>
 <br>
 
 <div class="box-body table-responsive no-padding">
@@ -80,7 +80,8 @@
 		    		echo "<tr>";
 		    			echo "<td colspan=4>";
 		    			echo "<div class='callout callout-info'>";
-		    			echo "<h4>Não há programas cadastrados para o coordenador <b>".$userData['name']."</b>.</h4>";
+		    			$userName = $userData->getName();
+		    			echo "<h4>Não há programas cadastrados para o coordenador <b>".$userName."</b>.</h4>";
 		    			echo "</div>";
 		    			echo "</td>";
 		    		echo "</tr>";
