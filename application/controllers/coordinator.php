@@ -2,6 +2,8 @@
 
 require_once('program.php');
 require_once(APPPATH."/exception/DimensionException.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 
 class Coordinator extends CI_Controller {
 
@@ -148,9 +150,9 @@ class Coordinator extends CI_Controller {
 
 	public function coordinator_programs(){
 
-		$session = $this->session->userdata("current_user");
-		$userData = $session['user'];
-		$coordinatorId = $userData['id'];
+		$session = SessionManager::getInstance();
+		$userData = $session->getUserData();
+		$coordinatorId = $userData->getId();
 
 		$program = new Program();
 		$coordinatorPrograms = $program->getCoordinatorPrograms($coordinatorId);
