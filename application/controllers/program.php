@@ -449,18 +449,24 @@ class Program extends CI_Controller {
 
 		$programs = array();
 		$id = 0;
-		foreach ($allPrograms as $program) {
 
-			$summaryNonExists = isEmpty($program['summary']);
-			$historyNonExists = isEmpty($program['history']);
-			$contactNonExists = isEmpty($program['contact']);
-			$researchLineNonExists = isEmpty($program['research_line']);
+		if($allPrograms !== FALSE){
 
-			if(!$summaryNonExists && !$historyNonExists && !$contactNonExists && !$researchLineNonExists){
-				$programs[$id] = $program;
-				$id++;
+			foreach ($allPrograms as $program) {
+			
+				$summaryNonExists = isEmpty($program['summary']);
+				$historyNonExists = isEmpty($program['history']);
+				$contactNonExists = isEmpty($program['contact']);
+				$researchLineNonExists = isEmpty($program['research_line']);
+
+				if(!$summaryNonExists && !$historyNonExists && !$contactNonExists && !$researchLineNonExists){
+					$programs[$id] = $program;
+					$id++;
+				}	
+
 			}
-
+		}else{
+			$programs = FALSE;
 		}
 
 		return $programs;

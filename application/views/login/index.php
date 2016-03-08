@@ -55,4 +55,5 @@ Sistema Integrado de Gestão Acadêmica
 	}
 	?>
 	</div>
-<?php } ?>
+<?php }?>
+	
