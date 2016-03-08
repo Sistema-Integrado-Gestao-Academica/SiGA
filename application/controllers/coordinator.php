@@ -125,8 +125,9 @@ class Coordinator extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível criar a dimensão. Não é permitido nomes iguais, cheque o nome informado.";
 		}
-
-		$this->session->set_flashdata($status, $message);
+		
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("coordinator/manageDimensions");
 	}
 
@@ -143,8 +144,9 @@ class Coordinator extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível adicionar a dimensão à essa avaliação.";
 		}
-		
-		$this->session->set_flashdata($status, $message);
+				
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("coordinator/program_evaluation_index/{$programId}/{$evaluationId}");
 	}
 
@@ -246,8 +248,9 @@ class Coordinator extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível desativar a dimensão.";
 		}
-
-		$this->session->set_flashdata($status, $message);
+		
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}/{$programId}");
 	}
 
@@ -318,8 +321,9 @@ class Coordinator extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível salvar a avaliação. Tente novamente.";
 		}
-
-		$this->session->set_flashdata($status, $message);
+		
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect('coordinator/coordinator_programs');
 	}
 
@@ -362,8 +366,9 @@ class Coordinator extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível alterar o peso da dimensão. Tente novamente.";
 		}
-
-		$this->session->set_flashdata($status, $message);
+		
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("coordinator/evaluationDimensionData/{$programEvaluationId}/{$dimensionType}/{$programId}");
 	}
 

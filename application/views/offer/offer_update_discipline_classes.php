@@ -3,13 +3,17 @@
 
 <?php
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+$session = SessionManager::getInstance(); 
+
 	if($disciplineData !== FALSE){
 		if($offerDisciplineData !== FALSE){
 			formToUpdateOfferDisciplineClass($disciplineData['discipline_code'], $idOffer, $teachers, $offerDisciplineData, $idCourse);
 		}else{
 			$status = "danger";
 			$message = "Não foi possível recuperar os dados desta turma. Tente novamente.";
-			$this->session->set_flashdata($status, $message);
+			$session->showFlashMessage($status, $message);
 			redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}");
 		}
 
@@ -26,5 +30,3 @@
 <?php
 	}
 ?>
-
-

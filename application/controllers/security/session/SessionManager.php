@@ -32,7 +32,7 @@ class SessionManager extends CI_Controller{
 
         $userId = $user->getId();
 
-        $userGroups = $groupController->getUserGroups($userId);
+        /*$userGroups = $groupController->getUserGroups($userId);
 
         if($userGroups !== FALSE){
 
@@ -49,7 +49,7 @@ class SessionManager extends CI_Controller{
 
             $e = new GroupException(self::USER_WITH_NO_GROUPS_EXCEPTION);
             GroupException::handle($e);
-        }
+        }*/
 
     }
 
@@ -98,6 +98,7 @@ class SessionManager extends CI_Controller{
 
     public function unsetUserData(){
         $this->session->unset_userdata(self::CURRENT_USER_LABEL);
+        $this->session->sess_destroy();
     }
 
     public function logout(){

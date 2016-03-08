@@ -15,8 +15,9 @@ class Semester extends CI_Controller {
 
 	public function saveSemester() {
 		
-		$loggedUserData = $this->session->userdata('current_user');
-		$loggedUserLogin = $loggedUserData['user']['login'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$loggedUserLogin = $loggedUserData->getLogin();
 		$password = $this->input->post('password');
 		
 		$this->load->model('usuarios_model');
