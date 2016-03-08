@@ -136,8 +136,8 @@ class Course extends CI_Controller {
 			$status = "danger";
 			$message = $e->getMessage();
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($status, $message);
 		redirect("secretary_home");
 	}
@@ -345,8 +345,8 @@ class Course extends CI_Controller {
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($insertStatus, $insertMessage);
 
 		redirect('cursos');
@@ -374,8 +374,8 @@ class Course extends CI_Controller {
 			$saveStatus = "danger";
 			$saveMessage = $caughtException->getMessage();
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($saveStatus, $saveMessage);
 		redirect('/course/formToEditCourse/'.$idCourse);
 	}
@@ -403,8 +403,8 @@ class Course extends CI_Controller {
 			$saveStatus = "danger";
 			$saveMessage = $caughtException->getMessage();
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($saveStatus, $saveMessage);
 		redirect('/course/formToEditCourse/'.$idCourse);
 	}
@@ -481,8 +481,8 @@ class Course extends CI_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Dados na forma incorreta.";
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect('cursos');
 	}
@@ -554,7 +554,7 @@ class Course extends CI_Controller {
 	 */
 	private function updateCourseToOtherCourseType($id_course, $courseType, $courseToUpdate, $commonAttributes=NULL, $post_graduation_type=NULL){
 
-		$session = SessionManager::getInstance():
+		$session = SessionManager::getInstance();
 		switch ($courseType){
 			case GRADUATION:
 				try{
@@ -567,7 +567,7 @@ class Course extends CI_Controller {
 				}catch(CourseNameException $caughtException){
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
-				}		
+				}
 				$session->showFlashMessage($updateStatus, $updateMessage);
 
 				break;
@@ -583,7 +583,7 @@ class Course extends CI_Controller {
 				}catch(CourseNameException $caughtException){
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
-				}		
+				}
 				$session->showFlashMessage($updateStatus, $updateMessage);
 
 				break;
@@ -598,7 +598,7 @@ class Course extends CI_Controller {
 				}catch(CourseNameException $caughtException){
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
-				}		
+				}
 				$session->showFlashMessage($updateStatus, $updateMessage);
 
 				break;
@@ -643,8 +643,8 @@ class Course extends CI_Controller {
 			$deleteStatus = "danger";
 			$deleteMessage = "Não foi possível excluir este curso.";
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('cursos');
@@ -670,8 +670,8 @@ class Course extends CI_Controller {
 			$deleteStatus = "danger";
 			$deleteMessage = "Não foi possível excluir este secretário.";
 		}
-		
-		$session = SessionManager::getInstance():
+
+		$session = SessionManager::getInstance();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('/course/formToEditCourse/'.$course_id);
