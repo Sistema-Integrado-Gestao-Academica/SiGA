@@ -169,7 +169,8 @@ class DocumentRequest extends CI_Controller {
 					$message = "Não foi possível enviar a solicitação de documento informada.";
 				}
 
-				$this->session->set_flashdata($status, $message);
+				$session = SessionManager::getInstance();
+				$session->showFlashMessage($status, $message);
 				redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 
 				break;
@@ -195,8 +196,9 @@ class DocumentRequest extends CI_Controller {
 					$status = "danger";
 					$message = "Não foi possível enviar a solicitação de documento informada.";
 				}
-
-				$this->session->set_flashdata($status, $message);
+				
+				$session = SessionManager::getInstance();
+				$session->showFlashMessage($status, $message);
 				redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 
 				break;
@@ -229,7 +231,9 @@ class DocumentRequest extends CI_Controller {
 			$message = "Não foi possível cancelar a solicitação de documento informada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+
+		$session->showFlashMessage($status, $message);
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 	}
 
@@ -246,8 +250,9 @@ class DocumentRequest extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível arquivar a solicitação de documento informada.";
 		}
+		$session = SessionManager::getInstance();
 
-		$this->session->set_flashdata($status, $message);
+		$session->showFlashMessage($status, $message);
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 	}
 
@@ -315,8 +320,9 @@ class DocumentRequest extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível atualizar o status do documento.";
 		}
+		$session = SessionManager::getInstance();
 
-		$this->session->set_flashdata($status, $message);
+		$session->showFlashMessage($status, $message);
 		redirect("documentrequest/documentRequestReport/{$courseId}");
 	}
 

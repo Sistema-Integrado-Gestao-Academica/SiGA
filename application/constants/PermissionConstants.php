@@ -17,6 +17,8 @@ class PermissionConstants extends Constants{
 	const RESEARCH_LINES_PERMISSION = "research_lines";
 	const COURSES_PERMISSION = "cursos";
 	const DISCIPLINE_PERMISSION = "discipline";
+	const DEPARTMENTS_PERMISSION = "departamentos";
+	const FUNCTIONS_PERMISSION = "funcoes";
 
 	// Student functionalities permissions
 	const DOCUMENT_REQUEST_PERMISSION = "documents_request";

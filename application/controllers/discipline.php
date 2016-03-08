@@ -140,15 +140,16 @@ class Discipline extends CI_Controller {
 
 			$alreadyExists = $this->discipline_model->disciplineExists($disciplineCode,$disciplineName);
 
+			$session = SessionManager::getInstance();
 			if($alreadyExists['code']){
-				$this->session->set_flashdata("danger", "Código de disciplina já existe no sistema");
+				$session->showFlashMessage("danger", "Código de disciplina já existe no sistema");
 				redirect("discipline/discipline_index");
 			}else if($alreadyExists['name']){
-				$this->session->set_flashdata("danger", "Disciplina já existe no sistema");
+				$session->showFlashMessage("danger", "Disciplina já existe no sistema");
 				redirect("discipline/discipline_index");
 			}else{
 				$this->discipline_model->saveNewDiscipline($disciplineToRegister);
-				$this->session->set_flashdata("success", "Disciplina \"{$disciplineName}\" cadastrada com sucesso");
+				$session->showFlashMessage("success", "Disciplina \"{$disciplineName}\" cadastrada com sucesso");
 				redirect("discipline/discipline_index");
 			}
 		}else{
@@ -185,7 +186,8 @@ class Discipline extends CI_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Dados na forma incorreta.";
 		}
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect('/discipline/discipline_index');
 	}
 
@@ -204,7 +206,8 @@ class Discipline extends CI_Controller {
 			$deleteMessage = "Não foi possível excluir esta disciplina.";
 		}
 
-		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('/discipline/discipline_index');
 	}
