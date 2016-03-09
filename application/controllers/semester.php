@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/exception/LoginException.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Semester extends CI_Controller {
 
@@ -15,13 +16,13 @@ class Semester extends CI_Controller {
 
 	public function saveSemester() {
 		
-		$session = SessionManager::getInstance();
 		$loggedUserData = $session->getUserData();
 		$loggedUserLogin = $loggedUserData->getLogin();
 		$password = $this->input->post('password');
 		
 		$this->load->model('usuarios_model');
 		$this->load->model('semester_model');
+		$session = SessionManager::getInstance();
 
 		try{
 
@@ -36,16 +37,16 @@ class Semester extends CI_Controller {
 				$wasUpdated = $this->semester_model->updateCurrentSemester($semesterId);
 
 				if($wasUpdated){
-					$this->session->set_flashdata("success", "Semestre atual alterado");
+					$session->showFlashMessage("success", "Semestre atual alterado");
 				}else{
-					$this->session->set_flashdata("danger", "Não foi possível alterar o semestre atual.");
+					$session->showFlashMessage("danger", "Não foi possível alterar o semestre atual.");
 				}
 				
 				redirect('/usuario/secretary_offerList');
 			}
 
 		}catch(LoginException $caughtException){
-			$this->session->set_flashdata("danger", "Falha na autenticação.");
+			$session->showFlashMessage("danger", "Falha na autenticação.");
 			redirect('/usuario/secretary_offerList');
 		}
 	}

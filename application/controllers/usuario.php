@@ -164,7 +164,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("research_lines/");
 
 	}
@@ -219,7 +220,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover os usuários do grupo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("user_report");
 	}
 
@@ -236,7 +238,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
 
@@ -253,7 +256,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover o grupo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
 
@@ -270,7 +274,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover o usuário informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("usuario/listUsersOfGroup/{$idGroup}");
 	}
 
@@ -680,7 +685,7 @@ class Usuario extends CI_Controller {
 			} else {
 				$this->usuarios_model->salva($usuario);
 				$this->usuarios_model->saveGroup($usuario, $group);
-				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
+				$session->showFlashMessage("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
 			$session->showFlashMessage($status, $message);
@@ -717,10 +722,10 @@ class Usuario extends CI_Controller {
 				$session->unsetUserData();
 				$session->login($user);
 
-				$this->session->set_flashdata("success", "Os dados foram alterados");
+				$session->showFlashMessage("success", "Os dados foram alterados");
 
 			}else{
-				$this->session->set_flashdata("danger", "Os dados não foram alterados");
+				$session->showFlashMessage("danger", "Os dados não foram alterados");
 			}
 
 			redirect('usuario/conta');
@@ -809,7 +814,8 @@ class Usuario extends CI_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
 		}
-			$this->session->set_flashdata($updateStatus, $updateMessage);
+			$session = SessionManager::getInstance();
+			$session->showFlashMessage($updateStatus, $updateMessage);
 			redirect("student_information/");
 	}
 
@@ -855,7 +861,8 @@ class Usuario extends CI_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Não foi possível alterar seus novos dados. Tente novamente.";
 		}
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect("student_information/");
 	}
 
@@ -1023,6 +1030,7 @@ class Usuario extends CI_Controller {
 
 		$this->load->model('usuarios_model');
 
+		$session = SessionManager::getInstance();
 		try{
 			$foundUser = $this->validateUser($login, $password);
 
@@ -1044,21 +1052,20 @@ class Usuario extends CI_Controller {
 						return $user;
 
 					}catch(UserException $e){
-						$this->session->set_flashdata("danger", $e->getMessage());
+						$session->showFlashMessage("danger", $e->getMessage());
 						redirect("usuario/conta");
 					}
 
 				}else{
-					$this->session->set_flashdata("danger", "A nova senha não pode estar em branco.");
+					$session->showFlashMessage("danger", "A nova senha não pode estar em branco.");
 					redirect("usuario/conta");
 				}
 			}else{
-				$this->session->set_flashdata("danger", "Senha atual incorreta.");
+				$session->showFlashMessage("danger", "Senha atual incorreta.");
 				redirect("usuario/conta");
 			}
 		}catch(LoginException $e){
-
-			$this->session->set_flashdata("danger", "Senha atual incorreta.");
+			$session->showFlashMessage("danger", "Senha atual incorreta.");
 			redirect("usuario/conta");
 		}
 	}
