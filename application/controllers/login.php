@@ -19,6 +19,9 @@ class Login extends CI_Controller {
 		$login = $this->input->post("login");
 		$password = $this->input->post("senha");
 
+		$this->load->model("usuarios_model");
+
+		$session = SessionManager::getInstance();
 		try{
 
 			$userController = new Usuario();
@@ -26,7 +29,6 @@ class Login extends CI_Controller {
 
 			if($user !== FALSE){
 
-				$session = SessionManager::getInstance();
 				$session->login($user);
 
 				redirect('/');
@@ -34,14 +36,14 @@ class Login extends CI_Controller {
 			}else{
 				$authenticationStatus = "danger";
 				$authenticationMessage = "Ocorreu um erro ao carregar os dados. Tente Novamente.";
-				$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+				$session->showFlashMessage($authenticationStatus, $authenticationMessage);
 				redirect('/');
 			}
 
 		}catch(LoginException $caughtException){
 			$authenticationStatus = "danger";
 			$authenticationMessage = $caughtException->getMessage();
-			$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+			$session->showFlashMessage($authenticationStatus, $authenticationMessage);
 			redirect('/');
 		}
 
@@ -61,7 +63,8 @@ class Login extends CI_Controller {
 		$thereIsMessage = !empty($messageToDisplay);
 		if($thereIsMessage){
 			$statusLogout = $this->checkStatusLogout($statusLogout);
-			$this->session->set_flashdata($statusLogout, $messageToDisplay);
+			$session = SessionManager::getInstance();
+			$session->showFlashMessage($statusLogout, $messageToDisplay);
 
 			// VALIDAR O PATH
 			$this->unsetLoggedUserAndRedirectTo($path);

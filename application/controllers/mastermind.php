@@ -8,9 +8,6 @@ require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
-
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
 class MasterMind extends CI_Controller {
 
 	public function saveMastermindToStudent(){
@@ -37,7 +34,8 @@ class MasterMind extends CI_Controller {
 			$updateMessage = "Não foi possível salvar a relação entre orientador e aluno. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect("mastermind/displayMastermindPage/$courseId");
 
 	}
@@ -59,7 +57,8 @@ class MasterMind extends CI_Controller {
 			$updateMessage = "Não foi possível deletar a relação entre orientador e aluno. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect("mastermind/displayMastermindPage/$courseId");
 	}
 
@@ -211,7 +210,7 @@ class MasterMind extends CI_Controller {
 			$updateMessage = "Não foi possível alterar sua titulação. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect('/');
 
 	}
@@ -285,7 +284,8 @@ class MasterMind extends CI_Controller {
 			$message = "A solicitação não pôde ser finalizada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect('mastermind');
 	}
 

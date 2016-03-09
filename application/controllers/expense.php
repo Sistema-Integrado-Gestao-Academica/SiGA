@@ -1,9 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
+
 class Expense extends CI_Controller {
 
 	public function index($budgetplan_id) {
-		session();
 		$this->load->model('budgetplan_model');
 		$this->load->model('expense_model');
 		$budgetplan = $this->budgetplan_model->get('id', $budgetplan_id);
@@ -18,11 +20,10 @@ class Expense extends CI_Controller {
 		}
 
 		$data = array('budgetplan' => $budgetplan, 'months' => $months, 'types' => $expenseTypes);
-		$this->load->template("budgetplan/expense", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "budgetplan/expense", $data);
 	}
 
 	public function save() {
-		session();
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 
@@ -48,17 +49,17 @@ class Expense extends CI_Controller {
 
 		$this->load->model('expense_model');
 
+		$session = SessionManager::getInstance();
 		if ($this->expense_model->save($expense) && $this->budgetplan_model->update($budgetplan)) {
-			$this->session->set_flashdata("success", "Nova despesa adicionada com sucesso.");
+			$session->showFlashMessage("success", "Nova despesa adicionada com sucesso.");
 			redirect("budgetplan/budgetplanExpenses/{$id}");
 		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente.");
+			$session->showFlashMessage("danger", "Houve algum erro. Tente novamente.");
 			redirect("planoorcamentario/{$id}/novadespesa");
 		}
 	}
 
 	public function delete() {
-		session();
 		$expense_id = $this->input->post('expense_id');
 		$budgetplan_id = $this->input->post('budgetplan_id');
 
@@ -71,11 +72,12 @@ class Expense extends CI_Controller {
 		$budgetplan['spending'] -= $expense['value'];
 		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
 
+		$session = SessionManager::getInstance();
 		if ($this->expense_model->delete($expense_id) && $this->budgetplan_model->update($budgetplan)) {
-			$this->session->set_flashdata("danger", "Despesa foi removida");
+			$session->showFlashMessage("danger", "Despesa foi removida");
 		} else {
 			$this->expense_model->save($expense);
-			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
+			$session->showFlashMessage("danger", "Houve algum erro. Tente novamente");
 		}
 
 		redirect("budgetplan/budgetplanExpenses/{$budgetplan_id}");

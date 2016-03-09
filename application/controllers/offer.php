@@ -8,6 +8,8 @@ require_once('usuario.php');
 require_once('schedule.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 
 class Offer extends CI_Controller {
 
@@ -49,7 +51,8 @@ class Offer extends CI_Controller {
 			$message = "Não foi possível criar a lista de oferta. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getIntance();
+		$session->showFlashMessage($status, $message);
 		redirect('usuario/secretary_offerList');
 	}
 
@@ -65,8 +68,9 @@ class Offer extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível aprovar essa lista de ofertas. Verifique se há discisplinas adicionadas a essa lista, não é possível aprovar uma lista sem disciplinas.";
 		}
-
-		$this->session->set_flashdata($status, $message);
+		
+		$session = SessionManager::getIntance();
+		$session->showFlashMessage($status, $message);
 		redirect('usuario/secretary_offerList');
 	}
 
@@ -82,7 +86,8 @@ class Offer extends CI_Controller {
 			$message = "Não foi possível apagar essa turma da lista de ofertas.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getIntance();
+		$session->showFlashMessage($status, $message);
 		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}/{$idCourse}");
 	}
 
@@ -259,7 +264,8 @@ class Offer extends CI_Controller {
 			$message = "Dados na forma incorreta.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getIntance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}/{$idCourse}");
 	}
@@ -315,7 +321,8 @@ class Offer extends CI_Controller {
 			$message = "Dados na forma incorreta. Cheque os dados informados.<br> Informe apenas letras para a turma.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getIntance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("offer/displayDisciplineClasses/{$idDiscipline}/{$idOffer}/{$idCourse}");
 	}
@@ -346,7 +353,8 @@ class Offer extends CI_Controller {
 			$message = "Não foi possível retirar essa disciplina. Cheque os códigos informados.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getIntance();
+		$session->showFlashMessage($status, $message);
 		redirect("offer/addDisciplines/{$idOffer}/{$idCourse}");
 	}
 
