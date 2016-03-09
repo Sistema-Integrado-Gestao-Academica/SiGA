@@ -5,6 +5,7 @@ require_once('module.php');
 require_once('course.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Program extends CI_Controller {
 
@@ -115,7 +116,8 @@ class Program extends CI_Controller {
 			$insertMessage = "Não foi possível adicionar o curso informado.";
 		}
 
-		$this->session->set_flashdata($insertStatus, $insertMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($insertStatus, $insertMessage);
 		redirect("program/editProgram/{$programId}");
 	}
 
@@ -146,7 +148,8 @@ class Program extends CI_Controller {
 			$removeMessage = "Não foi possível adicionar o curso informado.";
 		}
 
-		$this->session->set_flashdata($removeStatus, $removeMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($removeStatus, $removeMessage);
 		redirect("program/editProgram/{$programId}");
 	}
 
@@ -208,6 +211,10 @@ class Program extends CI_Controller {
 			$programResearchLine = $this->input->post('program_research_lines');
 
 			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);
+			$this->load->model('program_model');
+			
+
+			$session = SessionManager::getInstance();
 			if($dataIsOk){
 
 				$programData = array(
@@ -221,7 +228,6 @@ class Program extends CI_Controller {
 					'research_line' => $programResearchLine
 				);
 
-				$this->load->model('program_model');
 
 				$wasUpdated = $this->program_model->editProgram($programId, $programData);
 
@@ -233,13 +239,13 @@ class Program extends CI_Controller {
 					$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
 				}
 
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect('program');
 			}
 			else{
 				$insertStatus = "danger";
 				$insertMessage = "Esse programa já está cadastrado.";
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect("program/editProgram/{$programId}");
 			}
 
@@ -247,8 +253,7 @@ class Program extends CI_Controller {
 		else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta. Cheque os dados informados. Espaços em branco não são aceitos.";
-
-			$this->session->set_flashdata($insertStatus, $insertMessage);
+			$session->showFlashMessage($insertStatus, $insertMessage);
 			redirect("program/editProgram/{$programId}");
 		}
 	}
@@ -272,7 +277,8 @@ class Program extends CI_Controller {
 			$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($insertStatus, $insertMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($insertStatus, $insertMessage);
 
 		redirect('coordinator/coordinator_programs');
 
@@ -292,7 +298,8 @@ class Program extends CI_Controller {
 			$deleteMessage = "Não foi possível deletar o programa informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($deleteStatus, $deleteMessage);
 		redirect('program');
 	}
 
@@ -351,8 +358,10 @@ class Program extends CI_Controller {
 
 			$programNotExists = $this->verifyIfProgramNotExists($programName, $programAcronym);
 
+			$this->load->model('program_model');
+			
+			$session = SessionManager::getInstance();
 			if($programNotExists){
-				$this->load->model('program_model');
 				$wasSaved = $this->program_model->saveProgram($programData);
 
 				if($wasSaved){
@@ -364,13 +373,13 @@ class Program extends CI_Controller {
 					$insertMessage = "Não foi possível cadastrar o programa. Tente novamente.";
 				}
 
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect('program');
 			}
 			else{
 				$insertStatus = "danger";
 				$insertMessage = "Esse programa já está cadastrado.";
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect('program/registerNewProgram');
 			}
 		}
@@ -379,7 +388,7 @@ class Program extends CI_Controller {
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
 
-			$this->session->set_flashdata($insertStatus, $insertMessage);
+			$session->showFlashMessage($insertStatus, $insertMessage);
 			redirect('program/registerNewProgram');
 		}
 	}

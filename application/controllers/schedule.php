@@ -3,6 +3,7 @@
 require_once(APPPATH."/data_types/ClassHour.php");
 require_once(APPPATH."/exception/ClassHourException.php");
 require_once(APPPATH."/exception/ScheduleException.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Schedule extends CI_Controller {
 
@@ -325,7 +326,8 @@ class Schedule extends CI_Controller {
 			$message = "Ocorreu um erro e não foi possível alterar o local.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
 	}
@@ -353,7 +355,8 @@ class Schedule extends CI_Controller {
 			$message = "Ocorreu um erro e não foi possível retirar o horário";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class}");
 	}
@@ -405,7 +408,8 @@ class Schedule extends CI_Controller {
 			}
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
 	}
