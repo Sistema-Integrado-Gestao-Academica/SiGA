@@ -121,16 +121,17 @@ class Program extends CI_Controller {
 
 	public function getInformationAboutPrograms(){
 		
-		$programs = $this->getProgramsWithInformation();
+		$programs = $this->getAllPrograms();
 		$quantityOfPrograms = count($programs);
 		
 		//  Contains the courses, research lines and teachers
-		$coursesProgram = $this->getProgramsCoursesInfo($programs);		
-		
+		$coursesPrograms = $this->getProgramsCoursesInfo($programs);		
+		$programs = $this->getProgramsWithInformation($programs, $coursesPrograms);
+
 		$data = array (
 			'programs' => $programs,
 			'quantityOfPrograms' => $quantityOfPrograms,
-			'coursesPrograms' => $coursesProgram,
+			'coursesPrograms' => $coursesPrograms,
 		);
 
 		return $data;
@@ -447,29 +448,27 @@ class Program extends CI_Controller {
 	}
 
 
-	private function getProgramsWithInformation(){
-
-		$allPrograms = $this->getAllPrograms();
-
-		$programs = array();
+	private function getProgramsWithInformation($allPrograms, $coursesPrograms){
+		
 		$id = 0;
-
+		$programs = array();
 		if($allPrograms !== FALSE){
+			foreach($allPrograms as $program){
+				$summaryNonExists = empty($program['summary']);
+				$historyNonExists = empty($program['history']);
+				$contactNonExists = empty($program['contact']);
+				$researchLineNonExists = empty($program['research_line']);
 
-			foreach ($allPrograms as $program) {
-			
-				$summaryNonExists = isEmpty($program['summary']);
-				$historyNonExists = isEmpty($program['history']);
-				$contactNonExists = isEmpty($program['contact']);
-				$researchLineNonExists = isEmpty($program['research_line']);
-
-				if(!$summaryNonExists && !$historyNonExists && !$contactNonExists && !$researchLineNonExists){
-					$programs[$id] = $program;
-					$id++;
-				}	
-
+				$coursesProgram = $coursesPrograms[$program['id_program']];
+				$coursesNonExists = empty($coursesProgram);
+				
+				if(!$summaryNonExists || !$historyNonExists || !$contactNonExists || !$researchLineNonExists || !$coursesNonExists){
+						$programs[$id] = $program;
+						$id++;
+				}
 			}
-		}else{
+		}
+		else{
 			$programs = FALSE;
 		}
 
@@ -524,7 +523,10 @@ class Program extends CI_Controller {
 		foreach ($coursesId as $id) {
 						
 			$courseController = new Course();
-			$researchLines[$id] = $courseController->getCourseResearchLines($id);
+			$researchLine = $courseController->getCourseResearchLines($id);
+			if(!empty($researchLine)){
+				$researchLines[$id] = $researchLine;
+			}
 		}
 
 		return $researchLines;
@@ -533,14 +535,26 @@ class Program extends CI_Controller {
 
 	private function getCourseTeachers($coursesId){
 
-		$teachers = array();
+		$teachersName = array();
 		foreach ($coursesId as $id) {
 						
 			$courseController = new Course();
 			$teachers[$id] = $courseController->getCourseTeachers($id);
 		}
 
-		return $teachers;
+		foreach ($teachers as $teacher) {
+
+			if(!empty($teacher)){
+
+				$i = 0;
+				foreach ($teacher as $teacherName){
+					$teachersName[$i] = $teacherName['name'];
+					$i++;
+				}
+			}
+
+		}
+		return $teachersName;
 
 	}
 }
