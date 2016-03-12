@@ -237,7 +237,7 @@ class Program extends CI_Controller {
 				}
 
 				$this->session->set_flashdata($insertStatus, $insertMessage);
-				redirect('program');
+				redirect("program/editProgram/{$programId}");
 			}
 			else{
 				$insertStatus = "danger";

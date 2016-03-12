@@ -3,7 +3,9 @@
 require_once('course.php');
 require_once('usuario.php');
 require_once('module.php');
+require_once('program.php');
 require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class Secretary extends CI_Controller {
 
@@ -199,5 +201,35 @@ class Secretary extends CI_Controller {
 		$this->session->set_flashdata($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
+
+
+	public function getSecretaryPrograms(){
+		$session = $this->session->userdata("current_user");
+		$userData = $session['user'];
+		$secretaryId = $userData['id'];
+
+		$courseController = new Course();
+		$courses = $courseController->getCoursesOfSecretary($secretaryId);
+
+		$data = array();
+		$programs = array();
+		if(!empty($courses)){
+
+			foreach ($courses as $course) {
+
+				$program = new Program();
+				$courseId = $course['id_course'];
+				$programId = $course['id_program'];
+				$programs[$courseId] = $program->getProgramById($programId);
+			}
+			
+		}
+		$data = array(
+			'courses' => $courses,
+			'programs' => $programs
+		);
+		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, 'secretary/secretary_programs', $data);
+	}
+
 }
 
