@@ -123,10 +123,14 @@ class Program extends CI_Controller {
 		
 		$programs = $this->getProgramsWithInformation();
 		$quantityOfPrograms = count($programs);
-
+		
+		//  Contains the courses, research lines and teachers
+		$coursesProgram = $this->getProgramsCoursesInfo($programs);		
+		
 		$data = array (
 			'programs' => $programs,
-			'quantityOfPrograms' => $quantityOfPrograms
+			'quantityOfPrograms' => $quantityOfPrograms,
+			'coursesPrograms' => $coursesProgram,
 		);
 
 		return $data;
@@ -473,4 +477,70 @@ class Program extends CI_Controller {
 	
 	}
 
+	private function getProgramsCoursesInfo($programs){
+
+		$coursesProgram = array();
+		foreach ($programs as $program) {
+			$coursesPrograms = $this->getProgramCourses($program['id_program']);	
+			if ($coursesPrograms !== FALSE){
+				$courses = $this->getProgramsCourses($coursesPrograms);
+				$coursesProgram [$program['id_program']] = ($courses);
+
+			}
+			else{
+				$coursesProgram[$program['id_program']] = FALSE;
+			}
+		}
+	
+		return $coursesProgram;
+	}
+
+	private function getProgramsCourses($coursesPrograms){
+
+		$i = 0;
+		foreach ($coursesPrograms as $courses) {
+			$coursesId[$i] = $courses['id_course'];
+			$coursesName[$i] = $courses['course_name'];
+			$i++;
+		}
+
+		$researchLines = $this->getCourseResearchLines($coursesId);
+		$teachers = $this->getCourseTeachers($coursesId);
+
+		$courses = array(
+			'coursesId' => $coursesId,
+			'coursesName' => $coursesName,
+			'researchLines' => $researchLines,
+			'teachers' => $teachers
+		);
+		
+		return $courses;	
+				
+	}
+
+	private function getCourseResearchLines($coursesId){
+
+		$researchLines = array();
+		foreach ($coursesId as $id) {
+						
+			$courseController = new Course();
+			$researchLines[$id] = $courseController->getCourseResearchLines($id);
+		}
+
+		return $researchLines;
+
+	}
+
+	private function getCourseTeachers($coursesId){
+
+		$teachers = array();
+		foreach ($coursesId as $id) {
+						
+			$courseController = new Course();
+			$teachers[$id] = $courseController->getCourseTeachers($id);
+		}
+
+		return $teachers;
+
+	}
 }

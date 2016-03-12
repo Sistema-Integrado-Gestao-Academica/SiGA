@@ -474,6 +474,26 @@ class Course extends CI_Controller {
 		redirect('cursos');
 	}
 
+	public function getCourseResearchLines($courseId){
+
+		$this->load->model('course_model');
+
+		$researchLines = $this->course_model->getCourseResearchLines($courseId);
+
+		$researchLineNames = array();
+
+		if($researchLines !== FALSE){
+			
+			foreach ($researchLines as $researchLine) {
+				$researchLineId = $researchLine['id_research_line'];
+				$researchLineNames = $this->getResearchLineNameById($researchLineId);
+			}
+		}
+
+		return $researchLineNames;
+
+	}
+
 	public function getResearchLineNameById($researchLinesId){
 		$this->load->model('course_model');
 
