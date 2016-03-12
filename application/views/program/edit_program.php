@@ -43,19 +43,6 @@ $programSummary = array(
 	"cols" => "10"
 );
 
-
-$programResearchLines = array(
-	"name" => "program_research_lines",
-	"id" => "program_research_lines",
-	"type" => "text",
-	"class" => "form-campo",
-	"class" => "form-control",
-	"maxlength" => "1500",
-	"placeholder" => "Máximo de 1500 caracteres",
-	"style" => "height: 70px",
-	"cols" => "10"
-);
-
 $programHistory = array(
 	"name" => "program_history",
 	"id" => "program_history",
@@ -74,7 +61,6 @@ if($programData !== FALSE){
 	$programContact['value'] = $programData['contact'];
 	$programSummary['value'] = $programData['summary'];
 	$programHistory['value'] = $programData['history'];
-	$programResearchLines['value'] = $programData['research_line'];
 	
 }
 
@@ -152,12 +138,6 @@ if($currentYear !== FALSE){
 				<?= form_label("Histórico", "program_history") ?>
 				<?= form_textarea($programHistory)?>
 				<?= form_error("program_history") ?>
-			</div>
-
-			<div class="form-group">	
-				<?= form_label("Linhas de Pesquisa", "program_research_lines") ?>
-				<?= form_textarea($programResearchLines)?>
-				<?= form_error("program_research_lines") ?>
 			</div>
 		</div>
 

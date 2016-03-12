@@ -210,7 +210,6 @@ class Program extends CI_Controller {
 			$programContact = $this->input->post('program_contact');
 			$programHistory = $this->input->post('program_history');
 			$programSummary = $this->input->post('program_summary');
-			$programResearchLine = $this->input->post('program_research_lines');
 
 			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);
 			if($dataIsOk){
@@ -222,8 +221,7 @@ class Program extends CI_Controller {
 					'opening_year' => $openingYear,
 					'contact' => $programContact,
 					'history' => $programHistory,
-					'summary' => $programSummary,
-					'research_line' => $programResearchLine
+					'summary' => $programSummary
 				);
 
 				$this->load->model('program_model');
