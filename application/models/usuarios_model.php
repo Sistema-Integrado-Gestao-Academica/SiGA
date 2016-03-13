@@ -180,8 +180,8 @@ class Usuarios_model extends CI_Model {
 
 	public function getGroups($idUser){
 
-		$this->db->select('group.name');
-		$this->db->from('users_group');
+		$this->db->select('group.group_name');
+		$this->db->from('user_group');
 		$this->db->join('group', "group.id_group = user_group.id_group");
 		$this->db->where('id_user', $idUser);
 		$foundGroups = $this->db->get()->result_array();

@@ -172,28 +172,33 @@ class Usuario extends CI_Controller {
 	 * @param userId - The id of the current user 
 	 * @return userGroup - Return the academic secretary or admin group
 	 */
-	public function getGroup($userId){
-			echo "<br>";
-		echo "<br>";
-		echo "<br>";
-		echo "<br>";
-		echo "<br>";
-		echo "<br>";
-		echo "<br>";
-		var_dump($userId); exit();
+	public function getGroup(){
+		
+		$userGroup = "";
+			
+		$session = $this->session->userdata("current_user");
+		$userId = $session['user']['id'];
 
-			$this->load->model('usuarios_model');
-		$userGroups = $this->usuarios_model->getGroups($idUser);
+
+		$this->load->model('usuarios_model');
+		$userGroups = $this->usuarios_model->getGroups($userId);
 		
 		if($userGroups !== FALSE){
 
 			foreach ($userGroups as $userGroup) {
-				var_dump($userGroup);
+				if($userGroup['group_name'] == GroupConstants::ACADEMIC_SECRETARY_GROUP){
+					$userGroup = GroupConstants::ACADEMIC_SECRETARY_GROUP;
+					break;
+				}
+				elseif ($userGroup['group_name'] == GroupConstants::ADMIN_GROUP) {
+					$userGroup = GroupConstants::ADMIN_GROUP;
+					break;	
+				}
 			}
-
 		}
+		
 
-		return GroupConstants::ACADEMIC_SECRETARY_GROUP;
+		return $userGroup;
 	}
 
 	public function removeUserGroup($idUser, $idGroup){
