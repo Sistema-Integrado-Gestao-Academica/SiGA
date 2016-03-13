@@ -1,5 +1,7 @@
 
 <?php 
+require_once(APPPATH."/constants/GroupConstants.php");
+
 	
 $programName = array(
 	"name" => "program_name",
@@ -147,7 +149,14 @@ if($currentYear !== FALSE){
 					<?= form_button($submitBtn) ?>
 				</div>
 				<div class="col-xs-6">
-					<?= anchor('program', 'Voltar', "class='btn bg-olive btn-block'") ?>
+					<?php 
+					if ($userGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP){ 
+						echo anchor('secretary_programs', 'Voltar', "class='btn bg-olive btn-block'");
+					} 
+					else{
+						echo anchor('program', 'Voltar', "class='btn bg-olive btn-block'");
+					} ?>
+
 				</div>
 			</div>
 		</div>

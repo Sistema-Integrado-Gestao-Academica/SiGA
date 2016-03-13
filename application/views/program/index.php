@@ -5,4 +5,4 @@
 <br>
 <br>
 
-<?php displayRegisteredPrograms($programs); ?>
+<?php displayRegisteredPrograms($programs, TRUE); ?>

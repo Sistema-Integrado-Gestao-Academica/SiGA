@@ -163,9 +163,10 @@ class Program extends CI_Controller {
 		$group = new Module();
 		$foundGroup = $group->getGroupByName(GroupConstants::COORDINATOR_GROUP);
 
+		$user = new Usuario();
+		$userGroup = $user->getGroup();
+		
 		if($foundGroup !== FALSE){
-
-			$user = new Usuario();
 			$users = $user->getUsersOfGroup($foundGroup['id_group']);
 
 			if($users !== FALSE){
@@ -186,11 +187,13 @@ class Program extends CI_Controller {
 
 		$courses = $course->getCoursesToProgram($programId);
 
+
 		$data = array(
 			'programData' => $program,
 			'users' => $usersForCoordinator,
-			'courses' => $courses
-		);
+			'courses' => $courses,
+			'userGroup' => $userGroup
+ 		);
 
 		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
 
