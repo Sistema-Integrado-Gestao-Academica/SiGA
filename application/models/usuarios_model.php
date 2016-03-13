@@ -178,6 +178,19 @@ class Usuarios_model extends CI_Model {
 		return $foundUsers;
 	}
 
+	public function getGroups($idUser){
+
+		$this->db->select('group.name');
+		$this->db->from('users_group');
+		$this->db->join('group', "group.id_group = user_group.id_group");
+		$this->db->where('id_user', $idUser);
+		$foundGroups = $this->db->get()->result_array();
+
+		$foundGroups = checkArray($foundGroups);
+
+		return $foundGroups;
+	}
+
 	public function removeAllUsersOfGroup($idGroup){
 		
 		$this->load->model('module_model');

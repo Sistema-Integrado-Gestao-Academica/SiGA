@@ -220,7 +220,10 @@ class Secretary extends CI_Controller {
 				$program = new Program();
 				$courseId = $course['id_course'];
 				$programId = $course['id_program'];
-				$programs[$courseId] = $program->getProgramById($programId);
+				if($programId != NULL){
+					
+					$programs[$courseId] = $program->getProgramById($programId);
+				}
 			}
 			
 		}

@@ -192,7 +192,9 @@ class Program extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, "program/edit_program", $data);
+		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
+
+		loadTemplateSafelyByGroup($groups, "program/edit_program", $data);
 	}
 
 	public function updateProgram(){

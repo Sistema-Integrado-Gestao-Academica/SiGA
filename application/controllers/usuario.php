@@ -167,6 +167,35 @@ class Usuario extends CI_Controller {
 		redirect("usuario/manageGroups/{$idUser}");
 	}
 
+	/**
+	 * Get the group of the user to edit program
+	 * @param userId - The id of the current user 
+	 * @return userGroup - Return the academic secretary or admin group
+	 */
+	public function getGroup($userId){
+			echo "<br>";
+		echo "<br>";
+		echo "<br>";
+		echo "<br>";
+		echo "<br>";
+		echo "<br>";
+		echo "<br>";
+		var_dump($userId); exit();
+
+			$this->load->model('usuarios_model');
+		$userGroups = $this->usuarios_model->getGroups($idUser);
+		
+		if($userGroups !== FALSE){
+
+			foreach ($userGroups as $userGroup) {
+				var_dump($userGroup);
+			}
+
+		}
+
+		return GroupConstants::ACADEMIC_SECRETARY_GROUP;
+	}
+
 	public function removeUserGroup($idUser, $idGroup){
 
 		$this->load->model('usuarios_model');
