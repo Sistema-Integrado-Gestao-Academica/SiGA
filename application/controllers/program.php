@@ -192,7 +192,9 @@ class Program extends CI_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, "program/edit_program", $data);
+		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
+
+		loadTemplateSafelyByGroup($groups, "program/edit_program", $data);
 	}
 
 	public function updateProgram(){
@@ -237,7 +239,7 @@ class Program extends CI_Controller {
 				}
 
 				$this->session->set_flashdata($insertStatus, $insertMessage);
-				redirect('program');
+				redirect("program/editProgram/{$programId}");
 			}
 			else{
 				$insertStatus = "danger";
@@ -537,7 +539,7 @@ class Program extends CI_Controller {
 		foreach ($coursesId as $id) {
 						
 			$courseController = new Course();
-			$teachers[$id] = $courseController->getCourseTeachers($id);
+			$teachers[$id] = $courseController->getCourseTeachersName($id);
 		}
 
 		foreach ($teachers as $teacher) {
