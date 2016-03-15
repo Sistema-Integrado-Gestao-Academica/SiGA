@@ -117,6 +117,7 @@ $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
 $route['classHour_test'] = 'tests/ClassHour_test';
 $route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
+$route['selection_process_test'] = 'tests/SelectionProcess_Test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */
