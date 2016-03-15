@@ -62,6 +62,139 @@ class SelectionProcess_Test extends CI_Controller{
         $this->unit->run($id, $selectionProcess->getId(), $test_name, $notes);
     }
 
+    public function shouldInstantiateWithValidRandomId(){
+
+        $id = rand(SelectionProcess::MIN_ID, PHP_INT_MAX);
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid random id (id = ".$id.")";
+
+        $this->unit->run($id, $selectionProcess->getId(), $test_name, $notes);
+    }
+
+    public function shouldInstantiateWithValidFALSEId(){
+
+        $id = FALSE;
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid FALSE id";
+
+        $this->unit->run($id, $selectionProcess->getId(), $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidId0(){
+
+        $id = 0;
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with id 0 (id = ".$id.")";
+
+        $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidRandomId(){
+
+        $id = rand(PHP_INT_MAX + 1, SelectionProcess::MIN_ID-1);
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with random invalid id (id = ".$id.")";
+
+        $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidNullId(){
+
+        $id = NULL;
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with invalid NULL id ";
+
+        $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidBlankId(){
+
+        $id = "";
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with invalid blank id";
+
+        $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidNotNumberId(){
+
+        $id = "ad7&3)";
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        $notes = "";
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name, $id);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with invalid not number id";
+
+        $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
+    }
+
 /* Course tests */
 
     public function shouldInstantiateWithValidCourseId1(){
@@ -82,7 +215,7 @@ class SelectionProcess_Test extends CI_Controller{
 
     public function shouldInstantiateWithValidRandomCourseId(){
 
-        $course = rand(SelectionProcess::COURSE_MIN_ID, PHP_INT_MAX);
+        $course = rand(SelectionProcess::MIN_ID, PHP_INT_MAX);
         $name = "Edital PPGE 2016";
 
         try{
@@ -115,7 +248,7 @@ class SelectionProcess_Test extends CI_Controller{
     
     public function shouldNotInstantiateWithInvalidRandomCourseId(){
 
-        $course = rand(PHP_INT_MAX + 1, SelectionProcess::COURSE_MIN_ID-1);
+        $course = rand(PHP_INT_MAX + 1, SelectionProcess::MIN_ID-1);
         $name = "Edital PPGE 2016";
 
         try{
@@ -259,6 +392,13 @@ class SelectionProcess_Test extends CI_Controller{
         /* Call your test functions here */
 
         $this->shouldInstantiateWithValidId1();
+        $this->shouldInstantiateWithValidRandomId();
+        $this->shouldInstantiateWithValidFALSEId();
+        $this->shouldNotInstantiateWithInvalidId0();
+        $this->shouldNotInstantiateWithInvalidRandomId();
+        $this->shouldNotInstantiateWithInvalidNullId();
+        $this->shouldNotInstantiateWithInvalidBlankId();
+        $this->shouldNotInstantiateWithInvalidNotNumberId();
 
         $this->shouldInstantiateWithValidCourseId1();
         $this->shouldInstantiateWithValidRandomCourseId();
@@ -273,7 +413,11 @@ class SelectionProcess_Test extends CI_Controller{
         $this->shouldNotInstantiateWithInvalidBlankName();
         $this->shouldNotInstantiateWithInvalidNullName();
 
-        $test_report = array('unit_report' => $this->unit->report());
+        $test_report = array(
+            'unit_report' => $this->unit->report(),
+            'passedTests' => $this->unit->passed_tests(),
+            'failedTests' => $this->unit->failed_tests()
+        );
 
         $this->load->test_template('tests/SelectionProcess_test_report', $test_report);
     }

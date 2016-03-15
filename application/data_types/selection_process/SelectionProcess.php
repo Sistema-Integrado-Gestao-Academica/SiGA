@@ -10,7 +10,7 @@ abstract class SelectionProcess{
 	const INVALID_ID = "O ID do processo seletivo deve ser um número maior que zero.";
 	const INVALID_SETTINGS = "Configurações inválidas para o processo seletivo.";
 
-	const COURSE_MIN_ID = 1;
+	const MIN_ID = 1;
 
 	private $id;
 	private $name;
@@ -69,6 +69,7 @@ abstract class SelectionProcess{
 			}
 		}else{
 			//If the ID is FALSE, is because is a new object, not coming from DB
+			$this->id = $id;
 		}
 	}
 
