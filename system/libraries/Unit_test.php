@@ -34,6 +34,9 @@ class CI_Unit_test {
 	var $_template				= NULL;
 	var $_template_rows			= NULL;
 	var $_test_items_visible	= array();
+	
+	var $passedTests 			= 0;
+	var $totalTests 			= 0;
 
 	public function __construct()
 	{
@@ -108,6 +111,12 @@ class CI_Unit_test {
 
 		$back = $this->_backtrace();
 
+		$this->totalTests += 1;
+
+		if($result === TRUE){
+			$this->passedTests += 1;
+		}
+
 		$report[] = array (
 							'test_name'			=> $test_name,
 							'test_datatype'		=> gettype($test),
@@ -121,6 +130,32 @@ class CI_Unit_test {
 		$this->results[] = $report;
 
 		return($this->report($this->result($report)));
+	}
+
+	// --------------------------------------------------------------------
+
+	/** Get the quantity of passed tests
+	 *
+	 * Return the number of passed tests
+	 *
+	 * @access	public
+	 * @return	int
+	 */
+	function passed_tests(){
+		return $this->passedTests;
+	}
+
+	// --------------------------------------------------------------------
+
+	/** Get the quantity of failed tests
+	 *
+	 * Return the number of failed tests
+	 *
+	 * @access	public
+	 * @return	int
+	 */
+	function failed_tests(){
+		return ($this->totalTests - $this->passedTests);
 	}
 
 	// --------------------------------------------------------------------
