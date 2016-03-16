@@ -15,7 +15,7 @@ require_once(APPPATH."/exception/SelectionProcessException.php");
 class SelectionProcess_Test extends TestCase{
 
     public function __construct(){
-        parent::__construct();
+        parent::__construct($this);
     }
 
 /* Id tests */
@@ -358,20 +358,4 @@ class SelectionProcess_Test extends TestCase{
 
         $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
     }
-
-/*  */
-
-    public function index(){
-
-        parent::run($this);
-
-        $test_report = array(
-            'unit_report' => $this->unit->report(),
-            'passedTests' => $this->unit->passed_tests(),
-            'failedTests' => $this->unit->failed_tests()
-        );
-
-        $this->load->test_template('tests/SelectionProcess_test_report', $test_report);
-    }
-
 }

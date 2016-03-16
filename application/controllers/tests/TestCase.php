@@ -6,18 +6,18 @@
 
 abstract class TestCase extends CI_Controller{
 
-	private $child;
-	private $reportPath;
+    const REPORT_PATH = "test_report";
+  
+    private $child;
 
-    public function __construct($child, $reportPath){
+    public function __construct($child){
         
         parent::__construct();
 
         $this->child = $child;
-        $this->reportPath = $reportPath;
         
         $this->load->library('unit_test');
-        
+
         $tableTemplate = "
           <h2><i class='fa fa-pencil-square-o'></i></h2>
           <div class=\"box-body table-responsive no-padding\">
@@ -47,47 +47,48 @@ abstract class TestCase extends CI_Controller{
 
     private function run(){
 
-    	$child = $this->child;
+        $child = $this->child;
 
-    	$testClass = new ReflectionClass(get_class($child));
+        $testClass = new ReflectionClass(get_class($child));
 
-    	$tests = $testClass->getMethods();
+        $tests = $testClass->getMethods();
 
-    	foreach($tests as $test){
-    		
-    		// Get the methods only for the child (the class that contains the tests)
-    		if($test->class === get_class($child)){
+        foreach($tests as $test){
+            
+            // Get the methods only for the child (the class that contains the tests)
+            if($test->class === get_class($child)){
 
-    			$testName = $test->name;
+                $testName = $test->name;
 
-    			// Check if the method(test) exists
-    			if(method_exists($child, $testName)){
+                // Check if the method(test) exists
+                if(method_exists($child, $testName)){
 
-    				// No need to run the construct and the index
-	    			if($testName !== "__construct" && $testName !== "index"){
-		    			
-		    			// Run the tests
-		    			$child->{$testName}();
-	    			}
-    			}else{
+                    // No need to run the construct and the index
+                    if($testName !== "__construct" && $testName !== "index"){
+                        
+                        // Run the tests
+                        $child->{$testName}();
+                    }
+                }else{
 
-    				// Using AdminLTE callout and callout() method defined in tables_helper
-    				callout("danger", "O teste '".$testName."'() não existe.");
-    			}
-    		}
-    	}
+                    // Using AdminLTE callout and callout() method defined in tables_helper
+                    callout("danger", "O teste '".$testName."'() não existe.");
+                }
+            }
+        }
     }
 
     public function index(){
 
-    	$this->run();
+        $this->run();
 
         $test_report = array(
             'unit_report' => $this->unit->report(),
             'passedTests' => $this->unit->passed_tests(),
-            'failedTests' => $this->unit->failed_tests()
+            'failedTests' => $this->unit->failed_tests(),
+            'classUnderTest' => get_class($this->child)
         );
 
-        $this->load->test_template($this->reportPath, $test_report);
+        $this->load->test_template(self::REPORT_PATH, $test_report);
     }
 }
