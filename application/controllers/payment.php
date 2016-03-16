@@ -188,7 +188,7 @@ class Payment extends CI_Controller {
 		$pisPasep = $paymentData["pisPasep"];
 		$cpf = $paymentData["cpf"];
 		$enrollmentNumber = $paymentData["enrollmentNumber"];
-		$arrivalInBrazil = $paymentData["arrivalInBrazil"];
+		$arrivalInBrazil = $paymentData["arrivalInBrazil"];		
 		$phone = $paymentData["phone"];
 		$email = $paymentData["email"];
 		$address = $paymentData["address"];

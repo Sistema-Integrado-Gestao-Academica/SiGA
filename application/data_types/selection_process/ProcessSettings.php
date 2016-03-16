@@ -6,29 +6,24 @@ require_once "phases/ProcessPhase.php";
 class ProcessSettings{
 
 	const INVALID_PHASE = "As fases do processo seletivo não pode ser nulas."; 
+	const INVALID_DATE = "A data informada é inválida. Deve estar no formato dd/mm/yyyy.";
+	const INVALID_DATE_INTERVAL = "A data final não pode ser antes da data inicial.";
 
 	private $startDate;
 	private $endDate;
 	private $phases;
 	private $phasesOrder;
-	private $currentPhase;
 
-	public function __construct($startDate, $endDate, $phases = FALSE, $phasesOrder = FALSE, $currentPhase = FALSE){
+	public function __construct($startDate, $endDate, $phases = FALSE, $phasesOrder = FALSE){
 
 		$this->setStartDate($startDate);
 		$this->setEndDate($endDate);
+		$this->validateDatesDiff();
 		$this->setPhases($phases);
 		$this->setPhasesOrder($phasesOrder);
-		$this->setCurrentPhase($currentPhase);
 	}
 
 	public function addPhase($phase){
-
-		/**
-		 
-		 Ver questão da classe abstrata
-
-		 **/
 
 		if(get_parent_class($phase) === ProcessPhase::class){
 			
@@ -42,16 +37,98 @@ class ProcessSettings{
 		}
 	}
 
+	private function validateDatesDiff(){
+
+		$startDate = $this->getStartDate();
+		$endDate = $this->getEndDate();
+
+		// The end date must be later than the start date
+		if($endDate <= $startDate){
+			throw new SelectionProcessException(self::INVALID_DATE_INTERVAL);
+		}
+	}
+
 //Setters
 
 	private function setStartDate($startDate){
 
-		$this->startDate = $startDate;
+		$date = $this->validateDate($startDate);
+
+	   if($date !== FALSE){
+
+	   		$validStartDate = $this->formatDateToDateTime($date);
+
+			try{
+				$validDate = new DateTime($validStartDate);
+				
+				$this->startDate = $validDate;
+			}catch(Exception $e){
+				
+				throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_DATE." - ".$e->getMessage());
+			}
+	   }else{
+			throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_DATE);
+	   }
+	   
 	}
 
 	private function setEndDate($endDate){
 		
-		$this->endDate = $endDate;
+		$date = $this->validateDate($endDate);
+
+	   if($date !== FALSE){
+
+	   		$validStartDate = $this->formatDateToDateTime($date);
+
+			try{
+				$validDate = new DateTime($validStartDate);
+				
+				$this->endDate = $validDate;
+			}catch(Exception $e){
+				
+				throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_DATE." - ".$e->getMessage());
+			}
+	   }else{
+			throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_DATE);
+	   }
+	}
+
+	private function validateDate($strDate){
+
+		$date = date_parse_from_format("d/m/Y", $strDate);
+
+		$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE 
+					   && $date["day"] !== FALSE && $date["error_count"] === 0 
+					   && $date["warning_count"] === 0;
+
+		if(!$dateIsValid){
+			$date = FALSE;
+		}
+
+		return $date;
+	}
+
+	private function formatDateToDateTime($date){
+
+		$day = $date["day"];
+		$month = $date["month"];
+		$year = $date["year"];
+
+		$strDay = (string) $day;
+		$strMonth = (string) $month;
+		
+		if(strlen($strDay) === 1){
+			$day = "0".$day;
+		}
+
+		if(strlen($strMonth) === 1){
+			$month = "0".$month;
+		}
+
+		// Valid format date to DateTime class
+		$formattedDate = $year."/".$month."/".$day;
+
+		return $formattedDate;
 	}
 
 	private function setPhases($phases){
@@ -72,21 +149,30 @@ class ProcessSettings{
 		}
 	}
 
-	private function setCurrentPhase($currentPhase){
-
-		if($currentPhase !== FALSE){
-			$this->currentPhase = $currentPhase;
-		}else{
-
-		}
-	}
-
 // Getters
 
 	public function getStartDate(){
 		return $this->startDate;
 	}
-	
+
+	public function getFormattedStartDate(){
+		
+		$date = $this->getStartDate();
+
+		$formattedDate = $date->format("d/m/Y");
+
+		return $formattedDate;
+	}
+
+	public function getFormattedEndDate(){
+		
+		$date = $this->getEndDate();
+
+		$formattedDate = $date->format("d/m/Y");
+
+		return $formattedDate;
+	}
+
 	public function getEndDate(){
 		return $this->endDate;
 	}
@@ -97,9 +183,5 @@ class ProcessSettings{
 
 	public function getPhasesOrder(){
 		return $this->phasesOrder;
-	}
-
-	public function getCurrentPhase(){
-		return $this->currentPhase;
 	}
 }
