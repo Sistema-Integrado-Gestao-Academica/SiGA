@@ -93,6 +93,7 @@ $route['secretary_programs'] = 'secretary/getSecretaryPrograms';
  */
 $route['mastermind'] = 'mastermind/displayMastermindStudents';
 $route['titling_area'] = 'mastermind/titlingArea';
+$route['update_profile'] = 'teacher/updateProfile';
 
 /*
  * Student functionalities routes
