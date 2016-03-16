@@ -1,9 +1,9 @@
 
 <?php 
 	
-$summary = array(
-	"name" => "summary",
-	"id" => "summary",
+$summaryField = array(
+	"name" => "summaryField",
+	"id" => "summaryField",
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
@@ -12,10 +12,10 @@ $summary = array(
 
 );
 
-$lattes = array(
-	"name" => "lattes",
-	"id" => "lattes",
-	"type" => "text",
+$lattesField = array(
+	"name" => "lattesField",
+	"id" => "lattesField",
+	"type" => "url",
 	"class" => "form-campo",
 	"class" => "form-control"
 );
@@ -26,6 +26,11 @@ $submitBtn = array(
 	"content" => "Atualizar perfil",
 	"type" => "submit"
 );
+
+// Setting values
+$summaryField['value'] = $summary;
+$lattesField['value'] = $lattes;
+
 ?>
 
 <div class="form-box" id="login-box">
@@ -36,15 +41,15 @@ $submitBtn = array(
 
 		<div class="body bg-gray">
 			<div class="form-group">	
-				<?= form_label("Resumo", "summary") ?>
-				<?= form_textarea($summary) ?>
-				<?= form_error("summary") ?>
+				<?= form_label("Resumo", "summaryField") ?>
+				<?= form_textarea($summaryField) ?>
+				<?= form_error("summaryField") ?>
 			</div>
 
 			<div class="form-group">	
-				<?= form_label("Link para o Lattes", "lattes") ?>
-				<?= form_input($lattes) ?>
-				<?= form_error("lattes") ?>
+				<?= form_label("Link para o Lattes", "lattesField") ?>
+				<?= form_input($lattesField) ?>
+				<?= form_error("lattesField") ?>
 			</div>
 		</div>
 

@@ -4,17 +4,18 @@ require_once(APPPATH."/constants/GroupConstants.php");
 
 class Teacher extends CI_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('teacher_model');
+	}
+
 	public function updateProfile(){
 		
 		$session = $this->session->userdata("current_user");
 		$teacher = $session['user']['id'];
+		$infoProfile = $this->getInfoProfile($teacher);
 
-		$data = array(
-			'teacher' => $teacher,
-			'session' => $session
-		);
-
-		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'teacher/update_profile', $data);
+		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'teacher/update_profile', $infoProfile);
 	}
 
 	public function saveProfile(){
@@ -25,28 +26,54 @@ class Teacher extends CI_Controller {
 
 		//if($teacherDataIsOk){
 
-			$summary = $this->input->post('summary');
-			$lattes = $this->input->post('lattes');
+			$summary = $this->input->post('summaryField');
+			$lattes = $this->input->post('lattesField');
 			
 			$teacherData = array(
 				'summary' => $summary,
-				'lattes' => $lattes
+				'lattes_link' => $lattes,
+				'id_user' => $teacherId
 			);
 
-			$this->load->model('teacher_model');
-
-			$wasUpdated = $this->teacher_model->updateProfile($teacherId, $teacherData);
+			$wasUpdated = $this->teacher_model->updateProfile($teacherData);
 
 			if($wasUpdated){
 				$insertStatus = "success";
 				$insertMessage = "Perfil atualizado com sucesso!";
+				$this->session->set_flashdata($insertStatus, $insertMessage);
+				redirect('mastermind_home');
 			}
 			else{
 				$insertStatus = "danger";
 				$insertMessage = "Não foi possível atualizar o perfil. Tente novamente.";
+				$this->session->set_flashdata($insertStatus, $insertMessage);
+				redirect('update_profile');
 			}
 
-			$this->session->set_flashdata($insertStatus, $insertMessage);
-			redirect('mastermind_home');
+	}
+
+	public function getInfoProfile($teacherId){
+
+		$teacher = array('id_user' => $teacherId);
+		$teacherProfile = $this->teacher_model->getTeacherProfile($teacher);
+		
+		if($teacherProfile !== FALSE && !empty($teacherProfile)){
+			
+			$summary = $teacherProfile['summary'];
+			$lattes = $teacherProfile['lattes_link'];
+		}	
+		else{
+			
+			$summary = "";	
+			$lattes = "";
+		}
+
+		$data = array(
+			'teacher' => $teacherId,
+			'summary' => $summary,
+			'lattes' => $lattes
+		);
+		
+		return $data;
 	}
 }
