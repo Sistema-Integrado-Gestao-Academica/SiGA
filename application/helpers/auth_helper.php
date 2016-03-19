@@ -48,7 +48,20 @@ function loadTemplateSafelyByGroup($requiredGroup, $template, $data = array()){
 
 	$ci = get_instance();
 
-	$userHasGroup = $group->checkUserGroup($requiredGroup);
+	$userHasGroup = FALSE;
+
+	if(is_string($requiredGroup)){
+		$userHasGroup = $group->checkUserGroup($requiredGroup);
+	}
+	else{
+		foreach ($requiredGroup as $g) {
+			$userHasGroup = $group->checkUserGroup($g);
+			if($userHasGroup == TRUE){
+				break;
+			}
+		}
+		
+	}
 
 	if($userHasGroup){
 		$ci->load->template($template, $data);

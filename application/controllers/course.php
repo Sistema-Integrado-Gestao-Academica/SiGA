@@ -48,6 +48,16 @@ class Course extends CI_Controller {
 		return $teachers;
 	}
 
+	public function getCourseTeachersName($courseId){
+
+		$this->load->model('course_model');
+
+		$teachers = $this->course_model->getCourseTeachersName($courseId);
+
+		return $teachers;
+	}
+
+
 	public function enrollTeacherToCourse($teacherId, $courseId){
 
 		$this->load->model('course_model');
@@ -472,6 +482,26 @@ class Course extends CI_Controller {
 
 		$this->session->set_flashdata($updateStatus, $updateMessage);
 		redirect('cursos');
+	}
+
+	public function getCourseResearchLines($courseId){
+
+		$this->load->model('course_model');
+
+		$researchLines = $this->course_model->getCourseResearchLines($courseId);
+
+		$researchLineNames = array();
+
+		if($researchLines !== FALSE){
+			
+			foreach ($researchLines as $researchLine) {
+				$researchLineId = $researchLine['id_research_line'];
+				$researchLineNames = $this->getResearchLineNameById($researchLineId);
+			}
+		}
+
+		return $researchLineNames;
+
 	}
 
 	public function getResearchLineNameById($researchLinesId){

@@ -121,12 +121,17 @@ class Program extends CI_Controller {
 
 	public function getInformationAboutPrograms(){
 		
-		$programs = $this->getProgramsWithInformation();
+		$programs = $this->getAllPrograms();
 		$quantityOfPrograms = count($programs);
+		
+		//  Contains the courses, research lines and teachers
+		$coursesPrograms = $this->getProgramsCoursesInfo($programs);		
+		$programs = $this->getProgramsWithInformation($programs, $coursesPrograms);
 
 		$data = array (
 			'programs' => $programs,
-			'quantityOfPrograms' => $quantityOfPrograms
+			'quantityOfPrograms' => $quantityOfPrograms,
+			'coursesPrograms' => $coursesPrograms,
 		);
 
 		return $data;
@@ -158,9 +163,10 @@ class Program extends CI_Controller {
 		$group = new Module();
 		$foundGroup = $group->getGroupByName(GroupConstants::COORDINATOR_GROUP);
 
+		$user = new Usuario();
+		$userGroup = $user->getGroup();
+		
 		if($foundGroup !== FALSE){
-
-			$user = new Usuario();
 			$users = $user->getUsersOfGroup($foundGroup['id_group']);
 
 			if($users !== FALSE){
@@ -181,13 +187,17 @@ class Program extends CI_Controller {
 
 		$courses = $course->getCoursesToProgram($programId);
 
+
 		$data = array(
 			'programData' => $program,
 			'users' => $usersForCoordinator,
-			'courses' => $courses
-		);
+			'courses' => $courses,
+			'userGroup' => $userGroup
+ 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, "program/edit_program", $data);
+		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
+
+		loadTemplateSafelyByGroup($groups, "program/edit_program", $data);
 	}
 
 	public function updateProgram(){
@@ -205,7 +215,6 @@ class Program extends CI_Controller {
 			$programContact = $this->input->post('program_contact');
 			$programHistory = $this->input->post('program_history');
 			$programSummary = $this->input->post('program_summary');
-			$programResearchLine = $this->input->post('program_research_lines');
 
 			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);
 			if($dataIsOk){
@@ -217,8 +226,7 @@ class Program extends CI_Controller {
 					'opening_year' => $openingYear,
 					'contact' => $programContact,
 					'history' => $programHistory,
-					'summary' => $programSummary,
-					'research_line' => $programResearchLine
+					'summary' => $programSummary
 				);
 
 				$this->load->model('program_model');
@@ -234,7 +242,7 @@ class Program extends CI_Controller {
 				}
 
 				$this->session->set_flashdata($insertStatus, $insertMessage);
-				redirect('program');
+				redirect("program/editProgram/{$programId}");
 			}
 			else{
 				$insertStatus = "danger";
@@ -443,29 +451,27 @@ class Program extends CI_Controller {
 	}
 
 
-	private function getProgramsWithInformation(){
-
-		$allPrograms = $this->getAllPrograms();
-
-		$programs = array();
+	private function getProgramsWithInformation($allPrograms, $coursesPrograms){
+		
 		$id = 0;
-
+		$programs = array();
 		if($allPrograms !== FALSE){
+			foreach($allPrograms as $program){
+				$summaryNonExists = empty($program['summary']);
+				$historyNonExists = empty($program['history']);
+				$contactNonExists = empty($program['contact']);
+				$researchLineNonExists = empty($program['research_line']);
 
-			foreach ($allPrograms as $program) {
-			
-				$summaryNonExists = isEmpty($program['summary']);
-				$historyNonExists = isEmpty($program['history']);
-				$contactNonExists = isEmpty($program['contact']);
-				$researchLineNonExists = isEmpty($program['research_line']);
-
-				if(!$summaryNonExists && !$historyNonExists && !$contactNonExists && !$researchLineNonExists){
-					$programs[$id] = $program;
-					$id++;
-				}	
-
+				$coursesProgram = $coursesPrograms[$program['id_program']];
+				$coursesNonExists = empty($coursesProgram);
+				
+				if(!$summaryNonExists || !$historyNonExists || !$contactNonExists || !$researchLineNonExists || !$coursesNonExists){
+						$programs[$id] = $program;
+						$id++;
+				}
 			}
-		}else{
+		}
+		else{
 			$programs = FALSE;
 		}
 
@@ -473,4 +479,85 @@ class Program extends CI_Controller {
 	
 	}
 
+	private function getProgramsCoursesInfo($programs){
+
+		$coursesProgram = array();
+		foreach ($programs as $program) {
+			$coursesPrograms = $this->getProgramCourses($program['id_program']);	
+			if ($coursesPrograms !== FALSE){
+				$courses = $this->getProgramsCourses($coursesPrograms);
+				$coursesProgram [$program['id_program']] = ($courses);
+
+			}
+			else{
+				$coursesProgram[$program['id_program']] = FALSE;
+			}
+		}
+	
+		return $coursesProgram;
+	}
+
+	private function getProgramsCourses($coursesPrograms){
+
+		$i = 0;
+		foreach ($coursesPrograms as $courses) {
+			$coursesId[$i] = $courses['id_course'];
+			$coursesName[$i] = $courses['course_name'];
+			$i++;
+		}
+
+		$researchLines = $this->getCourseResearchLines($coursesId);
+		$teachers = $this->getCourseTeachers($coursesId);
+
+		$courses = array(
+			'coursesId' => $coursesId,
+			'coursesName' => $coursesName,
+			'researchLines' => $researchLines,
+			'teachers' => $teachers
+		);
+		
+		return $courses;	
+				
+	}
+
+	private function getCourseResearchLines($coursesId){
+
+		$researchLines = array();
+		foreach ($coursesId as $id) {
+						
+			$courseController = new Course();
+			$researchLine = $courseController->getCourseResearchLines($id);
+			if(!empty($researchLine)){
+				$researchLines[$id] = $researchLine;
+			}
+		}
+
+		return $researchLines;
+
+	}
+
+	private function getCourseTeachers($coursesId){
+
+		$teachersName = array();
+		foreach ($coursesId as $id) {
+						
+			$courseController = new Course();
+			$teachers[$id] = $courseController->getCourseTeachersName($id);
+		}
+
+		foreach ($teachers as $teacher) {
+
+			if(!empty($teacher)){
+
+				$i = 0;
+				foreach ($teacher as $teacherName){
+					$teachersName[$i] = $teacherName['name'];
+					$i++;
+				}
+			}
+
+		}
+		return $teachersName;
+
+	}
 }

@@ -55,8 +55,7 @@ class Program_model extends CI_Model {
 
 		$this->db->select('*');
 		$this->db->from('course');
-		$this->db->join('program_course', "program_course.id_course = course.id_course");
-		$this->db->where('program_course.id_program', $programId);
+		$this->db->where('course.id_program', $programId);
 		$programCourses = $this->db->get()->result_array();
 
 		$programCourses = checkArray($programCourses);

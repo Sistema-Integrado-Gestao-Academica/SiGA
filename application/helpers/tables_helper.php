@@ -1590,58 +1590,67 @@ function displayRegisteredCoursesToProgram($programId, $courses){
 	buildTableEndDeclaration();
 }
 
-function displayRegisteredPrograms($programs){
+function displayRegisteredPrograms($programs, $canRemove){
 
-	buildTableDeclaration();
+	if(!empty($programs)){
+		buildTableDeclaration();
 
-	buildTableHeaders(array(
-		'Programas cadastrados',
-		'Ações'
-	));
+		buildTableHeaders(array(
+			'Programas cadastrados',
+			'Ações'
+		));
 
-    if($programs !== FALSE){
+		if($programs !== FALSE){
 
-    	foreach($programs as $program){
-    		echo "<tr>";
+			foreach($programs as $program){
+				echo "<tr>";
 
-    			echo "<td>";
-    				echo $program['program_name']." - ".$program['acronym'];
-    			echo "</td>";
+					echo "<td>";
+						echo $program['program_name']." - ".$program['acronym'];
+					echo "</td>";
 
-    			echo "<td>";
+					echo "<td>";
 
-				$summaryNonExists = isEmpty($program['summary']);
-				$historyNonExists = isEmpty($program['history']);
-				$contactNonExists = isEmpty($program['contact']);
-				$researchLineNonExists = isEmpty($program['research_line']);
+					$summaryNonExists = isEmpty($program['summary']);
+					$historyNonExists = isEmpty($program['history']);
+					$contactNonExists = isEmpty($program['contact']);
 
-				if($summaryNonExists || $historyNonExists || $contactNonExists || $researchLineNonExists){			
-    				echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-         				data-content=\"Edite o programa e complemente com os dados de resumo, contato, histórico e linhas de 	pesquisa.\" id='alert' ><i class='fa fa-warning'></i> Dados Incompletos </span>";
-	    		}
-	    			echo "<br><br>";
-    				echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
-         				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-         				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
+					if($summaryNonExists || $historyNonExists || $contactNonExists){			
+						echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		     				data-content=\"Edite o programa e complemente com os dados de resumo, contato, histórico e linhas de 	pesquisa.\" id='alert' ><i class='fa fa-warning'></i> Dados Incompletos </span>";
+		    		}
+		    			echo "<br><br>";
+						echo anchor("program/editProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right: 5%' id='edit_program_btn' data-container=\"body\"
+		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		     				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
-    				echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
-         				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-         				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
+					if ($canRemove) {
+						
+						echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
+		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+		     				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
+					}
 
-    			echo "</td>";
+					echo "</td>";
 
-    		echo "</tr>";
-    	}
+				echo "</tr>";
+			}
 
-    }else{
-    	echo "<td colspan=2>";
-    		$wrapperContent = anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'");
-    		$callout = wrapperCallout("info", $wrapperContent, "Não existem programas cadastrados.");
-    		$callout->draw();
+		}else{
+			echo "<td colspan=2>";
+				$wrapperContent = anchor("program/registerNewProgram", "Cadastrar Programa", "class='btn btn-primary'");
+				$callout = wrapperCallout("info", $wrapperContent, "Não existem programas cadastrados.");
+				$callout->draw();
+			echo "</td>";
+		}
+
+		buildTableEndDeclaration();
+	}
+	else{
+		echo "<td colspan=2>";
+			callout("info", "Nenhum programa cadastrado");
 		echo "</td>";
-    }
-
-	buildTableEndDeclaration();
+	}
 }
 
 function displayCoordinatorPrograms($programs){
