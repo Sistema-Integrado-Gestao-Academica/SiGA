@@ -1,6 +1,14 @@
 
 $(document).ready(function(){
 
+
+	$("#sortable").sortable();
+	$("#sortable").sortable("option", "axis", "y");
+	$("#sortable").sortable("option", "cursor", "move");
+	$("#sortable").sortable("option", "containment", "parent");
+	
+	var order = $("#sortable").sortable("toArray");
+
 	// Back button
 	$("#back_btn").click(function(){
 		history.go(-1);

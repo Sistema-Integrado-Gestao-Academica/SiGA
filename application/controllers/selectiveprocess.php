@@ -3,6 +3,7 @@
 require_once("secretary.php");
 require_once("course.php");
 require_once("program.php");
+require_once("phase.php");
 
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/constants/SelectionProcessConstants.php");
@@ -13,6 +14,15 @@ require_once(APPPATH."/data_types/selection_process/SpecialStudentProcess.php");
 require_once(APPPATH."/data_types/selection_process/ProcessSettings.php");
 
 class SelectiveProcess extends CI_Controller {
+
+    const MODEL_NAME = "selectiveprocess_model";
+    const MODEL_OBJECT = "process_model";
+
+    public function __construct(){
+        parent::__construct();
+
+        $this->load->model(self::MODEL_NAME, self::MODEL_OBJECT);
+    }
 
     public function index() {
         
@@ -63,8 +73,12 @@ class SelectiveProcess extends CI_Controller {
         $course = new Course();
         $course = $course->getCourseById($courseId);
 
+        $phase = new Phase();
+        $phases = $phase->getAllPhases(); 
+
         $data = array(
-            'course' => $course
+            'course' => $course,
+            'phases' => $phases
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/new", $data);
@@ -88,6 +102,7 @@ class SelectiveProcess extends CI_Controller {
         $noticeName = $this->input->post("selective_process_name");
         $startDate = $this->input->post("selective_process_start_date");
         $endDate = $this->input->post("selective_process_end_date");
+
 
         $config = $this->setUploadOptions(); 
 
@@ -116,22 +131,62 @@ class SelectiveProcess extends CI_Controller {
 
                 if($process !== FALSE){
                     
-                    /* 
-                        Continue from here ...
-                    */
-                    $phases = array();
-                    $phaseOrder = serialize(array());
+                    $homologation = SelectionProcessConstants::HOMOLOGATION_PHASE_ID;
 
-                    $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
+                    $preProject = $this->input->post("phase_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
+                    
+                    $preProjectWeight = $this->input->post("phase_weight_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
+
+                    $writtenTest = $this->input->post("phase_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
+                    
+                    $writtenTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
+
+                    $oralTest = $this->input->post("phase_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+
+                    $oralTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+
+                    $phases = array();
+                    
+                    if($preProject !== FALSE){
+                        $preProject = new PreProjectEvaluation($preProjectWeight);
+                        $phases[] = $preProject;
+                    }
+
+                    if($writtenTest !== FALSE){
+                        $writtenTest = new WrittenTest($writtenTestWeight);
+                        $phases[] = $writtenTest;
+                    }
+
+                    if($oralTest !== FALSE){
+                        $oralTest = new OralTest($OralTestWeight);
+                        $phases[] = $oralTest;
+                    }
+
+                    if(!empty($phases)){
+
+                        // Just to test
+                        $phaseOrder = serialize(array(1,2,3,4));
+
+                        $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
+
+                        $process->addSettings($processSettings);
+
+                        $this->process_model->save($process);
+
+                    }else{
+                        // The process must have at least one phase
+                    }
 
                 }else{
                     // Invalid Student Type
                 }
             }catch(SelectionProcessException $e){
-
+                var_dump($e->getMessage());
+                exit;
             }
 
         }else{
+            // Errors on file upload
             $errors = $this->upload->display_errors();
         }
     }

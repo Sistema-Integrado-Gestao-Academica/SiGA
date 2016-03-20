@@ -41,7 +41,20 @@
 		"name" => "notice_file",
 		"id" => "notice_file",
 		"type" => "file"
-		// "class" => "form-campo form-control"
+	);
+
+	$processPhases = array(
+		"class" => "form-control",
+		"checked" => TRUE
+	);
+
+	$phaseWeight = array(
+		"type" => "number",
+		"min" => 0,
+		"max" => 5,
+		"steps" => 1,
+		"class" => "form-control",
+		"placeholder" => "Informe o peso dessa fase"
 	);
 
 	$submitBtn = array(
@@ -58,11 +71,12 @@
 
 <!-- Basic data of selection process -->
 
-<h4><i class="fa fa-file-o"></i> Dados básicos</h4>
+<h3><i class="fa fa-file-o"></i> Dados básicos</h3>
 <br>
 
 <?= form_open_multipart("selectiveprocess/newSelectionProcess"); ?>
 
+<?= form_hidden($hidden); ?>
 
 <div class="row">
 	<div class="col-md-3">
@@ -102,9 +116,96 @@
 <!-- Selection Process Settings -->
 <br>
 <br>
-<h4><i class="fa fa-cogs"></i> Configurações do edital</h4>
+<h3><i class="fa fa-cogs"></i> Configurações do edital</h3>
 
+<br>
+<h4><i class="fa fa-files-o"></i> Fases do edital</h4>
 
+<div class="row">
+	<div class="col-md-8">
+		<?= form_label("Selecione as fases que comporão o processo seletivo:"); ?>
+		
+		<h4><small><b>
+		Marque as fases desejadas clicando em seus nomes.<br>
+		Ao lado do nome da fase, informe o peso da mesma.<br>
+		Os pesos definidos são os pesos padrão.<br>
+		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
+		</b></small></h4>
+		
+	<?php
+		if(!empty($phases)){
+
+			foreach($phases as $phase){
+				
+				// Homologation phase is obrigatory and do not have weight
+				if($phase->getPhaseName() !== SelectionProcessConstants::HOMOLOGATION_PHASE){
+
+				$processPhases["id"] = "phase_".$phase->getPhaseId();
+				$processPhases["name"] = "phase_".$phase->getPhaseId();
+				$processPhases["value"] = $phase->getPhaseId();
+
+				$phaseWeight["id"] = "phase_weight_".$phase->getWeight();
+				$phaseWeight["name"] = "phase_weight_".$phase->getWeight();
+				$phaseWeight["value"] = $phase->getWeight();
+	?>
+				<div class="row">
+					
+					<div class="col-md-8">
+						<div class="input-group">
+						<span class="input-group-addon">
+						
+							<?= form_checkbox($processPhases); ?>
+							<?= form_label($phase->getPhaseName(), $processPhases["id"]); ?>
+						</span>
+						
+						<?= form_input($phaseWeight); ?>
+						</div>
+					</div>
+				</div>
+				
+			<?php   }else{ 	?>
+
+					<div class="row">
+						<div class="col-md-8">
+							<div class="input-group">
+							<span class="input-group-addon">
+							
+								<?= form_label($phase->getPhaseName()); ?>
+							<span class="label label-default">Fase obrigatória e sem peso.</span>
+							</span>
+
+							</div>
+						</div>
+					</div>
+
+	<?php  			}
+		    }
+		}else{
+			callout("info", "Não há fases cadastradas. Não é possível abrir o edital.");
+			$submitBtn['disabled'] = TRUE;
+		}
+	?>
+
+	</div>
+</div>
+
+<br>
+<br>
+<br>
+  <style>
+	  #sortable { margin: 0; padding: 0; width: 60%; }
+	  #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; padding-bottom: 1.0em; font-size: 1.4em; height: 18px; }
+	  #sortable li span { position: absolute; margin-left: -1.3em; }
+  </style>
+
+<div id="phases_order_list">
+	<ol id = "sortable" style="cursor: move;">
+		<li id="homologation"><span class="label label-primary">Homologação</span></li>
+		<li id="pre_project"><span class="label label-primary">Avaliação de pré-projeto</span></li>
+		<li id="written_test"><span class="label label-primary">Prova escrita</span></li>
+		<li id="oral_test"><span class="label label-primary">Prova Oral</span></li>
+	</ol>
+</div>
 
 <br>
 <br>
