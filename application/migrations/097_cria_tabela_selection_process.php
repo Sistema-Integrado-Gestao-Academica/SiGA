@@ -7,12 +7,13 @@ class Migration_cria_tabela_selection_process extends CI_Migration {
 		// Creating selection process table
 		$this->dbforge->add_field(array(
 			'id_process' => array('type' => 'INT', 'auto_increment' => true),
-			'noticeName' => array('type' => 'VARCHAR(60)'),
-			'notice' => array('type' => 'MEDIUMBLOB'),
+			'id_course' => array('type' => "INT"),
+			'process_type' => array('type' => 'VARCHAR(20)'),
+			'notice_name' => array('type' => 'VARCHAR(60)'),
+			'notice_path' => array('type' => 'TEXT'),
 			'start_date' => array('type' => 'DATE'),
 			'end_date' => array('type' => 'DATE'),
-			'phaseOrder' => array('type' => "VARCHAR(200)"),
-			'id_course' => array('type' => "INT")
+			'phase_order' => array('type' => "VARCHAR(200)")
 		));
 		$this->dbforge->add_key('id_process', true);
 		$this->dbforge->create_table('selection_process', TRUE);

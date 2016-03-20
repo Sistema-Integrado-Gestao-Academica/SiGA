@@ -88,4 +88,6 @@ abstract class SelectionProcess{
 	public function getSettings(){
 		return $this->settings;
 	}
+
+	public abstract function getType();
 }

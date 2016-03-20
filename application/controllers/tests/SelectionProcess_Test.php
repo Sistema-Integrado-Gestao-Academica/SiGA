@@ -14,6 +14,7 @@ require_once(APPPATH."/data_types/selection_process/ProcessSettings.php");
 require_once(APPPATH."/data_types/selection_process/RegularStudentProcess.php");
 require_once(APPPATH."/data_types/selection_process/SpecialStudentProcess.php");
 require_once(APPPATH."/exception/SelectionProcessException.php");
+require_once(APPPATH."/constants/SelectionProcessConstants.php");
 
 class SelectionProcess_Test extends TestCase{
 
@@ -457,4 +458,23 @@ class SelectionProcess_Test extends TestCase{
 
         $this->unit->run($selectionProcess, "is_false", $test_name, $notes);
     }
+
+/* Type tests */
+
+    public function shouldReturnTheRegularStudentType(){
+
+        $course = "1";
+        $name = "Edital PPGE 2016";
+
+        try{
+            $selectionProcess = new RegularStudentProcess($course, $name);
+        }catch (SelectionProcessException $e){
+            $selectionProcess = FALSE;
+        }
+
+        $test_name = "Test if get the Regular Student type";
+
+        $this->unit->run(SelectionProcessConstants::REGULAR_STUDENT, $selectionProcess->getType(), $test_name);
+    }
+
 }

@@ -62,6 +62,14 @@ $(document).ready(function(){
 		dateFormat: "dd-mm-yy"
 	});
 
+	$("#selective_process_start_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
+	$("#selective_process_end_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
 	$("#totalValue").change(function(){
 		checkInstallments();
 	});

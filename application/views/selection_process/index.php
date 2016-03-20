@@ -33,9 +33,11 @@ if($programs !== FALSE){
 	}
 
 }else{
-	echo "<td colspan=2>";
-		callout("info", "Não existem programas cadastrados para este secretário.");
-	echo "</td>";
+	echo "<tr>";
+		echo "<td colspan=2>";
+			callout("info", "Não existem programas cadastrados para este secretário.");
+		echo "</td>";
+	echo "</tr>";
 }
 
 buildTableEndDeclaration();
