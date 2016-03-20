@@ -6,7 +6,7 @@ require_once(APPPATH."/exception/SelectionProcessException.php");
 
 class PreProjectEvaluation extends WeightedPhase{
 
-	public function __construct($phaseName, $weight, $grade = FALSE){
-		parent::__construct($phaseName, $weight, $grade);
+	public function __construct($weight, $grade = FALSE, $id = FALSE){
+		parent::__construct(SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE, $weight, $grade, $id);
 	}
 }

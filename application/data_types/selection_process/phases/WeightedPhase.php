@@ -18,9 +18,9 @@ abstract class WeightedPhase extends ProcessPhase{
 	protected $weight;
 	protected $grade;
 
-	public function __construct($phaseName, $weight, $grade = FALSE){
+	public function __construct($phaseName, $weight, $grade = FALSE, $id = FALSE){
 
-        parent::__construct($phaseName);
+        parent::__construct($phaseName, $id);
         $this->setWeight($weight);
         $this->setGrade($grade);
 	}

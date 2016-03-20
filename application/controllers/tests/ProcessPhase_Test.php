@@ -31,182 +31,75 @@ class ProcessPhase_Test extends TestCase{
     }
 
 /* Phase name tests */
-    public function shouldInstantiateWithValidHomologationName(){
+
+
+    public function shouldReturnHomologationName(){
 
         $phaseName = SelectionProcessConstants::HOMOLOGATION_PHASE;
 
         $notes = "";
         try{
-            $phase = new Homologation($phaseName);
+            $phase = new Homologation();
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
 
-        $test_name = "Test if instantiate with the Homologation phase name.";
+        $test_name = "Test if return with the right Homologation phase name.";
 
         $this->unit->run($phaseName, $phase->getPhaseName(), $test_name, $notes);
     }
 
-    public function shouldNotInstantiateWithInvalidBlankName(){
-
-        $phaseName = "";
-
-        $notes = "";
-        try{
-            $phase = new Homologation($phaseName);
-        }catch (SelectionProcessException $e){
-            $phase = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with blank phase name.";
-
-        $this->unit->run($phase, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidNullName(){
-
-        $phaseName = NULL;
-
-        $notes = "";
-        try{
-            $phase = new Homologation($phaseName);
-        }catch (SelectionProcessException $e){
-            $phase = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with NULL phase name.";
-
-        $this->unit->run($phase, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidFalseName(){
-
-        $phaseName = FALSE;
-
-        $notes = "";
-        try{
-            $phase = new Homologation($phaseName);
-        }catch (SelectionProcessException $e){
-            $phase = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with FALSE phase name.";
-
-        $this->unit->run($phase, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidAnyStringName(){
-
-        // This is not an available option (from SelectionProcessConstants)
-        $phaseName = "Fase de aprovação";
-
-        $notes = "";
-        try{
-            $phase = new Homologation($phaseName);
-        }catch (SelectionProcessException $e){
-            $phase = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with not defined phase name.";
-
-        $this->unit->run($phase, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidNotHomologationName(){
-
-        // To the homologation object, the phase name must be the HOMOLOGATION_PHASE
-        $phaseName = SelectionProcessConstants::WRITTEN_TEST_PHASE;
-
-        $notes = "";
-        try{
-            $phase = new Homologation($phaseName);
-        }catch (SelectionProcessException $e){
-            $phase = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with not homologation phase name.";
-
-        $this->unit->run($phase, "is_false", $test_name, $notes);
-    }
-
-    public function shouldInstantiateWithValidPreProjectEvaluationName(){
+    public function shouldReturnPreProjectEvaluationName(){
 
         $phaseName = SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE;
         $weight = 1;
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
 
-        $test_name = "Test if instantiate with the PreProjectEvaluation phase name.";
+        $test_name = "Test if instantiate with the right phase name.";
 
         $this->unit->run($phaseName, $phase->getPhaseName(), $test_name, $notes);
     }
 
-    public function shouldNotInstantiateWithInvalidNotWeightedPhaseName(){
-
-        $phaseName = SelectionProcessConstants::HOMOLOGATION_PHASE;
-        $weight = 1;
-
-        $notes = "";
-        try{
-            // Weighted phases
-            $phase = new PreProjectEvaluation($phaseName, $weight);
-            $phase = new WrittenTest($phaseName, $weight);
-            $phase = new OralTest($phaseName, $weight);
-
-        }catch (SelectionProcessException $e){
-            $phase = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with the PreProjectEvaluation phase name.";
-
-        $this->unit->run($phase, "is_false", $test_name, $notes);
-    }
-
-    public function shouldInstantiateWithValidWrittenTestName(){
+    public function shouldReturnWrittenTestName(){
 
         $phaseName = SelectionProcessConstants::WRITTEN_TEST_PHASE;
         $weight = 1;
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new WrittenTest($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
 
-        $test_name = "Test if instantiate with the WrittenTest phase name.";
+        $test_name = "Test if return the right WrittenTest phase name.";
 
         $this->unit->run($phaseName, $phase->getPhaseName(), $test_name, $notes);
     }
 
-    public function shouldInstantiateWithValidOralTestName(){
+    public function shouldReturnOralTestName(){
 
         $phaseName = SelectionProcessConstants::ORAL_TEST_PHASE;
         $weight = 1;
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new OralTest($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
 
-        $test_name = "Test if instantiate with the OralTest phase name.";
+        $test_name = "Test if return the right OralTest phase name.";
 
         $this->unit->run($phaseName, $phase->getPhaseName(), $test_name, $notes);
     }
@@ -220,7 +113,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -238,7 +131,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -256,7 +149,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -274,7 +167,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -292,7 +185,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -310,7 +203,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -328,7 +221,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -346,7 +239,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -364,7 +257,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -382,7 +275,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -400,7 +293,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight);
+            $phase = new PreProjectEvaluation($weight);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -421,7 +314,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -440,7 +333,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -459,7 +352,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -478,7 +371,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -497,7 +390,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -516,7 +409,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -535,7 +428,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -554,7 +447,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -574,7 +467,7 @@ class ProcessPhase_Test extends TestCase{
         $notes = "";
         try{
 
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
             //exit;
 
         }catch (SelectionProcessException $e){
@@ -595,7 +488,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -614,7 +507,7 @@ class ProcessPhase_Test extends TestCase{
 
         $notes = "";
         try{
-            $phase = new PreProjectEvaluation($phaseName, $weight, $grade);
+            $phase = new PreProjectEvaluation($weight, $grade);
         }catch (SelectionProcessException $e){
             $phase = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
