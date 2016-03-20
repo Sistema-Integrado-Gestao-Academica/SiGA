@@ -121,7 +121,8 @@
 						<div id=<?="teachers".$program['id_program']?> class="collapse">	
 					<?php 
 						foreach ($teachers as $teacher) { 
-							echo "<p>{$teacher}</p>";					
+							echo "<p>{$teacher['name']}</p>";	
+				
 						}
 					?>				
 					

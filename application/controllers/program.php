@@ -3,6 +3,7 @@
 require_once('usuario.php');
 require_once('module.php');
 require_once('course.php');
+require_once('teacher.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 
@@ -538,11 +539,12 @@ class Program extends CI_Controller {
 
 	private function getCourseTeachers($coursesId){
 
-		$teachersName = array();
+		$teachersInfo = array();
+		
 		foreach ($coursesId as $id) {
 						
 			$courseController = new Course();
-			$teachers[$id] = $courseController->getCourseTeachersName($id);
+			$teachers[$id] = $courseController->getCourseTeachers($id);
 		}
 
 		foreach ($teachers as $teacher) {
@@ -550,14 +552,18 @@ class Program extends CI_Controller {
 			if(!empty($teacher)){
 
 				$i = 0;
-				foreach ($teacher as $teacherName){
-					$teachersName[$i] = $teacherName['name'];
+				foreach ($teacher as $teacherInfo){
+					$teacherId = $teacherInfo['id_user'];
+					
+					$teacherController = new Teacher();
+					$teachersInfo[$i] = $teacherController->getInfoProfile($teacherId);
+					$teachersInfo[$i]['name'] = $teacherInfo['name']; 
 					$i++;
 				}
 			}
 
 		}
-		return $teachersName;
+		return $teachersInfo;
 
 	}
 }
