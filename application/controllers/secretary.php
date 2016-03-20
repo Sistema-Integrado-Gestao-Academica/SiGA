@@ -203,7 +203,26 @@ class Secretary extends CI_Controller {
 	}
 
 
+	public function secretaryPrograms(){
+
+		$session = $this->session->userdata("current_user");
+		$userData = $session['user'];
+		$secretaryId = $userData['id'];
+
+		$programsAndCourses = $this->getSecretaryPrograms();		
+		$programs = $programsAndCourses['programs'];
+		$courses = $programsAndCourses['courses'];
+
+		$data = array(
+			'courses' => $courses,
+			'programs' => $programs
+		);
+
+		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, 'secretary/secretary_programs', $data);
+	}
+
 	public function getSecretaryPrograms(){
+
 		$session = $this->session->userdata("current_user");
 		$userData = $session['user'];
 		$secretaryId = $userData['id'];
@@ -211,27 +230,33 @@ class Secretary extends CI_Controller {
 		$courseController = new Course();
 		$courses = $courseController->getCoursesOfSecretary($secretaryId);
 
-		$data = array();
+		$alreadyAddedPrograms = array();
 		$programs = array();
-		if(!empty($courses)){
+		if($courses !== FALSE){
 
 			foreach ($courses as $course) {
 
 				$program = new Program();
 				$courseId = $course['id_course'];
 				$programId = $course['id_program'];
+
 				if($programId != NULL){
-					
-					$programs[$courseId] = $program->getProgramById($programId);
+
+					if(!isset($alreadyAddedPrograms[$programId])){
+						$programs[] = $program->getProgramById($programId);
+					}
+
+					$alreadyAddedPrograms[$programId] = $programId;
 				}
 			}
 			
+		}else{
+			$courses = array();
 		}
-		$data = array(
-			'courses' => $courses,
-			'programs' => $programs
-		);
-		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, 'secretary/secretary_programs', $data);
+
+		$result = array('programs' => $programs , 'courses' => $courses);
+		
+		return $result;
 	}
 
 }

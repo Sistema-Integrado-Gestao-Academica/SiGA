@@ -86,7 +86,7 @@ $route['enroll_mastermind'] = 'usuario/secretary_enrollMasterMinds';
 $route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
 $route['documents_report'] = 'documentrequest/documentRequestSecretary';
 $route['research_lines'] = 'usuario/secretary_research_lines';
-$route['secretary_programs'] = 'secretary/getSecretaryPrograms';
+$route['secretary_programs'] = 'secretary/secretaryPrograms';
 
 /*
  * Mastermind functionalities routes
@@ -100,6 +100,11 @@ $route['titling_area'] = 'mastermind/titlingArea';
 $route['student'] = 'usuario/student_index';
 $route['student_information'] = 'usuario/studentInformationsForm';
 $route['documents_request'] = "documentrequest/index";
+
+/*
+ * Selection Process functionalities routes
+ */
+$route['selection_process'] = 'selectiveprocess/index';
 
 /*
  * Test report routes
