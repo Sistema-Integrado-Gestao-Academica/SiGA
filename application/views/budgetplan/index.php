@@ -45,11 +45,11 @@
 				<?= anchor("budgetplan/budgetplanExpenses/{$budgetplan['id']}", "<i class='fa fa-dollar'></i>", "class='btn btn-warning btn-editar btn-sm' style='margin-right:2%;'") ?>
 				<?= anchor("planoorcamentario/{$budgetplan['id']}", "<i class='fa fa-edit'></i>", "class='btn btn-primary btn-editar btn-sm' style='margin-right:10%;'") ?>
 				
-				<button data-toggle="collapse" data-target="#confirmation" class="btn btn-danger btn-remover btn-sm" style='margin: -20px auto auto 100px;'>
+				<button data-toggle="collapse" data-target=<?="#confirmation".$budgetplan['id']?> class="btn btn-danger btn-remover btn-sm" style='margin: -20px auto auto 100px;'>
 					<span class=" glyphicon glyphicon-remove"></span>
 				</button>
 				
-				<div id="confirmation" class="collapse">
+				<div id=<?="confirmation".$budgetplan['id']?> class="collapse">
 					<?= form_open('/budgetplan/delete') ?>
 					<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
 					<br>
