@@ -15,13 +15,13 @@
 	?></h3></a>
 
 	<div class="box-body">
-      <div class="box-group" id="accordion">
+      <div class="box-group" id=<?="accordion".$program['id_program']?>>
             <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
             <div class="panel box box-primary">
               <div class="box-header with-border">
                 <h4 class="box-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href=<?="#summary".$program['id_program']?> aria-expanded="false">
-					O <?php	echo $program['acronym']?>
+                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#summary".$program['id_program']?> aria-expanded="false">
+					O <?php	echo $program['acronym']?> <i class=" fa fa-caret-down"></i>
                   </a>
                 </h4>
               </div>
@@ -50,8 +50,8 @@
             <div class="panel box box-primary">
               <div class="box-header with-border">
                 <h4 class="box-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href=<?="#history".$program['id_program']?> aria-expanded="false">
-					Histórico
+                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#history".$program['id_program']?> aria-expanded="false">
+					Histórico <i class=" fa fa-caret-down"></i>
                   </a>
                 </h4>
               </div>
@@ -72,8 +72,8 @@
 				<div class="panel box box-primary">
               		<div class="box-header with-border">
 	                <h4 class="box-title">
-	                  <a data-toggle="collapse" data-parent="#accordion" href=<?="#contact".$program['id_program']?> aria-expanded="false" class="collapsed">
-						Contato
+	                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#contact".$program['id_program']?> aria-expanded="false" class="collapsed">
+						Contato <i class=" fa fa-caret-down"></i>
 	                  </a>
 	                </h4>
 	              </div>
@@ -98,8 +98,8 @@
 					<div class="panel box box-primary">
 		              <div class="box-header with-border">
 		                <h4 class="box-title">
-		                  <a data-toggle="collapse" data-parent="#accordion" href=<?="#research".$program['id_program']?> aria-expanded="false" >
-							Linhas de Pesquisa
+		                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#research".$program['id_program']?> aria-expanded="false" >
+							Linhas de Pesquisa <i class=" fa fa-caret-down"></i>
 		                  </a>
 		                </h4>
 		              </div>

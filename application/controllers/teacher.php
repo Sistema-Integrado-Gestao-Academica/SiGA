@@ -21,34 +21,30 @@ class Teacher extends CI_Controller {
 	public function saveProfile(){
 		
 		$teacherId = $this->input->post('teacher');
+
+		$summary = $this->input->post('summaryField');
+		$lattes = $this->input->post('lattesField');
 		
-		//$teacherDataIsOk = $this->validatesNewProgramData();
+		$teacherData = array(
+			'summary' => $summary,
+			'lattes_link' => $lattes,
+			'id_user' => $teacherId
+		);
 
-		//if($teacherDataIsOk){
+		$wasUpdated = $this->teacher_model->updateProfile($teacherData);
 
-			$summary = $this->input->post('summaryField');
-			$lattes = $this->input->post('lattesField');
-			
-			$teacherData = array(
-				'summary' => $summary,
-				'lattes_link' => $lattes,
-				'id_user' => $teacherId
-			);
-
-			$wasUpdated = $this->teacher_model->updateProfile($teacherData);
-
-			if($wasUpdated){
-				$insertStatus = "success";
-				$insertMessage = "Perfil atualizado com sucesso!";
-				$this->session->set_flashdata($insertStatus, $insertMessage);
-				redirect('mastermind_home');
-			}
-			else{
-				$insertStatus = "danger";
-				$insertMessage = "Não foi possível atualizar o perfil. Tente novamente.";
-				$this->session->set_flashdata($insertStatus, $insertMessage);
-				redirect('update_profile');
-			}
+		if($wasUpdated){
+			$insertStatus = "success";
+			$insertMessage = "Perfil atualizado com sucesso!";
+			$this->session->set_flashdata($insertStatus, $insertMessage);
+			redirect('mastermind_home');
+		}
+		else{
+			$insertStatus = "danger";
+			$insertMessage = "Não foi possível atualizar o perfil. Tente novamente.";
+			$this->session->set_flashdata($insertStatus, $insertMessage);
+			redirect('update_profile');
+		}
 
 	}
 
