@@ -43,11 +43,6 @@
 		"type" => "file"
 	);
 
-	$processPhases = array(
-		"class" => "form-control",
-		"checked" => TRUE
-	);
-
 	$phaseWeight = array(
 		"type" => "number",
 		"min" => 0,
@@ -57,11 +52,18 @@
 		"placeholder" => "Informe o peso dessa fase"
 	);
 
-	$submitBtn = array(
+	$saveProcessBtn = array(
 		"id" => "open_selective_process_btn",
 		"class" => "btn bg-primary btn-flat",
-		"content" => "Abrir Processo Seletivo",
-		"type" => "submit"
+		"content" => "Abrir Processo Seletivo"
+	);
+
+	$submitFileBtn = array(
+		"id" => "open_selective_process_btn",
+		"class" => "btn btn-success btn-flat",
+		"content" => "Salvar arquivo",
+		"type" => "submit",
+		"style" => "margin-top: 5%;"
 	);
 
 	$hidden = array(
@@ -74,7 +76,6 @@
 <h3><i class="fa fa-file-o"></i> Dados básicos</h3>
 <br>
 
-<?= form_open_multipart("selectiveprocess/newSelectionProcess"); ?>
 
 <?= form_hidden($hidden); ?>
 
@@ -88,11 +89,6 @@
 		<?= form_input($name); ?>
 	</div>
 </div>
-
-<br>
-<br>
-<?= form_label("PDF do edital <small><i>(Arquivo PDF apenas)</i></small>:", "notice_file"); ?>
-<?= form_input($noticeFile); ?>
 
 <br>
 <br>
@@ -126,7 +122,7 @@
 		<?= form_label("Selecione as fases que comporão o processo seletivo:"); ?>
 		
 		<h4><small><b>
-		Marque as fases desejadas clicando em seus nomes.<br>
+		Marque as fases desejadas como "Sim".<br>
 		Ao lado do nome da fase, informe o peso da mesma.<br>
 		Os pesos definidos são os pesos padrão.<br>
 		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
@@ -139,10 +135,15 @@
 				
 				// Homologation phase is obrigatory and do not have weight
 				if($phase->getPhaseName() !== SelectionProcessConstants::HOMOLOGATION_PHASE){
+				
+				$selectName = "phase_".$phase->getPhaseId();
+				$selectId = $selectName;
+				$selectedItem = TRUE;
 
-				$processPhases["id"] = "phase_".$phase->getPhaseId();
-				$processPhases["name"] = "phase_".$phase->getPhaseId();
-				$processPhases["value"] = $phase->getPhaseId();
+				$processPhases = array(
+					TRUE => "Sim",
+					FALSE => "Não",
+				);
 				
 				$phaseWeight["id"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["name"] = "phase_weight_".$phase->getPhaseId();
@@ -150,12 +151,12 @@
 	?>
 				<div class="row">
 					
-					<div class="col-md-8">
+					<div class="col-md-10">
 						<div class="input-group">
 						<span class="input-group-addon">
-						
-							<?= form_checkbox($processPhases); ?>
-							<?= form_label($phase->getPhaseName(), $processPhases["id"]); ?>
+							
+							<?= form_label($phase->getPhaseName(), $selectName); ?>
+							<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}'"); ?>
 						</span>
 						
 						<?= form_input($phaseWeight); ?>
@@ -166,7 +167,7 @@
 			<?php   }else{ ?>
 
 					<div class="row">
-						<div class="col-md-8">
+						<div class="col-md-10">
 							<div class="input-group">
 							<span class="input-group-addon">
 							
@@ -191,30 +192,45 @@
 
 <br>
 <br>
-<br>
-  <style>
-	  #sortable { margin: 0; padding: 0; width: 60%; }
-	  #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; padding-bottom: 1.0em; font-size: 1.4em; height: 18px; }
-	  #sortable li span { position: absolute; margin-left: -1.3em; }
-  </style>
 
-<div id="phases_order_list">
-	<ol id = "sortable" style="cursor: move;">
-		<li id="homologation"><span class="label label-primary">Homologação</span></li>
-		<li id="pre_project"><span class="label label-primary">Avaliação de pré-projeto</span></li>
-		<li id="written_test"><span class="label label-primary">Prova escrita</span></li>
-		<li id="oral_test"><span class="label label-primary">Prova Oral</span></li>
-	</ol>
-</div>
+<h4><i class="fa fa-sort-amount-asc"></i> Ordem das fases do edital</h4>
+
+<br>
+Defina a ordem de execução das fases para este edital arrastando as fases para a posição desejada:
+<br>
+
+<div id="phases_list_to_order"></div>
+
+<br>
+<?= form_button($saveProcessBtn); ?>
+
+<!-- Notice file upload -->
 
 <br>
 <br>
-<div class="row">
-	<div class="col-md-3">
-		<?= form_button($submitBtn) ?>
+<h4><i class="fa fa-upload"></i> Arquivo do edital</h4>
+
+<br>
+<h5>Selecione o PDF contendo o edital do processo seletivo. </h5>
+<br>
+<?= form_open_multipart("selectiveprocess/newSelectionProcess"); ?>
+	
+	<div class="row">
+		<div class="col-md-4">
+			<?= form_label("PDF do edital <small><i>(Arquivo '.pdf' apenas)</i></small>:", "notice_file"); ?>
+		</div>
+
+		<div class="col-md-3">
+			<?= form_input($noticeFile); ?>
+		</div>
 	</div>
-</div>
-
-
+	<div class="row">
+		<div class="col-md-4">
+		</div>
+		<div class="col-md-4">
+			<?= form_button($submitFileBtn) ?>
+		</div>
+	</div>
 
 <?= form_close(); ?>
+<br>

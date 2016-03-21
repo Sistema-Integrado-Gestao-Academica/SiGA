@@ -164,7 +164,7 @@ class SelectiveProcess extends CI_Controller {
                     }
 
                     if(!empty($phases)){
-
+                        
                         // All processes have homologation
                         $phases[] = new Homologation();
 

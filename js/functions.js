@@ -1,13 +1,36 @@
 
 $(document).ready(function(){
 
+	$("#phase_2").ready(function(){
 
-	$("#sortable").sortable();
-	$("#sortable").sortable("option", "axis", "y");
-	$("#sortable").sortable("option", "cursor", "move");
-	$("#sortable").sortable("option", "containment", "parent");
+		getPhasesToSort();
+
+		$(this).change(function(){
+			getPhasesToSort();
+		});
+	});
+
+	$("#phase_3").ready(function(){
+
+		getPhasesToSort();
+		
+		$(this).change(function(){
+			getPhasesToSort();
+		});
+	});
 	
-	var order = $("#sortable").sortable("toArray");
+	$("#phase_4").ready(function(){
+
+		getPhasesToSort();
+		
+		$(this).change(function(){
+			getPhasesToSort();
+		});
+	});
+
+	$("#open_selective_process_btn").click(function(){
+		saveSelectiveProcess();
+	});
 
 	// Back button
 	$("#back_btn").click(function(){
@@ -87,6 +110,62 @@ $(document).ready(function(){
 	});
 
 });
+
+function makeSortable(){
+	$("#sortable").sortable();
+	$("#sortable").sortable("option", "axis", "y");
+	$("#sortable").sortable("option", "cursor", "move");
+	$("#sortable").sortable("option", "containment", "parent");
+	
+	var order = $("#sortable").sortable("toArray");
+}
+
+function getPhasesToSort(){
+
+	var preProject;
+	var writtenTest;
+	var oralTest;
+	
+	preProject = $("#phase_2").val();
+	writtenTest = $("#phase_3").val();
+	oralTest = $("#phase_4").val();
+
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/getPhasesToSort";
+
+	$.post(
+		urlToPost,
+		{
+			preProject: preProject,
+			writtenTest: writtenTest,
+			oralTest: oralTest	
+		},
+		function(data){
+			$("#phases_list_to_order").html(data);
+			makeSortable();
+		}
+	);
+}
+
+function saveSelectiveProcess(){
+
+
+
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/newSelectionProcess";
+
+	$.post(
+		urlToPost,
+		{
+			
+		},
+		function(data){
+
+		}
+	);
+}
 
 function searchEmployeeToPayment(){
 
