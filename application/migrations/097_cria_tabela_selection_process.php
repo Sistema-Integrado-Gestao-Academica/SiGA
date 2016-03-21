@@ -53,7 +53,7 @@ class Migration_cria_tabela_selection_process extends CI_Migration {
 		));
 		$this->dbforge->create_table('process_phase', TRUE);
 
-		$processConstraint = "ALTER TABLE process_phase ADD CONSTRAINT PROCESS_PHASE_PROCESS_FK FOREIGN KEY (id_process) REFERENCES selection_process(id_process) ON DELETE NO ACTION ON UPDATE RESTRICT";
+		$processConstraint = "ALTER TABLE process_phase ADD CONSTRAINT PROCESS_PHASE_PROCESS_FK FOREIGN KEY (id_process) REFERENCES selection_process(id_process) ON DELETE CASCADE ON UPDATE RESTRICT";
 		$this->db->query($processConstraint);
 
 		$phaseConstraint = "ALTER TABLE process_phase ADD CONSTRAINT PROCESS_PHASE_PHASE_FK FOREIGN KEY (id_phase) REFERENCES phase(id_phase) ON DELETE NO ACTION ON UPDATE RESTRICT";

@@ -133,9 +133,39 @@ class SelectiveProcessAjax extends CI_Controller {
 
                     // Finally saves the selection process
                     $this->load->model("selectiveprocess_model", "process_model");
-                    $this->process_model->save($process);
+                    
+                    $processId = $this->process_model->save($process);
+
 
                     callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
+
+                    $hidden = array(
+                        'selection_process_id' => base64_encode($processId),
+                        'course' => $courseId
+                    );
+
+                    echo form_open_multipart("selectiveprocess/saveNoticeFile");
+
+                        echo form_hidden($hidden);
+
+                        $noticeFile = array(
+                            "name" => "notice_file",
+                            "id" => "notice_file",
+                            "type" => "file"
+                        );
+                        
+                        $submitFileBtn = array(
+                            "id" => "open_selective_process_btn",
+                            "class" => "btn btn-success btn-flat",
+                            "content" => "Salvar arquivo",
+                            "type" => "submit",
+                            "style" => "margin-top: 5%;"
+                        );
+
+                        include(APPPATH."/views/selection_process/_upload_notice_file.php");
+
+                    echo form_close();
+                    echo "<br>";
 
                 }else{
                     // The process must have at least one phase

@@ -84,10 +84,10 @@ class SelectiveProcess extends CI_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/new", $data);
     }
 
-    private function setUploadOptions(){
+    private function setUploadOptions($fileName){
         
         $config['upload_path'] = APPPATH.'/upload_files/notices/';
-        //$config['file_name'] = "edital";
+        $config['file_name'] = $fileName;
         $config['allowed_types'] = 'pdf';
         $config['max_size'] = '5500';
         $config['remove_spaces'] = TRUE;
@@ -95,16 +95,14 @@ class SelectiveProcess extends CI_Controller {
         return $config;
     }
 
-    public function newSelectionProcess(){
+    public function saveNoticeFile(){
 
         $courseId = $this->input->post("course");
-        $studentType = $this->input->post("student_type");
-        $noticeName = $this->input->post("selective_process_name");
-        $startDate = $this->input->post("selective_process_start_date");
-        $endDate = $this->input->post("selective_process_end_date");
+        $processId = base64_decode($this->input->post("selection_process_id"));
 
+        $process = $this->process_model->getById($processId);
 
-        $config = $this->setUploadOptions(); 
+        $config = $this->setUploadOptions($process->getName());
 
         // Remember to give the proper permission to the /upload_files folder
         $this->load->library('upload', $config);
@@ -114,92 +112,51 @@ class SelectiveProcess extends CI_Controller {
             $noticeFile = $this->upload->data();
             $noticePath = $noticeFile['full_path'];
 
-            try{
-                switch($studentType){
-                    case SelectionProcessConstants::REGULAR_STUDENT:
-                        $process = new RegularStudentProcess($courseId, $noticeName);
-                        break;
-                    
-                    case SelectionProcessConstants::SPECIAL_STUDENT:
-                        $process = new SpecialStudentProcess($courseId, $noticeName);
-                        break;
+            $wasUpdated = $this->updateNoticeFile($processId, $noticePath);
 
-                    default:
-                        $process = FALSE;
-                        break;
-                }
-
-                if($process !== FALSE){
-                    
-                    // Adds the path to the selection process
-                    $process->setNoticePath($noticePath);
-
-                    $preProject = $this->input->post("phase_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
-                    
-                    $preProjectWeight = $this->input->post("phase_weight_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
-
-                    $writtenTest = $this->input->post("phase_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
-                    
-                    $writtenTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
-
-                    $oralTest = $this->input->post("phase_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
-
-                    $oralTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
-
-                    $phases = array();
-                    
-                    if($preProject !== FALSE){
-                        $preProject = new PreProjectEvaluation($preProjectWeight, FALSE, $preProject);
-                        $phases[] = $preProject;
-                    }
-
-                    if($writtenTest !== FALSE){
-                        $writtenTest = new WrittenTest($writtenTestWeight, FALSE, $writtenTest);
-                        $phases[] = $writtenTest;
-                    }
-
-                    if($oralTest !== FALSE){
-                        $oralTest = new OralTest($oralTestWeight, FALSE, $oralTest);
-                        $phases[] = $oralTest;
-                    }
-
-                    if(!empty($phases)){
-                        
-                        // All processes have homologation
-                        $phases[] = new Homologation();
-
-                        // Just to test
-                            
-
-                            //FIX HERE
-
-                            $phasesOrder = array(1,2,3,4);
-
-                        //
-
-                        $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
-
-                        $process->addSettings($processSettings);
-
-                        // Finally saves the selection process
-                        $this->process_model->save($process);
-
-                    }else{
-                        // The process must have at least one phase
-                    }
-
-                }else{
-                    // Invalid Student Type
-                }
-            }catch(SelectionProcessException $e){
-                var_dump($e->getMessage());
-                exit;
+            if($wasUpdated){
+                $status = "success";
+                $message = "Processo Seletivo e edital salvo com sucesso!";
+                $pathToRedirect = "selectiveprocess/courseSelectiveProcesses/{$courseId}";
+            }else{
+                $status = "danger";
+                $message = "Não foi possível salvar o arquivo do Edital. Tente novamente.";
+                $pathToRedirect = "selectiveprocess/tryUploadNoticeFile/{$processId}";
             }
 
         }else{
             // Errors on file upload
             $errors = $this->upload->display_errors();
+            
+            $status = "danger";
+            $message = $errors."<br>Tente novamente.";
+            $pathToRedirect = "selectiveprocess/tryUploadNoticeFile/{$processId}";
         }
+
+        $this->session->set_flashdata($status, $message);
+        redirect($pathToRedirect);
     }
 
+    private function updateNoticeFile($processId, $noticePath){
+
+        $wasUpdated = $this->process_model->updateNoticeFile($processId, $noticePath);
+
+        return $wasUpdated;
+    }
+
+    public function tryUploadNoticeFile($processId){
+
+        $process = $this->process_model->getById($processId);
+
+        $data = array(
+            'process' => $process
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/upload_notice", $data);
+    }
+
+    public function courseSelectiveProcesses($courseId){
+
+        // List all selective processes of a course
+    }
 }

@@ -1,6 +1,13 @@
 
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/constants/SelectionProcessConstants.php");
+require_once(APPPATH."/exception/SelectionProcessException.php");
+require_once(APPPATH."/data_types/selection_process/SelectionProcess.php");
+require_once(APPPATH."/data_types/selection_process/RegularStudentProcess.php");
+require_once(APPPATH."/data_types/selection_process/SpecialStudentProcess.php");
+require_once(APPPATH."/data_types/selection_process/ProcessSettings.php");
+
 class SelectiveProcess_model extends CI_Model {
 
 	const SELECTION_PROCESS_TABLE = "selection_process";
@@ -24,7 +31,6 @@ class SelectiveProcess_model extends CI_Model {
 	const REPEATED_NOTICE_NAME = "O nome do edital informado já existe. Nome informado: ";
 
 	public function save($process){
-
 		
 		$courseId = $process->getCourse();
 		$processType = $process->getType();
@@ -55,9 +61,11 @@ class SelectiveProcess_model extends CI_Model {
 			$savedProcess = $this->getByName($noticeName);
 
 			if($savedProcess !== FALSE){
-				$id = $savedProcess[self::ID_ATTR];
+				$processId = $savedProcess[self::ID_ATTR];
 
-				$this->saveProcessPhases($process, $id);
+				$this->saveProcessPhases($process, $processId);
+
+				return $processId;
 			}else{
 				// For some reason did not saved the selection process
 				throw new SelectionProcessException(self::COULDNT_SAVE_SELECTION_PROCESS);
@@ -66,6 +74,7 @@ class SelectiveProcess_model extends CI_Model {
 			throw new SelectionProcessException(self::REPEATED_NOTICE_NAME.$noticeName);
 		}
 	}
+
 
 	private function saveProcessPhases($process, $processId){
 
@@ -89,6 +98,44 @@ class SelectiveProcess_model extends CI_Model {
 
 		}
 	}
+
+	public function updateNoticeFile($processId, $noticePath){
+
+		$this->db->where(self::ID_ATTR, $processId);
+		$updated = $this->db->update(self::SELECTION_PROCESS_TABLE, array(
+			self::NOTICE_PATH_ATTR => $noticePath
+		));
+
+		return $updated;
+	}
+
+	public function getById($processId){
+
+		$foundProcess = $this->get(self::ID_ATTR, $processId);
+
+		if($foundProcess !== FALSE){
+
+			if($foundProcess[self::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
+
+				try{
+
+					$selectiveProcess = new RegularStudentProcess(
+						$foundProcess[self::COURSE_ATTR],
+						$foundProcess[self::NOTICE_NAME_ATTR],
+						$foundProcess[self::ID_ATTR]
+					);
+
+				}catch(SelectionProcessException $e){
+					$selectiveProcess = FALSE;
+				}
+			}
+
+		}else{
+			$selectiveProcess = FALSE;
+		}
+
+		return $selectiveProcess;
+	} 
 
 	private function getByName($name){
 

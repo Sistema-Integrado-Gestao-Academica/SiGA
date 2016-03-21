@@ -37,12 +37,6 @@
 		"maxlength" => "60"
 	);
 
-	$noticeFile = array(
-		"name" => "notice_file",
-		"id" => "notice_file",
-		"type" => "file"
-	);
-
 	$phaseWeight = array(
 		"type" => "number",
 		"min" => 0,
@@ -58,14 +52,6 @@
 		"content" => "Abrir Processo Seletivo"
 	);
 
-	$submitFileBtn = array(
-		"id" => "open_selective_process_btn",
-		"class" => "btn btn-success btn-flat",
-		"content" => "Salvar arquivo",
-		"type" => "submit",
-		"style" => "margin-top: 5%;"
-	);
-
 	$hidden = array(
 		"id" => "course",
 		"name" => "course",
@@ -76,11 +62,10 @@
 
 <!-- Basic data of selection process -->
 
+<?= form_input($hidden); ?>
+
 <h3><i class="fa fa-file-o"></i> Dados básicos</h3>
 <br>
-
-
-<?= form_input($hidden); ?>
 
 <div class="row">
 	<div class="col-md-3">
@@ -207,35 +192,9 @@ Defina a ordem de execução das fases para este edital arrastando as fases para
 <br>
 <?= form_button($saveProcessBtn); ?>
 
+
 <br>
 <div id="selection_process_saving_status"></div>
 
-<!-- Notice file upload -->
-
 <br>
-<h4><i class="fa fa-upload"></i> Arquivo do edital</h4>
-
-<br>
-<h5>Selecione o PDF contendo o edital do processo seletivo. </h5>
-<br>
-<?= form_open_multipart("selectiveprocess/newSelectionProcess"); ?>
-	
-	<div class="row">
-		<div class="col-md-4">
-			<?= form_label("PDF do edital <small><i>(Arquivo '.pdf' apenas)</i></small>:", "notice_file"); ?>
-		</div>
-
-		<div class="col-md-3">
-			<?= form_input($noticeFile); ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-		</div>
-		<div class="col-md-4">
-			<?= form_button($submitFileBtn) ?>
-		</div>
-	</div>
-
-<?= form_close(); ?>
 <br>
