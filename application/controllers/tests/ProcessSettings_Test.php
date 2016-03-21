@@ -9,10 +9,18 @@
  */
 
 require_once("TestCase.php");
+
 require_once(APPPATH."/data_types/selection_process/SelectionProcess.php");
 require_once(APPPATH."/data_types/selection_process/RegularStudentProcess.php");
 require_once(APPPATH."/data_types/selection_process/ProcessSettings.php");
 require_once(APPPATH."/exception/SelectionProcessException.php");
+
+require_once(APPPATH."/data_types/selection_process/phases/ProcessPhase.php");
+require_once(APPPATH."/data_types/selection_process/phases/Homologation.php");
+require_once(APPPATH."/data_types/selection_process/phases/WeightedPhase.php");
+require_once(APPPATH."/data_types/selection_process/phases/PreProjectEvaluation.php");
+require_once(APPPATH."/data_types/selection_process/phases/WrittenTest.php");
+require_once(APPPATH."/data_types/selection_process/phases/OralTest.php");
 
 class ProcessSettings_Test extends TestCase{
 
@@ -411,6 +419,133 @@ class ProcessSettings_Test extends TestCase{
         $test_name = "Test if instantiate with end date less than start date ".$endDate;
 
         $this->unit->run($processSettings, "is_false", $test_name, $notes);
+    }
+
+    public function shouldAddHomologationPhase(){
+
+        $startDate = "16/03/2016";
+        $endDate = "16/04/2016";
+
+        $phaseToAdd = new Homologation();
+
+        $notes = "";
+        try{
+            $processSettings = new ProcessSettings($startDate, $endDate);
+            $processSettings->addPhase($phaseToAdd);
+        }catch (SelectionProcessException $e){
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if add Homologation phase";
+
+        $this->unit->run($phaseToAdd, $processSettings->getPhases()[0], $test_name, $notes);
+    }
+
+    public function shouldAddPreProjectPhase(){
+
+        $startDate = "16/03/2016";
+        $endDate = "16/04/2016";
+
+        $phaseToAdd = new PreProjectEvaluation(1);
+
+        $notes = "";
+        try{
+            $processSettings = new ProcessSettings($startDate, $endDate);
+            $processSettings->addPhase($phaseToAdd);
+        }catch (SelectionProcessException $e){
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if add PreProjectEvaluation phase";
+
+        $this->unit->run($phaseToAdd, $processSettings->getPhases()[0], $test_name, $notes);
+    }
+
+    public function shouldAddWrittenTestPhase(){
+
+        $startDate = "16/03/2016";
+        $endDate = "16/04/2016";
+
+        $phaseToAdd = new WrittenTest(1);
+
+        $notes = "";
+        try{
+            $processSettings = new ProcessSettings($startDate, $endDate);
+            $processSettings->addPhase($phaseToAdd);
+        }catch (SelectionProcessException $e){
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if add WrittenTest phase";
+
+        $this->unit->run($phaseToAdd, $processSettings->getPhases()[0], $test_name, $notes);
+    }
+
+    public function shouldAddOralTestPhase(){
+
+        $startDate = "16/03/2016";
+        $endDate = "16/04/2016";
+
+        $phaseToAdd = new OralTest(1);
+
+        $notes = "";
+        try{
+            $processSettings = new ProcessSettings($startDate, $endDate);
+            $processSettings->addPhase($phaseToAdd);
+        }catch (SelectionProcessException $e){
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if add OralTest phase";
+
+        $this->unit->run($phaseToAdd, $processSettings->getPhases()[0], $test_name, $notes);
+    }
+
+    public function shouldAddMultiplePhases(){
+
+        $startDate = "16/03/2016";
+        $endDate = "16/04/2016";
+
+        $phaseToAdd = array(
+            new Homologation(),
+            new OralTest(1),
+            new PreProjectEvaluation(1)
+        );
+
+        $notes = "";
+        try{
+            $processSettings = new ProcessSettings($startDate, $endDate, $phaseToAdd);
+        }catch (SelectionProcessException $e){
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if add multiple phases";
+
+        $this->unit->run($phaseToAdd, $processSettings->getPhases(), $test_name, $notes);
+    }
+
+    public function shouldNotAddNotPhaseObject(){
+
+        $startDate = "16/03/2016";
+        $endDate = "16/04/2016";
+
+        $phaseToAdd = array(
+            new Homologation(),
+            new OralTest(1),
+            array("test")
+        );
+
+        $notes = "";
+        try{
+            $processSettings = new ProcessSettings($startDate, $endDate, $phaseToAdd);
+        }catch (SelectionProcessException $e){
+            $processSettings = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if add multiple phases";
+
+        $this->unit->run($processSettings, "is_false" , $test_name, $notes);
     }
 
 }

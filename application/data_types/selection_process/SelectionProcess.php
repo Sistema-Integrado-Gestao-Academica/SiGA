@@ -9,6 +9,7 @@ abstract class SelectionProcess{
 	const INVALID_COURSE = "Um processo seletivo deve estar vinculado à algum curso de um programa.";
 	const INVALID_ID = "O ID do processo seletivo deve ser um número maior que zero.";
 	const INVALID_SETTINGS = "Configurações inválidas para o processo seletivo.";
+	const INVALID_NOTICE_PATH = "O caminho para o edital informado é inválido ou não existe.";
 
 	const MIN_ID = 1;
 
@@ -18,6 +19,7 @@ abstract class SelectionProcess{
 	// Foreign Key from Course. Course id
 	private $course;
 
+	private $noticePath;
 	protected $settings;
 
 	public function __construct($course = FALSE, $name = "", $id = FALSE){
@@ -32,6 +34,19 @@ abstract class SelectionProcess{
 			$this->settings = $settings;
 		}else{
 			throw new SelectionProcessException(self::INVALID_SETTINGS);
+		}
+	}
+
+	public function setNoticePath($path){
+		
+		if(is_string($path)){
+			if(file_exists($path)){
+				$this->noticePath = $path;
+			}else{
+				throw new SelectionProcessException(self::INVALID_NOTICE_PATH);
+			}
+		}else{
+			throw new SelectionProcessException(self::INVALID_NOTICE_PATH);
 		}
 	}
 
@@ -87,6 +102,10 @@ abstract class SelectionProcess{
 
 	public function getSettings(){
 		return $this->settings;
+	}
+
+	public function getNoticePath(){
+		return $this->noticePath;
 	}
 
 	public abstract function getType();

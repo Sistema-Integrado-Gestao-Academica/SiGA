@@ -7,7 +7,7 @@ require_once(APPPATH."/exception/SelectionProcessException.php");
 abstract class WeightedPhase extends ProcessPhase{
 	
     const MIN_WEIGHT = 1;
-    const MAX_WEIGHT = 4;
+    const MAX_WEIGHT = 5;
 
     const MIN_GRADE = 0;
     const MAX_GRADE = 100;

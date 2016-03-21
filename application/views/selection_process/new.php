@@ -143,9 +143,9 @@
 				$processPhases["id"] = "phase_".$phase->getPhaseId();
 				$processPhases["name"] = "phase_".$phase->getPhaseId();
 				$processPhases["value"] = $phase->getPhaseId();
-
-				$phaseWeight["id"] = "phase_weight_".$phase->getWeight();
-				$phaseWeight["name"] = "phase_weight_".$phase->getWeight();
+				
+				$phaseWeight["id"] = "phase_weight_".$phase->getPhaseId();
+				$phaseWeight["name"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["value"] = $phase->getWeight();
 	?>
 				<div class="row">
@@ -163,7 +163,7 @@
 					</div>
 				</div>
 				
-			<?php   }else{ 	?>
+			<?php   }else{ ?>
 
 					<div class="row">
 						<div class="col-md-8">

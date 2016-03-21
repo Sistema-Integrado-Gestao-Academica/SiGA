@@ -131,7 +131,8 @@ class SelectiveProcess extends CI_Controller {
 
                 if($process !== FALSE){
                     
-                    $homologation = SelectionProcessConstants::HOMOLOGATION_PHASE_ID;
+                    // Adds the path to the selection process
+                    $process->setNoticePath($noticePath);
 
                     $preProject = $this->input->post("phase_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
                     
@@ -148,29 +149,39 @@ class SelectiveProcess extends CI_Controller {
                     $phases = array();
                     
                     if($preProject !== FALSE){
-                        $preProject = new PreProjectEvaluation($preProjectWeight);
+                        $preProject = new PreProjectEvaluation($preProjectWeight, FALSE, $preProject);
                         $phases[] = $preProject;
                     }
 
                     if($writtenTest !== FALSE){
-                        $writtenTest = new WrittenTest($writtenTestWeight);
+                        $writtenTest = new WrittenTest($writtenTestWeight, FALSE, $writtenTest);
                         $phases[] = $writtenTest;
                     }
 
                     if($oralTest !== FALSE){
-                        $oralTest = new OralTest($OralTestWeight);
+                        $oralTest = new OralTest($oralTestWeight, FALSE, $oralTest);
                         $phases[] = $oralTest;
                     }
 
                     if(!empty($phases)){
 
+                        // All processes have homologation
+                        $phases[] = new Homologation();
+
                         // Just to test
-                        $phaseOrder = serialize(array(1,2,3,4));
+                            
+
+                            //FIX HERE
+
+                            $phasesOrder = array(1,2,3,4);
+
+                        //
 
                         $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
 
                         $process->addSettings($processSettings);
 
+                        // Finally saves the selection process
                         $this->process_model->save($process);
 
                     }else{

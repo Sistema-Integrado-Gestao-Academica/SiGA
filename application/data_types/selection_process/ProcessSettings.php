@@ -2,6 +2,7 @@
 
 require_once APPPATH."/exception/SelectionProcessException.php";
 require_once "phases/ProcessPhase.php";
+require_once "phases/WeightedPhase.php";
 
 class ProcessSettings{
 
@@ -25,7 +26,8 @@ class ProcessSettings{
 
 	public function addPhase($phase){
 
-		if(get_parent_class($phase) === ProcessPhase::class){
+		$parentClass = get_parent_class($phase);
+		if($parentClass === ProcessPhase::class || $parentClass === WeightedPhase::class){
 			
 			if(!is_null($phase)){
 				$this->phases[] = $phase;
@@ -134,7 +136,17 @@ class ProcessSettings{
 	private function setPhases($phases){
 
 		if($phases !== FALSE){
-			$this->phases = $phases;
+
+			if(is_array($phases)){
+
+				foreach($phases as $phase){
+					
+					$this->addPhase($phase);
+				}
+
+			}else{
+				throw new SelectionProcessException(self::INVALID_PHASE);
+			}
 		}else{
 			$this->phases = array();
 		}
@@ -153,6 +165,24 @@ class ProcessSettings{
 
 	public function getStartDate(){
 		return $this->startDate;
+	}
+
+	public function getYMDStartDate(){
+		
+		$date = $this->getStartDate();
+
+		$formattedDate = $date->format("Y/m/d");
+
+		return $formattedDate;
+	}
+
+	public function getYMDEndDate(){
+		
+		$date = $this->getEndDate();
+
+		$formattedDate = $date->format("Y/m/d");
+
+		return $formattedDate;
 	}
 
 	public function getFormattedStartDate(){
