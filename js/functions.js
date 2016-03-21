@@ -116,8 +116,6 @@ function makeSortable(){
 	$("#sortable").sortable("option", "axis", "y");
 	$("#sortable").sortable("option", "cursor", "move");
 	$("#sortable").sortable("option", "containment", "parent");
-	
-	var order = $("#sortable").sortable("toArray");
 }
 
 function getPhasesToSort(){
@@ -150,8 +148,24 @@ function getPhasesToSort(){
 
 function saveSelectiveProcess(){
 
+	var course = $("#course").val();
+	var studentType = $("#student_type").val();
+	var noticeName = $("#selective_process_name").val();
+	var startDate = $("#selective_process_start_date").val();
+	var endDate = $("#selective_process_end_date").val();
 
 
+	var preProject = $("#phase_2").val();
+	var preProjectWeight = $("#phase_weight_2").val();
+	
+	var writtenTest = $("#phase_3").val();
+	var writtenTestWeight = $("#phase_weight_2").val();
+	
+	var oralTest = $("#phase_4").val();
+	var oralTestWeight = $("#phase_weight_4").val();
+	
+	var phasesOrder = $("#sortable").sortable("toArray");
+	
 	var siteUrl = $("#site_url").val();
 
 	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/newSelectionProcess";
@@ -159,10 +173,21 @@ function saveSelectiveProcess(){
 	$.post(
 		urlToPost,
 		{
-			
+			course: course,
+		    student_type: studentType,
+		    selective_process_name: noticeName,
+		    selective_process_start_date: startDate,
+		    selective_process_end_date: endDate,
+			phase_2: preProject,
+			phase_weight_2: preProjectWeight,
+		    phase_3: writtenTest,
+		    phase_weight_3: writtenTestWeight,
+		    phase_4: oralTest,
+		    phase_weight_4: oralTestWeight,
+		    phases_order: phasesOrder
 		},
 		function(data){
-
+			$("#selection_process_saving_status").html(data);
 		}
 	);
 }

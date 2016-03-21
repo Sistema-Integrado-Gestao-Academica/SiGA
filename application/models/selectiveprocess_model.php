@@ -25,26 +25,27 @@ class SelectiveProcess_model extends CI_Model {
 
 	public function save($process){
 
+		
 		$courseId = $process->getCourse();
 		$processType = $process->getType();
 		$noticeName = $process->getName();
-		$noticePath = $process->getNoticePath();
 		$startDate = $process->getSettings()->getYMDStartDate();
 		$endDate = $process->getSettings()->getYMDEndDate();
 		$phasesOrder = serialize($process->getSettings()->getPhasesOrder());
 
+		
 		$processToSave = array(
 			self::COURSE_ATTR => $courseId,
 			self::PROCESS_TYPE_ATTR => $processType,
 			self::NOTICE_NAME_ATTR => $noticeName,
-			self::NOTICE_PATH_ATTR => $noticePath,
 			self::START_DATE_ATTR => $startDate,
 			self::END_DATE_ATTR => $endDate,
 			self::PHASE_ORDER_ATTR => $phasesOrder
 		);
-
+		
 		$previousProcess = $this->getByName($noticeName);
 
+		
 		// Does not exists this selection process yet
 		if($previousProcess === FALSE){
 
@@ -72,13 +73,20 @@ class SelectiveProcess_model extends CI_Model {
 
 		foreach($phases as $phase){
 			$phaseId = $phase->getPhaseId();
-			$phaseWeight = $phase->getWeight();
+
+			if($phase->getPhaseName() === SelectionProcessConstants::HOMOLOGATION_PHASE){
+
+				$phaseWeight = SelectionProcessConstants::HOMOLOGATION_PHASE_WEIGHT;
+			}else{
+				$phaseWeight = $phase->getWeight();
+			}
 
 			$this->db->insert(self::PROCESS_PHASE_TABLE, array(
 				self::ID_ATTR => $processId,
 				self::ID_PHASE_ATTR => $phaseId,
 				self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight
 			));
+
 		}
 	}
 

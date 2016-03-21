@@ -14,6 +14,8 @@ class SelectionProcessConstants extends Constants{
 	const WRITTEN_TEST_PHASE_ID = 3;
 	const ORAL_TEST_PHASE_ID = 4;
 
+	const HOMOLOGATION_PHASE_WEIGHT = 0;
+
 	const REGULAR_STUDENT = "regular_student";
 	const SPECIAL_STUDENT = "special_student";
 }

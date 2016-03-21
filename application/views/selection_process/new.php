@@ -67,7 +67,10 @@
 	);
 
 	$hidden = array(
-		"course" => $course['id_course']
+		"id" => "course",
+		"name" => "course",
+		"type" => "hidden",
+		"value" => $course['id_course']
 	);
 ?>
 
@@ -77,12 +80,12 @@
 <br>
 
 
-<?= form_hidden($hidden); ?>
+<?= form_input($hidden); ?>
 
 <div class="row">
 	<div class="col-md-3">
 		<?= form_label("Processo Seletivo para:", "student_type"); ?>
-		<?= form_dropdown("student_type", $studentType, "id='student_type'"); ?>
+		<?= form_dropdown("student_type", $studentType, "","id='student_type'"); ?>
 	</div>
 	<div class="col-md-6">
 		<?= form_label("Nome do edital", "selective_process_name"); ?>
@@ -204,9 +207,11 @@ Defina a ordem de execução das fases para este edital arrastando as fases para
 <br>
 <?= form_button($saveProcessBtn); ?>
 
+<br>
+<div id="selection_process_saving_status"></div>
+
 <!-- Notice file upload -->
 
-<br>
 <br>
 <h4><i class="fa fa-upload"></i> Arquivo do edital</h4>
 

@@ -7,8 +7,9 @@ require_once "phases/WeightedPhase.php";
 class ProcessSettings{
 
 	const INVALID_PHASE = "As fases do processo seletivo não pode ser nulas."; 
-	const INVALID_DATE = "A data informada é inválida. Deve estar no formato dd/mm/yyyy.";
-	const INVALID_DATE_INTERVAL = "A data final não pode ser antes da data inicial.";
+	const INVALID_START_DATE = "A data inicial informada é inválida. Deve estar no formato dd/mm/yyyy.";
+	const INVALID_END_DATE = "A data final informada é inválida. Deve estar no formato dd/mm/yyyy.";
+	const INVALID_DATE_INTERVAL = "A data final não pode ser antes ou igual à data inicial.";
 
 	private $startDate;
 	private $endDate;
@@ -66,10 +67,10 @@ class ProcessSettings{
 				$this->startDate = $validDate;
 			}catch(Exception $e){
 				
-				throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_DATE." - ".$e->getMessage());
+				throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_START_DATE." - ".$e->getMessage());
 			}
 	   }else{
-			throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_DATE);
+			throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_START_DATE);
 	   }
 	   
 	}
@@ -88,10 +89,10 @@ class ProcessSettings{
 				$this->endDate = $validDate;
 			}catch(Exception $e){
 				
-				throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_DATE." - ".$e->getMessage());
+				throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_END_DATE." - ".$e->getMessage());
 			}
 	   }else{
-			throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_DATE);
+			throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_END_DATE);
 	   }
 	}
 
