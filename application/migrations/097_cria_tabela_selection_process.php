@@ -20,8 +20,13 @@ class Migration_cria_tabela_selection_process extends CI_Migration {
 		$this->dbforge->add_key('id_process', true);
 		$this->dbforge->create_table('selection_process', TRUE);
 		
+		// Adding course FK
 		$addConstraint = "ALTER TABLE selection_process ADD CONSTRAINT SELECTION_PROCESS_COURSE_FK FOREIGN KEY (id_course) REFERENCES course(id_course) ON DELETE NO ACTION ON UPDATE RESTRICT";
 		$this->db->query($addConstraint);
+
+		// Adding notice_name Unique constraint
+		$ukConstraint = "ALTER TABLE selection_process ADD CONSTRAINT NOTICE_NAME_UK UNIQUE(notice_name)";
+		$this->db->query($ukConstraint);
 
 		// Creating Selection Process permission
 		$this->db->insert('permission', array('permission_name' => "Processo Seletivo", 'route' => "selection_process", "id_permission"=>28));
