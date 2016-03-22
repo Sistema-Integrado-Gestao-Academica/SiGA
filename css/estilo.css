@@ -115,7 +115,7 @@ td {
 .nav-tabs.nav-justified > .active > a,
 .nav-tabs.nav-justified > .active > a:hover,
 .nav-tabs.nav-justified > .active > a:focus {
-  background-color: #428bca;
-  border-bottom: 4px solid #428bca;
+  background-color: #4682B4;
+  border-bottom: 4px solid #4682B4;
   color: #fff;
 }
