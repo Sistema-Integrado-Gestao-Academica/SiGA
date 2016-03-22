@@ -84,9 +84,22 @@ class SelectiveProcess extends CI_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/new", $data);
     }
 
-    private function setUploadOptions($fileName){
+    private function setUploadOptions($fileName, $programId, $courseId, $processId){
         
-        $config['upload_path'] = APPPATH.'/upload_files/notices/';
+        // Remember to give the proper permission to the /upload_files folder
+        define("NOTICES_UPLOAD_FOLDER_PATH", "upload_files/notices");
+        
+        $desiredPath = APPPATH.NOTICES_UPLOAD_FOLDER_PATH;
+
+        $ids = array(
+            "p" => $programId,
+            "c" => $courseId,
+            "s" => $processId
+        );
+
+        $path = $this->createFolders($desiredPath, $ids);
+
+        $config['upload_path'] = $path;
         $config['file_name'] = $fileName;
         $config['allowed_types'] = 'pdf';
         $config['max_size'] = '5500';
@@ -95,20 +108,45 @@ class SelectiveProcess extends CI_Controller {
         return $config;
     }
 
+    private function createFolders($desiredPath, $ids){
+
+        foreach ($ids as $folderType => $id) {
+            
+            $auxPath = $desiredPath;
+
+            $pathToAdd = "/".$folderType."_".$id;
+
+            if(is_dir($auxPath.$pathToAdd)){
+                $desiredPath .= $pathToAdd;
+                $auxPath = $desiredPath;
+            }
+            else{
+                mkdir($auxPath.$pathToAdd, 0777, TRUE);
+                $desiredPath .= $pathToAdd;
+            }
+        }
+
+        return $desiredPath;
+    }
+
     public function saveNoticeFile(){
+
+        $this->load->library('upload');
 
         $courseId = $this->input->post("course");
         $processId = base64_decode($this->input->post("selection_process_id"));
 
         $process = $this->process_model->getById($processId);
 
-        $config = $this->setUploadOptions($process->getName());
-
-        // Remember to give the proper permission to the /upload_files folder
-        $this->load->library('upload', $config);
+        $course = new Course();
+        $course = $course->getCourseById($courseId);
+        
+        $config = $this->setUploadOptions($process->getName(), $course["id_program"], $course["id_course"], $processId);
+        
+        $this->upload->initialize($config);
 
         if($this->upload->do_upload("notice_file")){
-            
+
             $noticeFile = $this->upload->data();
             $noticePath = $noticeFile['full_path'];
 
@@ -128,6 +166,7 @@ class SelectiveProcess extends CI_Controller {
             // Errors on file upload
             $errors = $this->upload->display_errors();
             
+            var_dump($errors);exit;
             $status = "danger";
             $message = $errors."<br>Tente novamente.";
             $pathToRedirect = "selectiveprocess/tryUploadNoticeFile/{$processId}";
