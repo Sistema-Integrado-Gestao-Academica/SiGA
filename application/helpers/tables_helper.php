@@ -1615,7 +1615,7 @@ function displayRegisteredPrograms($programs, $canRemove){
 					$historyNonExists = isEmpty($program['history']);
 					$contactNonExists = isEmpty($program['contact']);
 
-					if($summaryNonExists || $historyNonExists || $contactNonExists){			
+					if($summaryNonExists || $historyNonExists || $contactNonExists){
 						echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"Edite o programa e complemente com os dados de resumo, contato, histórico e linhas de 	pesquisa.\" id='alert' ><i class='fa fa-warning'></i> Dados Incompletos </span>";
 		    		}
@@ -1625,7 +1625,7 @@ function displayRegisteredPrograms($programs, $canRemove){
 		     				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
 					if ($canRemove) {
-						
+
 						echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
@@ -2545,7 +2545,8 @@ function displayGuestUsers(){
 
 		buildTableHeaders(array(
 			'Nome',
-			'E-mail'
+			'E-mail',
+			'Ações'
 		));
 
 		foreach ($guests as $keys => $user){
@@ -2555,6 +2556,9 @@ function displayGuestUsers(){
 				echo "</td>";
 				echo "<td>";
 					echo $user['email'];
+				echo "</td>";
+				echo "<td>";
+					echo "Matricular Aluno";
 				echo "</td>";
 
 			echo "</tr>";
