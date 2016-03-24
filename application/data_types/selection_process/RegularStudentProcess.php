@@ -12,4 +12,8 @@ class RegularStudentProcess extends SelectionProcess{
 	public function getType(){
 		return SelectionProcessConstants::REGULAR_STUDENT;
 	}
+
+	public function getFormmatedType(){
+		return SelectionProcessConstants::REGULAR_STUDENT_PORTUGUESE;
+	}
 }

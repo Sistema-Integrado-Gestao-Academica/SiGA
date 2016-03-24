@@ -68,6 +68,22 @@ class SelectiveProcess extends CI_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/program_courses", $data);
     }
 
+    public function courseSelectiveProcesses($courseId){
+
+        $course = new Course();
+        $course = $course->getCourseById($courseId);
+
+        $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
+
+        $data = array(
+            'course' => $course,
+            'selectiveProcesses' => $selectiveProcesses
+        );
+
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/course_process", $data);
+    }
+
     public function openSelectiveProcess($courseId){
 
         $course = new Course();
@@ -166,7 +182,6 @@ class SelectiveProcess extends CI_Controller {
             // Errors on file upload
             $errors = $this->upload->display_errors();
             
-            var_dump($errors);exit;
             $status = "danger";
             $message = $errors."<br>Tente novamente.";
             $pathToRedirect = "selectiveprocess/tryUploadNoticeFile/{$processId}";
@@ -194,8 +209,56 @@ class SelectiveProcess extends CI_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/upload_notice", $data);
     }
 
-    public function courseSelectiveProcesses($courseId){
+    private function getCourseSelectiveProcesses($courseId){
 
-        // List all selective processes of a course
+        $processes = $this->process_model->getCourseSelectiveProcesses($courseId);
+
+
+        if($processes !== FALSE){
+ 
+            $selectiveProcesses = array();
+
+            foreach($processes as $process){
+                
+                if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
+
+                    try{
+                        
+                        $selectionProcess = new RegularStudentProcess(
+                            $process[SelectiveProcess_model::COURSE_ATTR],
+                            $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
+                            $process[SelectiveProcess_model::ID_ATTR]
+                        );
+
+                    }catch(SelectionProcessException $e){
+                        $selectionProcess = FALSE;
+                    }
+
+                }else{
+                    try{
+                        $selectionProcess = new SpecialStudentProcess(
+                            $process[SelectiveProcess_model::COURSE_ATTR],
+                            $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
+                            $process[SelectiveProcess_model::ID_ATTR]
+                        );
+                    }catch(SelectionProcessException $e){
+                        $selectionProcess = FALSE;
+                    }
+                }
+
+                if($selectionProcess !== FALSE){
+                    $selectiveProcesses[] = $selectionProcess;                    
+                }else{
+                    // Something is wrong with the data registered on database
+                    // Should not have wrong data because the data is validated before inserting, using the same class.
+                    show_error("O banco de dados retornou um valor inválido da tabela ".SelectiveProcess_model::SELECTION_PROCESS_TABLE.". Contate o administrador.", 500, "Algo de errado com o banco de dados");
+                }
+            }
+
+        }else{
+            $selectiveProcesses = FALSE;
+        }
+
+        return $selectiveProcesses;
     }
 }

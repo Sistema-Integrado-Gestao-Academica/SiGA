@@ -9,6 +9,10 @@ class SpecialStudentProcess extends SelectionProcess{
 	}
 
 	public function getType(){
-		return SelectionProcessConstants::REGULAR_STUDENT;
+		return SelectionProcessConstants::SPECIAL_STUDENT;
+	}
+
+	public function getFormmatedType(){
+		return SelectionProcessConstants::SPECIAL_STUDENT_PORTUGUESE;
 	}
 }

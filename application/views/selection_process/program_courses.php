@@ -22,8 +22,8 @@ if($courses  !== FALSE){
 			echo "<td>";
 
 				echo anchor(
-					"selectiveprocess/openSelectiveProcess/{$course['id_course']}",
-					"<i class='fa fa-plus'></i> Abrir edital para <b>".$course['course_name']."</b>",
+					"selectiveprocess/courseSelectiveProcesses/{$course['id_course']}",
+					"<i class='fa fa-list'></i> Editais do curso <b>".$course['course_name']."</b>",
 					"class='btn btn-primary'"
 				);
 

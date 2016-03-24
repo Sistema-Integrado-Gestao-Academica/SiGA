@@ -109,4 +109,5 @@ abstract class SelectionProcess{
 	}
 
 	public abstract function getType();
+	public abstract function getFormmatedType();
 }

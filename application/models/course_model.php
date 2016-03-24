@@ -6,6 +6,9 @@ require_once(APPPATH."/constants/GroupConstants.php");
 
 class Course_model extends CI_Model {
 
+	const COURSE_NAME_ATTR = "course_name";
+	const ID_ATTR = "id_course";
+
 	public function getCourseTeachers($courseId){
 
 		$this->db->select('users.name, teacher_course.*');

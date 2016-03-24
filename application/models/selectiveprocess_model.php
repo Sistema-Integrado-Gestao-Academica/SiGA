@@ -109,6 +109,13 @@ class SelectiveProcess_model extends CI_Model {
 		return $updated;
 	}
 
+	public function getCourseSelectiveProcesses($courseId){
+
+		$foundProcesses = $this->get(self::COURSE_ATTR, $courseId, FALSE);
+
+		return $foundProcesses;
+	}
+
 	public function getById($processId){
 
 		$foundProcess = $this->get(self::ID_ATTR, $processId);
@@ -120,6 +127,18 @@ class SelectiveProcess_model extends CI_Model {
 				try{
 
 					$selectiveProcess = new RegularStudentProcess(
+						$foundProcess[self::COURSE_ATTR],
+						$foundProcess[self::NOTICE_NAME_ATTR],
+						$foundProcess[self::ID_ATTR]
+					);
+
+				}catch(SelectionProcessException $e){
+					$selectiveProcess = FALSE;
+				}
+			}else{
+				try{
+
+					$selectiveProcess = new SpecialStudentProcess(
 						$foundProcess[self::COURSE_ATTR],
 						$foundProcess[self::NOTICE_NAME_ATTR],
 						$foundProcess[self::ID_ATTR]

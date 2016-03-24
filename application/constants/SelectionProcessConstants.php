@@ -18,4 +18,6 @@ class SelectionProcessConstants extends Constants{
 
 	const REGULAR_STUDENT = "regular_student";
 	const SPECIAL_STUDENT = "special_student";
+	const REGULAR_STUDENT_PORTUGUESE = "Aluno regular";
+	const SPECIAL_STUDENT_PORTUGUESE = "Aluno especial";
 }
