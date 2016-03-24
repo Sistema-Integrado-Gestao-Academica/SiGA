@@ -7,3 +7,5 @@ user_guide
 .settings/
 application/config/*.php
 siga.sublime-workspace
+
+/application/upload_files

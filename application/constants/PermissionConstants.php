@@ -16,11 +16,14 @@ class PermissionConstants extends Constants{
 	const BUDGETPLAN_PERMISSION = "planoorcamentario";
 	const RESEARCH_LINES_PERMISSION = "research_lines";
 	const COURSES_PERMISSION = "cursos";
+	const PROGRAMS_PERMISSION = "program";
 
 	const SECRETARY_PROGRAMS_PERMISSION = "secretary_programs";
+	
 	// Student functionalities permissions
 	const DOCUMENT_REQUEST_PERMISSION = "documents_request";
 
 	const MASTERMIND_PERMISSION = "mastermind";
 
+	const SELECTION_PROCESS_PERMISSION = "selection_process";
 }

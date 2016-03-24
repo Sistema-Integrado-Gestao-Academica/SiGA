@@ -86,7 +86,7 @@ $route['enroll_mastermind'] = 'usuario/secretary_enrollMasterMinds';
 $route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
 $route['documents_report'] = 'documentrequest/documentRequestSecretary';
 $route['research_lines'] = 'usuario/secretary_research_lines';
-$route['secretary_programs'] = 'secretary/getSecretaryPrograms';
+$route['secretary_programs'] = 'secretary/secretaryPrograms';
 
 /*
  * Mastermind functionalities routes
@@ -103,6 +103,11 @@ $route['student_information'] = 'usuario/studentInformationsForm';
 $route['documents_request'] = "documentrequest/index";
 
 /*
+ * Selection Process functionalities routes
+ */
+$route['selection_process'] = 'selectiveprocess/index';
+
+/*
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test
  */
@@ -117,6 +122,9 @@ $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
 $route['classHour_test'] = 'tests/ClassHour_test';
 $route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
+$route['selection_process_test'] = 'tests/SelectionProcess_Test';
+$route['process_settings_test'] = 'tests/ProcessSettings_Test';
+$route['process_phase_test'] = 'tests/ProcessPhase_Test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */

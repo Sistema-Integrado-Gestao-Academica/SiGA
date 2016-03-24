@@ -17,7 +17,7 @@ class Program extends CI_Controller {
 			'programs' => $programs
 		);
 
-		loadTemplateSafelyByPermission("program",'program/index', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::PROGRAMS_PERMISSION,'program/index', $data);
 	}
 
 	public function getAllPrograms(){
