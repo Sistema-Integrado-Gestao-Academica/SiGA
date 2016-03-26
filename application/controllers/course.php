@@ -673,6 +673,15 @@ class Course extends CI_Controller {
 		return $secretary;
 	}
 
+
+	public function getCourseAcademicSecretaryName($id_course){
+
+		$this->load->model('course_model');
+		$secretaryName = $this->course_model->getAcademicSecretaryName($id_course);
+
+		return $secretaryName;
+	}
+
 	public function deleteSecretary(){
 		$course_id = $this->input->post('id_course');
 		$secretary_id = $this->input->post('id_secretary');

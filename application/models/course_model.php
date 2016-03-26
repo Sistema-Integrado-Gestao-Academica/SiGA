@@ -541,6 +541,19 @@ class Course_model extends CI_Model {
 		return $secretary;
 	}
 
+	public function getAcademicSecretaryName($id_course){
+
+		$this->db->select('users.name');
+		$this->db->from('users');
+		$this->db->join('secretary_course','users.id = secretary_course.id_user');
+		$this->db->where('secretary_course.id_course', $id_course);
+		$this->db->where('secretary_course.id_group', GroupConstants::ACADEMIC_SECRETARY_GROUP_ID);
+		$secretary = $this->db->get()->result_array();
+		$secretary = checkArray($secretary);
+
+		return $secretary;
+	}
+
 	public function getSecretaryByUserId($id_user){
 
 		$this->db->select('id_secretary, id_group, id_course');

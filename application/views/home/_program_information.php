@@ -72,25 +72,37 @@
 				<div class="panel box box-primary">
               		<div class="box-header with-border">
 	                <h4 class="box-title">
-	                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#contact".$program['id_program']?> aria-expanded="false" class="collapsed">
-						Contato <i class=" fa fa-caret-down"></i>
+	                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#contact".$program['id_program']?> aria-expanded="false" class="collapsed"> Secretaria e Contato <i class=" fa fa-caret-down"></i>
 	                  </a>
 	                </h4>
 	              </div>
 	              	<div id=<?="contact".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false">
 	                	<div class="box-body">			
 
-						<p><?php echo $program['contact']?></p>
+						<p><b>Contatos</b></p>
+							<p><?php echo $program['contact']?></p>
+					<?php
+						}
+						if ($coursesPrograms !== FALSE) {
+							$coursesProgram = $coursesPrograms[$program['id_program']];
+							
+							$secretaries = $coursesProgram['secretaries']; 
+							
+							if(!empty($secretaries)){ 
+								
+								echo "<p><b>Secretários</b></p>";
+
+								foreach ($secretaries as $secretary) {
+
+									echo "<p>{$secretary['name']}</p>";							
+								}
+							}
+							?> 
+							</div>
 						</div>
 					</div>
-				</div>
-		
 		<?php
-			}
 
-			if ($coursesPrograms !== FALSE) {
-			
-				$coursesProgram = $coursesPrograms[$program['id_program']];
 				$researchLines = $coursesProgram['researchLines']; 
 				
 				if(!empty($researchLines)){ ?>

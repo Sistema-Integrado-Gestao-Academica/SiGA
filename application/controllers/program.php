@@ -509,12 +509,14 @@ class Program extends CI_Controller {
 
 		$researchLines = $this->getCourseResearchLines($coursesId);
 		$teachers = $this->getCourseTeachers($coursesId);
+		$secretaries = $this->getCourseAcademicSecretarys($coursesId);
 
 		$courses = array(
 			'coursesId' => $coursesId,
 			'coursesName' => $coursesName,
 			'researchLines' => $researchLines,
-			'teachers' => $teachers
+			'teachers' => $teachers,
+			'secretaries' => $secretaries
 		);
 		
 		return $courses;	
@@ -565,5 +567,31 @@ class Program extends CI_Controller {
 		}
 		return $teachersInfo;
 
+	}
+
+	private function getCourseAcademicSecretarys($coursesId){
+
+		$secretariesInfo = array();
+		
+		foreach ($coursesId as $id) {
+						
+			$courseController = new Course();
+			$secretaries[$id] = $courseController->getCourseAcademicSecretaryName($id);
+		}
+
+		foreach ($secretaries as $secretary) {
+
+			if(!empty($secretary)){
+
+				$i = 0;
+				foreach ($secretary as $secretaryInfo){
+					$secretariesInfo[$i]['name'] = $secretaryInfo['name']; 
+					$i++;
+				}
+			}
+
+		}
+		
+		return $secretariesInfo;
 	}
 }
