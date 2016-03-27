@@ -13,7 +13,19 @@
 ?>
     <a class="nav-tabs-dropdown btn btn-block btn-primary"><h3>Sobre o <?php echo $program['program_name']
 	?></h3></a>
-
+	<!-- <ul class='nav nav-tabs nav-justified'>
+		<li class='active'>
+			<a href="#secretary" data-toggle="tab" aria-expanded="true">Secretaria e Contato</a>
+		</li>
+		<li>
+			<a href="#secretary" data-toggle="tab" aria-expanded="true">Cursos</a>
+		</li>
+		<li class='active'>
+			<a href="#secretary" data-toggle="tab" aria-expanded="true">Coordenador</a>
+		</li>
+		<li class='active'>
+			<a href="#secretary" data-toggle="tab" aria-expanded="true">Docentes</a>
+		</li> -->
 	<div class="box-body">
       <div class="box-group" id=<?="accordion".$program['id_program']?>>
             <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->

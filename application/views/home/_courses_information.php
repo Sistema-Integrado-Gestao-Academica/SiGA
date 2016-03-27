@@ -43,7 +43,7 @@
 
 						<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
 							<li class="active">
-								<a href="#vtab1" data-toggle="collapse" data-target=<?="#teacher".$teacher['teacher']?>>
+								<a href="#vtab1" data-toggle="collapse" data-target=<?="#teacher".$teacher['id']?>>
 								<h4><?= $teacher['name']?></h4> 
 								</a>
 							</li>
@@ -54,7 +54,8 @@
 							
 							if (!$isSummaryBlank || !$isLattesBlank){ ?>
 
-								<div id=<?="teacher".$teacher['teacher']?> class="collapse">
+								<div id=<?="teacher".$teacher['id']?> class="collapse">
+									<b>Email:</b><br><?= $teacher['email']?> <br>
 									<?php if (!$isSummaryBlank){ ?>
 										<b>Resumo:</b><br><?= $teacher['summary']?>
 									<?php } ?>

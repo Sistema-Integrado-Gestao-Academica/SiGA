@@ -542,28 +542,22 @@ class Program extends CI_Controller {
 	private function getCourseTeachers($coursesId){
 
 		$teachersInfo = array();
-		
+
 		foreach ($coursesId as $id) {
-						
-			$courseController = new Course();
-			$teachers[$id] = $courseController->getCourseTeachers($id);
-		}
-
-		foreach ($teachers as $teacher) {
-
-			if(!empty($teacher)){
-
+			$teacherController = new Teacher();
+			$teachers[$id] = $teacherController->getCourseTeachersForHomepage($id);
+			
+			if(!empty($teachers[$id])){
 				$i = 0;
-				foreach ($teacher as $teacherInfo){
-					$teacherId = $teacherInfo['id_user'];
-					
-					$teacherController = new Teacher();
-					$teachersInfo[$i] = $teacherController->getInfoProfile($teacherId);
-					$teachersInfo[$i]['name'] = $teacherInfo['name']; 
+				foreach ($teachers[$id] as $teacherInfo){		
+					$teachersInfo[$i]['id'] = $teacherInfo[0]['id']; 
+					$teachersInfo[$i]['name'] = $teacherInfo[0]['name']; 
+					$teachersInfo[$i]['email'] = $teacherInfo[0]['email'];
+					$teachersInfo[$i]['summary'] = $teacherInfo[0]['summary'];
+					$teachersInfo[$i]['lattes_link'] = $teacherInfo[0]['lattes_link'];
 					$i++;
 				}
-			}
-
+			}                  	
 		}
 		return $teachersInfo;
 
