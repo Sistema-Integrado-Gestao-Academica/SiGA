@@ -95,7 +95,7 @@
 							<p><?php echo $program['contact']?></p>
 					<?php
 						}
-						if ($coursesPrograms !== FALSE) {
+			if ($coursesPrograms !== FALSE) {
 							$coursesProgram = $coursesPrograms[$program['id_program']];
 							
 							$secretaries = $coursesProgram['secretaries']; 
@@ -144,12 +144,7 @@
 				}
 
 			} ?>
-
-
-
-
-		</ul>
-	   	<?php include ('_courses_information.php'); ?>
+	   		<?php include ('_courses_information.php'); ?>
         </div>
     </div>
 	<?php }

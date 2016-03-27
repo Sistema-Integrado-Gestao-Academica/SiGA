@@ -394,4 +394,21 @@ class Coordinator extends CI_Controller {
 
 		loadTemplateSafelyByGroup("coordenador",'program/coordinator_course_students', $data);	
 	}
+
+	public function getCoordinatorsForHomepage($programs){
+		
+		$coordinators = array();
+
+		$this->load->model('teacher_model');
+		if($programs !== FALSE){
+			
+			foreach ($programs as $program) {
+				$coordinatorId = $program['coordinator'];
+				$coordinators[$program['id_program']] = $this->teacher_model->getInfoTeacherForHomepage($coordinatorId);
+			}
+		}
+
+
+		return $coordinators;
+	}
 }

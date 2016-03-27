@@ -91,5 +91,5 @@ class Coordinator_model extends CI_Model {
 		
 		return $quantity;
 	}
-	
+
 }

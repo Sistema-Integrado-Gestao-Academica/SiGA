@@ -129,10 +129,13 @@ class Program extends CI_Controller {
 		$coursesPrograms = $this->getProgramsCoursesInfo($programs);		
 		$programs = $this->getProgramsWithInformation($programs, $coursesPrograms);
 
+		$coordinators = $this->getCoordinatorsForHomepage($programs);
+
 		$data = array (
 			'programs' => $programs,
 			'quantityOfPrograms' => $quantityOfPrograms,
-			'coursesPrograms' => $coursesPrograms,
+			'coordinators' => $coordinators,
+			'coursesPrograms' => $coursesPrograms
 		);
 
 		return $data;
@@ -478,6 +481,14 @@ class Program extends CI_Controller {
 
 		return $programs;
 	
+	}
+
+	public function getCoordinatorsForHomepage($programs){
+
+		$coordinator = new Coordinator();
+		$coordinators = $coordinator->getCoordinatorsForHomepage($programs);
+		
+		return $coordinators;
 	}
 
 	private function getProgramsCoursesInfo($programs){
