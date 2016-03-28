@@ -46,3 +46,7 @@ if($selectiveProcesses !== FALSE){
 }
 
 buildTableEndDeclaration();
+
+echo "<br>";
+
+echo anchor("selectiveprocess/programCourses/{$course['id_program']}", "Voltar", "class='btn btn-danger'");

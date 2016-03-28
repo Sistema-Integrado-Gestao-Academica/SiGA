@@ -198,3 +198,10 @@ Defina a ordem de execução das fases para este edital arrastando as fases para
 
 <br>
 <br>
+
+<?= anchor(
+		"selectiveprocess/courseSelectiveProcesses/{$course['id_program']}",
+		"Voltar",
+		"class='btn btn-danger'"
+	);
+?>

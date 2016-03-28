@@ -80,7 +80,6 @@ class SelectiveProcess extends CI_Controller {
             'selectiveProcesses' => $selectiveProcesses
         );
 
-
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/course_process", $data);
     }
 

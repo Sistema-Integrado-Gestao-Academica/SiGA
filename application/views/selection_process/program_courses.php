@@ -39,3 +39,7 @@ if($courses  !== FALSE){
 }
 
 buildTableEndDeclaration();
+
+echo  "<br>";
+
+echo anchor("selection_process","Voltar","class='btn btn-danger'");
