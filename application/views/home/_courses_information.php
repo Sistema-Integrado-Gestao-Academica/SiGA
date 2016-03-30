@@ -5,7 +5,7 @@ if ($coursesPrograms !== FALSE) {
 
 	if(!empty($coursesName)){ ?>
 
-		<div class="panel box box-primary">
+		<div class="panel box box-default">
 			<div class="box-header with-border">
 	    		<h4 class="box-title">
 	      		<a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#collapseTwo".$program['id_program']?> class="collapsed" aria-expanded="false" >
@@ -27,7 +27,7 @@ if ($coursesPrograms !== FALSE) {
 		} 
 } ?>
 
-<div class="panel box box-primary">
+<div class="panel box box-default">
           <div class="box-header with-border">
             <h4 class="box-title">
               <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#coordinator".$program['id_program']?> class="collapsed" aria-expanded="false">
@@ -74,7 +74,7 @@ if ($coursesPrograms !== FALSE) {
 
 	if(!empty($teachers)){ ?>
 		
-		<div class="panel box box-primary">
+		<div class="panel box box-default">
           <div class="box-header with-border">
             <h4 class="box-title">
               <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#collapseThree".$program['id_program']?> class="collapsed" aria-expanded="false">
