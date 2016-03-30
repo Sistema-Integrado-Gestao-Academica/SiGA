@@ -169,20 +169,20 @@ class Usuario extends CI_Controller {
 
 	/**
 	 * Get the group of the user to edit program
-	 * @param userId - The id of the current user 
+	 * @param userId - The id of the current user
 	 * @return userGroup - Return the academic secretary or admin group
 	 */
 	public function getGroup(){
-		
+
 		$userGroup = "";
-			
+
 		$session = $this->session->userdata("current_user");
 		$userId = $session['user']['id'];
 
 
 		$this->load->model('usuarios_model');
 		$userGroups = $this->usuarios_model->getGroups($userId);
-		
+
 		if($userGroups !== FALSE){
 
 			foreach ($userGroups as $userGroup) {
@@ -192,11 +192,11 @@ class Usuario extends CI_Controller {
 				}
 				elseif ($userGroup['group_name'] == GroupConstants::ADMIN_GROUP) {
 					$userGroup = GroupConstants::ADMIN_GROUP;
-					break;	
+					break;
 				}
 			}
 		}
-		
+
 
 		return $userGroup;
 	}
@@ -666,27 +666,6 @@ class Usuario extends CI_Controller {
 			$this->load->template("usuario/conta", $dados);
 		}
 
-	}
-
-	public function searchForStudent(){
-
-		$studentNameToSearch = $this->input->post('student_name');
-
-		$students = $this->getRegisteredStudentsByName($studentNameToSearch);
-
-		$studentIds = array();
-		$studentNames = array();
-		$i = 0;
-		foreach($students as $student){
-			$studentIds[$i] = $student['id'];
-			$studentNames[$i] = $student['name'];
-			$i++;
-		}
-
-		$studentsToDropdown = array_combine($studentIds, $studentNames);
-
-		// On tables helper
-		displayRegisteredStudents($studentsToDropdown, $studentNameToSearch);
 	}
 
 	public function saveStudentBasicInformation(){

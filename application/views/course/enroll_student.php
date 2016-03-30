@@ -1,12 +1,5 @@
-
-<br>
-<br>
-<br>
-<br>
-
+<h2 class='principal'>Matricular alunos no curso <i><?=$couseName?></i></h2>
 <?php
-
-echo "<h2>Matricular alunos no curso <i>".$courseName."</i></h2><br><br>";
 
 displayEnrollStudentForm();
 
@@ -15,23 +8,36 @@ displayEnrollStudentForm();
 <br>
 <br>
 
-<div class='form-group col-xs-6'>
-	<?php
-	echo form_open('course/enrollStudent');
+<?php
 
-		echo form_hidden('courseId', $courseId);
+if($guests !== FALSE){
+	echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
 
-	?>
+	buildTableDeclaration();
 
-		<div id="search_student_result"></div>
-			
-	<?php
-	echo form_close();
-	?>
-</div>
+	buildTableHeaders(array(
+		'Nome',
+		'E-mail',
+		'Ações'
+	));
 
-<div class='col-xs-8'>
-	<div class="box-body table-responsive no-padding">
-		<?php displayGuestUsers();?>
-	</div>
-</div>
+	foreach ($guests as $user){
+		echo "<tr>";
+			echo "<td>";
+				echo $user['name'];
+			echo "</td>";
+			echo "<td>";
+				echo $user['email'];
+			echo "</td>";
+			echo "<td>";
+				echo anchor("enrollment/enrollStudent/{$courseId}/{$user['id']}", "Matricular", "class='btn btn-primary'");
+			echo "</td>";
+
+		echo "</tr>";
+	}
+
+	buildTableEndDeclaration();
+}
+
+
+?>

@@ -2247,34 +2247,6 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 	buildTableEndDeclaration();
 }
 
-function displayRegisteredStudents($students, $studentNameToSearch){
-
-	$thereIsStudents = sizeof($students) > 0;
-
-	if($thereIsStudents){
-
-		$enrollStudentBtn = array(
-			"id" => "enroll_student_btn",
-			"class" => "btn bg-olive btn-block",
-			"content" => "Matricular aluno",
-			"type" => "submit",
-			"style" => "width:35%"
-		);
-
-		echo form_label("Usuários encontrados:","user_to_enroll");
-		echo "<h4><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small></h4>";
-		echo form_dropdown('user_to_enroll', $students, "", "id = user_to_enroll class='form-control'");
-
-		echo "<br>";
-		echo form_button($enrollStudentBtn);
-
-	}else{
-
-		$principalMessage = "Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.<br><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small>";
-		callout("info", $principalMessage);
-	}
-}
-
 function displayRegisteredUsers($allUsers){
 
 	echo "<h3>Lista de Usuários:</h3>";
@@ -2531,42 +2503,6 @@ function displayUsersOfGroup($idGroup, $usersOfGroup){
     }
 
     buildTableEndDeclaration();
-}
-
-function displayGuestUsers(){
-
-	$users = new Usuario();
-	$guests = $users->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
-
-	if($guests !== FALSE){
-		echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
-
-		buildTableDeclaration();
-
-		buildTableHeaders(array(
-			'Nome',
-			'E-mail',
-			'Ações'
-		));
-
-		foreach ($guests as $keys => $user){
-			echo "<tr>";
-				echo "<td>";
-					echo $user['name'];
-				echo "</td>";
-				echo "<td>";
-					echo $user['email'];
-				echo "</td>";
-				echo "<td>";
-					echo "Matricular Aluno";
-				echo "</td>";
-
-			echo "</tr>";
-		}
-
-		buildTableEndDeclaration();
-	}
-
 }
 
 function displayResearchLinesByCourse($research_lines,$courses){
