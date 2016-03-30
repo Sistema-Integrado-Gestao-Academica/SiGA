@@ -22,19 +22,6 @@ class Course_model extends CI_Model {
 		return $teachers;
 	}
 
-	public function getCourseTeachersName($courseId){
-
-		$this->db->select('users.name');
-		$this->db->from('users');
-		$this->db->join("teacher_course", "users.id = teacher_course.id_user");
-		$this->db->where("teacher_course.id_course", $courseId);
-		$teachers = $this->db->get()->result_array();
-
-		$teachers = checkArray($teachers);
-
-		return $teachers;
-	}
-
 	public function enrollTeacherToCourse($teacherId, $courseId){
 
 		$teacherToEnroll = array(
@@ -536,6 +523,19 @@ class Course_model extends CI_Model {
 
 		$secretary = $this->db->get_where("secretary_course", array('id_course' => $id_course))->result_array();
 
+		$secretary = checkArray($secretary);
+
+		return $secretary;
+	}
+
+	public function getAcademicSecretaryName($id_course){
+
+		$this->db->select('users.name');
+		$this->db->from('users');
+		$this->db->join('secretary_course','users.id = secretary_course.id_user');
+		$this->db->where('secretary_course.id_course', $id_course);
+		$this->db->where('secretary_course.id_group', GroupConstants::ACADEMIC_SECRETARY_GROUP_ID);
+		$secretary = $this->db->get()->result_array();
 		$secretary = checkArray($secretary);
 
 		return $secretary;

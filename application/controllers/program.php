@@ -129,10 +129,13 @@ class Program extends CI_Controller {
 		$coursesPrograms = $this->getProgramsCoursesInfo($programs);		
 		$programs = $this->getProgramsWithInformation($programs, $coursesPrograms);
 
+		$coordinators = $this->getCoordinatorsForHomepage($programs);
+
 		$data = array (
 			'programs' => $programs,
 			'quantityOfPrograms' => $quantityOfPrograms,
-			'coursesPrograms' => $coursesPrograms,
+			'coordinators' => $coordinators,
+			'coursesPrograms' => $coursesPrograms
 		);
 
 		return $data;
@@ -480,6 +483,14 @@ class Program extends CI_Controller {
 	
 	}
 
+	public function getCoordinatorsForHomepage($programs){
+
+		$coordinator = new Coordinator();
+		$coordinators = $coordinator->getCoordinatorsForHomepage($programs);
+		
+		return $coordinators;
+	}
+
 	private function getProgramsCoursesInfo($programs){
 
 		$coursesProgram = array();
@@ -509,12 +520,14 @@ class Program extends CI_Controller {
 
 		$researchLines = $this->getCourseResearchLines($coursesId);
 		$teachers = $this->getCourseTeachers($coursesId);
+		$secretaries = $this->getCourseAcademicSecretarys($coursesId);
 
 		$courses = array(
 			'coursesId' => $coursesId,
 			'coursesName' => $coursesName,
 			'researchLines' => $researchLines,
-			'teachers' => $teachers
+			'teachers' => $teachers,
+			'secretaries' => $secretaries
 		);
 		
 		return $courses;	
@@ -540,30 +553,50 @@ class Program extends CI_Controller {
 	private function getCourseTeachers($coursesId){
 
 		$teachersInfo = array();
+
+		foreach ($coursesId as $id) {
+			$teacherController = new Teacher();
+			$teachers[$id] = $teacherController->getCourseTeachersForHomepage($id);
+			
+			if(!empty($teachers[$id])){
+				$i = 0;
+				foreach ($teachers[$id] as $teacherInfo){		
+					$teachersInfo[$i]['id'] = $teacherInfo[0]['id']; 
+					$teachersInfo[$i]['name'] = $teacherInfo[0]['name']; 
+					$teachersInfo[$i]['email'] = $teacherInfo[0]['email'];
+					$teachersInfo[$i]['summary'] = $teacherInfo[0]['summary'];
+					$teachersInfo[$i]['lattes_link'] = $teacherInfo[0]['lattes_link'];
+					$i++;
+				}
+			}                  	
+		}
+		return $teachersInfo;
+
+	}
+
+	private function getCourseAcademicSecretarys($coursesId){
+
+		$secretariesInfo = array();
 		
 		foreach ($coursesId as $id) {
 						
 			$courseController = new Course();
-			$teachers[$id] = $courseController->getCourseTeachers($id);
+			$secretaries[$id] = $courseController->getCourseAcademicSecretaryName($id);
 		}
 
-		foreach ($teachers as $teacher) {
+		foreach ($secretaries as $secretary) {
 
-			if(!empty($teacher)){
+			if(!empty($secretary)){
 
 				$i = 0;
-				foreach ($teacher as $teacherInfo){
-					$teacherId = $teacherInfo['id_user'];
-					
-					$teacherController = new Teacher();
-					$teachersInfo[$i] = $teacherController->getInfoProfile($teacherId);
-					$teachersInfo[$i]['name'] = $teacherInfo['name']; 
+				foreach ($secretary as $secretaryInfo){
+					$secretariesInfo[$i]['name'] = $secretaryInfo['name']; 
 					$i++;
 				}
 			}
 
 		}
-		return $teachersInfo;
-
+		
+		return $secretariesInfo;
 	}
 }

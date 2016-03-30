@@ -76,4 +76,20 @@ class Teacher_model extends CI_Model {
 
 	}
 
+
+	public function getInfoTeacherForHomepage($teacherId){
+
+		$this->db->select('users.id, users.name, users.email,
+							teacher_profile.summary, teacher_profile.lattes_link'
+						);
+		$this->db->from('users');
+		$this->db->join("teacher_profile", "users.id = teacher_profile.id_user");
+		$this->db->where("teacher_profile.id_user", $teacherId);
+		$teachers = $this->db->get()->result_array();
+		$teachers = checkArray($teachers);
+
+		return $teachers;
+	}
+
+
 }

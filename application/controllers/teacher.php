@@ -7,6 +7,7 @@ class Teacher extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('teacher_model');
+		$this->load->model('course_model');
 	}
 
 	public function updateProfile(){
@@ -46,6 +47,23 @@ class Teacher extends CI_Controller {
 			redirect('update_profile');
 		}
 
+	}
+
+
+	public function getCourseTeachersForHomepage($courseId){
+
+		$teachers = $this->course_model->getCourseTeachers($courseId);
+		$teachersInfo = array();
+
+		if($teachers !== FALSE){
+			
+			foreach ($teachers as $teacher) {
+				$teacherId = $teacher['id_user'];
+				$teachersInfo[$teacherId] = $this->teacher_model->getInfoTeacherForHomepage($teacherId);
+			}
+		}
+
+		return $teachersInfo;
 	}
 
 	public function getInfoProfile($teacherId){

@@ -48,16 +48,6 @@ class Course extends CI_Controller {
 		return $teachers;
 	}
 
-	public function getCourseTeachersName($courseId){
-
-		$this->load->model('course_model');
-
-		$teachers = $this->course_model->getCourseTeachersName($courseId);
-
-		return $teachers;
-	}
-
-
 	public function enrollTeacherToCourse($teacherId, $courseId){
 
 		$this->load->model('course_model');
@@ -671,6 +661,15 @@ class Course extends CI_Controller {
 		$secretary = $this->course_model->getSecretaryByCourseId($id_course);
 
 		return $secretary;
+	}
+
+
+	public function getCourseAcademicSecretaryName($id_course){
+
+		$this->load->model('course_model');
+		$secretaryName = $this->course_model->getAcademicSecretaryName($id_course);
+
+		return $secretaryName;
 	}
 
 	public function deleteSecretary(){
