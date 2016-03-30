@@ -1,7 +1,9 @@
 <h2 class='principal'>Matricular alunos no curso <i><?=$couseName?></i></h2>
 <?php
-
-displayEnrollStudentForm();
+/*
+ * Legacy code. Waiting for reuse on search for guests users to enrollment
+ */
+//displayEnrollStudentForm();
 
 ?>
 
