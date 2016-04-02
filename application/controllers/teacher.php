@@ -25,10 +25,14 @@ class Teacher extends CI_Controller {
 
 		$summary = $this->input->post('summaryField');
 		$lattes = $this->input->post('lattesField');
-		
+		$availableResearchLines = $this->input->post('researchLines');
+		$researchLineId = $this->input->post('researchLineField');
+		$researchLine = $availableResearchLines[$researchLineId];
+
 		$teacherData = array(
 			'summary' => $summary,
 			'lattes_link' => $lattes,
+			'research_line' => $researchLine,
 			'id_user' => $teacherId
 		);
 
@@ -50,6 +54,9 @@ class Teacher extends CI_Controller {
 	}
 
 
+	/**
+		Get the teacher info for homepage based on program courses
+	*/
 	public function getCourseTeachersForHomepage($courseId){
 
 		$teachers = $this->course_model->getCourseTeachers($courseId);
@@ -81,9 +88,10 @@ class Teacher extends CI_Controller {
 			
 			$summary = "";	
 			$lattes = "";
+			$researchLine = "";
 		}
 
-		$availableResearchLines = $this->getAvailableResearchLines($teacherId);
+		$availableResearchLines = $this->getAvailableResearchLines($teacherId, $researchLine);
 		$data = array(
 			'teacher' => $teacherId,
 			'summary' => $summary,
@@ -95,13 +103,45 @@ class Teacher extends CI_Controller {
 		return $data;
 	}
 
-	private function getAvailableResearchLines($teacherId){
+	private function getAvailableResearchLines($teacherId, $currentResearchLine){
 
 		$courses = $this->teacher_model->getTeacherCourses($teacherId);
 
-		$researchLines = array();
+		$researchLines = $this->getTeacherResearchLinesInfo($courses);
 		$availableResearchLines = array();
 	
+		$id = 0;
+		// Put the current research line on top of dropdown
+		if (!empty($currentResearchLine)){
+			$availableResearchLines[$id] = $currentResearchLine;			
+			$id++;
+		}
+		if($researchLines !== FALSE){
+			
+
+			foreach ($researchLines as $researchLine) {
+				$researchLineLength = count($researchLine);
+
+				for ($i = 0; $i < $researchLineLength; $i++){
+					$researchLineInfo = $researchLine[$i];
+					$researchLineId = $researchLineInfo['id_research_line'];
+					$description = $researchLineInfo['description'];
+					if($description != $currentResearchLine){
+						$availableResearchLines[$id] = $description;
+						$id++;
+					}			
+				}
+
+			}
+		}
+
+		return $availableResearchLines;
+	}
+
+	private function getTeacherResearchLinesInfo($courses){
+		
+		$researchLines = array();
+
 		foreach ($courses as $course) {
 			$id = $course['id_course'];
 			$researchLinesCourse = $this->course_model->getCourseResearchLines($id);	 
@@ -110,18 +150,6 @@ class Teacher extends CI_Controller {
 			}
 		}
 
-		$id = 0;
-		foreach ($researchLines as $researchLine) {
-			$researchLineLength = count($researchLine);
-
-			for ($i = 0; $i < $researchLineLength; $i++){
-				$researchLineInfo = $researchLine[$i];
-				$availableResearchLines[$id] = $researchLineInfo['description'];			
-				$id++;
-			}
-
-		}
-
-		return $availableResearchLines;
+		return $researchLines;
 	}
 }

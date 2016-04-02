@@ -38,6 +38,7 @@ $researchLineField['value'] = $researchLine;
 	<div class="header">Atualizar Perfil</div>
 	<?= form_open("teacher/saveProfile") ?>
 	<?= form_hidden("teacher", $teacher) ?>
+	<?= form_hidden("researchLines", $availableResearchLines) ?>
 
 
 		<div class="body bg-gray">
@@ -55,7 +56,7 @@ $researchLineField['value'] = $researchLine;
 
 			<div class="form-group">	
 				<?= form_label("Linha de Pesquisa", "researchLineField") ?>
-				<?= form_dropdown("research_line", $availableResearchLines, '', "id='research_line'") ?>
+				<?= form_dropdown("researchLineField", $availableResearchLines, '', "id='researchLineField'") ?>
 				<?= form_error("researchLineField") ?>
 			</div>
 

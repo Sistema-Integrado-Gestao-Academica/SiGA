@@ -32,11 +32,13 @@ class Teacher_model extends CI_Model {
 		$id = $teacherData[self::ID_COLUMN];
 		$summary = $teacherData[self::SUMMARY_COLUMN];
 		$lattes = $teacherData[self::LATTES_COLUMN];
+		$research_line = $teacherData[self::RESEARCH_LINE_COLUMN];
 
 		$this->db->where(self::ID_COLUMN, $id);
 		$this->db->update(self::TABLE_NAME, array(
 												self::SUMMARY_COLUMN => $summary,
-												self::LATTES_COLUMN => $lattes
+												self::LATTES_COLUMN => $lattes,
+												self::RESEARCH_LINE_COLUMN => $research_line
 											));
 
 		$wasUpdated = $this->verifyIfGetProfile($teacherData);
