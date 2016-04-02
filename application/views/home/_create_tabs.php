@@ -18,7 +18,7 @@
 				echo anchor(
 					"#program".$first,
 					bold($program['acronym']),
-					"class='btn-lg' data-toggle='tab'"
+					"class='btn btn-tab' data-toggle='tab'"
 				);
 			}
 			else{
