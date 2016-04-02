@@ -6,6 +6,7 @@ class Teacher_model extends CI_Model {
 	const SUMMARY_COLUMN = "summary";
 	const ID_COLUMN = "id_user";
 	const LATTES_COLUMN = "lattes_link";
+	const RESEARCH_LINE_COLUMN = "research_line";
 
 	public function updateProfile($teacherData){
 
