@@ -104,7 +104,7 @@
 							<div class="row">
         						<div class="col-lg-4">
 								<?php
-									echo form_label("Login", "login");
+									// echo form_label("Login", "login");
 									echo form_input(array(
 										"name" => "login",
 										"id" => "login",
@@ -113,13 +113,13 @@
 										"maxlength" => "255",
 										"value" => set_value("login", ""),
 										"class" => "form-control",
-										"placeholder" => "Login de Usuário",
+										"placeholder" => "Usuário",
 									));
 									?>
 								</div>
 								<div class="col-lg-4">
 								<?php
-									echo form_label("Senha", "senha");
+									// echo form_label("Senha", "senha");
 									echo form_input(array(
 										"name" => "senha",
 										"id" => "senha",
@@ -131,7 +131,7 @@
 									));
 								?>
 								</div>
-								<br>
+								<!-- <br> -->
 								<div class="col-lg-2">
 									<?php
 										echo form_button(array(
@@ -139,12 +139,15 @@
 											"class" => "btn btn-default",
 											"content" => "Entrar",
 											"type" => "submit"
-										));?>
-
+										));
+									
+									
+									?>
 								</div>
 							</div>
 							<?php
 										echo form_close();
+										echo anchor("usuario/restorePassword", "Esqueci minha senha", "id='link'");
 										?>
 						</ul>
 

@@ -111,6 +111,11 @@ td {
   color: #2F4F4F;
 }
 
+.callout.callout-green{
+  background-color: #f0f7dc;
+  border-color: #3d9970;
+}
+
 #tabs{
   border-radius: 10px;
   background-color: #fff;
@@ -132,6 +137,10 @@ td {
   color: #fff;
 }
 
+#link{
+  color: #fff;
+  margin-left: 70%;
+}
 
 /*
  * Skin: Green (from AdminLTE)

@@ -580,6 +580,30 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/conta", $dados);
 	}
 
+	public function restorePassword(){
+		$success = $this->validateDataForRestorePassword();
+		
+		if($success){
+
+			$email = $this->input->post("email");
+			redirect("usuario/formulario");
+		}
+		else{
+			$this->load->template("usuario/restore_password");
+		}
+
+	}
+
+	private function validateDataForRestorePassword(){
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
+	}
+
 	public function novo() {
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
