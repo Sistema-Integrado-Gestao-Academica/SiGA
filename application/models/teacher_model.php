@@ -84,13 +84,25 @@ class Teacher_model extends CI_Model {
 							teacher_profile.summary, teacher_profile.lattes_link'
 						);
 		$this->db->from('users');
-		$this->db->join("teacher_profile", "users.id = teacher_profile.id_user");
-		$this->db->where("teacher_profile.id_user", $teacherId);
+		$this->db->join(self::TABLE_NAME, "users.id = ".self::TABLE_NAME.".".self::ID_COLUMN);
+		$this->db->where(self::TABLE_NAME.".".self::ID_COLUMN, $teacherId);
 		$teachers = $this->db->get()->result_array();
 		$teachers = checkArray($teachers);
 
 		return $teachers;
 	}
 
+	public function getTeacherCourses($teacherId){
+
+		$this->db->select('id_course');
+		$this->db->from("teacher_course");
+		$this->db->where("teacher_course.".self::ID_COLUMN, $teacherId);
+
+		$courses = $this->db->get()->result_array();
+		$courses = checkArray($courses);
+
+		return $courses;
+
+	}
 
 }

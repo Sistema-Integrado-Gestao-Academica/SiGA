@@ -15,7 +15,7 @@ class Teacher extends CI_Controller {
 		$session = $this->session->userdata("current_user");
 		$teacher = $session['user']['id'];
 		$infoProfile = $this->getInfoProfile($teacher);
-
+		
 		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'teacher/update_profile', $infoProfile);
 	}
 
@@ -75,6 +75,7 @@ class Teacher extends CI_Controller {
 			
 			$summary = $teacherProfile['summary'];
 			$lattes = $teacherProfile['lattes_link'];
+			$researchLine = $teacherProfile['research_line'];
 		}	
 		else{
 			
@@ -82,12 +83,45 @@ class Teacher extends CI_Controller {
 			$lattes = "";
 		}
 
+		$availableResearchLines = $this->getAvailableResearchLines($teacherId);
 		$data = array(
 			'teacher' => $teacherId,
 			'summary' => $summary,
-			'lattes' => $lattes
+			'lattes' => $lattes,
+			'researchLine' => $researchLine, # Research line of the teacher
+			'availableResearchLines' => $availableResearchLines # Possible research lines for the teacher
 		);
 		
 		return $data;
+	}
+
+	private function getAvailableResearchLines($teacherId){
+
+		$courses = $this->teacher_model->getTeacherCourses($teacherId);
+
+		$researchLines = array();
+		$availableResearchLines = array();
+	
+		foreach ($courses as $course) {
+			$id = $course['id_course'];
+			$researchLinesCourse = $this->course_model->getCourseResearchLines($id);	 
+			if ($researchLinesCourse !== FALSE){
+				$researchLines[$id] = $researchLinesCourse;
+			}
+		}
+
+		$id = 0;
+		foreach ($researchLines as $researchLine) {
+			$researchLineLength = count($researchLine);
+
+			for ($i = 0; $i < $researchLineLength; $i++){
+				$researchLineInfo = $researchLine[$i];
+				$availableResearchLines[$id] = $researchLineInfo['description'];			
+				$id++;
+			}
+
+		}
+
+		return $availableResearchLines;
 	}
 }

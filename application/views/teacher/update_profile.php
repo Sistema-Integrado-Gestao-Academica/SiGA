@@ -30,7 +30,7 @@ $submitBtn = array(
 // Setting values
 $summaryField['value'] = $summary;
 $lattesField['value'] = $lattes;
-$researchLineField['value'] = $research_line;
+$researchLineField['value'] = $researchLine;
 
 ?>
 
@@ -55,8 +55,8 @@ $researchLineField['value'] = $research_line;
 
 			<div class="form-group">	
 				<?= form_label("Linha de Pesquisa", "researchLineField") ?>
-				<?= form_dropdown("research_line", $availableResearchLines, '', "id='research_line") ?>
-				<?= form_error("lattesField") ?>
+				<?= form_dropdown("research_line", $availableResearchLines, '', "id='research_line'") ?>
+				<?= form_error("researchLineField") ?>
 			</div>
 
 		</div>
