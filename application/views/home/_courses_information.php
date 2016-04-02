@@ -47,8 +47,7 @@ if ($coursesPrograms !== FALSE) {
 							<?php 
 							
 							$isSummaryBlank = empty($coordinator['summary']) || is_null($coordinator['summary']);
-							$isLattesBlank = empty($coordinator['lattes']) ||  is_null($coordinator['lattes']);
-							
+							$isLattesBlank = empty($coordinator['lattes_link']) ||  is_null($coordinator['lattes_link']);
 							if (!$isSummaryBlank || !$isLattesBlank){ ?>
 								<div id=<?="coordinator".$program['id_program'].$program['coordinator']?> class="collapse">
 									<b>Email:</b><br><?= $coordinator['email']?> <br>
@@ -57,7 +56,7 @@ if ($coursesPrograms !== FALSE) {
 									<?php } ?>
 									<br><br>
 									<?php if (!$isLattesBlank){ ?>
-										<a class="btn btn-primary btn-flat btn-xs" href=<?= $coordinator['lattes']?>>Currículo Lattes</a>
+										<a class="btn btn-primary btn-flat btn-xs" href=<?= $coordinator['lattes_link']?>>Currículo Lattes</a>
 									<?php } ?>
 								</div>
 							<?php
@@ -98,7 +97,7 @@ if ($coursesPrograms !== FALSE) {
 									<?php 
 									
 									$isSummaryBlank = empty($teacher['summary']) || is_null($teacher['summary']);
-									$isLattesBlank = empty($teacher['lattes']) ||  is_null($teacher['lattes']);
+									$isLattesBlank = empty($teacher['lattes_link']) ||  is_null($teacher['lattes_link']);
 									
 									if (!$isSummaryBlank || !$isLattesBlank){ ?>
 
@@ -109,7 +108,7 @@ if ($coursesPrograms !== FALSE) {
 											<?php } ?>
 											<br><br>
 											<?php if (!$isLattesBlank){ ?>
-												<a class="btn btn-primary btn-flat btn-xs" href=<?= $teacher['lattes']?>>Currículo Lattes</a>
+												<a class="btn btn-primary btn-flat btn-xs" href=<?= $teacher['lattes_link']?>>Currículo Lattes</a>
 											<?php } ?>
 										</div>
 									<?php
