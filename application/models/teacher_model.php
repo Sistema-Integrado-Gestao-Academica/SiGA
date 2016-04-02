@@ -83,7 +83,8 @@ class Teacher_model extends CI_Model {
 	public function getInfoTeacherForHomepage($teacherId){
 
 		$this->db->select('users.id, users.name, users.email,
-							teacher_profile.summary, teacher_profile.lattes_link'
+							teacher_profile.summary, teacher_profile.lattes_link, 
+							teacher_profile.research_line'
 						);
 		$this->db->from('users');
 		$this->db->join(self::TABLE_NAME, "users.id = ".self::TABLE_NAME.".".self::ID_COLUMN);

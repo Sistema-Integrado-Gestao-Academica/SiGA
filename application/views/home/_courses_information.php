@@ -48,11 +48,18 @@ if ($coursesPrograms !== FALSE) {
 							
 							$isSummaryBlank = empty($coordinator['summary']) || is_null($coordinator['summary']);
 							$isLattesBlank = empty($coordinator['lattes_link']) ||  is_null($coordinator['lattes_link']);
-							if (!$isSummaryBlank || !$isLattesBlank){ ?>
+
+							$isResearchLineBlank = empty($coordinator['research_line']) ||  is_null($coordinator['research_line']);
+									
+							if (!$isSummaryBlank || !$isLattesBlank || !$isResearchLineBlank){ ?>
 								<div id=<?="coordinator".$program['id_program'].$program['coordinator']?> class="collapse">
 									<b>Email:</b><br><?= $coordinator['email']?> <br>
 									<?php if (!$isSummaryBlank){ ?>
 										<b>Resumo:</b><br><?= $coordinator['summary']?>
+									<?php } ?>
+									<br>	
+									<?php if (!$isResearchLineBlank){ ?>
+										<b>Linha de Pesquisa:</b><br><?= $coordinator['research_line']?>
 									<?php } ?>
 									<br><br>
 									<?php if (!$isLattesBlank){ ?>
@@ -85,7 +92,7 @@ if ($coursesPrograms !== FALSE) {
             <div class="box-body">
 					<?php 
 						foreach ($teachers as $teacher) { 
-
+							
 							if($teacher['id'] != $program['coordinator']){?>
 
 								<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
@@ -98,13 +105,19 @@ if ($coursesPrograms !== FALSE) {
 									
 									$isSummaryBlank = empty($teacher['summary']) || is_null($teacher['summary']);
 									$isLattesBlank = empty($teacher['lattes_link']) ||  is_null($teacher['lattes_link']);
+
+									$isResearchLineBlank = empty($teacher['research_line']) ||  is_null($teacher['research_line']);
 									
-									if (!$isSummaryBlank || !$isLattesBlank){ ?>
+									if (!$isSummaryBlank || !$isLattesBlank || $isResearchLineBlank){ ?>
 
 										<div id=<?="teacher".$program['id_program'].$teacher['id']?> class="collapse">
 											<b>Email:</b><br><?= $teacher['email']?> <br>
 											<?php if (!$isSummaryBlank){ ?>
 												<b>Resumo:</b><br><?= $teacher['summary']?>
+											<?php } ?>
+											<br>	
+											<?php if (!$isResearchLineBlank){ ?>
+												<b>Linha de Pesquisa:</b><br><?= $teacher['research_line']?>
 											<?php } ?>
 											<br><br>
 											<?php if (!$isLattesBlank){ ?>

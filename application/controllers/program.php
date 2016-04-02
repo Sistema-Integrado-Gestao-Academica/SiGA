@@ -566,6 +566,7 @@ class Program extends CI_Controller {
 					$teachersInfo[$i]['email'] = $teacherInfo[0]['email'];
 					$teachersInfo[$i]['summary'] = $teacherInfo[0]['summary'];
 					$teachersInfo[$i]['lattes_link'] = $teacherInfo[0]['lattes_link'];
+					$teachersInfo[$i]['research_line'] = $teacherInfo[0]['research_line'];
 					$i++;
 				}
 			}                  	
