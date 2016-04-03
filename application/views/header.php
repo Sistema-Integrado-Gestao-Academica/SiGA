@@ -267,7 +267,8 @@
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-
+<br>
+<br>
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>

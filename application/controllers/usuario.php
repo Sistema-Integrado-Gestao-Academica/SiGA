@@ -581,12 +581,30 @@ class Usuario extends CI_Controller {
 	}
 
 	public function restorePassword(){
-		$success = $this->validateDataForRestorePassword();
+		$validData = $this->validateDataForRestorePassword();
 		
-		if($success){
-
+		if($validData){
 			$email = $this->input->post("email");
-			redirect("usuario/formulario");
+
+			$this->load->model('usuarios_model');
+			$userExists = $this->usuarios_model->existsTheEmail($email);
+		
+			if($userExists){
+				$success = $this->sendEmail($email);
+
+				if($success){
+					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
+					redirect("/");
+				}
+				else{
+					$this->session->set_flashdata("danger", "Não foi possível enviar o email. Tente novamente.");	
+					redirect("usuario/restorePassword");
+				}
+			}
+			else{
+				$this->session->set_flashdata("danger", "Não foi encontrado nenhum usuário com esse email.");
+				redirect("usuario/restorePassword");
+			}
 		}
 		else{
 			$this->load->template("usuario/restore_password");
@@ -594,6 +612,15 @@ class Usuario extends CI_Controller {
 
 	}
 
+	private function sendEmail($email){
+
+		$emailSent = FALSE;
+
+		// $newPassword = $this->generatePassword();
+
+		return $emailSent;
+	}
+	
 	private function validateDataForRestorePassword(){
 
 		$this->load->library("form_validation");

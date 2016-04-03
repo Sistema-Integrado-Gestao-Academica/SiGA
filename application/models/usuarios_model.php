@@ -253,6 +253,18 @@ class Usuarios_model extends CI_Model {
 
 		return $foundUser;
 	}
+	
+	public function existsTheEmail($email){
+
+		$this->db->select('email');
+		$searchResult = $this->db->get_where('users', array('email' => $email));
+		
+		$foundEmail = $searchResult->row_array();
+
+		$wasFound = sizeof($foundEmail) > 0;
+
+		return $wasFound;
+	}
 
 	/**
 	 * Get the user data by its login
