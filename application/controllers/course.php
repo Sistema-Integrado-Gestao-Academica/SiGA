@@ -89,54 +89,6 @@ class Course extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario", 'secretary/course_students', $data);
 	}
 
-	public function checkChoosenCourseType(){
-
-		define('POST_GRADUATION', 'post_graduation');
-		define('GRADUATION', 'graduation');
-		define('DISTANCE_EDUCATION', 'ead');
-
-		$choosenCourseType = $this->input->post('courseType');
-
-		switch($choosenCourseType){
-			case POST_GRADUATION:
-				// Function located on the helper 'forms' - Loaded by autoload
-				postGraduationTypesSelect();
-				break;
-			case GRADUATION:
-				// Code to the graduation specificities
-				break;
-			case DISTANCE_EDUCATION:
-				// Code to the EAD specificities
-				break;
-			default:
-				// Function located on the helper 'forms' - Loaded by autoload
-				emptyDiv();
-		}
-	}
-
-	public function checkChoosenPostGraduationType(){
-
-		// Option values for the post graduation type <select> - Look this select id on 'forms' helper
-		define('ACADEMIC_PROGRAM', 'academic_program');
-		define('PROFESSIONAL_PROGRAM', 'professional_program');
-
-		$choosenPostGraduationType = $this->input->post('postGradType');
-
-		switch($choosenPostGraduationType){
-			case ACADEMIC_PROGRAM:
-				// Function located on the helper 'forms' - Loaded by autoload
-				academicProgramForm();
-				break;
-			case PROFESSIONAL_PROGRAM:
-				// Function located on the helper 'forms' - Loaded by autoload
-				professionalProgramForm();
-				break;
-			default:
-				// Function located on the helper 'forms' - Loaded by autoload
-				emptyDiv();
-		}
-	}
-
 	public function formToRegisterNewCourse(){
 
 		$this->load->model('course_model');
