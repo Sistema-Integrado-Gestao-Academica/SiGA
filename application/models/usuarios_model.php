@@ -254,16 +254,16 @@ class Usuarios_model extends CI_Model {
 		return $foundUser;
 	}
 	
-	public function existsTheEmail($email){
+	public function getUserByEmail($email){
 
-		$this->db->select('email');
-		$searchResult = $this->db->get_where('users', array('email' => $email));
-		
-		$foundEmail = $searchResult->row_array();
+		$this->db->select('id, email');
+		$this->db->from('users');
+		$this->db->where("email", $email);
 
-		$wasFound = sizeof($foundEmail) > 0;
+		$foundUser = $this->db->get()->row_array();
+		$foundUser = checkArray($foundUser);
 
-		return $wasFound;
+		return $foundUser;
 	}
 
 	/**
@@ -493,6 +493,15 @@ class Usuarios_model extends CI_Model {
 	public function remove($usuario) {		
 		$res = $this->db->delete("users", array("login" => $usuario['login']));
 		return $res;
+	}
+
+	public function updatePassword($user){
+		
+		$this->db->where('id', $user['id']);
+		$this->db->update("users", array(
+			'password' => $user['password']
+		));
+
 	}
 	
 	public function getAllUserGroups(){

@@ -11,6 +11,11 @@ require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Usuario extends CI_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('usuarios_model');
+	}
+
 	public function loadModel(){
 		$this->load->model("usuarios_model");
 	}
@@ -152,7 +157,6 @@ class Usuario extends CI_Controller {
 
 	public function addGroupToUser($idUser, $idGroup){
 
-		$this->load->model('usuarios_model');
 		$wasSaved = $this->usuarios_model->addGroupToUser($idUser, $idGroup);
 
 		if($wasSaved){
@@ -179,8 +183,6 @@ class Usuario extends CI_Controller {
 		$session = $this->session->userdata("current_user");
 		$userId = $session['user']['id'];
 
-
-		$this->load->model('usuarios_model');
 		$userGroups = $this->usuarios_model->getGroups($userId);
 		
 		if($userGroups !== FALSE){
@@ -203,7 +205,6 @@ class Usuario extends CI_Controller {
 
 	public function removeUserGroup($idUser, $idGroup){
 
-		$this->load->model('usuarios_model');
 		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
 
 		if($wasDeleted){
@@ -220,7 +221,6 @@ class Usuario extends CI_Controller {
 
 	public function removeUserFromGroup($idUser, $idGroup){
 
-		$this->load->model('usuarios_model');
 		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
 
 		if($wasDeleted){
@@ -237,8 +237,6 @@ class Usuario extends CI_Controller {
 
 	public function checkIfUserExists($idUser){
 
-		$this->load->model('usuarios_model');
-
 		$userExists = $this->usuarios_model->checkIfUserExists($idUser);
 
 		return $userExists;
@@ -246,16 +244,12 @@ class Usuario extends CI_Controller {
 
 	public function getAllUsers(){
 
-		$this->load->model('usuarios_model');
-
 		$allUsers = $this->usuarios_model->getAllUsers();
 
 		return $allUsers;
 	}
 
 	public function getUsersToBeSecretaries(){
-
-		$this->load->model('usuarios_model');
 
 		$group = new Module();
 		$groupData = $group->getGroupByName(GroupConstants::SECRETARY_GROUP);
@@ -268,8 +262,6 @@ class Usuario extends CI_Controller {
 
 	public function getUserCourses($userId){
 
-		$this->load->model('usuarios_model');
-
 		$userCourses = $this->usuarios_model->getUserCourse($userId);
 
 		return $userCourses;
@@ -280,7 +272,6 @@ class Usuario extends CI_Controller {
 		$loggedUserData = $this->session->userdata("current_user");
 		$userId = $loggedUserData['user']['id'];
 
-		$this->load->model('usuarios_model');
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 		$userCourse = $this->usuarios_model->getUserCourse($userId);
 
@@ -586,12 +577,12 @@ class Usuario extends CI_Controller {
 		if($validData){
 			$email = $this->input->post("email");
 
-			$this->load->model('usuarios_model');
-			$userExists = $this->usuarios_model->existsTheEmail($email);
+			$user = $this->usuarios_model->getUserByEmail($email);
 		
-			if($userExists){
-				$success = $this->sendEmail($email);
+			if($user !== FALSE){
 
+				$success = $this->sendEmailForRestorePassword($user);
+				
 				if($success){
 					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
 					redirect("/");
@@ -612,11 +603,39 @@ class Usuario extends CI_Controller {
 
 	}
 
-	private function sendEmail($email){
+	private function sendEmailForRestorePassword($user){
+		
+		$newPassword = $this->generateNewPassword($user);
+		$subject = "Solicitação de recuperação de senha"; 
+		$message = "Sua nova senha é: ".$newPassword;
+		$success = $this->sendEmailForUser($user['email'], "UnB", "no-reply-sip@il.unb.br", $subject, $message);
+
+		return $success;
+	}
+
+
+	/**
+		* Send a email for a user
+		* @param $userEmail: The email address of the user
+		* @param $instituteName: The name of the institute
+		* @param $instituteEmail: The email address of the institute
+		* @param $subject: The subject of the email
+		* @param $message: The message of the email
+	*/
+	private function sendEmailForUser($userEmail, $instituteName, $instituteEmail, $subject, $message){
 
 		$emailSent = FALSE;
 
-		// $newPassword = $this->generatePassword();
+		// $this->load->library('email');
+
+		// $this->email->from($instituteEmail, $instituteName);
+		// $this->email->to($userEmail); 
+		
+		// $this->email->subject($message);
+		// $this->email->message($message);	
+
+		// $emailSent = $this->email->send();
+		// var_dump($this->email->print_debugger()); exit();
 
 		return $emailSent;
 	}
@@ -629,6 +648,20 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		return $success;
+	}
+
+	private function generateNewPassword($user){
+		
+		define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
+		
+		$newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
+
+		// Changing the user password
+		$encryptedPassword = md5($newPassword);
+		$user['password'] = $encryptedPassword;
+		$this->usuarios_model->updatePassword($user);
+
+		return $newPassword;
 	}
 
 	public function novo() {
