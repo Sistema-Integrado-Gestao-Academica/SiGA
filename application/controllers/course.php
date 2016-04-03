@@ -89,31 +89,6 @@ class Course extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario", 'secretary/course_students', $data);
 	}
 
-	/*
-	 * Load view to enroll a student
-	 * @param $curseID id from active course
-	*/
-	public function enrollStudentToCourse($courseId){
-
-		$this->load->model('course_model');
-
-		$users = new Usuario();
-		$guests = $users->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
-
-		$course = $this->course_model->getCourseById($courseId);
-		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
-
-		$courseName = $course['course_name'];
-
-		$courseData = array(
-			'courseId' => $courseId,
-			'courseName' => $courseName,
-			'guests' => $guests
-		);
-
-		loadTemplateSafelyByPermission("cursos",'course/enroll_student.php', $courseData);
-	}
-
 	public function checkChoosenCourseType(){
 
 		define('POST_GRADUATION', 'post_graduation');

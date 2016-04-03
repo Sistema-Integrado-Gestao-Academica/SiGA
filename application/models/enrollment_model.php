@@ -2,6 +2,14 @@
 
 class Enrollment_model extends CI_Model {
 
+    public function enrollStudentIntoCourse($courseId, $studentId){
+
+        $enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date)
+                       VALUES ({$courseId}, {$studentId}, NOW())";
+
+        $this->db->query($enrollment);
+    }
+
     public function checkIfEnrollmentExists($enrollment){
 
         $this->db->select("enrollment");

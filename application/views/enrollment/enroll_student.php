@@ -1,4 +1,4 @@
-<h2 class='principal'>Matricular alunos no curso <i><?=$courseName?></i></h2>
+<h2 class='principal'>Matricular alunos no curso <i><?=$course['course_name']?></i></h2>
 <?php
 /*
  * Legacy code. Waiting for reuse on search for guests users to enrollment
@@ -32,7 +32,7 @@ if($guests !== FALSE){
 				echo $user['email'];
 			echo "</td>";
 			echo "<td>";
-				echo anchor("enrollment/enrollStudent/{$courseId}/{$user['id']}", "Matricular", "class='btn btn-primary'");
+				echo anchor("enrollment/enrollStudent/{$course['id_course']}/{$user['id']}", "Matricular", "class='btn btn-primary'");
 			echo "</td>";
 
 		echo "</tr>";

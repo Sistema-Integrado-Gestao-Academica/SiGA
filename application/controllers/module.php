@@ -66,7 +66,6 @@ class Module extends CI_Controller {
 			'id_group' => $groupId
 		);
 
-		$this->load->model('module_model');
 		$this->module_model->addGroupToUser($groupToUser);
 	}
 
@@ -87,8 +86,7 @@ class Module extends CI_Controller {
 			'id_user' => $userId,
 			'id_group' => $groupId
 		);
-
-		$this->load->model('module_model');
+		
 		$this->module_model->deleteGroupOfUser($groupToUser);
 	}
 

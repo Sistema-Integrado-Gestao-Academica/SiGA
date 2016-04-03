@@ -1,71 +1,88 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/data_types/StudentRegistration.php");
-require_once(APPPATH."/exception/StudentRegistrationException.php");
 require_once("course.php");
 require_once("module.php");
+
+require_once(APPPATH."/data_types/StudentRegistration.php");
+require_once(APPPATH."/exception/StudentRegistrationException.php");
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Enrollment extends CI_Controller {
 
-    public function newStudentEnrollmentNumber(){
+	const MODEL_NAME = "enrollment_model";
 
-        $enrollmentNumberExists = TRUE;
+	public function __construct(){
+		parent::__construct();
+		$this->loadModel();	
+	}
 
-        while($enrollmentNumberExists){
+	public function loadModel(){
+		$this->load->model(self::MODEL_NAME);
+	}
 
-            $studentRegistration = new StudentRegistration();
-            $registration = $studentRegistration->getRegistration();
+	/**
+	 * Load view to enroll a student
+	 * @param $courseId - The id from an active course
+	 */
+	public function enrollStudentToCourse($courseId){
 
-            $this->load->model('enrollment_model');
-            $enrollmentNumberExists = $this->enrollment_model->checkIfEnrollmentExists($registration);
-        }
+		$users = new Usuario();
+		$guests = $users->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
 
-        return $studentRegistration;
-    }
+		$course = new Course();
+		$foundCourse = $course->getCourseById($courseId);
+		$courseType = $course->getCourseTypeByCourseId($courseId);
 
-    /*
-     * Public method to enroll a student in active course course
-     *
-    */
-    public function enrollStudent($courseId, $userId){
+		$data = array(
+			'course' => $foundCourse,
+			'guests' => $guests
+		);
 
-      $this->load->model('course_model');
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'enrollment/enroll_student', $data);
+	}
 
-      try{
-        $studentRegistration = $this->newStudentEnrollmentNumber();
-        $registration = $studentRegistration->getRegistration();
+	/**
+	 * Enroll a student in a given course
+	 * @param $course - The course to enroll the student
+	 * @param $user - The student to enroll
+	 */
+	public function enrollStudent($course, $user){
 
+		// Begins a transaction
+		$this->db->trans_start();
 
-        $enrollment = "INSERT INTO course_student (id_course, id_user,
-           enroll_date, enrollment)
-           VALUES ({$courseId}, {$userId}, NOW(), {$registration})";
+		$this->enrollment_model->enrollStudentIntoCourse($course, $user);
 
-        $this->course_model->enrollStudentIntoCourse($enrollment);
+		$this->addStudentGroupToNewStudent($user);
 
-        $course = new Course();
-        $this->addStudentGroupToNewStudent($userId);
+		// Ends a transaction
+		$this->db->trans_complete();
 
-        $status = "success";
-        $message = "Aluno matriculado com sucesso. Matrícula Nº <b>".$studentRegistration->getFormattedRegistration()."</b>.";
-      }catch(StudentRegistrationException $e){
-        $status = "danger";
-        $message = $e->getMessage();
-      }
+		if($this->db->trans_status() === FALSE){
+			$status = "danger";
+			$message = "Não foi possível matricular este aluno. Tente novamente.";
+		}else{
+			$status = "success";
+			$message = "Aluno matriculado com sucesso.";
+		}
 
-      $this->session->set_flashdata($status, $message);
-      redirect("secretary_home");
-    }
+		$this->session->set_flashdata($status, $message);
+		redirect("enrollStudent/{$course}");
+	}
 
-    private function addStudentGroupToNewStudent($userId){
+	/**
+	 * Adds the student group to the given user
+	 * @param $userId - The user id to add the group
+	 */
+	private function addStudentGroupToNewStudent($userId){
 
-  		$group = new Module();
+	  	$group = new Module();
 
-  		$studentGroup = GroupConstants::STUDENT_GROUP;
-  		$group->addGroupToUser($studentGroup, $userId);
+	  	$studentGroup = GroupConstants::STUDENT_GROUP;
+		$group->addGroupToUser($studentGroup, $userId);
 
-  		$guestGroup = GroupConstants::GUEST_GROUP;
-  		$group->deleteGroupOfUser($guestGroup, $userId);
-  	}
-
+		$guestGroup = GroupConstants::GUEST_GROUP;
+		$group->deleteGroupOfUser($guestGroup, $userId);
+	}
 }

@@ -82,11 +82,6 @@ class Course_model extends CI_Model {
 		return $wasDefined;
 	}
 
-	public function enrollStudentIntoCourse($enrollment){
-
-		$this->db->query($enrollment);
-	}
-
 	public function getCourseStudents($courseId){
 
 		$this->db->select("users.name, users.id, users.email, course_student.enroll_date, course_student.enrollment");
