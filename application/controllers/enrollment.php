@@ -79,6 +79,34 @@ class Enrollment extends CI_Controller {
 		$course = $this->input->post("course");
 		$student = $this->input->post("student");
 		$newRegistration = $this->input->post("new_registration");
+
+		try{
+			$registration = new StudentRegistration($newRegistration);
+
+			$this->updateRegistration($registration, $course, $student);
+
+			$status = "success";
+			$message = "Matrícula atualizada com sucesso.";
+
+		}catch(StudentRegistrationException $e){
+			$status = "danger";
+			$message = $e->getMessage();
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("course/courseStudents/{$course}");
+	}
+
+	/**
+	 * Updates a registration of a student of a course
+	 * @param $registration - StudentRegistration object containing the new registration
+	 * @param $course - The course of the student
+	 * @param $student - The student to update the registration
+	 * @throws StudentRegistrationException
+	 */
+	public function updateRegistration($registration, $course, $student){
+
+		$this->enrollment_model->saveRegistration($registration, $course, $student);
 	}
 
 	/**

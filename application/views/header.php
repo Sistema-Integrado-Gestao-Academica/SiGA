@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-
-<br>
-<br>
 <br>
 <?php
 	require_once(APPPATH."/constants/GroupConstants.php");

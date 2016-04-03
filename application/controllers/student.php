@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once("usuario.php");
+require_once("enrollment.php");
 
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/data_types/StudentRegistration.php");
@@ -37,8 +38,6 @@ class Student extends CI_Controller {
 	}
 
 	public function registerEnrollment(){
-
-		$this->loadModel();
 		
 		$course = $this->input->post('course');
 		$student = $this->input->post('student');
@@ -48,7 +47,8 @@ class Student extends CI_Controller {
 
 			$registration = new StudentRegistration($enrollment);
 
-			$this->student_model->saveRegistration($course, $student, $registration);
+			$enrollment = new Enrollment();
+			$enrollment->updateRegistration($registration, $course, $student);
 
 			$status = "success";
 			$message = "Matrícula atualizada com sucesso!";
