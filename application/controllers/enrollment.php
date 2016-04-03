@@ -63,12 +63,22 @@ class Enrollment extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível matricular este aluno. Tente novamente.";
 		}else{
+
+			log_message("info", "Student ${user} enrolled in course {$course} successfully.");
+			
 			$status = "success";
 			$message = "Aluno matriculado com sucesso.";
 		}
 
 		$this->session->set_flashdata($status, $message);
 		redirect("enrollStudent/{$course}");
+	}
+
+	public function updateStudentRegistration(){
+
+		$course = $this->input->post("course");
+		$student = $this->input->post("student");
+		$newRegistration = $this->input->post("new_registration");
 	}
 
 	/**

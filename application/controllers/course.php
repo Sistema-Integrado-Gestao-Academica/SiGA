@@ -9,6 +9,7 @@ require_once('budgetplan.php');
 require_once('enrollment.php');
 require_once('usuario.php');
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/data_types/StudentRegistration.php");
 require_once(APPPATH."/exception/StudentRegistrationException.php");
@@ -86,7 +87,7 @@ class Course extends CI_Controller {
 			'course' => $courseData
 		);
 
-		loadTemplateSafelyByGroup("secretario", 'secretary/course_students', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/course_students', $data);
 	}
 
 	public function formToRegisterNewCourse(){
