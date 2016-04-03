@@ -33,7 +33,7 @@
 	<link rel="icon" href="<?=base_url()?>/favicon.ico" type="image/ico">
 </head>
 
-<body class="skin-blue">
+<body class="skin-green-light">
 	<header>
 		<?php
 			$this->load->helper('url');
@@ -100,69 +100,54 @@
 					</ul>
 
 						<ul class="nav navbar-nav navbar-right">
-							<li class="dropdown user user-menu">
-								<a href="#" class="dropdow	n-toggle" data-toggle="dropdown">
-									<i class="glyphicon glyphicon-user"></i>
-									<span>Login<i class="caret"></i></span>
-								</a>
-								<ul class="dropdown-menu">
-									<div class="bg-gray">
-									<?php
-									echo form_open("login/autenticar");
+					<?php
+						echo form_open("login/autenticar");?>
+							<div class="row">
+        						<div class="col-lg-4">
+								<?php
+									echo form_label("Login", "login");
+									echo form_input(array(
+										"name" => "login",
+										"id" => "login",
+										"type" => "text",
+										"class" => "form-campo",
+										"maxlength" => "255",
+										"value" => set_value("login", ""),
+										"class" => "form-control",
+										"placeholder" => "Login de Usuário",
+									));
 									?>
-									<div class="header">
-										<div class="bg-olive">
-										<h4 align="center">Login</h4>
-									</div>
-									</div>
-									<li class="user-header">
-										<p>
-											<?php
-											echo form_label("Login", "login");
-											echo form_input(array(
-												"name" => "login",
-												"id" => "login",
-												"type" => "text",
-												"class" => "form-campo",
-												"maxlength" => "255",
-												"value" => set_value("login", ""),
-												"class" => "form-control",
-												"placeholder" => "Login de Usuário"
-											));
-											?>
-										</p>
-										<p>
-											<?php
-												echo form_label("Senha", "senha");
-												echo form_input(array(
-													"name" => "senha",
-													"id" => "senha",
-													"type" => "password",
-													"class" => "form-campo",
-													"maxlength" => "255",
-													"class" => "form-control",
-													"placeholder" => "Senha"
-												));
-											?>
-										</p>
-										<div class="footer">
-											<?php
-												echo form_button(array(
-													"id" => "login_btn",
-													"class" => "btn bg-olive btn-block",
-													"content" => "Entrar",
-													"type" => "submit"
-												));
+								</div>
+								<div class="col-lg-4">
+								<?php
+									echo form_label("Senha", "senha");
+									echo form_input(array(
+										"name" => "senha",
+										"id" => "senha",
+										"type" => "password",
+										"class" => "form-campo",
+										"maxlength" => "255",
+										"class" => "form-control",
+										"placeholder" => "Senha"
+									));
+								?>
+								</div>
+								<br>
+								<div class="col-lg-2">
+									<?php
+										echo form_button(array(
+											"id" => "login_btn",
+											"class" => "btn btn-default",
+											"content" => "Entrar",
+											"type" => "submit"
+										));?>
 
-												echo form_close();
-												?>
-											</div>
-										</div>
-
-								</ul>
-							</li>
+								</div>
+							</div>
+							<?php
+										echo form_close();
+										?>
 						</ul>
-
 
 				<?php }?>
 

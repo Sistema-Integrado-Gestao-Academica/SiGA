@@ -11,7 +11,7 @@
 	if($tabId != "program".MAX_QUANTITY_OF_TABS){
 
 ?>
-    <a class="nav-tabs-dropdown btn btn-block btn-primary"><h3>Sobre o <?php echo $program['program_name']
+    <a class="nav-tabs-dropdown btn btn-block btn-gray"><h3>Sobre o <?php echo $program['program_name']
 	?></h3></a>
 	<!-- <ul class='nav nav-tabs nav-justified'>
 		<li class='active'>
@@ -29,7 +29,7 @@
 	<div class="box-body">
       <div class="box-group" id=<?="accordion".$program['id_program']?>>
             <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
-            <div class="panel box box-primary">
+            <div class="panel box box-default">
               <div class="box-header with-border">
                 <h4 class="box-title">
                   <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#summary".$program['id_program']?> aria-expanded="false">
@@ -59,7 +59,7 @@
 
 			if (!empty($programHistory)) {?>
 	
-            <div class="panel box box-primary">
+            <div class="panel box box-default">
               <div class="box-header with-border">
                 <h4 class="box-title">
                   <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#history".$program['id_program']?> aria-expanded="false">
@@ -81,7 +81,7 @@
 
 			if (!empty($programContact)) {?>
 	
-				<div class="panel box box-primary">
+				<div class="panel box box-default">
               		<div class="box-header with-border">
 	                <h4 class="box-title">
 	                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#contact".$program['id_program']?> aria-expanded="false" class="collapsed"> Secretaria e Contato <i class=" fa fa-caret-down"></i>
@@ -119,7 +119,7 @@
 				
 				if(!empty($researchLines)){ ?>
 
-					<div class="panel box box-primary">
+					<div class="panel box box-default">
 		              <div class="box-header with-border">
 		                <h4 class="box-title">
 		                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#research".$program['id_program']?> aria-expanded="false" >
