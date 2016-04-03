@@ -1615,7 +1615,7 @@ function displayRegisteredPrograms($programs, $canRemove){
 					$historyNonExists = isEmpty($program['history']);
 					$contactNonExists = isEmpty($program['contact']);
 
-					if($summaryNonExists || $historyNonExists || $contactNonExists){			
+					if($summaryNonExists || $historyNonExists || $contactNonExists){
 						echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"Edite o programa e complemente com os dados de resumo, contato, histórico e linhas de 	pesquisa.\" id='alert' ><i class='fa fa-warning'></i> Dados Incompletos </span>";
 		    		}
@@ -1625,7 +1625,7 @@ function displayRegisteredPrograms($programs, $canRemove){
 		     				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
 					if ($canRemove) {
-						
+
 						echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
@@ -2247,34 +2247,6 @@ function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
 	buildTableEndDeclaration();
 }
 
-function displayRegisteredStudents($students, $studentNameToSearch){
-
-	$thereIsStudents = sizeof($students) > 0;
-
-	if($thereIsStudents){
-
-		$enrollStudentBtn = array(
-			"id" => "enroll_student_btn",
-			"class" => "btn bg-olive btn-block",
-			"content" => "Matricular aluno",
-			"type" => "submit",
-			"style" => "width:35%"
-		);
-
-		echo form_label("Usuários encontrados:","user_to_enroll");
-		echo "<h4><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small></h4>";
-		echo form_dropdown('user_to_enroll', $students, "", "id = user_to_enroll class='form-control'");
-
-		echo "<br>";
-		echo form_button($enrollStudentBtn);
-
-	}else{
-
-		$principalMessage = "Nenhum aluno encontrado com a chave '".$studentNameToSearch."'.<br><small>OBS.: Usuários pertencentes ao grupo convidado apenas.</small>";
-		callout("info", $principalMessage);
-	}
-}
-
 function displayRegisteredUsers($allUsers){
 
 	echo "<h3>Lista de Usuários:</h3>";
@@ -2531,38 +2503,6 @@ function displayUsersOfGroup($idGroup, $usersOfGroup){
     }
 
     buildTableEndDeclaration();
-}
-
-function displayGuestUsers(){
-
-	$users = new Usuario();
-	$guests = $users->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
-
-	if($guests !== FALSE){
-		echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
-
-		buildTableDeclaration();
-
-		buildTableHeaders(array(
-			'Nome',
-			'E-mail'
-		));
-
-		foreach ($guests as $keys => $user){
-			echo "<tr>";
-				echo "<td>";
-					echo $user['name'];
-				echo "</td>";
-				echo "<td>";
-					echo $user['email'];
-				echo "</td>";
-
-			echo "</tr>";
-		}
-
-		buildTableEndDeclaration();
-	}
-
 }
 
 function displayResearchLinesByCourse($research_lines,$courses){

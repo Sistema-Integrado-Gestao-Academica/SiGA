@@ -7,6 +7,7 @@ require_once('graduation.php');
 require_once('ead.php');
 require_once('budgetplan.php');
 require_once('enrollment.php');
+require_once('usuario.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/data_types/StudentRegistration.php");
@@ -88,9 +89,16 @@ class Course extends CI_Controller {
 		loadTemplateSafelyByGroup("secretario", 'secretary/course_students', $data);
 	}
 
+	/*
+	 * Load view to enroll a student
+	 * @param $curseID id from active course
+	*/
 	public function enrollStudentToCourse($courseId){
 
 		$this->load->model('course_model');
+
+		$users = new Usuario();
+		$guests = $users->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
 
 		$course = $this->course_model->getCourseById($courseId);
 		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
@@ -99,49 +107,11 @@ class Course extends CI_Controller {
 
 		$courseData = array(
 			'courseId' => $courseId,
-			'courseName' => $courseName
+			'courseName' => $courseName,
+			'guests' => $guests
 		);
 
 		loadTemplateSafelyByPermission("cursos",'course/enroll_student.php', $courseData);
-	}
-
-	public function enrollStudent(){
-
-		$this->load->model('course_model');
-
-		$courseId = $this->input->post('courseId');
-		$userToEnroll = $this->input->post('user_to_enroll');
-
-		try{
-			$enrollmentController = new Enrollment();
-			$studentRegistration = $enrollmentController->newStudentEnrollmentNumber();
-			$registration = $studentRegistration->getRegistration();
-
-			$enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date, enrollment) VALUES ({$courseId}, {$userToEnroll}, NOW(), {$registration})";
-
-			$this->course_model->enrollStudentIntoCourse($enrollment);
-			$this->addStudentGroupToNewStudent($userToEnroll);
-
-			$status = "success";
-			$message = "Aluno matriculado com sucesso. Matrícula Nº <b>".$studentRegistration->getFormattedRegistration()."</b>.";
-		}catch(StudentRegistrationException $e){
-			$status = "danger";
-			$message = $e->getMessage();
-		}
-
-		$this->session->set_flashdata($status, $message);
-		redirect("secretary_home");
-	}
-
-	private function addStudentGroupToNewStudent($userId){
-
-		$group = new Module();
-
-		$studentGroup = GroupConstants::STUDENT_GROUP;
-		$group->addGroupToUser($studentGroup, $userId);
-
-		$guestGroup = GroupConstants::GUEST_GROUP;
-		$group->deleteGroupOfUser($guestGroup, $userId);
 	}
 
 	public function checkChoosenCourseType(){
@@ -483,7 +453,7 @@ class Course extends CI_Controller {
 		$researchLineNames = array();
 
 		if($researchLines !== FALSE){
-			
+
 			foreach ($researchLines as $researchLine) {
 				$researchLineId = $researchLine['id_research_line'];
 				$researchLineNames = $this->getResearchLineNameById($researchLineId);
