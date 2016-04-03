@@ -734,65 +734,6 @@ class Usuario extends CI_Controller {
 		redirect("student_information/");
 	}
 
-	private function getRegisteredStudentsByName($userName){
-
-		define("GUEST", "convidado");
-
-		$foundUsers = $this->getUserByName($userName);
-
-		$students = array();
-
-		$usersWasFound = $foundUsers !== FALSE;
-		if($usersWasFound){
-
-			$group = new Module();
-
-			$i = 0;
-			foreach($foundUsers as $user){
-				$userId = $user['id'];
-				$userGroups = $group->checkModules($userId);
-
-				// $userIsStudent = $this->checkIfIsStudent($userGroups);
-				$userIsGuest = $this->checkIfIsGuest($userGroups);
-
-				if($userIsGuest){
-					$students[$i] = $user;
-					$i++;
-				}
-			}
-		}
-
-		return $students;
-	}
-
-	private function checkIfIsStudent($userGroups){
-
-		define("STUDENT", "estudante");
-
-		$isStudent = FALSE;
-		foreach($userGroups as $group_name){
-			if($group_name == STUDENT){
-				$isStudent = TRUE;
-				break;
-			}
-		}
-
-		return $isStudent;
-	}
-
-	private function checkIfIsGuest($userGroups){
-
-		$isGuest = FALSE;
-		foreach($userGroups as $group_name){
-			if($group_name == GUEST){
-				$isGuest = TRUE;
-				break;
-			}
-		}
-
-		return $isGuest;
-	}
-
 	public function getUserByName($userName){
 
 		$this->load->model('usuarios_model');
@@ -802,11 +743,11 @@ class Usuario extends CI_Controller {
 		return $foundUser;
 	}
 
-	public function getUsersOfGroup($idGroup){
+	public function getUsersOfGroup($idGroup, $name = FALSE){
 
 		$this->load->model('usuarios_model');
 
-		$groups = $this->usuarios_model->getUsersOfGroup($idGroup);
+		$groups = $this->usuarios_model->getUsersOfGroup($idGroup, $name);
 
 		return $groups;
 	}

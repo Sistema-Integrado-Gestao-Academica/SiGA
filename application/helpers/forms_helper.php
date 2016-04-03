@@ -150,32 +150,6 @@ function searchForStudentRequestByNameForm($courseId){
 	echo form_close();
 }
 
-function displayEnrollStudentForm(){
-
-	$studentName = array(
-		"name" => "student_name",
-		"id" => "student_name",
-		"type" => "text",
-		"class" => "form-campo",
-		"class" => "form-control",
-		"maxlength" => "50",
-		'style' => "width:40%;"
-	);
-
-	$searchForStudentBtn = array(
-		"id" => "search_student_btn",
-		"class" => "btn bg-olive btn-block",
-		"content" => "Procurar por aluno",
-		"type" => "submit",
-		'style' => "width:15%;"
-	);
-
-	echo form_label("Informe o nome do usuário para matricular nesse curso:");
-	echo form_input($studentName);
-
-	echo form_button($searchForStudentBtn);
-}
-
 function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId){
 
 	$submitBtn = array(

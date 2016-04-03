@@ -1,19 +1,47 @@
-<h2 class='principal'>Matricular alunos no curso <i><?=$course['course_name']?></i></h2>
+<h2 class='principal'>Matricular alunos no curso <i><b><?=$course['course_name']?></b></i></h2>
 <?php
-/*
- * Legacy code. Waiting for reuse on search for guests users to enrollment
- */
-//displayEnrollStudentForm();
 
+	$guestName = array(
+		"name" => "guest_name",
+		"id" => "guest_name",
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "70",
+		"placeholder" => "Nome do usuário a pesquisar"
+	);
+
+	$searchForStudentBtn = array(
+		"id" => "search_guests_btn",
+		"class" => "btn btn-success btn-flat",
+		"content" => "Procurar por aluno",
+		"type" => "submit"
+	);
+
+	$hidden = array(
+		'id' => "course",
+		'name' => "course",
+		'type' => "hidden",
+		'value' => $course['id_course']
+	);
+
+	echo form_input($hidden);
 ?>
+	<div class='row'>
+	<div class='col-lg-6'>
+		<?= form_label("Informe o nome do usuário: ", "student_name"); ?>
+		<div class='input-group'>
+			<?= form_input($guestName); ?>
+			<span class="input-group-addon"> <?= form_button($searchForStudentBtn);?> </span>
+		</div>
+	</div>
+	</div>
 
-<br>
-<br>
-
+<div id="guests_table">
+	
 <?php
-
 if($guests !== FALSE){
-	echo "<h3>Lista de Usuários que podem ser Matriculados</h3>";
+	echo "<h3><i class='fa fa-users'></i> Lista de Usuários que podem ser matriculados:</h3><br>";
 
 	buildTableDeclaration();
 
@@ -42,6 +70,6 @@ if($guests !== FALSE){
 }else{
 	callout("info", "Não existem usuários disponíveis para matrícula no momento.");
 }
-
-
 ?>
+
+</div>
