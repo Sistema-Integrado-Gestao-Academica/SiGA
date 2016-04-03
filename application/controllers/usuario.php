@@ -606,8 +606,13 @@ class Usuario extends CI_Controller {
 	private function sendEmailForRestorePassword($user){
 		
 		$newPassword = $this->generateNewPassword($user);
-		$subject = "Solicitação de recuperação de senha"; 
-		$message = "Sua nova senha é: ".$newPassword;
+		$subject = "Solicitação de recuperação de senha - SiGA"; 
+		$message = "Olá, <b>{$user['name']}</b>. <br>";
+		$message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
+		$message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
+		$message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>";
+
+
 		$success = $this->sendEmailForUser($user['email'], $user['name'], $subject, $message);
 
 		return $success;
@@ -630,6 +635,7 @@ class Usuario extends CI_Controller {
 		$this->load->helper("email");
 		
 		$mail = setDefaultConfiguration(); 
+		$mail->IsHTML(true);
 		$mail->Subject = $subject; 
 	    $mail->Body = $message;
 	    $mail->AddAddress($userEmail, $userName);

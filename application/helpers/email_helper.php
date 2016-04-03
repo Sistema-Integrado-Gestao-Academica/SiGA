@@ -10,10 +10,10 @@ function setDefaultConfiguration(){
     $mail->Port = 465; 
     $mail->Username = ""; 
     $mail->Password = ""; 
+    $mail->CharSet = 'UTF-8';
     $instituteName = "";
     $instituteEmail = "";
     $mail->SetFrom($instituteEmail, $instituteName); 
 
-   	
 	return $mail;
 }
