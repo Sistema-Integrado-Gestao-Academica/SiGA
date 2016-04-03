@@ -1,5 +1,5 @@
 
-<h2 class="principal">Bem vindo <b><i><?php echo $userData['name'];?></i></b>!</h2>
+<h2 class="principal">Bem vindo, <b><i><?php echo $userData['name'];?></i></b>!</h2>
 
 <?php
 	require_once(APPPATH."/data_types/StudentRegistration.php");
@@ -44,13 +44,9 @@
 			}
 
 		}else{
-		?>
 
-		<div class="callout callout-info">
-			<h4>Aluno não matriculado em nenhum curso.</h4>
-		</div>
-
-		<?php } ?>
+			callout("info", "Aluno não matriculado em nenhum curso.");
+		} ?>
 
 	</div>
 

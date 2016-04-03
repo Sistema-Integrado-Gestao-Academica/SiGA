@@ -101,6 +101,7 @@ class TemporaryRequest extends CI_Controller {
 		$offer = new Offer();
 		$courseOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
 
+		$disciplinesClasses = FALSE;
 		if($courseOffer !== FALSE){
 
 			$offerId = $courseOffer['id_offer'];
