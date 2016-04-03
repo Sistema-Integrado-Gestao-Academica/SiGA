@@ -657,9 +657,80 @@ class Usuario extends CI_Controller {
 		// Changing the user password
 		$encryptedPassword = md5($newPassword);
 		$user['password'] = $encryptedPassword;
-		$this->usuarios_model->updatePassword($user);
+		$temporaryPassword = TRUE;
+		$this->usuarios_model->updatePassword($user, $temporaryPassword);
 
 		return $newPassword;
+	}
+
+	public function changePassword(){
+
+		$success = $this->validatePasswordField();
+
+		if ($success) {
+
+			$password = md5($this->input->post("password"));
+			$confirmPassword = md5($this->input->post("confirm_password"));
+
+			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
+			if($isValidPassword){
+
+				$session = $this->session->userdata("current_user");
+				
+				$user = array();
+				$user['password'] = $password;
+				$user['id'] = $session['user']['id'];
+				$temporaryPassword = FALSE;
+
+				$isUpdated = $this->usuarios_model->updatePassword($user, $temporaryPassword);
+
+				if($isUpdated){
+					$this->session->set_flashdata("success", "Senha alterada com sucesso.");
+					redirect('/');
+				}
+				else{
+					$this->session->set_flashdata("danger", "Não foi possível alterar a senha. Tente novamente.");
+					redirect('usuario/changePassword');
+				}
+			}
+			else{
+				$this->session->set_flashdata("danger", "As senhas devem ser iguais.");
+				redirect('usuario/changePassword');
+			}
+		}
+		else{
+			
+			$this->load->template('usuario/change_password');
+		}
+	}
+
+	public function validatePasswordField(){
+		
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("password", "Digite sua nova senha", "required");
+		$this->form_validation->set_rules("confirm_password", "Confirme sua nova senha", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
+
+	}
+
+	/**
+		* Verify if password and confirm password are equals
+		* @param: password: Receive the password
+		* @param: confirmPassword: Receive the confirm password
+	*/
+	public function verifyIfPasswordsAreEquals($password, $confirmPassword){
+
+		if ($password == $confirmPassword){
+			$validPassword = TRUE;
+		}
+		else{
+			$validPassword = FALSE;
+		}
+
+		return $validPassword;
 	}
 
 	public function novo() {

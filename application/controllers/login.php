@@ -23,7 +23,6 @@ class Login extends CI_Controller {
 			$user = $this->usuarios_model->validateUser($login, $password);
 			
 			if(sizeof($user) > 0){
-				
 				$this->load->model("module_model");
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
 				$registeredGroups = $this->module_model->getUserGroups($user['id']);
@@ -35,7 +34,15 @@ class Login extends CI_Controller {
 				);
 
 				$this->session->set_userdata("current_user", $userData);
-				redirect('/');
+				$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);
+				
+				if(!$isATemporaryPassword){
+					redirect('/');
+				}
+				else{
+					redirect('usuario/changePassword');
+				}
+
 				
 			}else{
 				$authenticationStatus = "danger";
