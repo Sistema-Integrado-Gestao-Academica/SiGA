@@ -6,6 +6,7 @@ class Teacher_model extends CI_Model {
 	const SUMMARY_COLUMN = "summary";
 	const ID_COLUMN = "id_user";
 	const LATTES_COLUMN = "lattes_link";
+	const RESEARCH_LINE_COLUMN = "research_line";
 
 	public function updateProfile($teacherData){
 
@@ -31,11 +32,13 @@ class Teacher_model extends CI_Model {
 		$id = $teacherData[self::ID_COLUMN];
 		$summary = $teacherData[self::SUMMARY_COLUMN];
 		$lattes = $teacherData[self::LATTES_COLUMN];
+		$research_line = $teacherData[self::RESEARCH_LINE_COLUMN];
 
 		$this->db->where(self::ID_COLUMN, $id);
 		$this->db->update(self::TABLE_NAME, array(
 												self::SUMMARY_COLUMN => $summary,
-												self::LATTES_COLUMN => $lattes
+												self::LATTES_COLUMN => $lattes,
+												self::RESEARCH_LINE_COLUMN => $research_line
 											));
 
 		$wasUpdated = $this->verifyIfGetProfile($teacherData);
@@ -80,16 +83,29 @@ class Teacher_model extends CI_Model {
 	public function getInfoTeacherForHomepage($teacherId){
 
 		$this->db->select('users.id, users.name, users.email,
-							teacher_profile.summary, teacher_profile.lattes_link'
+							teacher_profile.summary, teacher_profile.lattes_link, 
+							teacher_profile.research_line'
 						);
 		$this->db->from('users');
-		$this->db->join("teacher_profile", "users.id = teacher_profile.id_user");
-		$this->db->where("teacher_profile.id_user", $teacherId);
+		$this->db->join(self::TABLE_NAME, "users.id = ".self::TABLE_NAME.".".self::ID_COLUMN);
+		$this->db->where(self::TABLE_NAME.".".self::ID_COLUMN, $teacherId);
 		$teachers = $this->db->get()->result_array();
 		$teachers = checkArray($teachers);
 
 		return $teachers;
 	}
 
+	public function getTeacherCourses($teacherId){
+
+		$this->db->select('id_course');
+		$this->db->from("teacher_course");
+		$this->db->where("teacher_course.".self::ID_COLUMN, $teacherId);
+
+		$courses = $this->db->get()->result_array();
+		$courses = checkArray($courses);
+
+		return $courses;
+
+	}
 
 }

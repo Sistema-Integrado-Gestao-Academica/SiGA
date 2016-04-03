@@ -30,6 +30,7 @@ $submitBtn = array(
 // Setting values
 $summaryField['value'] = $summary;
 $lattesField['value'] = $lattes;
+$researchLineField['value'] = $researchLine;
 
 ?>
 
@@ -37,6 +38,7 @@ $lattesField['value'] = $lattes;
 	<div class="header">Atualizar Perfil</div>
 	<?= form_open("teacher/saveProfile") ?>
 	<?= form_hidden("teacher", $teacher) ?>
+	<?= form_hidden("researchLines", $availableResearchLines) ?>
 
 
 		<div class="body bg-gray">
@@ -51,6 +53,13 @@ $lattesField['value'] = $lattes;
 				<?= form_input($lattesField) ?>
 				<?= form_error("lattesField") ?>
 			</div>
+
+			<div class="form-group">	
+				<?= form_label("Linha de Pesquisa", "researchLineField") ?>
+				<?= form_dropdown("researchLineField", $availableResearchLines, '', "id='researchLineField'") ?>
+				<?= form_error("researchLineField") ?>
+			</div>
+
 		</div>
 
 		<div class="footer">

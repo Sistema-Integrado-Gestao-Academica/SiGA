@@ -12,7 +12,7 @@ class Migration_cria_tabela_selection_process extends CI_Migration {
 			'id_course' => array('type' => "INT"),
 			'process_type' => array('type' => 'VARCHAR(20)'),
 			'notice_name' => array('type' => 'VARCHAR(60)'),
-			'notice_path' => array('type' => 'TEXT', "null" -> TRUE),
+			'notice_path' => array('type' => 'TEXT', "null" => TRUE),
 			'start_date' => array('type' => 'DATE'),
 			'end_date' => array('type' => 'DATE'),
 			'phase_order' => array('type' => "VARCHAR(200)", 'null' => TRUE)
