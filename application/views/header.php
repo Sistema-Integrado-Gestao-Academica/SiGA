@@ -62,20 +62,23 @@
                                         	echo ucfirst($session['user']['name']);
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
-                                        	foreach($session['user_groups'] as $group){
-                                        		switch ($group['group_name']) {
-                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-                                        				$groupNameToDisplay = "Secretaria acadêmica";
-                                        				break;
-                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-                                        				$groupNameToDisplay = "Secretaria financeira";
-                                        				break;
-                                        			default:
-                                        				$groupNameToDisplay = $group['group_name'];
-                                        				break;
-                                        		}
-                                        		echo ucfirst($groupNameToDisplay);
-                                        		echo "<br>";
+                                        	if($session['user_groups'] !== FALSE){
+                                        		
+	                                        	foreach($session['user_groups'] as $group){
+	                                        		switch ($group['group_name']) {
+	                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+	                                        				$groupNameToDisplay = "Secretaria acadêmica";
+	                                        				break;
+	                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+	                                        				$groupNameToDisplay = "Secretaria financeira";
+	                                        				break;
+	                                        			default:
+	                                        				$groupNameToDisplay = $group['group_name'];
+	                                        				break;
+	                                        		}
+	                                        		echo ucfirst($groupNameToDisplay);
+	                                        		echo "<br>";
+	                                        	}
                                         	}
                                         ?>
                                         <br>
@@ -105,7 +108,7 @@
 							<div class="row">
         						<div class="col-lg-4">
 								<?php
-									echo form_label("Login", "login");
+									// echo form_label("Login", "login");
 									echo form_input(array(
 										"name" => "login",
 										"id" => "login",
@@ -114,13 +117,13 @@
 										"maxlength" => "255",
 										"value" => set_value("login", ""),
 										"class" => "form-control",
-										"placeholder" => "Login de Usuário",
+										"placeholder" => "Usuário",
 									));
 									?>
 								</div>
 								<div class="col-lg-4">
 								<?php
-									echo form_label("Senha", "senha");
+									// echo form_label("Senha", "senha");
 									echo form_input(array(
 										"name" => "senha",
 										"id" => "senha",
@@ -132,7 +135,7 @@
 									));
 								?>
 								</div>
-								<br>
+								<!-- <br> -->
 								<div class="col-lg-2">
 									<?php
 										echo form_button(array(
@@ -140,12 +143,15 @@
 											"class" => "btn btn-default",
 											"content" => "Entrar",
 											"type" => "submit"
-										));?>
-
+										));
+									
+									
+									?>
 								</div>
 							</div>
 							<?php
 										echo form_close();
+										echo anchor("usuario/restorePassword", "Esqueci minha senha", "id='link'");
 										?>
 						</ul>
 
@@ -215,48 +221,50 @@
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
 	                <?php
+	                	if($session['user_permissions'] !== FALSE){
 
-						foreach($session['user_permissions'] as $groupName => $groupPermissions){
-                			if($groupName == GroupConstants::SECRETARY_GROUP){
-								continue;
-							}else{
-								echo "<li class='treeview'>";
+							foreach($session['user_permissions'] as $groupName => $groupPermissions){
+	                			if($groupName == GroupConstants::SECRETARY_GROUP){
+									continue;
+								}else{
+									echo "<li class='treeview'>";
 
-								switch ($groupName) {
-                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-                        				$groupNameToShow = "Secretaria acadêmica";
-                        				break;
-                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-                        				$groupNameToShow = "Secretaria financeira";
-                        				break;
-                        			default:
-                        				$groupNameToShow = $groupName;
-                        				break;
-                        		}
-								echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
+									switch ($groupName) {
+	                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+	                        				$groupNameToShow = "Secretaria acadêmica";
+	                        				break;
+	                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+	                        				$groupNameToShow = "Secretaria financeira";
+	                        				break;
+	                        			default:
+	                        				$groupNameToShow = $groupName;
+	                        				break;
+	                        		}
+									echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
 
-									echo "<ul class='treeview-menu'>";
+										echo "<ul class='treeview-menu'>";
 
-									if($groupPermissions !== FALSE){
+										if($groupPermissions !== FALSE){
 
-										foreach($groupPermissions as $permission){
+											foreach($groupPermissions as $permission){
 
-											echo "<li>";
-												if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
-													continue;
-												}else{
-													echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-												}
-											echo "</li>";
+												echo "<li>";
+													if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
+														continue;
+													}else{
+														echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
+													}
+												echo "</li>";
+											}
 										}
-									}
 
-									echo "</ul>";
+										echo "</ul>";
 
-								echo "</li>";
+									echo "</li>";
+								}
 							}
-						}
 
+	                	}
 					?>
                   	</ul>
 	                </section>
@@ -265,7 +273,8 @@
             <?php }?>
             <aside class="right-side">
             	<div class="container">
-
+<br>
+<br>
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>

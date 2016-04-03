@@ -166,6 +166,19 @@ class Usuarios_model extends CI_Model {
 		}
 	}
 
+	public function verifyIfIsTemporaryPassword($userId){
+
+		$this->db->select('temporary_password');
+		$user = $this->db->get_where('users', array('id' => $userId));
+
+		$foundPassword = $user->row_array();
+
+		$isTemporaryPassword = $foundPassword['temporary_password'];
+
+		return $isTemporaryPassword;
+
+	}
+
 	public function getUsersOfGroup($idGroup, $name = FALSE){
 
 		$this->db->select('users.id, users.name, users.cpf, users.email');
@@ -255,6 +268,18 @@ class Usuarios_model extends CI_Model {
 		$this->db->like('name', $userName);
 		$foundUser = $this->db->get('users')->result_array();
 
+		$foundUser = checkArray($foundUser);
+
+		return $foundUser;
+	}
+	
+	public function getUserByEmail($email){
+
+		$this->db->select('id, email, name');
+		$this->db->from('users');
+		$this->db->where("email", $email);
+
+		$foundUser = $this->db->get()->row_array();
 		$foundUser = checkArray($foundUser);
 
 		return $foundUser;
@@ -487,6 +512,36 @@ class Usuarios_model extends CI_Model {
 	public function remove($usuario) {		
 		$res = $this->db->delete("users", array("login" => $usuario['login']));
 		return $res;
+	}
+
+	public function updatePassword($user, $temporaryPassword){
+		
+		$this->db->where('id', $user['id']);
+		$this->db->update("users", array(
+			'password' => $user['password'],
+			'temporary_password' => $temporaryPassword
+		));
+
+		$isUpdated = $this->checkIfUpdatePassword($user);
+
+		return $isUpdated;
+	}
+
+	public function checkIfUpdatePassword($user){
+
+		$this->db->select('password');
+		$foundUser = $this->db->get_where('users', array('id' => $user['id']));
+		$foundPassword = $foundUser->row_array();
+
+		if($foundPassword['password'] == $user['password']){
+
+			$isUpdated = TRUE;
+		}
+		else{
+			$isUpdated = FALSE;
+		}
+
+		return $isUpdated;
 	}
 	
 	public function getAllUserGroups(){

@@ -11,6 +11,11 @@ require_once(APPPATH."/constants/PermissionConstants.php");
 
 class Usuario extends CI_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('usuarios_model');
+	}
+
 	public function loadModel(){
 		$this->load->model("usuarios_model");
 	}
@@ -152,7 +157,6 @@ class Usuario extends CI_Controller {
 
 	public function addGroupToUser($idUser, $idGroup){
 
-		$this->load->model('usuarios_model');
 		$wasSaved = $this->usuarios_model->addGroupToUser($idUser, $idGroup);
 
 		if($wasSaved){
@@ -179,8 +183,6 @@ class Usuario extends CI_Controller {
 		$session = $this->session->userdata("current_user");
 		$userId = $session['user']['id'];
 
-
-		$this->load->model('usuarios_model');
 		$userGroups = $this->usuarios_model->getGroups($userId);
 
 		if($userGroups !== FALSE){
@@ -203,7 +205,6 @@ class Usuario extends CI_Controller {
 
 	public function removeUserGroup($idUser, $idGroup){
 
-		$this->load->model('usuarios_model');
 		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
 
 		if($wasDeleted){
@@ -220,7 +221,6 @@ class Usuario extends CI_Controller {
 
 	public function removeUserFromGroup($idUser, $idGroup){
 
-		$this->load->model('usuarios_model');
 		$wasDeleted = $this->usuarios_model->removeUserGroup($idUser, $idGroup);
 
 		if($wasDeleted){
@@ -237,8 +237,6 @@ class Usuario extends CI_Controller {
 
 	public function checkIfUserExists($idUser){
 
-		$this->load->model('usuarios_model');
-
 		$userExists = $this->usuarios_model->checkIfUserExists($idUser);
 
 		return $userExists;
@@ -246,16 +244,12 @@ class Usuario extends CI_Controller {
 
 	public function getAllUsers(){
 
-		$this->load->model('usuarios_model');
-
 		$allUsers = $this->usuarios_model->getAllUsers();
 
 		return $allUsers;
 	}
 
 	public function getUsersToBeSecretaries(){
-
-		$this->load->model('usuarios_model');
 
 		$group = new Module();
 		$groupData = $group->getGroupByName(GroupConstants::SECRETARY_GROUP);
@@ -268,11 +262,31 @@ class Usuario extends CI_Controller {
 
 	public function getUserCourses($userId){
 
-		$this->load->model('usuarios_model');
-
 		$userCourses = $this->usuarios_model->getUserCourse($userId);
 
 		return $userCourses;
+	}
+
+	public function student_index(){
+
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+
+		$userStatus = $this->usuarios_model->getUserStatus($userId);
+		$userCourse = $this->usuarios_model->getUserCourse($userId);
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		$userData = array(
+			'userData' => $loggedUserData['user'],
+			'status' => $userStatus,
+			'courses' => $userCourse,
+			'currentSemester' => $currentSemester
+		);
+
+		// On auth_helper
+		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
 	}
 
 	public function getUserStatus($userId){
@@ -555,6 +569,174 @@ class Usuario extends CI_Controller {
 		$usuarioLogado = session();
 		$dados = array("usuario" => $usuarioLogado);
 		$this->load->template("usuario/conta", $dados);
+	}
+
+	public function restorePassword(){
+		$validData = $this->validateDataForRestorePassword();
+		
+		if($validData){
+			$email = $this->input->post("email");
+
+			$user = $this->usuarios_model->getUserByEmail($email);
+		
+			if($user !== FALSE){
+
+				$success = $this->sendEmailForRestorePassword($user);
+				
+				if($success){
+					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
+					redirect("/");
+				}
+				else{
+					$this->session->set_flashdata("danger", "Não foi possível enviar o email. Tente novamente.");	
+					redirect("usuario/restorePassword");
+				}
+			}
+			else{
+				$this->session->set_flashdata("danger", "Não foi encontrado nenhum usuário com esse email.");
+				redirect("usuario/restorePassword");
+			}
+		}
+		else{
+			$this->load->template("usuario/restore_password");
+		}
+
+	}
+
+	private function sendEmailForRestorePassword($user){
+		
+		$newPassword = $this->generateNewPassword($user);
+		$subject = "Solicitação de recuperação de senha - SiGA"; 
+		$message = "Olá, <b>{$user['name']}</b>. <br>";
+		$message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
+		$message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
+		$message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>";
+
+
+		$success = $this->sendEmailForUser($user['email'], $user['name'], $subject, $message);
+
+		return $success;
+	}
+
+
+	/**
+		* Send a email for a user
+		* @param $userEmail: The email address of the user
+		* @param $instituteName: The name of the institute
+		* @param $instituteEmail: The email address of the institute
+		* @param $subject: The subject of the email
+		* @param $message: The message of the email
+	*/
+	private function sendEmailForUser($userEmail, $userName, $subject, $message){
+
+		$emailSent = FALSE;
+		
+		$this->load->library("My_PHPMailer");
+		$this->load->helper("email");
+		
+		$mail = setDefaultConfiguration(); 
+		$mail->IsHTML(true);
+		$mail->Subject = $subject; 
+	    $mail->Body = $message;
+	    $mail->AddAddress($userEmail, $userName);
+	    $emailSent = $mail->Send();
+	    
+		return $emailSent;
+	}
+	
+	private function validateDataForRestorePassword(){
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
+	}
+
+	private function generateNewPassword($user){
+		
+		define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
+		
+		$newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
+
+		// Changing the user password
+		$encryptedPassword = md5($newPassword);
+		$user['password'] = $encryptedPassword;
+		$temporaryPassword = TRUE;
+		$this->usuarios_model->updatePassword($user, $temporaryPassword);
+
+		return $newPassword;
+	}
+
+	public function changePassword(){
+
+		$success = $this->validatePasswordField();
+
+		if ($success) {
+
+			$password = md5($this->input->post("password"));
+			$confirmPassword = md5($this->input->post("confirm_password"));
+
+			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
+			if($isValidPassword){
+
+				$session = $this->session->userdata("current_user");
+				
+				$user = array();
+				$user['password'] = $password;
+				$user['id'] = $session['user']['id'];
+				$temporaryPassword = FALSE;
+
+				$isUpdated = $this->usuarios_model->updatePassword($user, $temporaryPassword);
+
+				if($isUpdated){
+					$this->session->set_flashdata("success", "Senha alterada com sucesso.");
+					redirect('/');
+				}
+				else{
+					$this->session->set_flashdata("danger", "Não foi possível alterar a senha. Tente novamente.");
+					redirect('usuario/changePassword');
+				}
+			}
+			else{
+				$this->session->set_flashdata("danger", "As senhas devem ser iguais.");
+				redirect('usuario/changePassword');
+			}
+		}
+		else{
+			
+			$this->load->template('usuario/change_password');
+		}
+	}
+
+	public function validatePasswordField(){
+		
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("password", "Digite sua nova senha", "required");
+		$this->form_validation->set_rules("confirm_password", "Confirme sua nova senha", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
+
+	}
+
+	/**
+		* Verify if password and confirm password are equals
+		* @param: password: Receive the password
+		* @param: confirmPassword: Receive the confirm password
+	*/
+	public function verifyIfPasswordsAreEquals($password, $confirmPassword){
+
+		if ($password == $confirmPassword){
+			$validPassword = TRUE;
+		}
+		else{
+			$validPassword = FALSE;
+		}
+
+		return $validPassword;
 	}
 
 	public function novo() {
