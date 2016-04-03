@@ -53,10 +53,6 @@ $(document).ready(function(){
 		checkDocumentType();
 	});
 
-	$("#search_student_btn").click(function(){
-		searchForStudent();
-	});
-
 	$("#approve_offer_list_btn").hover(function(){
 		$("#approve_offer_list_btn").popover('show');
 	},function(){
@@ -341,21 +337,6 @@ function checkDocumentType(){
 		{documentType: currentType},
 		function(data){
 			$("#document_request_data").html(data);
-		}
-	);
-}
-
-// Student functions
-function searchForStudent(){
-	var studentName = $("#student_name").val();
-	var siteUrl = $("#site_url").val();
-
-	var urlToPost = siteUrl + "/usuario/searchForStudent";
-	$.post(
-		urlToPost,
-		{student_name: studentName},
-		function(data){
-			$("#search_student_result").html(data);
 		}
 	);
 }
