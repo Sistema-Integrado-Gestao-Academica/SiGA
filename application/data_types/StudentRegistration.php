@@ -6,7 +6,7 @@ class StudentRegistration{
 
     const COULDNT_GET_CURRENT_YEAR = "Não foi possível recuperar o ano atual para compor a matrícula. Contate o administrador.";
     const REGISTRATION_CANT_BE_EMPTY = "A matrícula do aluno não pode estar vazia.";
-    const REGISTRATION_MUST_BE_9_NUMBERS = "A matrícula do aluno deve conter apenas números.";
+    const REGISTRATION_MUST_BE_9_NUMBERS = "A matrícula do aluno deve conter apenas 9 números.";
     const REGISTRATION_LENGTH = 9;
 
     private $registration;

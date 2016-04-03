@@ -275,29 +275,6 @@ class Usuario extends CI_Controller {
 		return $userCourses;
 	}
 
-	public function student_index(){
-
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
-
-		$this->load->model('usuarios_model');
-		$userStatus = $this->usuarios_model->getUserStatus($userId);
-		$userCourse = $this->usuarios_model->getUserCourse($userId);
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		$userData = array(
-			'userData' => $loggedUserData['user'],
-			'status' => $userStatus,
-			'courses' => $userCourse,
-			'currentSemester' => $currentSemester
-		);
-
-		// On auth_helper
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
-	}
-
 	public function getUserStatus($userId){
 
 		$this->load->model('usuarios_model');
