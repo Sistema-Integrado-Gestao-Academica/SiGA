@@ -608,7 +608,7 @@ class Usuario extends CI_Controller {
 		$newPassword = $this->generateNewPassword($user);
 		$subject = "Solicitação de recuperação de senha"; 
 		$message = "Sua nova senha é: ".$newPassword;
-		$success = $this->sendEmailForUser($user['email'], "UnB", "no-reply-sip@il.unb.br", $subject, $message);
+		$success = $this->sendEmailForUser($user['email'], $user['name'], $subject, $message);
 
 		return $success;
 	}
@@ -622,21 +622,19 @@ class Usuario extends CI_Controller {
 		* @param $subject: The subject of the email
 		* @param $message: The message of the email
 	*/
-	private function sendEmailForUser($userEmail, $instituteName, $instituteEmail, $subject, $message){
+	private function sendEmailForUser($userEmail, $userName, $subject, $message){
 
 		$emailSent = FALSE;
-
-		// $this->load->library('email');
-
-		// $this->email->from($instituteEmail, $instituteName);
-		// $this->email->to($userEmail); 
 		
-		// $this->email->subject($message);
-		// $this->email->message($message);	
-
-		// $emailSent = $this->email->send();
-		// var_dump($this->email->print_debugger()); exit();
-
+		$this->load->library("My_PHPMailer");
+		$this->load->helper("email");
+		
+		$mail = setDefaultConfiguration(); 
+		$mail->Subject = $subject; 
+	    $mail->Body = $message;
+	    $mail->AddAddress($userEmail, $userName);
+	    $emailSent = $mail->Send();
+	    
 		return $emailSent;
 	}
 	

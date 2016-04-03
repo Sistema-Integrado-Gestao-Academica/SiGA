@@ -256,7 +256,7 @@ class Usuarios_model extends CI_Model {
 	
 	public function getUserByEmail($email){
 
-		$this->db->select('id, email');
+		$this->db->select('id, email, name');
 		$this->db->from('users');
 		$this->db->where("email", $email);
 
