@@ -60,7 +60,7 @@
 						    			echo form_button(array(
 						    				'id' => "update_registration",
 						    				'type' => "submit",
-						    				'class' => "btn btn-primary btn-flat",
+						    				'class' => "btn btn-success btn-flat",
 						    				'content' => "Atualizar matrícula"
 						    			));
 						    			echo "</span>";
