@@ -201,9 +201,11 @@ td {
   background: transparent;
 }
 .skin-green-light .wrapper,
-.skin-green-light .main-sidebar,
-.skin-green-light .left-side {
+.skin-green-light .main-sidebar{
   background-color: #f9fafc;
+}
+.skin-green-light .left-side {
+  background-color: #f6f6f6;
 }
 .skin-green-light .content-wrapper,
 .skin-green-light .main-footer {
