@@ -557,21 +557,8 @@ class Program extends CI_Controller {
 		foreach ($coursesId as $id) {
 			$teacherController = new Teacher();
 			$teachers[$id] = $teacherController->getCourseTeachersForHomepage($id);
-			
-			if(!empty($teachers[$id])){
-				$i = 0;
-				foreach ($teachers[$id] as $teacherInfo){		
-					$teachersInfo[$i]['id'] = $teacherInfo[0]['id']; 
-					$teachersInfo[$i]['name'] = $teacherInfo[0]['name']; 
-					$teachersInfo[$i]['email'] = $teacherInfo[0]['email'];
-					$teachersInfo[$i]['summary'] = $teacherInfo[0]['summary'];
-					$teachersInfo[$i]['lattes_link'] = $teacherInfo[0]['lattes_link'];
-					$teachersInfo[$i]['research_line'] = $teacherInfo[0]['research_line'];
-					$i++;
-				}
-			}                  	
 		}
-		return $teachersInfo;
+		return $teachers;
 
 	}
 

@@ -22,6 +22,17 @@ class Course_model extends CI_Model {
 		return $teachers;
 	}
 
+	public function getTeachers($courseId){
+		
+		$this->db->select('id_user');
+		$this->db->from('teacher_course');
+		$this->db->where('id_course', $courseId);
+		$teachers = $this->db->get()->result_array();
+		$teachers = checkArray($teachers);
+
+		return $teachers;
+	}
+
 	public function enrollTeacherToCourse($teacherId, $courseId){
 
 		$teacherToEnroll = array(

@@ -59,18 +59,29 @@ class Teacher extends CI_Controller {
 	*/
 	public function getCourseTeachersForHomepage($courseId){
 
-		$teachers = $this->course_model->getCourseTeachers($courseId);
+		$teachers = $this->course_model->getTeachers($courseId);
 		$teachersInfo = array();
+		$teachersData = array();
 
-		if($teachers !== FALSE){
+		if($teachers !== FALSE || !empty($teachers)){
 			
 			foreach ($teachers as $teacher) {
 				$teacherId = $teacher['id_user'];
-				$teachersInfo[$teacherId] = $this->teacher_model->getInfoTeacherForHomepage($teacherId);
+				$teachersInfo[$teacherId]['extra_data'] = $this->teacher_model->getInfoTeacherForHomepage($teacherId);
+				$teachersInfo[$teacherId]['basic_data'] = $this->teacher_model->getTeacherData($teacherId);
+
+				$teacherInfo = $teachersInfo[$teacherId];
+				$teachersData[$teacherId]['id'] = $teacherInfo['basic_data'][0]['id']; 
+				$teachersData[$teacherId]['name'] = $teacherInfo['basic_data'][0]['name']; 
+				$teachersData[$teacherId]['email'] = $teacherInfo['basic_data'][0]['email'];
+				$teachersData[$teacherId]['summary'] = $teacherInfo['extra_data'][0]['summary'];
+				$teachersData[$teacherId]['lattes_link'] = $teacherInfo['extra_data'][0]['lattes_link'];
+				$teachersData[$teacherId]['research_line'] = $teacherInfo['extra_data'][0]['research_line'];		
+		               	
 			}
 		}
 
-		return $teachersInfo;
+		return $teachersData;
 	}
 
 	public function getInfoProfile($teacherId){

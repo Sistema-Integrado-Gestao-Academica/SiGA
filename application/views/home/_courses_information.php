@@ -32,7 +32,8 @@ if ($coursesPrograms !== FALSE) {
             <h4 class="box-title">
               <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#coordinator".$program['id_program']?> class="collapsed" aria-expanded="false">
                 Coordenador <i class=" fa fa-caret-down"></i>
-                <?php $coordinator = $coordinators[$program['id_program']][0];?>
+                <?php $coordinatorBasicData = $coordinators[$program['id_program']]['basic_data'][0];?>
+                <?php $coordinatorExtraData = $coordinators[$program['id_program']]['extra_data'][0];?>
               </a>
             </h4>
           </div>
@@ -41,29 +42,29 @@ if ($coursesPrograms !== FALSE) {
 						<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
 							<li class="active">
 								<a href="#vtab1" data-toggle="collapse" data-target=<?="#coordinator".$program['id_program'].$program['coordinator']?>>
-								<h4><?= $coordinator['name']?></h4> 
+								<h4><?= $coordinatorBasicData['name']?></h4> 
 								</a>
 							</li>
+								<div id=<?="coordinator".$program['id_program'].$program['coordinator']?> class="collapse">
+									<b>Email:</b><br><?= $coordinatorBasicData['email']?> <br>
 							<?php 
 							
-							$isSummaryBlank = empty($coordinator['summary']) || is_null($coordinator['summary']);
-							$isLattesBlank = empty($coordinator['lattes_link']) ||  is_null($coordinator['lattes_link']);
+							$isSummaryBlank = empty($coordinatorExtraData['summary']) || is_null($coordinatorExtraData['summary']);
+							$isLattesBlank = empty($coordinatorExtraData['lattes_link']) ||  is_null($coordinatorExtraData['lattes_link']);
 
-							$isResearchLineBlank = empty($coordinator['research_line']) ||  is_null($coordinator['research_line']);
+							$isResearchLineBlank = empty($coordinatorExtraData['research_line']) ||  is_null($coordinatorExtraData['research_line']);
 									
 							if (!$isSummaryBlank || !$isLattesBlank || !$isResearchLineBlank){ ?>
-								<div id=<?="coordinator".$program['id_program'].$program['coordinator']?> class="collapse">
-									<b>Email:</b><br><?= $coordinator['email']?> <br>
 									<?php if (!$isSummaryBlank){ ?>
-										<b>Resumo:</b><br><?= $coordinator['summary']?>
+										<b>Resumo:</b><br><?= $coordinatorExtraData['summary']?>
 									<?php } ?>
 									<br>	
 									<?php if (!$isResearchLineBlank){ ?>
-										<b>Linha de Pesquisa:</b><br><?= $coordinator['research_line']?>
+										<b>Linha de Pesquisa:</b><br><?= $coordinatorExtraData['research_line']?>
 									<?php } ?>
 									<br><br>
 									<?php if (!$isLattesBlank){ ?>
-										<a class="btn btn-primary btn-flat btn-xs" href=<?= $coordinator['lattes_link']?>>Currículo Lattes</a>
+										<a class="btn btn-primary btn-flat btn-xs" href=<?= $coordinatorExtraData['lattes_link']?>>Currículo Lattes</a>
 									<?php } ?>
 								</div>
 							<?php
@@ -77,7 +78,6 @@ if ($coursesPrograms !== FALSE) {
 <?php
 if ($coursesPrograms !== FALSE) {
 	$teachers = $coursesProgram['teachers'];
-
 	if(!empty($teachers)){ ?>
 		
 		<div class="panel box box-default">
@@ -91,44 +91,50 @@ if ($coursesPrograms !== FALSE) {
           <div id=<?="collapseThree".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
             <div class="box-body">
 					<?php 
-						foreach ($teachers as $teacher) { 
-							
-							if($teacher['id'] != $program['coordinator']){?>
+						foreach ($teachers as $teachersCourse) { 
 
-								<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
-									<li class="active">
-										<a href=<?="#teacher".$program['id_program'].$teacher['id']?> data-toggle="collapse" data-target=>
-										<h4><?= $teacher['name']?></h4> 
-										</a>
-									</li>
-									<?php 
+							if(!empty($teachersCourse)){
+
+								foreach ($teachersCourse as $teacher) {
 									
-									$isSummaryBlank = empty($teacher['summary']) || is_null($teacher['summary']);
-									$isLattesBlank = empty($teacher['lattes_link']) ||  is_null($teacher['lattes_link']);
+									if($teacher['id'] != $program['coordinator']){?>
 
-									$isResearchLineBlank = empty($teacher['research_line']) ||  is_null($teacher['research_line']);
-									
-									if (!$isSummaryBlank || !$isLattesBlank || $isResearchLineBlank){ ?>
+									<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">
+										<li class="active">
+											<a href=<?="#teacher".$program['id_program'].$teacher['id']?> data-toggle="collapse" data-target=>
+											<h4><?= $teacher['name']?></h4> 
+											</a>
+										</li>
+										<?php 
+										
+										$isSummaryBlank = empty($teacher['summary']) || is_null($teacher['summary']);
+										$isLattesBlank = empty($teacher['lattes_link']) ||  is_null($teacher['lattes_link']);
 
-										<div id=<?="teacher".$program['id_program'].$teacher['id']?> class="collapse">
-											<b>Email:</b><br><?= $teacher['email']?> <br>
-											<?php if (!$isSummaryBlank){ ?>
-												<b>Resumo:</b><br><?= $teacher['summary']?>
-											<?php } ?>
-											<br>	
-											<?php if (!$isResearchLineBlank){ ?>
-												<b>Linha de Pesquisa:</b><br><?= $teacher['research_line']?>
-											<?php } ?>
-											<br><br>
-											<?php if (!$isLattesBlank){ ?>
-												<a class="btn btn-primary btn-flat btn-xs" href=<?= $teacher['lattes_link']?>>Currículo Lattes</a>
-											<?php } ?>
-										</div>
-									<?php
-									}	?>					
+										$isResearchLineBlank = empty($teacher['research_line']) ||  is_null($teacher['research_line']);
+										
+										if (!$isSummaryBlank || !$isLattesBlank || $isResearchLineBlank){ ?>
 
-					           </ul>
-					<?php	
+											<div id=<?="teacher".$program['id_program'].$teacher['id']?> class="collapse">
+												<b>Email:</b><br><?= $teacher['email']?> <br>
+												<?php if (!$isSummaryBlank){ ?>
+													<b>Resumo:</b><br><?= $teacher['summary']?>
+												<?php } ?>
+												<br>	
+												<?php if (!$isResearchLineBlank){ ?>
+													<b>Linha de Pesquisa:</b><br><?= $teacher['research_line']?>
+												<?php } ?>
+												<br><br>
+												<?php if (!$isLattesBlank){ ?>
+													<a class="btn btn-primary btn-flat btn-xs" href=<?= $teacher['lattes_link']?>>Currículo Lattes</a>
+												<?php } ?>
+											</div>
+										<?php
+										}	?>					
+
+						           </ul>
+						<?php	
+									}
+								}
 							}
 						}
 					?>							
