@@ -960,13 +960,6 @@ class Usuario extends CI_Controller {
 		return $userName;
 	}
 
-	public function getStudentBasicInformation($idUser){
-		$this->load->model('usuarios_model');
-		$userData = $this->usuarios_model->getStudentBasicInformation($idUser);
-
-		return $userData;
-	}
-
 	/**
 	  * Join the id's and names of user types into an array as key => value.
 	  * Used to the user type form
