@@ -99,7 +99,7 @@ $route['update_profile'] = 'teacher/updateProfile';
  * Student functionalities routes
  */
 $route['student'] = 'student/index';
-$route['student_information'] = 'usuario/studentInformationsForm';
+$route['student_information'] = 'student/studentInformation';
 $route['documents_request'] = "documentrequest/index";
 
 /*

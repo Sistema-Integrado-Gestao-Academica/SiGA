@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once("usuario.php");
+require_once("semester.php");
 require_once("enrollment.php");
 
 require_once(APPPATH."/constants/GroupConstants.php");
@@ -61,5 +62,27 @@ class Student extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 		redirect("student");
+	}
+
+	public function studentInformation(){
+		$loggedUserData = $this->session->userdata("current_user");
+		$userId = $loggedUserData['user']['id'];
+
+		$user = new Usuario();
+		$userStatus = $user->getUserStatus($userId);
+		$userCourses = $user->getUserCourses($userId);
+
+		$semester = new Semester();
+		$currentSemester = $semester->getCurrentSemester();
+
+		$userData = array(
+				'userData' => $loggedUserData['user'],
+				'status' => $userStatus,
+				'courses' => $userCourses,
+				'currentSemester' => $currentSemester
+		);
+
+		// On auth_helper
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_specific_data_form', $userData);
 	}
 }
