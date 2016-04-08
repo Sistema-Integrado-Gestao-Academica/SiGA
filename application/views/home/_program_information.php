@@ -79,7 +79,7 @@
 
 		$programContact = $program['contact'];
 
-			if (!empty($programContact)) {?>
+			if (!empty($programContact) || $coursesPrograms !== FALSE) {?>
 	
 				<div class="panel box box-default">
               		<div class="box-header with-border">
@@ -90,11 +90,12 @@
 	              </div>
 	              	<div id=<?="contact".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false">
 	                	<div class="box-body">			
-
+	                <?php if(!empty($programContact)){ ?>
 						<p><b>Contatos</b></p>
 							<p><?php echo $program['contact']?></p>
 					<?php
-						}
+	                	}
+			}
 			if ($coursesPrograms !== FALSE) {
 							$coursesProgram = $coursesPrograms[$program['id_program']];
 							
