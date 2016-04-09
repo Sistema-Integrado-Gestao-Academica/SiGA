@@ -7,8 +7,8 @@ abstract class BarNotification extends Notification{
 	protected $content;
 	protected $seen;
 
-	public function __construct($content, $seen = FALSE, $id = FALSE){
-		parent::__construct($id);
+	public function __construct($user, $content, $seen = FALSE, $id = FALSE){
+		parent::__construct($user, $id);
 		$this->setContent($content);
 		$this->setSeen($seen);
 	}
@@ -22,6 +22,7 @@ abstract class BarNotification extends Notification{
 		}
 	}
 
+	// Default setter. Can be overrided
 	protected function setContent($content){
 		$this->content = $content;
 	}
