@@ -1,6 +1,7 @@
 <?php
 
 require_once APPPATH."/exception/EmailNotificationException.php";
+require_once APPPATH."/constants/EmailConstants.php";
 require_once("Notification.php");
 
 class EmailNotification extends Notification{
@@ -12,10 +13,6 @@ class EmailNotification extends Notification{
 	const EMPTY_SUBJECT = "O assunto não pode ser nulo nem vazio.";
 	const EMPTY_MESSAGE = "A mensagem não pode ser nula nem vazia.";
 
-	// Default values
-	const SENDER_NAME = "SiGA";
-    const SENDER_EMAIL = "no-reply-sip@il.unb.br";
-
 	protected $senderName;
 	protected $senderEmail;
 	protected $receiverName;
@@ -25,8 +22,8 @@ class EmailNotification extends Notification{
 
 	public function __construct($user){
 		parent::__construct($user);
-		$this->setSenderName(self::SENDER_NAME);
-		$this->setSenderEmail(self::SENDER_EMAIL);
+		$this->setSenderName(EmailConstants::SENDER_NAME);
+		$this->setSenderEmail(EmailConstants::SENDER_EMAIL);
 		$this->setReceiverName($user->getName());
 		$this->setReceiverEmail($user->getEmail());
 	}
@@ -148,17 +145,26 @@ class EmailNotification extends Notification{
 	public function notify(){
         $emailSent = FALSE;
 
-        $ci =& get_instance();
-        $ci->load->library("My_PHPMailer");
-        
-        $mail = $this->setDefaultConfiguration(); 
+		$message = $this->getMessage();
 
-        $mail->IsHTML(true);
-        $mail->Subject = $this->getSubject(); 
-        $mail->Body = $this->getMessage();
-        $mail->SetFrom($this->getSenderEmail(), $this->getSenderName()); 
-        $mail->AddAddress($this->getReceiverEmail(), $this->getReceiverName());
-        $emailSent = $mail->Send();
+		if(!is_null($message) && !empty($message)){
+
+	        $ci =& get_instance();
+	        $ci->load->library("My_PHPMailer");
+	        
+	        $mail = $this->setDefaultConfiguration(); 
+
+	        $mail->IsHTML(true);
+	        $mail->Subject = $this->getSubject(); 
+	        $mail->Body = $message;
+	        $mail->SetFrom($this->getSenderEmail(), $this->getSenderName()); 
+	        $mail->AddAddress($this->getReceiverEmail(), $this->getReceiverName());
+	        $emailSent = $mail->Send();
+		}
+		else{
+			$emailSent = FALSE;
+		}
+        
         return $emailSent;
 	}
 

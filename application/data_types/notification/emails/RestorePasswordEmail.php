@@ -4,6 +4,8 @@ require_once APPPATH."/data_types/notification/EmailNotification.php";
 
 class RestorePasswordEmail extends EmailNotification{
 
+    const RESTORE_PASSWORD_SUBJECT = "Solicitação de recuperação de senha - SiGA";
+
 	public function __construct($user){
 		parent::__construct($user);
 		$this->setSubject();	
@@ -12,7 +14,7 @@ class RestorePasswordEmail extends EmailNotification{
 
 	private function setSubject(){
 
-        $this->subject = "Solicitação de recuperação de senha - SiGA"; 
+        $this->subject = self::RESTORE_PASSWORD_SUBJECT; 
 	}
 
 	private function setMessage(){ 
@@ -20,11 +22,14 @@ class RestorePasswordEmail extends EmailNotification{
         $user = $this->user();
         $newPassword = $user->getPassword();
         $userName = $user->getName();
+        $message = "";
 
-        $message = "Olá, <b>{$userName}</b>. <br>";
-        $message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
-        $message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
-        $message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>"; 
+        if(!is_null($newPassword) && !empty($newPassword)){
+            $message = "Olá, <b>{$userName}</b>. <br>";
+            $message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
+            $message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
+            $message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>"; 
+        }
 
         $this->message = $message;
     }

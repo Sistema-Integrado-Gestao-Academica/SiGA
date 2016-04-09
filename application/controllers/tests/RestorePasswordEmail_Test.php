@@ -12,7 +12,7 @@ require_once("TestCase.php");
 require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
 require_once(APPPATH."/exception/EmailNotificationException.php");
 
-class EmailNotification_Test extends TestCase{
+class RestorePasswordEmail_Test extends TestCase{
 
     public function __construct(){
         parent::__construct($this);
@@ -21,213 +21,78 @@ class EmailNotification_Test extends TestCase{
 
     public function getEmailDefaultInformation(){
 
+        $id = 1;
+        $userName = "Joao";
+        $userEmail = "joao@joao.com";
+        $password = bin2hex(openssl_random_pseudo_bytes(4));
+
+        $user = new User($id, $userName, FALSE, $userEmail, FALSE, $password, FALSE);
+
+        $message = "Olá, <b>{$userName}</b>. <br>";
+        $message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
+        $message = $message."Sua nova senha para acesso é: <b>".$password."</b>. <br>";
+        $message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>"; 
+
         $emailInfo = array();
 
-        $emailInfo['receiverName'] = "João";
-        $emailInfo['receiverEmail'] = "joao@joao.com";
-
-        $user = 1;
         $emailInfo['user'] = $user;
+        $emailInfo['subject'] = RestorePasswordEmail::RESTORE_PASSWORD_SUBJECT;
+        $emailInfo['message'] = $message;       
 
         return $emailInfo;
     }
 
-
     public function shouldReturnEmailInformation(){
 
         $emailInfo = $this->getEmailDefaultInformation();
-
+        $user = $emailInfo['user'];
         $notes = "";
         try{
-            $email = new RestorePasswordEmail($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail']);
+            $email = new RestorePasswordEmail($user);
             $notes = "Criou";
         }
         catch (EmailNotificationException $e){
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
-
+        
         $test_name = "Test if return the receiver name.";
-        $this->unit->run($email->getReceiverName(), $emailInfo['receiverName'], $test_name, $notes);
+        $this->unit->run($email->getReceiverName(), $user->getName(), $test_name, $notes);
 
         $test_name = "Test if return the receiver email.";
-        $this->unit->run($email->getReceiverEmail(), $emailInfo['receiverEmail'], $test_name, $notes);
+        $this->unit->run($email->getReceiverEmail(), $user->getEmail(), $test_name, $notes);
+       
+        $test_name = "Test if return the sender name.";
+        $this->unit->run($email->getSenderName(), EmailConstants::SENDER_NAME, $test_name, $notes);
+
+        $test_name = "Test if return the sender email.";
+        $this->unit->run($email->getSenderEmail(), EmailConstants::SENDER_EMAIL, $test_name, $notes);
 
         $test_name = "Test if return the subject.";
-        $subject_message = "Solicitação de recuperação de senha - SiGA";
         $this->unit->run($email->getSubject(), $emailInfo['subject'], $test_name, $notes);
 
         $test_name = "Test if return the message.";
         $this->unit->run($email->getMessage(), $emailInfo['message'], $test_name, $notes);
     }
 
-    public function shouldReturnExceptionWithReceiverNameEmpty(){
+    public function shouldReturnExceptionWithNewPasswordEmpty(){
 
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['receiverName'] = "";
+        $id = 1;
+        $userName = "Joao";
+        $userEmail = "joao@joao.com";
+
+        $user = new User($id, $userName, FALSE, $userEmail, FALSE, FALSE, FALSE);
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new RestorePasswordEmail($user);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
 
-        $test_name = "Test if create an email with empty sender name.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithReceiverNameNull(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['receiverName'] = NULL;
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with null sender name.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithReceiverEmailEmpty(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['receiverEmail'] = "";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with empty receiver email.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithReceiverEmailNull(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['receiverEmail'] = NULL;
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with null receiver email.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithReceiverEmailInvalid(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['receiverEmail'] = "receiver";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with invalid receiver email.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithSubjectEmpty(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['subject'] = "";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with empty subject.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithSubjectNull(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['subject'] = NULL;
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with null subject.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithMessageEmpty(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['message'] = "";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with empty message.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithMessageNull(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['message'] = NULL;
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with null message.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
+        $test_name = "Test if create an email with empty password.";
+        $this->unit->run($email->getMessage(), "" , $test_name, $notes);
 
     }
 
