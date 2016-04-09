@@ -257,163 +257,55 @@ function mastermindMessageForm($requestId, $mastermindId, $isFinalized, $masterm
 	echo form_close();
 }
 
-function displayFormUpdateStudentBasicInformation($idUser){
-	$user = new Usuario();
+function studentBasicInfoForm($path, $hiddenData, $previousData = FALSE){
 
-	$studentData = $user->getStudentBasicInformation($idUser);
-	$hidden = array('student_registration' => $idUser, 'id_user' => $idUser);
+	$cellPhone = array(
+		"name" => "cell_phone_number",
+		"id" => "cell_phone_number",
+		"type" => "number",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "11"
+	);
 
-	if($studentData){
-		echo "<h4>Mantenha-nos atualizados:</h4>";
-		echo "<div class='form-box' id='login-box'>";
-			echo "<div class='header'>Informações Básicas</div>";
-			updateStudentBasicInformationForm($studentData,$hidden);
-	}else{
-		echo "<h4>Cadastre aqui seus dados:</h4>";
-		echo "<div class='form-box' id='login-box'>";
-			echo "<div class='header'>Informações Básicas</div>";
-			saveStudentBasicInformationForm($hidden);
+	$homePhone = array(
+		"name" => "home_phone_number",
+		"id" => "home_phone_number",
+		"type" => "number",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"maxlength" => "11"
+	);
+
+	$submitBtn = array(
+		"class" => "btn btn-success btn-block ",
+		"content" => "Atualizar dados",
+		"type" => "submit"
+	);
+
+	if($previousData !== FALSE){
+		$cellPhone['value'] = $previousData['cell_phone'];
+		$homePhone['value'] = $previousData['home_phone'];
 	}
 
-	echo "</div>";
-}
-
-function saveStudentBasicInformationForm($hidden){
-
-	$emailLabel = array(
-			"name" => "email",
-			"id" => "email",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "30"
-	);
-
-	$cellPonheLabel = array(
-			"name" => "cell_phone_number",
-			"id" => "cell_phone_number",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "9"
-	);
-
-	$homePonheLabel = array(
-			"name" => "home_phone_number",
-			"id" => "home_phone_number",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "9"
-	);
-
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-success btn-block ",
-			"content" => "Aprovar",
-			"type" => "submit"
-	);
-
-	echo form_open('usuario/saveStudentBasicInformation','',$hidden);
+	echo form_open($path,'',$hiddenData);
 	echo "<div class='body bg-gray'>";
-	echo "<div class='form-group'>";
-	echo form_label("Email", "email") . "<br>";
-	echo form_input($emailLabel);
-	echo form_error("email");
-	echo "<br>";
-	echo "<br>";
-	echo "</div>";
-	echo "<div class='form-group'>";
-	echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
-	echo form_input($homePonheLabel);
-	echo form_error("home_phone_number");
-	echo "<br>";
-	echo "<br>";
-	echo "</div>";
-	echo "<div class='form-group'>";
-	echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
-	echo form_input($cellPonheLabel);
-	echo form_error("cell_phone_number");
-	echo "<br>";
-	echo "<br>";
-	echo "</div>";
+		echo "<div class='form-group'>";
+			echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
+			echo form_input($homePhone);
+			echo form_error("home_phone_number");
+		echo "</div>";
+		
+		echo "<div class='form-group'>";
+			echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
+			echo form_input($cellPhone);
+			echo form_error("cell_phone_number");
+		echo "</div>";
 	echo "</div>";
 	echo "<div class='footer'>";
-	echo form_button($submit_button_array_to_form);
+		echo form_button($submitBtn);
 	echo "</div>";
 	echo form_close();
-
-
-}
-
-
-function updateStudentBasicInformationForm($studentData,$hidden){
-
-	$emailLabel = array(
-			"name" => "email",
-			"id" => "email",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "30",
-			"value" => $studentData['email']
-	);
-
-	$cellPonheLabel = array(
-			"name" => "cell_phone_number",
-			"id" => "cell_phone_number",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "9",
-			"value" => $studentData['cell_phone_number']
-	);
-
-	$homePonheLabel = array(
-			"name" => "home_phone_number",
-			"id" => "home_phone_number",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "9",
-			"value" => $studentData['home_phone_number']
-	);
-
-	$submit_button_array_to_form = array(
-			"class" => "btn btn-success btn-block ",
-			"content" => "Aprovar",
-			"type" => "submit"
-	);
-
-	echo form_open('usuario/updateStudentBasicInformation','', $hidden);
-	echo "<div class='body bg-gray'>";
-	echo "<div class='form-group'>";
-	echo form_label("Email", "email") . "<br>";
-	echo form_input($emailLabel);
-	echo form_error("email");
-	echo "<br>";
-	echo "<br>";
-	echo "</div>";
-	echo "<div class='form-group'>";
-	echo form_label("Telefone Residencial", "home_phone_number") . "<br>";
-	echo form_input($homePonheLabel);
-	echo form_error("home_phone_number");
-	echo "<br>";
-	echo "<br>";
-	echo "</div>";
-	echo "<div class='form-group'>";
-	echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
-	echo form_input($cellPonheLabel);
-	echo form_error("cell_phone_number");
-	echo "<br>";
-	echo "<br>";
-	echo "</div>";
-	echo "</div>";
-	echo "<div class='footer'>";
-	echo form_button($submit_button_array_to_form);
-	echo "</div>";
-	echo form_close();
-
-
 }
 
 function formToEnrollTeacherToCourse($courseTeachers, $teachers, $courseId){

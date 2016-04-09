@@ -298,28 +298,6 @@ class Usuario extends CI_Controller {
 		return $userStatus;
 	}
 
-	public function studentInformationsForm(){
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
-
-		$this->load->model('usuarios_model');
-		$userStatus = $this->usuarios_model->getUserStatus($userId);
-		$userCourse = $this->usuarios_model->getUserCourse($userId);
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		$userData = array(
-				'userData' => $loggedUserData['user'],
-				'status' => $userStatus,
-				'courses' => $userCourse,
-				'currentSemester' => $currentSemester
-		);
-
-		// On auth_helper
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_specific_data_form', $userData);
-	}
-
 	public function studentCoursePage($courseId, $userId){
 
 		$userData = $this->getUserById($userId);
@@ -827,95 +805,6 @@ class Usuario extends CI_Controller {
 
 	}
 
-	public function saveStudentBasicInformation(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("home_phone_number", "Telefone Residencial", "required|alpha_dash");
-		$this->form_validation->set_rules("cell_phone_number", "Telefone Celular", "required|alpha_dash");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
-
-		if ($success){
-			$email = $this->input->post("email");
-			$cellPhone = $this->input->post("cell_phone_number");
-			$homePhone = $this->input->post("home_phone_number");
-			$studentRegistration = $this->input->post("student_registration");
-			$idUser = $this->input->post("id_user");
-
-			$studentBasics = array(
-					'email'    => $email,
-					'cell_phone_number'    => $cellPhone,
-					'home_phone_number' => $homePhone,
-					'student_registration' => $studentRegistration,
-					'id_user' => $idUser
-			);
-
-			$this->load->model("usuarios_model");
-
-			$savedBasicInformation = $this->usuarios_model->saveStudentBasicInformation($studentBasics);
-
-			if($savedBasicInformation){
-				$updateStatus = "success";
-				$updateMessage = "Novos dados cadastrados com sucesso";
-			}else{
-				$updateStatus = "danger";
-				$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
-			}
-
-		} else {
-			$updateStatus = "danger";
-			$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
-		}
-			$this->session->set_flashdata($updateStatus, $updateMessage);
-			redirect("student_information/");
-	}
-
-	public function updateStudentBasicInformation(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("home_phone_number", "Telefone Residencial", "required|alpha_dash");
-		$this->form_validation->set_rules("cell_phone_number", "Telefone Celular", "required|alpha_dash");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
-
-		if ($success){
-			$email = $this->input->post("email");
-			$cellPhone = $this->input->post("cell_phone_number");
-			$homePhone = $this->input->post("home_phone_number");
-			$studentRegistration = $this->input->post("student_registration");
-			$idUser = $this->input->post("id_user");
-
-			$studentBasicsUpdate = array(
-					'email'    => $email,
-					'cell_phone_number'    => $cellPhone,
-					'home_phone_number' => $homePhone
-			);
-
-			$whereUpdate = array(
-					'student_registration' => $studentRegistration,
-					'id_user' => $idUser
-			);
-
-			$this->load->model("usuarios_model");
-
-			$updatedBasicInformation = $this->usuarios_model->updateStudentBasicInformation($studentBasicsUpdate, $whereUpdate);
-
-			if($updatedBasicInformation){
-				$updateStatus = "success";
-				$updateMessage = "Novos dados alterados com sucesso";
-			}else{
-				$updateStatus = "danger";
-				$updateMessage = "Não foi possível alterar seus novos dados. Tente novamente.";
-			}
-
-		} else {
-			$updateStatus = "danger";
-			$updateMessage = "Não foi possível alterar seus novos dados. Tente novamente.";
-		}
-		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect("student_information/");
-	}
-
 	public function getUserByName($userName){
 
 		$this->load->model('usuarios_model');
@@ -980,13 +869,6 @@ class Usuario extends CI_Controller {
 		$userName = $this->usuarios_model->getNameByUserId($idUser);
 
 		return $userName;
-	}
-
-	public function getStudentBasicInformation($idUser){
-		$this->load->model('usuarios_model');
-		$userData = $this->usuarios_model->getStudentBasicInformation($idUser);
-
-		return $userData;
 	}
 
 	/**
