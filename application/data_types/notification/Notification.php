@@ -1,6 +1,7 @@
 <?php
 
 require_once(APPPATH."/exception/NotificationException.php");
+require_once(APPPATH."/data_types/User.php");
 
 abstract class Notification{
 	
@@ -9,7 +10,7 @@ abstract class Notification{
 	private $id;
 	protected $user;
 
-	public function __construct($user = FALSE, $id = FALSE){
+	public function __construct($user, $id = FALSE){
 		$this->setId($id);
 		$this->setUser($user);
 	}
@@ -23,6 +24,7 @@ abstract class Notification{
 
 		if($id !== FALSE){
 
+			// Checks if is a number and greater than 0
 			if(!is_nan((double) $id) && $id > 0){
 				$this->id = $id;
 			}else{
@@ -36,7 +38,17 @@ abstract class Notification{
 
 	private function setUser($user){
 		if($user !== FALSE){
-			$this->user = $user;
+			if(is_object($user) && !is_null($user)){
+				if(get_class($user) === User::class){
+					$this->user = $user;
+				}else{
+					throw new NotificationException(self::INVALID_USER);
+				}
+			}else{
+				throw new NotificationException(self::INVALID_USER);
+			}
+		}else{
+			// Nothing to do, because the user can be attached later
 		}
 	}
 
@@ -48,5 +60,6 @@ abstract class Notification{
 		return $this->user;
 	}
 
+	// Method to notify the notification user
 	public abstract function notify();
 }
