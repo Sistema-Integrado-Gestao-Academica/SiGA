@@ -6,9 +6,10 @@ require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
-require_once('email.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
+require_once(APPPATH."/data_types/User.php");
 
 class Usuario extends CI_Controller {
 
@@ -557,10 +558,10 @@ class Usuario extends CI_Controller {
 			$email = $this->input->post("email");
 
 			$user = $this->usuarios_model->getUserByEmail($email);
-		
+			$user = $this->generateNewPassword($user);
 			if($user !== FALSE){
-				$email = new Email();
-				$success = $email->sendEmailForRestorePassword($user);
+				$email = new RestorePasswordEmail($user);
+				$success = $email->notify();
 				
 				if($success){
 					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
@@ -581,6 +582,29 @@ class Usuario extends CI_Controller {
 		}
 
 	}
+
+    private function generateNewPassword($user){
+        
+        define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
+        
+        $ci =& get_instance();
+        $ci->load->model('usuarios_model');
+
+        $newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
+
+        // Changing the user password
+        $encryptedPassword = md5($newPassword);
+        $userPassword = $encryptedPassword;
+        $temporaryPassword = TRUE;
+
+        $id = $user->getId();
+        $this->usuarios_model->updatePassword($id, $userPassword, $temporaryPassword);
+
+        $user = new User($id, $user->getName(), FALSE, $user->getEmail(), FALSE, $newPassword, FALSE);
+
+        return $user;
+    }
+
 
 	private function validateDataForRestorePassword(){
 

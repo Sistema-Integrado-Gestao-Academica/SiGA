@@ -13,25 +13,22 @@ class EmailNotification extends Notification{
 	const EMPTY_MESSAGE = "A mensagem não pode ser nula nem vazia.";
 
 	// Default values
-	const SENDER_NAME = "UNB";
-    const SENDER_EMAIL = "unb@unb.br";
+	const SENDER_NAME = "SiGA";
+    const SENDER_EMAIL = "no-reply-sip@il.unb.br";
 
-	private $senderName;
-	private $senderEmail;
-	private $receiverName;
-	private $receiverEmail;
-	private $subject;
-	private $message;
+	protected $senderName;
+	protected $senderEmail;
+	protected $receiverName;
+	protected $receiverEmail;
+	protected $subject;
+	protected $message;
 
-
-	public function __construct($user, $receiverName, $receiverEmail, $subject, $message){
+	public function __construct($user){
 		parent::__construct($user);
 		$this->setSenderName(self::SENDER_NAME);
 		$this->setSenderEmail(self::SENDER_EMAIL);
-		$this->setReceiverName($receiverName);
-		$this->setReceiverEmail($receiverEmail);
-		$this->setSubject($subject);
-		$this->setMessage($message);
+		$this->setReceiverName($user->getName());
+		$this->setReceiverEmail($user->getEmail());
 	}
 
 	private function setSenderName($name){
@@ -101,31 +98,7 @@ class EmailNotification extends Notification{
 
 	}
 
-	private function setSubject($subject){
-		
-		if(!is_null($subject) && !empty($subject)){
-			$this->subject = $subject;
-		} 
-		else{
-			throw new EmailNotificationException(self::EMPTY_SUBJECT);
-			
-		}
-
-	}
-
-	private function setMessage($message){
-		
-		if(!is_null($message) && !empty($message)){
-			$this->message = $message;
-		} 
-		else{
-			throw new EmailNotificationException(self::EMPTY_MESSAGE);
-			
-		}
-
-	}
-
-	public function getSenderName(){
+		public function getSenderName(){
 		return $this->senderName;
 	}
 
@@ -157,32 +130,36 @@ class EmailNotification extends Notification{
 		return $result;	
 	}
 
-	public function notify(){
-
-	}
-
-	
-	/**
-        * Send a email for a user
-        * @param $userEmail: The email address of the user
-        * @param $instituteName: The name of the institute
-        * @param $instituteEmail: The email address of the institute
-        * @param $subject: The subject of the email
-        * @param $message: The message of the email
-    */
-    private function sendEmailForUser($email){
-
-        $emailSent = FALSE;
-        $this->load->library("My_PHPMailer");
-        $mail = $this->setDefaultConfiguration(); 
-        $mail->IsHTML(true);
-        $mail->Subject = $email->getSubject(); 
-        $mail->Body = $email->getMessage();
-        $mail->SetFrom($email->getSenderName(), $email->getSenderEmail()); 
-        $mail->AddAddress($email->getReceiverName(), $email->getReceiverEmail());
-        $emailSent = $mail->Send();
-
-        return $emailSent;
+    private function setDefaultConfiguration(){
+    	
+    	$mail = new PHPMailer();
+        $mail->IsSMTP(); 
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = "ssl"; 
+        $mail->Host = ""; 
+        $mail->Port = 465; 
+        $mail->Username = ""; 
+        $mail->Password = ""; 
+        $mail->CharSet = 'UTF-8';
+    	
+    	return $mail;
     }
+
+	public function notify(){
+        $emailSent = FALSE;
+
+        $ci =& get_instance();
+        $ci->load->library("My_PHPMailer");
+        
+        $mail = $this->setDefaultConfiguration(); 
+
+        $mail->IsHTML(true);
+        $mail->Subject = $this->getSubject(); 
+        $mail->Body = $this->getMessage();
+        $mail->SetFrom($this->getSenderEmail(), $this->getSenderName()); 
+        $mail->AddAddress($this->getReceiverEmail(), $this->getReceiverName());
+        $emailSent = $mail->Send();
+        return $emailSent;
+	}
 
 }
