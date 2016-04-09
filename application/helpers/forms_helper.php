@@ -262,19 +262,19 @@ function studentBasicInfoForm($path, $hiddenData, $previousData = FALSE){
 	$cellPhone = array(
 		"name" => "cell_phone_number",
 		"id" => "cell_phone_number",
-		"type" => "text",
+		"type" => "number",
 		"class" => "form-campo",
 		"class" => "form-control",
-		"maxlength" => "9"
+		"maxlength" => "11"
 	);
 
 	$homePhone = array(
 		"name" => "home_phone_number",
 		"id" => "home_phone_number",
-		"type" => "text",
+		"type" => "number",
 		"class" => "form-campo",
 		"class" => "form-control",
-		"maxlength" => "9"
+		"maxlength" => "11"
 	);
 
 	$submitBtn = array(

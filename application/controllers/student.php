@@ -6,8 +6,12 @@ require_once("semester.php");
 require_once("enrollment.php");
 
 require_once(APPPATH."/constants/GroupConstants.php");
+
 require_once(APPPATH."/data_types/StudentRegistration.php");
+require_once(APPPATH."/data_types/basic/Phone.php");
+
 require_once(APPPATH."/exception/StudentRegistrationException.php");
+require_once(APPPATH."/exception/PhoneException.php");
 
 class Student extends CI_Controller {
 
@@ -88,6 +92,54 @@ class Student extends CI_Controller {
 
 		// On auth_helper
 		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_specific_data_form', $data);
+	}
+
+	public function saveBasicInfo(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("home_phone_number", "Telefone Residencial", "required|alpha_dash");
+		$this->form_validation->set_rules("cell_phone_number", "Telefone Celular", "required|alpha_dash");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		if ($success){
+			$cellPhone = $this->input->post("cell_phone_number");
+			$homePhone = $this->input->post("home_phone_number");
+			$idUser = $this->input->post("id_user");
+
+			try{
+
+				$cellPhone = new Phone($cellPhone);
+				$homePhone = new Phone($homePhone);
+
+				$studentBasics = array(
+					'cell_phone' => $cellPhone,
+					'home_phone' => $homePhone,
+					'id_user' => $idUser
+				);
+
+				$this->loadModel();
+				$savedBasicInformation = $this->student_model->updateBasicInfo($studentBasics);
+
+				if($savedBasicInformation){
+					$updateStatus = "success";
+					$updateMessage = "Novos dados alterados com sucesso";
+				}else{
+					$updateStatus = "danger";
+					$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
+				}
+
+			}catch(PhoneException $e){
+				$updateStatus = "danger";
+				$updateMessage = $e->getMessage();
+			}
+
+		} else {
+			$updateStatus = "danger";
+			$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
+		}
+		
+		$this->session->set_flashdata($updateStatus, $updateMessage);
+		redirect("student_information");
 	}
 
 	private function getBasicInfo($studentId){

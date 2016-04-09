@@ -15,5 +15,32 @@ class Student_model extends CI_Model {
 		$basicInfo = checkArray($basicInfo);
 
 		return $basicInfo;
-	}	
+	}
+
+	public function updateBasicInfo($basicInfo){
+
+		$userId = $basicInfo['id_user'];
+		$homePhone = $basicInfo['home_phone'];
+		$cellPhone = $basicInfo['cell_phone'];
+
+		$newInfo = array(
+			'home_phone' => $homePhone->getNumber(),
+			'cell_phone' => $cellPhone->getNumber()
+		);
+
+		$this->db->trans_start();
+
+		$this->db->where("id", $userId);
+		$this->db->update("users", $newInfo);
+
+		$this->db->trans_complete();
+
+        if($this->db->trans_status() === FALSE){
+            $updated = FALSE;
+        }else{
+        	$updated = TRUE;
+        }
+
+        return $updated;
+	}
 }

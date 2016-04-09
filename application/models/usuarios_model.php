@@ -602,18 +602,4 @@ class Usuarios_model extends CI_Model {
 
 		return $userExists;
 	}
-	
-	public function saveStudentBasicInformation($studentBasics){
-		
-		$inserted = $this->db->insert('students_basic_information', $studentBasics);
-		return $inserted;
-	}
-	
-	public function updateStudentBasicInformation($studentBasicsUpdate, $whereUpdate){
-		$this->db->where($whereUpdate);
-		$upadated = $this->db->update('students_basic_information', $studentBasicsUpdate);
-		
-		return $upadated;
-		
-	}
 }

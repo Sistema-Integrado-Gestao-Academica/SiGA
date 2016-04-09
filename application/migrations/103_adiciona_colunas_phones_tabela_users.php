@@ -5,8 +5,8 @@ class Migration_Adiciona_colunas_phones_tabela_users extends CI_Migration {
 	public function up() {
 
 		$this->dbforge->add_column('users', array(
-			'home_phone' => array('type' => 'varchar(9)', "null" => TRUE),
-			'cell_phone' => array('type' => 'varchar(9)', "null" => TRUE)
+			'home_phone' => array('type' => 'varchar(11)', "null" => TRUE),
+			'cell_phone' => array('type' => 'varchar(11)', "null" => TRUE)
 		));
 
 	}
