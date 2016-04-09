@@ -126,7 +126,7 @@ $route['selection_process_test'] = 'tests/SelectionProcess_Test';
 $route['process_settings_test'] = 'tests/ProcessSettings_Test';
 $route['process_phase_test'] = 'tests/ProcessPhase_Test';
 $route['phone_test'] = 'tests/Phone_Test';
-$route['notification_test'] = 'tests/Notification_Test';
+$route['bar_notification_test'] = 'tests/BarNotification_Test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */
