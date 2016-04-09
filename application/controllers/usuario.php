@@ -6,6 +6,7 @@ require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
+require_once('email.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 
@@ -580,8 +581,8 @@ class Usuario extends CI_Controller {
 			$user = $this->usuarios_model->getUserByEmail($email);
 		
 			if($user !== FALSE){
-
-				$success = $this->sendEmailForRestorePassword($user);
+				$email = new Email();
+				$success = $email->sendEmailForRestorePassword($user);
 				
 				if($success){
 					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
@@ -603,47 +604,6 @@ class Usuario extends CI_Controller {
 
 	}
 
-	private function sendEmailForRestorePassword($user){
-		
-		$newPassword = $this->generateNewPassword($user);
-		$subject = "Solicitação de recuperação de senha - SiGA"; 
-		$message = "Olá, <b>{$user['name']}</b>. <br>";
-		$message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
-		$message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
-		$message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>";
-
-
-		$success = $this->sendEmailForUser($user['email'], $user['name'], $subject, $message);
-
-		return $success;
-	}
-
-
-	/**
-		* Send a email for a user
-		* @param $userEmail: The email address of the user
-		* @param $instituteName: The name of the institute
-		* @param $instituteEmail: The email address of the institute
-		* @param $subject: The subject of the email
-		* @param $message: The message of the email
-	*/
-	private function sendEmailForUser($userEmail, $userName, $subject, $message){
-
-		$emailSent = FALSE;
-		
-		$this->load->library("My_PHPMailer");
-		$this->load->helper("email");
-		
-		$mail = setDefaultConfiguration(); 
-		$mail->IsHTML(true);
-		$mail->Subject = $subject; 
-	    $mail->Body = $message;
-	    $mail->AddAddress($userEmail, $userName);
-	    $emailSent = $mail->Send();
-	    
-		return $emailSent;
-	}
-	
 	private function validateDataForRestorePassword(){
 
 		$this->load->library("form_validation");
@@ -652,21 +612,6 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		return $success;
-	}
-
-	private function generateNewPassword($user){
-		
-		define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
-		
-		$newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
-
-		// Changing the user password
-		$encryptedPassword = md5($newPassword);
-		$user['password'] = $encryptedPassword;
-		$temporaryPassword = TRUE;
-		$this->usuarios_model->updatePassword($user, $temporaryPassword);
-
-		return $newPassword;
 	}
 
 	public function changePassword(){
