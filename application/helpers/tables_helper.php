@@ -85,51 +85,6 @@ function wrapperCallout($calloutType = "info", $wrapperContent = FALSE, $princip
 	return $wrapperCallout;
 }
 
-function displayStudentSpecificDataPage($idUser){
-
-	$user = new Usuario();
-
-	$studentData = $user->getStudentBasicInformation($idUser);
-	echo "<h4>Dados Pessoais:</h4>";
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Matrícula',
-		'E-mail',
-		'Telefone (Residência)',
-		'Telefone (Celular)'
-	));
-
-	if($studentData !== FALSE){
-		echo "<tr>";
-			echo "<td>";
-				echo $studentData['student_registration'];
-			echo "</td>";
-			echo "<td>";
-				echo $studentData['email'];
-			echo "</td>";
-			echo "<td>";
-				echo $studentData['home_phone_number'];
-			echo "</td>";
-			echo "<td>";
-				echo $studentData['cell_phone_number'];
-			echo "</td>";
-		echo "</tr>";
-	}else{
-
-		echo "<tr>";
-		echo "<td colspan=5>";
-		echo "<div class=\"callout callout-warning\">";
-		echo "<h4>Você ainda não atualizou seus dados.</h4>";
-		echo "</div>";
-		echo "</td>";
-		echo "</tr>";
-	}
-
-	buildTableEndDeclaration();
-}
-
 function courseTableToSecretaryPage($courses){
 
 	$courseController = new Course();

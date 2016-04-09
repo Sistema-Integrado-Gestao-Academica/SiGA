@@ -56,3 +56,12 @@ function isEmpty($attribute){
 
     return $isEmpty;
 }
+
+function decorateNullData($str){
+
+    if($str == NULL){
+        $str = "-";
+    }
+    
+    return $str;
+}
