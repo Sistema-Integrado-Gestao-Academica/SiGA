@@ -9,13 +9,9 @@ class Migration_cria_permissao_atualizar_perfil_docente extends CI_Migration {
 		
 		#creating relation between academic secretary and research lines permission
 		$this->db->insert('group_permission', array('id_group' => 5, 'id_permission' => 28));
-		
 	}
 
-	public function down() {
-		
-
-		
+	public function down() {		
 	}
 
 }
