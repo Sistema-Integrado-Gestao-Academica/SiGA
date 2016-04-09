@@ -9,7 +9,7 @@
  */
 
 require_once("TestCase.php");
-require_once(APPPATH."/data_types/EmailNotification.php");
+require_once(APPPATH."/data_types/notification/EmailNotification.php");
 require_once(APPPATH."/exception/EmailNotificationException.php");
 
 class EmailNotification_Test extends TestCase{
@@ -23,12 +23,13 @@ class EmailNotification_Test extends TestCase{
 
         $emailInfo = array();
 
-        $emailInfo['senderName'] = "José";
-        $emailInfo['senderEmail'] = "jose@jose.com";
         $emailInfo['receiverName'] = "João";
         $emailInfo['receiverEmail'] = "joao@joao.com";
         $emailInfo['subject'] = "Nomes comuns";
         $emailInfo['message'] = "Você tem o nome comum como o meu!";
+
+        $user = 1;
+        $emailInfo['user'] = $user;
 
         return $emailInfo;
     }
@@ -40,18 +41,12 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
             $notes = "Criou";
         }
         catch (EmailNotificationException $e){
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
-
-        $test_name = "Test if return the sender name.";
-        $this->unit->run($email->getSenderName(), $emailInfo['senderName'], $test_name, $notes);
-
-        $test_name = "Test if return the sender email.";
-        $this->unit->run($email->getSenderEmail(), $emailInfo['senderEmail'], $test_name, $notes);
 
         $test_name = "Test if return the receiver name.";
         $this->unit->run($email->getReceiverName(), $emailInfo['receiverName'], $test_name, $notes);
@@ -66,52 +61,14 @@ class EmailNotification_Test extends TestCase{
         $this->unit->run($email->getMessage(), $emailInfo['message'], $test_name, $notes);
     }
 
-    public function shouldReturnExceptionWithSenderNameEmpty(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['senderName'] = "";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with empty sender name.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithSenderNameNull(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['senderName'] = NULL;
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with null sender name.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-     public function shouldReturnExceptionWithReceiverNameEmpty(){
+    public function shouldReturnExceptionWithReceiverNameEmpty(){
 
         $emailInfo = $this->getEmailDefaultInformation();
         $emailInfo['receiverName'] = "";
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -130,7 +87,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -142,63 +99,6 @@ class EmailNotification_Test extends TestCase{
 
     }
 
-    public function shouldReturnExceptionWithSenderEmailEmpty(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['senderEmail'] = "";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with empty sender email.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithSenderEmailNull(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['senderEmail'] = NULL;
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with null sender email.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
-    public function shouldReturnExceptionWithSenderEmailInvalid(){
-
-        $emailInfo = $this->getEmailDefaultInformation();
-        $emailInfo['senderEmail'] = "sender";
-
-        $notes = "";
-        try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
-        }
-        catch (EmailNotificationException $e){
-            $email = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if create an email with invalid sender email.";
-        $this->unit->run($email, "is_false" , $test_name, $notes);
-
-    }
-
     public function shouldReturnExceptionWithReceiverEmailEmpty(){
 
         $emailInfo = $this->getEmailDefaultInformation();
@@ -206,7 +106,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -225,7 +125,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -244,7 +144,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -263,7 +163,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -282,7 +182,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -301,7 +201,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;
@@ -320,7 +220,7 @@ class EmailNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $email = new EmailNotification($emailInfo['senderName'], $emailInfo['senderEmail'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
+            $email = new EmailNotification($emailInfo['user'], $emailInfo['receiverName'], $emailInfo['receiverEmail'], $emailInfo['subject'], $emailInfo['message']);
         }
         catch (EmailNotificationException $e){
             $email = FALSE;

@@ -1,9 +1,10 @@
 
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/data_types/EmailNotification.php");
+require_once(APPPATH."/data_types/notification/EmailNotification.php");
 
 class Email extends CI_Controller {
+
 
     public function __construct(){
         parent::__construct();
@@ -21,10 +22,7 @@ class Email extends CI_Controller {
         $mail->Username = ""; 
         $mail->Password = ""; 
         $mail->CharSet = 'UTF-8';
-        $instituteName = "";
-        $instituteEmail = "";
-        $mail->SetFrom($instituteEmail, $instituteName); 
-    	return $mail;
+        return $mail;
     }
 
 
@@ -36,17 +34,16 @@ class Email extends CI_Controller {
         * @param $subject: The subject of the email
         * @param $message: The message of the email
     */
-    private function sendEmailForUser($userEmail, $userName, $subject, $message){
+    private function sendEmailForUser($email){
 
         $emailSent = FALSE;
-        
         $this->load->library("My_PHPMailer");
-        
         $mail = $this->setDefaultConfiguration(); 
         $mail->IsHTML(true);
-        $mail->Subject = $subject; 
-        $mail->Body = $message;
-        $mail->AddAddress($userEmail, $userName);
+        $mail->Subject = $email->getSubject(); 
+        $mail->Body = $email->getMessage();
+        $mail->SetFrom($email->getSenderName(), $email->getSenderEmail()); 
+        $mail->AddAddress($email->getReceiverName(), $email->getReceiverEmail());
         $emailSent = $mail->Send();
 
         return $emailSent;
@@ -58,15 +55,16 @@ class Email extends CI_Controller {
     public function sendEmailForRestorePassword($user){ 
         
         $newPassword = $this->generateNewPassword($user);
-                var_dump($user);
+        
         $subject = "Solicitação de recuperação de senha - SiGA"; 
         $message = "Olá, <b>{$user['name']}</b>. <br>";
         $message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
         $message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
-        $message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>";
+        $message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>"; 
 
+        $email = new EmailNotification($user['id'], $user['name'], $user['email'], $subject, $message);
 
-        $success = $this->sendEmailForUser($user['email'], $user['name'], $subject, $message);
+        $success = $this->sendEmailForUser($email);
 
         return $success;
     }

@@ -1,8 +1,9 @@
 <?php
 
 require_once APPPATH."/exception/EmailNotificationException.php";
+require_once("Notification.php");
 
-class EmailNotification{
+class EmailNotification extends Notification{
 
 	// Error messages 
 	const EMPTY_NAME = "O nome não pode ser nulo nem vazio.";
@@ -12,9 +13,8 @@ class EmailNotification{
 	const EMPTY_MESSAGE = "A mensagem não pode ser nula nem vazia.";
 
 	// Default values
-	const SMTP_SECURE = "ssl";
-	const PORT = "465";
-	const CHARSET = "UTF-8";
+	const SENDER_NAME = "UNB";
+    const SENDER_EMAIL = "unb@unb.br";
 
 	private $senderName;
 	private $senderEmail;
@@ -24,10 +24,10 @@ class EmailNotification{
 	private $message;
 
 
-	public function __construct($senderName, $senderEmail, $receiverName, $receiverEmail, $subject, $message){
-
-		$this->setSenderName($senderName);
-		$this->setSenderEmail($senderEmail);
+	public function __construct($user, $receiverName, $receiverEmail, $subject, $message){
+		parent::__construct($user);
+		$this->setSenderName(self::SENDER_NAME);
+		$this->setSenderEmail(self::SENDER_EMAIL);
 		$this->setReceiverName($receiverName);
 		$this->setReceiverEmail($receiverEmail);
 		$this->setSubject($subject);
@@ -156,4 +156,33 @@ class EmailNotification{
 
 		return $result;	
 	}
+
+	public function notify(){
+
+	}
+
+	
+	/**
+        * Send a email for a user
+        * @param $userEmail: The email address of the user
+        * @param $instituteName: The name of the institute
+        * @param $instituteEmail: The email address of the institute
+        * @param $subject: The subject of the email
+        * @param $message: The message of the email
+    */
+    private function sendEmailForUser($email){
+
+        $emailSent = FALSE;
+        $this->load->library("My_PHPMailer");
+        $mail = $this->setDefaultConfiguration(); 
+        $mail->IsHTML(true);
+        $mail->Subject = $email->getSubject(); 
+        $mail->Body = $email->getMessage();
+        $mail->SetFrom($email->getSenderName(), $email->getSenderEmail()); 
+        $mail->AddAddress($email->getReceiverName(), $email->getReceiverEmail());
+        $emailSent = $mail->Send();
+
+        return $emailSent;
+    }
+
 }
