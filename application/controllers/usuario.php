@@ -630,12 +630,10 @@ class Usuario extends CI_Controller {
 
 				$session = $this->session->userdata("current_user");
 				
-				$user = array();
-				$user['password'] = $password;
-				$user['id'] = $session['user']['id'];
+				$userId = $session['user']['id'];
 				$temporaryPassword = FALSE;
 
-				$isUpdated = $this->usuarios_model->updatePassword($user, $temporaryPassword);
+				$isUpdated = $this->usuarios_model->updatePassword($userId, $password, $temporaryPassword);
 
 				if($isUpdated){
 					$this->session->set_flashdata("success", "Senha alterada com sucesso.");
