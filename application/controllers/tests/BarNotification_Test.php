@@ -682,4 +682,48 @@ class BarNotification_Test extends TestCase{
 
         $this->unit->run($notification, "is_false", $test_name, $notes);
     }
+
+// Type tests
+    
+    public function shouldReturnRegularNotificationType(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if return RegularNotification type";
+
+        $this->unit->run(RegularNotification::class, $notification->type(), $test_name, $notes);
+    }
+
+    public function shouldReturnActionNotificationType(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "route";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if return ActionNotification type";
+
+        $this->unit->run(ActionNotification::class, $notification->type(), $test_name, $notes);
+    }
+
 }

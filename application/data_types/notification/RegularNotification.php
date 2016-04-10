@@ -11,4 +11,8 @@ class RegularNotification extends BarNotification{
 	public function notify(){
 
 	}
+
+	public function type(){
+		return self::class;
+	}
 }

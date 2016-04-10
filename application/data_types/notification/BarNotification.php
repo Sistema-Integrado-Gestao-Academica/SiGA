@@ -12,6 +12,7 @@ abstract class BarNotification extends Notification{
 	private $id;
 	protected $content;
 	protected $seen;
+	protected $type;
 
 	public function __construct($user, $content, $id = FALSE, $seen = FALSE){
 		parent::__construct($user);
@@ -65,4 +66,6 @@ abstract class BarNotification extends Notification{
 	public function seen(){
 		return $this->seen;
 	}
+
+	public abstract function type();
 }
