@@ -40,8 +40,8 @@ class SecretaryEmailNotification extends EmailNotification{
         if($validGuestUsers && $validDocumentsRequest){
             $message = "Olá, <b>{$userName}</b>. <br>";
             $message = $message."Esta é uma mensagem automática para informar a situação atual da Secretaria Acadêmica. <br>";
-            $message = $message."Há <b>".$quantityOfGuestUsers."</b> usuários sem matrícula em um curso. <br>";
-            $message = $message."Há <b>".$quantityOfDocumentsRequest."</b> documentos solicitados. <br>";
+            $message = $message."Há <b>".$quantityOfGuestUsers."</b> usuário(s) sem matrícula em um curso. <br>";
+            $message = $message."Há <b>".$quantityOfDocumentsRequest."</b> documento(s) solicitado(s). <br>";
         }
 
         $this->message = $message;

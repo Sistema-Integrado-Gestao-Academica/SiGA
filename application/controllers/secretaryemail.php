@@ -13,18 +13,24 @@ class SecretaryEmail extends CI_Controller {
 		parent::__construct();
 		$this->load->model("usuarios_model");
 		$this->load->model("documentrequest_model");
+		$this->input->is_cli_request();
 	}
 
-	public function sendEmail($id){
+	public function sendEmail(){
 
-		$user = $this->usuarios_model->getUserById($id);
-		$user = $this->usuarios_model->getUserDataForEmail($user);
+		$secretaries = $this->usuarios_model->getAllSecretaries();
+		if($secretaries != FALSE){
+			foreach ($secretaries as $id => $secretarie) {				
+				$user = $this->usuarios_model->getUserById($id);
+				$user = $this->usuarios_model->getUserDataForEmail($user);
 
-		$quantityOfGuestUsers = $this->getQuantityOfGuestUsers();
-		$quantityOfDocumentsRequest = $this->getQuantityOfDocumentsRequest($id);
-		
-		$notifySecretary = new SecretaryEmailNotification($user, $quantityOfGuestUsers, $quantityOfDocumentsRequest);
-		$notifySecretary->notify();
+				$quantityOfGuestUsers = $this->getQuantityOfGuestUsers();
+				$quantityOfDocumentsRequest = $this->getQuantityOfDocumentsRequest($id);
+				
+				$notifySecretary = new SecretaryEmailNotification($user, $quantityOfGuestUsers, $quantityOfDocumentsRequest);
+				$notifySecretary->notify();
+			}
+		}
 	}
 
 	private function getQuantityOfDocumentsRequest($userId){
