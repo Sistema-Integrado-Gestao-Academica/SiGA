@@ -27,16 +27,20 @@ class EnrolledStudentEmail_Test extends TestCase{
 
         $user = new User($id, $userName, FALSE, $userEmail, FALSE, FALSE, FALSE);
 
-        $course = array();
-        $course['name'] =  "Engenharia";
+        $course =  1;
+        $ci =& get_instance();
+        $ci->load->model("course_model");
+        $courseName = $ci->course_model->getCourseName($course);
+
         $message = "Olá, <b>{$userName}</b>. <br>";
-            $message = $message."Estamos te enviando essa mensagem para comunicar que sua matrícula no curso de: <b>".$course['name']."</b> foi efetuada.<br>";
+            $message = $message."Estamos te enviando essa mensagem para comunicar que sua matrícula no curso de: <b>".$courseName."</b> foi efetuada.<br>";
             $message = $message."O seu acesso ao SiGA como estudante está liberado."; 
 
         $emailInfo = array();
 
         $emailInfo['user'] = $user;
         $emailInfo['course'] = $course;
+        $emailInfo['courseName'] = $courseName;
         $emailInfo['subject'] = EnrolledStudentEmail::STUDENT_ENROLLED_SUBJECT;
         $emailInfo['message'] = $message;       
 
@@ -70,7 +74,7 @@ class EnrolledStudentEmail_Test extends TestCase{
         $this->unit->run($email->getSenderEmail(), EmailConstants::SENDER_EMAIL, $test_name, $notes);
 
         $test_name = "Test if return the course.";
-        $this->unit->run($email->getCourse(), $emailInfo['course'], $test_name, $notes);        
+        $this->unit->run($email->getCourse(), $emailInfo['courseName'], $test_name, $notes);        
 
         $test_name = "Test if return the subject.";
         $this->unit->run($email->getSubject(), $emailInfo['subject'], $test_name, $notes);
