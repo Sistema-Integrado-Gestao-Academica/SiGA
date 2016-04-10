@@ -17,10 +17,16 @@ class ActionNotification extends BarNotification{
 
 	private function setLink($link){
 
-		// $linkMatchesPattern = preg_match("", $link);
+		$linkMatchesPattern = preg_match("/^[a-zA-Z0-9_\/~%.:_\-]{1,}$/", $link);
 
-		if(!is_null($link) && !empty($link)){
-			$this->link = $link;
+		if($linkMatchesPattern === 1 || $linkMatchesPattern == TRUE){
+			$linkMatchesPattern = TRUE;
+		}else{
+			$linkMatchesPattern = FALSE;
+		}
+
+		if(!is_null($link) && !empty($link) && $linkMatchesPattern){
+				$this->link = $link;
 		}else{
 			throw new NotificationException(self::INVALID_LINK);
 		}

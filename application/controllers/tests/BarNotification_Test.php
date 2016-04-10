@@ -563,7 +563,7 @@ class BarNotification_Test extends TestCase{
         $content = "Hi John Doe!";
         $id = "1";
         $seen = FALSE;
-        $link = "/controller/action/1/2";
+        $link = "/controller/act-ion/1/2";
 
         $notes = "";
         try{
@@ -584,7 +584,7 @@ class BarNotification_Test extends TestCase{
         $content = "Hi John Doe!";
         $id = "1";
         $seen = FALSE;
-        $link = "route_to_link";
+        $link = "route_to_link/12";
 
         $notes = "";
         try{
