@@ -250,5 +250,126 @@ class BarNotification_Test extends TestCase{
         $test_name = "Test if instantiate with invalid FALSE user";
 
         $this->unit->run($notification, "is_false", $test_name, $notes);
-    }    
+    }
+
+// Seen tests
+    public function shouldInstantiateWithValidFalseSeen(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid seen value FALSE";
+
+        $this->unit->run($seen, $notification->seen(), $test_name, $notes);
+    }
+
+    public function shouldInstantiateWithValidTrueSeen(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = TRUE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid seen value TRUE";
+
+        $this->unit->run($seen, $notification->seen(), $test_name, $notes);
+    }
+
+    public function shouldReturnFalseWithInvalidNumberSeen(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = 0;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid seen value FALSE";
+
+        $this->unit->run($notification->seen(), "is_false", $test_name, $notes);
+    }
+
+    public function shouldReturnFalseWithInvalidNullSeen(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = NULL;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid seen value FALSE";
+
+        $this->unit->run($notification->seen(), "is_false", $test_name, $notes);
+    }
+
+    public function shouldReturnFalseWithInvalidBlankSeen(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = "";
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid seen value FALSE";
+
+        $this->unit->run($notification->seen(), "is_false", $test_name, $notes);
+    }
+
+    public function shouldReturnFalseWithInvalidStringSeen(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = "TRUE";
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid seen value FALSE";
+
+        $this->unit->run($notification->seen(), "is_false", $test_name, $notes);
+    }
 }
