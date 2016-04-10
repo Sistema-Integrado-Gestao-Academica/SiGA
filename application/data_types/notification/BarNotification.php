@@ -8,6 +8,7 @@ abstract class BarNotification extends Notification{
 
 	const INVALID_ID = "O ID da notificação deve ser um número maior que zero.";
 	const INVALID_CONTENT = "Não pode existir uma notificação vazia. Deve conter um texto.";
+	const COULDNT_SEND_NOTIFICATION = "Não foi possível salvar a notificação.";
 
 	private $id;
 	protected $content;
@@ -20,6 +21,8 @@ abstract class BarNotification extends Notification{
 		$this->setContent($content);
 		$this->setSeen($seen);
 	}
+
+	public abstract function type();
 
 	private function setId($id){
 
@@ -67,5 +70,16 @@ abstract class BarNotification extends Notification{
 		return $this->seen;
 	}
 
-	public abstract function type();
+	public function notify(){
+
+		$ci =& get_instance();
+
+		$ci->load->library("bnotification");
+
+		$sent = $ci->bnotification->sendNotification($this);
+
+		if(!$sent){
+			throw new NotificationException(self::COULDNT_SEND_NOTIFICATION);	
+		}
+	}
 }

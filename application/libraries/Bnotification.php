@@ -3,8 +3,9 @@
 require_once("NotificationModel.php");
 
 class Bnotification{
-	
-	public function sentNotification($notification){
+
+
+	public function sendNotification($notification){
 
 		$model = new NotificationModel();
 

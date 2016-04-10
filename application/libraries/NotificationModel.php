@@ -20,7 +20,28 @@ class NotificationModel{
 
 	public function saveNotification($notification){
 
+		$saveNotification = $this->createSaveNotificationQuery($notification);
+
 		$ci = $this->getCIInstance();
+
+		// Try to save
+		$ci->db->trans_start();
+
+		$ci->db->query($saveNotification);
+
+		$ci->db->trans_complete();
+
+		// Get result
+        if($ci->db->trans_status() === FALSE){
+            $saved = FALSE;
+        }else{
+        	$saved = TRUE;
+        }
+
+        return $saved;
+	}
+
+	private function createSaveNotificationQuery($notification){
 
 		if($notification->seen()){
 			$seen = 1;
@@ -47,20 +68,6 @@ class NotificationModel{
 
 		$saveNotification .= " CURRENT_TIMESTAMP)";
 
-		// Try to save
-		$ci->db->trans_start();
-
-		$ci->db->query($saveNotification);
-
-		$ci->db->trans_complete();
-
-		// Get result
-        if($ci->db->trans_status() === FALSE){
-            $saved = FALSE;
-        }else{
-        	$saved = TRUE;
-        }
-
-        return $saved;
+		return $saveNotification;
 	}
 }

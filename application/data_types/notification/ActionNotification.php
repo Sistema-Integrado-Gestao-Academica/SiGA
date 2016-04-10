@@ -39,8 +39,4 @@ class ActionNotification extends BarNotification{
 	public function type(){
 		return self::class;
 	}
-
-	public function notify(){
-
-	}
 }
