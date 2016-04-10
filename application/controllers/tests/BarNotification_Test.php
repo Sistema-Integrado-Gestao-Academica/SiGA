@@ -373,7 +373,7 @@ class BarNotification_Test extends TestCase{
         $this->unit->run($notification->seen(), "is_false", $test_name, $notes);
     }
 
-// Content tests for RegularNotification
+// Content tests
 
     public function shouldInstantiateWithValidStringContent(){
 
@@ -551,6 +551,134 @@ class BarNotification_Test extends TestCase{
         }
 
         $test_name = "Test if instantiate with a invalid number content";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+// ActionNotification link tests
+
+    public function shouldInstantiateWithValidLink(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "/controller/action/1/2";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid link '".$link."'.";
+
+        $this->unit->run($link, $notification->link(), $test_name, $notes);
+    }
+
+    public function shouldInstantiateWithValidStringRouteLink(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "route_to_link";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid link '".$link."'.";
+
+        $this->unit->run($link, $notification->link(), $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidNullLink(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = NULL;
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a invalid NULL link ";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidBlankLink(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a invalid blank link ";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidFalseLink(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a invalid FALSE link ";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidDisallowedCharacthersLink(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "controller@/**,";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a invalid link with disallowed characters";
 
         $this->unit->run($notification, "is_false", $test_name, $notes);
     }
