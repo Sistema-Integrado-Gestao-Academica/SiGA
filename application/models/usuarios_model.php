@@ -604,7 +604,7 @@ class Usuarios_model extends CI_Model {
 		return $userExists;
 	}
 
-	private function getUserDataForEmail($foundUser){
+	public function getUserDataForEmail($foundUser){
 		
 		if($foundUser != FALSE){
 

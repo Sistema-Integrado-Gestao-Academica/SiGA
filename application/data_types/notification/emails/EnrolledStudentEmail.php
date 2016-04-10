@@ -27,13 +27,12 @@ class EnrolledStudentEmail extends EmailNotification{
         
         $user = $this->user();
         $course = $this->getCourse();
-        $courseName = $course['name'];
         $userName = $user->getName();
         $message = "";
 
         if(!is_null($course) && !empty($course)){
             $message = "Olá, <b>{$userName}</b>. <br>";
-            $message = $message."Estamos te enviando essa mensagem para comunicar que sua matrícula no curso de: <b>".$course['name']."</b> foi efetuada.<br>";
+            $message = $message."Estamos te enviando essa mensagem para comunicar que sua matrícula no curso de: <b>".$course."</b> foi efetuada.<br>";
             $message = $message."O seu acesso ao SiGA como estudante está liberado."; 
         }
         $this->message = $message;
@@ -43,6 +42,10 @@ class EnrolledStudentEmail extends EmailNotification{
 
         if(!is_null($course)){
 
+            $ci =& get_instance();
+            $ci->load->model("course_model");
+
+            $course = $ci->course_model->getCourseName($course);
             $this->course = $course;
         }
         else{

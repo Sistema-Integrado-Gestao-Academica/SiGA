@@ -133,8 +133,8 @@ class EmailNotification extends Notification{
         $mail->IsSMTP(); 
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = "ssl"; 
-        $mail->Host = ""; 
         $mail->Port = 465; 
+        $mail->Host = ""; 
         $mail->Username = ""; 
         $mail->Password = ""; 
         $mail->CharSet = 'UTF-8';
