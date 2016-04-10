@@ -7,6 +7,7 @@ require_once(APPPATH."/exception/NotificationException.php");
 abstract class BarNotification extends Notification{
 
 	const INVALID_ID = "O ID da notificação deve ser um número maior que zero.";
+	const INVALID_CONTENT = "Não pode existir uma notificação vazia. Deve conter um texto.";
 
 	private $id;
 	protected $content;
@@ -46,7 +47,11 @@ abstract class BarNotification extends Notification{
 
 	// Default setter. Can be overrided
 	protected function setContent($content){
-		$this->content = $content;
+		if(!is_null($content) && is_string($content) && !empty($content)){
+			$this->content = $content;
+		}else{
+			throw new NotificationException(self::INVALID_CONTENT);
+		}
 	}
 
 	public function id(){

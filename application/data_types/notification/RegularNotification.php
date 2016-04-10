@@ -8,10 +8,6 @@ class RegularNotification extends BarNotification{
 		parent::__construct($user, $content, $id, $seen);
 	}
 
-	protected function setContent($content){
-		$this->content = $content;
-	}
-
 	public function notify(){
 
 	}
