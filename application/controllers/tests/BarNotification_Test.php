@@ -30,7 +30,7 @@ class BarNotification_Test extends TestCase{
         return $user;
     }
 
-/* id tests */
+/* Id tests */
     public function shouldInstantiateWithValidId1(){
 
         $user = $this->createTestUser();
@@ -157,7 +157,7 @@ class BarNotification_Test extends TestCase{
         $content = "Hi John Doe!";
         $id = "1asd";
         $seen = FALSE;
-        
+
         $notes = "";
         try{
             $notification = new RegularNotification($user, $content, $id, $seen);
@@ -171,10 +171,84 @@ class BarNotification_Test extends TestCase{
         $this->unit->run($notification, "is_false", $test_name, $notes);
     }
 
-    /**
+// User tests
+    public function shouldInstantiateWithValidUser(){
 
-        CONTINUAR OS TESTES
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
 
-    */
-    
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid user";
+
+        $this->unit->run($user, $notification->user(), $test_name, $notes);
+    }    
+
+    public function shouldNotInstantiateWithInvalidNullUser(){
+
+        $user = NULL;
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with invalid NULL user";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidNotUserUser(){
+
+        $user = new DateTime();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a  not User object";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidFalseUser(){
+
+        $user = FALSE;
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with invalid FALSE user";
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }    
 }

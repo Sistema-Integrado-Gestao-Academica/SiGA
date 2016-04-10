@@ -5,6 +5,8 @@ require_once(APPPATH."/data_types/User.php");
 
 abstract class Notification{
 
+	const INVALID_USER = "Usuário da notificação inválido. Uma notificação deve ser enviada para um usuário do sistema.";
+
 	protected $user;
 
 	public function __construct($user){
@@ -12,23 +14,18 @@ abstract class Notification{
 	}
 
 	public function attachUser($user){
-
 		$this->setUser($user);
 	}
 
 	private function setUser($user){
-		if($user !== FALSE){
-			if(is_object($user) && !is_null($user)){
-				if(get_class($user) === User::class){
-					$this->user = $user;
-				}else{
-					throw new NotificationException(self::INVALID_USER);
-				}
+		if(!is_null($user) && is_object($user)){
+			if(get_class($user) === User::class){
+				$this->user = $user;
 			}else{
 				throw new NotificationException(self::INVALID_USER);
 			}
 		}else{
-			// Nothing to do, because the user can be attached later
+			throw new NotificationException(self::INVALID_USER);
 		}
 	}
 
