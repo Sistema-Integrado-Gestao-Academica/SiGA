@@ -77,7 +77,7 @@ abstract class SelectionProcess{
 
 		if($id !== FALSE){
 
-			if(!is_nan((double) $id) && $id > 0){
+			if(!is_nan((double) $id) && ctype_digit($id) && $id > 0){
 				$this->id = $id;
 			}else{
 				throw new SelectionProcessException(self::INVALID_ID);

@@ -24,7 +24,7 @@ abstract class BarNotification extends Notification{
 		if($id !== FALSE){
 
 			// Checks if is a number and greater than 0
-			if(!is_nan((double) $id) && $id > 0){
+			if(!is_nan((double) $id) && ctype_digit($id) && $id > 0){
 				$this->id = $id;
 			}else{
 				throw new NotificationException(self::INVALID_ID);

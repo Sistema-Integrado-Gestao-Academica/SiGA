@@ -38,11 +38,10 @@ class BarNotification_Test extends TestCase{
         $id = "1";
         $seen = FALSE;
 
-
         $notes = "";
         try{
             $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (SelectionProcessException $e){
+        }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
         }
@@ -51,5 +50,131 @@ class BarNotification_Test extends TestCase{
 
         $this->unit->run($id, $notification->id(), $test_name, $notes);
     }
+
+    public function shouldInstantiateWithValidRandomId(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = rand(1, PHP_INT_MAX);
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a random valid id equals to ".$id;
+
+        $this->unit->run($id, $notification->id(), $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidId0(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = 0;
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a valid id equals to ".$id;
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidRandomId(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = rand(PHP_INT_MAX + 1, 0);
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a random valid id equals to ".$id;
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidNullId(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = NULL;
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a random valid id equals to NULL".$id;
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithBlankId(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "";
+        $seen = FALSE;
+
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a random valid id equals to NULL".$id;
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    public function shouldNotInstantiateWithInvalidNotNumberId(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1asd";
+        $seen = FALSE;
+        
+        $notes = "";
+        try{
+            $notification = new RegularNotification($user, $content, $id, $seen);
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if instantiate with a random valid id equals to NULL".$id;
+
+        $this->unit->run($notification, "is_false", $test_name, $notes);
+    }
+
+    /**
+
+        CONTINUAR OS TESTES
+
+    */
     
 }
