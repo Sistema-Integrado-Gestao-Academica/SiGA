@@ -8,11 +8,11 @@ class RegularNotification extends BarNotification{
 		parent::__construct($user, $content, $id, $seen);
 	}
 
-	public function notify(){
-
-	}
-
 	public function type(){
 		return self::class;
+	}
+
+	public function notify(){
+
 	}
 }
