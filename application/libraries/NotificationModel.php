@@ -87,4 +87,25 @@ class NotificationModel{
 
 		return $notifications;
 	}
+
+	public function setNotificationSeen($notificationId){
+
+		$ci = $this->getCIInstance();
+
+		$ci->trans_start();
+
+		$ci->db->where(self::ID_COLUMN, $notificationId);
+		$ci->db->update(self::NOTIFICATION_TABLE, array(self::SEEN_COLUMN => TRUE));
+
+		$ci->db->trans_complete();
+
+		// Get result
+        if($ci->db->trans_status() === FALSE){
+            $updated = FALSE;
+        }else{
+        	$updated = TRUE;
+        }
+
+        return $updated;
+	}
 }

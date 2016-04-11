@@ -42,6 +42,15 @@ class NavBarNotification{
 		return $saved;
 	}
 
+	public function setNotificationSeen($notificationId){
+
+		$model = new NotificationModel();
+
+		$updated = $model->setNotificationSeen($notificationId);
+
+		return $updated;
+	}
+
 	public function getUserNotifications($user){
 
 		$model = new NotificationModel();

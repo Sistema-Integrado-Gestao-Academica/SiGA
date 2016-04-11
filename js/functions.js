@@ -1,6 +1,7 @@
 
 $(document).ready(function(){
 
+
 	$("#phase_2").ready(function(){
 
 		getPhasesToSort();
@@ -114,6 +115,23 @@ $(document).ready(function(){
 	});
 
 });
+
+function setNotificationSeen(notificationId){
+
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/ajax/notificationajax/setNotificationSeen";
+
+	$.post(
+		urlToPost,
+		{
+			notificationId: notificationId
+		},
+		function(data){
+			alert(data);
+		}
+	);
+}
 
 function makeSortable(){
 	$("#sortable").sortable();

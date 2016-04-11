@@ -8,6 +8,12 @@
 	$notifications = $session["notifications"]["notifications"];
 	$notSeenNotifications = $session["notifications"]["not_seen"];
 	
+	echo form_input(array(
+		'id' => "notifications_amount",
+		'name' => "notifications_amount",
+		'type' => "hidden",
+		'value' => count($notifications)
+	));
 ?>
 <html>
 <head>
@@ -68,7 +74,7 @@
                                     <ul style="overflow-y: scroll; width: 100%; height: 200px;" class="menu">
                                         
                                         <?php
-
+                                        	$i = 1;
                                         	foreach ($notifications as $notification){
 
                                         		if($notification->seen()){
@@ -77,17 +83,23 @@
                                         			echo "<li class='not_seen'>";
                                         		}
 
-                                        			if($notification->type() == ActionNotification::class){
-                                        				echo "<a href='".$notification->link()."'>";
-                                        			}else{
-                                        				echo "<a>";
-                                        			}
+                                        		$notificationLinkId = "notification_".$i;
 
-                                        			echo "<i class='fa fa-bell info'></i>";
-                                        			echo $notification->content();
+                                    			$notificationId = $notification->id();
 
-                                        			echo "</a>";
+                                    			if($notification->type() == ActionNotification::class){
+													echo "<a onclick='setNotificationSeen({$notificationId});' id='{$notificationLinkId}' href='".$notification->link()."'>";
+                                    			}else{
+                                    				echo "<a id='{$notificationLinkId}' onclick='setNotificationSeen({$notificationId});'>";
+                                    			}
+
+                                    			echo "<i class='fa fa-bell info'></i>";
+                                    			echo $notification->content();
+
+                                    			echo "</a>";
                                         		echo "</li>";
+
+                                        		$i++;
                                         	}
 
                                         ?>
