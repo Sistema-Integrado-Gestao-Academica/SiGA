@@ -32,6 +32,10 @@ class ActionNotification extends BarNotification{
 		}
 	}
 
+	public function notify(){
+		parent::notify();
+	}
+
 	public function link(){
 		return $this->link;
 	}

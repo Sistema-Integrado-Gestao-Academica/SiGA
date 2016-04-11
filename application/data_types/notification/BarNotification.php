@@ -74,9 +74,7 @@ abstract class BarNotification extends Notification{
 
 		$ci =& get_instance();
 
-		$ci->load->library("bnotification");
-
-		$sent = $ci->bnotification->sendNotification($this);
+		$sent = $ci->navbarnotification->sendNotification($this);
 
 		if(!$sent){
 			throw new NotificationException(self::COULDNT_SEND_NOTIFICATION);	

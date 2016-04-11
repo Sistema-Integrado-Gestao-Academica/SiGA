@@ -14,7 +14,7 @@ class Migration_cria_tabela_notification extends CI_Migration {
 			'seen' => array('type' => 'TINYINT(1)'),
 			'link' => array('type' => 'TEXT', "null" => TRUE),
 			'type' => array('type' => 'VARCHAR(30)'),
-			'time' => array('type' => 'TIMESTAMP')
+			'time' => array('type' => 'TIMESTAMP', "default" => "0000-00-00 00:00:00", "null" => FALSE)
 		));
 		$this->dbforge->add_key('id_notification', true);
 		$this->dbforge->create_table('notification', TRUE);

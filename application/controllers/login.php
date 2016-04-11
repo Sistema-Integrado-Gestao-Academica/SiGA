@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/exception/LoginException.php");
+require_once(APPPATH."/data_types/User.php");
 
 class Login extends CI_Controller {
 
@@ -27,15 +28,23 @@ class Login extends CI_Controller {
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
 				$registeredGroups = $this->module_model->getUserGroups($user['id']);
 
+				// Getting user notifications
+				$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);
+				$this->load->library("navBarNotification", "", "notification");
+
+            	$notifications = $this->notification->getUserNotifications($userObj);
+				//
+
 				$userData = array(
+					'notifications' => $notifications,
 					'user' => $user,
 					'user_permissions' => $registeredPermissions,
 					'user_groups' => $registeredGroups
 				);
 
 				$this->session->set_userdata("current_user", $userData);
-				$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);
-				
+				$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);				
+
 				if(!$isATemporaryPassword){
 					redirect('/');
 				}

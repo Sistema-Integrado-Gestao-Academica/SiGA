@@ -25,7 +25,7 @@ class BarNotification_Test extends TestCase{
 
     public function createTestUser(){
         
-        $user = new User(1, "John Doe", FALSE, "johndoe@mail.com");
+        $user = new User(2, "John Doe", FALSE, "johndoe@mail.com");
 
         return $user;
     }
@@ -684,7 +684,7 @@ class BarNotification_Test extends TestCase{
     }
 
 // Type tests
-    
+
     public function shouldReturnRegularNotificationType(){
 
         $user = $this->createTestUser();
@@ -724,6 +724,63 @@ class BarNotification_Test extends TestCase{
         $test_name = "Test if return ActionNotification type";
 
         $this->unit->run(ActionNotification::class, $notification->type(), $test_name, $notes);
+    }
+
+    public function shouldSaveNotification(){
+
+        $user = $this->createTestUser();
+        $content = "As suas notificações funcionaram!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "route_to_notification";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+
+            $notification->notify();
+
+            $saved = TRUE;
+
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $saved = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if save notification";
+
+        $this->unit->run($saved, "is_true", $test_name, $notes);
+    }
+
+    public function shouldReturnNotifications(){
+
+        $user = $this->createTestUser();
+        $content = "Hi John Doe!";
+        $id = "1";
+        $seen = FALSE;
+        $link = "route_to_notification";
+
+        $notes = "";
+        try{
+            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+
+            $this->load->library("navBarNotification", "", "notification");
+
+            $notifications = $this->notification->getUserNotifications($user);
+
+            foreach ($notifications as $n){
+                echo $n->id();
+            }
+
+        }catch (NotificationException $e){
+            $notifications = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
+
+        $test_name = "Test if save notification";
+
+        $this->unit->run($notifications, "is_array", $test_name, $notes);
     }
 
 }

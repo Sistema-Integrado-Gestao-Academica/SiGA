@@ -4,6 +4,9 @@
 	require_once(APPPATH."/constants/GroupConstants.php");
 
 	$session = $this->session->userdata("current_user");
+	$notifications = $session["notifications"];
+	
+	require_once(APPPATH."/data_types/notification/ActionNotification.php");
 ?>
 <html>
 <head>
@@ -49,6 +52,50 @@
 					<?php if ($session) { ?>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
+
+						<li class="dropdown notifications-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bell-o"></i>
+                                <span class="label label-warning"><?php echo count($notifications);?></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header"><?php echo "Você tem ".count($notifications)." notificações";?></li>
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
+
+                                    <ul style="overflow-y: scroll; width: 100%; height: 200px;" class="menu">
+                                        
+                                        <?php
+
+                                        	foreach ($notifications as $notification){
+                                        		echo "<li>";
+
+                                        			if($notification->type() == ActionNotification::class){
+                                        				echo "<a href='".$notification->link()."'>";
+                                        			}else{
+                                        				echo "<a>";
+                                        			}
+
+                                        			echo "<i class='fa fa-list info'></i>";
+                                        			echo $notification->content();
+
+                                        			echo "</a>";
+                                        		echo "</li>";
+                                        	}
+
+                                        ?>
+                                        
+                                    </ul>
+
+                                    <div style="background: rgb(0, 0, 0) none repeat scroll 0% 0%; width: 3px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 0px; z-index: 99; right: 1px; height: 156.863px;" class="slimScrollBar"></div>
+
+                                    <div style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; background: rgb(51, 51, 51) none repeat scroll 0% 0%; opacity: 0.2; z-index: 90; right: 1px;" class="slimScrollRail"></div></div>
+                                </li>
+                                <li class="footer"><a href="#">Visualizar todas</a></li>
+                            </ul>
+                        </li>
+
 						<li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>

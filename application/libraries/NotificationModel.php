@@ -70,4 +70,19 @@ class NotificationModel{
 
 		return $saveNotification;
 	}
+
+	public function getUserNotifications($user){
+
+		$ci = $this->getCIInstance();
+
+		$ci->db->where(self::USER_COLUMN, $user->getId());
+		$ci->db->order_by(self::SEEN_COLUMN, "asc");
+		$ci->db->order_by(self::TIME_COLUMN, "desc");
+		$ci->db->limit(6);
+		$notifications = $ci->db->get(self::NOTIFICATION_TABLE)->result_array();
+
+		$notifications = checkArray($notifications);
+
+		return $notifications;
+	}
 }
