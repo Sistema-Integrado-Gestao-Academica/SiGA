@@ -1,7 +1,6 @@
 
 $(document).ready(function(){
 
-
 	$("#phase_2").ready(function(){
 
 		getPhasesToSort();
@@ -122,13 +121,14 @@ function setNotificationSeen(notificationId){
 
 	var urlToPost = siteUrl + "/ajax/notificationajax/setNotificationSeen";
 
+	var notificationId = notificationId;
+
 	$.post(
 		urlToPost,
 		{
-			notificationId: notificationId
+			notification: notificationId
 		},
 		function(data){
-			alert(data);
 		}
 	);
 }

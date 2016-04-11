@@ -95,7 +95,7 @@ class NotificationModel{
 		$ci->trans_start();
 
 		$ci->db->where(self::ID_COLUMN, $notificationId);
-		$ci->db->update(self::NOTIFICATION_TABLE, array(self::SEEN_COLUMN => TRUE));
+		$ci->db->update(self::NOTIFICATION_TABLE, array(self::SEEN_COLUMN => 1));
 
 		$ci->db->trans_complete();
 

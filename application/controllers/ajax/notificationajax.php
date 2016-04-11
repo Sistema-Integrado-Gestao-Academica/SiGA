@@ -1,18 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/libraries/NotificationModel.php");
+
 class NotificationAjax extends CI_Controller {
 
     public function setNotificationSeen(){
 
-        $notificationId = $this->input->post("notificationId");
+        $notificationId = $this->input->post("notification");
 
-        $updated = $this->navbarnotification->setNotificationSeen($notificationId);
-        
-        if($updated){
-            echo "Foi";   
-        }else{
-            echo "Nao deu";   
-        }
+        $this->db->where(NotificationModel::ID_COLUMN, $notificationId);
+        $this->db->update(NotificationModel::NOTIFICATION_TABLE, array(NotificationModel::SEEN_COLUMN => TRUE));
     }
-
 }

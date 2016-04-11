@@ -67,7 +67,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header"><?php echo "<b>Você tem ".$notSeenNotifications." notificação(ões) não vista(s).</b>";?></li>
-                                <li>
+                                <li>                                
                                     <!-- inner menu: contains the actual data -->
                                     <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
 
