@@ -13,6 +13,8 @@ class NotificationModel{
 	const TYPE_COLUMN = "type";
 	const TIME_COLUMN = "time";
 
+	const MAX_NOTIFICATIONS_ON_BAR = 10;
+
 	private function getCIInstance(){
 		$ci =& get_instance();
 		return $ci;
@@ -60,10 +62,10 @@ class NotificationModel{
 		$saveNotification .= " VALUES('".$notification->user()->getId()."', '";
 		$saveNotification .= $notification->content()."', ";
 		$saveNotification .= $seen.", '";
-		$saveNotification .= $notification->type()."', '";
+		$saveNotification .= $notification->type()."', ";
 
 		if($notification->type() === ActionNotification::class){
-			$saveNotification .= $notification->link()."', ";
+			$saveNotification .= "'".$notification->link()."', ";
 		}
 
 		$saveNotification .= " CURRENT_TIMESTAMP)";
@@ -78,7 +80,7 @@ class NotificationModel{
 		$ci->db->where(self::USER_COLUMN, $user->getId());
 		$ci->db->order_by(self::SEEN_COLUMN, "asc");
 		$ci->db->order_by(self::TIME_COLUMN, "desc");
-		$ci->db->limit(6);
+		$ci->db->limit(self::MAX_NOTIFICATIONS_ON_BAR);
 		$notifications = $ci->db->get(self::NOTIFICATION_TABLE)->result_array();
 
 		$notifications = checkArray($notifications);

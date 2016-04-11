@@ -2,11 +2,12 @@
 <br>
 <?php
 	require_once(APPPATH."/constants/GroupConstants.php");
+	require_once(APPPATH."/data_types/notification/ActionNotification.php");
 
 	$session = $this->session->userdata("current_user");
-	$notifications = $session["notifications"];
+	$notifications = $session["notifications"]["notifications"];
+	$notSeenNotifications = $session["notifications"]["not_seen"];
 	
-	require_once(APPPATH."/data_types/notification/ActionNotification.php");
 ?>
 <html>
 <head>
@@ -56,10 +57,10 @@
 						<li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
-                                <span class="label label-warning"><?php echo count($notifications);?></span>
+                                <span class="label label-warning"><?php echo $notSeenNotifications;?></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="header"><?php echo "Você tem ".count($notifications)." notificações";?></li>
+                                <li class="header"><?php echo "<b>Você tem ".$notSeenNotifications." notificação(ões) não vista(s).</b>";?></li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
                                     <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
@@ -69,7 +70,12 @@
                                         <?php
 
                                         	foreach ($notifications as $notification){
-                                        		echo "<li>";
+
+                                        		if($notification->seen()){
+                                        			echo "<li>";
+                                        		}else{
+                                        			echo "<li class='not_seen'>";
+                                        		}
 
                                         			if($notification->type() == ActionNotification::class){
                                         				echo "<a href='".$notification->link()."'>";
@@ -77,7 +83,7 @@
                                         				echo "<a>";
                                         			}
 
-                                        			echo "<i class='fa fa-list info'></i>";
+                                        			echo "<i class='fa fa-bell info'></i>";
                                         			echo $notification->content();
 
                                         			echo "</a>";

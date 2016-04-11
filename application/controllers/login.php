@@ -30,9 +30,8 @@ class Login extends CI_Controller {
 
 				// Getting user notifications
 				$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);
-				$this->load->library("navBarNotification", "", "notification");
-
-            	$notifications = $this->notification->getUserNotifications($userObj);
+				
+            	$notifications = $this->navbarnotification->getUserNotifications($userObj);
 				//
 
 				$userData = array(

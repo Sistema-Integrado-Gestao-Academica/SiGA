@@ -300,3 +300,15 @@ td {
     border-left: 1px solid #d2d6de;
   }
 }
+
+/* Seen Notification styles*/
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li.not_seen > a:hover{
+  background: #e6e6fa;
+  text-decoration: none;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li.not_seen > a{
+  background: #f8b801;
+  text-decoration: none;
+}
+/* / Seen Notification styles*/

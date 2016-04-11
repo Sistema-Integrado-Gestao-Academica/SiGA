@@ -5,11 +5,33 @@ require_once("NotificationModel.php");
 require_once(APPPATH."/data_types/User.php");
 
 require_once(APPPATH."/data_types/notification/RegularNotification.php");
-require_once(APPPATH."/data_types/notification/RegularNotification.php");
+require_once(APPPATH."/data_types/notification/ActionNotification.php");
 
 require_once(APPPATH."/exception/NotificationException.php");
 
 class NavBarNotification{
+
+	public function newRegularNotification($user, $content, $id = FALSE, $seen = FALSE){
+
+		try{
+			$notification = new RegularNotification($user, $content, $id, $seen);
+
+			return $notification;
+		}catch(NotificationException $e){
+			throw $e;
+		}
+	}
+
+	public function newActionNotification($user, $content, $link, $id = FALSE, $seen = FALSE){
+
+		try{
+			$notification = new ActionNotification($user, $content, $link, $id, $seen);
+			
+			return $notification;
+		}catch(NotificationException $e){
+			throw $e;
+		}
+	}
 
 	public function sendNotification($notification){
 
@@ -27,6 +49,7 @@ class NavBarNotification{
 		$foundNotifications = $model->getUserNotifications($user);
 		
 		$notifications = array();
+		$notSeenNotifications = 0;
 		foreach($foundNotifications as $notification){
 
 			$id = $notification[NotificationModel::ID_COLUMN];
@@ -49,8 +72,15 @@ class NavBarNotification{
 					show_error("A tabela de notificações retornou um valor inválido para o tipo de notificação", 500, "Erro no banco de dados.");
 					break;
 			}
+
+			if($seen === "0" || $seen === 0 || $seen === FALSE){
+				$notSeenNotifications++;
+			}
 		}
 
-		return $notifications;
+		$result["not_seen"] = $notSeenNotifications;
+		$result["notifications"] = $notifications;
+
+		return $result;
 	}
 }

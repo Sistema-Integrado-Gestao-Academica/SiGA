@@ -11,7 +11,7 @@ class ActionNotification extends BarNotification{
 	protected $link;
 
 	public function __construct($user, $content, $link, $id = FALSE, $seen = FALSE){
-		parent::__construct($user, $content, $id, $seen = FALSE);
+		parent::__construct($user, $content, $id, $seen);
 		$this->setLink($link);
 	}
 

@@ -41,11 +41,16 @@ abstract class BarNotification extends Notification{
 	}
 
 	protected function setSeen($seen){
-
+		
 		if(is_bool($seen)){
 			$this->seen = $seen;
 		}else{
-			$this->seen = FALSE;
+			if($seen === "1" || $seen === 1){
+				$seen = TRUE;
+			}else{
+				$seen = FALSE;
+			}
+			$this->seen = $seen;
 		}
 	}
 
