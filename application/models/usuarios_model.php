@@ -281,6 +281,7 @@ class Usuarios_model extends CI_Model {
 
 		$foundUser = $this->db->get()->row_array();
 		$foundUser = checkArray($foundUser);
+		$foundUser = $this->getUserDataForEmail($foundUser);
 
 		return $foundUser;
 	}
@@ -514,26 +515,26 @@ class Usuarios_model extends CI_Model {
 		return $res;
 	}
 
-	public function updatePassword($user, $temporaryPassword){
+	public function updatePassword($id, $newPassword, $temporaryPassword){
 		
-		$this->db->where('id', $user['id']);
+		$this->db->where('id', $id);
 		$this->db->update("users", array(
-			'password' => $user['password'],
+			'password' => $newPassword,
 			'temporary_password' => $temporaryPassword
 		));
 
-		$isUpdated = $this->checkIfUpdatePassword($user);
+		$isUpdated = $this->checkIfUpdatePassword($id, $newPassword);
 
 		return $isUpdated;
 	}
 
-	public function checkIfUpdatePassword($user){
+	public function checkIfUpdatePassword($id, $newPassword){
 
 		$this->db->select('password');
-		$foundUser = $this->db->get_where('users', array('id' => $user['id']));
+		$foundUser = $this->db->get_where('users', array('id' => $id));
 		$foundPassword = $foundUser->row_array();
 
-		if($foundPassword['password'] == $user['password']){
+		if($foundPassword['password'] == $newPassword){
 
 			$isUpdated = TRUE;
 		}
@@ -601,5 +602,21 @@ class Usuarios_model extends CI_Model {
 		$userExists = sizeof($foundUser) > 0;
 
 		return $userExists;
+	}
+
+	public function getUserDataForEmail($foundUser){
+		
+		if($foundUser != FALSE){
+
+			$id = $foundUser['id'];
+			$name = $foundUser['name'];
+			$email = $foundUser['email'];
+			$user = new User($id, $name, FALSE, $email, FALSE, FALSE, FALSE);
+		}
+		else{
+			$user = NULL;
+		}
+
+		return $user;
 	}
 }
