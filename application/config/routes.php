@@ -128,6 +128,7 @@ $route['process_phase_test'] = 'tests/ProcessPhase_Test';
 $route['email_notification_test'] = 'tests/EmailNotification_Test';
 $route['restore_password_email_test'] = 'tests/RestorePasswordEmail_Test';
 $route['enrolled_student_email_test'] = 'tests/EnrolledStudentEmail_Test';
+$route['secretary_email_notification_test'] = 'tests/SecretaryEmailNotification_Test';
 $route['phone_test'] = 'tests/Phone_Test';
 $route['bar_notification_test'] = 'tests/BarNotification_Test';
 // $route['test'] = 'test_report';
