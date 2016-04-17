@@ -153,7 +153,7 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <?=anchor("conta", "Conta", "class='btn btn-default btn-flat'")?>
+                                        <?=anchor("profile", "Conta", "class='btn btn-default btn-flat'")?>
                                     </div>
                                     <div class="pull-right">
                                         <?=anchor("logout", "Sair", "class='btn btn-default btn-flat'")?>

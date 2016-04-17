@@ -619,4 +619,43 @@ class Usuarios_model extends CI_Model {
 
 		return $user;
 	}
+
+	private function getUserDataById($userId){
+
+		$this->db->select('*');
+		$this->db->from('users');
+		$this->db->where('users.id', $userId);
+		$user = $this->db->get()->result_array();
+
+		$user = checkArray($user);
+
+		return $user;
+	}
+
+	public function getObjectUser($userId){
+
+		$foundUsers = $this->getUserDataById($userId);
+		
+		if($foundUsers != FALSE){
+			
+			foreach ($foundUsers as $foundUser) {
+				$id = $foundUser['id'];
+				$name = $foundUser['name'];
+				$email = $foundUser['email'];
+				$cpf = $foundUser['cpf'];
+				$homePhone = $foundUser['home_phone'];
+				$cellPhone = $foundUser['cell_phone'];
+				$login = $foundUser['login'];
+				$password = $foundUser['password'];
+				$user = new User($id, $name, $cpf, $email, $login, $password, FALSE, $homePhone, $cellPhone);
+			}
+
+		}
+		else{
+			$user = NULL;
+		}
+
+		return $user;
+
+	}
 }

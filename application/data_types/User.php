@@ -16,8 +16,10 @@ class User{
 	private $login;
 	private $password;
 	private $groups;
+	private $homePhone;
+	private $cellPhone;
 	
-	public function __construct($id = FALSE, $name = FALSE, $cpf = FALSE, $email = FALSE, $login = FALSE, $password = FALSE, $groups = FALSE){
+	public function __construct($id = FALSE, $name = FALSE, $cpf = FALSE, $email = FALSE, $login = FALSE, $password = FALSE, $groups = FALSE, $homePhone = FALSE, $cellPhone = FALSE){
 		$this->setId($id);
 		$this->setName($name);
 		$this->setCpf($cpf);
@@ -25,6 +27,8 @@ class User{
 		$this->setLogin($login);
 		$this->setPassword($password);
 		$this->setGroups($groups);
+		$this->setHomePhone($homePhone);
+		$this->setCellPhone($cellPhone);
 	}
 	
 	// public function addGroup($group){
@@ -105,6 +109,13 @@ class User{
 			$this->groups = array();
 		}
 	}
+	private function setHomePhone($homePhone){
+		$this->homePhone = $homePhone;
+	}
+
+	private function setCellPhone($cellPhone){
+		$this->cellPhone = $cellPhone;
+	}
 
 	// Getters
 	
@@ -134,5 +145,12 @@ class User{
 	
 	public function getGroups(){
 		return $this->groups;
+	}
+
+	public function getHomePhone(){
+		return $this->homePhone;
+	}
+	public function getCellPhone(){
+		return $this->cellPhone;
 	}
 }

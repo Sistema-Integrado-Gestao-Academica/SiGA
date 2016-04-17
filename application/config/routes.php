@@ -42,6 +42,7 @@
 $route['default_controller'] = "login";
 $route['404_override'] = '';
 $route['conta'] = 'usuario/conta';
+$route['profile'] = 'usuario/profile';
 $route['logout'] = 'login/logout';
 
 $route['cadastro'] = 'usuario/formulario';

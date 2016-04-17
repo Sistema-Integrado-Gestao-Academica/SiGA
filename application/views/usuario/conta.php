@@ -1,11 +1,9 @@
 <h2 class="text-center">Conta</h2>
 
 <?php
-echo form_open("usuario/altera");
+echo form_open("usuario/updateProfile");
 
-$usuario = session();
-
-$value = $usuario['user']['name'];
+$value = $user->getName();
 echo form_label("Nome", "nome");
 echo form_input(array(
 	"name" => "nome",
@@ -17,7 +15,7 @@ echo form_input(array(
 ));
 echo form_error("nome");
 
-$value = $usuario['user']['email'];
+$value = $user->getEmail();
 echo form_label("E-mail", "email");
 echo form_input(array(
 	"name" => "email",
@@ -29,7 +27,7 @@ echo form_input(array(
 ));
 echo form_error("email");
 
-$value = $usuario['user']['login'];
+$value = $user->getLogin();
 echo form_label("Login", "login");
 echo form_input(array(
 	"disabled" => "disabled",
@@ -41,6 +39,30 @@ echo form_input(array(
 	"value" => $value
 ));
 echo form_error("login");
+
+$value = $user->getHomePhone();
+echo form_label("Telefone Residencial", "phone");
+echo form_input(array(
+	"name" => "home_phone",
+	"id" => "home_phone",
+	"type" => "text",
+	"class" => "form-campo",
+	"maxlength" => "11"
+	// "value" => $value
+));
+echo form_error("phone");
+
+$value = $user->getCellPhone();
+echo form_label("Telefone Celular", "phone");
+echo form_input(array(
+	"name" => "cell_phone",
+	"id" => "cell_phone",
+	"type" => "text",
+	"class" => "form-campo",
+	"maxlength" => "11"
+	// "value" => $value
+));
+echo form_error("phone");
 
 /* ------------------------------------------------------------------------ */
 

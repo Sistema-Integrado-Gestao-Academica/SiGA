@@ -551,6 +551,15 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/conta", $dados);
 	}
 
+	public function profile() {
+		$loggedUser = session();
+		$userId = $loggedUser['user']['id'];	 
+		$user = $this->usuarios_model->getObjectUser($userId);
+		$data = array('user' => $user);
+		$this->load->template("usuario/conta", $data);
+	}
+
+
 	public function restorePassword(){
 		$validData = $this->validateDataForRestorePassword();
 		
@@ -729,6 +738,39 @@ class Usuario extends CI_Controller {
 			$this->load->template("usuario/formulario", $data);
 		}
 	}
+
+	public function updateProfile(){
+		
+		$user = session();
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("email", "E-mail", "valid_email");
+		$this->form_validation->set_rules("home_phone", "Telefone Residencial", "required|alpha_dash");
+		$this->form_validation->set_rules("cell_phone", "Telefone Celular", "required|alpha_dash");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		if ($success) {
+			$usuario = $this->getAccountForm($usuarioLogado);
+
+			$this->load->model('usuarios_model');
+			$alterado = $this->usuarios_model->altera($usuario);
+
+			if ($alterado && $usuarioLogado != $usuario) {
+				$this->session->set_userdata('current_user', $usuario);
+				$this->session->set_flashdata("success", "Os dados foram alterados");
+			} else if (!$alterado){
+				$this->session->set_flashdata("danger", "Os dados não foram alterados");
+			}
+
+			redirect('usuario/conta');
+		} 
+		else {
+			$this->load->template("usuario/conta");
+		}
+	}
+
 
 	public function altera() {
 		$usuarioLogado = session();
