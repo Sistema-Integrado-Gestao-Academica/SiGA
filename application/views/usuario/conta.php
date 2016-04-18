@@ -3,17 +3,19 @@
 <?php
 echo form_open("usuario/updateProfile");
 
+echo form_hidden('id', $user->getId());
+
 $value = $user->getName();
-echo form_label("Nome", "nome");
+echo form_label("Nome", "name");
 echo form_input(array(
-	"name" => "nome",
-	"id" => "nome",
+	"name" => "name",
+	"id" => "name",
 	"type" => "text",
 	"class" => "form-campo",
 	"maxlength" => "255",
 	"value" => $value
 ));
-echo form_error("nome");
+echo form_error("name");
 
 $value = $user->getEmail();
 echo form_label("E-mail", "email");
@@ -47,8 +49,8 @@ echo form_input(array(
 	"id" => "home_phone",
 	"type" => "text",
 	"class" => "form-campo",
-	"maxlength" => "11"
-	// "value" => $value
+	"maxlength" => "11",
+	"value" => $value
 ));
 echo form_error("phone");
 
@@ -59,8 +61,8 @@ echo form_input(array(
 	"id" => "cell_phone",
 	"type" => "text",
 	"class" => "form-campo",
-	"maxlength" => "11"
-	// "value" => $value
+	"maxlength" => "11",
+	"value" => $value
 ));
 echo form_error("phone");
 
@@ -68,19 +70,19 @@ echo form_error("phone");
 
 ?><br><br><h4>Alterar Senha</h4><br><?php
 
-echo form_label("Senha atual", "senha");
+echo form_label("Senha atual", "password");
 echo form_password(array(
-	"name" => "senha",
-	"id" => "senha",
+	"name" => "password",
+	"id" => "password",
 	"class" => "form-campo",
 	"maxlength" => "255"
 ));
 echo form_error("password");
 
-echo form_label("Nova senha", "nova_senha");
+echo form_label("Nova senha", "new_password");
 echo form_password(array(
-	"name" => "nova_senha",
-	"id" => "nova_senha",
+	"name" => "new_password",
+	"id" => "new_password",
 	"class" => "form-campo",
 	"maxlength" => "255"
 ));

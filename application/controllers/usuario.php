@@ -741,8 +741,6 @@ class Usuario extends CI_Controller {
 
 	public function updateProfile(){
 		
-		$user = session();
-
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
@@ -751,20 +749,22 @@ class Usuario extends CI_Controller {
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
+
 		if ($success) {
-			$usuario = $this->getAccountForm($usuarioLogado);
+			$user = $this->getAccountForm();
+			$updated = $this->usuarios_model->update($user);
 
-			$this->load->model('usuarios_model');
-			$alterado = $this->usuarios_model->altera($usuario);
+			$sessionData = $this->getNewSessionData($user);
 
-			if ($alterado && $usuarioLogado != $usuario) {
-				$this->session->set_userdata('current_user', $usuario);
+			if ($updated) {
+				$this->session->set_userdata('current_user', $sessionData);
 				$this->session->set_flashdata("success", "Os dados foram alterados");
-			} else if (!$alterado){
+			} 
+			else if (!$updated){
 				$this->session->set_flashdata("danger", "Os dados não foram alterados");
 			}
 
-			redirect('usuario/conta');
+			redirect('usuario/profile');
 		} 
 		else {
 			$this->load->template("usuario/conta");
@@ -900,38 +900,60 @@ class Usuario extends CI_Controller {
 		return $form_user_groups;
 	}
 
-	private function getAccountForm($usuarioLogado) {
-		$name = $this->input->post("nome");
+	private function getAccountForm() {
+		
+		$id = $this->input->post("id");
+		$name = $this->input->post("name");
 		$email = $this->input->post("email");
-		$login = $usuarioLogado['user']['login'];
-		$password = md5($this->input->post("senha"));
-		$new_password = md5($this->input->post("nova_senha"));
+		$homePhone = $this->input->post("home_phone");
+		$cellPhone = $this->input->post("cell_phone");
+		$password = md5($this->input->post("password"));
+		$new_password = md5($this->input->post("new_password"));
 		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
 
-		$this->load->model('usuarios_model');
-		$user = $this->usuarios_model->busca('login', $login);
 
-		if ($new_password != $blank_password && $password != $user['password']) {
+		$user = $this->usuarios_model->getObjectUser($id);
+		$login = $user->getLogin();
+
+		if ($new_password != $blank_password && $password != $user->getPassword()) {
 			$this->session->set_flashdata("danger", "Senha atual incorreta");
-			redirect("usuario/conta");
-		} else if ($new_password == $blank_password) {
-			$new_password = $user['password'];
+			redirect("usuario/profile");
+		} 
+		else if ($new_password == $blank_password) {
+			$new_password = $user->getPassword();
 		}
 
-		if ($name == "") {
-			$name = $user['name'];
+		if (empty($name)) {
+			$name = $user->getName();
 		}
 
-		if ($email == "") {
-			$email = $user['email'];
+		if (empty($email)) {
+			$email = $user->getEmail();
 		}
-
-		$user = $usuarioLogado;
-		$user['user']['name'] = $name;
-		$user['user']['email'] = $email;
-		$user['user']['password'] = $new_password;
-
+		
+		if (empty($homePhone)) {
+			$homePhone = $user->getHomePhone();
+		}
+		
+		if (empty($cellPhone)) {
+			$cellPhone = $user->getCellPhone();
+		}
+		
+		$user = new User($id, $name, $cpf, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
+	
 		return $user;
+	}
+
+	private function getNewSessionData($user){
+
+		$sessionData = session();
+		$sessionData['user']['id'] = $user->getId();
+		$sessionData['user']['name'] = $user->getName();
+		$sessionData['user']['email'] = $user->getEmail();
+		$sessionData['user']['login'] = $user->getLogin();
+		$sessionData['user']['password'] = $user->getPassword();
+		
+		return $sessionData;
 	}
 
 	/**

@@ -28,14 +28,7 @@ class Login extends CI_Controller {
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
 				$registeredGroups = $this->module_model->getUserGroups($user['id']);
 
-				// Getting user notifications
-				$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);
-				
-            	$notifications = $this->navbarnotification->getUserNotifications($userObj);
-				//
-
 				$userData = array(
-					'notifications' => $notifications,
 					'user' => $user,
 					'user_permissions' => $registeredPermissions,
 					'user_groups' => $registeredGroups

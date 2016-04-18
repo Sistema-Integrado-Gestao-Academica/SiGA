@@ -59,31 +59,34 @@ class NavBarNotification{
 		
 		$notifications = array();
 		$notSeenNotifications = 0;
-		foreach($foundNotifications as $notification){
+		if($foundNotifications !== FALSE){
 
-			$id = $notification[NotificationModel::ID_COLUMN];
-			$userId = $notification[NotificationModel::USER_COLUMN];
-			$content = $notification[NotificationModel::CONTENT_COLUMN];
-			$seen = $notification[NotificationModel::SEEN_COLUMN];
-			$link = $notification[NotificationModel::LINK_COLUMN];
-			$type = $notification[NotificationModel::TYPE_COLUMN];
+			foreach($foundNotifications as $notification){
 
-			switch($type){
-				case RegularNotification::class:
-					$notifications[] = new RegularNotification($user, $content, $id, $seen);
-					break;
-				
-				case ActionNotification::class:
-					$notifications[] = new ActionNotification($user, $content, $link, $id, $seen);
-					break;
-				
-				default:
-					show_error("A tabela de notificações retornou um valor inválido para o tipo de notificação", 500, "Erro no banco de dados.");
-					break;
-			}
+				$id = $notification[NotificationModel::ID_COLUMN];
+				$userId = $notification[NotificationModel::USER_COLUMN];
+				$content = $notification[NotificationModel::CONTENT_COLUMN];
+				$seen = $notification[NotificationModel::SEEN_COLUMN];
+				$link = $notification[NotificationModel::LINK_COLUMN];
+				$type = $notification[NotificationModel::TYPE_COLUMN];
 
-			if($seen === "0" || $seen === 0 || $seen === FALSE){
-				$notSeenNotifications++;
+				switch($type){
+					case RegularNotification::class:
+						$notifications[] = new RegularNotification($user, $content, $id, $seen);
+						break;
+					
+					case ActionNotification::class:
+						$notifications[] = new ActionNotification($user, $content, $link, $id, $seen);
+						break;
+					
+					default:
+						show_error("A tabela de notificações retornou um valor inválido para o tipo de notificação", 500, "Erro no banco de dados.");
+						break;
+				}
+
+				if($seen === "0" || $seen === 0 || $seen === FALSE){
+					$notSeenNotifications++;
+				}
 			}
 		}
 

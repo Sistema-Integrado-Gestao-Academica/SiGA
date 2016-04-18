@@ -510,6 +510,21 @@ class Usuarios_model extends CI_Model {
 		return $res;
 	}
 
+	public function update($user) {
+		
+		$this->db->where('id', $user->getId());
+		$result = $this->db->update("users", array(
+			'name' => $user->getName(),
+			'email' => $user->getEmail(),
+			'password' => $user->getPassword(),
+			'home_phone' => $user->getHomePhone(),
+			'cell_phone' => $user->getCellPhone()
+		));
+
+		return $result;
+	}
+
+
 	public function remove($usuario) {		
 		$res = $this->db->delete("users", array("login" => $usuario['login']));
 		return $res;

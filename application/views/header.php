@@ -3,17 +3,27 @@
 <?php
 	require_once(APPPATH."/constants/GroupConstants.php");
 	require_once(APPPATH."/data_types/notification/ActionNotification.php");
+	require_once(APPPATH."/data_types/User.php");
 
 	$session = $this->session->userdata("current_user");
-	$notifications = $session["notifications"]["notifications"];
-	$notSeenNotifications = $session["notifications"]["not_seen"];
-	
-	echo form_input(array(
-		'id' => "notifications_amount",
-		'name' => "notifications_amount",
-		'type' => "hidden",
-		'value' => count($notifications)
-	));
+	$user = $session['user'];
+
+	if($session){
+
+		// Getting user notifications
+		$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);	
+		$userNotifications = $this->navbarnotification->getUserNotifications($userObj);
+
+		$notifications = $userNotifications["notifications"];
+		$notSeenNotifications = $userNotifications["not_seen"];
+		
+		echo form_input(array(
+			'id' => "notifications_amount",
+			'name' => "notifications_amount",
+			'type' => "hidden",
+			'value' => count($notifications)
+		));
+	}
 ?>
 <html>
 <head>
@@ -63,9 +73,15 @@
 						<li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
-                                <span class="label label-warning"><?php echo $notSeenNotifications;?></span>
+
+                                <?php if ($notSeenNotifications !== 0){ ?>
+                                	<span class="label label-warning">
+                                		<?php echo $notSeenNotifications;?>
+                                	</span>
+                                <?php } ?>
                             </a>
                             <ul class="dropdown-menu">
+
                                 <li class="header"><?php echo "<b>Você tem ".$notSeenNotifications." notificação(ões) não vista(s).</b>";?></li>
                                 <li>                                
                                     <!-- inner menu: contains the actual data -->

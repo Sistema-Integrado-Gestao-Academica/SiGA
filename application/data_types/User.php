@@ -58,7 +58,7 @@ class User{
 		}
 	}
 
-	private function setName($name){
+	public function setName($name){
 		if(is_string($name)){
 			if(!empty($name)){
 				// Split the first, middle and last name into a array
