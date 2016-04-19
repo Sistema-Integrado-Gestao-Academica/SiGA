@@ -6,9 +6,9 @@
 	require_once(APPPATH."/data_types/User.php");
 
 	$session = $this->session->userdata("current_user");
-	$user = $session['user'];
 
 	if($session){
+		$user = $session['user'];
 
 		// Getting user notifications
 		$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);	
