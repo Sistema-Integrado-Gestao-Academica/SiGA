@@ -494,41 +494,49 @@ class Program extends CI_Controller {
 	private function getProgramsCoursesInfo($programs){
 
 		$coursesProgram = array();
-		foreach ($programs as $program) {
-			$coursesPrograms = $this->getProgramCourses($program['id_program']);	
-			if ($coursesPrograms !== FALSE){
-				$courses = $this->getProgramsCourses($coursesPrograms);
-				$coursesProgram [$program['id_program']] = ($courses);
 
-			}
-			else{
-				$coursesProgram[$program['id_program']] = FALSE;
+		if($programs !== FALSE){
+
+			foreach ($programs as $program) {
+				$coursesPrograms = $this->getProgramCourses($program['id_program']);	
+				if ($coursesPrograms !== FALSE){
+					$courses = $this->getProgramsCourses($coursesPrograms);
+					$coursesProgram [$program['id_program']] = ($courses);
+
+				}
+				else{
+					$coursesProgram[$program['id_program']] = FALSE;
+				}
 			}
 		}
-	
+
 		return $coursesProgram;
 	}
 
 	private function getProgramsCourses($coursesPrograms){
 
 		$i = 0;
-		foreach ($coursesPrograms as $courses) {
-			$coursesId[$i] = $courses['id_course'];
-			$coursesName[$i] = $courses['course_name'];
-			$i++;
+		$courses = array();
+		if($coursesPrograms !== FALSE){
+
+			foreach ($coursesPrograms as $courses) {
+				$coursesId[$i] = $courses['id_course'];
+				$coursesName[$i] = $courses['course_name'];
+				$i++;
+			}
+
+			$researchLines = $this->getCourseResearchLines($coursesId);
+			$teachers = $this->getCourseTeachers($coursesId);
+			$secretaries = $this->getCourseAcademicSecretarys($coursesId);
+
+			$courses = array(
+				'coursesId' => $coursesId,
+				'coursesName' => $coursesName,
+				'researchLines' => $researchLines,
+				'teachers' => $teachers,
+				'secretaries' => $secretaries
+			);
 		}
-
-		$researchLines = $this->getCourseResearchLines($coursesId);
-		$teachers = $this->getCourseTeachers($coursesId);
-		$secretaries = $this->getCourseAcademicSecretarys($coursesId);
-
-		$courses = array(
-			'coursesId' => $coursesId,
-			'coursesName' => $coursesName,
-			'researchLines' => $researchLines,
-			'teachers' => $teachers,
-			'secretaries' => $secretaries
-		);
 		
 		return $courses;	
 				
@@ -537,12 +545,15 @@ class Program extends CI_Controller {
 	private function getCourseResearchLines($coursesId){
 
 		$researchLines = array();
-		foreach ($coursesId as $id) {
-						
-			$courseController = new Course();
-			$researchLine = $courseController->getCourseResearchLines($id);
-			if(!empty($researchLine)){
-				$researchLines[$id] = $researchLine;
+		if($coursesId !== FALSE){
+
+			foreach ($coursesId as $id) {
+							
+				$courseController = new Course();
+				$researchLine = $courseController->getCourseResearchLines($id);
+				if(!empty($researchLine)){
+					$researchLines[$id] = $researchLine;
+				}
 			}
 		}
 
@@ -552,11 +563,14 @@ class Program extends CI_Controller {
 
 	private function getCourseTeachers($coursesId){
 
-		$teachersInfo = array();
+		$teachers = array();
 
-		foreach ($coursesId as $id) {
-			$teacherController = new Teacher();
-			$teachers[$id] = $teacherController->getCourseTeachersForHomepage($id);
+		if($coursesId !== FALSE){
+
+			foreach ($coursesId as $id) {
+				$teacherController = new Teacher();
+				$teachers[$id] = $teacherController->getCourseTeachersForHomepage($id);
+			}
 		}
 		return $teachers;
 
@@ -566,23 +580,29 @@ class Program extends CI_Controller {
 
 		$secretariesInfo = array();
 		
-		foreach ($coursesId as $id) {
-						
-			$courseController = new Course();
-			$secretaries[$id] = $courseController->getCourseAcademicSecretaryName($id);
-		}
+		if($coursesId !== FALSE){
 
-		foreach ($secretaries as $secretary) {
-
-			if(!empty($secretary)){
-
-				$i = 0;
-				foreach ($secretary as $secretaryInfo){
-					$secretariesInfo[$i]['name'] = $secretaryInfo['name']; 
-					$i++;
-				}
+			foreach ($coursesId as $id) {
+							
+				$courseController = new Course();
+				$secretaries[$id] = $courseController->getCourseAcademicSecretaryName($id);
 			}
 
+			if($secretaries !== FALSE){
+				
+				foreach ($secretaries as $secretary) {
+
+					if(!empty($secretary)){
+
+						$i = 0;
+						foreach ($secretary as $secretaryInfo){
+							$secretariesInfo[$i]['name'] = $secretaryInfo['name']; 
+							$i++;
+						}
+					}
+
+				}
+			}
 		}
 		
 		return $secretariesInfo;

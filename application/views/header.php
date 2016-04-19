@@ -43,6 +43,7 @@
 	<script src=<?=base_url("js/bootstrap.min.js")?>></script>
 	<script src=<?=base_url("js/AdminLTE/app.js")?>></script>
 	<script src=<?=base_url("js/functions.js")?>></script>
+	<script src=<?=base_url("js/enrollment.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
