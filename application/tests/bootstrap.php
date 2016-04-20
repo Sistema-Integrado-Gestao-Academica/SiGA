@@ -18,7 +18,7 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
-	define('ENVIRONMENT', 'development');
+	define('ENVIRONMENT', 'testing');
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
@@ -72,7 +72,7 @@ if (defined('ENVIRONMENT'))
  * NO TRAILING SLASH!
  *
  */
-	$application_folder = '../../application';
+	$application_folder = '../application';
 
 /*
  * --------------------------------------------------------------------
@@ -180,6 +180,7 @@ if (defined('ENVIRONMENT'))
 	if (is_dir($application_folder))
 	{
 		define('APPPATH', $application_folder.'/');
+		define('COMPOSER_DEPENDENCIES',"vendor-dependencies/");
 	}
 	else
 	{
@@ -189,6 +190,8 @@ if (defined('ENVIRONMENT'))
 		}
 
 		define('APPPATH', BASEPATH.$application_folder.'/');
+
+		define('COMPOSER_DEPENDENCIES', BASEPATH."vendor-dependencies/");
 	}
 
 /*
@@ -199,9 +202,7 @@ if (defined('ENVIRONMENT'))
  * And away we go...
  *
  */
-//require_once BASEPATH.'core/CodeIgniter.php';
+require_once BASEPATH.'core/CodeIgniter.php';
 
-/* End of file bootstrap.php */
-/* Location: ./bootstrap.php */
-
-require_once('load.php');
+/* End of file index.php */
+/* Location: ./index.php */
