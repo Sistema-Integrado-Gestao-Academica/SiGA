@@ -2,6 +2,7 @@
 
 require_once APPPATH."/exception/EmailNotificationException.php";
 require_once APPPATH."/constants/EmailConstants.php";
+require_once APPPATH."/constants/EmailSenderData.php";
 require_once("Notification.php");
 
 class EmailNotification extends Notification{
@@ -134,9 +135,9 @@ class EmailNotification extends Notification{
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = "ssl"; 
         $mail->Port = 465; 
-        $mail->Host = ""; 
-        $mail->Username = ""; 
-        $mail->Password = ""; 
+        $mail->Host = EmailSenderData::HOST;
+        $mail->Username = EmailSenderData::USER;
+        $mail->Password = EmailSenderData::PASSWORD;
         $mail->CharSet = 'UTF-8';
     	
     	return $mail;
@@ -150,7 +151,7 @@ class EmailNotification extends Notification{
 		if(!is_null($message) && !empty($message)){
 
 	        $ci =& get_instance();
-	        $ci->load->library("My_PHPMailer");
+	        $ci->load->library("Mailing");
 	        
 	        $mail = $this->setDefaultConfiguration(); 
 
@@ -159,6 +160,7 @@ class EmailNotification extends Notification{
 	        $mail->Body = $message;
 	        $mail->SetFrom($this->getSenderEmail(), $this->getSenderName()); 
 	        $mail->AddAddress($this->getReceiverEmail(), $this->getReceiverName());
+	        
 	        $emailSent = $mail->Send();
 		}
 		else{
