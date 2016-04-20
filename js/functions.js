@@ -32,10 +32,6 @@ $(document).ready(function(){
 		saveSelectiveProcess();
 	});
 
-	$("#documentType").change(function(){
-		checkDocumentType();
-	});
-
 	$("#approve_offer_list_btn").hover(function(){
 		$("#approve_offer_list_btn").popover('show');
 	},function(){
@@ -69,24 +65,6 @@ $(document).ready(function(){
 	});
 
 });
-
-function setNotificationSeen(notificationId){
-
-	var siteUrl = $("#site_url").val();
-
-	var urlToPost = siteUrl + "/ajax/notificationajax/setNotificationSeen";
-
-	var notificationId = notificationId;
-
-	$.post(
-		urlToPost,
-		{
-			notification: notificationId
-		},
-		function(data){
-		}
-	);
-}
 
 function makeSortable(){
 	$("#sortable").sortable();
@@ -169,33 +147,3 @@ function saveSelectiveProcess(){
 	);
 }
 
-function checkDocumentType(){
-
-	var currentType = $("#documentType").val();
-	var siteUrl = $("#site_url").val();
-
-	var urlToPost = siteUrl + "/documentrequest/checkDocumentType";
-
-	$.post(
-		urlToPost,
-		{documentType: currentType},
-		function(data){
-			$("#document_request_data").html(data);
-		}
-	);
-}
-
-function getCurrentCourse(){
-	var currentCourse = $("#current_course").val();
-
-	return currentCourse;
-}
-
-function deleteAccount() {
-	return confirm("Tem certeza que deseja apagar sua conta?");
-}
-
-function passwordRequest() {
-	var password = prompt("Digite sua senha para continuar")
-	document.getElementsByName("password")[0].value = password;
-}

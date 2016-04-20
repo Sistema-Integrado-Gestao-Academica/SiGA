@@ -13,10 +13,3 @@
 		)) ?>
 	<?php endif ?>
 <?= form_close() ?>
-
-<script>
-	function passwordRequest() {
-		var password = prompt("Digite sua senha para continuar")
-		document.getElementsByName("password")[0].value = password;
-	}
-</script>
