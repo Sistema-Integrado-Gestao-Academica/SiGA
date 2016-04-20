@@ -42,13 +42,14 @@
 	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
 	<script src=<?=base_url("js/bootstrap.min.js")?>></script>
 	<script src=<?=base_url("js/AdminLTE/app.js")?>></script>
-	<script src=<?=base_url("js/functions.js")?>></script>
+	<script src=<?=base_url("js/popovers.js")?>></script>
 	<script src=<?=base_url("js/enrollment.js")?>></script>
 	<script src=<?=base_url("js/payment.js")?>></script>
 	<script src=<?=base_url("js/notification.js")?>></script>
 	<script src=<?=base_url("js/request.js")?>></script>
 	<script src=<?=base_url("js/user.js")?>></script>
 	<script src=<?=base_url("js/course.js")?>></script>
+	<script src=<?=base_url("js/selectiveprocess.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>

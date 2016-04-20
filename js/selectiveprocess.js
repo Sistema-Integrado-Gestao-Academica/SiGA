@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
 
 	$("#phase_2").ready(function(){
@@ -32,29 +31,6 @@ $(document).ready(function(){
 		saveSelectiveProcess();
 	});
 
-	$("#approve_offer_list_btn").hover(function(){
-		$("#approve_offer_list_btn").popover('show');
-	},function(){
-		$("#approve_offer_list_btn").popover('hide');
-	});
-
-	$("#remove_program_btn").hover(function(){
-		$("#remove_program_btn").popover('show');
-	},function(){
-		$("#remove_program_btn").popover('hide');
-	});
-
-	$("#edit_program_btn").hover(function(){
-		$("#edit_program_btn").popover('show');
-	},function(){
-		$("#edit_program_btn").popover('hide');
-	});
-
-	$("#alert").hover(function(){
-		$("#alert").popover('show');
-	},function(){
-		$("#alert").popover('hide');
-	});
 
 	$("#selective_process_start_date").datepicker($.datepicker.regional["pt-BR"], {
 		dateFormat: "dd-mm-yy"
@@ -71,34 +47,6 @@ function makeSortable(){
 	$("#sortable").sortable("option", "axis", "y");
 	$("#sortable").sortable("option", "cursor", "move");
 	$("#sortable").sortable("option", "containment", "parent");
-}
-
-function getPhasesToSort(){
-
-	var preProject;
-	var writtenTest;
-	var oralTest;
-	
-	preProject = $("#phase_2").val();
-	writtenTest = $("#phase_3").val();
-	oralTest = $("#phase_4").val();
-
-	var siteUrl = $("#site_url").val();
-
-	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/getPhasesToSort";
-
-	$.post(
-		urlToPost,
-		{
-			preProject: preProject,
-			writtenTest: writtenTest,
-			oralTest: oralTest	
-		},
-		function(data){
-			$("#phases_list_to_order").html(data);
-			makeSortable();
-		}
-	);
 }
 
 function saveSelectiveProcess(){
@@ -147,3 +95,30 @@ function saveSelectiveProcess(){
 	);
 }
 
+function getPhasesToSort(){
+
+	var preProject;
+	var writtenTest;
+	var oralTest;
+	
+	preProject = $("#phase_2").val();
+	writtenTest = $("#phase_3").val();
+	oralTest = $("#phase_4").val();
+
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/getPhasesToSort";
+
+	$.post(
+		urlToPost,
+		{
+			preProject: preProject,
+			writtenTest: writtenTest,
+			oralTest: oralTest	
+		},
+		function(data){
+			$("#phases_list_to_order").html(data);
+			makeSortable();
+		}
+	);
+}
