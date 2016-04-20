@@ -32,15 +32,6 @@ $(document).ready(function(){
 		saveSelectiveProcess();
 	});
 
-	
-	$("#discipline_search_btn").ready(function(){
-		searchDisciplineClasses();
-	});
-
-	$("#discipline_search_btn").click(function(){
-		searchDisciplineClasses();
-	});
-
 	$("#documentType").change(function(){
 		checkDocumentType();
 	});
@@ -174,28 +165,6 @@ function saveSelectiveProcess(){
 		},
 		function(data){
 			$("#selection_process_saving_status").html(data);
-		}
-	);
-}
-
-function searchDisciplineClasses(){
-
-	var disciplineName = $("#discipline_name_search").val();
-	var courseId = $("#courseId").val();
-	var userId = $("#userId").val();
-	var siteUrl = $("#site_url").val();
-
-	var urlToPost = siteUrl + "/temporaryrequest/searchDisciplinesToRequest";
-
-	$.post(
-		urlToPost,
-		{
-			disciplineName: disciplineName,
-			courseId: courseId,
-			userId: userId
-		},
-		function(data){
-			$("#discipline_search_result").html(data);
 		}
 	);
 }

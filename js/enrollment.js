@@ -7,6 +7,15 @@ $(document).ready(function(){
 	$("#search_guests_btn").click(function(){
 		searchGuestsToEnroll();
 	});
+
+	$("#discipline_search_btn").ready(function(){
+		searchDisciplineClasses();
+	});
+
+	$("#discipline_search_btn").click(function(){
+		searchDisciplineClasses();
+	});
+
 });
 
 
@@ -27,6 +36,28 @@ function searchGuestsToEnroll(){
 		},
 		function(data){
 			$("#guests_table").html(data);
+		}
+	);
+}
+
+function searchDisciplineClasses(){
+
+	var disciplineName = $("#discipline_name_search").val();
+	var courseId = $("#courseId").val();
+	var userId = $("#userId").val();
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/ajax/enrollmentajax/searchDisciplinesToRequest";
+
+	$.post(
+		urlToPost,
+		{
+			disciplineName: disciplineName,
+			courseId: courseId,
+			userId: userId
+		},
+		function(data){
+			$("#discipline_search_result").html(data);
 		}
 	);
 }

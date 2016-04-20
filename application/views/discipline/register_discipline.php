@@ -48,7 +48,6 @@ $submit_button_array_to_form = array(
 		"type" => "submit"
 );
 
-var_dump($courses);
 ?>
 
 <div class="form-box" id="login-box"> 
@@ -67,7 +66,7 @@ var_dump($courses);
 		<div class="form-group">
 				<?php 
 				// Name field
-				echo form_label("Nome a disciplina", "discipline_name");
+				echo form_label("Nome da disciplina", "discipline_name");
 				echo form_input($discipline_name_to_form);
 				echo form_error("discipline_name");
 				?>
