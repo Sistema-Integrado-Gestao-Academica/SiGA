@@ -9,3 +9,4 @@ application/config/*.php
 siga.sublime-workspace
 
 /application/upload_files
+/vendor-dependencies
