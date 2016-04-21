@@ -10,7 +10,7 @@ class ExampleTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testFALSE() {
-		$this->assertTrue(FALSE);
+		$this->assertFalse(FALSE);
 	}
 
 	public function testTRUE() {
