@@ -741,33 +741,37 @@ class Usuario extends CI_Controller {
 	public function updateProfile(){
 		
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("name", "Nome", "trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("email", "E-mail", "valid_email");
-		$this->form_validation->set_rules("home_phone", "Telefone Residencial", "required|alpha_dash");
-		$this->form_validation->set_rules("cell_phone", "Telefone Celular", "required|alpha_dash");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
 
 		if ($success) {
 			$user = $this->getAccountForm();
-			$updated = $this->usuarios_model->update($user);
+			if(!is_null($user)){
 
-			$sessionData = $this->getNewSessionData($user);
+				$updated = $this->usuarios_model->update($user);
 
-			if ($updated) {
-				$this->session->set_userdata('current_user', $sessionData);
-				$this->session->set_flashdata("success", "Os dados foram alterados");
-			} 
-			else if (!$updated){
-				$this->session->set_flashdata("danger", "Os dados não foram alterados");
+				$sessionData = $this->getNewSessionData($user);
+
+				if ($updated) {
+					$this->session->set_userdata('current_user', $sessionData);
+					$this->session->set_flashdata("success", "Os dados foram alterados");
+				} 
+				else if (!$updated){
+					$this->session->set_flashdata("danger", "Os dados não foram alterados");
+				}
+			}
+			else{
+				$this->session->set_flashdata("danger", "Email já cadastrado no sistema.");
 			}
 
-			redirect('usuario/profile');
 		} 
 		else {
-			$this->load->template("usuario/conta");
+			$this->session->set_flashdata("danger", "Dados inválidos!");
 		}
+		redirect('usuario/profile');
 	}
 
 	public function remove() {
@@ -881,35 +885,42 @@ class Usuario extends CI_Controller {
 		$new_password = md5($this->input->post("new_password"));
 		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
 
+		$emailExists = $this->usuarios_model->verifyIfEmailExistsForAnotherUser($email, $id);
 
-		$user = $this->usuarios_model->getObjectUser($id);
-		$login = $user->getLogin();
+		if(!$emailExists){
 
-		if ($new_password != $blank_password && $password != $user->getPassword()) {
-			$this->session->set_flashdata("danger", "Senha atual incorreta");
-			redirect("usuario/profile");
-		} 
-		else if ($new_password == $blank_password) {
-			$new_password = $user->getPassword();
-		}
+			$user = $this->usuarios_model->getObjectUser($id);
+			$login = $user->getLogin();
 
-		if (empty($name)) {
-			$name = $user->getName();
-		}
+			if ($new_password != $blank_password && $password != $user->getPassword()) {
+				$this->session->set_flashdata("danger", "Senha atual incorreta");
+				redirect("usuario/profile");
+			} 
+			else if ($new_password == $blank_password) {
+				$new_password = $user->getPassword();
+			}
 
-		if (empty($email)) {
-			$email = $user->getEmail();
+			if (empty($name)) {
+				$name = $user->getName();
+			}
+
+			if (empty($email)) {
+				$email = $user->getEmail();
+			}
+			
+			if (empty($homePhone)) {
+				$homePhone = $user->getHomePhone();
+			}
+			
+			if (empty($cellPhone)) {
+				$cellPhone = $user->getCellPhone();
+			}
+			
+			$user = new User($id, $name, $cpf, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 		}
-		
-		if (empty($homePhone)) {
-			$homePhone = $user->getHomePhone();
+		else{
+			$user = NULL;
 		}
-		
-		if (empty($cellPhone)) {
-			$cellPhone = $user->getCellPhone();
-		}
-		
-		$user = new User($id, $name, $cpf, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 	
 		return $user;
 	}

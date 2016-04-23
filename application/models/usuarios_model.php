@@ -179,6 +179,19 @@ class Usuarios_model extends CI_Model {
 
 	}
 
+	public function verifyIfEmailExistsForAnotherUser($email, $userId){
+		
+		$this->db->select('email');
+		$this->db->where('id !=', $userId);
+		$foundUsers = $this->db->get('users')->result_array();
+
+		$foundUsers = checkArray($foundUsers);
+
+		$emailExists = $this->verifyIfEmailExists($email, $foundUsers);
+
+		return $emailExists;
+	}
+
 	public function verifyIfUserExists($user){
 		
 		$this->db->select('cpf, email, login');
@@ -206,7 +219,7 @@ class Usuarios_model extends CI_Model {
 		return $userExists;
 	}
 
-	public function verifyIfCpfExists($cpf, $foundUsers){
+	private function verifyIfCpfExists($cpf, $foundUsers){
 
 		$cpfExists = FALSE;
 
@@ -224,7 +237,7 @@ class Usuarios_model extends CI_Model {
 
 	}
 
-	public function verifyIfLoginExists($login, $foundUsers){
+	private function verifyIfLoginExists($login, $foundUsers){
 
 		$loginExists = FALSE;
 
@@ -241,7 +254,7 @@ class Usuarios_model extends CI_Model {
 		return $loginExists;
 	}
 
-	public function verifyIfEmailExists($email, $foundUsers){
+	private function verifyIfEmailExists($email, $foundUsers){
 
 		$emailExists = FALSE;
 
