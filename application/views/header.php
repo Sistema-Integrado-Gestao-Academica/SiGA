@@ -72,7 +72,9 @@
 			<div class="navbar-btn sidebar-toggle" role="button">
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-					<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
+					<a href="<?php echo base_url('/');?>">
+						<img src="<?php echo base_url('img/logo_home.png'); ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
+					</a>
 					<?php if ($session) { ?>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">

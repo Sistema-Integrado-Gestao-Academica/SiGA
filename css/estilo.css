@@ -147,6 +147,11 @@ td {
  
 }
 
+#logo_home{
+  width:10%;
+  height:20%;
+}
+
 .popover-content {
     color: black;
 }
