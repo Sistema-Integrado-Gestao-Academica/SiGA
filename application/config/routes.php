@@ -46,6 +46,7 @@ $route['profile'] = 'usuario/profile';
 $route['logout'] = 'login/logout';
 
 $route['cadastro'] = 'usuario/formulario';
+$route['usuario/new'] = 'usuario/newUser';
 $route['configuracoes'] = 'settings';
 $route['cursos'] = 'course/index';
 $route['departamentos'] = 'departamento/formulario';

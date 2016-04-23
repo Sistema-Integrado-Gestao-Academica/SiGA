@@ -1,19 +1,19 @@
 <div class="form-box" id="login-box"> 
 	<div class="header">Cadastrar um novo usuário</div>
-	<?= form_open("usuario/novo") ?>
+	<?= form_open("usuario/new") ?>
 		<div class="body bg-gray">
 			<div class="form-group">
-				<?= form_label("Nome", "nome") ?>
+				<?= form_label("Nome", "name") ?>
 				<?= form_input(array(
-					"name" => "nome",
-					"id" => "nome",
+					"name" => "name",
+					"id" => "name",
 					"type" => "text",
 					"class" => "form-campo",
 					"maxlength" => "70",
 					"class" => "form-control",
-					"value" => set_value("nome", "")
+					"value" => set_value("name", "")
 				)) ?>
-				<?= form_error("nome") ?>
+				<?= form_error("name") ?>
 			</div>
 			
 			<div class="form-group">
@@ -68,15 +68,15 @@
 			</div>
 
 			<div class="form-group">
-				<?= form_label("Senha", "senha") ?>
+				<?= form_label("Senha", "password") ?>
 				<?= form_password(array(
-					"name" => "senha",
-					"id" => "senha",
+					"name" => "password",
+					"id" => "password",
 					"class" => "form-campo",
 					"class" => "form-control",
 					"maxlength" => "255"
 				)) ?>
-				<?= form_error("senha") ?>
+				<?= form_error("password") ?>
 			</div>
 		</div>
 

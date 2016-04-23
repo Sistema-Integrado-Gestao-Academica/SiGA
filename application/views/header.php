@@ -187,7 +187,7 @@
 					</ul>
 				<?php } else { ?>
 
-					<li><?=anchor("usuario/novo", "Cadastro", "class='navbar-brand'")?></li>
+					<li><?=anchor("usuario/new", "Cadastro", "class='navbar-brand'")?></li>
 					</ul>
 
 						<ul class="nav navbar-nav navbar-right">

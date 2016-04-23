@@ -693,41 +693,41 @@ class Usuario extends CI_Controller {
 		return $validPassword;
 	}
 
-	public function novo() {
+	public function newUser() {
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("name", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
-		$this->form_validation->set_rules("senha", "Senha", "required");
+		$this->form_validation->set_rules("password", "Senha", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
 		if ($success) {
-			$nome  = $this->input->post("nome");
+			$name  = $this->input->post("name");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
 			$group = $this->input->post("userGroup");
 			$login = $this->input->post("login");
-			$senha = md5($this->input->post("senha"));
+			$password = md5($this->input->post("password"));
 
-			$usuario = array(
-				'name'     => $nome,
+			$user = array(
+				'name'     => $name,
 				'cpf'      => $cpf,
 				'email'    => $email,
 				'login'    => $login,
-				'password' => $senha
+				'password' => $password
 			);
 
-			$this->load->model("usuarios_model");
-			$usuarioExiste = $this->usuarios_model->buscaPorLoginESenha($login);
-
-			if ($usuarioExiste) {
+			$userExists = $this->usuarios_model->buscaPorLoginESenha($login);
+					
+			if ($userExists) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
 				redirect("usuario/formulario");
-			} else {
-				$this->usuarios_model->salva($usuario);
-				$this->usuarios_model->saveGroup($usuario, $group);
+			} 
+			else {
+				$this->usuarios_model->salva($user);
+				$this->usuarios_model->saveGroup($user, $group);
 				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
