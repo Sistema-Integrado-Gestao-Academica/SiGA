@@ -24,9 +24,16 @@ class Budgetplan extends CI_Controller {
 
 		$this->load->model('course_model');
 		$courses_options = $this->course_model->getAllCourses();
-		$courses = array("Nenhum");
-		foreach ($courses_options as $c) {
-			$courses[$c['id_course']] = $c['course_name'];
+		$courses = array();
+
+		if($courses_options !== FALSE){
+
+			foreach ($courses_options as $c) {
+				$courses[$c['id_course']] = $c['course_name'];
+			}
+		}
+		else{
+			$courses = FALSE;
 		}
 
 		$user = new Usuario();
