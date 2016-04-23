@@ -137,11 +137,19 @@ td {
   color: #fff;
 }
 
-#link{
+#link_restore_password{
   color: #fff;
-  margin-left: 70%;
+  /*margin-left: -200%;*/
 }
 
+#login_btn{
+   margin-left: 10%;
+ 
+}
+
+.popover-content {
+    color: black;
+}
 /*
  * Skin: Green (from AdminLTE)
  * -----------

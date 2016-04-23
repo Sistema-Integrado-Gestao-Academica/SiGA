@@ -23,4 +23,10 @@ $(document).ready(function(){
 	},function(){
 		$("#alert").popover('hide');
 	});
+
+	$("#link_restore_password").hover(function(){
+		$("#link_restore_password").popover('show');
+	},function(){
+		$("#link_restore_password").popover('hide');
+	});
 });

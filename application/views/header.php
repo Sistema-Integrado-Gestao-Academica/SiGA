@@ -224,8 +224,12 @@
 								?>
 								</div>
 								<!-- <br> -->
-								<div class="col-lg-2">
+								<div class="col-lg-4">
+									<div class="row">
 									<?php
+										echo anchor("usuario/restorePassword", "<i class='fa fa-question-circle'></i>", "id='link_restore_password' data-toggle=\"popover\" data-placement=\"bottom\" data-trigger=\"hover\"
+	     								data-content=\"Clique se tiver esquecido sua senha.\"");
+
 										echo form_button(array(
 											"id" => "login_btn",
 											"class" => "btn btn-default",
@@ -235,11 +239,11 @@
 									
 									
 									?>
+									</div>
 								</div>
 							</div>
 							<?php
 										echo form_close();
-										echo anchor("usuario/restorePassword", "Esqueci minha senha", "id='link'");
 										?>
 						</ul>
 
