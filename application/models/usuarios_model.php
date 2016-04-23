@@ -4,8 +4,8 @@ require_once(APPPATH."/exception/LoginException.php");
 
 class Usuarios_model extends CI_Model {
 
-	public function salva($usuario) {
-		$this->db->insert("users", $usuario);
+	public function save($user) {
+		$this->db->insert("users", $user);
 	}
 
 	public function saveGroup($user, $group){
@@ -177,6 +177,85 @@ class Usuarios_model extends CI_Model {
 
 		return $isTemporaryPassword;
 
+	}
+
+	public function verifyIfUserExists($user){
+		
+		$this->db->select('cpf, email, login');
+		$foundUsers = $this->db->get('users')->result_array();
+
+		$foundUsers = checkArray($foundUsers);
+		$userExists = FALSE;
+
+		if($foundUsers !== FALSE){
+			
+			$userExists = $this->verifyIfCpfExists($user['cpf'], $foundUsers);
+
+			if(!$userExists){	
+				
+				$userExists = $this->verifyIfLoginExists($user['login'], $foundUsers);	
+					
+					if(!$userExists){
+
+						$userExists = $this->verifyIfEmailExists($user['email'], $foundUsers);	
+					
+					}
+			}
+		}
+
+		return $userExists;
+	}
+
+	public function verifyIfCpfExists($cpf, $foundUsers){
+
+		$cpfExists = FALSE;
+
+		foreach ($foundUsers as $user) {
+			
+			$userCpf = $user['cpf'];
+			if($userCpf == $cpf){
+				$cpfExists = TRUE;
+				break;
+			}	
+
+		}
+
+		return $cpfExists;
+
+	}
+
+	public function verifyIfLoginExists($login, $foundUsers){
+
+		$loginExists = FALSE;
+
+		foreach ($foundUsers as $user) {
+			
+			$userLogin = $user['login'];
+			if($userLogin == $login){
+				$loginExists = TRUE;
+				break;
+			}	
+
+		}
+
+		return $loginExists;
+	}
+
+	public function verifyIfEmailExists($email, $foundUsers){
+
+		$emailExists = FALSE;
+
+		foreach ($foundUsers as $user) {
+			
+			$userEmail = $user['email'];
+			if($userEmail == $email){
+				$emailExists = TRUE;
+				break;
+			}	
+
+		}
+
+		return $emailExists;
 	}
 
 	public function getUsersOfGroup($idGroup, $name = FALSE){

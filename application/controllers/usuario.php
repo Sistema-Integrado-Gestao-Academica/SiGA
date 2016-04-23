@@ -524,13 +524,13 @@ class Usuario extends CI_Controller {
 	}
 
 	public function formulario() {
-		$this->load->model('usuarios_model');
 		$users = $this->usuarios_model->buscaTodos();
 
-		if ($users && !$this->session->userdata('current_user')) {
+		if ($users && $this->session->userdata('current_user')) {
 			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
 			redirect('login');
-		} else {
+		} 
+		else {
 
 			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
@@ -719,16 +719,15 @@ class Usuario extends CI_Controller {
 				'password' => $password
 			);
 
-			$userExists = $this->usuarios_model->buscaPorLoginESenha($login);
-					
+			$userExists = $this->usuarios_model->verifyIfUserExists($user);
 			if ($userExists) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
 				redirect("usuario/formulario");
 			} 
 			else {
-				$this->usuarios_model->salva($user);
+				$this->usuarios_model->save($user);
 				$this->usuarios_model->saveGroup($user, $group);
-				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
+				$this->session->set_flashdata("success", "Usuário \"{$user['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
 		} else {
@@ -767,35 +766,6 @@ class Usuario extends CI_Controller {
 			redirect('usuario/profile');
 		} 
 		else {
-			$this->load->template("usuario/conta");
-		}
-	}
-
-
-	public function altera() {
-		$usuarioLogado = session();
-
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("email", "E-mail", "valid_email");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
-
-		if ($success) {
-			$usuario = $this->getAccountForm($usuarioLogado);
-
-			$this->load->model('usuarios_model');
-			$alterado = $this->usuarios_model->altera($usuario);
-
-			if ($alterado && $usuarioLogado != $usuario) {
-				$this->session->set_userdata('current_user', $usuario);
-				$this->session->set_flashdata("success", "Os dados foram alterados");
-			} else if (!$alterado){
-				$this->session->set_flashdata("danger", "Os dados não foram alterados");
-			}
-
-			redirect('usuario/conta');
-		} else {
 			$this->load->template("usuario/conta");
 		}
 	}
