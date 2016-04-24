@@ -523,26 +523,15 @@ class Usuario extends CI_Controller {
 		return $userHasSecretary;
 	}
 
-	public function formulario() {
-		$users = $this->usuarios_model->buscaTodos();
+	public function register(){
 
-		if ($users && $this->session->userdata('current_user')) {
-			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
-			redirect('login');
-		} 
-		else {
+		$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
-			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
+		$data = array(
+			'user_groups' => $userGroups
+		);
 
-			$data = array('user_groups' => $userGroups);
-			$this->load->template("usuario/formulario", $data);
-		}
-	}
-
-	public function formulario_entrada() {
-
-		$this->load->template("usuario/formulario_entrada");
-
+		$this->load->template("usuario/new_user", $data);
 	}
 
 	public function conta() {
@@ -703,7 +692,7 @@ class Usuario extends CI_Controller {
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
-		if ($success) {
+		if($success){
 			$name  = $this->input->post("name");
 			$cpf   = $this->input->post("cpf");
 			$email = $this->input->post("email");
@@ -722,19 +711,18 @@ class Usuario extends CI_Controller {
 			$userExists = $this->usuarios_model->verifyIfUserExists($user);
 			if ($userExists) {
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
-				redirect("usuario/formulario");
+				redirect("register");
 			} 
 			else {
 				$this->usuarios_model->save($user);
 				$this->usuarios_model->saveGroup($user, $group);
+				
 				$this->session->set_flashdata("success", "Usuário \"{$user['login']}\" cadastrado com sucesso");
 				redirect("/");
 			}
-		} else {
-			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
-
-			$data = array('user_groups' => $userGroups);
-			$this->load->template("usuario/formulario", $data);
+		}
+		else{
+			$this->register();
 		}
 	}
 

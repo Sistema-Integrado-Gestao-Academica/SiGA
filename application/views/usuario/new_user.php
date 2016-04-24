@@ -1,6 +1,6 @@
 <div class="form-box" id="login-box"> 
 	<div class="header">Cadastrar um novo usuário</div>
-	<?= form_open("usuario/new") ?>
+	<?= form_open("register_user") ?>
 		<div class="body bg-gray">
 			<div class="form-group">
 				<?= form_label("Nome", "name") ?>

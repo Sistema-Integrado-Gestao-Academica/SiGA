@@ -189,12 +189,12 @@
 					</ul>
 				<?php } else { ?>
 
-					<li><?=anchor("usuario/new", "Cadastro", "class='navbar-brand'")?></li>
+					<li><?=anchor("register", "Cadastro", "class='navbar-brand'")?></li>
 					</ul>
 
 						<ul class="nav navbar-nav navbar-right">
 					<?php
-						echo form_open("login/autenticar");?>
+						echo form_open("login/authenticate");?>
 							<div class="row">
         						<div class="col-lg-4">
 								<?php
@@ -215,8 +215,8 @@
 								<?php
 									// echo form_label("Senha", "senha");
 									echo form_input(array(
-										"name" => "senha",
-										"id" => "senha",
+										"name" => "password",
+										"id" => "password",
 										"type" => "password",
 										"class" => "form-campo",
 										"maxlength" => "255",

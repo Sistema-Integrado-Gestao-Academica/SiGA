@@ -388,6 +388,8 @@ class Usuarios_model extends CI_Model {
 		$this->db->where("login", $login);
 		$foundUser = $this->db->get("users")->row_array();
 
+		$foundUser = checkArray($foundUser);
+		
 		return $foundUser;
 	}
 

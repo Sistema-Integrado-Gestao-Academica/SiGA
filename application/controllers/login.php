@@ -5,7 +5,7 @@ require_once(APPPATH."/data_types/User.php");
 
 class Login extends CI_Controller {
 
-	public function index() {
+	public function index(){
 
 		$program = new Program();
 		$data = $program->getInformationAboutPrograms();
@@ -13,17 +13,17 @@ class Login extends CI_Controller {
 		$this->load->template('login/index', $data);
 	}
 
-	public function autenticar() {
+	public function authenticate(){
 		
 		$login = $this->input->post("login");
-		$password = $this->input->post("senha");
+		$password = $this->input->post("password");
 
 		try{
 
 			$this->load->model("usuarios_model");
 			$user = $this->usuarios_model->validateUser($login, $password);
 			
-			if(sizeof($user) > 0){
+			if($user !== FALSE){
 				$this->load->model("module_model");
 				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
 				$registeredGroups = $this->module_model->getUserGroups($user['id']);
