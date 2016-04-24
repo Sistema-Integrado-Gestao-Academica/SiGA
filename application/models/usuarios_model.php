@@ -378,7 +378,11 @@ class Usuarios_model extends CI_Model {
 
 		$foundUser = $this->db->get()->row_array();
 		$foundUser = checkArray($foundUser);
-		$foundUser = $this->getUserDataForEmail($foundUser);
+	
+		if($foundUser !== FALSE){
+
+			$foundUser = $this->getUserDataForEmail($foundUser);
+		}
 
 		return $foundUser;
 	}

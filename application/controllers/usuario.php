@@ -558,8 +558,8 @@ class Usuario extends CI_Controller {
 			$email = $this->input->post("email");
 
 			$user = $this->usuarios_model->getUserByEmail($email);
-			$user = $this->generateNewPassword($user);
 			if($user !== FALSE){
+				$user = $this->generateNewPassword($user);
 				$email = new RestorePasswordEmail($user);
 				$success = $email->notify();
 				
