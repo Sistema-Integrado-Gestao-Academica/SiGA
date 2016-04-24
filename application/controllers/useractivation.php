@@ -56,10 +56,22 @@ class UserActivation extends CI_Controller {
 
 		$user = $user->getUserById($userId);
 
-		$data = array(
-			'user' => $user
-		);
+		$userIsActive = $user['active'] == 1;
 
-		$this->load->template("usuario/resent_email", $data);
+		if(!$userIsActive){
+
+			$data = array(
+				'user' => $user
+			);
+
+			$this->load->template("usuario/resent_email", $data);
+		}else{
+
+			$status = "danger";
+			$message = "Cadastro já confirmado, {$user['login']}.";
+
+			$this->session->set_flashdata($status, $message);
+			redirect("/");
+		}
 	}
 }
