@@ -34,6 +34,44 @@ class UserActivation_model extends CI_Model {
 		return $exists;
 	}
 
+	public function confirmRegister($userId, $activationKey){
+
+		$foundActivation = $this->get(array(
+			self::USER_COLUMN => $userId,
+			self::ACTIVATION_COLUMN => $activationKey
+		));
+
+		if($foundActivation !== FALSE){
+			
+			$confirmed = $this->activateUser($userId);
+
+			$this->activation_model->cleanUsedActivation($activationKey);
+		}else{
+			$confirmed = FALSE;
+		}
+
+		return $confirmed;
+	}
+
+	public function activateUser($userId){
+
+		$this->load->model("usuarios_model");
+
+		$this->db->where(Usuarios_model::USER_ID_COLUMN, $userId);
+		
+		$activated = $this->db->update(Usuarios_model::USER_TABLE, array(
+			Usuarios_model::ACTIVE_COLUMN => TRUE
+		));
+
+		return $activated;
+	}
+
+	public function cleanUsedActivation($activationKey){
+
+		$this->db->where(self::ACTIVATION_COLUMN, $activationKey);
+		$this->db->delete(self::ACTIVATION_TABLE);
+	}
+
 	private function get($attr, $value = FALSE, $unique = TRUE){
 
 		if(is_array($attr)){

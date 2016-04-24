@@ -4,6 +4,11 @@ require_once(APPPATH."/exception/LoginException.php");
 
 class Usuarios_model extends CI_Model {
 
+	const USER_TABLE = "users";
+
+	const USER_ID_COLUMN = "id";
+	const ACTIVE_COLUMN = "active";
+
 	public function save($user) {
 		$this->db->insert("users", $user);
 	}
@@ -384,7 +389,7 @@ class Usuarios_model extends CI_Model {
 	 * @return An array with the user data if exists or FALSE if does not
 	 */
 	public function getUserDataByLogin($login){
-		$this->db->select('id, name, email, login');
+		$this->db->select('id, name, email, login, active');
 		$this->db->where("login", $login);
 		$foundUser = $this->db->get("users")->row_array();
 

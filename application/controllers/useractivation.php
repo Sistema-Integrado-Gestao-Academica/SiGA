@@ -28,6 +28,23 @@ class UserActivation extends CI_Controller {
 	}
 
 	public function confirm(){
-		
+
+		$activationKey = $this->input->get("k");
+		$encryptedUserId = $this->input->get("u");
+
+		$userId = openssl_decrypt($encryptedUserId, "AES128", $activationKey);
+
+		$confirmed = $this->activation_model->confirmRegister($userId, $activationKey);
+
+		if($confirmed){
+			$status = "success";
+			$message = "Cadastro confirmado com sucesso!";
+		}else{
+			$status = "danger";
+			$message = "O link informado já foi utilizado e está inválido. Não foi possível confirmar o seu cadastro.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("/");
 	}
 }

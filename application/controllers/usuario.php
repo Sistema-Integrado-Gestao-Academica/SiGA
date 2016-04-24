@@ -746,7 +746,7 @@ class Usuario extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível realizar o cadastro solicitado. Tente novamente.";
 		}else{
-			
+
 			$emailSent = $this->sendConfirmationEmail($savedUser, $activation);
 
 			if($emailSent){
@@ -754,9 +754,7 @@ class Usuario extends CI_Controller {
 				$message = "{$savedUser['login']}, um email foi enviado para \"{$savedUser['email']}\" para você confirmar seu cadastro no sistema.";
 			}else{
 				$status = "danger";
-				$message = "{$savedUser['login']}, não foi possível enviar o email para você confirmar seu cadastro no sistema.";
-
-				// rollback
+				$message = "{$savedUser['login']}, não foi possível enviar o email para você confirmar seu cadastro no sistema. Cheque o email informado e tente novamente.";
 			}
 		}
 

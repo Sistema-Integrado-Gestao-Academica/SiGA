@@ -6,7 +6,7 @@ require_once(APPPATH."/data_types/User.php");
 class Login extends CI_Controller {
 
 	public function index(){
-		
+
 		$program = new Program();
 		$data = $program->getInformationAboutPrograms();
 
@@ -24,24 +24,35 @@ class Login extends CI_Controller {
 			$user = $this->usuarios_model->validateUser($login, $password);
 			
 			if($user !== FALSE){
-				$this->load->model("module_model");
-				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
-				$registeredGroups = $this->module_model->getUserGroups($user['id']);
 
-				$userData = array(
-					'user' => $user,
-					'user_permissions' => $registeredPermissions,
-					'user_groups' => $registeredGroups
-				);
+				$userIsActive = $user['active'] == 1;
+				
+				if($userIsActive){
 
-				$this->session->set_userdata("current_user", $userData);
-				$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);				
+					$this->load->model("module_model");
+					$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
+					$registeredGroups = $this->module_model->getUserGroups($user['id']);
 
-				if(!$isATemporaryPassword){
+					$userData = array(
+						'user' => $user,
+						'user_permissions' => $registeredPermissions,
+						'user_groups' => $registeredGroups
+					);
+
+					$this->session->set_userdata("current_user", $userData);
+					$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);				
+
+					if(!$isATemporaryPassword){
+						redirect('/');
+					}
+					else{
+						redirect('usuario/changePassword');
+					}
+				}else{
+					$authenticationStatus = "danger";
+					$authenticationMessage = "Cadastro não confirmado. Um e-mail de confirmação foi enviado para o e-mail utilizado no cadastro.";
+					$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
 					redirect('/');
-				}
-				else{
-					redirect('usuario/changePassword');
 				}
 
 				
