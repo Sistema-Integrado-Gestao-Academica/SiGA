@@ -383,7 +383,7 @@ class Usuarios_model extends CI_Model {
 	 * @param $login - String with the user login
 	 * @return An array with the user data if exists or FALSE if does not
 	 */
-	private function getUserDataByLogin($login){
+	public function getUserDataByLogin($login){
 		$this->db->select('id, name, email, login');
 		$this->db->where("login", $login);
 		$foundUser = $this->db->get("users")->row_array();

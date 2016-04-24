@@ -15,7 +15,7 @@ class SecretaryEmailNotification extends EmailNotification{
 
 	public function __construct($user, $quantityOfGuestUsers, $quantityOfDocumentsRequest){
 		parent::__construct($user);
-		$this->setSubject();	
+		$this->setSubject();
         $this->setGuestUsers($quantityOfGuestUsers);
         $this->setDocumentsRequest($quantityOfDocumentsRequest);
         $this->setMessage();

@@ -6,7 +6,7 @@ require_once(APPPATH."/data_types/User.php");
 class Login extends CI_Controller {
 
 	public function index(){
-
+		
 		$program = new Program();
 		$data = $program->getInformationAboutPrograms();
 

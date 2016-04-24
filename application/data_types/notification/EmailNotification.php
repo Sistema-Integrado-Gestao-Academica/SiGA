@@ -96,7 +96,7 @@ class EmailNotification extends Notification{
 
 	}
 
-		public function getSenderName(){
+	public function getSenderName(){
 		return $this->senderName;
 	}
 

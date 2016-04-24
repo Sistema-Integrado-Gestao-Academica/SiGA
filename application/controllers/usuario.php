@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('useractivation.php');
 require_once('course.php');
 require_once('module.php');
 require_once('semester.php');
@@ -701,29 +702,60 @@ class Usuario extends CI_Controller {
 			$password = md5($this->input->post("password"));
 
 			$user = array(
-				'name'     => $name,
-				'cpf'      => $cpf,
-				'email'    => $email,
-				'login'    => $login,
-				'password' => $password
+				'name'       => $name,
+				'cpf'        => $cpf,
+				'email'      => $email,
+				'login'      => $login,
+				'password' 	 => $password,
+				'active' => 0
 			);
 
 			$userExists = $this->usuarios_model->verifyIfUserExists($user);
-			if ($userExists) {
+			if($userExists){
 				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
 				redirect("register");
 			} 
-			else {
-				$this->usuarios_model->save($user);
-				$this->usuarios_model->saveGroup($user, $group);
-				
-				$this->session->set_flashdata("success", "Usuário \"{$user['login']}\" cadastrado com sucesso");
-				redirect("/");
+			else{
+
+				$this->registerUser($user, $group);
 			}
 		}
 		else{
 			$this->register();
 		}
+	}
+
+	private function registerUser($user, $group){
+
+		$userActivation = new UserActivation();
+
+		// Starting transaction
+		$this->db->trans_start();
+
+		$this->usuarios_model->save($user);
+		$this->usuarios_model->saveGroup($user, $group);
+		$savedUser = $this->usuarios_model->getUserDataByLogin($user['login']);
+
+		$activation = $userActivation->generateActivation($savedUser);
+
+		$this->sendConfirmationEmail($savedUser, $activation);
+		
+		// Finishing transaction
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() === FALSE){
+
+		}else{
+			$this->session->set_flashdata("success", "Usuário \"{$user['login']}\" cadastrado com sucesso");
+			redirect("/");
+		}
+	}
+
+	private function sendConfirmationEmail($user, $activation){
+
+		$userEmail = $user['email'];
+
+
 	}
 
 	public function updateProfile(){
