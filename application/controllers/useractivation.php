@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once "usuario.php";
+
 class UserActivation extends CI_Controller {
 
 	const MODEL_NAME = "useractivation_model";
@@ -46,5 +48,18 @@ class UserActivation extends CI_Controller {
 
 		$this->session->set_flashdata($status, $message);
 		redirect("/");
+	}
+
+	public function resentEmail($userId){
+
+		$user = new Usuario();
+
+		$user = $user->getUserById($userId);
+
+		$data = array(
+			'user' => $user
+		);
+
+		$this->load->template("usuario/resent_email", $data);
 	}
 }

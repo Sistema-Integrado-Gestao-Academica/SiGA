@@ -49,6 +49,7 @@ $route['cadastro'] = 'usuario/formulario';
 $route['register'] = 'usuario/register';
 $route['register_user'] = 'usuario/newUser';
 $route['confirm_register'] = 'useractivation/confirm';
+$route['resent_confirmation_email/(:num)'] = 'useractivation/resentEmail/$1/';
 $route['configuracoes'] = 'settings';
 $route['cursos'] = 'course/index';
 $route['departamentos'] = 'departamento/formulario';

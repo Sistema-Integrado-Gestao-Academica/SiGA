@@ -582,7 +582,7 @@ class Usuarios_model extends CI_Model {
 	
 	public function getUserById($id_user){
 		
-		$this->db->select('id, name, email');
+		$this->db->select('id, name, email, login');
 		
 		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
 
