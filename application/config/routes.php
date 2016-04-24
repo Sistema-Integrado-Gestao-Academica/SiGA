@@ -48,6 +48,7 @@ $route['logout'] = 'login/logout';
 $route['cadastro'] = 'usuario/formulario';
 $route['register'] = 'usuario/register';
 $route['register_user'] = 'usuario/newUser';
+$route['confirm_register'] = 'useractivation/confirm';
 $route['configuracoes'] = 'settings';
 $route['cursos'] = 'course/index';
 $route['departamentos'] = 'departamento/formulario';

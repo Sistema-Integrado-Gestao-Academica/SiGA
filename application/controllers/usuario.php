@@ -10,6 +10,7 @@ require_once('request.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
+require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
 require_once(APPPATH."/data_types/User.php");
 
 class Usuario extends CI_Controller {
@@ -737,25 +738,44 @@ class Usuario extends CI_Controller {
 		$savedUser = $this->usuarios_model->getUserDataByLogin($user['login']);
 
 		$activation = $userActivation->generateActivation($savedUser);
-
-		$this->sendConfirmationEmail($savedUser, $activation);
 		
 		// Finishing transaction
 		$this->db->trans_complete();
 
 		if($this->db->trans_status() === FALSE){
-
+			$status = "danger";
+			$message = "Não foi possível realizar o cadastro solicitado. Tente novamente.";
 		}else{
-			$this->session->set_flashdata("success", "Usuário \"{$user['login']}\" cadastrado com sucesso");
-			redirect("/");
+			
+			$emailSent = $this->sendConfirmationEmail($savedUser, $activation);
+
+			if($emailSent){
+				$status = "success";
+				$message = "{$savedUser['login']}, um email foi enviado para \"{$savedUser['email']}\" para você confirmar seu cadastro no sistema.";
+			}else{
+				$status = "danger";
+				$message = "{$savedUser['login']}, não foi possível enviar o email para você confirmar seu cadastro no sistema.";
+
+				// rollback
+			}
 		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("/");
 	}
 
 	private function sendConfirmationEmail($user, $activation){
 
-		$userEmail = $user['email'];
+		$id = $user['id'];
+		$name = $user['name'];
+		$email = $user['email'];
+		$user = new User($id, $name, FALSE, $email);
 
+		$email = new ConfirmSignUpEmail($user, $activation);
 
+		$sent = $email->notify();
+
+		return $sent;
 	}
 
 	public function updateProfile(){
@@ -955,26 +975,6 @@ class Usuario extends CI_Controller {
 		$sessionData['user']['password'] = $user->getPassword();
 		
 		return $sessionData;
-	}
-
-	/**
-	 * Join the id's and names of users into an array as key => value.
-	 * Used to the update course form
-	 * @param $useres - The array that contains the tuples of users
-	 * @return An array with the id's and users names as id => name
-	 */
-	private function turnUsersToArray($users){
-		// Quantity of course types registered
-		$quantity_of_course_types = sizeof($users);
-
-		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
-			$keys[$cont] = $users[$cont]['id'];
-			$values[$cont] = ucfirst($users[$cont]['name']);
-		}
-
-		$form_users = array_combine($keys, $values);
-
-		return $form_users;
 	}
 
 }

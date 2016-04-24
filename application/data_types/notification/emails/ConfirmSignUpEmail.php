@@ -6,38 +6,49 @@ require_once APPPATH."/exception/EmailNotificationException.php";
 
 class ConfirmSignUpEmail extends EmailNotification{
 
-    const SUBJECT = "Confirmação de cadastro no ".EmailConstants::SENDER_NAME;
+    const SUBJECT = "Confirmação de cadastro no ";
+    const CONFIRM_PAGE = "confirm_register";
 
-	public function __construct($user){
+    private $activation;
+
+	public function __construct($user, $activation){
 		parent::__construct($user);
+        $this->setActivation($activation);
+        $this->setSubject();    
+        $this->setMessage();
 	}
 
-	protected function setSubject(){
-        $this->subject = self::SUBJECT; 
+	private function setSubject(){
+        $this->subject = self::SUBJECT.EmailConstants::SENDER_NAME;
 	}
 
-	protected function setMessage(){ 
+	private function setMessage(){ 
         
         $user = $this->user();
         $userName = $user->getName();
-
-        /**
-            Criar atributo activation na classe User
-            
-            Salvar o activation gerado na hora do cadastro
-    
-            Montar o link de confirmação
-
-            Enviar o email de confirmação
-
-            Fazer página de recebimento do link de confirmação
-        */
-
-        // $activation = $user->activation();
+        $userId = $user->getId();
+        $activation = $this->activation;
+        $encryptedUser = openssl_encrypt($userId, "AES128", $activation);
 
         $message = "Olá, <b>{$userName}</b>. <br>";
-        $message = $message."Para efetivar seu cadastro no sistema, clique no link abaixo:";
+        $message .= "Para confirmar seu cadastro no sistema, clique no link abaixo: <br><br>";
+        $message .= "<a href='";
+        $message .= $this->getSiteUrl()."?k={$activation}&u={$encryptedUser}";
+        $message .= "'>Confirmar cadastro no ".EmailConstants::SENDER_NAME.".</a>";
 
         $this->message = $message;
+    }
+
+    private function setActivation($activation){
+        $this->activation = $activation;
+    }
+
+    private function getSiteUrl(){
+
+        $ci =& get_instance();
+        $ci->load->helper('url');
+        $siteUrl = site_url(self::CONFIRM_PAGE);
+
+        return $siteUrl;
     }
 }

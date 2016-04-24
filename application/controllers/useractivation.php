@@ -26,4 +26,8 @@ class UserActivation extends CI_Controller {
 
 		return $activation;
 	}
+
+	public function confirm(){
+		
+	}
 }
