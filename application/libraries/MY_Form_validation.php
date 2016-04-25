@@ -56,4 +56,92 @@ class MY_Form_validation extends CI_Form_validation {
     }
 
 
+    function verify_if_cpf_no_exists($cpf){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('verify_if_cpf_no_exists', 'Já existe um usuário com o %s informado.');
+
+        $CI->db->select('cpf');
+        $foundUsers = $CI->db->get('users')->result_array();
+
+        $foundUsers = checkArray($foundUsers);
+
+        $cpfNoExists = TRUE;
+
+        if($foundUsers !== FALSE){
+
+            foreach ($foundUsers as $user) {
+                
+                $userCpf = $user['cpf'];
+                if($userCpf == $cpf){
+                    $cpfNoExists = FALSE;
+                    break;
+                }   
+
+            }
+        }
+
+        return $cpfNoExists;
+
+    }
+
+    function verify_if_login_no_exists($login){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('verify_if_login_no_exists', 'Já existe um usuário com o %s informado.');
+
+        $CI->db->select('login');
+        $foundUsers = $CI->db->get('users')->result_array();
+
+        $foundUsers = checkArray($foundUsers);
+
+        $loginNoExists = TRUE;
+
+        if($foundUsers !== FALSE){
+
+            foreach ($foundUsers as $user) {
+                
+                $userLogin = $user['login'];
+                if($userLogin == $login){
+                    $loginNoExists = FALSE;
+                    break;
+                }   
+
+            }
+        }
+
+        return $loginNoExists;
+    }
+
+    function verify_if_email_no_exists($email){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('verify_if_email_no_exists', 'Já existe um usuário com o %s informado.');
+
+        $CI->db->select('email');
+        $foundUsers = $CI->db->get('users')->result_array();
+
+        $foundUsers = checkArray($foundUsers);
+
+        $emailNoExists = TRUE;
+
+        if($foundUsers !== FALSE){
+
+
+            foreach ($foundUsers as $user) {
+                
+                $userEmail = $user['email'];
+                if($userEmail == $email){
+                    $emailNoExists = FALSE;
+                    break;
+                }   
+
+            }
+        }
+
+        return $emailNoExists;
+    }
 }
