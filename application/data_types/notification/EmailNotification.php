@@ -5,7 +5,7 @@ require_once APPPATH."/constants/EmailConstants.php";
 require_once APPPATH."/constants/EmailSenderData.php";
 require_once("Notification.php");
 
-class EmailNotification extends Notification{
+abstract class EmailNotification extends Notification{
 
 	// Error messages 
 	const EMPTY_NAME = "O nome não pode ser nulo nem vazio.";
@@ -27,7 +27,12 @@ class EmailNotification extends Notification{
 		$this->setSenderEmail(EmailConstants::SENDER_EMAIL);
 		$this->setReceiverName($user->getName());
 		$this->setReceiverEmail($user->getEmail());
+		$this->setSubject();
+        $this->setMessage();
 	}
+
+	protected abstract function setMessage();
+	protected abstract function setSubject();
 
 	private function setSenderName($name){
 		

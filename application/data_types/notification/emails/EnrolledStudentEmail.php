@@ -12,18 +12,16 @@ class EnrolledStudentEmail extends EmailNotification{
     private $course;
 
 	public function __construct($user, $course){
-		parent::__construct($user);
-		$this->setSubject();	
         $this->setCourse($course);
-        $this->setMessage();
+        parent::__construct($user);
     }
 
-    private function setSubject(){
+    protected function setSubject(){
 
         $this->subject = self::STUDENT_ENROLLED_SUBJECT; 
     }
 
-    private function setMessage(){ 
+    protected function setMessage(){ 
         
         $user = $this->user();
         $course = $this->getCourse();

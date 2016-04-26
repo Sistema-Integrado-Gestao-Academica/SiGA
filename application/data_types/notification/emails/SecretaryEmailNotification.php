@@ -14,19 +14,17 @@ class SecretaryEmailNotification extends EmailNotification{
     private $documentsRequest;
 
 	public function __construct($user, $quantityOfGuestUsers, $quantityOfDocumentsRequest){
-		parent::__construct($user);
-		$this->setSubject();
         $this->setGuestUsers($quantityOfGuestUsers);
         $this->setDocumentsRequest($quantityOfDocumentsRequest);
-        $this->setMessage();
+        parent::__construct($user);
 	}
 
-	private function setSubject(){
+	protected function setSubject(){
 
         $this->subject = self::SECRETARY_SUBJECT; 
 	}
 
-	private function setMessage(){ 
+	protected function setMessage(){ 
         
         $user = $this->user();
         $userName = $user->getName();

@@ -12,17 +12,15 @@ class ConfirmSignUpEmail extends EmailNotification{
     private $activation;
 
 	public function __construct($user, $activation){
-		parent::__construct($user);
         $this->setActivation($activation);
-        $this->setSubject();    
-        $this->setMessage();
+        parent::__construct($user);
 	}
 
-	private function setSubject(){
+	protected function setSubject(){
         $this->subject = self::SUBJECT.EmailConstants::SENDER_NAME;
 	}
 
-	private function setMessage(){ 
+	protected function setMessage(){ 
         
         $user = $this->user();
         $userName = $user->getName();

@@ -685,14 +685,8 @@ class Usuario extends CI_Controller {
 	}
 
 	public function newUser() {
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("name", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
-		$this->form_validation->set_rules("password", "Senha", "required");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
+		
+		$success = $this->validateUserData();
 
 		if($success){
 			$name  = $this->input->post("name");
@@ -717,13 +711,26 @@ class Usuario extends CI_Controller {
 				redirect("register");
 			} 
 			else{
-
 				$this->registerUser($user, $group);
 			}
 		}
 		else{
 			$this->register();
 		}
+	}
+
+	private function validateUserData(){
+		
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("name", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
+		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
+		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
+		$this->form_validation->set_rules("password", "Senha", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
 	}
 
 	private function registerUser($user, $group){

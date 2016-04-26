@@ -8,16 +8,14 @@ class RestorePasswordEmail extends EmailNotification{
 
 	public function __construct($user){
 		parent::__construct($user);
-		$this->setSubject();	
-		$this->setMessage();
 	}
 
-	private function setSubject(){
+	protected function setSubject(){
 
         $this->subject = self::RESTORE_PASSWORD_SUBJECT; 
 	}
 
-	private function setMessage(){ 
+	protected function setMessage(){ 
         
         $user = $this->user();
         $newPassword = $user->getPassword();
