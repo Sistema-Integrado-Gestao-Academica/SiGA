@@ -4,6 +4,7 @@
 echo form_open("usuario/updateProfile");
 
 echo form_hidden('id', $user->getId());
+echo form_hidden('oldEmail', $user->getEmail());
 
 $value = $user->getName();
 echo form_label("Nome", "name");

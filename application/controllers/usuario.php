@@ -686,51 +686,46 @@ class Usuario extends CI_Controller {
 
 	public function newUser() {
 		
-		$success = $this->validateUserData();
+		$name  = $this->input->post("name");
+		$cpf   = $this->input->post("cpf");
+		$email = $this->input->post("email");
+		$group = $this->input->post("userGroup");
+		$login = $this->input->post("login");
+		$password = md5($this->input->post("password"));
 
+		$user = array(
+			'name'       => $name,
+			'cpf'        => $cpf,
+			'email'      => $email,
+			'login'      => $login,
+			'password' 	 => $password,
+			'active' => 0
+		);
+
+		$success = $this->validateRegisterUserFields();
 		if($success){
-			$name  = $this->input->post("name");
-			$cpf   = $this->input->post("cpf");
-			$email = $this->input->post("email");
-			$group = $this->input->post("userGroup");
-			$login = $this->input->post("login");
-			$password = md5($this->input->post("password"));
-
-			$user = array(
-				'name'       => $name,
-				'cpf'        => $cpf,
-				'email'      => $email,
-				'login'      => $login,
-				'password' 	 => $password,
-				'active' => 0
-			);
-
-			$userExists = $this->usuarios_model->verifyIfUserExists($user);
-			if($userExists){
-				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
-				redirect("register");
-			} 
-			else{
-				$this->registerUser($user, $group);
-			}
-		}
+			$this->registerUser($user, $group);
+		} 
 		else{
+			
 			$this->register();
 		}
+
 	}
 
-	private function validateUserData(){
+	private function validateRegisterUserFields(){
 		
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("name", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
+		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf|verify_if_cpf_no_exists");
+		$this->form_validation->set_rules("email", "E-mail", "required|valid_email|verify_if_email_no_exists");
+		$this->form_validation->set_rules("login", "Login", "required|alpha_dash|verify_if_login_no_exists");
 		$this->form_validation->set_rules("password", "Senha", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
 		return $success;
+
 	}
 
 	private function registerUser($user, $group){
@@ -785,15 +780,7 @@ class Usuario extends CI_Controller {
 
 	public function updateProfile(){
 		
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("name", "Nome", "trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("email", "E-mail", "valid_email");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
-
-
-		if ($success) {
-			$user = $this->getAccountForm();
+		$user = $this->getAccountForm();
 			if(!is_null($user)){
 
 				$updated = $this->usuarios_model->update($user);
@@ -807,16 +794,25 @@ class Usuario extends CI_Controller {
 				else if (!$updated){
 					$this->session->set_flashdata("danger", "Os dados não foram alterados");
 				}
+				redirect('usuario/profile');
 			}
 			else{
-				$this->session->set_flashdata("danger", "Email já cadastrado no sistema.");
+				
+				$this->profile();
 			}
+	}
 
-		} 
-		else {
-			$this->session->set_flashdata("danger", "Dados inválidos!");
+	private function validateEmailField($oldEmail, $newEmail){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("name", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		
+		if($oldEmail != $newEmail){
+			$this->form_validation->set_rules("email", "E-mail", "valid_email|verify_if_email_no_exists");
 		}
-		redirect('usuario/profile');
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
 	}
 
 	public function remove() {
@@ -923,6 +919,7 @@ class Usuario extends CI_Controller {
 		
 		$id = $this->input->post("id");
 		$name = $this->input->post("name");
+		$oldEmail = $this->input->post("oldEmail");
 		$email = $this->input->post("email");
 		$homePhone = $this->input->post("home_phone");
 		$cellPhone = $this->input->post("cell_phone");
@@ -930,9 +927,9 @@ class Usuario extends CI_Controller {
 		$new_password = md5($this->input->post("new_password"));
 		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
 
-		$emailExists = $this->usuarios_model->verifyIfEmailExistsForAnotherUser($email, $id);
+		$success = $this->validateEmailField($oldEmail, $email);
 
-		if(!$emailExists){
+		if($success){
 
 			$user = $this->usuarios_model->getObjectUser($id);
 			$login = $user->getLogin();
@@ -961,7 +958,7 @@ class Usuario extends CI_Controller {
 				$cellPhone = $user->getCellPhone();
 			}
 			
-			$user = new User($id, $name, $cpf, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
+			$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 		}
 		else{
 			$user = NULL;
