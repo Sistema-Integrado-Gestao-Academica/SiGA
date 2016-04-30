@@ -112,6 +112,11 @@ class DocumentRequest extends CI_Controller {
 
 				$wasSaved = $this->saveDocumentRequest($requestData);
 
+				/**
+					sendNotification
+					$this->navbarnotification->documentRequestNotification
+				 */
+
 				if($wasSaved){
 					$status = "success";
 					$message = "Solicitação de documento enviada com sucesso.";
@@ -135,6 +140,15 @@ class DocumentRequest extends CI_Controller {
 		$this->load->model('documentrequest_model', "doc_request_model");
 
 		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
+
+		$docRequest = new DocumentConstants();
+		$types = $docRequest->getAllTypes();
+		$requestedDoc = $types[$documentRequestData['document_type']];
+
+		$student = $documentRequestData["id_student"];
+		$course = $documentRequestData["id_course"];
+
+		$this->navbarnotification->documentRequestNotification($student, $course, $requestedDoc);
 
 		return $wasSaved;
 	}

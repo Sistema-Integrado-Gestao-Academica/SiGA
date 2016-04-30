@@ -15,11 +15,11 @@ abstract class BarNotification extends Notification{
 	protected $seen;
 	protected $type;
 
-	public function __construct($user, $content, $id = FALSE, $seen = FALSE){
+	public function __construct($user, $id = FALSE, $seen = FALSE, $content = FALSE){
 		parent::__construct($user);
 		$this->setId($id);
-		$this->setContent($content);
 		$this->setSeen($seen);
+		$this->setContent($content);
 	}
 
 	public abstract function type();
@@ -54,12 +54,21 @@ abstract class BarNotification extends Notification{
 		}
 	}
 
-	// Default setter. Can be overrided
 	protected function setContent($content){
-		if(!is_null($content) && is_string($content) && !empty($content)){
-			$this->content = $content;
+
+		if($content !== FALSE){
+
+			if(!is_null($content) && is_string($content) && !empty($content)){
+				$this->content = $content;
+			}else{
+				throw new NotificationException(self::INVALID_CONTENT);
+			}
 		}else{
-			throw new NotificationException(self::INVALID_CONTENT);
+			$this->content = $content;
+			/**
+			 * Nothing to do. When content is not false is because is coming from database,
+			 * Otherwise it is automatically generated on decorator classes.
+			 */ 
 		}
 	}
 

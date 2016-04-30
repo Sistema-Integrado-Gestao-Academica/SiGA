@@ -11,10 +11,15 @@
 require_once("TestCase.php");
 
 require_once(APPPATH."/data_types/User.php");
+
 require_once(APPPATH."/data_types/notification/Notification.php");
 require_once(APPPATH."/data_types/notification/BarNotification.php");
 require_once(APPPATH."/data_types/notification/RegularNotification.php");
 require_once(APPPATH."/data_types/notification/ActionNotification.php");
+
+// require_once(APPPATH."/data_types/notification/navbar/BarNotificationDecorator.php");
+require_once(APPPATH."/data_types/notification/navbar/DocumentRequestNotification.php");
+
 require_once(APPPATH."/exception/NotificationException.php");
 
 class BarNotification_Test extends TestCase{
@@ -40,7 +45,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -60,7 +65,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -80,7 +85,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -100,7 +105,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -120,7 +125,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -140,7 +145,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -160,7 +165,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -181,7 +186,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -201,7 +206,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -221,7 +226,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -241,7 +246,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -262,7 +267,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -282,7 +287,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -302,7 +307,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -322,7 +327,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -342,7 +347,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -362,7 +367,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -382,7 +387,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -402,7 +407,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -422,7 +427,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -431,188 +436,6 @@ class BarNotification_Test extends TestCase{
         $test_name = "Test if instantiate with a valid seen value FALSE";
 
         $this->unit->run($notification->seen(), "is_false", $test_name, $notes);
-    }
-
-// Content tests
-
-    public function shouldInstantiateWithValidStringContent(){
-
-        $user = $this->createTestUser();
-        $content = "Hi John Doe!";
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a valid content '".$content."'.";
-
-        $this->unit->run($content, $notification->content(), $test_name, $notes);
-    }
-
-    public function shouldInstantiateWithValidStringWithNumbersContent(){
-
-        $user = $this->createTestUser();
-        $content = "Hi John Doe, you have 3 new notifications!";
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-        
-        $test_name = "Test if instantiate with a valid content '".$content."'.";
-
-        $this->unit->run($content, $notification->content(), $test_name, $notes);
-    }
-
-    public function shouldInstantiateWithValidStringWithHtmlCodeContent(){
-
-        $user = $this->createTestUser();
-        $content = "<b><i class='fa fa-list'></i> <span></span>Hi John Doe, you have 3 new notifications!</b>";
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a valid HTML code content '".$content."'.";
-
-        $this->unit->run($content, $notification->content(), $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidNullContent(){
-
-        $user = $this->createTestUser();
-        $content = NULL;
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a invalid NULL content";
-
-        $this->unit->run($notification, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidFalseContent(){
-
-        $user = $this->createTestUser();
-        $content = FALSE;
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a invalid FALSE content";
-
-        $this->unit->run($notification, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidTrueContent(){
-
-        $user = $this->createTestUser();
-        $content = TRUE;
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a invalid TRUE content";
-
-        $this->unit->run($notification, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidBlankContent(){
-
-        $user = $this->createTestUser();
-        $content = "";
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a invalid blank content";
-
-        $this->unit->run($notification, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidObjectContent(){
-
-        $user = $this->createTestUser();
-        $content = $user;
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a invalid object content";
-
-        $this->unit->run($notification, "is_false", $test_name, $notes);
-    }
-
-    public function shouldNotInstantiateWithInvalidNumberContent(){
-
-        $user = $this->createTestUser();
-        $content = 1231;
-        $id = "1";
-        $seen = FALSE;
-
-        $notes = "";
-        try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
-        }catch (NotificationException $e){
-            $notification = FALSE;
-            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-        }
-
-        $test_name = "Test if instantiate with a invalid number content";
-
-        $this->unit->run($notification, "is_false", $test_name, $notes);
     }
 
 // ActionNotification link tests
@@ -627,7 +450,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -648,7 +471,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -669,7 +492,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -690,7 +513,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -711,7 +534,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -732,7 +555,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -754,7 +577,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new RegularNotification($user, $content, $id, $seen);
+            $notification = new RegularNotification($user, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -775,7 +598,7 @@ class BarNotification_Test extends TestCase{
 
         $notes = "";
         try{
-            $notification = new ActionNotification($user, $content, $link, $id, $seen);
+            $notification = new ActionNotification($user, $link, $id, $seen);
         }catch (NotificationException $e){
             $notification = FALSE;
             $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
@@ -786,90 +609,53 @@ class BarNotification_Test extends TestCase{
         $this->unit->run(ActionNotification::class, $notification->type(), $test_name, $notes);
     }
 
-    // public function shouldSaveRegularNotification(){
+    public function shouldSaveRegularNotification(){
 
-    //     $user = $this->createTestUser();
-    //     $content = "As suas notificações funcionaram!";
-    //     $id = "1";
-    //     $seen = FALSE;
-    //     $link = "route_to_notification";
+        $user = $this->createTestUser();
+        $courseToNotify = 1;
+        $requestedDoc = "Declaração";
 
-    //     $notes = "";
-    //     try{
+        $notes = "";
+        try{
 
-    //         $this->load->library("navBarNotification", "", "notification");
+            $this->load->library("navBarNotification", "", "notification");
 
-    //         $notification = $this->notification->newRegularNotification($user, $content, $id, $seen);
-    //         // $notification->notify();
+            // Uncomment to test if creates a notification
+            // $this->notification->documentRequestNotification($user, $courseToNotify, $requestedDoc);
 
-    //         $saved = TRUE;
+            $saved = TRUE;
 
-    //     }catch (NotificationException $e){
-    //         $notification = FALSE;
-    //         $saved = FALSE;
-    //         $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-    //     }
+        }catch (NotificationException $e){
+            $notification = FALSE;
+            $saved = FALSE;
+            $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
+        }
 
-    //     $test_name = "Test if save notification";
+        $test_name = "Test if save notification";
 
-    //     $this->unit->run($saved, "is_true", $test_name, $notes);
-    // }
-
-    // public function shouldSaveActionNotification(){
-
-    //     $user = $this->createTestUser();
-    //     $content = "As suas notificações funcionaram!";
-    //     $id = "1";
-    //     $seen = FALSE;
-    //     $link = "route/2";
-
-    //     $notes = "";
-    //     try{
-
-    //         $notification = $this->navbarnotification->newActionNotification($user, $content, $link, $id, $seen);
-    //         // $notification->notify();
-
-    //         $saved = TRUE;
-
-    //     }catch (NotificationException $e){
-    //         $notification = FALSE;
-    //         $saved = FALSE;
-    //         $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
-    //     }
-
-    //     $test_name = "Test if save notification";
-
-    //     $this->unit->run($saved, "is_true", $test_name, $notes);
-    // }
+        $this->unit->run($saved, "is_true", $test_name, $notes);
+    }
 
     // public function shouldReturnNotifications(){
 
     //     $user = $this->createTestUser();
-    //     $content = "Hi John Doe!";
-    //     $id = "1";
-    //     $seen = FALSE;
-    //     $link = "route_to_notification";
 
     //     $notes = "";
     //     try{
-    //         $notification = new ActionNotification($user, $content, $link, $id, $seen);
 
     //         $this->load->library("navBarNotification", "", "notification");
 
     //         $notifications = $this->notification->getUserNotifications($user);
-
-    //         foreach ($notifications["notifications"] as $n){
-    //             echo $n->id();
-    //         }
 
     //     }catch (NotificationException $e){
     //         $notifications = FALSE;
     //         $notes = "<b>Thrown Exception:</b> <i>".get_class($e)."</i> - ".$e->getMessage();
     //     }
 
-    //     $test_name = "Test if save notification";
+    //     $test_name = "Test if get notifications";
 
-    //     $this->unit->run($notifications, "is_array", $test_name, $notes);
+    //     $this->unit->run($notifications["notifications"], "is_array", $test_name, $notes);
+    //     $this->unit->run(empty($notifications["notifications"]), "is_false", $test_name." and is not empty", $notes);
     // }
 
 }

@@ -4,8 +4,8 @@ require_once("BarNotification.php");
 
 class RegularNotification extends BarNotification{
 
-	public function __construct($user, $content, $id = FALSE, $seen = FALSE){
-		parent::__construct($user, $content, $id, $seen);
+	public function __construct($user, $id = FALSE, $seen = FALSE, $content = FALSE){
+		parent::__construct($user, $id, $seen, $content);
 	}
 
 	public function type(){

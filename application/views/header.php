@@ -118,7 +118,7 @@
                                     				echo "<a id='{$notificationLinkId}' onclick='setNotificationSeen({$notificationId});'>";
                                     			}
 
-                                    			echo "<i class='fa fa-bell info'></i>";
+                                    			// echo "<i class='fa fa-bell info'></i>";
                                     			echo $notification->content();
 
                                     			echo "</a>";
