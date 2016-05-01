@@ -154,6 +154,7 @@ if ( ! function_exists('load_class'))
 		// then in the native system/libraries folder
 		foreach (array(APPPATH, BASEPATH) as $path)
 		{
+
 			if (file_exists($path.$directory.'/'.$class.'.php'))
 			{
 				$name = 'CI_'.$class;
@@ -181,6 +182,7 @@ if ( ! function_exists('load_class'))
 		// Did we find the class?
 		if ($name === FALSE)
 		{
+			var_dump($path.$directory.'/'.$class.'.php');
 			// Note: We use exit() rather than show_error() in order to avoid a
 			// self-referencing loop with the Exceptions class
 			set_status_header(503);
@@ -190,6 +192,7 @@ if ( ! function_exists('load_class'))
 
 		// Keep track of what we just loaded
 		is_loaded($class);
+		var_dump($class);
 
 		$_classes[$class] = isset($param)
 			? new $name($param)

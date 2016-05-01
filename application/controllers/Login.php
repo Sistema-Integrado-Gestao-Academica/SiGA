@@ -9,6 +9,7 @@ require_once(APPPATH."/controllers/security/session/SessionManager.php");
 class Login extends CI_Controller {
 
 	public function index(){
+		// $this->load->library('session');
 
 		$program = new Program();
 		$data = $program->getInformationAboutPrograms();

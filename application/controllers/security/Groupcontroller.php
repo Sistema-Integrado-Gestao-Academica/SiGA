@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once("permissioncontroller.php");
+require_once("Permissioncontroller.php");
 require_once(APPPATH."/data_types/security/Group.php");
 require_once(APPPATH."/exception/security/GroupException.php");
 

@@ -1,6 +1,6 @@
 <?php
 
-require_once(APPPATH."/controllers/security/groupcontroller.php");
+require_once(APPPATH."/controllers/security/Groupcontroller.php");
 require_once(APPPATH."/exception/security/GroupException.php");
 
 class SessionManager extends CI_Controller{
