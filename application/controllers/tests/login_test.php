@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'/controllers/login.php');
+require_once(APPPATH.'/controllers/Login.php');
 class Login_Test extends CI_Controller{
 
 	public function __construct(){

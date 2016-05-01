@@ -2,7 +2,7 @@
 /**
  *  Contains the basic data to the payment form
  */
-require_once(APPPATH."/controllers/payment.php");
+require_once(APPPATH."/controllers/Payment.php");
 
 $userTypes = array(
     "Interno" => "Interno",

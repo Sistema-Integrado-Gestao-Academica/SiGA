@@ -1,16 +1,16 @@
 <?php
 
-require_once(APPPATH."/controllers/schedule.php");
-require_once(APPPATH."/controllers/request.php");
-require_once(APPPATH."/controllers/course.php");
-require_once(APPPATH."/controllers/program.php");
-require_once(APPPATH."/controllers/offer.php");
-require_once(APPPATH."/controllers/discipline.php");
-require_once(APPPATH."/controllers/syllabus.php");
-require_once(APPPATH."/controllers/usuario.php");
-require_once(APPPATH."/controllers/module.php");
-require_once(APPPATH."/controllers/mastermind.php");
-require_once(APPPATH."/controllers/coordinator.php");
+require_once(APPPATH."/controllers/Schedule.php");
+require_once(APPPATH."/controllers/Request.php");
+require_once(APPPATH."/controllers/Course.php");
+require_once(APPPATH."/controllers/Program.php");
+require_once(APPPATH."/controllers/Offer.php");
+require_once(APPPATH."/controllers/Discipline.php");
+require_once(APPPATH."/controllers/Syllabus.php");
+require_once(APPPATH."/controllers/Usuario.php");
+require_once(APPPATH."/controllers/Module.php");
+require_once(APPPATH."/controllers/Mastermind.php");
+require_once(APPPATH."/controllers/Coordinator.php");
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(APPPATH."/constants/GroupConstants.php");

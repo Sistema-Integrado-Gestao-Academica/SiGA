@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/controllers/staff.php");
+require_once(APPPATH."/controllers/Staff.php");
 
 class PaymentAjax extends CI_Controller {
 

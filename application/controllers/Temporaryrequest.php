@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('request.php');
-require_once('offer.php');
-require_once('discipline.php');
-require_once('semester.php');
-require_once('schedule.php');
+require_once('Request.php');
+require_once('Offer.php');
+require_once('Discipline.php');
+require_once('Semester.php');
+require_once('Schedule.php');
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 

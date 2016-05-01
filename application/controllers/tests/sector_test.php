@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'/controllers/setor.php');
+require_once(APPPATH.'/controllers/Setor.php');
 class Sector_Test extends CI_Controller{
 
 	public function __construct(){

@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'/controllers/module.php');
+require_once(APPPATH.'/controllers/Module.php');
 class Module_Test extends CI_controller{
 
 	public function __construct(){

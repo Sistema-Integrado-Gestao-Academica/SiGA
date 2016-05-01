@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/controllers/course.php");
-require_once(APPPATH."/controllers/discipline.php");
+require_once(APPPATH."/controllers/Course.php");
+require_once(APPPATH."/controllers/Discipline.php");
 
 class Syllabus_model extends CI_Model {
 

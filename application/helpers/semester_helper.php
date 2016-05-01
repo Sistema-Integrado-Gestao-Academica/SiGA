@@ -1,6 +1,6 @@
 <?php 
 
-require_once(APPPATH."/controllers/semester.php");
+require_once(APPPATH."/controllers/Semester.php");
 
 function printCurrentSemester(){
 

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once("usuario.php");
+require_once("Usuario.php");
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 

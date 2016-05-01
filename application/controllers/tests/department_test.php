@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'/controllers/departamento.php');
+require_once(APPPATH.'/controllers/Departamento.php');
 class Department_Test extends CI_Controller{
 
 	public function __construct(){

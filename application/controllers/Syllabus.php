@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('discipline.php');
+require_once('Discipline.php');
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Syllabus extends CI_Controller {

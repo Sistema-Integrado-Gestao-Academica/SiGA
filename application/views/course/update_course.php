@@ -1,7 +1,7 @@
 <h2 class="principal">Cursos</h2>
 <input id="current_course" type="hidden" value="<?=$course['id_course']?>">
 <?php
-require_once APPPATH.'controllers/usuario.php';
+require_once APPPATH.'controllers/Usuario.php';
 $user = new Usuario();
 
 $hidden = array(

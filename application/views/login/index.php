@@ -1,6 +1,6 @@
 <?php
 
-require_once APPPATH.'controllers/capesavaliation.php';
+require_once APPPATH.'controllers/Capesavaliation.php';
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 $session = SessionManager::getInstance();

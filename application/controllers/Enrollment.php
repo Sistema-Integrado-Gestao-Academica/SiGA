@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once("course.php");
-require_once("module.php");
+require_once("Course.php");
+require_once("Module.php");
 
 require_once(APPPATH."/data_types/StudentRegistration.php");
 require_once(APPPATH."/exception/StudentRegistrationException.php");

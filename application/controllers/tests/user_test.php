@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'/controllers/usuario.php');
+require_once(APPPATH.'/controllers/Usuario.php');
 class User_Test extends CI_Controller{
 
 	public function __construct(){

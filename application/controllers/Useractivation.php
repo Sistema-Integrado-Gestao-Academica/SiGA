@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once "usuario.php";
+require_once "Usuario.php";
 
 class UserActivation extends CI_Controller {
 

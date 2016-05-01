@@ -1,8 +1,8 @@
 <?php
 
-require_once('syllabus.php');
-require_once('offer.php');
-require_once('module.php');
+require_once('Syllabus.php');
+require_once('Offer.php');
+require_once('Module.php');
 
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/controllers/security/session/SessionManager.php");

@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('offer.php');
-require_once('semester.php');
-require_once('temporaryrequest.php');
-require_once('mastermind.php');
+require_once('Offer.php');
+require_once('Semester.php');
+require_once('Temporaryrequest.php');
+require_once('Mastermind.php');
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(APPPATH."/controllers/security/session/SessionManager.php");

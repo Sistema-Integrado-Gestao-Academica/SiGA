@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once("usuario.php");
+require_once("Usuario.php");
 require_once(APPPATH."/exception/LoginException.php");
 
 require_once(APPPATH."/data_types/User.php");

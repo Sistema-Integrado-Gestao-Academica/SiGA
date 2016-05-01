@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once("secretary.php");
-require_once("course.php");
-require_once("program.php");
-require_once("phase.php");
+require_once("Secretary.php");
+require_once("Course.php");
+require_once("Program.php");
+require_once("Phase.php");
 
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/constants/SelectionProcessConstants.php");

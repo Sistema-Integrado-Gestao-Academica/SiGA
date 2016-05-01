@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('program.php');
+require_once('Program.php');
 require_once(APPPATH."/exception/DimensionException.php");
 require_once(APPPATH."/controllers/security/session/SessionManager.php");
 

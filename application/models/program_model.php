@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/controllers/course.php");
+require_once(APPPATH."/controllers/Course.php");
 
 class Program_model extends CI_Model {
 

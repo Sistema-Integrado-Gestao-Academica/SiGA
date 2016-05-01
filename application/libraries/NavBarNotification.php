@@ -2,8 +2,8 @@
 
 require_once("NotificationModel.php");
 
-require_once(APPPATH."/controllers/course.php");
-require_once(APPPATH."/controllers/usuario.php");
+require_once(APPPATH."/controllers/Course.php");
+require_once(APPPATH."/controllers/Usuario.php");
 
 require_once(APPPATH."/data_types/User.php");
 

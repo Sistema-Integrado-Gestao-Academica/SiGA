@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('login.php');
-require_once('module.php');
-require_once('program.php');
-require_once('graduation.php');
-require_once('ead.php');
-require_once('budgetplan.php');
-require_once('enrollment.php');
-require_once('usuario.php');
+require_once('Login.php');
+require_once('Module.php');
+require_once('Program.php');
+require_once('Graduation.php');
+require_once('Ead.php');
+require_once('Budgetplan.php');
+require_once('Enrollment.php');
+require_once('Usuario.php');
 
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");

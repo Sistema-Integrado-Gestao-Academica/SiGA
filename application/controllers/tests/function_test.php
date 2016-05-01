@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'/controllers/funcao.php');
+require_once(APPPATH.'/controllers/Funcao.php');
 class Function_Test extends CI_Controller{
 
 	public function __construct(){

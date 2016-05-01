@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('course.php');
-require_once('semester.php');
-require_once('request.php');
+require_once('Course.php');
+require_once('Semester.php');
+require_once('Request.php');
 
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");

@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/controllers/usuario.php");
+require_once(APPPATH."/controllers/Usuario.php");
 require_once(APPPATH."/constants/GroupConstants.php");
-require_once(APPPATH."/controllers/offer.php");
-require_once(APPPATH."/controllers/discipline.php");
-require_once(APPPATH."/controllers/semester.php");
+require_once(APPPATH."/controllers/Offer.php");
+require_once(APPPATH."/controllers/Discipline.php");
+require_once(APPPATH."/controllers/Semester.php");
 
 class EnrollmentAjax extends CI_Controller {
 

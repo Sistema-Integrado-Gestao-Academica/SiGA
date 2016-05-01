@@ -1,7 +1,7 @@
 <?php
 
 require_once('Constants.php');
-require_once(APPPATH.'/controllers/documentrequest.php');
+require_once(APPPATH.'/controllers/Documentrequest.php');
 
 class DocumentConstants extends Constants{
 
