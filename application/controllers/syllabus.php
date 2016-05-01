@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('discipline.php');
-
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Syllabus extends CI_Controller {
 
@@ -58,7 +58,8 @@ class Syllabus extends CI_Controller {
 			$message = "Não foi possível criar o currículo para o curso informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect('usuario/secretary_courseSyllabus');
 	}
 
@@ -171,10 +172,11 @@ class Syllabus extends CI_Controller {
 		$courseId = $this->input->post('courseId');
 		$syllabusId = $this->input->post('syllabusId');
 
+		$session = SessionManager::getInstance();
 		if ($researchLineId == NO_RESEARCH_LINE_CHOICE){
 			$status = "danger";
 			$message = "Não foi escolhida nenhuma linha de pesquisa";
-			$this->session->set_flashdata($status, $message);
+			$session->showFlashMessage($status, $message);
 			redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 
 		}else{
@@ -194,7 +196,7 @@ class Syllabus extends CI_Controller {
 				$message = "Disciplina não pode ser relacionada.";
 			}
 
-			$this->session->set_flashdata($status, $message);
+			$session->showFlashMessage($status, $message);
 			redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 		}
 	}
@@ -216,7 +218,8 @@ class Syllabus extends CI_Controller {
 			$message = "Disciplina não pode ser desrelacionada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("syllabus/relateDisciplineToResearchLine/{$disciplineCode}/{$syllabusId}/{$courseId}");
 	}
 
@@ -283,7 +286,8 @@ class Syllabus extends CI_Controller {
 			$message = "Não foi possível adicionar a disciplina ao currículo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("syllabus/addDisciplines/{$syllabusId}/{$courseId}");
 	}
 
@@ -301,7 +305,8 @@ class Syllabus extends CI_Controller {
 			$message = "Não foi possível remover a disciplina do currículo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("syllabus/addDisciplines/{$syllabusId}/{$courseId}");
 	}
 

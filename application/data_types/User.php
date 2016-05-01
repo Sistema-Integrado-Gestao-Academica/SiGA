@@ -18,8 +18,9 @@ class User{
 	private $groups;
 	private $homePhone;
 	private $cellPhone;
+	private $active;
 	
-	public function __construct($id = FALSE, $name = FALSE, $cpf = FALSE, $email = FALSE, $login = FALSE, $password = FALSE, $groups = FALSE, $homePhone = FALSE, $cellPhone = FALSE){
+	public function __construct($id = FALSE, $name = FALSE, $cpf = FALSE, $email = FALSE, $login = FALSE, $password = FALSE, $groups = FALSE, $homePhone = FALSE, $cellPhone = FALSE, $active = FALSE){
 		$this->setId($id);
 		$this->setName($name);
 		$this->setCpf($cpf);
@@ -29,19 +30,20 @@ class User{
 		$this->setGroups($groups);
 		$this->setHomePhone($homePhone);
 		$this->setCellPhone($cellPhone);
+		$this->setActive($active);
 	}
 	
-	// public function addGroup($group){
-	// 	if(is_object($group)){
-	// 		if(get_class($group) === Group::class){
-	// 			$this->groups[] = $group;
-	// 		}else{
-	// 			throw new UserException(self::INVALID_GROUP);
-	// 		}
-	// 	}else{
-	// 		throw new UserException(self::INVALID_GROUP);
-	// 	}
-	// }
+	public function addGroup($group){
+		if(is_object($group)){
+			if(get_class($group) === Group::class){
+				$this->groups[] = $group;
+			}else{
+				throw new UserException(self::INVALID_GROUP);
+			}
+		}else{
+			throw new UserException(self::INVALID_GROUP);
+		}
+	}
 
 	// Setters
 	private function setId($id){
@@ -117,6 +119,19 @@ class User{
 		$this->cellPhone = $cellPhone;
 	}
 
+	private function setActive($active){
+		if(is_bool($active)){
+			$this->active = $active;
+		}else{
+			if($active === "1" || $active === 1){
+				$active = TRUE;
+			}else{
+				$active = FALSE;
+			}
+			$this->active = $active;
+		}
+	}
+
 	// Getters
 	
 	public function getId(){
@@ -150,7 +165,12 @@ class User{
 	public function getHomePhone(){
 		return $this->homePhone;
 	}
+
 	public function getCellPhone(){
 		return $this->cellPhone;
+	}
+
+	public function getActive(){
+		return $this->active;
 	}
 }

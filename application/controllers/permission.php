@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Permission extends CI_Controller {
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+class PermissionOld extends CI_Controller {
 
 	public function checkUserPermission($requiredPermission){
 
@@ -8,31 +10,25 @@ class Permission extends CI_Controller {
 
 		if($permissionExists){
 
-			$loggedUserData = $this->session->userdata('current_user');
-			$userPermissions = $loggedUserData['user_permissions'];
+			$session = SessionManager::getInstance();
+			$userPermissions = $session->getUserPermissions();
 
 			$havePermission = FALSE;
-			foreach($userPermissions as $group => $groupPermissions){
+			foreach($userPermissions as $group => $permissions){
 
-				if($groupPermissions !== FALSE){
+				foreach($permissions as $permission){
 
-					foreach($groupPermissions as $permission){
-						
-						if($permission['route'] === $requiredPermission){
-							$havePermission = TRUE;
-							break;
-						}
+					if($permission->getFunctionality() === $requiredPermission){
+						$havePermission = TRUE;
+						break;
 					}
-				}else{
-					$havePermission = FALSE;
 				}
 
 				if($havePermission){
 					break;
-				}else{
-					continue;
 				}
 			}
+
 		}else{
 			$havePermission = FALSE;
 		}

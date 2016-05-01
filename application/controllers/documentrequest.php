@@ -5,24 +5,27 @@ require_once("course.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/constants/DocumentConstants.php");
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 class DocumentRequest extends CI_Controller {
 
 	// Functions to student //
 
 	public function index(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$user = new Usuario();
 		$userCourse = $user->getUserCourses($userId);
 
 		$data = array(
-			'userData' => $loggedUserData['user'],
+			'userData' => $loggedUserData,
 			'courses' => $userCourse
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/index", $data);		
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/index", $data);
 	}
 
 	public function requestDocument($courseId, $userId){
@@ -73,7 +76,7 @@ class DocumentRequest extends CI_Controller {
 				break;
 
 			case DocumentConstants::DECLARATIONS:
-				
+
 				$declarationType = $this->input->post('declarationType');
 
 				$requestData = array(
@@ -93,7 +96,8 @@ class DocumentRequest extends CI_Controller {
 					$message = "Não foi possível enviar a solicitação de documento informada.";
 				}
 
-				$this->session->set_flashdata($status, $message);
+				$session = SessionManager::getInstance();
+				$session->showFlashMessage($status, $message);
 				redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 
 				break;
@@ -124,8 +128,9 @@ class DocumentRequest extends CI_Controller {
 					$status = "danger";
 					$message = "Não foi possível enviar a solicitação de documento informada.";
 				}
-
-				$this->session->set_flashdata($status, $message);
+				
+				$session = SessionManager::getInstance();
+				$session->showFlashMessage($status, $message);
 				redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 
 				break;
@@ -167,7 +172,9 @@ class DocumentRequest extends CI_Controller {
 			$message = "Não foi possível cancelar a solicitação de documento informada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+
+		$session->showFlashMessage($status, $message);
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 	}
 
@@ -184,8 +191,9 @@ class DocumentRequest extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível arquivar a solicitação de documento informada.";
 		}
+		$session = SessionManager::getInstance();
 
-		$this->session->set_flashdata($status, $message);
+		$session->showFlashMessage($status, $message);
 		redirect("documentrequest/requestDocument/{$courseId}/{$studentId}");
 	}
 
@@ -208,9 +216,9 @@ class DocumentRequest extends CI_Controller {
 
 	public function documentRequestSecretary(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$currentUser = $loggedUserData['user'];
-		$userId = $currentUser['id'];
+		$session = SessionManager::getInstance();
+		$currentUser = $session->getUserData();
+		$userId = $currentUser->getId();
 
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($userId);
@@ -237,7 +245,7 @@ class DocumentRequest extends CI_Controller {
 			'courseData' => $courseData
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);		
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);
 	}
 
 	public function documentReady($requestId, $courseId){
@@ -253,8 +261,9 @@ class DocumentRequest extends CI_Controller {
 			$status = "danger";
 			$message = "Não foi possível atualizar o status do documento.";
 		}
+		$session = SessionManager::getInstance();
 
-		$this->session->set_flashdata($status, $message);
+		$session->showFlashMessage($status, $message);
 		redirect("documentrequest/documentRequestReport/{$courseId}");
 	}
 
@@ -278,7 +287,7 @@ class DocumentRequest extends CI_Controller {
 
 		$this->load->model('documentrequest_model', "doc_request_model");
 
-		$types = $this->doc_request_model->allNonDeclarationTypes();		
+		$types = $this->doc_request_model->allNonDeclarationTypes();
 
 		return $types;
 	}
@@ -287,7 +296,7 @@ class DocumentRequest extends CI_Controller {
 
 		$this->load->model('documentrequest_model', "doc_request_model");
 
-		$types = $this->doc_request_model->allDeclarationTypes();		
+		$types = $this->doc_request_model->allDeclarationTypes();
 
 		return $types;
 	}

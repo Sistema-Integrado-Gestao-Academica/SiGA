@@ -3,6 +3,7 @@
 <table class="table table-striped table-bordered">
 	<tr>
 		<td><h3 class="text-center">Funções cadastradas</h3></td>
+		<td><h3 class="text-center">Ações</h3></td>
 	</tr>
 
 <?php 

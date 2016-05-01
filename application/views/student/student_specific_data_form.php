@@ -1,4 +1,4 @@
-<h2 class="principal">Dados do(a) estudante <b><i><?php echo $userData['name'];?></i></b></h2>
+<h2 class="principal">Dados do(a) estudante <b><i><?php echo $userData->getName();?></i></b></h2>
 
 <h3><i class='fa fa-user'></i> Dados Pessoais</h3>
 
@@ -56,7 +56,7 @@ echo "<br>";
 // Update data form
 
 $hidden = array(
-	'id_user' => $userData['id']
+	'id_user' => $userData->getId()
 );
 
 if($studentData !== FALSE){

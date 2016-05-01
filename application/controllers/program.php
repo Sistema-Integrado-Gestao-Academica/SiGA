@@ -6,6 +6,7 @@ require_once('course.php');
 require_once('teacher.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Program extends CI_Controller {
 
@@ -30,30 +31,30 @@ class Program extends CI_Controller {
 	}
 
 	public function getAllProgramAreas(){
-		
+
 		$this->load->model('program_model');
-		
+
 		$programAreas = $this->program_model->getAllProgramAreas();
-		
+
 		if($programAreas !== FALSE){
 			foreach ($programAreas as $areas){
 
 				$areasResult[$areas['id_program_area']] = $areas['area_name'];
 			}
 		}else{
-			$areasResult = FALSE;			
+			$areasResult = FALSE;
 		}
 
 		return $areasResult;
 	}
-	
+
 	public function getCoordinatorPrograms($coordinatorId){
 
 		$this->load->model('program_model');
 
 		$programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 
-		return $programs;	
+		return $programs;
 	}
 
 	public function getProgramEvaluations($programId){
@@ -62,7 +63,7 @@ class Program extends CI_Controller {
 
 		$programEvaluations = $this->program_model->getProgramEvaluations($programId);
 
-		return $programEvaluations;	
+		return $programEvaluations;
 	}
 
 	public function getProgramEvaluation($programEvaluationId){
@@ -80,17 +81,17 @@ class Program extends CI_Controller {
 
 		$programs = $this->program_model->getProgramById($programId);
 
-		return $programs;	
+		return $programs;
 
 	}
-	
+
 	public function getProgramAreaByProgramId($programId){
 		$this->load->model('program_model');
-		
+
 		$programArea = $this->program_model->getProgramAreaByProgramId($programId);
-		
+
 		return $programArea;
-		
+
 	}
 
 	public function getProgramCourses($programId){
@@ -116,7 +117,8 @@ class Program extends CI_Controller {
 			$insertMessage = "Não foi possível adicionar o curso informado.";
 		}
 
-		$this->session->set_flashdata($insertStatus, $insertMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($insertStatus, $insertMessage);
 		redirect("program/editProgram/{$programId}");
 	}
 
@@ -155,7 +157,8 @@ class Program extends CI_Controller {
 			$removeMessage = "Não foi possível adicionar o curso informado.";
 		}
 
-		$this->session->set_flashdata($removeStatus, $removeMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($removeStatus, $removeMessage);
 		redirect("program/editProgram/{$programId}");
 	}
 
@@ -163,7 +166,7 @@ class Program extends CI_Controller {
 
 		$this->load->model('program_model');
 		$program = $this->program_model->getProgramById($programId);
-		
+
 		$group = new Module();
 		$foundGroup = $group->getGroupByName(GroupConstants::COORDINATOR_GROUP);
 
@@ -207,7 +210,7 @@ class Program extends CI_Controller {
 	public function updateProgram(){
 
 		$programId = $this->input->post('programId');
-		
+
 		$programDataIsOk = $this->validatesNewProgramData();
 
 		if($programDataIsOk){
@@ -221,8 +224,12 @@ class Program extends CI_Controller {
 			$programSummary = $this->input->post('program_summary');
 
 			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);
+			$this->load->model('program_model');
+			
+
+			$session = SessionManager::getInstance();
 			if($dataIsOk){
-		
+
 				$programData = array(
 					'program_name' => $programName,
 					'acronym' => $programAcronym,
@@ -233,7 +240,6 @@ class Program extends CI_Controller {
 					'summary' => $programSummary
 				);
 
-				$this->load->model('program_model');
 
 				$wasUpdated = $this->program_model->editProgram($programId, $programData);
 
@@ -244,38 +250,37 @@ class Program extends CI_Controller {
 					$insertStatus = "danger";
 					$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
 				}
-
-				$this->session->set_flashdata($insertStatus, $insertMessage);
-				redirect("program/editProgram/{$programId}");
 			}
 			else{
 				$insertStatus = "danger";
 				$insertMessage = "Esse programa já está cadastrado.";
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect("program/editProgram/{$programId}");
 			}
-
+			$session->showFlashMessage($insertStatus, $insertMessage);
+			redirect("program/editProgram/{$programId}");
+			
 		}
 		else{
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta. Cheque os dados informados. Espaços em branco não são aceitos.";
 			
-			$this->session->set_flashdata($insertStatus, $insertMessage);
+			$session->showFlashMessage($insertStatus, $insertMessage);
 			redirect("program/editProgram/{$programId}");
 		}
 	}
-	
+
 	public function updateProgramArea(){
 		$programId = $this->input->post('programId');
-		
+
 		$programArea = $this->input->post('new_program_area');
-		
+
 		$programData = array('id_area'=>$programArea);
-		
+
 		$this->load->model('program_model');
-		
+
 		$wasUpdated = $this->program_model->editProgram($programId, $programData);
-		
+
 		if($wasUpdated){
 			$insertStatus = "success";
 			$insertMessage = "Programa atualizado com sucesso!";
@@ -283,8 +288,9 @@ class Program extends CI_Controller {
 			$insertStatus = "danger";
 			$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
 		}
-		
-		$this->session->set_flashdata($insertStatus, $insertMessage);
+
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($insertStatus, $insertMessage);
 
 		redirect('coordinator/coordinator_programs');
 
@@ -304,7 +310,8 @@ class Program extends CI_Controller {
 			$deleteMessage = "Não foi possível deletar o programa informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($deleteStatus, $deleteMessage);
 		redirect('program');
 	}
 
@@ -333,7 +340,7 @@ class Program extends CI_Controller {
 		}else{
 			$usersForCoordinator = FALSE;
 		}
-		
+
 		$data = array(
 			'users' => $usersForCoordinator
 		);
@@ -352,7 +359,7 @@ class Program extends CI_Controller {
 			$programCoordinator = $this->input->post('program_coordinator');
 			$openingYear = $this->input->post('opening_year');
 			$programArea = $this->input->post('program_area');
-			
+
 			$programData = array(
 				'program_name' => $programName,
 				'acronym' => $programAcronym,
@@ -360,11 +367,13 @@ class Program extends CI_Controller {
 				'opening_year' =>$openingYear,
 				'id_area' => $programArea
 			);
-			
+
 			$programNotExists = $this->verifyIfProgramNotExists($programName, $programAcronym);
+
+			$this->load->model('program_model');
 			
+			$session = SessionManager::getInstance();
 			if($programNotExists){
-				$this->load->model('program_model');
 				$wasSaved = $this->program_model->saveProgram($programData);
 
 				if($wasSaved){
@@ -375,14 +384,14 @@ class Program extends CI_Controller {
 					$insertStatus = "danger";
 					$insertMessage = "Não foi possível cadastrar o programa. Tente novamente.";
 				}
-	
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect('program');
 			}
 			else{
 				$insertStatus = "danger";
 				$insertMessage = "Esse programa já está cadastrado.";
-				$this->session->set_flashdata($insertStatus, $insertMessage);
+				$session->showFlashMessage($insertStatus, $insertMessage);
 				redirect('program/registerNewProgram');
 			}
 		}
@@ -390,8 +399,8 @@ class Program extends CI_Controller {
 
 			$insertStatus = "danger";
 			$insertMessage = "Dados na forma incorreta.";
-			
-			$this->session->set_flashdata($insertStatus, $insertMessage);
+
+			$session->showFlashMessage($insertStatus, $insertMessage);
 			redirect('program/registerNewProgram');
 		}
 	}
@@ -416,11 +425,11 @@ class Program extends CI_Controller {
 	}
 
 	private function verifyIfProgramNotExists($name, $acronym){
-		
+
 		$programNotExists = TRUE;
 
 		$programs = $this->getAllPrograms();
-		
+
 		foreach ($programs as $program) {
 
 			$nameExists = $name == $program['program_name'];
@@ -434,12 +443,12 @@ class Program extends CI_Controller {
 		}
 
 		return $programNotExists;
-	}	
+	}
 
 	// Verify if the name and acronym of the edited program already exists
 	private function verifyTheNewData($id, $name, $acronym){
 
-		$program = $this->getProgramById($id); 
+		$program = $this->getProgramById($id);
 
 		$nameIsEqual = $name == $program['program_name'];
 		$acronymIsEqual = $acronym == $program['acronym'];

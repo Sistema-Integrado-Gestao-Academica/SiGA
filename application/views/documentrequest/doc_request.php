@@ -1,5 +1,8 @@
 <h2 class="principal">Solicitações de documentos</h2>
-<h4>Cursos para o(a) secretário(a) <b><?php echo $userData['name']?></b>:</h4>
+
+<?php $userName = $userData->getName(); ?>
+
+<h4>Cursos para o(a) secretário(a) <b><?php echo $userName ?></b>:</h4>
 
 <?php if($courses !== FALSE){ 
 	

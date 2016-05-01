@@ -12,8 +12,10 @@ class Teacher extends CI_Controller {
 
 	public function updateProfile(){
 		
-		$session = $this->session->userdata("current_user");
-		$teacher = $session['user']['id'];
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+		$teacher = $user->getId();
+
 		$infoProfile = $this->getInfoProfile($teacher);
 		
 		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'teacher/update_profile', $infoProfile);

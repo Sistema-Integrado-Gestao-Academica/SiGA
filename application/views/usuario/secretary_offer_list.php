@@ -1,4 +1,10 @@
-<?php  $session = $this->session->userdata("current_user"); ?>
+<?php  
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+$session = SessionManager::getInstance(); 
+$user = $session->getUserData();
+
+?>
 
 <br>
 <h4 align="center"><b>Lista de ofertas</b></h4>
@@ -22,16 +28,18 @@
 <br>
 
 <?php 
-	if($courses !== FALSE){
-		
-		echo "<h4>Cursos para o secretário <b>".$session['user']['name']."</b>:</h4>";
+	$userName = $user->getName();
+
+	if($courses !== FALSE){		
+
+		echo "<h4>Cursos para o secretário <b>".$userName."</b>:</h4>";
 
 		displayOffersList($proposedOffers);
 
 	}else{
 ?>
 		<div class="callout callout-warning">
-            <h4>Nenhum curso cadastrado para o secretário <b><?php echo $session['user']['name'];?></b>.<br><br>
+            <h4>Nenhum curso cadastrado para o secretário <b><?php echo $userName;?></b>.<br><br>
             <small><b>OBS.: Você somente pode criar e alterar listas de ofertas dos cursos os quais é secretário.</b></small></h4>
         </div>
 

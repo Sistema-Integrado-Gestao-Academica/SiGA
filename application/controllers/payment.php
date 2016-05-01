@@ -2,6 +2,7 @@
 
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/data_types/ServicePayment.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Payment extends CI_Controller {
 
@@ -165,7 +166,8 @@ class Payment extends CI_Controller {
 			$message = "Não foi possível registrar o pagamento informado.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("payment/expensePayments/{$expense}/{$budgetplan}");
 	}
 
@@ -271,7 +273,8 @@ class Payment extends CI_Controller {
 			$message = "Não foi possível registrar o pagamento informado.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("payment/expensePayments/{$expense}/{$budgetplan}");
 	}
 

@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/data_types/User.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 class Module extends CI_Controller {
 
 	public function checkUserGroup($requiredGroup){
@@ -8,12 +11,12 @@ class Module extends CI_Controller {
 
 		if($groupExists){
 
-			$loggedUserData = $this->session->userdata('current_user');
-			$userGroups = $loggedUserData['user_groups'];
-
+			$session = SessionManager::getInstance();
+			$userGroups = $session->getUserGroups();
+		
 			$haveGroup = FALSE;
 			foreach($userGroups as $group){
-				if($group['group_name'] === $requiredGroup){
+				if($group->getName() === $requiredGroup){
 					$haveGroup = TRUE;
 					break;
 				}
@@ -40,9 +43,9 @@ class Module extends CI_Controller {
 	}
 
 	public function getGroupById($idGroup){
-		
+
 		$this->load->model('module_model');
-		
+
 		$group = $this->module_model->getGroupById($idGroup);
 
 		return $group;
@@ -54,7 +57,7 @@ class Module extends CI_Controller {
 		$this->load->model("module_model");
 
 		$group = $this->module_model->getGroupByGroupName($groupName);
-		
+
 		if($group !== FALSE){
 			$groupId = $group['id_group'];
 		}else{
@@ -75,7 +78,7 @@ class Module extends CI_Controller {
 		$this->load->model("module_model");
 
 		$group = $this->module_model->getGroupByGroupName($groupName);
-		
+
 		if($group !== FALSE){
 			$groupId = $group['id_group'];
 		}else{
@@ -102,7 +105,7 @@ class Module extends CI_Controller {
 	/**
 	  * Check the modules registered to an user
 	  * @param $user_id - User id to check the modules
-	  * @return 
+	  * @return
 	  */
 	public function checkModules($user_id){
 
@@ -111,22 +114,22 @@ class Module extends CI_Controller {
 
 		return $registered_modules;
 	}
-	
+
 	/**
 	 * Check existing modules (groups) in the database
 	 * @return array with the modules (groups) names
 	 */
 	public function getExistingModules(){
-		
+
 		$this->load->model('module_model');
 		$existing_modules = $this->module_model->getAllModules();
 		$existing_modules_form = $this->turnCourseTypesToArray($existing_modules);
-		
+
 		return $existing_modules_form;
 	}
 
 	public function getUserGroups($idUser){
-		
+
 		$this->load->model('module_model');
 
 		$groups = $this->module_model->getUserGroups($idUser);
@@ -142,7 +145,7 @@ class Module extends CI_Controller {
 
 		return $groupExists;
 	}
-	
+
 	/**
 	 * Join the id's and names of modules (groups) into an array as key => value.
 	 * Used to the update course form
@@ -152,14 +155,14 @@ class Module extends CI_Controller {
 	private function turnCourseTypesToArray($modules){
 		// Quantity of course types registered
 		$quantity_of_course_types = sizeof($modules);
-	
+
 		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
 			$keys[$cont] = $modules[$cont]['id_group'];
 			$values[$cont] = $modules[$cont]['group_name'];
 		}
-	
+
 		$form_modules = array_combine($keys, $values);
-	
+
 		return $form_modules;
 	}
 

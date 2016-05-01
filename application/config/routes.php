@@ -64,7 +64,6 @@ $route['guest_home'] = 'usuario/guest_index';
 $route['planoorcamentario'] = 'budgetplan';
 $route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
 $route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
-$route['registerDoctorateCourse/(:num)'] = 'course/formToCreateDoctorateCourse/$1';
 $route['secretaria'] = 'utils/loadSecretaria';
 $route['secretary_home'] = 'usuario/secretary_index';
 $route['setores'] = 'setor/formulario';
@@ -120,12 +119,11 @@ $route['department_test'] = 'tests/department_test';
 $route['employee_test'] = 'tests/employee_test';
 $route['function_test'] = 'tests/function_test';
 $route['login_test'] = 'tests/login_test';
-$route['module_test'] = 'tests/module_test';
-$route['permission_test'] = 'tests/permission_test';
 $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
 $route['classHour_test'] = 'tests/ClassHour_test';
 $route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
+
 $route['selection_process_test'] = 'tests/SelectionProcess_Test';
 $route['process_settings_test'] = 'tests/ProcessSettings_Test';
 $route['process_phase_test'] = 'tests/ProcessPhase_Test';
@@ -135,7 +133,9 @@ $route['enrolled_student_email_test'] = 'tests/EnrolledStudentEmail_Test';
 $route['secretary_email_notification_test'] = 'tests/SecretaryEmailNotification_Test';
 $route['phone_test'] = 'tests/Phone_Test';
 $route['bar_notification_test'] = 'tests/BarNotification_Test';
-// $route['test'] = 'test_report';
+
+$route['permission_test'] = 'tests/Permission_test';
+$route['group_test'] = 'tests/Group_test';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

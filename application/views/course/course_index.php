@@ -1,14 +1,8 @@
-<?php
-require_once(APPPATH."/constants/GroupConstants.php");
 
-	$group = new Module();
-	$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
-?>
-
-<h2 class="principal">Cursos para o secretário(a) <i><b><?php echo $userData['name'];?></b></i></h2>
+<h2 class="principal">Cursos para o secretário(a) <i><b><?php echo $userData->getName();?></b></i></h2>
 <br><br>
-	
-	<?php 
+
+	<?php
 		if($isAdmin){
 			echo anchor(
 				"course/formToRegisterNewCourse",
@@ -36,7 +30,7 @@ require_once(APPPATH."/constants/GroupConstants.php");
 
 					<td>
 						<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
-						
+
 						<?php
 							if($isAdmin){
 								echo anchor(
@@ -49,9 +43,9 @@ require_once(APPPATH."/constants/GroupConstants.php");
 					</td>
 				</tr>
 		<?php endforeach ?>
-			
+
 			</tbody>
-			</table> 
+			</table>
 			</div>
 
 		<?php }else{ ?>
@@ -61,5 +55,5 @@ require_once(APPPATH."/constants/GroupConstants.php");
 			</div>
 
 		<?php } ?>
-	
+
 	<?= anchor("usuario/secretary_research_lines/", "<i class='fa fa-eraser'></i> Gerenciar Linhas de Pesquisa", "class='btn btn-success' style='margin-right:5%;'") ?>

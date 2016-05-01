@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(APPPATH."/exception/LoginException.php");
 
@@ -14,25 +14,17 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function saveGroup($user, $group){
-		define('FINANCEIRO', 1);
-		define('ADMINISTRATIVO', 2);
-		define('SECRETARIO', 7);
-		
-		$rowUser = $this->buscaPorLoginESenha($user['login']);
-		$user_id = $rowUser['id'];
-		
-		if($group == FINANCEIRO || $group == ADMINISTRATIVO){
-			$user_group = array("id_user"=>$user_id,"id_group"=>SECRETARIO);
-			$this->db->insert("user_group",$user_group);
-		}
-		
-		$user_group = array("id_user"=>$user_id,"id_group"=>$group);
-		
+
+		$user = $this->getUserDataByLogin($user['login']);
+		$userId = $user['id'];
+
+		$user_group = array("id_user" => $userId, "id_group" => $group);
+
 		$this->db->insert("user_group",$user_group);
 	}
 
 	public function addGroupToUser($idUser, $idGroup){
-		
+
 		$userExists = $this->checkIfUserExists($idUser);
 
 		$this->load->model('module_model');
@@ -126,19 +118,6 @@ class Usuarios_model extends CI_Model {
 		$this->db->delete('user_group', $userGroup);
 	}
 
-	public function buscaPorLoginESenha($login, $senha = "0") {
-		$this->db->where("login", $login);
-		if ($senha) {
-			$this->db->where("password", md5($senha));
-		}
-
-		// Select here the data from user to put on the session
-		$this->db->select('id, name, email, login');
-		$usuario = $this->db->get("users")->row_array();
-		$usuario = checkArray($usuario);
-		return $usuario;
-	}
-
 	/**
 	 * Validate the given user login and password
 	 * @param $login - String with the user login
@@ -186,10 +165,11 @@ class Usuarios_model extends CI_Model {
 
 	public function getUsersOfGroup($idGroup, $name = FALSE){
 
+		$this->db->distinct();
 		$this->db->select('users.id, users.name, users.cpf, users.email');
 		$this->db->from('users');
 		$this->db->join('user_group', "users.id = user_group.id_user");
-		$this->db->where('id_group', $idGroup);
+		$this->db->where('user_group.id_group', $idGroup);
 
 		if($name !== FALSE){
 			$this->db->like('users.name', $name);
@@ -216,12 +196,12 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function removeAllUsersOfGroup($idGroup){
-		
+
 		$this->load->model('module_model');
 		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
 
 		if($groupExists){
-			
+
 			$this->deleteAllUsersOfGroup($idGroup);
 
 			$registeredUserGroup = $this->getUserGroupByUserAndGroup('',$idGroup);
@@ -254,7 +234,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function getUserByName($userName){
-		
+
 		$foundUser = $this->getUserByPartialName($userName);
 		$foundUser = checkArray($foundUser);
 		return $foundUser;
@@ -267,7 +247,7 @@ class Usuarios_model extends CI_Model {
 		$foundName = checkArray($foundName);
 		return $foundName[0]['name'];
 	}
-	
+
 	private function getUserByPartialName($userName){
 		$this->db->select('id, name');
 		$this->db->like('name', $userName);
@@ -295,6 +275,13 @@ class Usuarios_model extends CI_Model {
 		return $foundUser;
 	}
 
+
+	public function remove($usuario) {		
+
+		$res = $this->db->delete("users", array("login" => $usuario['login']));
+		return $res;
+	}
+
 	/**
 	 * Get the user data by its login
 	 * @param $login - String with the user login
@@ -306,7 +293,7 @@ class Usuarios_model extends CI_Model {
 		$foundUser = $this->db->get("users")->row_array();
 
 		$foundUser = checkArray($foundUser);
-		
+
 		return $foundUser;
 	}
 
@@ -317,17 +304,22 @@ class Usuarios_model extends CI_Model {
 	 * @return TRUE if the passwords match or FALSE if does not
 	 */
 	private function checkPasswordForThisLogin($password, $login){
-		
+
 		$this->db->select('password');
 		$searchResult = $this->db->get_where('users', array('login' => $login));
 
 		$foundPassword = $searchResult->row_array();
 
-		$foundPassword = $foundPassword['password'];
-		$encryptedGivenPassword = md5($password);
+		$foundPassword = checkArray($foundPassword);
 
-		$passwordsMatch = $encryptedGivenPassword === $foundPassword;
-		
+		if($foundPassword !== FALSE){
+			$foundPassword = $foundPassword['password'];
+			$encryptedGivenPassword = md5($password);
+			$passwordsMatch = $encryptedGivenPassword === $foundPassword;
+		}else{
+			$passwordsMatch = FALSE;
+		}
+
 		return $passwordsMatch;
 	}
 
@@ -337,10 +329,10 @@ class Usuarios_model extends CI_Model {
 	 * @return TRUE if exists in the database or FALSE if does not
 	 */
 	private function existsThisLogin($loginToCheck){
-		
+
 		$this->db->select('login');
 		$searchResult = $this->db->get_where('users', array('login' => $loginToCheck));
-		
+
 		$foundLogin = $searchResult->row_array();
 
 		$wasFound = sizeof($foundLogin) > 0;
@@ -418,57 +410,57 @@ class Usuarios_model extends CI_Model {
 
 		return $foundStatus;
 	}
-	
+
 	/**
 	 * Function to look if an user is or not a course secretary
 	 */
 	public function get_user_secretary($user_id){
-		
+
 		$this->db->select('id_course');
 		$user_is_secretary = $this->db->get_where("secretary_course",array('id_user'=>$user_id))->row_array();
-		
+
 		$user_is_secretary = checkArray($user_is_secretary);
 		if($user_is_secretary){
-			
+
 			$this->db->select('course_name');
 			$course_name = $this->db->get_where("course",$user_is_secretary)->row_array();
-			
+
 			$return_secretary = array_merge($user_is_secretary,$course_name);
-			
+
 		}else{
 			$return_secretary = FALSE;
 		}
 		return $return_secretary;
 	}
-	
+
 	public function getUserGroupNameByIdGroup($groupId){
 		$this->db->select('group_name');
 		$group = $this->db->get_where('group', array('id_group'=>$groupId))->row_array();
 		$group = checkArray($group);
-		
+
 		$groupName = $group['group_name'];
 		return $groupName;
 	}
-	
+
 	public function buscaTodos() {
 		$this->db->select('id, name');
 		$this->db->where('name !=', 'admin');
 		$users = $this->db->get('users')->result_array();
-		
+
 		$users_id = array();
 		$users_name = array();
-		
+
 		for ($i=0 ; $i < sizeof($users); $i++){
 			$users_id[$i] = $users[$i]['id'];
 			$users_name[$i] = $users[$i]['name'];
 		}
 		$return_users = array_combine($users_id, $users_name);
-		
-		return $return_users; 
+
+		return $return_users;
 	}
-	
+
 	public function getAllSecretaries() {
-		
+
 		$allSecretaries = $this->getSecretaries();
 
 		$secretaries = array();
@@ -480,7 +472,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	private function getSecretaries(){
-		
+
 		define('SECRETARY_ID', 6);
 
 		$this->db->select('users.id, users.name');
@@ -491,18 +483,18 @@ class Usuarios_model extends CI_Model {
 		$foundSecretaries = checkArray($foundSecretaries);
 		return $foundSecretaries;
 	}
-	
+
 	public function getUserById($id_user){
 		
 		$this->db->select('id, name, email, login, active');
-		
+
 		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
 
 		$foundUser = checkArray($foundUser);
-		
+
 		return $foundUser;
 	}
-	
+
 	public function busca($str, $atributo) {
 		$this->db->where($str, $atributo);
 		$usuario = $this->db->get("users")->row_array();
@@ -510,12 +502,12 @@ class Usuarios_model extends CI_Model {
 		return $usuario;
 	}
 
-	public function altera($usuario) {
-		$this->db->where('login', $usuario['user']['login']);
+	public function altera($user) {
+		$this->db->where('login', $user->getLogin());
 		$res = $this->db->update("users", array(
-			'name' => $usuario['user']['name'],
-			'email' => $usuario['user']['email'],
-			'password' => $usuario['user']['password']
+			'name' => $user->getName(),
+			'email' => $user->getEmail(),
+			'password' => $user->getPassword()
 		));
 
 		return $res;
@@ -533,12 +525,6 @@ class Usuarios_model extends CI_Model {
 		));
 
 		return $result;
-	}
-
-
-	public function remove($usuario) {		
-		$res = $this->db->delete("users", array("login" => $usuario['login']));
-		return $res;
 	}
 
 	public function updatePassword($id, $newPassword, $temporaryPassword){
@@ -570,7 +556,7 @@ class Usuarios_model extends CI_Model {
 
 		return $isUpdated;
 	}
-	
+
 	public function getAllUserGroups(){
 
 		$this->db->select('id_group, group_name');
@@ -580,13 +566,13 @@ class Usuarios_model extends CI_Model {
 		$userGroups = checkArray($userGroups);
 		return $userGroups;
 	}
-	
+
 	public function getAllowedUserGroupsForFirstRegistration(){
-		
+
 		$this->db->select('id_group, group_name');
 		$where= "group_name = 'convidado'";
 		$this->db->where($where);
-		
+
 		$this->db->from('group');
 		$userGroups = $this->db->get()->result_array();
 		$userGroups = checkArray($userGroups);
@@ -599,7 +585,7 @@ class Usuarios_model extends CI_Model {
 	  * @return True if the id is of the admin, or false if does not.
 	  */
 	public function checkIfIdIsOfAdmin($id_to_check){
-		
+
 		// The administer name on database
 		define("ADMINISTER", "administrador");
 
@@ -642,7 +628,6 @@ class Usuarios_model extends CI_Model {
 		else{
 			$user = NULL;
 		}
-
 		return $user;
 	}
 
@@ -682,6 +667,6 @@ class Usuarios_model extends CI_Model {
 		}
 
 		return $user;
-
 	}
+
 }

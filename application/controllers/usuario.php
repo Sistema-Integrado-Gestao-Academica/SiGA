@@ -1,17 +1,25 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('useractivation.php');
+require_once('login.php');
+
 require_once('course.php');
 require_once('module.php');
 require_once('semester.php');
 require_once('offer.php');
 require_once('syllabus.php');
 require_once('request.php');
+
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
 require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
 require_once(APPPATH."/data_types/User.php");
+
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+require_once(APPPATH."/exception/UserException.php");
+require_once(APPPATH."/exception/LoginException.php");
 
 class Usuario extends CI_Controller {
 
@@ -22,6 +30,36 @@ class Usuario extends CI_Controller {
 
 	public function loadModel(){
 		$this->load->model("usuarios_model");
+	}
+
+	public function validateUser($login, $password){
+
+		$this->load->model("usuarios_model");
+
+		try{
+			$foundUser = $this->usuarios_model->validateUser($login, $password);
+		}catch(LoginException $e){
+			throw $e;
+		}
+
+		if($foundUser !== FALSE){
+			try{
+				$id = $foundUser['id'];
+				$name = $foundUser['name'];
+				$login = $foundUser['login'];
+				$email = $foundUser['email'];
+				$active = $foundUser['active'];
+
+				$user = new User($id, $name, FALSE, $email, $login, FALSE, FALSE, FALSE, FALSE, $active);
+
+			}catch(UserException $e){
+				$user = FALSE;
+			}
+		}else{
+			$user = FALSE;
+		}
+
+		return $user;
 	}
 
 	public function usersReport(){
@@ -71,16 +109,24 @@ class Usuario extends CI_Controller {
 	public function createCourseResearchLine(){
 		$this->load->model("course_model");
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
 
-		foreach ($secretaryCourses as $key => $courses){
-			$course[$courses['id_course']] = $courses['course_name'];
+		if($secretaryCourses !== FALSE){
+
+			foreach ($secretaryCourses as $key => $courses){
+				$course[$courses['id_course']] = $courses['course_name'];
+			}
+		}else{
+			$course = FALSE;
 		}
 
-		$data = array('courses'=> $course);
+		$data = array(
+			'courses'=> $course
+		);
 
 		loadTemplateSafelyByPermission('research_lines', 'secretary/create_research_line', $data);
 	}
@@ -94,8 +140,9 @@ class Usuario extends CI_Controller {
 
 		$description = $this->course_model->getResearchDescription($researchId,$courseId);
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
 
@@ -113,13 +160,35 @@ class Usuario extends CI_Controller {
 		loadTemplateSafelyByPermission('research_lines', 'secretary/update_research_line', $data);
 	}
 
+	public function removeCourseResearchLine($researchLineId,$course){
+
+		$this->load->model("course_model");
+
+		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Linha de pesquisa removida do curso ".$course." com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
+		}
+
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
+		redirect("research_lines/");
+
+	}
+
 	public function secretary_research_lines(){
 		$this->load->model("course_model");
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+
 
 		$this->loadResearchLinesPage($secretaryCourses);
 	}
@@ -127,10 +196,16 @@ class Usuario extends CI_Controller {
 	public function loadResearchLinesPage($secretaryCourses){
 		$this->load->model("course_model");
 
-		foreach ($secretaryCourses as $key => $course){
+		if($secretaryCourses !== FALSE){
 
-			$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
-			$courses[$key] = $course;
+			foreach ($secretaryCourses as $key => $course){
+
+				$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
+				$courses[$key] = $course;
+			}
+		}else{
+			$researchLines = FALSE;
+			$courses = FALSE;
 		}
 
 		$data = array(
@@ -155,7 +230,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover os usuários do grupo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("user_report");
 	}
 
@@ -171,7 +247,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
 
@@ -184,8 +261,9 @@ class Usuario extends CI_Controller {
 
 		$userGroup = "";
 
-		$session = $this->session->userdata("current_user");
-		$userId = $session['user']['id'];
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+		$userId = $user->getId();
 
 		$userGroups = $this->usuarios_model->getGroups($userId);
 
@@ -219,7 +297,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover o grupo informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
 
@@ -235,7 +314,8 @@ class Usuario extends CI_Controller {
 			$message = "Não foi possível remover o usuário informado. Tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("usuario/listUsersOfGroup/{$idGroup}");
 	}
 
@@ -273,8 +353,11 @@ class Usuario extends CI_Controller {
 
 	public function student_index(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$this->load->model('usuarios_model');
+
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 		$userCourse = $this->usuarios_model->getUserCourse($userId);
@@ -283,14 +366,13 @@ class Usuario extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		$userData = array(
-			'userData' => $loggedUserData['user'],
+			'userData' => $loggedUserData,
 			'status' => $userStatus,
 			'courses' => $userCourse,
 			'currentSemester' => $currentSemester
 		);
 
-		// On auth_helper
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_home', $userData);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_home', $userData);
 	}
 
 	public function getUserStatus($userId){
@@ -314,7 +396,7 @@ class Usuario extends CI_Controller {
 			'user' => $userData
 		);
 
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_course_page', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_course_page', $data);
 	}
 
 	public function student_offerList($courseId){
@@ -328,13 +410,18 @@ class Usuario extends CI_Controller {
 		$offer = new Offer();
 		$offerListDisciplines = $offer->getCourseApprovedOfferListDisciplines($courseId, $currentSemester['id_semester']);
 
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
 		$data = array(
 			'currentSemester' => $currentSemester,
 			'course' => $courseData,
-			'offerListDisciplines' => $offerListDisciplines
+			'offerListDisciplines' => $offerListDisciplines,
+			'userId' => $userId
 		);
 
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_offer_list', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_offer_list', $data);
 	}
 
 	public function guest_index(){
@@ -410,8 +497,10 @@ class Usuario extends CI_Controller {
 		$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
 
 		// Get the current user id
-		$logged_user_data = $this->session->userdata("current_user");
-		$currentUser = $logged_user_data['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$currentUser = $loggedUserData->getId();
+
 		// Get the courses of the secretary
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($currentUser);
@@ -447,8 +536,10 @@ class Usuario extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		// Get the current user id
-		$logged_user_data = $this->session->userdata("current_user");
-		$currentUser = $logged_user_data['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$currentUser = $loggedUserData->getId();
+
 		// Get the courses of the secretary
 		$course = new Course();
 		$courses = $course->getCoursesOfSecretary($currentUser);
@@ -476,8 +567,9 @@ class Usuario extends CI_Controller {
 
 	private function loadCourses(){
 
-		$logged_user_data = $this->session->userdata("current_user");
-		$currentUser = $logged_user_data['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$currentUser = $loggedUserData->getId();
 
 		$course = new Course();
 		$allCourses = $course->listAllCourses();
@@ -526,7 +618,6 @@ class Usuario extends CI_Controller {
 	}
 
 	public function register(){
-
 		$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
 		$data = array(
@@ -536,10 +627,14 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/new_user", $data);
 	}
 
-	public function conta() {
-		$usuarioLogado = session();
-		$dados = array("usuario" => $usuarioLogado);
-		$this->load->template("usuario/conta", $dados);
+	public function conta(){
+
+		$session = SessionManager::getInstance();
+		$loggedUser = $session->getUserData();
+
+		$data = array("user" => $loggedUser);
+
+		$this->load->template("usuario/conta", $data);
 	}
 
 	public function profile() {
@@ -553,27 +648,27 @@ class Usuario extends CI_Controller {
 
 	public function restorePassword(){
 		$validData = $this->validateDataForRestorePassword();
-		
+
 		if($validData){
 			$email = $this->input->post("email");
-
 			$user = $this->usuarios_model->getUserByEmail($email);
 			if($user !== FALSE){
 				$user = $this->generateNewPassword($user);
 				$email = new RestorePasswordEmail($user);
 				$success = $email->notify();
 				
+				$session = SessionManager::getInstance();
 				if($success){
-					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
+					$session->showFlashMessage("success", "Email enviado com sucesso.");	
 					redirect("/");
 				}
 				else{
-					$this->session->set_flashdata("danger", "Não foi possível enviar o email. Tente novamente.");	
+					$session->showFlashMessage("danger", "Não foi possível enviar o email. Tente novamente.");	
 					redirect("usuario/restorePassword");
 				}
 			}
 			else{
-				$this->session->set_flashdata("danger", "Não foi encontrado nenhum usuário com esse email.");
+				$session->showFlashMessage("danger", "Não foi encontrado nenhum usuário com esse email.");
 				redirect("usuario/restorePassword");
 			}
 		}
@@ -587,9 +682,6 @@ class Usuario extends CI_Controller {
         
         define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
         
-        $ci =& get_instance();
-        $ci->load->model('usuarios_model');
-
         $newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
 
         // Changing the user password
@@ -604,8 +696,6 @@ class Usuario extends CI_Controller {
 
         return $user;
     }
-
-
 	private function validateDataForRestorePassword(){
 
 		$this->load->library("form_validation");
@@ -615,7 +705,6 @@ class Usuario extends CI_Controller {
 
 		return $success;
 	}
-
 	public function changePassword(){
 
 		$success = $this->validatePasswordField();
@@ -628,24 +717,25 @@ class Usuario extends CI_Controller {
 			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
 			if($isValidPassword){
 
-				$session = $this->session->userdata("current_user");
-				
-				$userId = $session['user']['id'];
+				$session = SessionManager::getInstance(); 
+				$userData = $session->getUserData();
+								
+				$userId = $userData->getId();
 				$temporaryPassword = FALSE;
 
 				$isUpdated = $this->usuarios_model->updatePassword($userId, $password, $temporaryPassword);
 
 				if($isUpdated){
-					$this->session->set_flashdata("success", "Senha alterada com sucesso.");
+					$session->showFlashMessage("success", "Senha alterada com sucesso.");
 					redirect('/');
 				}
 				else{
-					$this->session->set_flashdata("danger", "Não foi possível alterar a senha. Tente novamente.");
+					$session->showFlashMessage("danger", "Não foi possível alterar a senha. Tente novamente.");
 					redirect('usuario/changePassword');
 				}
 			}
 			else{
-				$this->session->set_flashdata("danger", "As senhas devem ser iguais.");
+				$session->showFlashMessage("danger", "As senhas devem ser iguais.");
 				redirect('usuario/changePassword');
 			}
 		}
@@ -654,7 +744,6 @@ class Usuario extends CI_Controller {
 			$this->load->template('usuario/change_password');
 		}
 	}
-
 	public function validatePasswordField(){
 		
 		$this->load->library("form_validation");
@@ -664,7 +753,6 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		return $success;
-
 	}
 
 	/**
@@ -725,7 +813,6 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		return $success;
-
 	}
 
 	private function registerUser($user, $group){
@@ -759,8 +846,9 @@ class Usuario extends CI_Controller {
 				$message = "{$savedUser['login']}, não foi possível enviar o email para você confirmar seu cadastro no sistema. Cheque o email informado e tente novamente.";
 			}
 		}
-
-		$this->session->set_flashdata($status, $message);
+		
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("/");
 	}
 
@@ -785,14 +873,13 @@ class Usuario extends CI_Controller {
 
 				$updated = $this->usuarios_model->update($user);
 
-				$sessionData = $this->getNewSessionData($user);
-
+				$session = SessionManager::getInstance();
 				if ($updated) {
-					$this->session->set_userdata('current_user', $sessionData);
-					$this->session->set_flashdata("success", "Os dados foram alterados");
+					$session->login($user);
+					$session->showFlashMessage("success", "Os dados foram alterados");
 				} 
 				else if (!$updated){
-					$this->session->set_flashdata("danger", "Os dados não foram alterados");
+					$session->showFlashMessage("danger", "Os dados não foram alterados");
 				}
 				redirect('usuario/profile');
 			}
@@ -816,14 +903,17 @@ class Usuario extends CI_Controller {
 	}
 
 	public function remove() {
-		$usuarioLogado = session();
-		$this->load->model("usuarios_model");
-		if ($this->usuarios_model->remove($usuarioLogado)) {
-			$this->session->unset_userdata('current_user');
-			$this->session->set_flashdata("success", "Usuário \"{$usuarioLogado['user']['login']}\" removido");
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+
+		if ($this->usuarios_model->remove($user)) {
+			$session->unsetUserData();
+			$login = $user->getLogin();
+			$session->showFlashMessage("success", "Usuário \"{$login}\" removido");
 			redirect("login");
-		} else {
-			$dados = array('usuario' => session());
+		} 
+		else {
+			$dados = array('user' => $user);
 			$this->load->template("usuario/conta", $dados);
 		}
 
@@ -870,7 +960,6 @@ class Usuario extends CI_Controller {
 	 */
 	public function getUserGroups(){
 
-		$this->load->model("usuarios_model");
 		$user_groups = $this->usuarios_model->getAllUserGroups();
 
 		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
@@ -880,7 +969,6 @@ class Usuario extends CI_Controller {
 
 	public function getAllowedUserGroupsForFirstRegistration(){
 
-		$this->load->model("usuarios_model");
 		$userGroups = $this->usuarios_model->getAllowedUserGroupsForFirstRegistration();
 
 		$userGroupsArray = $this->turnUserGroupsToArray($userGroups);
@@ -925,7 +1013,7 @@ class Usuario extends CI_Controller {
 		$cellPhone = $this->input->post("cell_phone");
 		$password = md5($this->input->post("password"));
 		$new_password = md5($this->input->post("new_password"));
-		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
+		$blank_password = md5("");
 
 		$success = $this->validateEmailField($oldEmail, $email);
 
@@ -934,31 +1022,58 @@ class Usuario extends CI_Controller {
 			$user = $this->usuarios_model->getObjectUser($id);
 			$login = $user->getLogin();
 
-			if ($new_password != $blank_password && $password != $user->getPassword()) {
-				$this->session->set_flashdata("danger", "Senha atual incorreta");
-				redirect("usuario/profile");
-			} 
-			else if ($new_password == $blank_password) {
-				$new_password = $user->getPassword();
-			}
+			$session = SessionManager::getInstance();
 
-			if (empty($name)) {
-				$name = $user->getName();
-			}
+			try{
+				$foundUser = $this->validateUser($login, $password);
 
-			if (empty($email)) {
-				$email = $user->getEmail();
+				if($foundUser !== FALSE){
+
+					if ($new_password != $blank_password && $password != $user->getPassword()) {
+						$session->showFlashMessage("danger", "Senha atual incorreta");
+						redirect("usuario/profile");
+					} 
+					else if ($new_password == $blank_password) {
+						$new_password = $user->getPassword();
+					}
+
+					if (empty($name)) {
+						$name = $user->getName();
+					}
+
+					if (empty($email)) {
+						$email = $user->getEmail();
+					}
+					
+					if (empty($homePhone)) {
+						$homePhone = $user->getHomePhone();
+					}
+					
+					if (empty($cellPhone)) {
+						$cellPhone = $user->getCellPhone();
+					}
+					
+					try{
+						$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
+
+						return $user;
+
+					}
+					catch(UserException $e){
+						$session->showFlashMessage("danger", $e->getMessage());
+						redirect("usuario/conta");
+					}
+
+				}
+				else{
+					$session->showFlashMessage("danger", "Senha atual incorreta.");
+					redirect("usuario/conta");
+				}
 			}
-			
-			if (empty($homePhone)) {
-				$homePhone = $user->getHomePhone();
+			catch(LoginException $e){
+				$session->showFlashMessage("danger", "Senha atual incorreta.");
+				redirect("usuario/conta");
 			}
-			
-			if (empty($cellPhone)) {
-				$cellPhone = $user->getCellPhone();
-			}
-			
-			$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 		}
 		else{
 			$user = NULL;
@@ -967,20 +1082,7 @@ class Usuario extends CI_Controller {
 		return $user;
 	}
 
-	private function getNewSessionData($user){
-
-		$sessionData = session();
-		$sessionData['user']['id'] = $user->getId();
-		$sessionData['user']['name'] = $user->getName();
-		$sessionData['user']['email'] = $user->getEmail();
-		$sessionData['user']['login'] = $user->getLogin();
-		$sessionData['user']['password'] = $user->getPassword();
-		
-		return $sessionData;
+	function alpha_dash_space($str) {
+		return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
-
-}
-
-function alpha_dash_space($str) {
-	return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 }

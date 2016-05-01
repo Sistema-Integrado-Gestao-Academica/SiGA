@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 class CapesAvaliation extends CI_Controller {
 
 	public function getCapesAvaliationsNews(){
@@ -13,6 +15,9 @@ class CapesAvaliation extends CI_Controller {
 	}
 	
 	public function checkAsVisualized($avaliationId){
+		
+		$session = SessionManager::getInstance();
+
 		$this->load->model("capesavaliation_model");
 		
 		$visualized = $this->capesavaliation_model->changeToVisualized($avaliationId);
@@ -25,7 +30,7 @@ class CapesAvaliation extends CI_Controller {
 			$insertMessage =  "Falha na atualização, tente novamente.";
 		}
 		
-		$this->session->set_flashdata($insertStatus, $insertMessage);
+		$session->showFlashMessage($insertStatus, $insertMessage);
 		
 		redirect('login');
 	}

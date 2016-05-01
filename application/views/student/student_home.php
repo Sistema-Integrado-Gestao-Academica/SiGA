@@ -1,5 +1,5 @@
 
-<h2 class="principal">Bem vindo, <b><i><?php echo $userData['name'];?></i></b>!</h2>
+<h2 class="principal">Bem vindo, <b><i><?php echo $userData->getName();?></i></b>!</h2>
 
 <?php
 	require_once(APPPATH."/data_types/StudentRegistration.php");
@@ -11,7 +11,7 @@
 <br>
 <div class="panel panel-primary">
 
-	<div class="panel-heading"><h4>Cursos para o(a) aluno(a) <i><?php echo $userData['name'];?></i></h4></div>
+	<div class="panel-heading"><h4>Cursos para o(a) aluno(a) <i><?php echo $userData->getName();?></i></h4></div>
 
 	<div class="panel-body">
 
@@ -23,7 +23,7 @@
 
 				if($course['enrollment'] !== NULL){
 
-					echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$userData['id']}", "<b>".$course['course_name']."</b>");
+					echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
 					echo "<br>";
 					echo "Data matrícula: ".$course['enroll_date'];
 					echo "<br>";
@@ -33,8 +33,8 @@
 
 					echo "<h4> Curso: <b>{$course['course_name']}</b></h4>";
 
-					$userName = $userData['name'];
-					$studentId = $userData['id'];
+					$userName = $userData->getName();
+					$studentId = $userData->getId();
 					$courseId = $course['id_course'];
 
 					include("_inform_enrollment.php");

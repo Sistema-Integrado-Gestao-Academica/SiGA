@@ -4,14 +4,23 @@
 	require_once(APPPATH."/constants/GroupConstants.php");
 	require_once(APPPATH."/data_types/notification/ActionNotification.php");
 	require_once(APPPATH."/data_types/User.php");
+	require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
-	$session = $this->session->userdata("current_user");
+	$session = SessionManager::getInstance();
 
-	if($session){
-		$user = $session['user'];
+
+    if($session->isLogged()){
+        $userData = $session->getUserData();
+
+        $userName = $userData->getName();
+        $userEmail = $userData->getEmail();
+        $userId = $userData->getId();
+
+        $userGroups = $session->getUserGroups();
+		
 
 		// Getting user notifications
-		$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);	
+		$userObj = new User($userId, $userName, FALSE, $userEmail);	
 		$userNotifications = $this->navbarnotification->getUserNotifications($userObj);
 
 		$notifications = $userNotifications["notifications"];
@@ -75,9 +84,12 @@
 					<a href="<?php echo base_url('/');?>">
 						<img src="<?php echo base_url('img/logo_home.png'); ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
 					</a>
-					<?php if ($session) { ?>
+
+                <?php if ($session->isLogged()) {?>
+					
 				</ul>
-				<ul class="nav navbar-nav navbar-right">
+					
+					<ul class="nav navbar-nav navbar-right">
 
 						<li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -142,37 +154,35 @@
 						<li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
-                                <span><?=ucfirst($session['user']['name'])?><i class="caret"></i></span>
+                                <span><?=ucfirst($userName)?><i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header ">
                                     <p>
                                         <?php
-                                        	echo ucfirst($session['user']['name']);
+                                        	echo ucfirst($userName);
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
-                                        	if($session['user_groups'] !== FALSE){
-                                        		
-	                                        	foreach($session['user_groups'] as $group){
-	                                        		switch ($group['group_name']) {
-	                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-	                                        				$groupNameToDisplay = "Secretaria acadêmica";
-	                                        				break;
-	                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-	                                        				$groupNameToDisplay = "Secretaria financeira";
-	                                        				break;
-	                                        			default:
-	                                        				$groupNameToDisplay = $group['group_name'];
-	                                        				break;
-	                                        		}
-	                                        		echo ucfirst($groupNameToDisplay);
-	                                        		echo "<br>";
-	                                        	}
+ 
+                                        	foreach($userGroups as $group){
+                                        		switch ($group->getName()) {
+                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria acadêmica";
+                                        				break;
+                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria financeira";
+                                        				break;
+                                        			default:
+                                        				$groupNameToDisplay = $group->getName();
+                                        				break;
+                                        		}
+                                        		echo ucfirst($groupNameToDisplay);
+                                        		echo "<br>";
                                         	}
                                         ?>
                                         <br>
-                                        <small><?php echo $session['user']['email']?></small>
+                                        <small><?php echo $userEmail;?></small>
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
@@ -186,13 +196,16 @@
                                 </li>
                             </ul>
                         </li>
+
 					</ul>
 				<?php } else { ?>
-
-					<li><?=anchor("register", "Cadastro", "class='navbar-brand'")?></li>
+					
+						<li><?=anchor("register", "Cadastro", "class='navbar-brand'")?></li>
+					
 					</ul>
+				
+					<ul class="nav navbar-nav navbar-right">
 
-						<ul class="nav navbar-nav navbar-right">
 					<?php
 						echo form_open("login/authenticate");?>
 							<div class="row">
@@ -258,7 +271,7 @@
 	</header>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
-            <?php if($session){?>
+            <?php if($session->isLogged()){?>
 	            <aside class="left-side sidebar-offcanvas sidebar-fixed">
 	                <!-- sidebar: style can be found in sidebar.less -->
 	                <section class="sidebar">
@@ -266,7 +279,7 @@
 	                    <div class="user-panel">
 	                        <div class="pull-left info">
 	                            <br>
-	                            <p>Olá, <?=ucfirst($session['user']['name'])?></p>
+	                            <p>Olá, <?=ucfirst($userName)?></p>
 
 	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 
@@ -277,9 +290,9 @@
 
 		                            <ul class="dropdown-menu">
 		                            	<?php
-		                            		foreach($session['user_groups'] as $group){
+		                            		foreach($userGroups as $group){
 		                            			echo "<li>";
-		                            			switch ($group['group_name']) {
+		                            			switch ($group->getName()) {
                                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
                                         				$groupNameToDisplay = "Secretaria acadêmica";
                                         				break;
@@ -287,13 +300,13 @@
                                         				$groupNameToDisplay = "Secretaria financeira";
                                         				break;
                                         			default:
-                                        				$groupNameToDisplay = $group['group_name'];
+                                        				$groupNameToDisplay = $group->getName();
                                         				break;
                                         		}
-		                            			if($group['group_name'] == GroupConstants::SECRETARY_GROUP){
+		                            			if($group->getName() == GroupConstants::SECRETARY_GROUP){
 													continue;
 												}else{
-		                            				echo anchor($group['profile_route'], ucfirst($groupNameToDisplay));
+		                            				echo anchor($group->getProfileRoute(), ucfirst($groupNameToDisplay));
 		                            			}
 		                            			echo "</li>";
 		                            		}
@@ -314,61 +327,58 @@
 	                    <!-- /.search form -->
 	                    <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-	                <?php
-	                	if($session['user_permissions'] !== FALSE){
+                    <?php
 
-							foreach($session['user_permissions'] as $groupName => $groupPermissions){
-	                			if($groupName == GroupConstants::SECRETARY_GROUP){
-									continue;
-								}else{
-									echo "<li class='treeview'>";
+                        foreach($userGroups as $group){
+                            $groupName = $group->getName();
+                            if($groupName == GroupConstants::SECRETARY_GROUP){
+                                continue;
+                            }else{
+                                echo "<li class='treeview'>";
 
-									switch ($groupName) {
-	                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-	                        				$groupNameToShow = "Secretaria acadêmica";
-	                        				break;
-	                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-	                        				$groupNameToShow = "Secretaria financeira";
-	                        				break;
-	                        			default:
-	                        				$groupNameToShow = $groupName;
-	                        				break;
-	                        		}
-									echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
+                                switch ($groupName) {
+                                    case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        $groupNameToShow = "Secretaria acadêmica";
+                                        break;
+                                    case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        $groupNameToShow = "Secretaria financeira";
+                                        break;
+                                    default:
+                                        $groupNameToShow = $groupName;
+                                        break;
+                                }
+                                echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
 
-										echo "<ul class='treeview-menu'>";
+                                    echo "<ul class='treeview-menu'>";
 
-										if($groupPermissions !== FALSE){
+                                    $groupPermissions = $group->getPermissions();
+                                    foreach($groupPermissions as $permission){
 
-											foreach($groupPermissions as $permission){
+                                        echo "<li>";
+                                            if ($permission->getFunctionality() == PermissionConstants::RESEARCH_LINES_PERMISSION){
+                                                continue;
+                                            }else{
+                                                echo anchor($permission->getFunctionality(), $permission->getName(), "class='fa fa-caret-right'");
+                                            }
+                                        echo "</li>";
+                                    }
 
-												echo "<li>";
-													if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
-														continue;
-													}else{
-														echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-													}
-												echo "</li>";
-											}
-										}
 
-										echo "</ul>";
+                                    echo "</ul>";
 
-									echo "</li>";
-								}
-							}
+                                echo "</li>";
+                            }
+                        }
 
-	                	}
-					?>
-                  	</ul>
-	                </section>
-	                <!-- /.sidebar -->
-	            </aside>
+                    ?>
+                    </ul>
+                    </section>
+                    <!-- /.sidebar -->
+                </aside>
             <?php }?>
             <aside class="right-side">
-            	<div class="container">
-<br>
-<br>
+                <div class="container">
+
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>

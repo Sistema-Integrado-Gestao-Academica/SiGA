@@ -2,17 +2,44 @@
 
 require_once('syllabus.php');
 require_once('offer.php');
+require_once('module.php');
+
+require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Discipline extends CI_Controller {
 
+	const MODEL_NAME = "discipline_model";
+
+	public function __construct(){
+		parent::__construct();
+		$this->load->model(self::MODEL_NAME);
+	}
+
 	//Function to load index page of disciplines
 	public function discipline_index(){
-		$this->load->template("discipline/index_discipline");
+
+		$group = new Module();
+		$userIsAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
+
+		if ($userIsAdmin){
+			$disciplines = $this->getAllDisciplines();
+		}else{
+			$session = SessionManager::getInstance();
+			$user = $session->getUserData();
+			$userId = $user->getId();
+			$disciplines = $this->getDisciplinesBySecretary($userId);
+		}
+
+		$data = array(
+			'disciplines' => $disciplines,
+			'userIsAdmin' => $userIsAdmin
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "discipline/index_discipline", $data);
 	}
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
-
-		$this->load->model('discipline_model');
 
 		$disciplineClasses = $this->discipline_model->getClassesByDisciplineName($disciplineName, $offerId);
 
@@ -43,7 +70,7 @@ class Discipline extends CI_Controller {
 	 * @return array $registeredDisciplines
 	 */
 	public function getAllDisciplines(){
-		$this->load->model('discipline_model');
+
 		$registeredDisciplines = $this->discipline_model->listAllDisciplines();
 
 		return $registeredDisciplines;
@@ -51,7 +78,7 @@ class Discipline extends CI_Controller {
 
 	public function getDisciplineByPartialName($disciplineName){
 
-		$this->load->model('discipline_model');
+
 
 		$disciplines = $this->discipline_model->getDisciplineByPartialName($disciplineName);
 
@@ -60,8 +87,6 @@ class Discipline extends CI_Controller {
 
 	public function getDisciplinesBySecretary($userId){
 
-		$this->load->model('discipline_model');
-
 		$disciplines = $this->discipline_model->getDisciplinesBySecretary($userId);
 
 		return $disciplines;
@@ -69,7 +94,7 @@ class Discipline extends CI_Controller {
 
 	public function getCourseSyllabusDisciplines($courseId){
 
-		$this->load->model('discipline_model');
+
 
 		$syllabus = new Syllabus();
 		$foundSyllabus = $syllabus->getCourseSyllabus($courseId);
@@ -111,18 +136,19 @@ class Discipline extends CI_Controller {
 				'id_course_discipline' => $disciplineCourse
 			);
 
-			$this->load->model('discipline_model');
+
 			$alreadyExists = $this->discipline_model->disciplineExists($disciplineCode,$disciplineName);
 
+			$session = SessionManager::getInstance();
 			if($alreadyExists['code']){
-				$this->session->set_flashdata("danger", "Código de disciplina já existe no sistema");
+				$session->showFlashMessage("danger", "Código de disciplina já existe no sistema");
 				redirect("discipline/discipline_index");
 			}else if($alreadyExists['name']){
-				$this->session->set_flashdata("danger", "Disciplina já existe no sistema");
+				$session->showFlashMessage("danger", "Disciplina já existe no sistema");
 				redirect("discipline/discipline_index");
 			}else{
 				$this->discipline_model->saveNewDiscipline($disciplineToRegister);
-				$this->session->set_flashdata("success", "Disciplina \"{$disciplineName}\" cadastrada com sucesso");
+				$session->showFlashMessage("success", "Disciplina \"{$disciplineName}\" cadastrada com sucesso");
 				redirect("discipline/discipline_index");
 			}
 		}else{
@@ -151,7 +177,7 @@ class Discipline extends CI_Controller {
 					'workload' 		    => $workload
 			);
 
-			$this->load->model('discipline_model');
+
 			$updated = $this->discipline_model->updateDisciplineData($disciplineCode,$disciplineToUpdate);
 			$updateStatus = "success";
 			$updateMessage = "Disciplina \"{$disciplineName}\" alterada com sucesso";
@@ -159,7 +185,8 @@ class Discipline extends CI_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Dados na forma incorreta.";
 		}
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect('/discipline/discipline_index');
 	}
 
@@ -178,7 +205,8 @@ class Discipline extends CI_Controller {
 			$deleteMessage = "Não foi possível excluir esta disciplina.";
 		}
 
-		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('/discipline/discipline_index');
 	}
@@ -188,7 +216,7 @@ class Discipline extends CI_Controller {
 		$this->load->helper('url');
 		$site_url = site_url();
 
-		$this->load->model('discipline_model');
+
 		$discipline_searched = $this->discipline_model->getDisciplineByCode($code);
 		$data = array(
 				'discipline' => $discipline_searched,
@@ -218,8 +246,6 @@ class Discipline extends CI_Controller {
 
 	public function getDisciplineByCode($disciplineCode){
 
-		$this->load->model('discipline_model');
-
 		$discipline = $this->discipline_model->getDisciplineByCode($disciplineCode);
 
 		return $discipline;
@@ -227,7 +253,7 @@ class Discipline extends CI_Controller {
 
 	public function checkIfDisciplineExists($disciplineId){
 
-		$this->load->model('discipline_model');
+
 
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($disciplineId);
 
@@ -236,7 +262,7 @@ class Discipline extends CI_Controller {
 
 	public function getDisciplineResearchLines($disciplineCode){
 
-		$this->load->model('discipline_model');
+
 
 		$disciplineResearchLines = $this->discipline_model->getDisciplineResearchLines($disciplineCode);
 
@@ -244,14 +270,14 @@ class Discipline extends CI_Controller {
 	}
 
 	public function saveDisciplineResearchRelation($relationToSave){
-		$this->load->model('discipline_model');
+
 
 		$saved = $this->discipline_model->saveDisciplineResearchLine($relationToSave);
 		return $saved;
 	}
 
 	public function deleteDisciplineResearchRelation($researchRelation){
-		$this->load->model('discipline_model');
+
 
 		$deleted = $this->discipline_model->deleteDisciplineResearchLine($researchRelation);
 		return $deleted;
@@ -264,7 +290,7 @@ class Discipline extends CI_Controller {
 	 * @return boolean $deletedDiscipline
 	 */
 	private function dropDiscipline($code){
-		$this->load->model('discipline_model');
+
 		$deletedDiscipline = $this->discipline_model->deleteDiscipline($code);
 
 		return $deletedDiscipline;

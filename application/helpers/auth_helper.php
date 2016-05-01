@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once(APPPATH."/controllers/login.php");
 require_once(APPPATH."/controllers/permission.php");
@@ -23,8 +23,8 @@ function session() {
  */
 function loadTemplateSafelyByPermission($requiredPermission, $template, $data = array()){
 
-	$permission = new Permission();
-	
+	$permission = new PermissionOld();
+
 	$ci = get_instance();
 
 	$userHasPermission = $permission->checkUserPermission($requiredPermission);

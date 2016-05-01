@@ -6,6 +6,7 @@ require_once('temporaryrequest.php');
 require_once('mastermind.php');
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Request extends CI_Controller {
 
@@ -23,7 +24,8 @@ class Request extends CI_Controller {
 			$message = "Toda a solicitação não pôde ser aprovada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("request/courseRequests/{$courseId}");
 	}
 
@@ -41,7 +43,8 @@ class Request extends CI_Controller {
 			$message = "Toda a solicitação não pôde ser recusada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("request/courseRequests/{$courseId}");
 	}
 
@@ -61,7 +64,8 @@ class Request extends CI_Controller {
 		}
 
 		// $this->redirectToCurrentUserRequests($status, $message);
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect('mastermind');
 	}
 
@@ -81,7 +85,8 @@ class Request extends CI_Controller {
 		}
 
 		// $this->redirectToCurrentUserRequests($status, $message);
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect('mastermind');
 	}
 
@@ -127,7 +132,8 @@ class Request extends CI_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 	}
 
 	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea){
@@ -145,7 +151,8 @@ class Request extends CI_Controller {
 		}
 
 		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		// redirect('mastermind');
 	}
 
@@ -172,7 +179,8 @@ class Request extends CI_Controller {
 			$message = "A solicitação não pôde ser finalizada.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("request/courseRequests/{$courseId}");
 	}
 

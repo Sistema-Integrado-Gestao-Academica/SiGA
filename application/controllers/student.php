@@ -10,6 +10,8 @@ require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/data_types/StudentRegistration.php");
 require_once(APPPATH."/data_types/basic/Phone.php");
 
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 require_once(APPPATH."/exception/StudentRegistrationException.php");
 require_once(APPPATH."/exception/PhoneException.php");
 
@@ -28,18 +30,18 @@ class Student extends CI_Controller {
 
 	public function index(){
 
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		$session = SessionManager::getInstance();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
 
 		$user = new Usuario();
 		$userCourses = $user->getUserCourses($userId);
 
 		$data = array(
-			'userData' => $loggedUserData['user'],
+			'userData' => $loggedUserData,
 			'userCourses' => $userCourses
 		);
 
-		// On auth_helper
 		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_home', $data);
 	}
 
@@ -70,8 +72,12 @@ class Student extends CI_Controller {
 	}
 
 	public function studentInformation(){
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
+		
+		$this->loadModel();
+
+		$session = SessionManager::getInstance();
+		$userData = $session->getUserData();
+		$userId = $userData->getId();
 		
 		$studentBasicInfo = $this->getBasicInfo($userId);
 
@@ -83,7 +89,7 @@ class Student extends CI_Controller {
 		$currentSemester = $semester->getCurrentSemester();
 
 		$data = array(
-			'userData' => $loggedUserData['user'],
+			'userData' => $userData,
 			'status' => $userStatus,
 			'courses' => $userCourses,
 			'currentSemester' => $currentSemester,
@@ -144,7 +150,6 @@ class Student extends CI_Controller {
 
 	private function getBasicInfo($studentId){
 
-		$this->loadModel();
 		$basicInfo = $this->student_model->getBasicInfo($studentId);
 
 		if($basicInfo !== FALSE){

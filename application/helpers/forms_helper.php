@@ -9,7 +9,7 @@ function bold($string){
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
 	$discipline = array(
-		"name" => "discipline_to_search",
+		"name" => "discipline_tomo_search",
 		"id" => "discipline_to_search",
 		"type" => "text",
 		"class" => "form-campo form-control",
@@ -493,6 +493,11 @@ function createResearchLineForm($courses){
 			"content" => "Salvar",
 			"type" => "submit"
 	);
+
+	if($courses === FALSE){
+		$courses = array("Não há cursos para este secretário.");
+		$submitBtn['disabled'] = TRUE;
+	}
 
 	$researchLine = array(
 			"name" => "researchLine",

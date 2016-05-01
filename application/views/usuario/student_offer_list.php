@@ -1,5 +1,4 @@
 
-<?php $session = $this->session->userdata("current_user");?>
 <br>
 <br>
 
@@ -12,4 +11,4 @@
 <br>
 <?php displayOfferListDisciplines($offerListDisciplines, $course['id_course']); ?>
 
-<?php echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$session['user']['id']}", "Voltar", "class='btn btn-danger'"); ?>
+<?php echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>

@@ -409,10 +409,6 @@ class Course_model extends CI_Model {
 
 	}
 
-	public function cleanEnrolledStudents($idCourse){
-		$this->db->delete('course_student', array('id_course' => $idCourse));
-	}
-
 	/**
 	 * Check if a given course id exists on the database
 	 * @param $course_id

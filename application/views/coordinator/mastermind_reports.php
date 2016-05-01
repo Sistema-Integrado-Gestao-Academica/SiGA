@@ -2,8 +2,12 @@
 <br>
 
 <?php 
-$session = $this->session->userdata("current_user");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
-mastermindReportsTable($session['user']['id']);
+$session = SessionManager::getInstance(); 
+$user = $session->getUserData();
+$userId = $user->getId();
+
+mastermindReportsTable($userId);
 
 ?>

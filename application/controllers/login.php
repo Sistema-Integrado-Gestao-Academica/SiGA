@@ -1,7 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once("usuario.php");
 require_once(APPPATH."/exception/LoginException.php");
+
 require_once(APPPATH."/data_types/User.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Login extends CI_Controller {
 
@@ -14,65 +17,62 @@ class Login extends CI_Controller {
 	}
 
 	public function authenticate(){
-		
+
 		$login = $this->input->post("login");
 		$password = $this->input->post("password");
 
+		$this->load->model("usuarios_model");
+
+		$session = SessionManager::getInstance();
+
 		try{
 
-			$this->load->model("usuarios_model");
-			$user = $this->usuarios_model->validateUser($login, $password);
-			
+			$userController = new Usuario();
+			$user = $userController->validateUser($login, $password);
+
 			if($user !== FALSE){
 
-				$userIsActive = $user['active'] == 1;
+				$userIsActive = $user->getActive();
 				
 				if($userIsActive){
 
-					$this->load->model("module_model");
-					$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
-					$registeredGroups = $this->module_model->getUserGroups($user['id']);
+					$session->login($user);
 
-					$userData = array(
-						'user' => $user,
-						'user_permissions' => $registeredPermissions,
-						'user_groups' => $registeredGroups
-					);
-
-					$this->session->set_userdata("current_user", $userData);
-					$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);				
+					$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user->getId());				
 
 					if(!$isATemporaryPassword){
 						redirect('/');
 					}
 					else{
 						redirect('usuario/changePassword');
-					}
+					}	
+					
 				}else{
-					$resentEmailLink = anchor("resent_confirmation_email/{$user['id']}",'clique aqui');
+
+					$userId = $user->getId();
+					$resentEmailLink = anchor("resent_confirmation_email/{$userId}",'clique aqui');
 					$authenticationStatus = "danger";
 					$authenticationMessage = "Cadastro não confirmado. Um e-mail de confirmação foi enviado para o e-mail utilizado no cadastro.
 					<br> Caso não tenha recebido o e-mail, <b>{$resentEmailLink}</b>.";
 					
-					$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+					$session->showFlashMessage($authenticationStatus, $authenticationMessage);
 					redirect('/');
 				}
 
-				
 			}else{
 				$authenticationStatus = "danger";
 				$authenticationMessage = "Ocorreu um erro ao carregar os dados. Tente Novamente.";
-				$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+				$session->showFlashMessage($authenticationStatus, $authenticationMessage);
 				redirect('/');
 			}
 
 		}catch(LoginException $caughtException){
 			$authenticationStatus = "danger";
 			$authenticationMessage = $caughtException->getMessage();
-			$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
+			$session->showFlashMessage($authenticationStatus, $authenticationMessage);
 			redirect('/');
 		}
-		
+
 	}
 
 
@@ -85,11 +85,12 @@ class Login extends CI_Controller {
 	 * @return void
 	 */
 	public function logout($messageToDisplay = "", $statusLogout = "success", $path = '/') {
-		
+
 		$thereIsMessage = !empty($messageToDisplay);
 		if($thereIsMessage){
 			$statusLogout = $this->checkStatusLogout($statusLogout);
-			$this->session->set_flashdata($statusLogout, $messageToDisplay);
+			$session = SessionManager::getInstance();
+			$session->showFlashMessage($statusLogout, $messageToDisplay);
 
 			// VALIDAR O PATH
 			$this->unsetLoggedUserAndRedirectTo($path);
@@ -120,7 +121,9 @@ class Login extends CI_Controller {
 	 * @return void
 	 */
 	private function unsetLoggedUserAndRedirectTo($pathToRedirect){
-		$this->session->unset_userdata("current_user", $usuario);
+		//$this->session->unset_userdata("current_user", $usuario);
+		//$this->session->sess_destroy();
+		SessionManager::getInstance()->logout();
 		redirect($pathToRedirect);
 	}
 }

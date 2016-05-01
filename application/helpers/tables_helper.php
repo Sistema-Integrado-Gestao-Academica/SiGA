@@ -219,28 +219,32 @@ function secretaryReportsTable($idCoordinator){
 	echo "<div class=\"modal-info\">";
 	echo "<div class=\"modal-content\">";
 
-	foreach ($secretaries as $key => $secretary){
-		$userData = new Usuario();
-		$secretaryData = $userData->getUserById($secretary['id_user']);
-		$secretaryGroup = $userData->getUserGroupNameByIdGroup($secretary['id_group']);
-		echo "<div class=\"modal-header bg-news\">";
-			echo "<h4 class=\"model-title\"> Secretário : ". ucfirst($secretaryData['name']) ."</h4>";
-		echo "</div>";
-		echo "<div class=\"modal-body\">";
-			echo "<h4>";
-				switch ($secretaryGroup) {
-					case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-						echo "Secretaria acadêmica";
-						break;
-					case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-						echo "Secretaria financeira";
-						break;
-					default:
-						break;
-				}
-			echo "</h4>";
-		echo "</div>";
+	if($secretaries !== FALSE){
+		foreach ($secretaries as $key => $secretary){
+			$userData = new Usuario();
+			$secretaryData = $userData->getUserById($secretary['id_user']);
+			$secretaryGroup = $userData->getUserGroupNameByIdGroup($secretary['id_group']);
+			echo "<div class=\"modal-header bg-news\">";
+				echo "<h4 class=\"model-title\"> Secretário : ". ucfirst($secretaryData['name']) ."</h4>";
+			echo "</div>";
+			echo "<div class=\"modal-body\">";
+				echo "<h4>";
+					switch ($secretaryGroup) {
+						case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+							echo "Secretaria acadêmica";
+							break;
+						case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+							echo "Secretaria financeira";
+							break;
+						default:
+							break;
+					}
+				echo "</h4>";
+			echo "</div>";
 
+		}
+	}else{
+		callout("info", "Nenhum secretário para este curso.");
 	}
 
 					echo "</div>";
@@ -2466,42 +2470,47 @@ function displayResearchLinesByCourse($research_lines,$courses){
 
 	echo anchor("usuario/createCourseResearchLine/","<i class='fa fa-plus-circle'></i>   Criar Linha de Pesquisa", "class='btn-lg'");
 
-	buildTableDeclaration();
+	if($research_lines !== FALSE){
+		buildTableDeclaration();
 
-	buildTableHeaders(array(
-		'Curso',
-		'Linhas de Pesquisa',
-		'Ações'
-	));
-	foreach ($research_lines as $keys => $researchs){
-		if($researchs){
-			foreach ($researchs as $researchData){
+		buildTableHeaders(array(
+			'Curso',
+			'Linhas de Pesquisa',
+			'Ações'
+		));
+
+		foreach ($research_lines as $keys => $researchs){
+			if($researchs){
+				foreach ($researchs as $researchData){
+					echo "<tr>";
+						echo "<td>";
+							echo $courses[$keys]['course_name'];
+						echo "</td>";
+						echo "<td>";
+							echo $researchData['description'];
+						echo "</td>";
+						echo "<td>";
+							echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
+							echo anchor("usuario/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+						echo "</td>";
+					echo "</tr>";
+				}
+			}else{
 				echo "<tr>";
 					echo "<td>";
 						echo $courses[$keys]['course_name'];
 					echo "</td>";
 					echo "<td>";
-						echo $researchData['description'];
+						echo "Não existem linhas de pesquisa cadastradas para este curso";
 					echo "</td>";
 					echo "<td>";
-						echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
-						echo anchor("secretary/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+						echo "Não existem ações possíveis.";
 					echo "</td>";
 				echo "</tr>";
 			}
-		}else{
-			echo "<tr>";
-				echo "<td>";
-					echo $courses[$keys]['course_name'];
-				echo "</td>";
-				echo "<td>";
-					echo "Não existem linhas de pesquisa cadastradas para este curso";
-				echo "</td>";
-				echo "<td>";
-					echo "Não existem ações possíveis.";
-				echo "</td>";
-			echo "</tr>";
 		}
+	}else{
+		callout("info", "Não foram encontradas linhas de pesquisa para este curso.");
 	}
 
 	buildTableEndDeclaration();

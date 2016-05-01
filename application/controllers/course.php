@@ -8,10 +8,15 @@ require_once('ead.php');
 require_once('budgetplan.php');
 require_once('enrollment.php');
 require_once('usuario.php');
+
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
-require_once(APPPATH."/exception/CourseNameException.php");
+
 require_once(APPPATH."/data_types/StudentRegistration.php");
+
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
+require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/StudentRegistrationException.php");
 
 class Course extends CI_Controller {
@@ -20,9 +25,10 @@ class Course extends CI_Controller {
 
 		$this->load->model('course_model');
 
-		$session = $this->session->userdata("current_user");
-		$user = $session['user'];
-		$userId = $user['id'];
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+
 
 		$group = new Module();
 		$userIsAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
@@ -35,10 +41,11 @@ class Course extends CI_Controller {
 
 		$data = array(
 			'courses' => $courses,
-			'userData' => $user
+			'userData' => $user,
+			'isAdmin' => $userIsAdmin
 		);
 
-		loadTemplateSafelyByPermission("cursos",'course/course_index', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION, 'course/course_index', $data);
 	}
 
 	public function getCourseTeachers($courseId){
@@ -212,14 +219,6 @@ class Course extends CI_Controller {
 
 			$wasSaved = $this->course_model->saveCourse($course);
 
-			/**
-			 * DEPRECATED CODE
-			 * $this->load->model('module_model');
-			 * if($courseWasSaved){
-			 * $groupsWereSaved = $this->module_model->saveNewCourseGroups($courseName);
-			 * }
-			 */
-
 			if($wasSaved){
 				$insertStatus = "success";
 				$insertMessage =  "Curso \"{$courseName}\" cadastrado com sucesso";
@@ -234,7 +233,8 @@ class Course extends CI_Controller {
 			$insertMessage = "Dados na forma incorreta.";
 		}
 
-		$this->session->set_flashdata($insertStatus, $insertMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($insertStatus, $insertMessage);
 
 		redirect('cursos');
 	}
@@ -262,7 +262,8 @@ class Course extends CI_Controller {
 			$saveMessage = $caughtException->getMessage();
 		}
 
-		$this->session->set_flashdata($saveStatus, $saveMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($saveStatus, $saveMessage);
 		redirect('/course/formToEditCourse/'.$idCourse);
 	}
 
@@ -290,7 +291,8 @@ class Course extends CI_Controller {
 			$saveMessage = $caughtException->getMessage();
 		}
 
-		$this->session->set_flashdata($saveStatus, $saveMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($saveStatus, $saveMessage);
 		redirect('/course/formToEditCourse/'.$idCourse);
 	}
 
@@ -346,13 +348,6 @@ class Course extends CI_Controller {
 			$this->load->model('course_model');
 
 			$courseWasUpdated = $this->course_model->updateCourse($idCourse, $course);
-			/**
-			 * DEPRECATED CODE
-			 * $secretaryWasUpdated = $this->course_model->updateSecretary($secretaryToRegister['id_secretary'], $secretaryToUpdate);
-			 */
-
-
-			// $dataIsOk = $courseWasUpdated && $secretaryWasUpdated;
 
 			if($courseWasUpdated){
 				$updateStatus = "success";
@@ -367,7 +362,8 @@ class Course extends CI_Controller {
 			$updateMessage = "Dados na forma incorreta.";
 		}
 
-		$this->session->set_flashdata($updateStatus, $updateMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($updateStatus, $updateMessage);
 		redirect('cursos');
 	}
 
@@ -388,7 +384,6 @@ class Course extends CI_Controller {
 		}
 
 		return $researchLineNames;
-
 	}
 
 	public function getResearchLineNameById($researchLinesId){
@@ -397,54 +392,6 @@ class Course extends CI_Controller {
 		$researchLinesName = $this->course_model->getResearchLineNameById($researchLinesId);
 
 		return $researchLinesName['description'];
-	}
-
-	private function cleanUpOldCourseData($idCourse, $oldCourseType){
-
-		// define("GRADUATION", "graduation");
-		// define("EAD", "ead");
-// 		define("ACADEMIC_PROGRAM", "academic_program");
-// 		define("PROFESSIONAL_PROGRAM", "professional_program");
-
-		$this->load->model('course_model');
-		switch($oldCourseType){
-			case GRADUATION:
-
-				$this->cleanCourseDependencies($idCourse);
-				$this->course_model->deleteCourseById($idCourse);
-				break;
-
-			case EAD:
-
-				$this->cleanCourseDependencies($idCourse);
-				$this->course_model->deleteCourseById($idCourse);
-				break;
-
-			default:
-
-				break;
-		}
-
-	}
-
-	private function cleanCourseDependencies($idCourse){
-
-		// Clean all course dependencies
-		$this->cleanBudgetplan($idCourse);
-		$this->cleanEnrolledStudents($idCourse);
-	}
-
-	private function cleanEnrolledStudents($idCourse){
-		$this->load->model('course_model');
-
-		$this->course_model->cleanEnrolledStudents($idCourse);
-	}
-
-	private function cleanBudgetplan($idCourse){
-
-		$budgetplan = new Budgetplan();
-
-		$budgetplan->deleteBudgetplanByCourseId($idCourse);
 	}
 
 	/**
@@ -458,6 +405,7 @@ class Course extends CI_Controller {
 	 */
 	private function updateCourseToOtherCourseType($id_course, $courseType, $courseToUpdate, $commonAttributes=NULL, $post_graduation_type=NULL){
 
+		$session = SessionManager::getInstance();
 		switch ($courseType){
 			case GRADUATION:
 				try{
@@ -471,7 +419,7 @@ class Course extends CI_Controller {
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
 				}
-				$this->session->set_flashdata($updateStatus, $updateMessage);
+				$session->showFlashMessage($updateStatus, $updateMessage);
 
 				break;
 
@@ -487,7 +435,7 @@ class Course extends CI_Controller {
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
 				}
-				$this->session->set_flashdata($updateStatus, $updateMessage);
+				$session->showFlashMessage($updateStatus, $updateMessage);
 
 				break;
 
@@ -502,7 +450,7 @@ class Course extends CI_Controller {
 					$updateStatus = "danger";
 					$updateMessage = $caughtException->getMessage();
 				}
-				$this->session->set_flashdata($updateStatus, $updateMessage);
+				$session->showFlashMessage($updateStatus, $updateMessage);
 
 				break;
 
@@ -547,7 +495,8 @@ class Course extends CI_Controller {
 			$deleteMessage = "Não foi possível excluir este curso.";
 		}
 
-		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('cursos');
 	}
@@ -583,7 +532,8 @@ class Course extends CI_Controller {
 			$deleteMessage = "Não foi possível excluir este secretário.";
 		}
 
-		$this->session->set_flashdata($deleteStatus, $deleteMessage);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('/course/formToEditCourse/'.$course_id);
 

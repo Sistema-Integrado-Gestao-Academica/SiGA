@@ -2,13 +2,15 @@
 
 require_once("usuario.php");
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Budgetplan extends CI_Controller {
 
 	public function index() {
-		session();
+
 		$this->load->model("budgetplan_model");
 		$this->load->model("course_model");
+
 		$budgetplans = $this->budgetplan_model->all();
 		foreach ($budgetplans as $key => $b) {
 			$budgetplans[$key]['status'] = $this->budgetplan_model->getBudgetplanStatus($b['status']);
@@ -56,11 +58,13 @@ class Budgetplan extends CI_Controller {
 			"courses" => $courses,
 			"managers" => $managers
 		);
-		$this->load->template('budgetplan/index', $data);
+
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'budgetplan/index', $data);
 	}
 
 	public function save() {
-		session();
+
+
 		$budgetplanName = $this->input->post("budgetplan_name");
 		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");
@@ -84,17 +88,23 @@ class Budgetplan extends CI_Controller {
 
 		$this->load->model('budgetplan_model');
 
-		if ($this->budgetplan_model->save($budgetplan)) {
-			$this->session->set_flashdata("success", "Novo Plano orçamentário cadastrado");
-		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Plano orçamentário não cadastrado");
-		}
+		if ($this->budgetplan_model->save($budgetplan)) {				
 
-		redirect("planoorcamentario");
+			$status = "success";
+			$message = "Novo Plano orçamentário cadastrado";
+		} 
+		else {
+			$status = "danger";
+			$message = "Houve algum erro. Plano orçamentário não cadastrado";
+		}
+		
+		$session = SessionManager::getInstance(); 
+		$session->showFlashMessage($status, $message);
+		redirect(PermissionConstants::BUDGETPLAN_PERMISSION);
 	}
 
 	public function edit($id) {
-		session();
+
 		$this->load->model('budgetplan_model');
 		$this->load->model('course_model');
 		$this->load->model('expense_model');
@@ -138,11 +148,12 @@ class Budgetplan extends CI_Controller {
 			'disable_spending' => $disable_spending,
 			'managers' => $managers
 		);
-		$this->load->template("budgetplan/edit", $data);
+
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'budgetplan/edit', $data);
 	}
 
 	public function update() {
-		session();
+
 		$id = $this->input->post("budgetplan_id");
 		$budgetplanName = $this->input->post("budgetplan_name");
 		$manager = $this->input->post("manager");
@@ -153,7 +164,7 @@ class Budgetplan extends CI_Controller {
 		$continue = $this->input->post("continue");
 
 		if (!$continue) {
-			redirect("planoorcamentario/{$id}");
+			redirect(PermissionConstants::BUDGETPLAN_PERMISSION."/{$id}");
 		}
 
 		$budgetplan = array(
@@ -174,17 +185,24 @@ class Budgetplan extends CI_Controller {
 		}
 
 		$this->load->model('budgetplan_model');
-		if ($this->budgetplan_model->update($budgetplan)) {
-			$this->session->set_flashdata("success", "Plano orçamentário alterado");
-		} else {
-			$this->session->set_flashdata("danger", "Houve algum erro. Tente novamente");
-		}
 		
-		redirect("planoorcamentario/{$id}");
+		
+		if ($this->budgetplan_model->update($budgetplan)) {
+			$status = "success";
+			$message = "Plano orçamentário alterado";
+		} else {
+			$status = "danger";
+			$message = "Houve algum erro. Tente novamente";
+		}
+
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
+
+		redirect(PermissionConstants::BUDGETPLAN_PERMISSION."/{$id}");
 	}
 
 	public function delete() {
-		session();
+
 		$id = $this->input->post("budgetplan_id");
 		$this->load->model('budgetplan_model');
 		$this->load->model('expense_model');
@@ -194,15 +212,17 @@ class Budgetplan extends CI_Controller {
 			$this->expense_model->delete($expense['id']);
 		}
 
+		$session = SessionManager::getInstance();
+
 		if ($this->budgetplan_model->delete($id)) {
-			$this->session->set_flashdata("danger", "Plano orçamentário foi removido");
+			$session->showFlashMessage("danger", "Plano orçamentário foi removido");
 		}
 
-		redirect("planoorcamentario");
+		redirect(PermissionConstants::BUDGETPLAN_PERMISSION);
 	}
 
 	public function budgetplanExpenses($budgetplanId){
-		
+
 		$this->load->model("budgetplan_model");
 		$this->load->model('expense_model');
 
@@ -222,7 +242,7 @@ class Budgetplan extends CI_Controller {
 			'expenses' => $expenses
 		);
 
-		loadTemplateSafelyByGroup('secretario', 'budgetplan/budgetplan_expenses', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'budgetplan/budgetplan_expenses', $data);
 	}
 
 	public function deleteBudgetplanByCourseId($courseId){

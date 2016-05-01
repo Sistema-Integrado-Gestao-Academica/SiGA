@@ -5,6 +5,8 @@ require_once('offer.php');
 require_once('discipline.php');
 require_once('semester.php');
 require_once('schedule.php');
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
+
 
 /**
  * In this class, consider where is written 'temp' equals to 'temporary'
@@ -62,7 +64,8 @@ class TemporaryRequest extends CI_Controller {
 			$status = "danger";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}
@@ -144,7 +147,8 @@ class TemporaryRequest extends CI_Controller {
 			}
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}
@@ -211,7 +215,8 @@ class TemporaryRequest extends CI_Controller {
 			$message = "Não foi possível remover a disciplina. Cheque os dados informados e tente novamente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}

@@ -6,6 +6,7 @@ require_once('module.php');
 require_once('program.php');
 require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Secretary extends CI_Controller {
 
@@ -64,7 +65,8 @@ class Secretary extends CI_Controller {
 			$message = "Não foi possível vincular o docente ao curso.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
 
@@ -81,27 +83,29 @@ class Secretary extends CI_Controller {
 			$message = "Não foi possível remover o docente ao curso.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
-	
+
 	public function saveResearchLine(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("researchLine", "Linha de Pesquisa", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
-		
+
+		$this->load->model("course_model");
+		$session = SessionManager::getInstance();
 		if ($success) {
 			$researchLine  = $this->input->post("researchLine");
 			$researchCourse   = $this->input->post("research_course");
-				
+
 			$newResearchLine = array(
 					'description'    => $researchLine,
 					'id_course' => $researchCourse
 			);
-		
-			$this->load->model("course_model");
-		
+
+
 			$wasSaved = $this->course_model->saveResearchLine($newResearchLine);
 			if ($wasSaved){
 				$status = "success";
@@ -110,37 +114,39 @@ class Secretary extends CI_Controller {
 				$status = "danger";
 				$message = "Não foi possível salvar o linha de pesquisa do curso ". $course;
 			}
-			
-			$this->session->set_flashdata($status,$message);
+
+			$session->showFlashMessage($status,$message);
 			redirect("research_lines/");
 		} else {
 			$status = "danger";
 			$message = "Não foi possível salvar o linha de pesquisa. Tente Novamente";
-				
-			$this->session->set_flashdata($status,$message);
+
+			$session->showFlashMessage($status,$message);
 			redirect("research_lines/");
-			
+
 		}
 	}
-	
+
 	public function updateResearchLine(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("researchLine", "Linha de Pesquisa", "required|trim|xss_clean|callback__alpha_dash_space");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
-	
+
+		$this->load->model("course_model");
+		$session = SessionManager::getInstance();
+		
 		if ($success) {
 			$researchLine  = $this->input->post("researchLine");
 			$researchCourse   = $this->input->post("research_course");
 			$researchLineId = $this->input->post("id_research_line");
-			
+
 			$updateResearchLine = array(
 					'description'    => $researchLine,
 					'id_course' => $researchCourse
 			);
-	
-			$this->load->model("course_model");
-	
+
+
 			$wasSaved = $this->course_model->updateResearchLine($updateResearchLine, $researchLineId);
 			if ($wasSaved){
 				$status = "success";
@@ -149,36 +155,17 @@ class Secretary extends CI_Controller {
 				$status = "danger";
 				$message = "Não foi possível alterar o linha de pesquisa.";
 			}
-				
-			$this->session->set_flashdata($status,$message);
+
+			$session->showFlashMessage($status,$message);
 			redirect("research_lines/");
 		} else {
 			$status = "danger";
 			$message = "Não foi possível alterar o linha de pesquisa. Tente Novamente";
-	
-			$this->session->set_flashdata($status,$message);
+
+			$session->showFlashMessage($status,$message);
 			redirect("research_lines/");
-				
+
 		}
-	}
-	
-	public function removeCourseResearchLine($researchLineId,$course){
-		
-		$this->load->model("course_model");
-		
-		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
-		
-		if($wasRemoved){
-			$status = "success";
-			$message = "Linha de pesquisa removida do curso ".$course." com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
-		}
-		
-		$this->session->set_flashdata($status, $message);
-		redirect("research_lines/");
-		
 	}
 
 	public function defineTeacherSituation(){
@@ -198,16 +185,13 @@ class Secretary extends CI_Controller {
 			$message = "Não foi possível definir a situação do docente.";
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
 
 
 	public function secretaryPrograms(){
-
-		$session = $this->session->userdata("current_user");
-		$userData = $session['user'];
-		$secretaryId = $userData['id'];
 
 		$programsAndCourses = $this->getSecretaryPrograms();		
 		$programs = $programsAndCourses['programs'];
@@ -223,9 +207,9 @@ class Secretary extends CI_Controller {
 
 	public function getSecretaryPrograms(){
 
-		$session = $this->session->userdata("current_user");
-		$userData = $session['user'];
-		$secretaryId = $userData['id'];
+		$session = SessionManager::getInstance();
+		$user = $session->getUserData();
+		$secretaryId = $user->getId();
 
 		$courseController = new Course();
 		$courses = $courseController->getCoursesOfSecretary($secretaryId);

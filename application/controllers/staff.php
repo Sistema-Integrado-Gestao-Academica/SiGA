@@ -2,6 +2,7 @@
 
 require_once("usuario.php");
 require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
 class Staff extends CI_Controller {
 
@@ -60,10 +61,11 @@ class Staff extends CI_Controller {
 			$this->load->model('staffs_model');
 			$staffExiste = $this->staffs_model->getStaff('id_user', $idStaff);
 
+			$session = SessionManager::getInstance();
 			if ($staffExiste) {
-				$this->session->set_flashdata('danger', 'Este funcionário já está cadastrado');
+				$session->showFlashMessage('danger', 'Este funcionário já está cadastrado');
 			} else if ($this->staffs_model->saveNewStaff($saveData)) {
-				$this->session->set_flashdata('success', "Funcionário \"$nome\" salvo com sucesso");
+				$session->showFlashMessage('success', "Funcionário \"$nome\" salvo com sucesso");
 			}
 		}
 
@@ -103,11 +105,12 @@ class Staff extends CI_Controller {
 			$this->load->model("staffs_model");
 			$updated = $this->staffs_model->updateStaffData($updateData, $where);
 
+			$session = SessionManager::getInstance();
 			if ($updated) {
-				$this->session->set_flashdata("success", "Funcionário alterado.");
+				$session->showFlashMessage("success", "Funcionário alterado.");
 				redirect("staffs");
 			} else {
-				$this->session->set_flashdata("danger", "Este funcionário não pôde ser alterado.");
+				$session->showFlashMessage("danger", "Este funcionário não pôde ser alterado.");
 				redirect("staffs");
 			}
 		}
@@ -121,11 +124,15 @@ class Staff extends CI_Controller {
 		$staff = array("id_staff" => $staff_id, "id_user" => $user_id);
 
 		if ($this->staffs_model->remove($staff)) {
-			$this->session->set_flashdata("success", "Funcionário foi removido");
+			$status = "success";
+			$message = "Funcionário foi removido";
 		}else{
-			$this->session->set_flashdata("danger", "Funcionário não foi removido. Tente novamente");
+			$status = "danger";
+			$message = "Funcionário não foi removido. Tente novamente";
 		}
 
+		$session = SessionManager::getInstance();
+		$session->showFlashMessage($status, $message);
 		redirect("staffs");
 	}
 

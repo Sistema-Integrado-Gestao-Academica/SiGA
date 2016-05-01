@@ -40,9 +40,9 @@ class SelectiveProcess extends CI_Controller {
 
     public function programCourses($programId){
 
-        $session = $this->session->userdata("current_user");
-        $userData = $session['user'];
-        $secretaryId = $userData['id'];
+        $session = SessionManager::getInstance();
+        $user = $session->getUserData();
+        $secretaryId = $user->getId();
 
         $courseController = new Course();
         $secretaryCourses = $courseController->getCoursesOfSecretary($secretaryId);
