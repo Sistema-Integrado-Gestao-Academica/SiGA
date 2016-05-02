@@ -72,10 +72,14 @@
 			<div class="navbar-btn sidebar-toggle" role="button">
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
+					<li>
 					<a href="<?php echo base_url('/');?>">
-						<img src="<?php echo base_url('img/logo_home.png'); ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
-					</a>
+					<?php $logo_image = base_url('img/logo_home.png');?>
+					
 					<?php if ($session) { ?>
+					</li>	
+						<img src="<?php echo $logo_image;?>" alt="Logo SiGA" class="navbar-brand" id="logo_logged_home"/>
+					</a>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 
@@ -188,11 +192,13 @@
                         </li>
 					</ul>
 				<?php } else { ?>
-
+					</li>	
+						<img src="<?php echo $logo_image; ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
+					</a>
 					<li><?=anchor("usuario/new", "Cadastro", "class='navbar-brand'")?></li>
 					</ul>
 
-						<ul class="nav navbar-nav navbar-right">
+					<ul class="nav navbar-nav navbar-right" id="login_menu">
 					<?php
 						echo form_open("login/autenticar");?>
 							<div class="row">
