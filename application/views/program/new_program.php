@@ -1,5 +1,5 @@
 
-<?php 
+<?php
 require_once APPPATH.'controllers/program.php';
 
 $programName = array(
@@ -8,7 +8,7 @@ $programName = array(
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "40"
+	"maxlength" => "80"
 );
 
 $programAcronym = array(
@@ -54,19 +54,19 @@ if($currentYear !== FALSE){
 	<div class="header">Cadastrar um novo Programa</div>
 	<?= form_open("program/newProgram") ?>
 		<div class="body bg-gray">
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Nome do Programa", "program_name") ?>
 				<?= form_input($programName) ?>
 				<?= form_error("program_name") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Sigla", "program_acronym") ?>
 				<?= form_input($programAcronym) ?>
 				<?= form_error("program_acronym") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Coordenador", "program_coordinator") ?>
 				<?php
 					if($users !== FALSE){
@@ -79,13 +79,13 @@ if($currentYear !== FALSE){
 				<?= form_error("program_coordinator") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Ano de abertura", "opening_year") ?>
 				<?= form_dropdown("opening_year", $openingYear, $currentYear) ?>
 				<?= form_error("opening_year") ?>
 			</div>
-			
-			<div class="form-group">	
+
+			<div class="form-group">
 				<?= form_label("Área do programa", "program_area") ?>
 				<?= form_dropdown("program_area", $programArea) ?>
 				<?= form_error("program_area") ?>
