@@ -148,8 +148,19 @@ td {
 }
 
 #logo_home{
-  width:10%;
-  height:20%;
+  width:27%;
+  height:27%;
+  margin-top: -3%;
+}
+
+#logo_logged_home{
+  width:40%;
+  height:40%;
+  margin-top: -2%;
+}
+
+#login_menu{
+  margin-top: 0.5%;
 }
 
 .popover-content {
@@ -186,7 +197,7 @@ td {
   color: #fff;
 }
 .skin-green-light .navbar .sidebar-toggle:hover {
-  background-color: #008d4c;
+  background-color: #3d9970;
 }
 @media (max-width: 767px) {
   .skin-green-light .navbar .dropdown-menu li.divider {
