@@ -1,15 +1,15 @@
 
-<?php 
+<?php
 require_once(APPPATH."/constants/GroupConstants.php");
 
-	
+
 $programName = array(
 	"name" => "program_name",
 	"id" => "program_name",
 	"type" => "text",
 	"class" => "form-campo",
 	"class" => "form-control",
-	"maxlength" => "40"
+	"maxlength" => "80"
 );
 
 $programAcronym = array(
@@ -31,7 +31,7 @@ $programContact = array(
 	"placeholder" => "Máximo de 300 caracteres",
 	"style" => "height: 70px",
 	"cols" => "10"
-);	
+);
 
 $programSummary = array(
 	"name" => "program_summary",
@@ -63,7 +63,7 @@ if($programData !== FALSE){
 	$programContact['value'] = $programData['contact'];
 	$programSummary['value'] = $programData['summary'];
 	$programHistory['value'] = $programData['history'];
-	
+
 }
 
 $submitBtn = array(
@@ -93,19 +93,19 @@ if($currentYear !== FALSE){
 	<?= form_hidden("programId", $programData['id_program']) ?>
 
 		<div class="body bg-gray">
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Nome do Programa", "program_name") ?>
 				<?= form_input($programName) ?>
 				<?= form_error("program_name") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Sigla", "program_acronym") ?>
 				<?= form_input($programAcronym) ?>
 				<?= form_error("program_acronym") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Coordenador", "program_coordinator") ?>
 				<?php
 					if($users !== FALSE){
@@ -118,25 +118,25 @@ if($currentYear !== FALSE){
 				<?= form_error("program_coordinator") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Ano de abertura", "opening_year") ?>
 				<?= form_dropdown("opening_year", $openingYear, $programData['opening_year']) ?>
 				<?= form_error("opening_year") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Contato", "program_contact") ?>
 				<?= form_textarea($programContact)?>
 				<?= form_error("program_contact") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Resumo", "program_summary") ?>
 				<?= form_textarea($programSummary)?>
 				<?= form_error("program_summary") ?>
 			</div>
 
-			<div class="form-group">	
+			<div class="form-group">
 				<?= form_label("Histórico", "program_history") ?>
 				<?= form_textarea($programHistory)?>
 				<?= form_error("program_history") ?>
@@ -149,10 +149,10 @@ if($currentYear !== FALSE){
 					<?= form_button($submitBtn) ?>
 				</div>
 				<div class="col-xs-6">
-					<?php 
-					if ($userGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP){ 
+					<?php
+					if ($userGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP){
 						echo anchor('secretary_programs', 'Voltar', "class='btn bg-olive btn-block'");
-					} 
+					}
 					else{
 						echo anchor('program', 'Voltar', "class='btn bg-olive btn-block'");
 					} ?>
