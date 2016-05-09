@@ -1,9 +1,9 @@
 <?php
 
-require_once(APPPATH."/controllers/Login.php");
-require_once(APPPATH."/controllers/Permission.php");
-require_once(APPPATH."/controllers/Module.php");
-require_once(APPPATH."/controllers/Request.php");
+require_once(MODULESPATH."auth/controllers/Login.php");
+require_once(MODULESPATH."auth/controllers/Permission.php");
+require_once(MODULESPATH."auth/controllers/Module.php");
+// require_once(APPPATH."/controllers/Request.php");
 
 function session() {
 	$ci = get_instance();

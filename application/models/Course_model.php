@@ -2,7 +2,7 @@
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/CourseException.php");
 require_once(APPPATH."/exception/SecretaryException.php");
-require_once(APPPATH."/constants/GroupConstants.php");
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 class Course_model extends CI_Model {
 

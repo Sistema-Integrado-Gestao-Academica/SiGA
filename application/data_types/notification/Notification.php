@@ -1,7 +1,7 @@
 <?php
 
 require_once(APPPATH."/exception/NotificationException.php");
-require_once(APPPATH."/data_types/User.php");
+require_once(MODULESPATH."auth/domain/User.php");
 
 abstract class Notification{
 

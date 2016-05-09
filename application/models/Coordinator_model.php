@@ -92,4 +92,22 @@ class Coordinator_model extends CI_Model {
 		return $quantity;
 	}
 
+	public function getCoordinatorsForHomepage($programs){
+
+		$coordinators = array();
+
+		$this->load->model('teacher_model');
+
+		if($programs !== FALSE){
+			
+			foreach ($programs as $program) {
+				$coordinatorId = $program['coordinator'];
+				$coordinators[$program['id_program']]['extra_data'] = $this->teacher_model->getInfoTeacherForHomepage($coordinatorId);
+				$coordinators[$program['id_program']]['basic_data'] = $this->teacher_model->getTeacherData($coordinatorId);
+				
+			}
+		}
+
+		return $coordinators;
+	}
 }

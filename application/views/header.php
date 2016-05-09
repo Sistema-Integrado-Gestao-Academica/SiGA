@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <br>
 <?php
-	require_once(APPPATH."/constants/GroupConstants.php");
+	require_once(MODULESPATH."auth/Auth.php");
+	require_once(MODULESPATH."auth/constants/GroupConstants.php");
 	require_once(APPPATH."/data_types/notification/ActionNotification.php");
-	require_once(APPPATH."/data_types/User.php");
-	require_once(APPPATH."/controllers/security/session/SessionManager.php");
 
-	$session = SessionManager::getInstance();
-
+	$session = Auth::getSession();
 
     if($session->isLogged()){
-        $userData = $session->getUserData();
+        $user = $session->getUserData();
 
-        $userName = $userData->getName();
-        $userEmail = $userData->getEmail();
-        $userId = $userData->getId();
+        $userName = $user->getName();
+        $userEmail = $user->getEmail();
+        $userId = $user->getId();
 
         $userGroups = $session->getUserGroups();
 		
 
 		// Getting user notifications
-		$userObj = new User($userId, $userName, FALSE, $userEmail);	
-		$userNotifications = $this->navbarnotification->getUserNotifications($userObj);
+		$userNotifications = $this->navbarnotification->getUserNotifications($user);
 
 		$notifications = $userNotifications["notifications"];
 		$notSeenNotifications = $userNotifications["not_seen"];

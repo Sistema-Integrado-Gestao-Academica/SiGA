@@ -267,7 +267,10 @@ switch (ENVIRONMENT)
 	}
 
 	define('APPPATH', $application_folder.DIRECTORY_SEPARATOR);
-
+	
+	// Modules path
+	define('MODULESPATH', APPPATH."/modules/");
+	
 	// Composer dependencies path
 	define('COMPOSER_DEPENDENCIES',"vendor-dependencies/");
 

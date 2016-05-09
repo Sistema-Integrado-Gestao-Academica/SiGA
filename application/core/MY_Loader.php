@@ -1,8 +1,11 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-class MY_Loader extends CI_Loader {
+/* load the MX_Loader class */
+require APPPATH."third_party/MX/Loader.php";
 
-	/**
+class MY_Loader extends MX_Loader {
+    
+    /**
 	 * Loads the header + content of page + footer at once to display
 	 * @param $pageContent - The page content to load between header and footer
 	 * @param $data - Data to sent to the requested view
@@ -25,5 +28,4 @@ class MY_Loader extends CI_Loader {
 		$this->view($pageContent, $data);
 		$this->view("test_footer.php");
 	}
-
 }
