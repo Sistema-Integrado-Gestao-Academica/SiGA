@@ -1,6 +1,7 @@
 <?php 
 
 require_once(APPPATH."/exception/LoginException.php");
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class Usuarios_model extends CI_Model {
 
@@ -77,7 +78,6 @@ class Usuarios_model extends CI_Model {
 		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
 
 		$dataIsOk = $userExists && $groupExists;
-
 		if($dataIsOk){
 			$this->deleteUserGroup($idUser, $idGroup);
 
@@ -541,6 +541,16 @@ class Usuarios_model extends CI_Model {
 		return $res;
 	}
 
+	public function deleteUserById($userId) {		
+		
+		$userDeleted = $this->removeUserGroup($userId, GroupConstants::GUEST_USER_GROUP_ID);
+		$this->db->where('id', $userId);
+		$userDeleted = $this->db->delete("users");
+		
+		return $userDeleted;
+	}
+
+
 	public function updatePassword($id, $newPassword, $temporaryPassword){
 		
 		$this->db->where('id', $id);
@@ -658,6 +668,24 @@ class Usuarios_model extends CI_Model {
 		return $user;
 	}
 
+
+	public function verifyEmailAndPassword($userId, $email, $password){
+
+		$dataIsOk = FALSE;
+
+		$user = $this->getUserById($userId);
+
+		$validEmail = $email == $user['email'];
+		if($validEmail){
+			$login = $user['login'];
+			$dataIsOk = $this->checkPasswordForThisLogin($password, $login);
+		}
+		else{
+			$dataIsOk = FALSE;
+		}
+		return $dataIsOk;
+	}
+
 	public function getObjectUser($userId){
 
 		$foundUsers = $this->getUserDataById($userId);
@@ -684,4 +712,5 @@ class Usuarios_model extends CI_Model {
 		return $user;
 
 	}
+
 }

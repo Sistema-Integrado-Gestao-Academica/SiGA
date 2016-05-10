@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once "usuario.php";
+require_once(APPPATH."/constants/GroupConstants.php");
+require_once(APPPATH."/data_types/User.php");
 
 class UserActivation extends CI_Controller {
 
@@ -9,6 +11,7 @@ class UserActivation extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model(self::MODEL_NAME, "activation_model");
+		$this->load->model("usuarios_model");	
 	}
 
 	public function generateActivation($user){
@@ -50,7 +53,34 @@ class UserActivation extends CI_Controller {
 		redirect("/");
 	}
 
-	public function resentEmail($userId){
+	public function resentEmail(){
+
+		$success = $this->validateResentEmailFields();
+
+		$userId = $this->input->post('id');
+		if($success){
+			$email = $this->input->post('email');
+			$password = $this->input->post('password');
+
+			$dataIsOk = $this->usuarios_model->verifyEmailAndPassword($userId, $email, $password);			
+		}
+		else{
+			$this->reconfirmRegister($userId);
+		}
+
+
+	}
+
+	private function validateResentEmailFields(){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
+		$this->form_validation->set_rules("password", "Senha", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
+	}
+	public function reconfirmRegister($userId){
 
 		$user = new Usuario();
 
@@ -69,6 +99,36 @@ class UserActivation extends CI_Controller {
 
 			$status = "danger";
 			$message = "Cadastro já confirmado, {$user['login']}.";
+
+			$this->session->set_flashdata($status, $message);
+			redirect("/");
+		}
+	}
+
+	public function cancelRegister($userId){
+		
+		// Starting transaction
+		$this->db->trans_start();
+
+		
+		$activationDeleted = $this->activation_model->deleteUserActivation($userId);
+		$userDeleted = $this->usuarios_model->deleteUserById($userId);
+		
+		
+		// Finishing transaction
+		$this->db->trans_complete();
+
+		$transaction_status = $this->db->trans_status();
+		if($transaction_status === FALSE){
+			$status = "danger";
+			$message = "Não foi possível cancelar o cadastro.";
+
+			$this->session->set_flashdata($status, $message);
+			redirect("cancel_register/{$userId}");
+		}
+		else{
+			$status = "success";
+			$message = "Cadastro cancelado com sucesso.";
 
 			$this->session->set_flashdata($status, $message);
 			redirect("/");

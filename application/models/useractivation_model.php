@@ -90,4 +90,12 @@ class UserActivation_model extends CI_Model {
 
 		return $foundActivation;
 	}
+
+	public function deleteUserActivation($userId){
+
+		$this->db->where(self::USER_COLUMN, $userId);
+		$deleted = $this->db->delete(self::ACTIVATION_TABLE);
+
+		return $deleted;
+	}
 }

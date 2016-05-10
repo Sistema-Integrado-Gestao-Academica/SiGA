@@ -7,6 +7,13 @@
 <h4><i class="fa fa-question-circle"></i> O que deseja fazer?</h4>
 
 <ul>
-	<li>Reenviar e-mail</li>
-	<li>Cancelar cadastro</li>
+	<li data-toggle="collapse" href='#resent_email_form'> Reenviar e-mail</li>
+	<div id=<?="resent_email_form"?> class="panel-collapse collapse in" aria-expanded="false">
+		<div class="box-body">		
+
+			<?php include(APPPATH.'views/usuario/_resent_email_form.php'); ?>
+
+		</div>
+	</div>
+	<li> <?php echo anchor("cancel_register/{$user['id']}",'Cancelar cadastro')?></li>
 </ul>

@@ -49,10 +49,10 @@ class Login extends CI_Controller {
 						redirect('usuario/changePassword');
 					}
 				}else{
-					$resentEmailLink = anchor("resent_confirmation_email/{$user['id']}",'clique aqui');
+					$registerNotConfirmedLink = anchor("reconfirm_register/{$user['id']}",'clique aqui');
 					$authenticationStatus = "danger";
 					$authenticationMessage = "Cadastro não confirmado. Um e-mail de confirmação foi enviado para o e-mail utilizado no cadastro.
-					<br> Caso não tenha recebido o e-mail, <b>{$resentEmailLink}</b>.";
+					<br> Caso não tenha recebido o e-mail, <b>{$registerNotConfirmedLink}</b>.";
 					
 					$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
 					redirect('/');
