@@ -4,9 +4,42 @@
 
 <br>
 
-<h4><i class="fa fa-question-circle"></i> O que deseja fazer?</h4>
+<h3><i class="fa fa-question-circle"></i> O que deseja fazer?</h3>
 
 <ul>
-	<li>Reenviar e-mail</li>
-	<li>Cancelar cadastro</li>
+	<h4>
+
+	<li> 
+		<a href='#resent_email_form' data-toggle="collapse"> Reenviar e-mail</a> 
+
+	</li>
+
+	</h4>
+	
+	<div id=<?="resent_email_form"?> class="panel-collapse collapse" aria-expanded="false">
+		<div class="box-body">		
+
+			<?php include(APPPATH.'views/usuario/_resent_email_form.php'); ?>
+
+		</div>
+	</div>
+	
+	<h4>
+
+	<li> 
+		<a href='#cancel_register_form' data-toggle="collapse"> Cancelar cadastro</a> 
+
+	</li>
+
+	</h4>
+	
+	<div id=<?="cancel_register_form"?> class="panel-collapse collapse" aria-expanded="false">
+		<div class="box-body">		
+
+			<?php include(APPPATH.'views/usuario/_cancel_register_form.php'); ?>
+
+		</div>
+	</div>
+
+	</h4>
 </ul>

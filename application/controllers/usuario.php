@@ -730,6 +730,7 @@ class Usuario extends CI_Controller {
 
 	private function registerUser($user, $group){
 
+
 		$userActivation = new UserActivation();
 
 		// Starting transaction
@@ -743,39 +744,18 @@ class Usuario extends CI_Controller {
 		
 		// Finishing transaction
 		$this->db->trans_complete();
-
 		if($this->db->trans_status() === FALSE){
 			$status = "danger";
 			$message = "Não foi possível realizar o cadastro solicitado. Tente novamente.";
-		}else{
+		}
+		else{
 
-			$emailSent = $this->sendConfirmationEmail($savedUser, $activation);
-
-			if($emailSent){
-				$status = "success";
-				$message = "{$savedUser['login']}, um email foi enviado para \"{$savedUser['email']}\" para você confirmar seu cadastro no sistema.";
-			}else{
-				$status = "danger";
-				$message = "{$savedUser['login']}, não foi possível enviar o email para você confirmar seu cadastro no sistema. Cheque o email informado e tente novamente.";
-			}
+			$this->load->helper("useractivation");
+			$message = sendConfirmationEmail($savedUser, $activation);
 		}
 
-		$this->session->set_flashdata($status, $message);
+		$this->session->set_flashdata($message['status'], $message['message']);
 		redirect("/");
-	}
-
-	private function sendConfirmationEmail($user, $activation){
-
-		$id = $user['id'];
-		$name = $user['name'];
-		$email = $user['email'];
-		$user = new User($id, $name, FALSE, $email);
-
-		$email = new ConfirmSignUpEmail($user, $activation);
-
-		$sent = $email->notify();
-
-		return $sent;
 	}
 
 	public function updateProfile(){
