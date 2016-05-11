@@ -4,16 +4,31 @@
 
 <br>
 
-<h4><i class="fa fa-question-circle"></i> O que deseja fazer?</h4>
+<h3><i class="fa fa-question-circle"></i> O que deseja fazer?</h3>
 
 <ul>
-	<li data-toggle="collapse" href='#resent_email_form'> Reenviar e-mail</li>
-	<div id=<?="resent_email_form"?> class="panel-collapse collapse in" aria-expanded="false">
+	<h4>
+
+	<li> 
+		<a href='#resent_email_form' data-toggle="collapse"> Reenviar e-mail</a> 
+
+	</li>
+
+	</h4>
+	
+	<div id=<?="resent_email_form"?> class="panel-collapse collapse" aria-expanded="false">
 		<div class="box-body">		
 
 			<?php include(APPPATH.'views/usuario/_resent_email_form.php'); ?>
 
 		</div>
 	</div>
-	<li> <?php echo anchor("cancel_register/{$user['id']}",'Cancelar cadastro')?></li>
+	
+	<h4>
+	
+	<li> 
+		<?php echo anchor("cancel_register/{$user['id']}",'Cancelar cadastro')?>
+	</li>
+
+	</h4>
 </ul>

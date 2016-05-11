@@ -26,12 +26,16 @@ class ConfirmSignUpEmail extends EmailNotification{
         $userName = $user->getName();
         $userId = $user->getId();
         $activation = $this->activation;
-        $encryptedUser = openssl_encrypt($userId, "AES128", $activation);
+        
+        $initializationVector = bin2hex(openssl_random_pseudo_bytes(8));
+        $initializationVector = $initializationVector.$userId;
+        
+        $encryptedUser = openssl_encrypt($userId, "AES128", $activation, $options = 0, $initializationVector);
 
         $message = "Olá, <b>{$userName}</b>. <br>";
         $message .= "Para confirmar seu cadastro no sistema, clique no link abaixo: <br><br>";
         $message .= "<a href='";
-        $message .= $this->getSiteUrl()."?k={$activation}&u={$encryptedUser}";
+        $message .= $this->getSiteUrl()."?k={$activation}&u={$encryptedUser}&i={$initializationVector}";
         $message .= "'>Confirmar cadastro no ".EmailConstants::SENDER_NAME.".</a>";
 
         $this->message = $message;

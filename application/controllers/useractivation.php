@@ -15,7 +15,6 @@ class UserActivation extends CI_Controller {
 	}
 
 	public function generateActivation($user){
-
 		$alreadyExists = TRUE;
 		while($alreadyExists){
 			// Generates a cryptographically secure ramdon string as activation
@@ -36,9 +35,11 @@ class UserActivation extends CI_Controller {
 
 		$activationKey = $this->input->get("k");
 		$encryptedUserId = $this->input->get("u");
+		$initializationVector = $this->input->get("i");
 
-		$userId = openssl_decrypt($encryptedUserId, "AES128", $activationKey);
+		$this->load->helper("useractivation");
 
+		$userId = openssl_decrypt($encryptedUserId, "AES128", $activationKey, $options = 0, $initializationVector);
 		$confirmed = $this->activation_model->confirmRegister($userId, $activationKey);
 
 		if($confirmed){
@@ -55,9 +56,33 @@ class UserActivation extends CI_Controller {
 
 	public function resentEmail(){
 
+		$userId = $this->input->post('id');
+		$success = $this->validateData($userId);
+
+		if($success){
+			$user = $this->usuarios_model->getUserById($userId);
+			$this->activation_model->deleteUserActivation($userId);
+			$activation = $this->generateActivation($user);
+
+			$this->load->helper("useractivation");
+			$message = sendConfirmationEmail($user, $activation);
+	
+			$this->session->set_flashdata($message['status'], $message['message']);
+			redirect('/');
+		}
+		else{
+			$status = "danger";
+			$message = "Não foi possível reenviar o email. Verifique se você colocou a senha e o email informados no cadastro.";
+
+			$this->session->set_flashdata($status, $message);
+			redirect("reconfirm_register/{$userId}");
+		}
+	}
+
+	private function validateData($userId){
+		
 		$success = $this->validateResentEmailFields();
 
-		$userId = $this->input->post('id');
 		if($success){
 			$email = $this->input->post('email');
 			$password = $this->input->post('password');
@@ -65,12 +90,12 @@ class UserActivation extends CI_Controller {
 			$dataIsOk = $this->usuarios_model->verifyEmailAndPassword($userId, $email, $password);			
 		}
 		else{
-			$this->reconfirmRegister($userId);
+			$dataIsOk = FALSE;
 		}
 
-
+		return $dataIsOk;
 	}
-
+	
 	private function validateResentEmailFields(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
@@ -80,6 +105,7 @@ class UserActivation extends CI_Controller {
 
 		return $success;
 	}
+	
 	public function reconfirmRegister($userId){
 
 		$user = new Usuario();
