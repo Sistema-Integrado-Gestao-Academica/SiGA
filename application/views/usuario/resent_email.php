@@ -25,10 +25,21 @@
 	</div>
 	
 	<h4>
-	
+
 	<li> 
-		<?php echo anchor("cancel_register/{$user['id']}",'Cancelar cadastro')?>
+		<a href='#cancel_register_form' data-toggle="collapse"> Cancelar cadastro</a> 
+
 	</li>
+
+	</h4>
+	
+	<div id=<?="cancel_register_form"?> class="panel-collapse collapse" aria-expanded="false">
+		<div class="box-body">		
+
+			<?php include(APPPATH.'views/usuario/_cancel_register_form.php'); ?>
+
+		</div>
+	</div>
 
 	</h4>
 </ul>

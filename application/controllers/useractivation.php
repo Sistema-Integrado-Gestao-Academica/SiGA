@@ -131,33 +131,66 @@ class UserActivation extends CI_Controller {
 		}
 	}
 
-	public function cancelRegister($userId){
+	public function cancelRegister(){
 		
-		// Starting transaction
-		$this->db->trans_start();
+		$userId = $this->input->post('id');
+		$login = $this->input->post('login');
 
-		
-		$activationDeleted = $this->activation_model->deleteUserActivation($userId);
-		$userDeleted = $this->usuarios_model->deleteUserById($userId);
-		
-		
-		// Finishing transaction
-		$this->db->trans_complete();
+		$correctPassword = $this->verifyUserPassword($login);
 
-		$transaction_status = $this->db->trans_status();
-		if($transaction_status === FALSE){
-			$status = "danger";
-			$message = "Não foi possível cancelar o cadastro.";
+		if($correctPassword){
+			// Starting transaction
+			$this->db->trans_start();
+			
+			$activationDeleted = $this->activation_model->deleteUserActivation($userId);
+			$userDeleted = $this->usuarios_model->deleteUserById($userId);
+			
+			// Finishing transaction
+			$this->db->trans_complete();
 
-			$this->session->set_flashdata($status, $message);
-			redirect("cancel_register/{$userId}");
+			$transaction_status = $this->db->trans_status();
+
+			if($transaction_status === FALSE){
+				$status = "danger";
+				$message = "Não foi possível cancelar o cadastro.";
+
+				$this->session->set_flashdata($status, $message);
+				redirect("reconfirm_register/{$userId}");
+			}
+			else{
+				$status = "success";
+				$message = "Cadastro cancelado com sucesso.";
+
+				$this->session->set_flashdata($status, $message);
+				redirect("/");
+			}
+
 		}
 		else{
-			$status = "success";
-			$message = "Cadastro cancelado com sucesso.";
+			$status = "danger";
+			$message = "Senha incorreta.";
 
 			$this->session->set_flashdata($status, $message);
-			redirect("/");
+			redirect("reconfirm_register/{$userId}");
 		}
+	}
+
+	private function verifyUserPassword($login){
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("password", "Senha", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		if($success){
+			$password = $this->input->post("password");
+			$correctPassword = $this->usuarios_model->checkPasswordForThisLogin($password, $login);
+		}
+		else{
+			$correctPassword = FALSE;
+		}
+
+		return $correctPassword;
+
 	}
 }

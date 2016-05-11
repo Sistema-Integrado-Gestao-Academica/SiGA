@@ -316,7 +316,7 @@ class Usuarios_model extends CI_Model {
 	 * @param $login - String with the login
 	 * @return TRUE if the passwords match or FALSE if does not
 	 */
-	private function checkPasswordForThisLogin($password, $login){
+	public function checkPasswordForThisLogin($password, $login){
 		
 		$this->db->select('password');
 		$searchResult = $this->db->get_where('users', array('login' => $login));
