@@ -106,4 +106,4 @@
 	</div>
 <?php }?>
 
-<?= anchor('usuario/secretary_coursesStudents', 'Voltar', "class='btn btn-danger'")?>
+<?= anchor('secretary/coursesStudents', 'Voltar', "class='btn btn-danger'")?>

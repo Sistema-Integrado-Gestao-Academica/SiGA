@@ -11,4 +11,4 @@
 <br>
 <?php displayOfferListDisciplines($offerListDisciplines, $course['id_course']); ?>
 
-<?php echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>
+<?php echo anchor("student/studentCoursePage/{$course['id_course']}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>

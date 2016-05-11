@@ -53,11 +53,11 @@ $route['default_controller'] = 'home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['conta'] = 'usuario/conta';
-$route['profile'] = 'usuario/profile';
-$route['logout'] = 'login/logout';
-$route['register'] = 'usuario/register';
-$route['register_user'] = 'usuario/newUser';
+$route['conta'] = 'auth/userController/conta';
+$route['profile'] = 'auth/userController/profile';
+$route['logout'] = 'auth/login/logout';
+$route['register'] = 'auth/userController/register';
+$route['register_user'] = 'auth/userController/newUser';
 $route['confirm_register'] = 'useractivation/confirm';
 $route['resent_confirmation_email/(:num)'] = 'useractivation/resentEmail/$1/';
 $route['configuracoes'] = 'settings';
@@ -71,16 +71,16 @@ $route['staffs'] = 'staff/staffsLoadPage';
 $route['staffs/(:num)'] = 'staff/editStaff/$1';
 $route['funcoes'] = 'funcao/formulario';
 $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
-$route['guest_home'] = 'usuario/guest_index';
+$route['guest_home'] = 'secretary/guest_index';
 $route['planoorcamentario'] = 'budgetplan';
 $route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
 $route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
 $route['secretaria'] = 'utils/loadSecretaria';
-$route['secretary_home'] = 'usuario/secretary_index';
+$route['secretary_home'] = 'secretary/index';
 $route['setores'] = 'setor/formulario';
 $route['setores/(:num)'] = 'setor/formulario_altera/$1';
 $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
-$route['user_report'] = 'usuario/usersReport';
+$route['user_report'] = 'auth/userController/usersReport';
 $route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
 $route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
 $route['mastermind_home'] = 'mastermind/index';
@@ -91,15 +91,15 @@ $route['program'] = 'program/index';
 /*
  * Secretary functionalities routes
  */
-$route['enroll_student'] = "usuario/secretary_enrollStudent";
-$route['student_list'] = 'usuario/secretary_coursesStudents';
-$route['request_report'] = 'usuario/secretary_requestReport';
-$route['offer_list'] = 'usuario/secretary_offerList';
-$route['course_syllabus'] = 'usuario/secretary_courseSyllabus';
-$route['enroll_mastermind'] = 'usuario/secretary_enrollMasterMinds';
-$route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
+$route['enroll_student'] = "secretary/enrollStudent";
+$route['student_list'] = 'secretary/coursesStudents';
+$route['request_report'] = 'secretary/requestReport';
+$route['offer_list'] = 'secretary/offerList';
+$route['course_syllabus'] = 'secretary/courseSyllabus';
+$route['enroll_mastermind'] = 'secretary/enrollMasterMinds';
+$route['enroll_teacher'] = 'secretary/enrollTeacher';
 $route['documents_report'] = 'documentrequest/documentRequestSecretary';
-$route['research_lines'] = 'usuario/secretary_research_lines';
+$route['research_lines'] = 'secretary/research_lines';
 $route['secretary_programs'] = 'secretary/secretaryPrograms';
 
 /*

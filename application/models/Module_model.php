@@ -258,8 +258,9 @@ class Module_model extends CI_Model {
 	 */
 	public function getAllModules(){
 		
-		$modules = $this->db->get('group')->result_array();
-		$modules = checkArray($modules);
-		return $modules;
+		$foundModules = $this->db->get('group')->result_array();
+		$foundModules = checkArray($foundModules);
+
+		return $foundModules;
 	}
 }

@@ -122,4 +122,4 @@
 
 <br>
 <br>
-<?php echo anchor("usuario/studentCoursePage/{$courseId}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>
+<?php echo anchor("student/studentCoursePage/{$courseId}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>

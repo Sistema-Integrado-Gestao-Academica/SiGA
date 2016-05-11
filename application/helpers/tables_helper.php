@@ -2150,7 +2150,7 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 			}
 		echo "</div>";
 		echo "<div class=\"col-xs-3\">";
-			echo anchor("usuario/secretary_offerList", "Voltar", "class='btn btn-danger'");
+			echo anchor("secretary/offerList", "Voltar", "class='btn btn-danger'");
 		echo "</div>";
 	echo "</div>";
 }

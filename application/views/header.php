@@ -204,7 +204,7 @@
 					<ul class="nav navbar-nav navbar-right">
 
 					<?php
-						echo form_open("login/authenticate");?>
+						echo form_open("auth/login/authenticate");?>
 							<div class="row">
         						<div class="col-lg-4">
 								<?php

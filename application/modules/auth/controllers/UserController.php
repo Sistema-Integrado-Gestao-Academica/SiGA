@@ -1,25 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once('Useractivation.php');
-require_once('Login.php');
 
-require_once('Course.php');
-require_once('Module.php');
-require_once('Semester.php');
-require_once('Offer.php');
-require_once('Syllabus.php');
-require_once('Request.php');
+require_once(MODULESPATH."auth/Auth.php");
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
+require_once(MODULESPATH."auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."auth/domain/User.php");
 
-require_once(APPPATH."/constants/GroupConstants.php");
-require_once(APPPATH."/constants/PermissionConstants.php");
 require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
 require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
-require_once(APPPATH."/data_types/User.php");
 
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
-require_once(APPPATH."/exception/UserException.php");
-require_once(APPPATH."/exception/LoginException.php");
+require_once(MODULESPATH."auth/exception/UserException.php");
+require_once(MODULESPATH."auth/exception/LoginException.php");
 
 class UserController extends MX_Controller {
 
@@ -66,12 +58,18 @@ class UserController extends MX_Controller {
 
 		$allUsers = $this->getAllUsers();
 
-		$group = new Module();
-		$allGroups = $group->getExistingModules();
+		$this->load->model("module_model");
+
+		$allGroups = $this->module_model->getAllModules();
+
+		$groups = array();
+		foreach($allGroups as $group){
+			$groups[$group['id_group']] = $group['group_name'];
+		}
 
 		$data = array(
 			'allUsers' => $allUsers,
-			'allGroups' => $allGroups
+			'allGroups' => $groups
 		);
 
 		loadTemplateSafelyByPermission('user_report','usuario/user_report', $data);
@@ -79,14 +77,20 @@ class UserController extends MX_Controller {
 
 	public function manageGroups($idUser){
 
-		$group = new Module();
-		$userGroups = $group->getUserGroups($idUser);
-		$allGroups = $group->getExistingModules();
+		$this->load->model("module_model");
+
+		$allGroups = $this->module_model->getAllModules();
+		$userGroups = $this->module_model->getUserGroups();
+
+		$groups = array();
+		foreach($allGroups as $group){
+			$groups[$group['id_group']] = $group['group_name'];
+		}
 
 		$data = array(
 			'idUser' => $idUser,
 			'userGroups' => $userGroups,
-			'allGroups' => $allGroups
+			'allGroups' => $groups
 		);
 
 		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
@@ -109,7 +113,7 @@ class UserController extends MX_Controller {
 	public function createCourseResearchLine(){
 		$this->load->model("course_model");
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
 
@@ -140,7 +144,7 @@ class UserController extends MX_Controller {
 
 		$description = $this->course_model->getResearchDescription($researchId,$courseId);
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
 
@@ -174,46 +178,10 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
 		}
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("research_lines/");
 
-	}
-
-	public function secretary_research_lines(){
-		$this->load->model("course_model");
-
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$userId = $loggedUserData->getId();
-
-		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
-
-
-		$this->loadResearchLinesPage($secretaryCourses);
-	}
-
-	public function loadResearchLinesPage($secretaryCourses){
-		$this->load->model("course_model");
-
-		if($secretaryCourses !== FALSE){
-
-			foreach ($secretaryCourses as $key => $course){
-
-				$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
-				$courses[$key] = $course;
-			}
-		}else{
-			$researchLines = FALSE;
-			$courses = FALSE;
-		}
-
-		$data = array(
-			'research_lines' => $researchLines,
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission('research_lines', 'usuario/secretary_research_lines', $data);
 	}
 
 	public function removeAllUsersOfGroup($idGroup){
@@ -230,7 +198,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover os usuários do grupo informado. Tente novamente.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("user_report");
 	}
@@ -247,7 +215,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
@@ -261,7 +229,7 @@ class UserController extends MX_Controller {
 
 		$userGroup = "";
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$user = $session->getUserData();
 		$userId = $user->getId();
 
@@ -297,7 +265,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover o grupo informado. Tente novamente.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
@@ -314,7 +282,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover o usuário informado. Tente novamente.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("usuario/listUsersOfGroup/{$idGroup}");
 	}
@@ -351,30 +319,6 @@ class UserController extends MX_Controller {
 		return $userCourses;
 	}
 
-	public function student_index(){
-
-		$this->load->model('usuarios_model');
-
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$userId = $loggedUserData->getId();
-
-		$userStatus = $this->usuarios_model->getUserStatus($userId);
-		$userCourse = $this->usuarios_model->getUserCourse($userId);
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		$userData = array(
-			'userData' => $loggedUserData,
-			'status' => $userStatus,
-			'courses' => $userCourse,
-			'currentSemester' => $currentSemester
-		);
-
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_home', $userData);
-	}
-
 	public function getUserStatus($userId){
 
 		$this->load->model('usuarios_model');
@@ -382,239 +326,6 @@ class UserController extends MX_Controller {
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 
 		return $userStatus;
-	}
-
-	public function studentCoursePage($courseId, $userId){
-
-		$userData = $this->getUserById($userId);
-
-		$course = new Course();
-		$courseData = $course->getCourseById($courseId);
-
-		$data = array(
-			'course' => $courseData,
-			'user' => $userData
-		);
-
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_course_page', $data);
-	}
-
-	public function student_offerList($courseId){
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		$course = new Course();
-		$courseData = $course->getCourseById($courseId);
-
-		$offer = new Offer();
-		$offerListDisciplines = $offer->getCourseApprovedOfferListDisciplines($courseId, $currentSemester['id_semester']);
-
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$userId = $loggedUserData->getId();
-
-		$data = array(
-			'currentSemester' => $currentSemester,
-			'course' => $courseData,
-			'offerListDisciplines' => $offerListDisciplines,
-			'userId' => $userId
-		);
-
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'usuario/student_offer_list', $data);
-	}
-
-	public function guest_index(){
-
-	}
-
-	public function secretary_index(){
-
-		loadTemplateSafelyByGroup("secretario",'usuario/secretary_home');
-	}
-
-	public function secretary_coursesStudents(){
-
-		$courses = $this->loadCourses();
-
-		$courseData = array(
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'usuario/secretary_courses_students', $courseData);
-	}
-
-	public function secretary_enrollStudent(){
-
-		$courses = $this->loadCourses();
-
-		$courseData = array(
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'usuario/secretary_enroll_student', $courseData);
-	}
-
-	public function secretary_enrollMasterMinds(){
-		$courses = $this->loadCourses();
-
-		$courseData = array(
-				'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::DEFINE_MASTERMIND_PERMISSION, 'usuario/secretary_enroll_master_mind', $courseData);
-	}
-
-	public function secretary_enrollTeacher(){
-
-		$courses = $this->loadCourses();
-
-		$courseData = array(
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/enroll_teacher', $courseData);
-	}
-
-	public function secretary_requestReport(){
-
-		$courses = $this->loadCourses();
-
-		$courseData = array(
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::REQUEST_REPORT_PERMISSION, 'request/secretary_courses_request', $courseData);
-	}
-
-	public function secretary_offerList(){
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		// Check if the logged user have admin permission
-		$group = new Module();
-		$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
-
-		// Get the current user id
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$currentUser = $loggedUserData->getId();
-
-		// Get the courses of the secretary
-		$course = new Course();
-		$courses = $course->getCoursesOfSecretary($currentUser);
-
-		// Get the proposed offers of every course
-		$offer = new Offer();
-		if($courses !== FALSE){
-
-			$proposedOffers = array();
-			foreach($courses as $course){
-				$courseId = $course['id_course'];
-				$courseName = $course['course_name'];
-				$proposedOffers[$courseName] = $offer->getCourseOfferList($courseId, $currentSemester['id_semester']);
-			}
-
-		}else{
-			$proposedOffers = FALSE;
-		}
-
-		$data = array(
-			'current_semester' => $currentSemester,
-			'isAdmin' => $isAdmin,
-			'proposedOffers' => $proposedOffers,
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::OFFER_LIST_PERMISSION, 'usuario/secretary_offer_list', $data);
-	}
-
-	public function secretary_courseSyllabus(){
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		// Get the current user id
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$currentUser = $loggedUserData->getId();
-
-		// Get the courses of the secretary
-		$course = new Course();
-		$courses = $course->getCoursesOfSecretary($currentUser);
-
-		if($courses !== FALSE){
-
-			$syllabus = new Syllabus();
-			$coursesSyllabus = array();
-			foreach ($courses as $course){
-
-				$coursesSyllabus[$course['course_name']] = $syllabus->getCourseSyllabus($course['id_course']);
-			}
-		}else{
-			$coursesSyllabus = FALSE;
-		}
-
-		$data = array(
-			'current_semester' => $currentSemester,
-			'courses' => $courses,
-			'syllabus' => $coursesSyllabus
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::COURSE_SYLLABUS_PERMISSION,'usuario/secretary_course_syllabus', $data);
-	}
-
-	private function loadCourses(){
-
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$currentUser = $loggedUserData->getId();
-
-		$course = new Course();
-		$allCourses = $course->listAllCourses();
-
-		if($allCourses !== FALSE){
-
-			$courses = array();
-			$i = 0;
-			foreach($allCourses as $course){
-
-				$userHasSecretaryForThisCourse = $this->checkIfUserHasSecretaryOfThisCourse($course['id_course'], $currentUser);
-
-				if($userHasSecretaryForThisCourse){
-					$courses[$i] = $course;
-					$i++;
-				}
-			}
-
-			if(!sizeof($courses) > 0){
-				$courses = FALSE;
-			}
-
-		}else{
-
-			$courses = FALSE;
-		}
-
-		return $courses;
-	}
-
-	private function checkIfUserHasSecretaryOfThisCourse($courseId, $userId){
-
-		$course = new Course();
-		$foundSecretaries = $course->getCourseSecretaries($courseId);
-		$userHasSecretary = FALSE;
-
-		if ($foundSecretaries !== FALSE) {
-			foreach ($foundSecretaries as $secretary) {
-				if ($secretary['id_user'] === $userId) {
-					$userHasSecretary = TRUE;
-				}
-			}
-		}
-
-		return $userHasSecretary;
 	}
 
 	public function register(){
@@ -629,7 +340,7 @@ class UserController extends MX_Controller {
 
 	public function conta(){
 
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$loggedUser = $session->getUserData();
 
 		$data = array("user" => $loggedUser);
@@ -657,7 +368,7 @@ class UserController extends MX_Controller {
 				$email = new RestorePasswordEmail($user);
 				$success = $email->notify();
 				
-				$session = SessionManager::getInstance();
+				$session = Auth::getSession();
 				if($success){
 					$session->showFlashMessage("success", "Email enviado com sucesso.");	
 					redirect("/");
@@ -717,7 +428,7 @@ class UserController extends MX_Controller {
 			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
 			if($isValidPassword){
 
-				$session = SessionManager::getInstance(); 
+				$session = Auth::getSession(); 
 				$userData = $session->getUserData();
 								
 				$userId = $userData->getId();
@@ -804,7 +515,7 @@ class UserController extends MX_Controller {
 	private function validateRegisterUserFields(){
 		
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("name", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("name", "Nome", "required|trim|valid_name");
 		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf|verify_if_cpf_no_exists");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email|verify_if_email_no_exists");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash|verify_if_login_no_exists");
@@ -817,7 +528,7 @@ class UserController extends MX_Controller {
 
 	private function registerUser($user, $group){
 
-		$userActivation = new UserActivation();
+		$this->load->module("auth/useractivation");
 
 		// Starting transaction
 		$this->db->trans_start();
@@ -826,7 +537,7 @@ class UserController extends MX_Controller {
 		$this->usuarios_model->saveGroup($user, $group);
 		$savedUser = $this->usuarios_model->getUserDataByLogin($user['login']);
 
-		$activation = $userActivation->generateActivation($savedUser);
+		$activation = $this->useractivation->generateActivation($savedUser);
 		
 		// Finishing transaction
 		$this->db->trans_complete();
@@ -847,7 +558,7 @@ class UserController extends MX_Controller {
 			}
 		}
 		
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("/");
 	}
@@ -873,7 +584,7 @@ class UserController extends MX_Controller {
 
 				$updated = $this->usuarios_model->update($user);
 
-				$session = SessionManager::getInstance();
+				$session = Auth::getSession();
 				if ($updated) {
 					$session->login($user);
 					$session->showFlashMessage("success", "Os dados foram alterados");
@@ -891,7 +602,7 @@ class UserController extends MX_Controller {
 
 	private function validateEmailField($oldEmail, $newEmail){
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("name", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("name", "Nome", "trim|valid_name");
 		
 		if($oldEmail != $newEmail){
 			$this->form_validation->set_rules("email", "E-mail", "valid_email|verify_if_email_no_exists");
@@ -903,7 +614,7 @@ class UserController extends MX_Controller {
 	}
 
 	public function remove() {
-		$session = SessionManager::getInstance();
+		$session = Auth::getSession();
 		$user = $session->getUserData();
 
 		if ($this->usuarios_model->remove($user)) {
@@ -1022,7 +733,7 @@ class UserController extends MX_Controller {
 			$user = $this->usuarios_model->getObjectUser($id);
 			$login = $user->getLogin();
 
-			$session = SessionManager::getInstance();
+			$session = Auth::getSession();
 
 			try{
 				$foundUser = $this->validateUser($login, $password);

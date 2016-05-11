@@ -8,6 +8,6 @@
 
 	displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $course['id_course']); 
 
-	echo anchor('usuario/secretary_courseSyllabus',"Voltar", "class='btn btn-primary'");
+	echo anchor('secretary/courseSyllabus',"Voltar", "class='btn btn-primary'");
 
 ?>

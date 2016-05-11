@@ -2,10 +2,7 @@
 
 require_once("NotificationModel.php");
 
-require_once(APPPATH."/controllers/Course.php");
-require_once(APPPATH."/controllers/Usuario.php");
-
-require_once(APPPATH."/data_types/User.php");
+require_once(MODULESPATH."auth/domain/User.php");
 
 require_once(APPPATH."/data_types/notification/RegularNotification.php");
 require_once(APPPATH."/data_types/notification/ActionNotification.php");
@@ -29,14 +26,14 @@ class NavBarNotification{
 
 
 		// Get request student name
-		$user = new Usuario();
-		$student = $user->getUserById($requestStudent);
+		$this->load->model("auth/usuarios_model");
+		$student = $this->usuarios_model->getUserById($requestStudent);
 		$studentName = $student["name"];
 		
 
 		// Get all secretaries of the course
-		$course = new Course();
-		$secretaries = $course->getCourseSecretaries($courseToNotify);
+		$this->load->model("program/course_model");
+		$secretaries = $this->course_model->getCourseSecretaries($courseToNotify);
 
 		if($secretaries !== FALSE){
 

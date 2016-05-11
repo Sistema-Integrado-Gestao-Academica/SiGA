@@ -23,7 +23,7 @@
 
 				if($course['enrollment'] !== NULL){
 
-					echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
+					echo anchor("student/studentCoursePage/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
 					echo "<br>";
 					echo "Data matrícula: ".$course['enroll_date'];
 					echo "<br>";

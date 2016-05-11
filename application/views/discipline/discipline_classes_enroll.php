@@ -7,4 +7,4 @@
 <br>
 <?php displayDisciplineClasses($disciplineClasses); ?>
 
-<?php echo anchor("usuario/student_offerList/{$courseId}", "Voltar", "class='btn btn-danger'"); ?>
+<?php echo anchor("student/student_offerList/{$courseId}", "Voltar", "class='btn btn-danger'"); ?>

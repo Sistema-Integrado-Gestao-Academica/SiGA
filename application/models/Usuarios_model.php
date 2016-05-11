@@ -1,6 +1,6 @@
 <?php
 
-require_once(APPPATH."/exception/LoginException.php");
+require_once(MODULESPATH."auth/exception/LoginException.php");
 
 class Usuarios_model extends CI_Model {
 

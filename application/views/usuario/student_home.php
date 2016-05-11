@@ -19,7 +19,7 @@
 
 			foreach ($courses as $course) {
 				$id = $userData->getId();
-				echo anchor("usuario/studentCoursePage/{$course['id_course']}/{$id}", "<b>".$course['course_name']."</b>");
+				echo anchor("student/studentCoursePage/{$course['id_course']}/{$id}", "<b>".$course['course_name']."</b>");
 				echo "<br>";
 				echo "Data matrícula: ".$course['enroll_date'];
 				echo "<hr>";
