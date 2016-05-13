@@ -1,11 +1,17 @@
 <?php 
 
 require_once(APPPATH."/exception/LoginException.php");
+require_once(APPPATH."/constants/GroupConstants.php");
 
 class Usuarios_model extends CI_Model {
 
-	public function salva($usuario) {
-		$this->db->insert("users", $usuario);
+	const USER_TABLE = "users";
+
+	const USER_ID_COLUMN = "id";
+	const ACTIVE_COLUMN = "active";
+
+	public function save($user) {
+		$this->db->insert("users", $user);
 	}
 
 	public function saveGroup($user, $group){
@@ -72,7 +78,6 @@ class Usuarios_model extends CI_Model {
 		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
 
 		$dataIsOk = $userExists && $groupExists;
-
 		if($dataIsOk){
 			$this->deleteUserGroup($idUser, $idGroup);
 
@@ -281,6 +286,11 @@ class Usuarios_model extends CI_Model {
 
 		$foundUser = $this->db->get()->row_array();
 		$foundUser = checkArray($foundUser);
+	
+		if($foundUser !== FALSE){
+
+			$foundUser = $this->getUserDataForEmail($foundUser);
+		}
 
 		return $foundUser;
 	}
@@ -290,11 +300,13 @@ class Usuarios_model extends CI_Model {
 	 * @param $login - String with the user login
 	 * @return An array with the user data if exists or FALSE if does not
 	 */
-	private function getUserDataByLogin($login){
-		$this->db->select('id, name, email, login');
+	public function getUserDataByLogin($login){
+		$this->db->select('id, name, email, login, active');
 		$this->db->where("login", $login);
 		$foundUser = $this->db->get("users")->row_array();
 
+		$foundUser = checkArray($foundUser);
+		
 		return $foundUser;
 	}
 
@@ -304,7 +316,7 @@ class Usuarios_model extends CI_Model {
 	 * @param $login - String with the login
 	 * @return TRUE if the passwords match or FALSE if does not
 	 */
-	private function checkPasswordForThisLogin($password, $login){
+	public function checkPasswordForThisLogin($password, $login){
 		
 		$this->db->select('password');
 		$searchResult = $this->db->get_where('users', array('login' => $login));
@@ -482,7 +494,7 @@ class Usuarios_model extends CI_Model {
 	
 	public function getUserById($id_user){
 		
-		$this->db->select('id, name, email');
+		$this->db->select('id, name, email, login, active');
 		
 		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
 
@@ -509,31 +521,56 @@ class Usuarios_model extends CI_Model {
 		return $res;
 	}
 
+	public function update($user) {
+		
+		$this->db->where('id', $user->getId());
+		$result = $this->db->update("users", array(
+			'name' => $user->getName(),
+			'email' => $user->getEmail(),
+			'password' => $user->getPassword(),
+			'home_phone' => $user->getHomePhone(),
+			'cell_phone' => $user->getCellPhone()
+		));
+
+		return $result;
+	}
+
+
 	public function remove($usuario) {		
 		$res = $this->db->delete("users", array("login" => $usuario['login']));
 		return $res;
 	}
 
-	public function updatePassword($user, $temporaryPassword){
+	public function deleteUserById($userId) {		
 		
-		$this->db->where('id', $user['id']);
+		$userDeleted = $this->removeUserGroup($userId, GroupConstants::GUEST_USER_GROUP_ID);
+		$this->db->where('id', $userId);
+		$userDeleted = $this->db->delete("users");
+		
+		return $userDeleted;
+	}
+
+
+	public function updatePassword($id, $newPassword, $temporaryPassword){
+		
+		$this->db->where('id', $id);
 		$this->db->update("users", array(
-			'password' => $user['password'],
+			'password' => $newPassword,
 			'temporary_password' => $temporaryPassword
 		));
 
-		$isUpdated = $this->checkIfUpdatePassword($user);
+		$isUpdated = $this->checkIfUpdatePassword($id, $newPassword);
 
 		return $isUpdated;
 	}
 
-	public function checkIfUpdatePassword($user){
+	public function checkIfUpdatePassword($id, $newPassword){
 
 		$this->db->select('password');
-		$foundUser = $this->db->get_where('users', array('id' => $user['id']));
+		$foundUser = $this->db->get_where('users', array('id' => $id));
 		$foundPassword = $foundUser->row_array();
 
-		if($foundPassword['password'] == $user['password']){
+		if($foundPassword['password'] == $newPassword){
 
 			$isUpdated = TRUE;
 		}
@@ -602,27 +639,78 @@ class Usuarios_model extends CI_Model {
 
 		return $userExists;
 	}
-	
-	public function getStudentBasicInformation($idUser){
-		
-		$studentBasics = $this->db->get_where('students_basic_information', array('id_user'=>$idUser))->row_array();
-		
-		$studentBasics = checkArray($studentBasics);
 
-		return $studentBasics;
-	}
-	
-	public function saveStudentBasicInformation($studentBasics){
+	public function getUserDataForEmail($foundUser){
 		
-		$inserted = $this->db->insert('students_basic_information', $studentBasics);
-		return $inserted;
+		if($foundUser != FALSE){
+
+			$id = $foundUser['id'];
+			$name = $foundUser['name'];
+			$email = $foundUser['email'];
+			$user = new User($id, $name, FALSE, $email, FALSE, FALSE, FALSE);
+		}
+		else{
+			$user = NULL;
+		}
+
+		return $user;
 	}
-	
-	public function updateStudentBasicInformation($studentBasicsUpdate, $whereUpdate){
-		$this->db->where($whereUpdate);
-		$upadated = $this->db->update('students_basic_information', $studentBasicsUpdate);
-		
-		return $upadated;
-		
+
+	private function getUserDataById($userId){
+
+		$this->db->select('*');
+		$this->db->from('users');
+		$this->db->where('users.id', $userId);
+		$user = $this->db->get()->result_array();
+
+		$user = checkArray($user);
+
+		return $user;
 	}
+
+
+	public function verifyEmailAndPassword($userId, $email, $password){
+
+		$dataIsOk = FALSE;
+
+		$user = $this->getUserById($userId);
+
+		$validEmail = $email == $user['email'];
+		if($validEmail){
+			$login = $user['login'];
+			$dataIsOk = $this->checkPasswordForThisLogin($password, $login);
+		}
+		else{
+			$dataIsOk = FALSE;
+		}
+		return $dataIsOk;
+	}
+
+	public function getObjectUser($userId){
+
+		$foundUsers = $this->getUserDataById($userId);
+		
+		if($foundUsers != FALSE){
+			
+			foreach ($foundUsers as $foundUser) {
+				$id = $foundUser['id'];
+				$name = $foundUser['name'];
+				$email = $foundUser['email'];
+				$cpf = $foundUser['cpf'];
+				$homePhone = $foundUser['home_phone'];
+				$cellPhone = $foundUser['cell_phone'];
+				$login = $foundUser['login'];
+				$password = $foundUser['password'];
+				$user = new User($id, $name, $cpf, $email, $login, $password, FALSE, $homePhone, $cellPhone);
+			}
+
+		}
+		else{
+			$user = NULL;
+		}
+
+		return $user;
+
+	}
+
 }

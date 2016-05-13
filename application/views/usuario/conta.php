@@ -1,23 +1,24 @@
 <h2 class="text-center">Conta</h2>
 
 <?php
-echo form_open("usuario/altera");
+echo form_open("usuario/updateProfile");
 
-$usuario = session();
+echo form_hidden('id', $user->getId());
+echo form_hidden('oldEmail', $user->getEmail());
 
-$value = $usuario['user']['name'];
-echo form_label("Nome", "nome");
+$value = $user->getName();
+echo form_label("Nome", "name");
 echo form_input(array(
-	"name" => "nome",
-	"id" => "nome",
+	"name" => "name",
+	"id" => "name",
 	"type" => "text",
 	"class" => "form-campo",
 	"maxlength" => "255",
 	"value" => $value
 ));
-echo form_error("nome");
+echo form_error("name");
 
-$value = $usuario['user']['email'];
+$value = $user->getEmail();
 echo form_label("E-mail", "email");
 echo form_input(array(
 	"name" => "email",
@@ -29,7 +30,7 @@ echo form_input(array(
 ));
 echo form_error("email");
 
-$value = $usuario['user']['login'];
+$value = $user->getLogin();
 echo form_label("Login", "login");
 echo form_input(array(
 	"disabled" => "disabled",
@@ -42,23 +43,47 @@ echo form_input(array(
 ));
 echo form_error("login");
 
+$value = $user->getHomePhone();
+echo form_label("Telefone Residencial", "phone");
+echo form_input(array(
+	"name" => "home_phone",
+	"id" => "home_phone",
+	"type" => "text",
+	"class" => "form-campo",
+	"maxlength" => "11",
+	"value" => $value
+));
+echo form_error("phone");
+
+$value = $user->getCellPhone();
+echo form_label("Telefone Celular", "phone");
+echo form_input(array(
+	"name" => "cell_phone",
+	"id" => "cell_phone",
+	"type" => "text",
+	"class" => "form-campo",
+	"maxlength" => "11",
+	"value" => $value
+));
+echo form_error("phone");
+
 /* ------------------------------------------------------------------------ */
 
 ?><br><br><h4>Alterar Senha</h4><br><?php
 
-echo form_label("Senha atual", "senha");
+echo form_label("Senha atual", "password");
 echo form_password(array(
-	"name" => "senha",
-	"id" => "senha",
+	"name" => "password",
+	"id" => "password",
 	"class" => "form-campo",
 	"maxlength" => "255"
 ));
 echo form_error("password");
 
-echo form_label("Nova senha", "nova_senha");
+echo form_label("Nova senha", "new_password");
 echo form_password(array(
-	"name" => "nova_senha",
-	"id" => "nova_senha",
+	"name" => "new_password",
+	"id" => "new_password",
 	"class" => "form-campo",
 	"maxlength" => "255"
 ));

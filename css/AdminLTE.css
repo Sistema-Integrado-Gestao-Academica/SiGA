@@ -865,13 +865,17 @@ body > .header .logo .icon {
   margin: 0;
   padding: 0;
   list-style: none;
+
+  /*Notification line height*/
+  line-height: 40px;
+  
   overflow-x: hidden;
 }
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a,
 .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a,
 .navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a {
   display: block;
-  white-space: nowrap;
+  /*white-space: nowrap;*/
   /* Prevent text from breaking */
   border-bottom: 1px solid #f4f4f4;
 }
@@ -889,7 +893,7 @@ body > .header .logo .icon {
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .fa,
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .ion {
   font-size: 20px;
-  width: 50px;
+  width: 40px;
   text-align: center;
   padding: 15px 0px;
   margin-right: 5px;

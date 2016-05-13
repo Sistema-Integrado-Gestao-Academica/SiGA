@@ -180,6 +180,7 @@ if (defined('ENVIRONMENT'))
 	if (is_dir($application_folder))
 	{
 		define('APPPATH', $application_folder.'/');
+		define('COMPOSER_DEPENDENCIES',"vendor-dependencies/");
 	}
 	else
 	{
@@ -189,6 +190,8 @@ if (defined('ENVIRONMENT'))
 		}
 
 		define('APPPATH', BASEPATH.$application_folder.'/');
+
+		define('COMPOSER_DEPENDENCIES', BASEPATH."vendor-dependencies/");
 	}
 
 /*

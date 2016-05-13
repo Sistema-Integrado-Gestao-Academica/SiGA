@@ -1,0 +1,10 @@
+{
+    "config": {
+        "vendor-dir":"vendor-dependencies"
+    },
+
+    "require": {
+        "phpoffice/phpexcel": "^1.8",
+        "phpmailer/phpmailer": "^5.2"
+    }
+}

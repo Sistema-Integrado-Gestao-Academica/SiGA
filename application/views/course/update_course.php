@@ -242,7 +242,7 @@ if($registeredPrograms !== FALSE){
 				<tr>
 					<td>
 						<h3>
-							<label class="label label-default"> Não existem cursos cadastrados</label>
+							<?php callout("info", "Não existem secretários cadastrados."); ?>
 						</h3>
 					</td>
 				</tr>

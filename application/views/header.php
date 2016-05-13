@@ -2,8 +2,28 @@
 <br>
 <?php
 	require_once(APPPATH."/constants/GroupConstants.php");
+	require_once(APPPATH."/data_types/notification/ActionNotification.php");
+	require_once(APPPATH."/data_types/User.php");
 
 	$session = $this->session->userdata("current_user");
+
+	if($session){
+		$user = $session['user'];
+
+		// Getting user notifications
+		$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);	
+		$userNotifications = $this->navbarnotification->getUserNotifications($userObj);
+
+		$notifications = $userNotifications["notifications"];
+		$notSeenNotifications = $userNotifications["not_seen"];
+		
+		echo form_input(array(
+			'id' => "notifications_amount",
+			'name' => "notifications_amount",
+			'type' => "hidden",
+			'value' => count($notifications)
+		));
+	}
 ?>
 <html>
 <head>
@@ -22,7 +42,14 @@
 	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
 	<script src=<?=base_url("js/bootstrap.min.js")?>></script>
 	<script src=<?=base_url("js/AdminLTE/app.js")?>></script>
-	<script src=<?=base_url("js/functions.js")?>></script>
+	<script src=<?=base_url("js/popovers.js")?>></script>
+	<script src=<?=base_url("js/enrollment.js")?>></script>
+	<script src=<?=base_url("js/payment.js")?>></script>
+	<script src=<?=base_url("js/notification.js")?>></script>
+	<script src=<?=base_url("js/request.js")?>></script>
+	<script src=<?=base_url("js/user.js")?>></script>
+	<script src=<?=base_url("js/course.js")?>></script>
+	<script src=<?=base_url("js/selectiveprocess.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
@@ -45,10 +72,77 @@
 			<div class="navbar-btn sidebar-toggle" role="button">
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-					<li><?=anchor("/", "Home", "class='navbar-brand'")?></li>
+					<li>
+					<a href="<?php echo base_url('/');?>">
+					<?php $logo_image = base_url('img/logo_home.png');?>
+					
 					<?php if ($session) { ?>
+					</li>	
+						<img src="<?php echo $logo_image;?>" alt="Logo SiGA" class="navbar-brand" id="logo_logged_home"/>
+					</a>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
+
+						<li class="dropdown notifications-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bell-o"></i>
+
+                                <?php if ($notSeenNotifications !== 0){ ?>
+                                	<span class="label label-warning">
+                                		<?php echo $notSeenNotifications;?>
+                                	</span>
+                                <?php } ?>
+                            </a>
+                            <ul class="dropdown-menu">
+
+                                <li class="header"><?php echo "<b>Você tem ".$notSeenNotifications." notificação(ões) não vista(s).</b>";?></li>
+                                <li>                                
+                                    <!-- inner menu: contains the actual data -->
+                                    <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
+
+                                    <ul style="overflow-y: scroll; width: 100%; height: 200px;" class="menu">
+                                        
+                                        <?php
+                                        	$i = 1;
+                                        	foreach ($notifications as $notification){
+
+                                        		if($notification->seen()){
+                                        			echo "<li>";
+                                        		}else{
+                                        			echo "<li class='not_seen'>";
+                                        		}
+
+                                        		$notificationLinkId = "notification_".$i;
+
+                                    			$notificationId = $notification->id();
+
+                                    			if($notification->type() == ActionNotification::class){
+													echo "<a onclick='setNotificationSeen({$notificationId});' id='{$notificationLinkId}' href='".$notification->link()."'>";
+                                    			}else{
+                                    				echo "<a id='{$notificationLinkId}' onclick='setNotificationSeen({$notificationId});'>";
+                                    			}
+
+                                    			// echo "<i class='fa fa-bell info'></i>";
+                                    			echo $notification->content();
+
+                                    			echo "</a>";
+                                        		echo "</li>";
+
+                                        		$i++;
+                                        	}
+
+                                        ?>
+                                        
+                                    </ul>
+
+                                    <div style="background: rgb(0, 0, 0) none repeat scroll 0% 0%; width: 3px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 0px; z-index: 99; right: 1px; height: 156.863px;" class="slimScrollBar"></div>
+
+                                    <div style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; background: rgb(51, 51, 51) none repeat scroll 0% 0%; opacity: 0.2; z-index: 90; right: 1px;" class="slimScrollRail"></div></div>
+                                </li>
+                                <li class="footer"><a href="#">Visualizar todas</a></li>
+                            </ul>
+                        </li>
+
 						<li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
@@ -88,7 +182,7 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <?=anchor("conta", "Conta", "class='btn btn-default btn-flat'")?>
+                                        <?=anchor("profile", "Conta", "class='btn btn-default btn-flat'")?>
                                     </div>
                                     <div class="pull-right">
                                         <?=anchor("logout", "Sair", "class='btn btn-default btn-flat'")?>
@@ -98,13 +192,16 @@
                         </li>
 					</ul>
 				<?php } else { ?>
-
-					<li><?=anchor("usuario/novo", "Cadastro", "class='navbar-brand'")?></li>
+					</li>	
+						<img src="<?php echo $logo_image; ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
+					</a>
+					</li>
+					<li><?=anchor("register", "Cadastro", "class='navbar-brand'")?></li>
 					</ul>
 
-						<ul class="nav navbar-nav navbar-right">
+					<ul class="nav navbar-nav navbar-right" id="login_menu">
 					<?php
-						echo form_open("login/autenticar");?>
+						echo form_open("login/authenticate");?>
 							<div class="row">
         						<div class="col-lg-4">
 								<?php
@@ -125,8 +222,8 @@
 								<?php
 									// echo form_label("Senha", "senha");
 									echo form_input(array(
-										"name" => "senha",
-										"id" => "senha",
+										"name" => "password",
+										"id" => "password",
 										"type" => "password",
 										"class" => "form-campo",
 										"maxlength" => "255",
@@ -136,8 +233,12 @@
 								?>
 								</div>
 								<!-- <br> -->
-								<div class="col-lg-2">
+								<div class="col-lg-4">
+									<div class="row">
 									<?php
+										echo anchor("usuario/restorePassword", "<i class='fa fa-question-circle'></i>", "id='link_restore_password' data-toggle=\"popover\" data-placement=\"bottom\" data-trigger=\"hover\"
+	     								data-content=\"Clique se tiver esquecido sua senha.\"");
+
 										echo form_button(array(
 											"id" => "login_btn",
 											"class" => "btn btn-default",
@@ -147,11 +248,11 @@
 									
 									
 									?>
+									</div>
 								</div>
 							</div>
 							<?php
 										echo form_close();
-										echo anchor("usuario/restorePassword", "Esqueci minha senha", "id='link'");
 										?>
 						</ul>
 

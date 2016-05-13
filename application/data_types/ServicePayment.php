@@ -1,7 +1,5 @@
 <?php
 
-include(APPPATH."/phpexcel/PHPExcel.php");
-
 class ServicePayment{
 
 	const FILE_NAME = "proposta.xls";
@@ -90,14 +88,16 @@ class ServicePayment{
 
 	private function generateSheet(){
 
-		$sheet = new PHPExcel();
+		$ci =& get_instance();
 
-		$sheet->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+		$ci->load->library("ExcelSheet", '', 'sheet');
+
+		$ci->sheet->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
 
 		// Creating the columns
-		$sheet->setActiveSheetIndex(0);
+		$ci->sheet->setActiveSheetIndex(0);
 
-		$activeSheet = $sheet->getActiveSheet();
+		$activeSheet = $ci->sheet->getActiveSheet();
 
 		$activeSheet->setTitle('Proposta');
 
@@ -760,7 +760,7 @@ class ServicePayment{
 		$activeSheet->setCellValue('D46', "ASSINATURA/CARIMBO:");
 		$activeSheet->mergeCells('D46:G47');
 
-		$this->sheet = $sheet;
+		$this->sheet = $ci->sheet;
 	}
 
 	public function downloadSheet(){

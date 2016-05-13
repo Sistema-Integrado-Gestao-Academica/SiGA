@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('useractivation.php');
 require_once('course.php');
 require_once('module.php');
 require_once('semester.php');
@@ -8,6 +9,9 @@ require_once('syllabus.php');
 require_once('request.php');
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
+require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
+require_once(APPPATH."/data_types/User.php");
 
 class Usuario extends CI_Controller {
 
@@ -298,28 +302,6 @@ class Usuario extends CI_Controller {
 		return $userStatus;
 	}
 
-	public function studentInformationsForm(){
-		$loggedUserData = $this->session->userdata("current_user");
-		$userId = $loggedUserData['user']['id'];
-
-		$this->load->model('usuarios_model');
-		$userStatus = $this->usuarios_model->getUserStatus($userId);
-		$userCourse = $this->usuarios_model->getUserCourse($userId);
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		$userData = array(
-				'userData' => $loggedUserData['user'],
-				'status' => $userStatus,
-				'courses' => $userCourse,
-				'currentSemester' => $currentSemester
-		);
-
-		// On auth_helper
-		loadTemplateSafelyByGroup("estudante", 'usuario/student_specific_data_form', $userData);
-	}
-
 	public function studentCoursePage($courseId, $userId){
 
 		$userData = $this->getUserById($userId);
@@ -529,7 +511,7 @@ class Usuario extends CI_Controller {
 	private function checkIfUserHasSecretaryOfThisCourse($courseId, $userId){
 
 		$course = new Course();
-		$foundSecretaries = $course->getCourseSecrecretary($courseId);
+		$foundSecretaries = $course->getCourseSecretaries($courseId);
 		$userHasSecretary = FALSE;
 
 		if ($foundSecretaries !== FALSE) {
@@ -543,26 +525,15 @@ class Usuario extends CI_Controller {
 		return $userHasSecretary;
 	}
 
-	public function formulario() {
-		$this->load->model('usuarios_model');
-		$users = $this->usuarios_model->buscaTodos();
+	public function register(){
 
-		if ($users && !$this->session->userdata('current_user')) {
-			$this->session->set_flashdata("danger", "Você deve ter permissão do administrador. Faça o login.");
-			redirect('login');
-		} else {
+		$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
 
-			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
+		$data = array(
+			'user_groups' => $userGroups
+		);
 
-			$data = array('user_groups' => $userGroups);
-			$this->load->template("usuario/formulario", $data);
-		}
-	}
-
-	public function formulario_entrada() {
-
-		$this->load->template("usuario/formulario_entrada");
-
+		$this->load->template("usuario/new_user", $data);
 	}
 
 	public function conta() {
@@ -571,6 +542,15 @@ class Usuario extends CI_Controller {
 		$this->load->template("usuario/conta", $dados);
 	}
 
+	public function profile() {
+		$loggedUser = session();
+		$userId = $loggedUser['user']['id'];	 
+		$user = $this->usuarios_model->getObjectUser($userId);
+		$data = array('user' => $user);
+		$this->load->template("usuario/conta", $data);
+	}
+
+
 	public function restorePassword(){
 		$validData = $this->validateDataForRestorePassword();
 		
@@ -578,10 +558,10 @@ class Usuario extends CI_Controller {
 			$email = $this->input->post("email");
 
 			$user = $this->usuarios_model->getUserByEmail($email);
-		
 			if($user !== FALSE){
-
-				$success = $this->sendEmailForRestorePassword($user);
+				$user = $this->generateNewPassword($user);
+				$email = new RestorePasswordEmail($user);
+				$success = $email->notify();
 				
 				if($success){
 					$this->session->set_flashdata("success", "Email enviado com sucesso.");	
@@ -603,47 +583,29 @@ class Usuario extends CI_Controller {
 
 	}
 
-	private function sendEmailForRestorePassword($user){
-		
-		$newPassword = $this->generateNewPassword($user);
-		$subject = "Solicitação de recuperação de senha - SiGA"; 
-		$message = "Olá, <b>{$user['name']}</b>. <br>";
-		$message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
-		$message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
-		$message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>";
+    private function generateNewPassword($user){
+        
+        define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
+        
+        $ci =& get_instance();
+        $ci->load->model('usuarios_model');
+
+        $newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
+
+        // Changing the user password
+        $encryptedPassword = md5($newPassword);
+        $userPassword = $encryptedPassword;
+        $temporaryPassword = TRUE;
+
+        $id = $user->getId();
+        $this->usuarios_model->updatePassword($id, $userPassword, $temporaryPassword);
+
+        $user = new User($id, $user->getName(), FALSE, $user->getEmail(), FALSE, $newPassword, FALSE);
+
+        return $user;
+    }
 
 
-		$success = $this->sendEmailForUser($user['email'], $user['name'], $subject, $message);
-
-		return $success;
-	}
-
-
-	/**
-		* Send a email for a user
-		* @param $userEmail: The email address of the user
-		* @param $instituteName: The name of the institute
-		* @param $instituteEmail: The email address of the institute
-		* @param $subject: The subject of the email
-		* @param $message: The message of the email
-	*/
-	private function sendEmailForUser($userEmail, $userName, $subject, $message){
-
-		$emailSent = FALSE;
-		
-		$this->load->library("My_PHPMailer");
-		$this->load->helper("email");
-		
-		$mail = setDefaultConfiguration(); 
-		$mail->IsHTML(true);
-		$mail->Subject = $subject; 
-	    $mail->Body = $message;
-	    $mail->AddAddress($userEmail, $userName);
-	    $emailSent = $mail->Send();
-	    
-		return $emailSent;
-	}
-	
 	private function validateDataForRestorePassword(){
 
 		$this->load->library("form_validation");
@@ -652,21 +614,6 @@ class Usuario extends CI_Controller {
 		$success = $this->form_validation->run();
 
 		return $success;
-	}
-
-	private function generateNewPassword($user){
-		
-		define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
-		
-		$newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
-
-		// Changing the user password
-		$encryptedPassword = md5($newPassword);
-		$user['password'] = $encryptedPassword;
-		$temporaryPassword = TRUE;
-		$this->usuarios_model->updatePassword($user, $temporaryPassword);
-
-		return $newPassword;
 	}
 
 	public function changePassword(){
@@ -683,12 +630,10 @@ class Usuario extends CI_Controller {
 
 				$session = $this->session->userdata("current_user");
 				
-				$user = array();
-				$user['password'] = $password;
-				$user['id'] = $session['user']['id'];
+				$userId = $session['user']['id'];
 				$temporaryPassword = FALSE;
 
-				$isUpdated = $this->usuarios_model->updatePassword($user, $temporaryPassword);
+				$isUpdated = $this->usuarios_model->updatePassword($userId, $password, $temporaryPassword);
 
 				if($isUpdated){
 					$this->session->set_flashdata("success", "Senha alterada com sucesso.");
@@ -739,78 +684,115 @@ class Usuario extends CI_Controller {
 		return $validPassword;
 	}
 
-	public function novo() {
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("login", "Login", "required|alpha_dash");
-		$this->form_validation->set_rules("senha", "Senha", "required");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
+	public function newUser() {
+		
+		$name  = $this->input->post("name");
+		$cpf   = $this->input->post("cpf");
+		$email = $this->input->post("email");
+		$group = $this->input->post("userGroup");
+		$login = $this->input->post("login");
+		$password = md5($this->input->post("password"));
 
-		if ($success) {
-			$nome  = $this->input->post("nome");
-			$cpf   = $this->input->post("cpf");
-			$email = $this->input->post("email");
-			$group = $this->input->post("userGroup");
-			$login = $this->input->post("login");
-			$senha = md5($this->input->post("senha"));
+		$user = array(
+			'name'       => $name,
+			'cpf'        => $cpf,
+			'email'      => $email,
+			'login'      => $login,
+			'password' 	 => $password,
+			'active' => 0
+		);
 
-			$usuario = array(
-				'name'     => $nome,
-				'cpf'      => $cpf,
-				'email'    => $email,
-				'login'    => $login,
-				'password' => $senha
-			);
-
-			$this->load->model("usuarios_model");
-			$usuarioExiste = $this->usuarios_model->buscaPorLoginESenha($login);
-
-			if ($usuarioExiste) {
-				$this->session->set_flashdata("danger", "Usuário já existe no sistema.");
-				redirect("usuario/formulario");
-			} else {
-				$this->usuarios_model->salva($usuario);
-				$this->usuarios_model->saveGroup($usuario, $group);
-				$this->session->set_flashdata("success", "Usuário \"{$usuario['login']}\" cadastrado com sucesso");
-				redirect("/");
-			}
-		} else {
-			$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
-
-			$data = array('user_groups' => $userGroups);
-			$this->load->template("usuario/formulario", $data);
+		$success = $this->validateRegisterUserFields();
+		if($success){
+			$this->registerUser($user, $group);
+		} 
+		else{
+			
+			$this->register();
 		}
+
 	}
 
-	public function altera() {
-		$usuarioLogado = session();
-
+	private function validateRegisterUserFields(){
+		
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("nome", "Nome", "trim|xss_clean|callback__alpha_dash_space");
-		$this->form_validation->set_rules("email", "E-mail", "valid_email");
+		$this->form_validation->set_rules("name", "Nome", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf|verify_if_cpf_no_exists");
+		$this->form_validation->set_rules("email", "E-mail", "required|valid_email|verify_if_email_no_exists");
+		$this->form_validation->set_rules("login", "Login", "required|alpha_dash|verify_if_login_no_exists");
+		$this->form_validation->set_rules("password", "Senha", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
-		if ($success) {
-			$usuario = $this->getAccountForm($usuarioLogado);
+		return $success;
 
-			$this->load->model('usuarios_model');
-			$alterado = $this->usuarios_model->altera($usuario);
+	}
 
-			if ($alterado && $usuarioLogado != $usuario) {
-				$this->session->set_userdata('current_user', $usuario);
-				$this->session->set_flashdata("success", "Os dados foram alterados");
-			} else if (!$alterado){
-				$this->session->set_flashdata("danger", "Os dados não foram alterados");
-			}
+	private function registerUser($user, $group){
 
-			redirect('usuario/conta');
-		} else {
-			$this->load->template("usuario/conta");
+
+		$userActivation = new UserActivation();
+
+		// Starting transaction
+		$this->db->trans_start();
+
+		$this->usuarios_model->save($user);
+		$this->usuarios_model->saveGroup($user, $group);
+		$savedUser = $this->usuarios_model->getUserDataByLogin($user['login']);
+
+		$activation = $userActivation->generateActivation($savedUser);
+		
+		// Finishing transaction
+		$this->db->trans_complete();
+		if($this->db->trans_status() === FALSE){
+			$status = "danger";
+			$message = "Não foi possível realizar o cadastro solicitado. Tente novamente.";
 		}
+		else{
+
+			$this->load->helper("useractivation");
+			$message = sendConfirmationEmail($savedUser, $activation);
+		}
+
+		$this->session->set_flashdata($message['status'], $message['message']);
+		redirect("/");
+	}
+
+	public function updateProfile(){
+		
+		$user = $this->getAccountForm();
+			if(!is_null($user)){
+
+				$updated = $this->usuarios_model->update($user);
+
+				$sessionData = $this->getNewSessionData($user);
+
+				if ($updated) {
+					$this->session->set_userdata('current_user', $sessionData);
+					$this->session->set_flashdata("success", "Os dados foram alterados");
+				} 
+				else if (!$updated){
+					$this->session->set_flashdata("danger", "Os dados não foram alterados");
+				}
+				redirect('usuario/profile');
+			}
+			else{
+				
+				$this->profile();
+			}
+	}
+
+	private function validateEmailField($oldEmail, $newEmail){
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("name", "Nome", "trim|xss_clean|callback__alpha_dash_space");
+		
+		if($oldEmail != $newEmail){
+			$this->form_validation->set_rules("email", "E-mail", "valid_email|verify_if_email_no_exists");
+		}
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
 	}
 
 	public function remove() {
@@ -825,95 +807,6 @@ class Usuario extends CI_Controller {
 			$this->load->template("usuario/conta", $dados);
 		}
 
-	}
-
-	public function saveStudentBasicInformation(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("home_phone_number", "Telefone Residencial", "required|alpha_dash");
-		$this->form_validation->set_rules("cell_phone_number", "Telefone Celular", "required|alpha_dash");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
-
-		if ($success){
-			$email = $this->input->post("email");
-			$cellPhone = $this->input->post("cell_phone_number");
-			$homePhone = $this->input->post("home_phone_number");
-			$studentRegistration = $this->input->post("student_registration");
-			$idUser = $this->input->post("id_user");
-
-			$studentBasics = array(
-					'email'    => $email,
-					'cell_phone_number'    => $cellPhone,
-					'home_phone_number' => $homePhone,
-					'student_registration' => $studentRegistration,
-					'id_user' => $idUser
-			);
-
-			$this->load->model("usuarios_model");
-
-			$savedBasicInformation = $this->usuarios_model->saveStudentBasicInformation($studentBasics);
-
-			if($savedBasicInformation){
-				$updateStatus = "success";
-				$updateMessage = "Novos dados cadastrados com sucesso";
-			}else{
-				$updateStatus = "danger";
-				$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
-			}
-
-		} else {
-			$updateStatus = "danger";
-			$updateMessage = "Não foi possível salvar seus novos dados. Tente novamente.";
-		}
-			$this->session->set_flashdata($updateStatus, $updateMessage);
-			redirect("student_information/");
-	}
-
-	public function updateStudentBasicInformation(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
-		$this->form_validation->set_rules("home_phone_number", "Telefone Residencial", "required|alpha_dash");
-		$this->form_validation->set_rules("cell_phone_number", "Telefone Celular", "required|alpha_dash");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$success = $this->form_validation->run();
-
-		if ($success){
-			$email = $this->input->post("email");
-			$cellPhone = $this->input->post("cell_phone_number");
-			$homePhone = $this->input->post("home_phone_number");
-			$studentRegistration = $this->input->post("student_registration");
-			$idUser = $this->input->post("id_user");
-
-			$studentBasicsUpdate = array(
-					'email'    => $email,
-					'cell_phone_number'    => $cellPhone,
-					'home_phone_number' => $homePhone
-			);
-
-			$whereUpdate = array(
-					'student_registration' => $studentRegistration,
-					'id_user' => $idUser
-			);
-
-			$this->load->model("usuarios_model");
-
-			$updatedBasicInformation = $this->usuarios_model->updateStudentBasicInformation($studentBasicsUpdate, $whereUpdate);
-
-			if($updatedBasicInformation){
-				$updateStatus = "success";
-				$updateMessage = "Novos dados alterados com sucesso";
-			}else{
-				$updateStatus = "danger";
-				$updateMessage = "Não foi possível alterar seus novos dados. Tente novamente.";
-			}
-
-		} else {
-			$updateStatus = "danger";
-			$updateMessage = "Não foi possível alterar seus novos dados. Tente novamente.";
-		}
-		$this->session->set_flashdata($updateStatus, $updateMessage);
-		redirect("student_information/");
 	}
 
 	public function getUserByName($userName){
@@ -982,13 +875,6 @@ class Usuario extends CI_Controller {
 		return $userName;
 	}
 
-	public function getStudentBasicInformation($idUser){
-		$this->load->model('usuarios_model');
-		$userData = $this->usuarios_model->getStudentBasicInformation($idUser);
-
-		return $userData;
-	}
-
 	/**
 	  * Join the id's and names of user types into an array as key => value.
 	  * Used to the user type form
@@ -1009,58 +895,68 @@ class Usuario extends CI_Controller {
 		return $form_user_groups;
 	}
 
-	private function getAccountForm($usuarioLogado) {
-		$name = $this->input->post("nome");
+	private function getAccountForm() {
+		
+		$id = $this->input->post("id");
+		$name = $this->input->post("name");
+		$oldEmail = $this->input->post("oldEmail");
 		$email = $this->input->post("email");
-		$login = $usuarioLogado['user']['login'];
-		$password = md5($this->input->post("senha"));
-		$new_password = md5($this->input->post("nova_senha"));
+		$homePhone = $this->input->post("home_phone");
+		$cellPhone = $this->input->post("cell_phone");
+		$password = md5($this->input->post("password"));
+		$new_password = md5($this->input->post("new_password"));
 		$blank_password = 'd41d8cd98f00b204e9800998ecf8427e';
 
-		$this->load->model('usuarios_model');
-		$user = $this->usuarios_model->busca('login', $login);
+		$success = $this->validateEmailField($oldEmail, $email);
 
-		if ($new_password != $blank_password && $password != $user['password']) {
-			$this->session->set_flashdata("danger", "Senha atual incorreta");
-			redirect("usuario/conta");
-		} else if ($new_password == $blank_password) {
-			$new_password = $user['password'];
+		if($success){
+
+			$user = $this->usuarios_model->getObjectUser($id);
+			$login = $user->getLogin();
+
+			if ($new_password != $blank_password && $password != $user->getPassword()) {
+				$this->session->set_flashdata("danger", "Senha atual incorreta");
+				redirect("usuario/profile");
+			} 
+			else if ($new_password == $blank_password) {
+				$new_password = $user->getPassword();
+			}
+
+			if (empty($name)) {
+				$name = $user->getName();
+			}
+
+			if (empty($email)) {
+				$email = $user->getEmail();
+			}
+			
+			if (empty($homePhone)) {
+				$homePhone = $user->getHomePhone();
+			}
+			
+			if (empty($cellPhone)) {
+				$cellPhone = $user->getCellPhone();
+			}
+			
+			$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 		}
-
-		if ($name == "") {
-			$name = $user['name'];
+		else{
+			$user = NULL;
 		}
-
-		if ($email == "") {
-			$email = $user['email'];
-		}
-
-		$user = $usuarioLogado;
-		$user['user']['name'] = $name;
-		$user['user']['email'] = $email;
-		$user['user']['password'] = $new_password;
-
+	
 		return $user;
 	}
 
-	/**
-	 * Join the id's and names of users into an array as key => value.
-	 * Used to the update course form
-	 * @param $useres - The array that contains the tuples of users
-	 * @return An array with the id's and users names as id => name
-	 */
-	private function turnUsersToArray($users){
-		// Quantity of course types registered
-		$quantity_of_course_types = sizeof($users);
+	private function getNewSessionData($user){
 
-		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
-			$keys[$cont] = $users[$cont]['id'];
-			$values[$cont] = ucfirst($users[$cont]['name']);
-		}
-
-		$form_users = array_combine($keys, $values);
-
-		return $form_users;
+		$sessionData = session();
+		$sessionData['user']['id'] = $user->getId();
+		$sessionData['user']['name'] = $user->getName();
+		$sessionData['user']['email'] = $user->getEmail();
+		$sessionData['user']['login'] = $user->getLogin();
+		$sessionData['user']['password'] = $user->getPassword();
+		
+		return $sessionData;
 	}
 
 }

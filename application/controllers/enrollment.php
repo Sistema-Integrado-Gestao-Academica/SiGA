@@ -5,6 +5,7 @@ require_once("module.php");
 
 require_once(APPPATH."/data_types/StudentRegistration.php");
 require_once(APPPATH."/exception/StudentRegistrationException.php");
+require_once(APPPATH."/data_types/notification/emails/EnrolledStudentEmail.php");
 require_once(APPPATH."/constants/GroupConstants.php");
 require_once(APPPATH."/constants/PermissionConstants.php");
 
@@ -49,6 +50,10 @@ class Enrollment extends CI_Controller {
 	 */
 	public function enrollStudent($course, $user){
 
+		$this->load->model("usuarios_model");
+		$userForEmail = $this->usuarios_model->getUserById($user);
+		$userForEmail = $this->usuarios_model->getUserDataForEmail($userForEmail);
+
 		// Begins a transaction
 		$this->db->trans_start();
 
@@ -65,7 +70,9 @@ class Enrollment extends CI_Controller {
 		}else{
 
 			log_message("info", "Student ${user} enrolled in course {$course} successfully.");
-			
+			$notifyUser = new EnrolledStudentEmail($userForEmail, $course);	
+			$notifyUser->notify();
+
 			$status = "success";
 			$message = "Aluno matriculado com sucesso.";
 		}

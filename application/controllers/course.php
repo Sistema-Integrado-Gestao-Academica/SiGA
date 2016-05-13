@@ -146,8 +146,7 @@ class Course extends CI_Controller {
 			$formUserSecretary = FALSE;
 		}
 
-		$course_controller = new Course();
-		$secretaryRegistered = $course_controller->getCourseSecrecretary($course['id_course']);
+		$secretaryRegistered = $this->getCourseSecretaries($course['id_course']);
 
 		$course_types = $this->db->get('course_type')->result_array();
 
@@ -553,10 +552,11 @@ class Course extends CI_Controller {
 		redirect('cursos');
 	}
 
-	public function getCourseSecrecretary($id_course){
+	public function getCourseSecretaries($courseId){
 
 		$this->load->model('course_model');
-		$secretary = $this->course_model->getSecretaryByCourseId($id_course);
+		
+		$secretary = $this->course_model->getCourseSecretaries($courseId);
 
 		return $secretary;
 	}

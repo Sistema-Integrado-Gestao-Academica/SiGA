@@ -42,9 +42,14 @@
 $route['default_controller'] = "login";
 $route['404_override'] = '';
 $route['conta'] = 'usuario/conta';
+$route['profile'] = 'usuario/profile';
 $route['logout'] = 'login/logout';
 
-$route['cadastro'] = 'usuario/formulario';
+$route['register'] = 'usuario/register';
+$route['register_user'] = 'usuario/newUser';
+$route['confirm_register'] = 'useractivation/confirm';
+$route['reconfirm_register/(:num)'] = 'useractivation/reconfirmRegister/$1/';
+$route['cancel_register/(:num)'] = 'useractivation/cancelRegister/$1/';
 $route['configuracoes'] = 'settings';
 $route['cursos'] = 'course/index';
 $route['departamentos'] = 'departamento/formulario';
@@ -99,7 +104,7 @@ $route['update_profile'] = 'teacher/updateProfile';
  * Student functionalities routes
  */
 $route['student'] = 'student/index';
-$route['student_information'] = 'usuario/studentInformationsForm';
+$route['student_information'] = 'student/studentInformation';
 $route['documents_request'] = "documentrequest/index";
 
 /*
@@ -125,6 +130,12 @@ $route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
 $route['selection_process_test'] = 'tests/SelectionProcess_Test';
 $route['process_settings_test'] = 'tests/ProcessSettings_Test';
 $route['process_phase_test'] = 'tests/ProcessPhase_Test';
+$route['email_notification_test'] = 'tests/EmailNotification_Test';
+$route['restore_password_email_test'] = 'tests/RestorePasswordEmail_Test';
+$route['enrolled_student_email_test'] = 'tests/EnrolledStudentEmail_Test';
+$route['secretary_email_notification_test'] = 'tests/SecretaryEmailNotification_Test';
+$route['phone_test'] = 'tests/Phone_Test';
+$route['bar_notification_test'] = 'tests/BarNotification_Test';
 // $route['test'] = 'test_report';
 
 /* End of file routes.php */

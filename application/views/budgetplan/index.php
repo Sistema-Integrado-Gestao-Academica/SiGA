@@ -75,7 +75,21 @@
 </tbody>
 </table>
 </div>
+<?php
 
+$submitBtn = array(
+		"class" => "btn bg-olive btn-block",
+		"type" => "sumbit",
+		"content" => "Cadastrar"
+);
+
+if($courses !== FALSE && $managers !== FALSE){
+	$isPossibleRegisterPO = TRUE;
+}
+else{
+	$isPossibleRegisterPO = FALSE;
+	$submitBtn['disabled'] = TRUE;
+}?>
 <div class="form-box-logged" id="login-box"> 
 	<div class="header">Cadastrar um novo P.O.</div>
 
@@ -92,6 +106,12 @@
 				"class" => "form-campo form-control"
 			)) ?>
 		</div>
+		
+		<?php
+			if($courses == FALSE){
+				$courses = array(0 => "Nenhum curso cadastrado no sistema");
+			}
+		?>
 
 		<div class="form-group">
 			<?= form_label("Curso", "course") ?><br>
@@ -99,9 +119,7 @@
 		</div>
 
 		<?php
-			if($managers !== FALSE){
-				$managers[0] = "Nenhum";
-			}else{
+			if($managers == FALSE){
 				$managers = array(0 => "Nenhum gestor cadastrado no sistema");
 			}
 		?>
@@ -128,14 +146,16 @@
 		</div>
 
 		<div class="footer body bg-gray">
-			<?= form_button(array(
-				"class" => "btn bg-olive btn-block",
-				"type" => "submit",
-				"content" => "Cadastrar"
-			)) ?>
+			<?= form_button($submitBtn) ?>
 		</div>
 	</div>
 	<?= form_close() ?>
+
+	<?php if(!$isPossibleRegisterPO){ ?>
+		<div class="callout callout-danger">
+			<h4>Não é possível cadastrar um P.O. sem um curso e um gestor.</h4>
+		</div>
+	<?php } ?>
 </div>
 
 <script>

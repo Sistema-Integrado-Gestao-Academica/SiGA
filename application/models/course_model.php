@@ -591,6 +591,8 @@ class Course_model extends CI_Model {
 
 		$secretaries = $this->db->get_where('secretary_course', array('id_course'=>$courseId))->result_array();
 
+		$secretaries = checkArray($secretaries);
+
 		return $secretaries;
 	}
 

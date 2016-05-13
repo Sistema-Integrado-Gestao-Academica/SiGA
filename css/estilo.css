@@ -137,11 +137,35 @@ td {
   color: #fff;
 }
 
-#link{
+#link_restore_password{
   color: #fff;
-  margin-left: 70%;
+  /*margin-left: -200%;*/
 }
 
+#login_btn{
+   margin-left: 10%;
+ 
+}
+
+#logo_home{
+  width:27%;
+  height:27%;
+  margin-top: -3%;
+}
+
+#logo_logged_home{
+  width:40%;
+  height:40%;
+  margin-top: -2%;
+}
+
+#login_menu{
+  margin-top: 0.5%;
+}
+
+.popover-content {
+    color: black;
+}
 /*
  * Skin: Green (from AdminLTE)
  * -----------
@@ -173,7 +197,7 @@ td {
   color: #fff;
 }
 .skin-green-light .navbar .sidebar-toggle:hover {
-  background-color: #008d4c;
+  background-color: #3d9970;
 }
 @media (max-width: 767px) {
   .skin-green-light .navbar .dropdown-menu li.divider {
@@ -300,3 +324,15 @@ td {
     border-left: 1px solid #d2d6de;
   }
 }
+
+/* Seen Notification styles*/
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li.not_seen > a:hover{
+  background: #e6e6fa;
+  text-decoration: none;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li.not_seen > a{
+  background: #f8b801;
+  text-decoration: none;
+}
+/* / Seen Notification styles*/

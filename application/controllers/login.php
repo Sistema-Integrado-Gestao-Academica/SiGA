@@ -1,10 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/exception/LoginException.php");
+require_once(APPPATH."/data_types/User.php");
 
 class Login extends CI_Controller {
 
-	public function index() {
+	public function index(){
 
 		$program = new Program();
 		$data = $program->getInformationAboutPrograms();
@@ -12,35 +13,49 @@ class Login extends CI_Controller {
 		$this->load->template('login/index', $data);
 	}
 
-	public function autenticar() {
+	public function authenticate(){
 		
 		$login = $this->input->post("login");
-		$password = $this->input->post("senha");
+		$password = $this->input->post("password");
 
 		try{
 
 			$this->load->model("usuarios_model");
 			$user = $this->usuarios_model->validateUser($login, $password);
 			
-			if(sizeof($user) > 0){
-				$this->load->model("module_model");
-				$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
-				$registeredGroups = $this->module_model->getUserGroups($user['id']);
+			if($user !== FALSE){
 
-				$userData = array(
-					'user' => $user,
-					'user_permissions' => $registeredPermissions,
-					'user_groups' => $registeredGroups
-				);
-
-				$this->session->set_userdata("current_user", $userData);
-				$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);
+				$userIsActive = $user['active'] == 1;
 				
-				if(!$isATemporaryPassword){
+				if($userIsActive){
+
+					$this->load->model("module_model");
+					$registeredPermissions = $this->module_model->getUserPermissions($user['id']);
+					$registeredGroups = $this->module_model->getUserGroups($user['id']);
+
+					$userData = array(
+						'user' => $user,
+						'user_permissions' => $registeredPermissions,
+						'user_groups' => $registeredGroups
+					);
+
+					$this->session->set_userdata("current_user", $userData);
+					$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user['id']);				
+
+					if(!$isATemporaryPassword){
+						redirect('/');
+					}
+					else{
+						redirect('usuario/changePassword');
+					}
+				}else{
+					$registerNotConfirmedLink = anchor("reconfirm_register/{$user['id']}",'clique aqui');
+					$authenticationStatus = "danger";
+					$authenticationMessage = "Cadastro não confirmado. Um e-mail de confirmação foi enviado para o e-mail utilizado no cadastro.
+					<br> Caso não tenha recebido o e-mail, <b>{$registerNotConfirmedLink}</b>.";
+					
+					$this->session->set_flashdata($authenticationStatus, $authenticationMessage);
 					redirect('/');
-				}
-				else{
-					redirect('usuario/changePassword');
 				}
 
 				
