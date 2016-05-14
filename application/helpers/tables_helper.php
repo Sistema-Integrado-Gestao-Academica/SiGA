@@ -1,23 +1,23 @@
 <?php
 
-require_once(APPPATH."/controllers/Schedule.php");
-require_once(APPPATH."/controllers/Request.php");
-require_once(APPPATH."/controllers/Course.php");
-require_once(APPPATH."/controllers/Program.php");
-require_once(APPPATH."/controllers/Offer.php");
-require_once(APPPATH."/controllers/Discipline.php");
-require_once(APPPATH."/controllers/Syllabus.php");
-require_once(APPPATH."/controllers/Usuario.php");
-require_once(APPPATH."/controllers/Module.php");
-require_once(APPPATH."/controllers/Mastermind.php");
-require_once(APPPATH."/controllers/Coordinator.php");
+// require_once(APPPATH."/controllers/Schedule.php");
+// require_once(APPPATH."/controllers/Request.php");
+// require_once(APPPATH."/controllers/Course.php");
+// require_once(APPPATH."/controllers/Program.php");
+// require_once(APPPATH."/controllers/Offer.php");
+// require_once(APPPATH."/controllers/Discipline.php");
+// require_once(APPPATH."/controllers/Syllabus.php");
+// require_once(APPPATH."/controllers/Usuario.php");
+// require_once(APPPATH."/controllers/Module.php");
+// require_once(APPPATH."/controllers/Mastermind.php");
+// require_once(APPPATH."/controllers/Coordinator.php");
 
-require_once(APPPATH."/constants/EnrollmentConstants.php");
-require_once(APPPATH."/constants/GroupConstants.php");
-require_once(APPPATH."/constants/OfferConstants.php");
+// require_once(APPPATH."/constants/EnrollmentConstants.php");
+// require_once(APPPATH."/constants/GroupConstants.php");
+// require_once(APPPATH."/constants/OfferConstants.php");
 
-require_once(APPPATH."/data_types/view_types/AlertCallout.php");
-require_once(APPPATH."/data_types/view_types/WrapperCallout.php");
+// require_once(APPPATH."/data_types/view_types/AlertCallout.php");
+// require_once(APPPATH."/data_types/view_types/WrapperCallout.php");
 
 /**
  * Builds the table declaration html code with the standard css class
@@ -2468,7 +2468,7 @@ function displayResearchLinesByCourse($research_lines,$courses){
 
 	echo "<h3 class='principal'>Linhas de pesquisa por curso</h3>";
 
-	echo anchor("usuario/createCourseResearchLine/","<i class='fa fa-plus-circle'></i>   Criar Linha de Pesquisa", "class='btn-lg'");
+	echo anchor("program/course/createCourseResearchLine/","<i class='fa fa-plus-circle'></i>   Criar Linha de Pesquisa", "class='btn-lg'");
 
 	if($research_lines !== FALSE){
 		buildTableDeclaration();
@@ -2490,8 +2490,8 @@ function displayResearchLinesByCourse($research_lines,$courses){
 							echo $researchData['description'];
 						echo "</td>";
 						echo "<td>";
-							echo anchor("usuario/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
-							echo anchor("usuario/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
+							echo anchor("program/course/updateCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['id_course']}","<i class='fa fa-pencil'></i>   Editar Linha de Pesquisa", "class='btn btn-primary'");
+							echo anchor("program/course/removeCourseResearchLine/{$researchData['id_research_line']}/{$courses[$keys]['course_name']}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
 						echo "</td>";
 					echo "</tr>";
 				}

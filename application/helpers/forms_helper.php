@@ -512,7 +512,7 @@ function createResearchLineForm($courses){
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
 
-		echo form_open('secretary/saveResearchLine','');
+		echo form_open('program/course/saveResearchLine','');
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
 			echo form_label("Linha de Pesquisa", "research_line");
@@ -558,7 +558,7 @@ function updateResearchLineForm($researchId, $description, $actualCourseForm, $c
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
 
-		echo form_open('secretary/updateResearchLine','',$hidden);
+		echo form_open('program/course/updateResearchLine','',$hidden);
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
 				echo form_label("Linha de Pesquisa", "research_line");

@@ -312,7 +312,7 @@ class Course extends MX_Controller {
 	private function validatesNewCourseData(){
 
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|valid_name");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
 		$this->form_validation->set_rules("course_duration", "Course duration", "required");
 		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
@@ -477,15 +477,15 @@ class Course extends MX_Controller {
 	 */
 	private function validatesUpdateCourseData(){
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|xss_clean|valid_name");
 		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		// $this->form_validation->set_rules("course_duration", "Course duration", "required");
-		// $this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
-		// $this->form_validation->set_rules("course_hours", "Course hours", "required");
-		// $this->form_validation->set_rules("course_class", "Course class", "required");
-		// $this->form_validation->set_rules("course_description", "Course description", "required");
-		//$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
-		//$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
+		$this->form_validation->set_rules("course_duration", "Course duration", "required");
+		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
+		$this->form_validation->set_rules("course_hours", "Course hours", "required");
+		$this->form_validation->set_rules("course_class", "Course class", "required");
+		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_rules("secretary_type", "Secretary Type", "required");
+		$this->form_validation->set_rules("user_secretary", "User Secretary", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 
@@ -627,9 +627,191 @@ class Course extends MX_Controller {
 		return $programCourses;
 	}
 
+	public function createCourseResearchLine(){
+		$this->load->model("course_model");
 
-	function alpha_dash_space($str){
-	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+		$session = getSession();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+
+		if($secretaryCourses !== FALSE){
+
+			foreach ($secretaryCourses as $key => $courses){
+				$course[$courses['id_course']] = $courses['course_name'];
+			}
+		}else{
+			$course = FALSE;
+		}
+
+		$data = array(
+			'courses'=> $course
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'course/create_research_line', $data);
+	}
+
+
+	public function updateCourseResearchLine($researchId, $courseId){
+		$this->load->model("course_model");
+
+		$actualCourse = $this->course_model->getCourseById($courseId);
+		$actualCourseForm = $actualCourse['id_course'];
+
+		$description = $this->course_model->getResearchDescription($researchId,$courseId);
+
+		$session = getSession();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+
+		foreach ($secretaryCourses as $key => $courses){
+			$course[$courses['id_course']] = $courses['course_name'];
+		}
+
+		$data = array(
+			'researchId' => $researchId,
+			'description' => $description,
+			'actualCourse' => $actualCourseForm,
+			'courses' => $course
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'course/update_research_line', $data);
+	}
+
+	public function removeCourseResearchLine($researchLineId,$course){
+
+		$this->load->model("course_model");
+
+		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
+
+		if($wasRemoved){
+			$status = "success";
+			$message = "Linha de pesquisa removida do curso {$course} com sucesso.";
+		}else{
+			$status = "danger";
+			$message = "Não foi possível remover o linha de pesquisa do curso {$course}";
+		}
+
+		$session = getSession();
+		$session->showFlashMessage($status, $message);
+		redirect("research_lines/");
+
+	}
+
+	public function research_lines(){
+		
+		$this->load->model("course_model");
+
+		$session = getSession();
+		$loggedUserData = $session->getUserData();
+		$userId = $loggedUserData->getId();
+
+		$secretaryCourses = $this->course_model->getCoursesOfSecretary($userId);
+
+		$this->loadResearchLinesPage($secretaryCourses);
+	}
+
+	public function loadResearchLinesPage($secretaryCourses){
+		$this->load->model("course_model");
+
+		if($secretaryCourses !== FALSE){
+
+			foreach ($secretaryCourses as $key => $course){
+
+				$researchLines[$key] = $this->course_model->getCourseResearchLines($course['id_course']);
+				$courses[$key] = $course;
+			}
+		}else{
+			$researchLines = FALSE;
+			$courses = FALSE;
+		}
+
+		$data = array(
+			'research_lines' => $researchLines,
+			'courses' => $courses
+		);
+
+		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'secretary/secretary_research_lines', $data);
+	}
+
+	public function saveResearchLine(){
+
+		$success = $this->validateReseachLineData();
+		$this->load->model("course_model");
+		$session = getSession();
+		if ($success) {
+			$researchLine  = $this->input->post("researchLine");
+			$researchCourse   = $this->input->post("research_course");
+
+			$newResearchLine = array(
+					'description'    => $researchLine,
+					'id_course' => $researchCourse
+			);
+
+
+			$wasSaved = $this->course_model->saveResearchLine($newResearchLine);
+			if ($wasSaved){
+				$status = "success";
+				$message = "Linha de pesquisa salva do curso ".$course." com sucesso.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível salvar o linha de pesquisa do curso ". $course;
+			}
+
+			$session->showFlashMessage($status,$message);
+			redirect("research_lines/");
+		} 
+		else {
+
+			$this->createCourseResearchLine();
+
+		}
+	}
+
+	private function validateReseachLineData(){		
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("researchLine", "Linha de Pesquisa", "required|trim|valid_name");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+		$success = $this->form_validation->run();
+
+		return $success;
+	}
+
+	public function updateResearchLine(){
+		
+		$success = $this->validateReseachLineData();
+		$this->load->model("course_model");
+		$session = getSession();
+		$researchCourse   = $this->input->post("research_course");
+		$researchLineId = $this->input->post("id_research_line");
+		
+		if ($success) {
+			$researchLine  = $this->input->post("researchLine");
+
+			$updateResearchLine = array(
+					'description'    => $researchLine,
+					'id_course' => $researchCourse
+			);
+
+
+			$wasSaved = $this->course_model->updateResearchLine($updateResearchLine, $researchLineId);
+			if ($wasSaved){
+				$status = "success";
+				$message = "Linha de pesquisa alterada com sucesso.";
+			}else{
+				$status = "danger";
+				$message = "Não foi possível alterar o linha de pesquisa.";
+			}
+
+			$session->showFlashMessage($status,$message);
+			redirect("research_lines/");
+		} else {
+			$this->updateCourseResearchLine($researchLineId, $researchCourse);
+		}
 	}
 
 	/**

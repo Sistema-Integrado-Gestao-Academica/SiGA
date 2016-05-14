@@ -87,6 +87,7 @@ $route['mastermind_home'] = 'mastermind/index';
 $route['coordinator_home'] = 'coordinator/index';
 $route['course_report'] = 'coordinator/course_report';
 $route['program'] = 'program/index';
+$route['research_lines'] = 'program/course/research_lines';
 
 /*
  * Secretary functionalities routes
@@ -99,7 +100,6 @@ $route['course_syllabus'] = 'secretary/secretary/courseSyllabus';
 $route['enroll_mastermind'] = 'secretary/secretary/enrollMasterMinds';
 $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'documentrequest/documentRequestSecretary';
-$route['research_lines'] = 'secretary/secretary/research_lines';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
 /*

@@ -56,4 +56,4 @@
 
 		<?php } ?>
 
-	<?= anchor("secretary/research_lines/", "<i class='fa fa-eraser'></i> Gerenciar Linhas de Pesquisa", "class='btn btn-success' style='margin-right:5%;'") ?>
+	<?= anchor("program/course/research_lines/", "<i class='fa fa-eraser'></i> Gerenciar Linhas de Pesquisa", "class='btn btn-success' style='margin-right:5%;'") ?>
