@@ -3,7 +3,7 @@
 require_once(MODULESPATH."auth/domain/User.php");
 require_once("SessionManager.php");
 
-class Module extends CI_Controller {
+class Module extends MX_Controller {
 
 	public function checkUserGroup($requiredGroup){
 

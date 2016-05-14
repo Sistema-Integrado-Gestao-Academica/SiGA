@@ -288,7 +288,7 @@ class Secretary extends CI_Controller {
 		
 		$this->load->model("course_model");
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
 

@@ -113,7 +113,7 @@ class UserController extends MX_Controller {
 	public function createCourseResearchLine(){
 		$this->load->model("course_model");
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
 
@@ -144,7 +144,7 @@ class UserController extends MX_Controller {
 
 		$description = $this->course_model->getResearchDescription($researchId,$courseId);
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
 
@@ -178,7 +178,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover o linha de pesquisa do curso ". $course;
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("research_lines/");
 
@@ -198,7 +198,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover os usuários do grupo informado. Tente novamente.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("user_report");
 	}
@@ -215,7 +215,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível adicionar o grupo informado. Tente novamente.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
@@ -229,7 +229,7 @@ class UserController extends MX_Controller {
 
 		$userGroup = "";
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$user = $session->getUserData();
 		$userId = $user->getId();
 
@@ -265,7 +265,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover o grupo informado. Tente novamente.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("usuario/manageGroups/{$idUser}");
 	}
@@ -282,7 +282,7 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível remover o usuário informado. Tente novamente.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("usuario/listUsersOfGroup/{$idGroup}");
 	}
@@ -340,7 +340,7 @@ class UserController extends MX_Controller {
 
 	public function conta(){
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$loggedUser = $session->getUserData();
 
 		$data = array("user" => $loggedUser);
@@ -349,7 +349,7 @@ class UserController extends MX_Controller {
 	}
 
 	public function profile() {
-		$loggedUser = session();
+		$loggedUser = getSession();
 		$userId = $loggedUser['user']['id'];	 
 		$user = $this->usuarios_model->getObjectUser($userId);
 		$data = array('user' => $user);
@@ -368,7 +368,7 @@ class UserController extends MX_Controller {
 				$email = new RestorePasswordEmail($user);
 				$success = $email->notify();
 				
-				$session = Auth::getSession();
+				$session = getSession();
 				if($success){
 					$session->showFlashMessage("success", "Email enviado com sucesso.");	
 					redirect("/");
@@ -428,7 +428,7 @@ class UserController extends MX_Controller {
 			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
 			if($isValidPassword){
 
-				$session = Auth::getSession(); 
+				$session = getSession(); 
 				$userData = $session->getUserData();
 								
 				$userId = $userData->getId();
@@ -558,7 +558,7 @@ class UserController extends MX_Controller {
 			}
 		}
 		
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("/");
 	}
@@ -584,7 +584,7 @@ class UserController extends MX_Controller {
 
 				$updated = $this->usuarios_model->update($user);
 
-				$session = Auth::getSession();
+				$session = getSession();
 				if ($updated) {
 					$session->login($user);
 					$session->showFlashMessage("success", "Os dados foram alterados");
@@ -614,7 +614,7 @@ class UserController extends MX_Controller {
 	}
 
 	public function remove() {
-		$session = Auth::getSession();
+		$session = getSession();
 		$user = $session->getUserData();
 
 		if ($this->usuarios_model->remove($user)) {
@@ -733,7 +733,7 @@ class UserController extends MX_Controller {
 			$user = $this->usuarios_model->getObjectUser($id);
 			$login = $user->getLogin();
 
-			$session = Auth::getSession();
+			$session = getSession();
 
 			try{
 				$foundUser = $this->validateUser($login, $password);

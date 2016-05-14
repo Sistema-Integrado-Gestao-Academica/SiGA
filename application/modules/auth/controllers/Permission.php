@@ -2,7 +2,7 @@
 
 require_once("SessionManager.php");
 
-class PermissionOld extends CI_Controller {
+class PermissionOld extends MX_Controller {
 
 	public function checkUserPermission($requiredPermission){
 

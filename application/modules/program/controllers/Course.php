@@ -15,16 +15,18 @@ class Course extends MX_Controller {
 
 		$this->load->model('course_model');
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$user = $session->getUserData();
 		$userId = $user->getId();
-
-		$userIsAdmin = Auth::checkUserGroup(GroupConstants::ADMIN_GROUP);
+		
+		$this->load->module("auth/module");
+		$userIsAdmin = $this->module->checkUserGroup(GroupConstants::ADMIN_GROUP);
 
 		if($userIsAdmin){
-			$courses = $this->listAllCourses();
-		}else{
-			$courses = $this->getCoursesOfSecretary($userId);
+			$courses = $this->course_model->getAllCourses();
+		}
+		else{
+			$courses = $this->course_model->getCoursesOfSecretary($userId);
 		}
 
 		$data = array(
@@ -129,7 +131,8 @@ class Course extends MX_Controller {
 		$this->load->model('course_model');
 		$course = $this->course_model->getCourseById($courseId);
 
-		$userToBeSecretaries = Auth::usersToSecretary();
+		$this->load->module("auth/userController");
+		$userToBeSecretaries = $this->usercontroller->getUsersToBeSecretaries();
 
 		if($userToBeSecretaries !== FALSE){
 
@@ -534,14 +537,6 @@ class Course extends MX_Controller {
 		return $deletedSecretary;
 	}
 
-	public function getCoursesOfSecretary($userId){
-
-		$this->load->model('course_model');
-		$courses = $this->course_model->getCoursesOfSecretary($userId);
-
-		return $courses;
-	}
-
 	public function getCourseStudents($courseId){
 
 		$this->load->model('course_model');
@@ -610,16 +605,6 @@ class Course extends MX_Controller {
 		return $programCourses;
 	}
 
-	/**
-	 * Function to get the list of all registered courses
-	 * @return array $registeredCourses
-	 */
-	public function listAllCourses(){
-		$this->load->model('course_model');
-		$registeredCourses = $this->course_model->getAllCourses();
-
-		return $registeredCourses;
-	}
 
 	function alpha_dash_space($str){
 	    return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;

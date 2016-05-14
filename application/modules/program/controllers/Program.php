@@ -114,7 +114,7 @@ class Program extends MX_Controller {
 			$insertMessage = "Não foi possível adicionar o curso informado.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($insertStatus, $insertMessage);
 		redirect("program/editProgram/{$programId}");
 	}
@@ -156,7 +156,7 @@ class Program extends MX_Controller {
 			$removeMessage = "Não foi possível adicionar o curso informado.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($removeStatus, $removeMessage);
 		redirect("program/editProgram/{$programId}");
 	}
@@ -223,7 +223,7 @@ class Program extends MX_Controller {
 			$this->load->model('program_model');
 			
 
-			$session = Auth::getSession();
+			$session = getSession();
 			if($dataIsOk){
 
 				$programData = array(
@@ -285,7 +285,7 @@ class Program extends MX_Controller {
 			$insertMessage = "Não foi possível atualizar os registros. Tente novamente.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($insertStatus, $insertMessage);
 
 		redirect('coordinator/coordinator_programs');
@@ -306,7 +306,7 @@ class Program extends MX_Controller {
 			$deleteMessage = "Não foi possível deletar o programa informado. Tente novamente.";
 		}
 
-		$session = Auth::getSession();
+		$session = getSession();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 		redirect('program');
 	}
@@ -365,7 +365,7 @@ class Program extends MX_Controller {
 
 			$this->load->model('program_model');
 			
-			$session = Auth::getSession();
+			$session = getSession();
 			if($programNotExists){
 				$wasSaved = $this->program_model->saveProgram($programData);
 

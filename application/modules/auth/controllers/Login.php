@@ -15,7 +15,7 @@ class Login extends MX_Controller {
 
 		$this->load->model("usuarios_model");
 
-		$session = Auth::getSession();
+		$session = getSession();
 
 		try{
 
@@ -81,7 +81,7 @@ class Login extends MX_Controller {
 		$thereIsMessage = !empty($messageToDisplay);
 		if($thereIsMessage){
 			$statusLogout = $this->checkStatusLogout($statusLogout);
-			$session = Auth::getSession();
+			$session = getSession();
 			$session->showFlashMessage($statusLogout, $messageToDisplay);
 
 			// VALIDAR O PATH
@@ -115,7 +115,7 @@ class Login extends MX_Controller {
 	private function unsetLoggedUserAndRedirectTo($pathToRedirect){
 		//$this->session->unset_userdata("current_user", $usuario);
 		//$this->session->sess_destroy();
-		Auth::getSession()->logout();
+		getSession()->logout();
 		redirect($pathToRedirect);
 	}
 }

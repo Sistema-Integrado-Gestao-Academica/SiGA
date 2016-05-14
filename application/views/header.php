@@ -5,7 +5,7 @@
 	require_once(MODULESPATH."auth/constants/GroupConstants.php");
 	require_once(APPPATH."/data_types/notification/ActionNotification.php");
 
-	$session = Auth::getSession();
+	$session = getSession();
 
     if($session->isLogged()){
         $user = $session->getUserData();

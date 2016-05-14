@@ -29,7 +29,7 @@
 					</td>
 
 					<td>
-						<?= anchor("course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+						<?= anchor("program/course/formToEditCourse/{$course['id_course']}", "<span class='glyphicon glyphicon-edit'></span>", "class='btn btn-primary' style='margin-right:5%;'") ?>
 
 						<?php
 							if($isAdmin){

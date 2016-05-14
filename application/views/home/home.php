@@ -3,7 +3,7 @@
 // require_once APPPATH.'controllers/Capesavaliation.php';
 require_once(MODULESPATH."auth/Auth.php");
 
-$session = Auth::getSession();
+$session = getSession();
 
 if ($session->isLogged()) {
 

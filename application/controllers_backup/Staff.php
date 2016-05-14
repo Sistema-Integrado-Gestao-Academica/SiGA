@@ -7,7 +7,7 @@ require_once(APPPATH."/controllers/security/session/SessionManager.php");
 class Staff extends CI_Controller {
 
 	public function staffsLoadPage() {
-		session();
+		getSession();
 		$staffs = $this->getRegisteredStaffs();
 		$guests = $this->getGuestUsers();
 		$data = array('staffs' => $staffs, 'guestUsers'=>$guests);
@@ -117,7 +117,7 @@ class Staff extends CI_Controller {
 	}
 
 	public function remove() {
-		session();
+		getSession();
 		$staff_id = $this->input->post("staff_id");
 		$user_id = $this->input->post("id_user");
 		$this->load->model("staffs_model");
