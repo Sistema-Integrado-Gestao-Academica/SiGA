@@ -4,6 +4,32 @@ require_once(APPPATH."/exception/StudentRegistrationException.php");
 
 class Student_model extends CI_Model {
 
+	public function getNameAndEnrollment($studentId){
+
+		$this->db->select("users.name, course_student.enrollment");
+		$this->db->from('users');
+		$this->db->join("course_student", "course_student.id_user = users.id");
+		$this->db->where("users.id", $studentId);
+		$student = $this->db->get()->result_array();
+
+		$student = checkArray($student);
+
+		return $student;
+	}
+
+	public function getUserByEnrollment($enrollment){
+
+		$this->db->select("users.id");
+		$this->db->from('users');
+		$this->db->join("course_student", "course_student.id_user = users.id");
+		$this->db->where("course_student.enrollment", $enrollment);
+		$student = $this->db->get()->result_array();
+
+		$student = checkArray($student);
+
+		return $student;
+	}
+
 	public function getBasicInfo($studentId){
 		
 		$this->db->select("users.email, users.home_phone, users.cell_phone, course_student.enrollment, course_student.id_course");

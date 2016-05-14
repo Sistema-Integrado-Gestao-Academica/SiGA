@@ -59,7 +59,7 @@ $submit_button_array_to_form = array(
 <div class="form-box" id="login-box"> 
 	<div class="header">Alterar Disciplina</div>
 	<?php
-	echo form_open("discipline/updateDiscipline",'',$discipline_code_hidden);
+	echo form_open("program/discipline/updateDiscipline",'',$discipline_code_hidden);
 	?>
 	<div class="body bg-gray">
 		<div class="form-group">

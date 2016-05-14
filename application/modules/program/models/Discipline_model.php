@@ -1,6 +1,7 @@
 <?php
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."secretary/exception/DisciplineException.php");
 
 class Discipline_model extends CI_Model {
 
@@ -109,7 +110,6 @@ class Discipline_model extends CI_Model {
 	 * Function to get updating data for one discipline and pass it to pdating function on db
 	 * @param int $disciplineCode
 	 * @param array $disciplineToUpdate
-	 * @throws DisciplineNameException
 	 * @throws DisciplineException
 	 * @return boolean $updated - TRUE for updated discipline, FALSE for error
 	 */
@@ -125,7 +125,7 @@ class Discipline_model extends CI_Model {
 				if(!$nameAlreadyExists){
 					$updated = $this->updateDisciplineOnDB($disciplineCode,$disciplineToUpdate);
 				}else{
-					throw new DisciplineNameException("A disciplina '".$updatedName."' já existe.");
+					throw new DisciplineException("A disciplina '".$updatedName."' já existe.");
 				}
 			}else{
 				$updated = $this->updateDisciplineOnDB($disciplineCode,$disciplineToUpdate);

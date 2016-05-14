@@ -11,9 +11,12 @@ require_once(APPPATH."/exception/StudentRegistrationException.php");
 
 class Course extends MX_Controller {
 
-	public function index() {
+	public function __construct(){
+		parent::__construct();
+		$this->load->model("course_model");
+	}
 
-		$this->load->model('course_model');
+	public function index() {
 
 		$session = getSession();
 		$user = $session->getUserData();
@@ -40,7 +43,7 @@ class Course extends MX_Controller {
 
 	public function getCourseTeachers($courseId){
 
-		$this->load->model('course_model');
+		
 
 		$teachers = $this->course_model->getCourseTeachers($courseId);
 
@@ -49,7 +52,7 @@ class Course extends MX_Controller {
 
 	public function enrollTeacherToCourse($teacherId, $courseId){
 
-		$this->load->model('course_model');
+		
 
 		$wasEnrolled = $this->course_model->enrollTeacherToCourse($teacherId, $courseId);
 
@@ -58,7 +61,7 @@ class Course extends MX_Controller {
 
 	public function removeTeacherFromCourse($teacherId, $courseId){
 
-		$this->load->model('course_model');
+		
 
 		$wasRemoved = $this->course_model->removeTeacherFromCourse($teacherId, $courseId);
 
@@ -67,7 +70,7 @@ class Course extends MX_Controller {
 
 	public function defineTeacherSituation($courseId, $teacherId, $situation){
 
-		$this->load->model('course_model');
+		
 
 		$defined = $this->course_model->defineTeacherSituation($courseId, $teacherId, $situation);
 
@@ -77,6 +80,9 @@ class Course extends MX_Controller {
 	public function courseStudents($courseId){
 
 		$students = $this->getCourseStudents($courseId);
+		
+		$students = $this->addStatusCourseStudents($students);
+		
 		$courseData = $this->getCourseById($courseId);
 
 		$data = array(
@@ -87,9 +93,25 @@ class Course extends MX_Controller {
 		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/course_students', $data);
 	}
 
+
+	private function addStatusCourseStudents($students){
+
+		if($students !== FALSE){
+			foreach ($students as $key => $student) {
+				$this->load->model("usuarios_model");
+
+				$id = $student['id'];
+				$status = $this->usuarios_model->getUserStatus($id);
+				$students[$key]['status'] = $status;
+			}
+		}
+
+		return $students;
+	}
+
 	public function formToRegisterNewCourse(){
 
-		$this->load->model('course_model');
+		
 
 		$courseTypes = $this->course_model->getAllCourseTypes();
 
@@ -128,7 +150,7 @@ class Course extends MX_Controller {
 	 */
 	public function formToEditCourse($courseId){
 
-		$this->load->model('course_model');
+		
 		$course = $this->course_model->getCourseById($courseId);
 
 		$this->load->module("auth/userController");
@@ -225,7 +247,7 @@ class Course extends MX_Controller {
 				'id_program' => $courseProgram
 			);
 
-			$this->load->model('course_model');
+			
 
 			$wasSaved = $this->course_model->saveCourse($course);
 
@@ -255,7 +277,7 @@ class Course extends MX_Controller {
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
 
-		$this->load->model('course_model');
+		
 		try{
 			$wasSaved = $this->course_model->saveCourseAcademicSecretary($academicSecretary, $idCourse, $courseName);
 
@@ -283,7 +305,7 @@ class Course extends MX_Controller {
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
 
-		$this->load->model('course_model');
+		
 
 		try{
 			$wasSaved = $this->course_model->saveCourseFinancialSecretary($financialSecretary, $idCourse, $courseName);
@@ -356,7 +378,7 @@ class Course extends MX_Controller {
 				'id_program' => $courseProgram
 			);
 
-			$this->load->model('course_model');
+			
 
 			$courseWasUpdated = $this->course_model->updateCourse($idCourse, $course);
 
@@ -381,7 +403,7 @@ class Course extends MX_Controller {
 
 	public function getCourseResearchLines($courseId){
 
-		$this->load->model('course_model');
+		
 
 		$researchLines = $this->course_model->getCourseResearchLines($courseId);
 
@@ -399,7 +421,7 @@ class Course extends MX_Controller {
 	}
 
 	public function getResearchLineNameById($researchLinesId){
-		$this->load->model('course_model');
+		
 
 		$researchLinesName = $this->course_model->getResearchLineNameById($researchLinesId);
 
@@ -515,7 +537,7 @@ class Course extends MX_Controller {
 
 	public function getCourseSecretaries($courseId){
 
-		$this->load->model('course_model');
+		
 		
 		$secretary = $this->course_model->getCourseSecretaries($courseId);
 
@@ -525,7 +547,7 @@ class Course extends MX_Controller {
 
 	public function getCourseAcademicSecretaryName($id_course){
 
-		$this->load->model('course_model');
+		
 		$secretaryName = $this->course_model->getAcademicSecretaryName($id_course);
 
 		return $secretaryName;
@@ -553,7 +575,7 @@ class Course extends MX_Controller {
 	}
 
 	private function deleteSecretaryFromDb($course_id, $secretary_id){
-		$this->load->model('course_model');
+		
 		$deletedSecretary = $this->course_model->deleteSecretary($course_id,$secretary_id);
 
 		return $deletedSecretary;
@@ -561,7 +583,7 @@ class Course extends MX_Controller {
 
 	public function getCourseStudents($courseId){
 
-		$this->load->model('course_model');
+		
 
 		$courseStudents = $this->course_model->getCourseStudents($courseId);
 
@@ -570,7 +592,7 @@ class Course extends MX_Controller {
 
 	public function getCourseByName($courseName){
 
-		$this->load->model('course_model');
+		
 
 		$course = $this->course_model->getCourseByName($courseName);
 
@@ -579,7 +601,7 @@ class Course extends MX_Controller {
 
 	public function getCourseById($courseId){
 
-		$this->load->model('course_model');
+		
 
 		$course = $this->course_model->getCourse(array('id_course' => $courseId));
 
@@ -588,7 +610,7 @@ class Course extends MX_Controller {
 
 	public function checkIfCourseExists($courseId){
 
-		$this->load->model('course_model');
+		
 
 		$courseExists = $this->course_model->checkIfCourseExists($courseId);
 
@@ -602,16 +624,31 @@ class Course extends MX_Controller {
 	 */
 	public function deleteCourseFromDb($course_id){
 
-		$this->load->model('course_model');
+		
 
 		$deletedCourse = $this->course_model->deleteCourseById($course_id);
 
 		return $deletedCourse;
 	}
 
+	public function getCoursesType($courses){
+
+		if($courses !== FALSE){
+			foreach ($courses as $key => $course) {
+				$id = $course['id_course'];
+				
+				$courseType = $this->course_model->getCourseTypeByCourseId($id);
+				$courses[$key]['type'] = $courseType['description'];
+			}
+		}
+
+		return $courses;
+
+	}
+
 	public function getCourseTypeByCourseId($courseId){
 
-		$this->load->model('course_model');
+		
 
 		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
 
@@ -620,7 +657,7 @@ class Course extends MX_Controller {
 
 	public function getCoursesToProgram($programId){
 
-		$this->load->model('course_model');
+		
 
 		$programCourses = $this->course_model->getCoursesToProgram($programId);
 

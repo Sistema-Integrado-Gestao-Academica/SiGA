@@ -5,8 +5,6 @@
 <?php 
 
 	if($courses !== FALSE){
-
-		$courseController = new Course();
 ?>
 		<div class="box-body table-responsive no-padding">
 		<table class="table table-bordered table-hover">
@@ -21,7 +19,6 @@
 			    	foreach($courses as $courseData){
 
 			    		$courseId = $courseData['id_course'];
-			    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
 
 						echo "<tr>";
 				    		echo "<td>";
@@ -33,11 +30,11 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo $courseType['description'];
+				    		echo $courseData['type'];
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo anchor("course/courseStudents/{$courseId}","<i class='fa fa-list'> Lista de alunos</i>", "class='btn btn-primary'");
+				    		echo anchor("program/course/courseStudents/{$courseId}","<i class='fa fa-list'> Lista de alunos</i>", "class='btn btn-primary'");
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}

@@ -64,7 +64,7 @@ class Secretary extends MX_Controller {
 		$courses = $this->loadCourses();
 
 		$courseData = array(
-				'courses' => $courses
+			'courses' => $courses
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::DEFINE_MASTERMIND_PERMISSION, 'secretary/secretary_enroll_master_mind', $courseData);
@@ -74,6 +74,9 @@ class Secretary extends MX_Controller {
 
 		$courses = $this->loadCourses();
 
+		$this->load->module("program/course");
+		$courses = $this->course->getCoursesType($courses);
+		
 		$courseData = array(
 			'courses' => $courses
 		);
