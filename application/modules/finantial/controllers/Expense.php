@@ -55,7 +55,7 @@ class Expense extends CI_Controller {
 			redirect("budgetplan_expenses/{$id}");
 		} else {
 			$session->showFlashMessage("danger", "Houve algum erro. Tente novamente.");
-			redirect("finantial/budgetplan/{$id}/novadespesa");
+			redirect("budgetplan/new_expense{$id}");
 		}
 	}
 

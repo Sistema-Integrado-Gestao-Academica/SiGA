@@ -72,9 +72,6 @@ $route['staffs/(:num)'] = 'staff/editStaff/$1';
 $route['funcoes'] = 'funcao/formulario';
 $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
 $route['guest_home'] = 'secretary/secretary/guest_index';
-$route['planoorcamentario'] = 'budgetplan';
-$route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
-$route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
 $route['secretaria'] = 'utils/loadSecretaria';
 $route['secretary_home'] = 'secretary/secretary/index';
 $route['setores'] = 'setor/formulario';
@@ -88,6 +85,16 @@ $route['coordinator_home'] = 'coordinator/index';
 $route['course_report'] = 'coordinator/course_report';
 $route['program'] = 'program/index';
 $route['research_lines'] = 'program/course/research_lines';
+
+/*
+ * Budgetplan routes
+ */
+$route['budgetplan_expenses/(:num)'] = 'finantial/budgetplan/budgetplanExpenses/$1';
+$route['budgetplan'] = 'finantial/budgetplan';
+$route['budgetplan/(:num)'] = 'finantial/budgetplan/edit/$1';
+$route['budgetplan/new_expense/(:num)'] = 'finantial/expense/index/$1';
+
+
 
 /*
  * Secretary functionalities routes

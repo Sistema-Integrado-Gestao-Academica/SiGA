@@ -4,7 +4,7 @@
 			<div class="header">Alterar um P.O.</div>
 
 			<div class="body bg-gray">
-				<?= form_open("budgetplan/update") ?>
+				<?= form_open("finantial/budgetplan/update") ?>
 					<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
 					<?= form_hidden("continue", "ok") ?>
 
