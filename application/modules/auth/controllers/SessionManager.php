@@ -69,8 +69,7 @@ class SessionManager extends MX_Controller{
     public function getUserGroups(){
 
         $currentUser = $this->getUserData();
-        $groups = $currentUser->getGroups();
-
+        $groups = $currentUser->getGroups();    
         return $groups;
     }
 

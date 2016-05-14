@@ -1,11 +1,3 @@
-<?php 
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
-$session = SessionManager::getInstance(); 
-$user = $session->getUserData();
-$userName = $user->getName();
-?>
-
 <h2 class="principal">Relatório de solicitações de matrícula</h2>
 
 <h4>Cursos para o(a) secretário(a) <b><?php echo $userName?></b>:</h4>

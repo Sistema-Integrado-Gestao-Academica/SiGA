@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/domain/User.php");
+require_once(MODULESPATH."auth/domain/Group.php");
 require_once("SessionManager.php");
 
 class Module extends MX_Controller {
@@ -11,11 +12,10 @@ class Module extends MX_Controller {
 
 		if($groupExists){
 
-			$session = SessionManager::getInstance();
+			$session = getSession();
 			$userGroups = $session->getUserGroups();
-		
-			$haveGroup = FALSE;
 			foreach($userGroups as $group){
+				$haveGroup = FALSE;
 				if($group->getName() === $requiredGroup){
 					$haveGroup = TRUE;
 					break;
