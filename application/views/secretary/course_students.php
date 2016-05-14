@@ -21,9 +21,6 @@
 <?php
 			    	foreach($students as $student){
 
-			    		$user = new Usuario();
-			    		$studentStatus = $user->getUserStatus($student['id']);
-
 						echo "<tr>";
 				    		echo "<td>";
 				    			$registration = $student['enrollment'];
@@ -86,7 +83,7 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		echo $studentStatus;
+				    		echo $student['status'];
 				    		echo "</td>";
 
 				    		echo "<td>";
