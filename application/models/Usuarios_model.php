@@ -407,7 +407,6 @@ class Usuarios_model extends CI_Model {
 		}else{
 			$foundStatus = FALSE;
 		}
-
 		return $foundStatus;
 	}
 

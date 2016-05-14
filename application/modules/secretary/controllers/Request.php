@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
-require_once(MODULESPATH."/auth/controllers/SessionManager.php");
+require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 
 class Request extends MX_Controller {
 
@@ -21,7 +21,8 @@ class Request extends MX_Controller {
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("request/courseRequests/{$courseId}");
+
+		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
 	public function refuseAllRequest($requestId, $courseId){
@@ -38,9 +39,9 @@ class Request extends MX_Controller {
 			$message = "Toda a solicitação não pôde ser recusada.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("request/courseRequests/{$courseId}");
+		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
 
@@ -58,12 +59,10 @@ class Request extends MX_Controller {
 			$message = "Toda a solicitação não pôde ser aprovada.";
 		}
 
-		// $this->redirectToCurrentUserRequests($status, $message);
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect('mastermind');
 	}
-
 
 	public function refuseAllStudentRequestsByMastermind($requestId, $studentId){
 
@@ -79,8 +78,7 @@ class Request extends MX_Controller {
 			$message = "Toda a solicitação não pôde ser reprovada.";
 		}
 
-		// $this->redirectToCurrentUserRequests($status, $message);
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect('mastermind');
 	}
@@ -89,14 +87,14 @@ class Request extends MX_Controller {
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
-		redirect("request/courseRequests/{$courseId}");
+		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
 	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId){
 
 		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_SECRETARY);
 
-		redirect("request/courseRequests/{$courseId}");
+		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
 	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId){
@@ -127,7 +125,7 @@ class Request extends MX_Controller {
 			$message = "Solicitação de disciplina não pôde ser aprovada.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 	}
 
@@ -145,10 +143,8 @@ class Request extends MX_Controller {
 			$message = "Solicitação de disciplina não pôde ser recusada.";
 		}
 
-		// $this->redirectToCurrentUserRequests($status, $message, $courseId);
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		// redirect('mastermind');
 	}
 
 	public function finalizeRequestToMastermind($requestId){
@@ -174,9 +170,9 @@ class Request extends MX_Controller {
 			$message = "A solicitação não pôde ser finalizada.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("request/courseRequests/{$courseId}");
+		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
 	public function saveMastermindMessage($mastermindId, $requestId, $message){
@@ -200,12 +196,41 @@ class Request extends MX_Controller {
 		$this->load->module("program/course");
 		$courseData = $this->course->getCourseById($courseId);
 
+		$users = $this->getUsersRequest($courseRequests);
+
 		$data = array(
 			'requests' => $courseRequests,
-			'course' => $courseData
+			'course' => $courseData,
+			'users' => $users
 		);
 
-		loadTemplateSafelyByGroup("secretario",'request/course_requests', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'request/course_requests', $data);
+	}
+
+	private function getUsersRequest($requests){
+
+		$users = array();
+		if($requests !== FALSE){
+
+			foreach ($requests as $request) {
+				
+				$requestId = $request['id_request'];
+				$userId = $request['id_student'];
+
+				$this->load->model("student_model");
+				$user = $this->student_model->getNameAndEnrollment($userId);
+		
+				$users[$requestId]['name'] = $user[0]['name'];
+				$users[$requestId]['enrollment'] = $user[0]['enrollment'];
+
+			}
+
+		}
+		else{
+			$users = FALSE;
+		}
+
+		return $users;
 	}
 
 	public function searchForStudentRequest(){
@@ -216,63 +241,65 @@ class Request extends MX_Controller {
 
 		$courseId = $this->input->post('courseId');
 
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$this->load->model("semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 
-		define("SEARCH_BY_STUDENT_ID", "by_id");
+		define("SEARCH_BY_STUDENT_ENROLLMENT", "by_enrollment");
 		define("SEARCH_BY_STUDENT_NAME", "by_name");
-
+		
+		$student = $this->input->post('student_identifier');
+		$courseRequests = array();
 		switch($searchType){
-			case SEARCH_BY_STUDENT_ID:
-				$studentIds = array();
+			case SEARCH_BY_STUDENT_ENROLLMENT:
 
-				$studentId = $this->input->post('student_identifier');
-				if(!empty($studentId)){
-					$studentIds[] = $studentId;
-				}else{
-					$studentIds[] = 0;
-				}
+				$this->load->model("student_model");
+				$foundUser = $this->student_model->getUserByEnrollment($student);
 
-				$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentIds);
+				$courseRequests = $this->getStudentsIdsForSearchRequests($courseId, $currentSemester['id_semester'], $foundUser);
+
 				break;
 
 			case SEARCH_BY_STUDENT_NAME:
-				$studentName = $this->input->post('student_identifier');
 
-				$user = new Usuario();
-				$foundUser = $user->getUserByName($studentName);
+				$this->load->model("usuarios_model");
+				$foundUser = $this->usuarios_model->getUserByName($student);
 
-				if($foundUser !== FALSE){
-					$studentId = array();
-					foreach($foundUser as $student){
-						$studentId[] = $student['id'];
-					}
-					$courseRequests = $this->getStudentRequests($courseId, $currentSemester['id_semester'], $studentId);
-				}else{
-					$courseRequests = FALSE;
-				}
+				$courseRequests = $this->getStudentsIdsForSearchRequests($courseId, $currentSemester['id_semester'], $foundUser);
+
 				break;
 
 			default:
 				break;
 		}
 
-		$course = new Course();
-		$courseData = $course->getCourseById($courseId);
+		$this->load->model("course_model");
+		$courseData = $this->course_model->getCourseById($courseId);
+
+		$users = $this->getUsersRequest($courseRequests);
 
 		$data = array(
 			'requests' => $courseRequests,
-			'course' => $courseData
+			'course' => $courseData,
+			'users' => $users
 		);
 
-		loadTemplateSafelyByGroup("secretario",'request/course_requests', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'request/course_requests', $data);
 	}
 
-	private function getStudentRequests($courseId, $semesterId, $studentId){
+	private function getStudentsIdsForSearchRequests($courseId, $semesterId, $users){
 
-		$this->load->model("request_model");
-
-		$courseRequests = $this->request_model->getStudentRequests($courseId, $semesterId, $studentId);
+		$courseRequests = array();
+		if($users !== FALSE){
+			$userIds = array();
+			foreach($users as $key => $user){
+				$studentsIds[$key] = $user['id'];
+			}
+			$this->load->model("request_model");
+			$courseRequests = $this->request_model->getStudentRequests($courseId, $semesterId, $studentsIds);
+		}
+		else{
+			$courseRequests = FALSE;
+		}
 
 		return $courseRequests;
 	}
@@ -290,8 +317,8 @@ class Request extends MX_Controller {
 
 		$this->load->model('request_model');
 
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$this->load->model("semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 
 		$temporaryRequest = new TemporaryRequest();
 		$disciplinesToRequest = $temporaryRequest->getUserTempRequest($userId, $courseId, $currentSemester['id_semester']);

@@ -98,11 +98,11 @@ function searchForStudentRequestByIdForm($courseId){
 		"type" => "submit"
 	);
 
-	define("SEARCH_BY_ID", "by_id");
+	define("SEARCH_BY_ENROLLMENT", "by_enrollment");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por matrícula do aluno</h4>";
-	echo form_open("request/searchForStudentRequest");
-		echo form_hidden('searchType', SEARCH_BY_ID);
+	echo form_open("secretary/request/searchForStudentRequest");
+		echo form_hidden('searchType', SEARCH_BY_ENROLLMENT);
 		echo form_hidden('courseId', $courseId);
 
 		echo "<div class='form-group'>";
@@ -137,7 +137,7 @@ function searchForStudentRequestByNameForm($courseId){
 	define("SEARCH_BY_NAME", "by_name");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por nome do aluno</h4>";
-	echo form_open("request/searchForStudentRequest");
+	echo form_open("secretary/request/searchForStudentRequest");
 		echo form_hidden('searchType', SEARCH_BY_NAME);
 		echo form_hidden('courseId', $courseId);
 

@@ -53,7 +53,7 @@ $submit_button_array_to_form = array(
 <div class="form-box" id="login-box">
 	<div class="header">Cadastrar nova Disciplina</div>
 	<?php
-	echo form_open("discipline/newDiscipline");
+	echo form_open("program/discipline/newDiscipline");
 	?>
 	<div class="body bg-gray">
 
