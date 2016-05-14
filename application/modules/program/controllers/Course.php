@@ -144,6 +144,7 @@ class Course extends MX_Controller {
 		}
 
 		$secretaryRegistered = $this->getCourseSecretaries($course['id_course']);
+		$secretaryRegistered = $this->addSecretariesName($secretaryRegistered);
 
 		$course_types = $this->db->get('course_type')->result_array();
 
@@ -173,7 +174,26 @@ class Course extends MX_Controller {
 			'registeredPrograms' => $registeredProgramsForm
 		);
 
-		loadTemplateSafelyByPermission("cursos",'course/update_course', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION,'course/update_course', $data);
+	}
+
+
+	private function addSecretariesName($secretariesRegistered){
+
+		if($secretariesRegistered !== FALSE){
+
+			foreach ($secretariesRegistered as $key => $secretaryRegistered) {
+
+				$id = $secretaryRegistered['id_user'];
+				$userName = $this->usercontroller->getUserNameById($id);
+				$secretariesRegistered[$key]['user_name'] = $userName;
+
+			}
+
+		}
+
+		return $secretariesRegistered;
+
 	}
 
 	/**
@@ -254,7 +274,7 @@ class Course extends MX_Controller {
 
 		$session = SessionManager::getInstance();
 		$session->showFlashMessage($saveStatus, $saveMessage);
-		redirect('/course/formToEditCourse/'.$idCourse);
+		redirect('program/course/formToEditCourse/'.$idCourse);
 	}
 
 	public function saveFinancialSecretary(){
@@ -283,7 +303,7 @@ class Course extends MX_Controller {
 
 		$session = SessionManager::getInstance();
 		$session->showFlashMessage($saveStatus, $saveMessage);
-		redirect('/course/formToEditCourse/'.$idCourse);
+		redirect('program/course/formToEditCourse/'.$idCourse);
 	}
 
 	/**
@@ -311,10 +331,11 @@ class Course extends MX_Controller {
 	public function updateCourse(){
 
 		$courseDataIsOk = $this->validatesNewCourseData();
+		$idCourse = $this->input->post('id_course');
 
+		$session = getSession();
 		if ($courseDataIsOk) {
 
-			$idCourse = $this->input->post('id_course');
 			$courseName = $this->input->post('courseName');
 			$courseType = $this->input->post('courseType');
 			$courseProgram = $this->input->post('courseProgram');
@@ -342,19 +363,20 @@ class Course extends MX_Controller {
 			if($courseWasUpdated){
 				$updateStatus = "success";
 				$updateMessage = "Curso \"{$courseName}\" alterado com sucesso";
-			}else{
+				$session->showFlashMessage($updateStatus, $updateMessage);
+				redirect('cursos');	
+			}
+			else{
 				$updateStatus = "danger";
 				$updateMessage = "Não foi possível alterar o curso \"{$courseName}\". Talvez o nome informado já exista. Tente novamente.";
+				$session->showFlashMessage($updateStatus, $updateMessage);
+				redirect('program/cursos/formToEditCourse/{$idCourse}');
 			}
 
 		} else {
-			$updateStatus = "danger";
-			$updateMessage = "Dados na forma incorreta.";
-		}
 
-		$session = SessionManager::getInstance();
-		$session->showFlashMessage($updateStatus, $updateMessage);
-		redirect('cursos');
+			$this->formToEditCourse($idCourse);
+		}
 	}
 
 	public function getCourseResearchLines($courseId){
@@ -525,7 +547,7 @@ class Course extends MX_Controller {
 		$session = SessionManager::getInstance();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
-		redirect('/course/formToEditCourse/'.$course_id);
+		redirect('program/course/formToEditCourse/'.$course_id);
 
 
 	}

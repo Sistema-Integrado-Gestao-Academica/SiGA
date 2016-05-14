@@ -34,7 +34,7 @@
 						<?php
 							if($isAdmin){
 								echo anchor(
-									"course/deleteCourse/{$course['id_course']}",
+									"program/course/deleteCourse/{$course['id_course']}",
 									"<span class='glyphicon glyphicon-remove'></span>",
 									"class='btn btn-danger'"
 								);

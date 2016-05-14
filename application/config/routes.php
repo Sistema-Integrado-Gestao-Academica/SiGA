@@ -71,12 +71,12 @@ $route['staffs'] = 'staff/staffsLoadPage';
 $route['staffs/(:num)'] = 'staff/editStaff/$1';
 $route['funcoes'] = 'funcao/formulario';
 $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
-$route['guest_home'] = 'secretary/guest_index';
+$route['guest_home'] = 'secretary/secretary/guest_index';
 $route['planoorcamentario'] = 'budgetplan';
 $route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
 $route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
 $route['secretaria'] = 'utils/loadSecretaria';
-$route['secretary_home'] = 'secretary/index';
+$route['secretary_home'] = 'secretary/secretary/index';
 $route['setores'] = 'setor/formulario';
 $route['setores/(:num)'] = 'setor/formulario_altera/$1';
 $route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
@@ -91,16 +91,16 @@ $route['program'] = 'program/index';
 /*
  * Secretary functionalities routes
  */
-$route['enroll_student'] = "secretary/enrollStudent";
-$route['student_list'] = 'secretary/coursesStudents';
-$route['request_report'] = 'secretary/requestReport';
-$route['offer_list'] = 'secretary/offerList';
-$route['course_syllabus'] = 'secretary/courseSyllabus';
-$route['enroll_mastermind'] = 'secretary/enrollMasterMinds';
-$route['enroll_teacher'] = 'secretary/enrollTeacher';
+$route['enroll_student'] = "secretary/secretary/enrollStudent";
+$route['student_list'] = 'secretary/secretary/coursesStudents';
+$route['request_report'] = 'secretary/secretary/requestReport';
+$route['offer_list'] = 'secretary/secretary/offerList';
+$route['course_syllabus'] = 'secretary/secretary/courseSyllabus';
+$route['enroll_mastermind'] = 'secretary/secretary/enrollMasterMinds';
+$route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'documentrequest/documentRequestSecretary';
-$route['research_lines'] = 'secretary/research_lines';
-$route['secretary_programs'] = 'secretary/secretaryPrograms';
+$route['research_lines'] = 'secretary/secretary/research_lines';
+$route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
 /*
  * Mastermind functionalities routes
