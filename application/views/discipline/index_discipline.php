@@ -1,6 +1,6 @@
 <h2 class="principal">Disciplinas</h2>
 
-<?=anchor("discipline/formToRegisterNewDiscipline", "Cadastrar Disciplina", array(
+<?=anchor("program/discipline/formToRegisterNewDiscipline", "Cadastrar Disciplina", array(
 	"class" => "btn btn-primary",
 	"type" => "submit",
 	"content" => "newDiscipline"
@@ -47,13 +47,13 @@
 
 					echo "<td>";
 
-						echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
+						echo anchor("program/discipline/{$indexes['discipline_code']}", "Editar", array(
 						"class" => "btn btn-primary btn-editar",
 						"type" => "submit",
 						"content" => "Editar"
 						));
 
-						echo form_open("discipline/deleteDiscipline");
+						echo form_open("program/discipline/deleteDiscipline");
 						echo form_hidden("discipline_code", $indexes['discipline_code']);
 						echo form_button(array(
 							"class" => "btn btn-danger btn-remover",
@@ -91,7 +91,7 @@
 							"content" => "Editar"
 					));
 
-					echo form_open("discipline/deleteDiscipline");
+					echo form_open("program/discipline/deleteDiscipline");
 					echo form_hidden("discipline_code", $indexes['discipline_code']);
 					echo form_button(array(
 							"class" => "btn btn-danger btn-remover",

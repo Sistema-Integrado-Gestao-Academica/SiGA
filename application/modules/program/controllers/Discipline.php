@@ -6,7 +6,6 @@
 
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
-require_once(MODULESPATH."auth/controllers/SessionManager.php");
 
 class Discipline extends MX_Controller {
 
@@ -140,20 +139,21 @@ class Discipline extends MX_Controller {
 
 			$alreadyExists = $this->discipline_model->disciplineExists($disciplineCode,$disciplineName);
 
-			$session = SessionManager::getInstance();
+			$session = getSession();
 			if($alreadyExists['code']){
 				$session->showFlashMessage("danger", "Código de disciplina já existe no sistema");
-				redirect("discipline/discipline_index");
+				redirect("program/discipline/formToRegisterNewDiscipline");
 			}else if($alreadyExists['name']){
 				$session->showFlashMessage("danger", "Disciplina já existe no sistema");
-				redirect("discipline/discipline_index");
+				redirect("program/discipline/formToRegisterNewDiscipline");
 			}else{
 				$this->discipline_model->saveNewDiscipline($disciplineToRegister);
 				$session->showFlashMessage("success", "Disciplina \"{$disciplineName}\" cadastrada com sucesso");
-				redirect("discipline/discipline_index");
+				redirect("program/discipline/discipline_index");
 			}
-		}else{
-
+		}
+		else{
+			$this->formToRegisterNewDiscipline();
 		}
 
 	}
@@ -186,9 +186,9 @@ class Discipline extends MX_Controller {
 			$updateStatus = "danger";
 			$updateMessage = "Dados na forma incorreta.";
 		}
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($updateStatus, $updateMessage);
-		redirect('/discipline/discipline_index');
+		redirect('/program/discipline/discipline_index');
 	}
 
 	/**
@@ -206,10 +206,10 @@ class Discipline extends MX_Controller {
 			$deleteMessage = "Não foi possível excluir esta disciplina.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
-		redirect('/discipline/discipline_index');
+		redirect('/program/discipline/discipline_index');
 	}
 
 	// Function to load a view form to edit a discipline
@@ -302,18 +302,14 @@ class Discipline extends MX_Controller {
 	 */
 	private function validatesDisciplineFormsData(){
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("discipline_name", "Discipline Name", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("discipline_name", "Discipline Name", "required|trim|valid_name");
 		$this->form_validation->set_rules("discipline_code", "Discipline Code", "required");
-		$this->form_validation->set_rules("name_abbreviation", "Name Abbreviation", "required|trim|xss_clean");
+		$this->form_validation->set_rules("name_abbreviation", "Name Abbreviation", "required|trim");
 		$this->form_validation->set_rules("credits", "Credits", "required");
 
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 
 		return $courseDataStatus;
-	}
-
-	function alpha_dash_space($str){
-		return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
 }
