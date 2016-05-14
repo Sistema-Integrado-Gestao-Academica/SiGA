@@ -23,10 +23,15 @@ class Secretary extends MX_Controller {
 
 	public function requestReport(){
 
+		$session = getSession();
+		$user = $session->getUserData();
+		$userName = $user->getName();	
+		
 		$courses = $this->loadCourses();
 
 		$courseData = array(
-			'courses' => $courses
+			'courses' => $courses,
+			'userName' => $userName
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::REQUEST_REPORT_PERMISSION, 'request/secretary_courses_request', $courseData);
@@ -78,12 +83,12 @@ class Secretary extends MX_Controller {
 
 	private function loadCourses(){
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$currentUser = $loggedUserData->getId();
 
-		$course = new Course();
-		$allCourses = $course->listAllCourses();
+		$this->load->model("course_model");
+		$allCourses = $this->course_model->getAllCourses();
 
 		if($allCourses !== FALSE){
 
