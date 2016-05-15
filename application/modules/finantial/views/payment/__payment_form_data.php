@@ -2,7 +2,7 @@
 /**
  *  Contains the basic data to the payment form
  */
-require_once(APPPATH."/controllers/Payment.php");
+require_once(MODULESPATH."finantial/constants/PaymentConstants.php");
 
 $userTypes = array(
     "Interno" => "Interno",
@@ -170,7 +170,7 @@ $totalValue = array(
     "class" => "form-control",
     "min" => 0,
     "step" => 0.01,
-    "max" => Payment::MAX_TOTAL_VALUE
+    "max" => PaymentConstants::MAX_TOTAL_VALUE
 );
 
 $installmentsQuantity = array(
@@ -181,7 +181,7 @@ $installmentsQuantity = array(
     "class" => "form-control",
     "min" => 1,
     "step" => 1,
-    "max" => Payment::MAX_INSTALLMENTS
+    "max" => PaymentConstants::MAX_INSTALLMENTS
 );
 
 $start_period = array(

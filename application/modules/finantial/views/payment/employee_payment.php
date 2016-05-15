@@ -28,7 +28,7 @@ $agency['value'] = $employee['agency'];
 
 $accountNumber['value'] = $employee['account_number'];
 
-$submitPath = "payment/registerPayment";
+$submitPath = "register_payment";
 include("_payment_form.php");
 
 ?>

@@ -43,16 +43,12 @@ class Course extends MX_Controller {
 
 	public function getCourseTeachers($courseId){
 
-		
-
 		$teachers = $this->course_model->getCourseTeachers($courseId);
 
 		return $teachers;
 	}
 
 	public function enrollTeacherToCourse($teacherId, $courseId){
-
-		
 
 		$wasEnrolled = $this->course_model->enrollTeacherToCourse($teacherId, $courseId);
 
@@ -61,16 +57,12 @@ class Course extends MX_Controller {
 
 	public function removeTeacherFromCourse($teacherId, $courseId){
 
-		
-
 		$wasRemoved = $this->course_model->removeTeacherFromCourse($teacherId, $courseId);
 
 		return $wasRemoved;
 	}
 
 	public function defineTeacherSituation($courseId, $teacherId, $situation){
-
-		
 
 		$defined = $this->course_model->defineTeacherSituation($courseId, $teacherId, $situation);
 
@@ -92,7 +84,6 @@ class Course extends MX_Controller {
 
 		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/course_students', $data);
 	}
-
 
 	private function addStatusCourseStudents($students){
 
@@ -150,7 +141,6 @@ class Course extends MX_Controller {
 	 */
 	public function formToEditCourse($courseId){
 
-		
 		$course = $this->course_model->getCourseById($courseId);
 
 		$this->load->module("auth/userController");

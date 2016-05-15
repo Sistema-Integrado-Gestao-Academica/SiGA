@@ -72,7 +72,7 @@ $totalHours['value'] = $payment['totalHours'];
 $serviceDescription['value'] = $payment['serviceDescription'];
 $serviceDescription['disabled'] = TRUE;
 
-$submitPath = "payment/registerRepayment";
+$submitPath = "register_repayment";
 include("_payment_form.php");
 
 ?>
@@ -82,7 +82,7 @@ include("_payment_form.php");
 
 <?php
 
-    //echo anchor("payment/expensePayments/{$expenseId}/{$budgetplanId}", "Voltar", "class='btn btn-danger'");
+    //echo anchor("expense_payments/{$expenseId}/{$budgetplanId}", "Voltar", "class='btn btn-danger'");
 
     $backBtn = array(
         "id" => "back_btn",

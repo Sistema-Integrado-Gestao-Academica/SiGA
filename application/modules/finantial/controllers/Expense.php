@@ -1,9 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-require_once(APPPATH."/constants/PermissionConstants.php");
+require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
-class Expense extends CI_Controller {
+class Expense extends MX_Controller {
 
 	public function index($budgetplan_id) {
 		$this->load->model('budgetplan_model');
@@ -20,6 +19,7 @@ class Expense extends CI_Controller {
 		}
 
 		$data = array('budgetplan' => $budgetplan, 'months' => $months, 'types' => $expenseTypes);
+		
 		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "budgetplan/expense", $data);
 	}
 
@@ -49,13 +49,13 @@ class Expense extends CI_Controller {
 
 		$this->load->model('expense_model');
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		if ($this->expense_model->save($expense) && $this->budgetplan_model->update($budgetplan)) {
 			$session->showFlashMessage("success", "Nova despesa adicionada com sucesso.");
 			redirect("budgetplan_expenses/{$id}");
 		} else {
 			$session->showFlashMessage("danger", "Houve algum erro. Tente novamente.");
-			redirect("budgetplan/new_expense{$id}");
+			redirect("budgetplan/new_expense/{$id}");
 		}
 	}
 
@@ -72,7 +72,7 @@ class Expense extends CI_Controller {
 		$budgetplan['spending'] -= $expense['value'];
 		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		if ($this->expense_model->delete($expense_id) && $this->budgetplan_model->update($budgetplan)) {
 			$session->showFlashMessage("danger", "Despesa foi removida");
 		} else {
@@ -84,6 +84,3 @@ class Expense extends CI_Controller {
 	}
 
 }
-
-/* End of file expense.php */
-/* Location: ./application/controllers/expense.php */

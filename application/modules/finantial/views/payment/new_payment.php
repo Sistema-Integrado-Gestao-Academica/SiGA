@@ -5,11 +5,11 @@
 <?php
 	include("__payment_form_data.php");
 
-	$submitPath = "payment/registerPayment";
+	$submitPath = "register_payment";
 
 	include("_payment_form.php");
 ?>
 
 <br>
 <br>
-<?= anchor("payment/expensePayments/{$expenseId}/{$budgetplanId}", "Voltar", "class='btn btn-danger'")?>
+<?= anchor("expense_payments/{$expenseId}/{$budgetplanId}", "Voltar", "class='btn btn-danger'")?>

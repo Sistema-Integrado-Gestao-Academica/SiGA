@@ -64,7 +64,6 @@ class Budgetplan extends MX_Controller {
 
 	public function save() {
 
-
 		$budgetplanName = $this->input->post("budgetplan_name");
 		$manager = $this->input->post("manager");
 		$course = $this->input->post("course");

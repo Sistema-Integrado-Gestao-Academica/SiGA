@@ -28,7 +28,7 @@
 				    			if($registration !== NULL){
 					    			echo bold("Matrícula atual: ").$registration;
 				    			}else{
-				    				echo bold("Matrícula não informada ainda.");
+				    				echo "<span class='label label-danger'> Matrícula não informada ainda.</span>";
 				    			}
 
 				    			echo "<hr>";

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/data_types/ServicePayment.php");
+require_once(MODULESPATH."finantial/domain/ServicePayment.php");
 
 class Payment_model extends CI_Model {
 

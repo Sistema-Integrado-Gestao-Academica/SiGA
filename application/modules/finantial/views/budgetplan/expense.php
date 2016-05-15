@@ -7,7 +7,7 @@
 	<div class="header" style="background-color: #3c8dbc">Adicionar despesa</div>
 
 	<div class="body bg-gray">
-		<?= form_open("expense/save") ?>
+		<?= form_open("save_expense") ?>
 			<?= form_hidden("budgetplan_id", $budgetplan['id']) ?>
 			<?= form_hidden("continue", "ok") ?>
 

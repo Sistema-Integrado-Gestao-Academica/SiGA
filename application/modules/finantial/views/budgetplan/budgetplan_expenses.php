@@ -30,7 +30,7 @@
 				<td><?=currencyBR($expense['value'])?></td>
 				<td>
 					
-					<?= form_open('expense/delete') ?>
+					<?= form_open('delete_expense') ?>
 						<?= form_hidden('expense_id', $expense['id']) ?>
 						<?= form_hidden('budgetplan_id', $budgetplan['id']) ?>
 						<button type="submit" class="btn btn-danger btn-sm">
@@ -44,7 +44,7 @@
 	
 						if($expenseHasPayment){
 							echo anchor(
-								"payment/expensePayments/{$expense['id']}/{$budgetplan['id']}",
+								"expense_payments/{$expense['id']}/{$budgetplan['id']}",
 								"<i class='fa fa-dollar'> Pagamentos</i>",
 								"class='btn btn-primary btn-sm' style='margin-top:5%;'"
 							);

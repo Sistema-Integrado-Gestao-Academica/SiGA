@@ -80,8 +80,6 @@ class Discipline extends MX_Controller {
 
 	public function getDisciplineByPartialName($disciplineName){
 
-
-
 		$disciplines = $this->discipline_model->getDisciplineByPartialName($disciplineName);
 
 		return $disciplines;

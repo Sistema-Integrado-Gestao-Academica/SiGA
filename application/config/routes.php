@@ -94,7 +94,21 @@ $route['budgetplan'] = 'finantial/budgetplan';
 $route['budgetplan/(:num)'] = 'finantial/budgetplan/edit/$1';
 $route['budgetplan/new_expense/(:num)'] = 'finantial/expense/index/$1';
 
+/*
+ * Expense routes
+ */
+$route['delete_expense'] = 'finantial/expense/delete';
+$route['save_expense'] = 'finantial/expense/save';
 
+/*
+ * Payment routes
+ */
+$route['expense_payments/(:num)/(:num)'] = 'finantial/payment/expensePayments/$1/$2';
+$route['new_payment/(:num)/(:num)'] = 'finantial/payment/newPayment/$1/$2';
+$route['register_payment'] = 'finantial/payment/registerPayment';
+$route['register_repayment'] = 'finantial/payment/registerRepayment';
+$route['repayment/(:num)/(:num)/(:num)'] = 'finantial/payment/repayment/$1/$2/$3';
+$route['generate_spreadsheet/(:num)'] = 'finantial/payment/generateSpreadsheet/$1';
 
 /*
  * Secretary functionalities routes

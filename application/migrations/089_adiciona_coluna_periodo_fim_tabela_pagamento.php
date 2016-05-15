@@ -9,15 +9,13 @@ class Migration_adiciona_coluna_periodo_fim_tabela_pagamento extends CI_Migratio
         ));
 
         $this->dbforge->modify_column('payment', array(
-            'arrivalInBrazil' => array('type' => "varchar(10)"),
-            'installment_date_1' => array('type' => "varchar(10)"),
-            'installment_date_2' => array('type' => "varchar(10)"),
-            'installment_date_3' => array('type' => "varchar(10)"),
-            'installment_date_4' => array('type' => "varchar(10)"),
-            'installment_date_5' => array('type' => "varchar(10)")
+            'arrivalInBrazil' => array('type' => "varchar(10)", 'null' => TRUE),
+            'installment_date_1' => array('type' => "varchar(10)", 'null' => TRUE),
+            'installment_date_2' => array('type' => "varchar(10)", 'null' => TRUE),
+            'installment_date_3' => array('type' => "varchar(10)", 'null' => TRUE),
+            'installment_date_4' => array('type' => "varchar(10)", 'null' => TRUE),
+            'installment_date_5' => array('type' => "varchar(10)", 'null' => TRUE)
         ));
-
-
     }
 
     public function down() {

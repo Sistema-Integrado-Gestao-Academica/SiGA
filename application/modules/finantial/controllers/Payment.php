@@ -1,13 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/PermissionConstants.php");
-require_once(APPPATH."/data_types/ServicePayment.php");
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
+require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
-class Payment extends CI_Controller {
+require_once(MODULESPATH."finantial/domain/ServicePayment.php");
 
-	const MAX_INSTALLMENTS = 5;
-	const MAX_TOTAL_VALUE = 8000;
+class Payment extends MX_Controller {
 
 	public function expensePayments($expenseId, $budgetplanId){
 
@@ -166,9 +163,9 @@ class Payment extends CI_Controller {
 			$message = "Não foi possível registrar o pagamento informado.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("payment/expensePayments/{$expense}/{$budgetplan}");
+		redirect("expense_payments/{$expense}/{$budgetplan}");
 	}
 
 	public function registerRepayment(){
@@ -273,9 +270,9 @@ class Payment extends CI_Controller {
 			$message = "Não foi possível registrar o pagamento informado.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("payment/expensePayments/{$expense}/{$budgetplan}");
+		redirect("expense_payments/{$expense}/{$budgetplan}");
 	}
 
 	public function generateSpreadsheet($paymentId){

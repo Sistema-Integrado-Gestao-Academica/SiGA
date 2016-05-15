@@ -20,16 +20,7 @@ class Staff extends CI_Controller {
 		$data = array('staff' => $staff);
 		$this->load->template('staffs/edit_staff', $data);
 	}
-
-	public function getEmployeeByPartialName($employeeName){
-
-		$this->load->model('staffs_model');
-
-		$employeeName = $this->staffs_model->getEmployeeByPartialName($employeeName);
-
-		return $employeeName;
-	}
-
+	
 	public function newStaff() {
 
 		$success = $this->validatesStaffData();

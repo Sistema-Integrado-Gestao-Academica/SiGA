@@ -57,7 +57,7 @@
 		<div class="col-lg-4">
 			<h4><i class='fa fa-dollar'></i> Pagamento Convencional</h4>
 			<?= anchor(
-				"payment/newPayment/{$budgetplanId}/{$expenseId}",
+				"new_payment/{$budgetplanId}/{$expenseId}",
 				"<i class='fa fa-plus-circle'></i> Novo pagamento",
 				"class='btn btn-primary'"
 			);?>
@@ -124,13 +124,13 @@
 
 				    		echo "<td>";
 				    			echo anchor(
-				    				"payment/generateSpreadsheet/{$payment['id_payment']}",
+				    				"generate_spreadsheet/{$payment['id_payment']}",
 				    				"<i class='fa fa-download'></i> Gerar planilha",
 				    				"class='btn btn-success' style='margin-bottom:5%;'"
 				    			);
 
 				    			echo anchor(
-				    				"payment/repayment/{$payment['id_payment']}/{$budgetplanId}/{$expenseId}",
+				    				"repayment/{$payment['id_payment']}/{$budgetplanId}/{$expenseId}",
 				    				"<i class='fa fa-plus-square'></i> Novo Pagamento",
 				    				"class='btn btn-info'"
 				    			);
