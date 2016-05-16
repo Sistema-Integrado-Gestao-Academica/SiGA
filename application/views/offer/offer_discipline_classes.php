@@ -20,4 +20,4 @@
 	}
 ?>
 
-<?= anchor("offer/addDisciplines/{$idOffer}/{$idCourse}", 'Voltar', "class='btn btn-danger'")?>
+<?= anchor("secretary/offer/addDisciplines/{$idOffer}/{$idCourse}", 'Voltar', "class='btn btn-danger'")?>

@@ -136,53 +136,11 @@ class Secretary extends MX_Controller {
 		return $userHasSecretary;
 	}
 
-	public function offerList(){
-
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
-
-		// Check if the logged user have admin permission
-		$group = new Module();
-		$isAdmin = $group->checkUserGroup(GroupConstants::ADMIN_GROUP);
-
-		// Get the current user id
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$currentUser = $loggedUserData->getId();
-
-		// Get the courses of the secretary
-		$course = new Course();
-		$courses = $course->getCoursesOfSecretary($currentUser);
-
-		// Get the proposed offers of every course
-		$offer = new Offer();
-		if($courses !== FALSE){
-
-			$proposedOffers = array();
-			foreach($courses as $course){
-				$courseId = $course['id_course'];
-				$courseName = $course['course_name'];
-				$proposedOffers[$courseName] = $offer->getCourseOfferList($courseId, $currentSemester['id_semester']);
-			}
-
-		}else{
-			$proposedOffers = FALSE;
-		}
-
-		$data = array(
-			'current_semester' => $currentSemester,
-			'isAdmin' => $isAdmin,
-			'proposedOffers' => $proposedOffers,
-			'courses' => $courses
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::OFFER_LIST_PERMISSION, 'secretary/secretary_offer_list', $data);
-	}
 
 	public function courseSyllabus(){
 
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$this->load->model("program/semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 
 		// Get the current user id
 		$session = SessionManager::getInstance();

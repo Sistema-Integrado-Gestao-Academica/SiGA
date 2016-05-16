@@ -1,8 +1,6 @@
 <?php
 
-require_once('Constants.php');
-
-class EnrollmentConstantsOld extends Constants{
+class EnrollmentConstants {
 
 	const MIN_VACANCY_QUANTITY_TO_ENROLL = 1;
 

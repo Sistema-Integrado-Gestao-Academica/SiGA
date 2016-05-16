@@ -1,20 +1,20 @@
 <?php
 
 require_once(MODULESPATH."/program/controllers/Discipline.php");
-// require_once(APPPATH."/controllers/Schedule.php");
+require_once(MODULESPATH."/program/controllers/Course.php");
+require_once(MODULESPATH."/auth/controllers/UserController.php");
+require_once(MODULESPATH."/secretary/controllers/Schedule.php");
 // require_once(APPPATH."/controllers/Request.php");
-// require_once(APPPATH."/controllers/Course.php");
 // require_once(APPPATH."/controllers/Program.php");
 // require_once(APPPATH."/controllers/Offer.php");
 // require_once(APPPATH."/controllers/Syllabus.php");
-// require_once(APPPATH."/controllers/Usuario.php");
 // require_once(APPPATH."/controllers/Module.php");
 // require_once(APPPATH."/controllers/Mastermind.php");
 // require_once(APPPATH."/controllers/Coordinator.php");
 
-// require_once(APPPATH."/constants/EnrollmentConstants.php");
 // require_once(APPPATH."/constants/GroupConstants.php");
-// require_once(APPPATH."/constants/OfferConstants.php");
+require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."/secretary/constants/OfferConstants.php");
 
 require_once(APPPATH."/data_types/view_types/AlertCallout.php");
 require_once(APPPATH."/data_types/view_types/WrapperCallout.php");
@@ -221,7 +221,7 @@ function secretaryReportsTable($idCoordinator){
 
 	if($secretaries !== FALSE){
 		foreach ($secretaries as $key => $secretary){
-			$userData = new Usuario();
+			$userData = new UserController();
 			$secretaryData = $userData->getUserById($secretary['id_user']);
 			$secretaryGroup = $userData->getUserGroupNameByIdGroup($secretary['id_group']);
 			echo "<div class=\"modal-header bg-news\">";
@@ -292,7 +292,7 @@ function showMastermindsStudents($masterminds){
 		foreach ($masterminds as $key => $mastermind){
 			$students = $coordinator->getMastermindStudents($mastermind['id_user']);
 
-			$userData = new Usuario();
+			$userData = new UserController();
 			$mastermindData = $userData->getUserById($mastermind['id_user']);
 
 							echo "<div class=\"modal-header bg-news\">";
@@ -876,7 +876,7 @@ function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idS
 
 function displayMastermindStudentRequest($requests, $idMastermind){
 
-	$user = new Usuario();
+	$user = new UserController();
 	$user->loadModel();
 
 	echo "<br>";
@@ -1117,7 +1117,6 @@ function switchRequestDisciplineStatus($status){
 function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 	$offer = new Offer();
-	$offer->loadModel();
 
 	$discipline = new Discipline();
 
@@ -1190,7 +1189,7 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 function displayDisciplineClasses($disciplineClasses){
 
-	$user = new Usuario();
+	$user = new UserController();
 
    	if($disciplineClasses !== FALSE){
 
@@ -1275,7 +1274,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 
 	if($offerDisciplineClasses !== FALSE){
 
-		$user = new Usuario();
+		$user = new UserController();
 
 		foreach($offerDisciplineClasses as $class){
 
@@ -1327,8 +1326,8 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 		    	echo "</td>";
 
 		    	echo "<td>";
-    			echo anchor("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
-    			echo anchor("offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
+    			echo anchor("secretary/offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
+    			echo anchor("secretary/offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
 		    	echo "</td>";
 
 		    echo "</tr>";
@@ -1423,7 +1422,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 		"content" => "Salvar alterações"
 	);
 
-	echo form_open("offer/updateOfferDisciplineClass/{$disciplineId}/{$idOffer}/{$offerDisciplineClass['class']}");
+	echo form_open("secretary/offer/updateOfferDisciplineClass/{$disciplineId}/{$idOffer}/{$offerDisciplineClass['class']}");
 
 	echo form_hidden('course', $idCourse);
 
@@ -1477,7 +1476,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 
 		echo "<div class='col-lg-6'>";
 		echo anchor(
-			"offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}/{$idCourse}",
+			"secretary/offer/displayDisciplineClasses/{$disciplineId}/{$idOffer}/{$idCourse}",
 			"Voltar",
 			"class='btn bg-olive btn-block'"
 		);
@@ -2021,7 +2020,7 @@ function displayOffersList($offers){
 
 		    		echo "<td>";
 		    			if($offer['offer_status'] === PROPOSED){
-	    					$content = anchor("offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+	    					$content = anchor("secretary/offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
 							$principalMessage = "Editar";
 						    $aditionalMessage = "<b><i>Aqui é possível adicionar disciplinas a lista de oferta e aprová-la.</i><b/>";
 		    			}else{
@@ -2061,7 +2060,7 @@ function displayOffersList($offers){
 
 	    					$warningCallout = wrapperCallout("warning");
 	    					$warningCallout->writeCalloutDeclaration();
-								echo form_open("offer/newOffer/{$courseId}");
+								echo form_open("secretary/offer/newOffer/{$courseId}");
 								echo form_checkbox($needsMastermindApprovalCheckBox);
 								echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
 								echo "<br>";
@@ -2121,14 +2120,14 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 
 	    echo "<tr>";
 			echo "<td colspan=2>";
-            echo anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
+            echo anchor("secretary/offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
             echo "</td>";
 	    echo "</tr>";
     }else{
 
     	echo "<tr>";
     	echo "<td colspan=2>";
-            $content = anchor("offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
+            $content = anchor("secretary/offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
   			$principalMessage = "Nenhuma disciplina adicionada a essa lista de oferta no momento.";
     		$callout = wrapperCallout("info", $content, $principalMessage);
     		$callout->draw();
@@ -2142,7 +2141,7 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 		echo "<div class=\"col-xs-3\">";
 			if($disciplines !== FALSE){
 
-				echo anchor("offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+				echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
 		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
 			}else{
@@ -2155,57 +2154,6 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 			echo anchor("secretary/offerList", "Voltar", "class='btn btn-danger'");
 		echo "</div>";
 	echo "</div>";
-}
-
-function displayRegisteredDisciplines($allDisciplines, $course, $idOffer){
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Código',
-		'Sigla',
-		'Disciplina',
-		'Créditos',
-		'Ações'
-	));
-
-    if($allDisciplines !== FALSE){
-
-	    foreach($allDisciplines as $discipline){
-
-		    echo "<tr>";
-		    	echo "<td>";
-	    			echo $discipline['discipline_code'];
-		    	echo "</td>";
-
-		    	echo "<td>";
-		    		echo $discipline['name_abbreviation'];
-		    	echo "</td>";
-
-		    	echo "<td>";
-		    		echo $discipline['discipline_name'];
-		    	echo "</td>";
-
-		    	echo "<td>";
-		    		echo $discipline['credits'];
-		    	echo "</td>";
-
-		    	echo "<td>";
-					echo anchor("offer/displayDisciplineClasses/{$discipline['discipline_code']}/{$idOffer}/{$course['id_course']}", "<i class='fa fa-tasks'></i> Gerenciar turmas para a oferta", "class='btn btn-primary'");
-		    	echo "</td>";
-		    echo "</tr>";
-	    }
-
-    }else{
-
-    	echo "<tr>";
-    	echo "<td colspan=5>";
-    		callout("warning", "Não há disciplinas cadastradas no currículo deste curso no momento.");
-    	echo "</td>";
-		echo "</tr>";
-    }
-
-	buildTableEndDeclaration();
 }
 
 function displayRegisteredUsers($allUsers){
@@ -2266,7 +2214,7 @@ function displayRegisteredUsers($allUsers){
 
 function displayUserGroups($idUser, $userGroups){
 
-	$user = new Usuario();
+	$user = new UserController();
 	$foundUser = $user->getUserById($idUser);
 	echo "<h3>Grupos pertencentes a <b>".$foundUser['name']."</b>:</h3>";
 	echo "<br>";
@@ -2308,7 +2256,7 @@ function displayUserGroups($idUser, $userGroups){
 
 function displayAllGroupsToUser($idUser, $allGroups, $userGroups){
 
-	$user = new Usuario();
+	$user = new UserController();
 	$foundUser = $user->getUserById($idUser);
 
 	echo "<h3>Grupos Existentes:</h3>";

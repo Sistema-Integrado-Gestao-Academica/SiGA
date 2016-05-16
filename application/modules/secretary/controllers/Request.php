@@ -188,8 +188,8 @@ class Request extends MX_Controller {
 
 		$this->load->model("request_model");
 
-		$this->load->module("program/semester");
-		$currentSemester = $this->semester->getCurrentSemester();
+		$this->load->model("program/semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 
 		$courseRequests = $this->getCourseRequests($courseId, $currentSemester['id_semester']);
 

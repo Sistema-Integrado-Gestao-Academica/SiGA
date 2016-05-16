@@ -1,16 +1,8 @@
-<?php  
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
-$session = SessionManager::getInstance(); 
-$user = $session->getUserData();
-
-?>
-
 <br>
 <h4 align="center"><b>Lista de ofertas</b></h4>
 <br>
 
-<?=	form_open('semester/saveSemester') ?>
+<?=	form_open('program/semester/saveSemester') ?>
 	<?= form_hidden('current_semester_id', $current_semester['id_semester']) ?>
 	<?= form_hidden('password') ?>
 	<?= form_label('Semestre atual') ?>

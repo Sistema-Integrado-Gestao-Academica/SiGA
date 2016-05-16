@@ -428,7 +428,7 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCo
 		"content" => "Cadastrar turma"
 	);
 
-	echo form_open("offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}/{$idCourse}");
+	echo form_open("secretary/offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}/{$idCourse}");
 
 		echo "<div class='form-box'>";
 			echo"<div class='header'>Nova turma para oferta</div>";

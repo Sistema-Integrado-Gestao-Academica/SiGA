@@ -52,8 +52,8 @@ class Discipline extends MX_Controller {
 
 		$disciplineData = $this->getDisciplineByCode($disciplineId);
 
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$this->load->model("program/semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 
 		$offer = new Offer();
 		$classes = $offer->getApprovedOfferListDisciplineClasses($courseId, $currentSemester['id_semester'], $disciplineId);
@@ -94,10 +94,8 @@ class Discipline extends MX_Controller {
 
 	public function getCourseSyllabusDisciplines($courseId){
 
-
-
-		$syllabus = new Syllabus();
-		$foundSyllabus = $syllabus->getCourseSyllabus($courseId);
+		$this->load->model("secretary/syllabus_model");
+		$foundSyllabus = $this->syllabus_model->getCourseSyllabus($courseId);
 
 		if(sizeof($foundSyllabus) > 0){
 

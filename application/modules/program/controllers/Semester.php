@@ -16,13 +16,13 @@ class Semester extends MX_Controller {
 
 	public function saveSemester() {
 		
+		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$loggedUserLogin = $loggedUserData->getLogin();
 		$password = $this->input->post('password');
 		
-		$this->load->model('usuarios_model');
-		$this->load->model('semester_model');
-		$session = getSession();
+		$this->load->model('auth/usuarios_model');
+		$this->load->model('program/semester_model');
 
 		try{
 
@@ -42,12 +42,12 @@ class Semester extends MX_Controller {
 					$session->showFlashMessage("danger", "Não foi possível alterar o semestre atual.");
 				}
 				
-				redirect('/secretary/offerList');
+				redirect('secretary/offer/offerList');
 			}
 
 		}catch(LoginException $caughtException){
 			$session->showFlashMessage("danger", "Falha na autenticação.");
-			redirect('/secretary/offerList');
+			redirect('/secretary/offer/offerList');
 		}
 	}
 

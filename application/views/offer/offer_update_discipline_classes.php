@@ -3,14 +3,13 @@
 
 <?php
 
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
-$session = SessionManager::getInstance(); 
+$session = getSession();
 
 	if($disciplineData !== FALSE){
 		if($offerDisciplineData !== FALSE){
 			formToUpdateOfferDisciplineClass($disciplineData['discipline_code'], $idOffer, $teachers, $offerDisciplineData, $idCourse);
-		}else{
+		}
+		else{
 			$status = "danger";
 			$message = "Não foi possível recuperar os dados desta turma. Tente novamente.";
 			$session->showFlashMessage($status, $message);
