@@ -137,41 +137,6 @@ class Secretary extends MX_Controller {
 	}
 
 
-	public function courseSyllabus(){
-
-		$this->load->model("program/semester_model");
-		$currentSemester = $this->semester_model->getCurrentSemester();
-
-		// Get the current user id
-		$session = SessionManager::getInstance();
-		$loggedUserData = $session->getUserData();
-		$currentUser = $loggedUserData->getId();
-
-		// Get the courses of the secretary
-		$course = new Course();
-		$courses = $course->getCoursesOfSecretary($currentUser);
-
-		if($courses !== FALSE){
-
-			$syllabus = new Syllabus();
-			$coursesSyllabus = array();
-			foreach ($courses as $course){
-
-				$coursesSyllabus[$course['course_name']] = $syllabus->getCourseSyllabus($course['id_course']);
-			}
-		}else{
-			$coursesSyllabus = FALSE;
-		}
-
-		$data = array(
-			'current_semester' => $currentSemester,
-			'courses' => $courses,
-			'syllabus' => $coursesSyllabus
-		);
-
-		loadTemplateSafelyByPermission(PermissionConstants::COURSE_SYLLABUS_PERMISSION,'secretary/secretary_course_syllabus', $data);
-	}
-
 	public function courseTeachers($courseId){
 
 		$course = new Course();

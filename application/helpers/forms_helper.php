@@ -28,7 +28,7 @@ function searchForDisciplineByNameForm($syllabusId, $courseId){
 	define("SEARCH_BY_NAME", "by_name");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por nome da disciplina</h4>";
-	echo form_open("syllabus/searchForDiscipline");
+	echo form_open("secretary/syllabus/searchForDiscipline");
 		echo form_hidden('searchType', SEARCH_BY_NAME);
 		echo form_hidden('syllabusId', $syllabusId);
 		echo form_hidden('courseId', $courseId);
@@ -64,7 +64,7 @@ function searchForDisciplineByIdForm($syllabusId, $courseId){
 	define("SEARCH_BY_ID", "by_id");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por código da disciplina</h4>";
-	echo form_open("syllabus/searchForDiscipline");
+	echo form_open("secretary/syllabus/searchForDiscipline");
 		echo form_hidden('searchType', SEARCH_BY_ID);
 		echo form_hidden('syllabusId', $syllabusId);
 		echo form_hidden('courseId', $courseId);
@@ -602,7 +602,7 @@ function relateDisciplineToResearchLineForm($researchLines, $discipline, $syllab
 			echo "<div class='form-box' id='login-box'>";
 				echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
 
-				echo form_open('syllabus/saveDisciplineResearchLine','',$hidden);
+				echo form_open('secretary/syllabus/saveDisciplineResearchLine','',$hidden);
 				echo "<div class='body bg-gray'>";
 					echo "<div class='form-group'>";
 						echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";

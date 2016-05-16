@@ -1,12 +1,3 @@
-<?php  
-
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
-$session = SessionManager::getInstance(); 
-$user = $session->getUserData();
-
-?>
-
 <br>
 <h4 align="center"><b>Currículos de cursos</b></h4>
 <br>
@@ -22,7 +13,60 @@ $user = $session->getUserData();
 		
 		echo "<h4>Cursos para o secretário <b>".$userName."</b>:</h4>";
 
-		displayCourseSyllabus($syllabus);
+		$course = new Course();
+		buildTableDeclaration();
+
+		buildTableHeaders(array(
+			'Curso',
+			'Código Currículo',
+			'Ações'
+		));
+
+	    if($syllabus !== FALSE){
+
+		    foreach($syllabus as $courseName => $syllabus){
+
+		    	$foundCourse = $course->getCourseByName($courseName);
+				$courseId = $foundCourse['id_course'];
+
+		    	echo "<tr>";
+
+		    		echo "<td>";
+		    			echo $courseName;
+		    		echo "</td>";
+
+		    		if($syllabus !== FALSE){
+
+		    			echo "<td>";
+		    				echo $syllabus['id_syllabus'];
+		    			echo "</td>";
+
+		    			echo "<td>";
+	    					$content = anchor("secretary/syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+	    					$principalMessage = "Editar";
+	    					$aditionalMessage = "<b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/>";
+	    					$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
+	    					$callout->draw();
+		    			echo "</td>";
+
+		    		}else{
+						echo "<td colspan=2>";
+					    	$content = anchor("secretary/syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
+							$principalMessage = "Nenhum currículo cadastrado para esse curso.";
+	    					$callout = wrapperCallout("info", $content, $principalMessage);
+	    					$callout->draw();
+		    			echo "</td>";
+		    		}
+
+		    	echo "</tr>";
+		    }
+	    }else{
+			echo "<td colspan=3>";
+				callout("info", "Nenhum curso cadastrado para este secretário.");
+			echo "</td>";
+	    }
+
+		buildTableEndDeclaration();
 
 	}else{
 ?>

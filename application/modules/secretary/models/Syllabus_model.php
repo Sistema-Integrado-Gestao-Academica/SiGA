@@ -76,8 +76,8 @@ class Syllabus_model extends CI_Model {
 
 	public function addDisciplineToSyllabus($syllabusId, $disciplineId){
 
-		$discipline = new Discipline();
-		$disciplineExists = $discipline->checkIfDisciplineExists($disciplineId);
+		$this->load->model("program/discipline_model");
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($disciplineId);
 
 		$syllabusExists = $this->checkIfSyllabusExists($syllabusId);
 
@@ -108,8 +108,8 @@ class Syllabus_model extends CI_Model {
 
 	public function removeDisciplineFromSyllabus($syllabusId, $disciplineId){
 
-		$discipline = new Discipline();
-		$disciplineExists = $discipline->checkIfDisciplineExists($disciplineId);
+		$this->load->model("program/discipline_model");
+		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($disciplineId);
 
 		$syllabusExists = $this->checkIfSyllabusExists($syllabusId);
 

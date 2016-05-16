@@ -1732,64 +1732,6 @@ function displayCourseStudents($courseId, $students){
     buildTableEndDeclaration();
 }
 
-function displayCourseSyllabus($syllabus){
-	$course = new Course();
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Curso',
-		'Código Currículo',
-		'Ações'
-	));
-
-    if($syllabus !== FALSE){
-
-	    foreach($syllabus as $courseName => $syllabus){
-
-	    	$foundCourse = $course->getCourseByName($courseName);
-			$courseId = $foundCourse['id_course'];
-
-	    	echo "<tr>";
-
-	    		echo "<td>";
-	    			echo $courseName;
-	    		echo "</td>";
-
-	    		if($syllabus !== FALSE){
-
-	    			echo "<td>";
-	    				echo $syllabus['id_syllabus'];
-	    			echo "</td>";
-
-	    			echo "<td>";
-    					$content = anchor("syllabus/displayDisciplinesOfSyllabus/{$syllabus['id_syllabus']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-    					$principalMessage = "Editar";
-    					$aditionalMessage = "<b><i>Aqui é possível adicionar e retirar disciplinas ao currículo do curso.</i><b/>";
-    					$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
-    					$callout->draw();
-	    			echo "</td>";
-
-	    		}else{
-					echo "<td colspan=2>";
-				    	$content = anchor("syllabus/newSyllabus/{$courseId}", "Novo Currículo", "class='btn btn-primary'");
-						$principalMessage = "Nenhum currículo cadastrado para esse curso.";
-    					$callout = wrapperCallout("info", $content, $principalMessage);
-    					$callout->draw();
-	    			echo "</td>";
-	    		}
-
-	    	echo "</tr>";
-	    }
-    }else{
-		echo "<td colspan=3>";
-			callout("info", "Nenhum curso cadastrado para este secretário.");
-		echo "</td>";
-    }
-
-	buildTableEndDeclaration();
-}
-
 function displaySyllabusDisciplinesToStudent($syllabusDisciplines){
 
 	buildTableDeclaration();
@@ -1836,60 +1778,6 @@ function displaySyllabusDisciplinesToStudent($syllabusDisciplines){
     }
 
 	buildTableEndDeclaration();
-}
-
-function displaySyllabusDisciplines($syllabusId, $syllabusDisciplines, $courseId){
-
-	echo anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "<i class='fa fa-plus-circle'></i> Adicionar disciplinas", "class='btn-lg'");
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Disciplina',
-		'Linhas de pesquisa',
-		'Ações'
-	));
-
-    if($syllabusDisciplines !== FALSE){
-
-    	foreach($syllabusDisciplines as $discipline){
-    		$disciplineController = new Discipline();
-    		$disciplineResearchLinesIds = $disciplineController->getDisciplineResearchLines($discipline['discipline_code']);
-
-    		$syllabus = new Syllabus();
-    		$disciplineResearchLinesNames = $syllabus->getDiscipineResearchLinesNames($disciplineResearchLinesIds);
-
-	    	echo "<tr>";
-		    	echo "<td>";
-		    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
-		    	echo "</td>";
-		    	echo "<td>";
-		    	if ($disciplineResearchLinesNames){
-		    		foreach ($disciplineResearchLinesNames as $names){
-		    			echo $names."<br>";
-		    		}
-		    	}else{
-		    		echo "Não relacionada a nenhuma linha de pesquisa.";
-		    	}
-		    	echo "</td>";
-		    	echo "<td>";
-		    	echo anchor("syllabus/relateDisciplineToResearchLine/{$discipline['discipline_code']}/{$syllabusId}/{$courseId}", "Relacionar Linha de Pesquisa", "class='btn btn-success'");
-		    	echo "</td>";
-	    	echo "</tr>";
-    	}
-    }else{
-
-    	echo "<tr>";
-    		echo "<td colspan=3>";
-			   	$content = anchor("syllabus/addDisciplines/{$syllabusId}/{$courseId}", "Adicionar disciplinas", "class='btn btn-primary'");
-				$principalMessage = "Nenhuma disciplina adicionada ao currículo.";
-    			$callout = wrapperCallout("info", $content, $principalMessage);
-    			$callout->draw();
-    		echo "</td>";
-    	echo "</tr>";
-    }
-
-    buildTableEndDeclaration();
 }
 
 function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
@@ -2468,38 +2356,3 @@ function displayResearchLinesByCourse($research_lines,$courses){
 	buildTableEndDeclaration();
 }
 
-function displayDisciplineToResearchLineTable($researchLines, $disciplines, $syllabusId, $courseId){
-
-	echo "<h3>Linhas de pesquisa da disciplina ". $disciplines['discipline_name']."</h3>";
-
-	buildTableDeclaration();
-
-	$headers = array('Linha de Pesquisa');
-	if($researchLines){
-		$headers[] = "Ações";
-	}
-
-	buildTableHeaders($headers);
-
-	if (!$researchLines){
-		echo "<tr>";
-			echo "<td>";
-				echo "Não foi relacionada nenhuma linha de pesquisa";
-			echo "</td>";
-		echo "</tr>";
-	}else{
-		foreach ($researchLines as $key => $line){
-			echo "<tr>";
-				echo "<td>";
-					echo $line;
-				echo "</td>";
-				echo "<td>";
-				echo anchor("syllabus/removeDisciplineResearchLine/{$key}/{$disciplines['discipline_code']}/{$syllabusId}/{$courseId}", "<i class='fa fa-eraser'></i> Remover Linha de Pesquisa", "class='btn btn-danger'");
-				echo "</td>";
-
-			echo "</tr>";
-		}
-	}
-
-	buildTableEndDeclaration();
-}
