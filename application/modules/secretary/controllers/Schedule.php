@@ -214,13 +214,13 @@ class Schedule extends MX_Controller {
 
 							    		// Anchor to remove the class hour
 							    		echo anchor(
-							    			"schedule/removeClassHourFromSchedule/{$idOfferDiscipline}/{$idClassHour}/{$offerDiscipline['id_offer']}/{$offerDiscipline['id_discipline']}/{$offerDiscipline['class']}/{$idCourse}",
+							    			"secretary/schedule/removeClassHourFromSchedule/{$idOfferDiscipline}/{$idClassHour}/{$offerDiscipline['id_offer']}/{$offerDiscipline['id_discipline']}/{$offerDiscipline['class']}/{$idCourse}",
 							    			"Remover Horário",
 							    			"class='btn btn-danger btn-flat'"
 							    		);
 
 							    		// Form to update the class local
-							    		echo form_open("schedule/changeClassLocal");
+							    		echo form_open("secretary/schedule/changeClassLocal");
 										    $hidden = array(
 										    	'idOfferDiscipline' => $idOfferDiscipline,
 										    	'idClassHour' => $idClassHour,
@@ -261,7 +261,7 @@ class Schedule extends MX_Controller {
 
 							    	}else{
 
-								    	echo form_open("schedule/insertClassHour");
+								    	echo form_open("secretary/schedule/insertClassHour");
 										    $hidden = array(
 										    	'hour' => $i,
 										    	'day' => $j,
@@ -325,10 +325,10 @@ class Schedule extends MX_Controller {
 			$message = "Ocorreu um erro e não foi possível alterar o local.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
-		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
+		redirect("secretary/offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
 	}
 
 	private function updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal){
@@ -354,10 +354,10 @@ class Schedule extends MX_Controller {
 			$message = "Ocorreu um erro e não foi possível retirar o horário";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
-		redirect("offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class}/{$courseId}");
+		redirect("secretary/offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class}/{$courseId}");
 	}
 
 	public function insertClassHour(){
@@ -407,10 +407,10 @@ class Schedule extends MX_Controller {
 			}
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
-		redirect("offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
+		redirect("secretary/offer/formToUpdateDisciplineClass/{$offer}/{$discipline}/{$class}/{$idCourse}");
 	}
 
 	private function saveClassHour($classHour, $idOfferDiscipline){

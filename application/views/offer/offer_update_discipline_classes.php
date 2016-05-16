@@ -13,11 +13,11 @@ $session = getSession();
 			$status = "danger";
 			$message = "Não foi possível recuperar os dados desta turma. Tente novamente.";
 			$session->showFlashMessage($status, $message);
-			redirect("offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}");
+			redirect("secretary/offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}");
 		}
 
 		echo anchor(
-			"offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}",
+			"secretary/offer/displayDisciplineClasses/{$disciplineData['discipline_code']}/{$idOffer}/{$idCourse}",
 			"Voltar",
 			"class='btn btn-danger'"
 		);

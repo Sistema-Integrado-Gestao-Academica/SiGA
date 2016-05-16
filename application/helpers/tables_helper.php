@@ -1396,6 +1396,13 @@ function drawFullScheduleTable($offerDiscipline, $idCourse){
 
 function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass, $idCourse){
 
+	
+	echo "<br>";
+	echo "<br>";
+	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
+	echo "<br>";
+	drawFullScheduleTable($offerDisciplineClass, $idCourse);
+
 	$disciplineClass = array(
 		"name" => "disciplineClass",
 		"id" => "disciplineClass",
@@ -1493,11 +1500,6 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 		callout("danger", "Não é possível alterar uma turma para que fique sem um professor principal.", "Contate o administrador.");
 	}
 
-	echo "<br>";
-	echo "<br>";
-	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
-	echo "<br>";
-	drawFullScheduleTable($offerDisciplineClass, $idCourse);
 }
 
 function displayRegisteredCoursesToProgram($programId, $courses){
