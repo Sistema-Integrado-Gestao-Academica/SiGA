@@ -6,13 +6,13 @@ class Teacher extends MX_Controller {
 
 	public function __construct(){
 		parent::__construct();
-		$this->load->model('teacher_model');
-		$this->load->model('course_model');
+		$this->load->model('program/teacher_model');
+		$this->load->model('program/course_model');
 	}
 
 	public function updateProfile(){
 		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$user = $session->getUserData();
 		$teacher = $user->getId();
 

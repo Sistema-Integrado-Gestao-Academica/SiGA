@@ -126,9 +126,9 @@ $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 /*
  * Mastermind functionalities routes
  */
-$route['mastermind'] = 'mastermind/displayMastermindStudents';
-$route['titling_area'] = 'mastermind/titlingArea';
-$route['update_profile'] = 'teacher/updateProfile';
+$route['mastermind'] = 'program/mastermind/displayMastermindStudents';
+$route['titling_area'] = 'program/mastermind/titlingArea';
+$route['update_profile'] = 'program/teacher/updateProfile';
 
 /*
  * Student functionalities routes

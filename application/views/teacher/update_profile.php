@@ -36,7 +36,7 @@ $researchLineField['value'] = $researchLine;
 
 <div class="form-box" id="login-box">
 	<div class="header">Atualizar Perfil</div>
-	<?= form_open("teacher/saveProfile") ?>
+	<?= form_open("program/teacher/saveProfile") ?>
 	<?= form_hidden("teacher", $teacher) ?>
 	<?= form_hidden("researchLines", $availableResearchLines) ?>
 
