@@ -39,7 +39,7 @@
 
 				    		echo "<td>";
 				    		echo anchor(
-				    			"secretary/removeTeacherFromCourse/{$teacher['id_user']}/{$teacher['id_course']}",
+				    			"secretary/secretary/removeTeacherFromCourse/{$teacher['id_user']}/{$teacher['id_course']}",
 				    			"<i class='fa fa-remove'></i> Remover",
 				    			"class = 'btn btn-danger'"
 				    		);

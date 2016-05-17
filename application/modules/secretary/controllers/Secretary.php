@@ -39,10 +39,14 @@ class Secretary extends MX_Controller {
 
 	public function enrollTeacher(){
 
+		$session = getSession();
+		$user = $session->getUserData();
+
 		$courses = $this->loadCourses();
 
 		$courseData = array(
-			'courses' => $courses
+			'courses' => $courses,
+			'user' => $user
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/enroll_teacher', $courseData);
@@ -139,17 +143,17 @@ class Secretary extends MX_Controller {
 
 	public function courseTeachers($courseId){
 
-		$course = new Course();
-		$courseData = $course->getCourseById($courseId);
+		$this->load->model("program/course_model");
+		$courseData = $this->course_model->getCourseById($courseId);
 
-		$courseTeachers = $course->getCourseTeachers($courseId);
+		$courseTeachers = $this->course_model->getCourseTeachers($courseId);
 
-		$group = new Module();
-		$foundGroup = $group->getGroupByName(GroupConstants::TEACHER_GROUP);
+		$this->load->model("auth/module_model");
+		$foundGroup = $this->module_model->getGroupByGroupName(GroupConstants::TEACHER_GROUP);
 
 		if($foundGroup !== FALSE){
-			$user = new Usuario();
-			$teachers = $user->getUsersOfGroup($foundGroup['id_group']);
+			$this->load->model("auth/usuarios_model");
+			$teachers = $this->usuarios_model->getUsersOfGroup($foundGroup['id_group']);
 
 			if($teachers !== FALSE){
 
@@ -180,8 +184,8 @@ class Secretary extends MX_Controller {
 		$courseId = $this->input->post('courseId');
 		$teacherId = $this->input->post('teacher');
 
-		$course = new Course();
-		$wasEnrolled = $course->enrollTeacherToCourse($teacherId, $courseId);
+		$this->load->model("program/course_model");
+		$wasEnrolled = $this->course_model->enrollTeacherToCourse($teacherId, $courseId);
 
 		if($wasEnrolled){
 
@@ -192,15 +196,15 @@ class Secretary extends MX_Controller {
 			$message = "Não foi possível vincular o docente ao curso.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
 
 	public function removeTeacherFromCourse($teacherId, $courseId){
 
-		$course = new Course();
-		$wasRemoved = $course->removeTeacherFromCourse($teacherId, $courseId);
+		$this->load->model("program/course_model");
+		$wasRemoved = $this->course_model->removeTeacherFromCourse($teacherId, $courseId);
 
 		if($wasRemoved){
 			$status = "success";
@@ -210,7 +214,7 @@ class Secretary extends MX_Controller {
 			$message = "Não foi possível remover o docente ao curso.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}
@@ -222,8 +226,8 @@ class Secretary extends MX_Controller {
 		$teacherId = $this->input->post('teacherId');
 		$situation = $this->input->post('situation');
 
-		$course = new Course();
-		$wasDefined = $course->defineTeacherSituation($courseId, $teacherId, $situation);
+		$this->load->model("program/course_model");
+		$wasDefined = $this->course_model->defineTeacherSituation($courseId, $teacherId, $situation);
 
 		if($wasDefined){
 			$status = "success";
@@ -233,7 +237,7 @@ class Secretary extends MX_Controller {
 			$message = "Não foi possível definir a situação do docente.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("secretary/courseTeachers/{$courseId}");
 	}

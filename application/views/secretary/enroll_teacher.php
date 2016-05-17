@@ -1,15 +1,9 @@
 <?php
-
-require_once(APPPATH."/controllers/security/session/SessionManager.php");
-
-$session = SessionManager::getInstance(); 
-$user = $session->getUserData();
-$userName = $user->getName();
 ?>
 
 <h2 class="principal">Docentes dos cursos</h2>
 
-<h4>Cursos para o(a) secretário(a) <b><i><?php echo $userName?></i></b>:</h4>
+<h4>Cursos para o(a) secretário(a) <b><i><?php echo $user->getName()?></i></b>:</h4>
 <?php if($courses !== FALSE){ ?>
 
 		<div class="box-body table-responsive no-padding">
