@@ -4,8 +4,8 @@ require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 class Staffs_model extends CI_Model {
 
-	public function getStaff($atributo, $setor) {
-		$res = $this->db->get_where("staffs", array($atributo => $setor[$atributo]))->row_array();
+	public function getStaffById($id) {
+		$res = $this->db->get_where("staffs", array('id_staff' => $id))->row_array();
 		$res = checkArray($res);
 		return $res;
 	}
