@@ -7,6 +7,13 @@ require_once(MODULESPATH."auth/Auth.php");
 
 class Program extends MX_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('program/program_model');
+		
+	}
+
+
 	public function index(){
 
 		$programs = $this->getAllPrograms();
@@ -20,8 +27,6 @@ class Program extends MX_Controller {
 
 	public function getAllPrograms(){
 
-		$this->load->model('program_model');
-
 		$programs = $this->program_model->getAllPrograms();
 
 		return $programs;
@@ -29,8 +34,7 @@ class Program extends MX_Controller {
 
 	public function getAllProgramAreas(){
 
-		$this->load->model('program_model');
-
+		
 		$programAreas = $this->program_model->getAllProgramAreas();
 
 		if($programAreas !== FALSE){
@@ -47,8 +51,7 @@ class Program extends MX_Controller {
 
 	public function getCoordinatorPrograms($coordinatorId){
 
-		$this->load->model('program_model');
-
+		
 		$programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 
 		return $programs;
@@ -56,8 +59,7 @@ class Program extends MX_Controller {
 
 	public function getProgramEvaluations($programId){
 
-		$this->load->model('program_model');
-
+		
 		$programEvaluations = $this->program_model->getProgramEvaluations($programId);
 
 		return $programEvaluations;
@@ -65,8 +67,7 @@ class Program extends MX_Controller {
 
 	public function getProgramEvaluation($programEvaluationId){
 
-		$this->load->model('program_model');
-
+		
 		$programEvaluation = $this->program_model->getProgramEvaluation($programEvaluationId);
 
 		return $programEvaluation;
@@ -74,8 +75,7 @@ class Program extends MX_Controller {
 
 	public function getProgramById($programId){
 
-		$this->load->model('program_model');
-
+		
 		$programs = $this->program_model->getProgramById($programId);
 
 		return $programs;
@@ -83,8 +83,7 @@ class Program extends MX_Controller {
 	}
 
 	public function getProgramAreaByProgramId($programId){
-		$this->load->model('program_model');
-
+		
 		$programArea = $this->program_model->getProgramAreaByProgramId($programId);
 
 		return $programArea;
@@ -93,8 +92,7 @@ class Program extends MX_Controller {
 
 	public function getProgramCourses($programId){
 
-		$this->load->model('program_model');
-
+		
 		$programCourses = $this->program_model->getProgramCourses($programId);
 
 		return $programCourses;
@@ -102,8 +100,7 @@ class Program extends MX_Controller {
 
 	public function addCourseToProgram($courseId, $programId){
 
-		$this->load->model('program_model');
-
+		
 		$wasAdded = $this->program_model->addCourseToProgram($courseId, $programId);
 
 		if($wasAdded){
@@ -121,8 +118,6 @@ class Program extends MX_Controller {
 
 	public function getInformationAboutPrograms(){
 		
-		
-		$this->load->model("program_model");
 		$programs = $this->program_model->getAllPrograms();
 		$quantityOfPrograms = count($programs);
 		
@@ -144,8 +139,7 @@ class Program extends MX_Controller {
 
 	public function removeCourseFromProgram($courseId, $programId){
 
-		$this->load->model('program_model');
-
+		
 		$wasRemoved = $this->program_model->removeCourseFromProgram($courseId, $programId);
 
 		if($wasRemoved){
@@ -163,16 +157,16 @@ class Program extends MX_Controller {
 
 	public function editProgram($programId){
 
-		$this->load->model('program_model');
 		$program = $this->program_model->getProgramById($programId);
 
-		$foundGroup = Auth::getGroupByName(GroupConstants::COORDINATOR_GROUP);
+		$this->load->model("auth/module_model");
+		$foundGroup = $this->module_model->getGroupByGroupName(GroupConstants::COORDINATOR_GROUP);
 
-		$this->load->module("auth/usercontroller");
+		$this->load->module("auth/userController");
 		$userGroup = $this->usercontroller->getGroup();
 		
 		if($foundGroup !== FALSE){
-			$users = $user->getUsersOfGroup($foundGroup['id_group']);
+			$users = $this->usercontroller->getUsersOfGroup($foundGroup['id_group']);
 
 			if($users !== FALSE){
 
@@ -209,6 +203,7 @@ class Program extends MX_Controller {
 
 		$programDataIsOk = $this->validatesNewProgramData();
 
+		$session = getSession();
 		if($programDataIsOk){
 
 			$programName = $this->input->post('program_name');
@@ -219,11 +214,8 @@ class Program extends MX_Controller {
 			$programHistory = $this->input->post('program_history');
 			$programSummary = $this->input->post('program_summary');
 
-			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);
-			$this->load->model('program_model');
-			
+			$dataIsOk = $this->verifyTheNewData($programId, $programName, $programAcronym);		
 
-			$session = getSession();
 			if($dataIsOk){
 
 				$programData = array(
@@ -258,11 +250,7 @@ class Program extends MX_Controller {
 			
 		}
 		else{
-			$insertStatus = "danger";
-			$insertMessage = "Dados na forma incorreta. Cheque os dados informados. Espaços em branco não são aceitos.";
-			
-			$session->showFlashMessage($insertStatus, $insertMessage);
-			redirect("program/editProgram/{$programId}");
+			$this->editProgram($programId);
 		}
 	}
 
@@ -273,8 +261,7 @@ class Program extends MX_Controller {
 
 		$programData = array('id_area'=>$programArea);
 
-		$this->load->model('program_model');
-
+		
 		$wasUpdated = $this->program_model->editProgram($programId, $programData);
 
 		if($wasUpdated){
@@ -294,8 +281,7 @@ class Program extends MX_Controller {
 
 	public function removeProgram($programId){
 
-		$this->load->model('program_model');
-
+		
 		$wasDeleted = $this->program_model->deleteProgram($programId);
 
 		if($wasDeleted){
@@ -363,8 +349,7 @@ class Program extends MX_Controller {
 
 			$programNotExists = $this->verifyIfProgramNotExists($programName, $programAcronym);
 
-			$this->load->model('program_model');
-			
+						
 			$session = getSession();
 			if($programNotExists){
 				$wasSaved = $this->program_model->saveProgram($programData);
@@ -390,11 +375,7 @@ class Program extends MX_Controller {
 		}
 		else{
 
-			$insertStatus = "danger";
-			$insertMessage = "Dados na forma incorreta.";
-
-			$session->showFlashMessage($insertStatus, $insertMessage);
-			redirect('program/registerNewProgram');
+			$this->registerNewProgram();
 		}
 	}
 

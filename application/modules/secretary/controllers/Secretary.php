@@ -1,11 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."program/controllers/Course.php");
-// require_once('Usuario.php');
-// require_once('Module.php');
-// require_once('Semester.php');
-// require_once('Offer.php');
-// require_once('Program.php');
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/auth/controllers/SessionManager.php");
@@ -259,12 +254,12 @@ class Secretary extends MX_Controller {
 
 	public function getSecretaryPrograms(){
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$user = $session->getUserData();
 		$secretaryId = $user->getId();
 
-		$courseController = new Course();
-		$courses = $courseController->getCoursesOfSecretary($secretaryId);
+		$this->load->model("program/course_model");
+		$courses = $this->course_model->getCoursesOfSecretary($secretaryId);
 
 		$alreadyAddedPrograms = array();
 		$programs = array();
@@ -272,14 +267,14 @@ class Secretary extends MX_Controller {
 
 			foreach ($courses as $course) {
 
-				$program = new Program();
+				$this->load->model("program/program_model");
 				$courseId = $course['id_course'];
 				$programId = $course['id_program'];
 
 				if($programId != NULL){
 
 					if(!isset($alreadyAddedPrograms[$programId])){
-						$programs[] = $program->getProgramById($programId);
+						$programs[] = $this->program_model->getProgramById($programId);
 					}
 
 					$alreadyAddedPrograms[$programId] = $programId;

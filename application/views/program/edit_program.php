@@ -1,6 +1,6 @@
 
 <?php 
-require_once(APPPATH."/constants/GroupConstants.php");
+require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 
 	
 $programName = array(
@@ -89,7 +89,7 @@ if($currentYear !== FALSE){
 
 <div class="form-box" id="login-box">
 	<div class="header">Editar Programa</div>
-	<?= form_open("program/updateProgram") ?>
+	<?= form_open("program/program/updateProgram") ?>
 	<?= form_hidden("programId", $programData['id_program']) ?>
 
 		<div class="body bg-gray">
