@@ -90,7 +90,7 @@ class Secretary extends MX_Controller {
 		$loggedUserData = $session->getUserData();
 		$currentUser = $loggedUserData->getId();
 
-		$this->load->model("course_model");
+		$this->load->model("program/course_model");
 		$allCourses = $this->course_model->getAllCourses();
 
 		if($allCourses !== FALSE){

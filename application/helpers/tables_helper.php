@@ -85,48 +85,6 @@ function wrapperCallout($calloutType = "info", $wrapperContent = FALSE, $princip
 	return $wrapperCallout;
 }
 
-function courseTableToSecretaryPage($courses){
-
-	$courseController = new Course();
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Código',
-		'Curso',
-		'Tipo',
-		'Ações'
-	));
-
-	if($courses !== FALSE){
-    	foreach($courses as $courseData){
-
-    		$courseId = $courseData['id_course'];
-    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
-
-			echo "<tr>";
-	    		echo "<td>";
-	    		echo $courseId;
-	    		echo "</td>";
-
-	    		echo "<td>";
-	    		echo $courseData['course_name'];
-	    		echo "</td>";
-
-	    		echo "<td>";
-	    		echo $courseType['description'];
-	    		echo "</td>";
-
-	    		echo "<td>";
-	    		echo anchor("enrollStudent/{$courseId}","<i class='fa fa-plus-square'>Matricular Aluno</i>", "class='btn btn-primary'");
-	    		echo "</td>";
-    		echo "</tr>";
-    	}
-    }
-
-    buildTableEndDeclaration();
-}
-
 function showCapesAvaliationsNews($atualizations){
 	$courseController = new Course();
 

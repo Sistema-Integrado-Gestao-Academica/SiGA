@@ -60,7 +60,7 @@ if($guests !== FALSE){
 				echo $user['email'];
 			echo "</td>";
 			echo "<td>";
-				echo anchor("enrollment/enrollStudent/{$course['id_course']}/{$user['id']}", "Matricular", "class='btn btn-primary'");
+				echo anchor("secretary/enrollment/enrollStudent/{$course['id_course']}/{$user['id']}", "Matricular", "class='btn btn-primary'");
 			echo "</td>";
 
 		echo "</tr>";
