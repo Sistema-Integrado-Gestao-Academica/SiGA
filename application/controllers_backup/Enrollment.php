@@ -101,7 +101,7 @@ class Enrollment extends CI_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("course/courseStudents/{$course}");
+		redirect("secretary/enrollment/courseStudents/{$course}");
 	}
 
 	/**

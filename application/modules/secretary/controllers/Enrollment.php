@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/data_types/StudentRegistration.php");
-require_once(APPPATH."/exception/StudentRegistrationException.php");
+require_once(MODULESPATH."/secretary/domain/StudentRegistration.php");
+require_once(MODULESPATH."/secretary/exception/StudentRegistrationException.php");
 require_once(MODULESPATH."/secretary/domain/notification/EnrolledStudentEmail.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
@@ -94,7 +94,7 @@ class Enrollment extends MX_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("course/courseStudents/{$course}");
+		redirect("program/course/courseStudents/{$course}");
 	}
 
 	/**

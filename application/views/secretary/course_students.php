@@ -3,7 +3,7 @@
 
 <?php 
 	
-	require_once(APPPATH."/data_types/StudentRegistration.php");
+	require_once(MODULESPATH."secretary/domain/StudentRegistration.php");
 
 	if($students !== FALSE){ ?>
 
@@ -33,7 +33,7 @@
 
 				    			echo "<hr>";
 
-					    		echo form_open("enrollment/updateStudentRegistration");
+					    		echo form_open("secretary/enrollment/updateStudentRegistration");
 
 					    			echo form_hidden(array(
 					    				'course' => $course['id_course'],
@@ -103,4 +103,4 @@
 	</div>
 <?php }?>
 
-<?= anchor('secretary/coursesStudents', 'Voltar', "class='btn btn-danger'")?>
+<?= anchor('secretary/secretary/coursesStudents', 'Voltar', "class='btn btn-danger'")?>
