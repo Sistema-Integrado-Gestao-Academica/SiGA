@@ -4,9 +4,9 @@ require_once(MODULESPATH."/program/controllers/Discipline.php");
 require_once(MODULESPATH."/program/controllers/Course.php");
 require_once(MODULESPATH."/auth/controllers/UserController.php");
 require_once(MODULESPATH."/secretary/controllers/Schedule.php");
+require_once(MODULESPATH."/secretary/controllers/Offer.php");
 // require_once(APPPATH."/controllers/Request.php");
 // require_once(APPPATH."/controllers/Program.php");
-// require_once(APPPATH."/controllers/Offer.php");
 // require_once(APPPATH."/controllers/Syllabus.php");
 // require_once(APPPATH."/controllers/Module.php");
 // require_once(APPPATH."/controllers/Mastermind.php");
@@ -876,7 +876,7 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 
 		    		echo "<td>";
 		    		echo anchor(
-		    				"temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
+		    				"student/temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
 	    					"Remover Disciplina",
 	    					"class='btn btn-danger btn-flat'"
 		    			);
@@ -969,7 +969,7 @@ function displayOfferListDisciplines($offerListDisciplines, $courseId){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		echo anchor("discipline/displayDisciplineClassesToEnroll/{$courseId}/{$discipline['discipline_code']}", "<b>".$discipline['discipline_name']." - ".$discipline['name_abbreviation']."</b>");
+	    		echo anchor("program/discipline/displayDisciplineClassesToEnroll/{$courseId}/{$discipline['discipline_code']}", "<b>".$discipline['discipline_name']." - ".$discipline['name_abbreviation']."</b>");
 	    		echo "</td>";
 
 	    		echo "<td>";
@@ -1759,7 +1759,7 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 			}
 		echo "</div>";
 		echo "<div class=\"col-xs-3\">";
-			echo anchor("secretary/offerList", "Voltar", "class='btn btn-danger'");
+			echo anchor("offer_list", "Voltar", "class='btn btn-danger'");
 		echo "</div>";
 	echo "</div>";
 }

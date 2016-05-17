@@ -133,8 +133,8 @@ $route['update_profile'] = 'teacher/updateProfile';
 /*
  * Student functionalities routes
  */
-$route['student'] = 'student/index';
-$route['student_information'] = 'student/studentInformation';
+$route['student'] = 'student/student/index';
+$route['student_information'] = 'student/student/studentInformation';
 $route['documents_request'] = "documentrequest/index";
 
 /*

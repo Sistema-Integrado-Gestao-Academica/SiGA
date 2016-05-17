@@ -2,7 +2,7 @@
 <h2 class="principal">Bem vindo, <b><i><?php echo $userData->getName();?></i></b>!</h2>
 
 <?php
-	require_once(APPPATH."/data_types/StudentRegistration.php");
+	require_once(MODULESPATH."secretary/domain/StudentRegistration.php");
 
 	printCurrentSemester();
 			

@@ -1,8 +1,8 @@
 <?php
 
-require_once(APPPATH."/exception/PhoneException.php");
+require_once(MODULESPATH."student/exception/PhoneException.php");
 
-class PhoneOld{
+class Phone{
 	
 	// Valid number lengths
 	const MIN_NUM_LENGTH = 8;

@@ -1,14 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 
 class Request extends MX_Controller {
 
+
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('secretary/request_model');
+	}
+
 	public function approveAllRequest($requestId, $courseId){
 
-		$this->load->model("request_model");
-
+		
 		$wasApproved = $this->request_model->approveAllRequest($requestId);
 
 		if($wasApproved){
@@ -27,8 +32,7 @@ class Request extends MX_Controller {
 
 	public function refuseAllRequest($requestId, $courseId){
 
-		$this->load->model("request_model");
-
+		
 		$wasRefused = $this->request_model->refuseAllRequest($requestId);
 
 		if($wasRefused){
@@ -47,8 +51,7 @@ class Request extends MX_Controller {
 
 	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
 
-		$this->load->model("request_model");
-
+		
 		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($requestId);
 
 		if($wasApproved){
@@ -66,8 +69,7 @@ class Request extends MX_Controller {
 
 	public function refuseAllStudentRequestsByMastermind($requestId, $studentId){
 
-		$this->load->model("request_model");
-
+		
 		$wasRefused = $this->request_model->mastermindRefuseAllCurrentStudentRequest($requestId);
 
 		if($wasRefused){
@@ -113,8 +115,7 @@ class Request extends MX_Controller {
 
 	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 
-		$this->load->model("request_model");
-
+		
 		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasApproved){
@@ -131,8 +132,7 @@ class Request extends MX_Controller {
 
 	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea){
 
-		$this->load->model("request_model");
-
+		
 		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasRefused){
@@ -177,8 +177,7 @@ class Request extends MX_Controller {
 
 	public function saveMastermindMessage($mastermindId, $requestId, $message){
 
-		$this->load->model("request_model");
-
+		
 		$messageSaved = $this->request_model->saveMastermindMessage($mastermindId, $requestId, $message);
 
 		return $messageSaved;
@@ -186,8 +185,7 @@ class Request extends MX_Controller {
 
 	public function courseRequests($courseId){
 
-		$this->load->model("request_model");
-
+		
 		$this->load->model("program/semester_model");
 		$currentSemester = $this->semester_model->getCurrentSemester();
 
@@ -235,8 +233,7 @@ class Request extends MX_Controller {
 
 	public function searchForStudentRequest(){
 
-		$this->load->model("request_model");
-
+		
 		$searchType = $this->input->post('searchType');
 
 		$courseId = $this->input->post('courseId');
@@ -294,8 +291,7 @@ class Request extends MX_Controller {
 			foreach($users as $key => $user){
 				$studentsIds[$key] = $user['id'];
 			}
-			$this->load->model("request_model");
-			$courseRequests = $this->request_model->getStudentRequests($courseId, $semesterId, $studentsIds);
+						$courseRequests = $this->request_model->getStudentRequests($courseId, $semesterId, $studentsIds);
 		}
 		else{
 			$courseRequests = FALSE;
@@ -306,8 +302,7 @@ class Request extends MX_Controller {
 
 	public function getCourseRequests($courseId, $semesterId){
 
-		$this->load->model("request_model");
-
+		
 		$courseRequests = $this->request_model->getCourseRequests($courseId, $semesterId);
 
 		return $courseRequests;
@@ -315,13 +310,13 @@ class Request extends MX_Controller {
 
 	public function studentEnrollment($courseId, $userId){
 
-		$this->load->model('request_model');
+		$this->load->model('secretary/request_model');
 
-		$this->load->model("semester_model");
+		$this->load->model("program/semester_model");
 		$currentSemester = $this->semester_model->getCurrentSemester();
 
-		$temporaryRequest = new TemporaryRequest();
-		$disciplinesToRequest = $temporaryRequest->getUserTempRequest($userId, $courseId, $currentSemester['id_semester']);
+		$this->load->model("student/temporaryrequest_model");
+		$disciplinesToRequest = $this->temporaryrequest_model->getUserTempRequest($userId, $courseId, $currentSemester['id_semester']);
 
 		$thereIsDisciplinesToRequest = $disciplinesToRequest !== FALSE;
 
@@ -369,10 +364,10 @@ class Request extends MX_Controller {
 
 			$requestId = $request['id_request'];
 
-			$mastermind = new MasterMind();
-			$mastermindId = $mastermind->getMastermindByStudent($userId);
+			$this->load->module("program/mastermind");
+			$mastermindId = $this->mastermind->getMastermindByStudent($userId);
 
-			$mastermindMessage = $mastermind->getMastermindMessage($mastermindId, $requestId);
+			$mastermindMessage = $this->mastermind->getMastermindMessage($mastermindId, $requestId);
 
 			$data['mastermindMessage'] = $mastermindMessage;
 
@@ -386,15 +381,12 @@ class Request extends MX_Controller {
 
 	private function getUserRequestDisciplines($userId, $courseId, $semesterId){
 
-		$this->load->model('request_model');
-
 		$requestDisciplines = $this->request_model->getUserRequestDisciplines($userId, $courseId, $semesterId);
 
 		return $requestDisciplines;
 	}
 
 	private function getMastermindMessage($userId, $courseId, $semesterId){
-		$this->load->model('request_model');
 
 		$mastermindMessage = $this->request_model->getMastermindMessage($userId, $courseId, $semesterId);
 
@@ -410,7 +402,6 @@ class Request extends MX_Controller {
 
 	private function getRequest($requestData){
 
-		$this->load->model('request_model');
 
 		$request = $this->request_model->getRequest($requestData);
 
@@ -514,7 +505,6 @@ class Request extends MX_Controller {
 	}
 
 	public function getCourseIdByIdRequest($requestId){
-		$this->load->model('request_model');
 
 		$courseId = $this->request_model->getRequestCourseId($requestId);
 
@@ -523,7 +513,6 @@ class Request extends MX_Controller {
 
 	public function getRequestDisciplinesClasses($requestId){
 
-		$this->load->model('request_model');
 
 		$disciplineClasses = $this->request_model->getRequestDisciplinesClasses($requestId);
 
@@ -532,7 +521,6 @@ class Request extends MX_Controller {
 
 	private function getRequestDisciplines($requestId){
 
-		$this->load->model('request_model');
 
 		$disciplines = $this->request_model->getRequestDisciplinesById($requestId);
 
@@ -541,7 +529,6 @@ class Request extends MX_Controller {
 
 	private function saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval = 0){
 
-		$this->load->model('request_model');
 
 		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval);
 
@@ -579,7 +566,6 @@ class Request extends MX_Controller {
 
 	private function saveNewRequest($student, $course, $semester, $mastermindApproval = 0){
 
-		$this->load->model('request_model');
 
 		$requisitionId = $this->request_model->saveNewRequest($student, $course, $semester, $mastermindApproval);
 

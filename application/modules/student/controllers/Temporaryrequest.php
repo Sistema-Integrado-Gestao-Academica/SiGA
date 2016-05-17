@@ -4,7 +4,12 @@
 /**
  * In this class, consider where is written 'temp' equals to 'temporary'
  */
-class TemporaryRequest extends CI_Controller {
+class TemporaryRequest extends MX_Controller {
+
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('student/temporaryrequest_model');
+	}
 
 	public function confirmEnrollmentRequest($userId, $courseId, $semesterId){
 
@@ -12,11 +17,9 @@ class TemporaryRequest extends CI_Controller {
 
 		if($userRequest !== FALSE){
 
-			$this->load->model('temporaryrequest_model');
 
-			$request = new Request();
-
-			$result = $request->receiveStudentRequest($userRequest);
+			$this->load->module("secretary/request");
+			$result = $this->request->receiveStudentRequest($userRequest);
 
 			if($result !== FALSE){
 				$wasConfirmed = $this->cleanUserTempRequest($userId, $courseId, $semesterId);
@@ -41,10 +44,10 @@ class TemporaryRequest extends CI_Controller {
 
 					$message = "Algumas solitações não foram atendidas.<br><br> Ocorreu um erro ao processar as matrículas das disciplinas abaixo:<br>";
 
-					$discipline = new Discipline();
+					$this->load->model("program/discipline_model");
 					foreach($result as $offerDiscipline){
 
-						$foundDiscipline = $discipline->getDisciplineByCode($offerDiscipline['id_discipline']);
+						$foundDiscipline = $this->discipline_model->getDisciplineByCode($offerDiscipline['id_discipline']);
 						$message = $message."<br>";
 						$message = $message."{$foundDiscipline['discipline_name']}"." - Turma {$offerDiscipline['class']}";
 					}
@@ -57,15 +60,13 @@ class TemporaryRequest extends CI_Controller {
 			$status = "danger";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
-		redirect("request/studentEnrollment/{$courseId}/{$userId}");
+		redirect("secretary/request/studentEnrollment/{$courseId}/{$userId}");
 	}
 
 	private function cleanUserTempRequest($userId, $courseId, $semesterId){
-
-		$this->load->model('temporaryrequest_model');
 
 		$wasCleaned = $this->temporaryrequest_model->cleanUserTempRequest($userId, $courseId, $semesterId);
 
@@ -74,8 +75,6 @@ class TemporaryRequest extends CI_Controller {
 
 	public function getUserTempRequest($userId, $courseId, $semesterId){
 
-		$this->load->model('temporaryrequest_model');
-
 		$request = $this->temporaryrequest_model->getUserTempRequest($userId, $courseId, $semesterId);
 
 		return $request;
@@ -83,11 +82,9 @@ class TemporaryRequest extends CI_Controller {
 
 	public function addTempDisciplineToRequest($idOfferDiscipline, $courseId, $userId){
 
-		$this->load->model('temporaryrequest_model');
-
 		// Semester data
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$this->load->model("program/semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 		$semesterId = $currentSemester['id_semester'];
 
 		$userTempRequest = $this->getUserTempRequest($userId, $courseId, $semesterId);
@@ -96,17 +93,16 @@ class TemporaryRequest extends CI_Controller {
 		if($userTempRequest !== FALSE){
 
 			// Get the requested discipline hours
-			$schedule = new Schedule();
-			$schedule->getDisciplineHours($idOfferDiscipline);
-			$requestedDisciplineSchedule = $schedule->getDisciplineSchedule();
+			$this->load->module("secretary/schedule");
+			$this->schedule->getDisciplineHours($idOfferDiscipline);
+			$requestedDisciplineSchedule = $this->schedule->getDisciplineSchedule();
 
 			// Get disciplines hours from already inserted to resquest disciplines
 			$insertedDisciplines = array();
 			foreach($userTempRequest as $registeredRequest){
 
-				$schedule = new Schedule();
-				$schedule->getDisciplineHours($registeredRequest['discipline_class']);
-				$disciplineSchedule = $schedule->getDisciplineSchedule();
+				$this->schedule->getDisciplineHours($registeredRequest['discipline_class']);
+				$disciplineSchedule = $this->schedule->getDisciplineSchedule();
 
 				$insertedDisciplines[] = $disciplineSchedule;
 			}
@@ -140,15 +136,14 @@ class TemporaryRequest extends CI_Controller {
 			}
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
-		redirect("request/studentEnrollment/{$courseId}/{$userId}");
+		redirect("secretary/request/studentEnrollment/{$courseId}/{$userId}");
 	}
 
 	private function saveTempRequest($userId, $courseId, $semesterId, $idOfferDiscipline){
 
-		$this->load->model('temporaryrequest_model');
 
 		$tempRequest = array(
 			'id_student' => $userId,
@@ -171,13 +166,12 @@ class TemporaryRequest extends CI_Controller {
 
 	public function removeDisciplineFromTempRequest($userId, $courseId, $semesterId, $disciplineId, $disciplineClass){
 
-		$this->load->model('temporaryrequest_model');
 
-		$offer = new Offer();
-		$foundOffer = $offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+		$this->load->model("secretary/offer_model");
+		$foundOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
 
 		if($foundOffer !== FALSE){
-			$offerDiscipline = $offer->getCourseOfferDisciplineByClass($disciplineId, $foundOffer['id_offer'], $disciplineClass);
+			$offerDiscipline = $this->offer_model->getCourseOfferDisciplineByClass($disciplineId, $foundOffer['id_offer'], $disciplineClass);
 		}else{
 			$offerDiscipline = FALSE;
 		}
@@ -208,15 +202,13 @@ class TemporaryRequest extends CI_Controller {
 			$message = "Não foi possível remover a disciplina. Cheque os dados informados e tente novamente.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
 		redirect("request/studentEnrollment/{$courseId}/{$userId}");
 	}
 
 	private function removeTempRequest($requestToRemove){
-
-		$this->load->model('temporaryrequest_model');
 
 		$requestWasRemoved = $this->temporaryrequest_model->removeTempRequest($requestToRemove);
 

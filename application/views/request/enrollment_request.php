@@ -21,7 +21,7 @@
 		if($thereIsDisciplinesToRequest){
 
 			echo anchor(
-				"temporaryrequest/confirmEnrollmentRequest/{$userId}/{$courseId}/{$semester['id_semester']}",
+				"student/temporaryrequest/confirmEnrollmentRequest/{$userId}/{$courseId}/{$semester['id_semester']}",
 				"Confirmar solicitação",
 				"class='btn btn-primary btn-flat'"
 			);
@@ -122,4 +122,4 @@
 
 <br>
 <br>
-<?php echo anchor("student/studentCoursePage/{$courseId}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>
+<?php echo anchor("student/student/studentCoursePage/{$courseId}/{$userId}", "Voltar", "class='btn btn-danger'"); ?>
