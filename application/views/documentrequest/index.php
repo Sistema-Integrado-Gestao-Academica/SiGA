@@ -8,14 +8,14 @@
 
 		<?php
 		
-		require_once(APPPATH."/data_types/StudentRegistration.php");
+		require_once(MODULESPATH."secretary/domain/StudentRegistration.php");
 
 		if($courses !== FALSE){
 
 			foreach ($courses as $course) {
 				
 				if($course['enrollment'] !== NULL){
-					echo anchor("documentrequest/requestDocument/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
+					echo anchor("secretary/documentrequest/requestDocument/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
 					echo "<br>";
 					echo "Data matrícula: ".$course['enroll_date'];
 					echo "<br>";

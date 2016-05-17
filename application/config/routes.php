@@ -120,7 +120,7 @@ $route['offer_list'] = 'secretary/offer/offerList';
 $route['course_syllabus'] = 'secretary/syllabus/secretaryCourseSyllabus';
 $route['enroll_mastermind'] = 'secretary/secretary/enrollMasterMinds';
 $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
-$route['documents_report'] = 'documentrequest/documentRequestSecretary';
+$route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
 /*

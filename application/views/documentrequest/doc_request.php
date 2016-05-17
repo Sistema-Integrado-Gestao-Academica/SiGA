@@ -6,7 +6,6 @@
 
 <?php if($courses !== FALSE){ 
 	
-	$courseController = new Course();
 ?>
 
 	<div class="box-body table-responsive no-padding">
@@ -22,7 +21,8 @@
 		    	foreach($courses as $courseData){
 
 		    		$courseId = $courseData['id_course'];
-		    		$courseType = $courseController->getCourseTypeByCourseId($courseId);
+					$this->load->model("program/course_model");
+		    		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
 
 					echo "<tr>";
 			    		echo "<td>";
@@ -39,7 +39,7 @@
 
 			    		echo "<td>";
 			    		echo anchor(
-			    			"documentrequest/documentRequestReport/{$courseId}",
+			    			"secretary/documentrequest/documentRequestReport/{$courseId}",
 			    			"<i class='fa fa-list'></i> Visualizar Solicitações",
 			    			"class='btn-lg'"
 			    		);

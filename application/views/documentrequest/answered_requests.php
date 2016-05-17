@@ -1,4 +1,4 @@
-<?php require_once(APPPATH."/constants/DocumentConstants.php"); ?>
+<?php require_once(MODULESPATH."secretary/constants/DocumentConstants.php"); ?>
 
 <h2 class="principal">Solicitação de Documentos atentidas</h2>
 
@@ -28,14 +28,11 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    			$studentId = $request['id_student'];
-				    			$user = new Usuario();
-				    			$userData = $user->getUserById($studentId);
-				    			echo $userData['name'];
+				    			echo $user[$request['id_request']]['name']; 
 				    		echo "</td>";
 				    		
 				    		echo "<td>";
-				    			echo $studentId;
+				    			echo $request['id_student'];
 				    		echo "</td>";
 
 				    		echo "<td>";
@@ -91,4 +88,4 @@
 	</div>
 <?php }?>
 
-<?= anchor("documentrequest/documentRequestReport/{$courseId}", 'Voltar', "class='btn btn-danger'")?>
+<?= anchor("secretary/documentrequest/documentRequestReport/{$courseId}", 'Voltar', "class='btn btn-danger'")?>
