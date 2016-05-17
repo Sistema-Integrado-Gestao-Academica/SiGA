@@ -1,5 +1,5 @@
 
-<?php require_once (APPPATH."/constants/SelectionProcessConstants.php");  ?>
+<?php require_once (MODULESPATH."/program/constants/SelectionProcessConstants.php");  ?>
 
 <h2 class="principal">Novo Processo Seletivo para o curso <b><i><?php echo $course['course_name'];?></i></b> </h2>
 
@@ -200,7 +200,7 @@ Defina a ordem de execução das fases para este edital arrastando as fases para
 <br>
 
 <?= anchor(
-		"selectiveprocess/courseSelectiveProcesses/{$course['id_program']}",
+		"program/selectiveprocess/courseSelectiveProcesses/{$course['id_program']}",
 		"Voltar",
 		"class='btn btn-danger'"
 	);

@@ -22,7 +22,7 @@ if($programs !== FALSE){
 			echo "<td>";
 
 				echo anchor(
-					"selectiveprocess/programCourses/{$program['id_program']}",
+					"program/selectiveprocess/programCourses/{$program['id_program']}",
 					"Cursos do programa",
 					"class='btn btn-primary'"
 				);

@@ -140,7 +140,7 @@ $route['documents_request'] = "documentrequest/index";
 /*
  * Selection Process functionalities routes
  */
-$route['selection_process'] = 'selectiveprocess/index';
+$route['selection_process'] = 'program/selectiveprocess/index';
 
 /*
  * Test report routes

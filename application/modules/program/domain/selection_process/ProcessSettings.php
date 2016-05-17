@@ -4,7 +4,7 @@ require_once APPPATH."/exception/SelectionProcessException.php";
 require_once "phases/ProcessPhase.php";
 require_once "phases/WeightedPhase.php";
 
-class ProcessSettingsOld{
+class ProcessSettings{
 
 	const INVALID_PHASE = "As fases do processo seletivo não pode ser nulas."; 
 	const INVALID_START_DATE = "A data inicial informada é inválida. Deve estar no formato dd/mm/yyyy.";

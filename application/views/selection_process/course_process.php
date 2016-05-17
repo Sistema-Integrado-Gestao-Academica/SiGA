@@ -4,7 +4,7 @@
 <?php
 
 echo anchor(
-	"selectiveprocess/openSelectiveProcess/{$course[Course_model::ID_ATTR]}",
+	"program/selectiveprocess/openSelectiveProcess/{$course[Course_model::ID_ATTR]}",
 	"<i class='fa fa-plus-square'></i> Abrir edital para <b>".$course[Course_model::COURSE_NAME_ATTR]."</b>",
 	"class = 'btn btn-lg'"
 );
@@ -49,4 +49,4 @@ buildTableEndDeclaration();
 
 echo "<br>";
 
-echo anchor("selectiveprocess/programCourses/{$course['id_program']}", "Voltar", "class='btn btn-danger'");
+echo anchor("program/selectiveprocess/programCourses/{$course['id_program']}", "Voltar", "class='btn btn-danger'");

@@ -2,7 +2,7 @@
 
 require_once "SelectionProcess.php";
 
-class SpecialStudentProcessOld extends SelectionProcess{
+class SpecialStudentProcess extends SelectionProcess{
 	
 	public function __construct($course = FALSE, $name = "", $id = FALSE){
 		parent::__construct($course, $name);
