@@ -12,7 +12,7 @@ $submitBtn = array(
 
 <div class="form-box" id="login-box">
 	<div class="header">Atualizar Área de Título</div>
-	<?= form_open("mastermind/UpdateTitlingArea") ?>
+	<?= form_open("program/mastermind/UpdateTitlingArea") ?>
 		<div class="body bg-gray">
 			
 			<div class="form-group">	
