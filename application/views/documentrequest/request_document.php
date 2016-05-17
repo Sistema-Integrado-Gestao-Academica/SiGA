@@ -1,11 +1,11 @@
-<?php require_once(APPPATH."/constants/DocumentConstants.php"); ?>
+<?php require_once(MODULESPATH."/secretary/constants/DocumentConstants.php"); ?>
 
 <h2 class="principal">Solicitação de Documentos</h2>
 
 <h3><i class="fa fa-list"></i> Documentos já solicitados</h3>
 <?php 
 	echo anchor(
-		"documentrequest/displayArchivedRequests/{$courseId}/{$userId}",
+		"student/documentrequestStudent/displayArchivedRequests/{$courseId}/{$userId}",
 		"Solicitações arquivadas",
 		"class='btn btn-success'"
 	); 
@@ -75,13 +75,13 @@
 				    		echo "<td>";
 				    		if($request['status'] === DocumentConstants::REQUEST_READY){
 				    			echo anchor(
-					    			"documentrequest/archiveRequest/{$request['id_request']}/{$courseId}/{$userId}",
+					    			"student/documentrequestStudent/archiveRequest/{$request['id_request']}/{$courseId}/{$userId}",
 						    		"<i class='fa fa-archive'></i> Arquivar",
 						    		"class='btn btn-success'"
 					    		);
 				    		}else{
 					    		echo anchor(
-					    			"documentrequest/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
+					    			"student/documentrequestStudent/cancelRequest/{$request['id_request']}/{$courseId}/{$userId}",
 						    		"<i class='fa fa-remove'></i>",
 						    		"class='btn btn-danger'"
 					    		);
@@ -105,7 +105,7 @@
 <br>
 <h3><i class="fa fa-plus-circle"></i> Nova solicitação</h3>
 <br>
-<?= form_open('documentrequest/newDocumentRequest') ?>
+<?= form_open('student/documentrequestStudent/newDocumentRequest') ?>
 	
 	<?= form_hidden("courseId", $courseId)?>
 	<?= form_hidden("studentId", $userId)?>

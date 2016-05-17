@@ -135,7 +135,7 @@ $route['update_profile'] = 'teacher/updateProfile';
  */
 $route['student'] = 'student/student/index';
 $route['student_information'] = 'student/student/studentInformation';
-$route['documents_request'] = "documentrequest/index";
+$route['documents_request'] = "student/documentrequestStudent/index";
 
 /*
  * Selection Process functionalities routes

@@ -3,11 +3,11 @@
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."/secretary/constants/DocumentConstants.php");
 
-class DocumentRequest extends MX_Controller {
+class DocumentRequestStudent extends MX_Controller {
 
 	public function __construct(){
 		parent::__construct();
-		$this->load->model('secretary/documentrequest_model', "doc_request_model");
+		$this->load->model('student/documentrequeststudent_model', "doc_request_model");
 	}
 
 	public function index(){
@@ -17,7 +17,7 @@ class DocumentRequest extends MX_Controller {
 		$userId = $loggedUserData->getId();
 
 		$this->load->model("auth/usuarios_model");
-		$userCourse = $this->usuarios_model->getUserCourses($userId);
+		$userCourse = $this->usuarios_model->getUserCourse($userId);
 
 		$data = array(
 			'userData' => $loggedUserData,
@@ -178,8 +178,6 @@ class DocumentRequest extends MX_Controller {
 	}
 
 	public function archiveRequest($requestId, $courseId, $studentId){
-
-		
 
 		$wasArchived = $this->doc_request_model->archiveRequest($requestId);
 

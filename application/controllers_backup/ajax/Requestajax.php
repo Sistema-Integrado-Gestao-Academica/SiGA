@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/DocumentConstants.php");
+require_once(MODULESPATH."/secretary/constants/DocumentConstants.php");
 
 class RequestAjax extends CI_Controller {
 

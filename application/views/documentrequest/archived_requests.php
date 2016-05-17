@@ -1,4 +1,4 @@
-<?php require_once(APPPATH."/constants/DocumentConstants.php"); ?>
+<?php require_once(MODULESPATH."/secretary/constants/DocumentConstants.php"); ?>
 
 <h2 class="principal">Solicitação de Documentos arquivadas</h2>
 
@@ -73,4 +73,4 @@
 	</div>
 <?php }?>
 
-<?= anchor("documentrequest/requestDocument/{$courseId}/{$studentId}", 'Voltar', "class='btn btn-danger'")?>
+<?= anchor("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}", 'Voltar', "class='btn btn-danger'")?>

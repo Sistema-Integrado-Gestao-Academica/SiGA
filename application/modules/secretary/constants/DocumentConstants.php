@@ -1,6 +1,7 @@
 <?php
 
-// require_once(MODULESPATH."/secretary/controllers/Documentrequest.php");
+require_once(MODULESPATH."/student/controllers/DocumentrequestStudent.php");
+require_once(MODULESPATH."/secretary/controllers/Documentrequest.php");
 
 class DocumentConstants{
 

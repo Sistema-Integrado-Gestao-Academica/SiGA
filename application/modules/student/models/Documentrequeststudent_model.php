@@ -2,7 +2,7 @@
 
 require_once(MODULESPATH."/secretary/constants/DocumentConstants.php");
 
-class DocumentRequest_model extends CI_Model {
+class DocumentRequestStudent_model extends CI_Model {
 
 	public function allNonDeclarationTypes(){
 

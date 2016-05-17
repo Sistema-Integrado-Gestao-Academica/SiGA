@@ -63,12 +63,12 @@ if($studentData !== FALSE){
 	echo "<h3><i class='fa fa-paste'></i> Mantenha-nos atualizados</h3>";
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Informações Básicas</div>";
-		studentBasicInfoForm("student/saveBasicInfo", $hidden, $studentData);
+		studentBasicInfoForm("student/student/saveBasicInfo", $hidden, $studentData);
 }else{
 	echo "<h3><i class='fa fa-save'></i> Cadastre aqui os seus dados</h3>";
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Informações Básicas</div>";
-		studentBasicInfoForm("student/saveBasicInfo", $hidden);
+		studentBasicInfoForm("student/student/saveBasicInfo", $hidden);
 }
 
 echo "</div>";

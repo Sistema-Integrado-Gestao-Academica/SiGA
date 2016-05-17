@@ -102,19 +102,18 @@ class Student extends MX_Controller {
 
 	public function studentInformation(){
 		
-		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$userData = $session->getUserData();
 		$userId = $userData->getId();
 		
 		$studentBasicInfo = $this->getBasicInfo($userId);
 
-		$user = new Usuario();
-		$userStatus = $user->getUserStatus($userId);
-		$userCourses = $user->getUserCourses($userId);
+		$this->load->model("auth/usuarios_model");
+		$userStatus = $this->usuarios_model->getUserStatus($userId);
+		$userCourses = $this->usuarios_model->getUserCourse($userId);
 
-		$semester = new Semester();
-		$currentSemester = $semester->getCurrentSemester();
+		$this->load->model("program/semester_model");
+		$currentSemester = $this->semester_model->getCurrentSemester();
 
 		$data = array(
 			'userData' => $userData,
@@ -150,8 +149,9 @@ class Student extends MX_Controller {
 					'home_phone' => $homePhone,
 					'id_user' => $idUser
 				);
-
-								$savedBasicInformation = $this->student_model->updateBasicInfo($studentBasics);
+		
+				$this->load->model(self::MODEL_NAME);		
+				$savedBasicInformation = $this->student_model->updateBasicInfo($studentBasics);
 
 				if($savedBasicInformation){
 					$updateStatus = "success";
@@ -177,6 +177,7 @@ class Student extends MX_Controller {
 
 	private function getBasicInfo($studentId){
 
+		$this->load->model(self::MODEL_NAME);		
 		$basicInfo = $this->student_model->getBasicInfo($studentId);
 
 		if($basicInfo !== FALSE){
