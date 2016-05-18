@@ -1,6 +1,6 @@
 
 <?php 
-require_once APPPATH.'controllers/Program.php';
+require_once MODULESPATH.'program/controllers/Program.php';
 
 $programName = array(
 	"name" => "program_name",

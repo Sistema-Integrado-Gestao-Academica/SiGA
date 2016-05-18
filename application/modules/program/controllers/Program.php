@@ -299,11 +299,12 @@ class Program extends MX_Controller {
 
 	public function registerNewProgram(){
 
-		$foundGroup = Auth::getGroupByName(GroupConstants::COORDINATOR_GROUP);
+		$this->load->model("auth/module_model");
+		$foundGroup = $this->module_model->getGroupByGroupName(GroupConstants::COORDINATOR_GROUP);
 
 		if($foundGroup !== FALSE){
 
-			$this->load->module("auth/usercontroller");
+			$this->load->module("auth/userController");
 			$users = $this->usercontroller->getUsersOfGroup($foundGroup['id_group']);
 
 			if($users !== FALSE){
@@ -386,7 +387,7 @@ class Program extends MX_Controller {
 
 		// form validation
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("program_name", "Nome do Programa", "required|trim|xss_clean|callback__alpha_dash_space");
+		$this->form_validation->set_rules("program_name", "Nome do Programa", "required|trim");
 		$this->form_validation->set_rules("program_acronym", "Sigla do Programa", "required|alpha");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$programDataStatus = $this->form_validation->run();

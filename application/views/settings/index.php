@@ -1,6 +1,6 @@
 <h1 class="principal">Configurações</h1>
 
-<?=	form_open('settings/saveSemester') ?>
+<?=	form_open('program/settings/saveSemester') ?>
 	<?= form_hidden('current_semester_id', $current_semester['id_semester']) ?>
 	<?= form_hidden('password') ?>
 	<?= form_label('Semestre corrente') ?>
