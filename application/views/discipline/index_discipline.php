@@ -85,7 +85,7 @@
 
 					echo "<td>";
 
-					echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
+					echo anchor("program/discipline/{$indexes['discipline_code']}", "Editar", array(
 							"class" => "btn btn-primary btn-editar",
 							"type" => "submit",
 							"content" => "Editar"

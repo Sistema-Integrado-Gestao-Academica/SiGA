@@ -17,16 +17,10 @@ class UserController extends MX_Controller {
 
 	public function __construct(){
 		parent::__construct();
-		$this->load->model('usuarios_model');
-	}
-
-	public function loadModel(){
-		$this->load->model("usuarios_model");
+		$this->load->model('auth/usuarios_model');
 	}
 
 	public function validateUser($login, $password){
-
-		$this->load->model("usuarios_model");
 
 		try{
 			$foundUser = $this->usuarios_model->validateUser($login, $password);
@@ -58,7 +52,7 @@ class UserController extends MX_Controller {
 
 		$allUsers = $this->getAllUsers();
 
-		$this->load->model("module_model");
+		$this->load->model("auth/module_model");
 
 		$allGroups = $this->module_model->getAllModules();
 
@@ -77,10 +71,10 @@ class UserController extends MX_Controller {
 
 	public function manageGroups($idUser){
 
-		$this->load->model("module_model");
 
+		$this->load->model("auth/module_model");
 		$allGroups = $this->module_model->getAllModules();
-		$userGroups = $this->module_model->getUserGroups();
+		$userGroups = $this->module_model->getUserGroups($idUser);
 
 		$groups = array();
 		foreach($allGroups as $group){
@@ -98,8 +92,6 @@ class UserController extends MX_Controller {
 
 	public function listUsersOfGroup($idGroup){
 
-		$this->load->model("usuarios_model");
-
 		$usersOfGroup = $this->usuarios_model->getUsersOfGroup($idGroup);
 
 		$data = array(
@@ -111,8 +103,6 @@ class UserController extends MX_Controller {
 	}
 
 	public function removeAllUsersOfGroup($idGroup){
-
-		$this->load->model("usuarios_model");
 
 		$wasDeleted = $this->usuarios_model->removeAllUsersOfGroup($idGroup);
 
@@ -143,7 +133,7 @@ class UserController extends MX_Controller {
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("usuario/manageGroups/{$idUser}");
+		redirect("auth/userController/manageGroups/{$idUser}");
 	}
 
 	/**
@@ -193,7 +183,7 @@ class UserController extends MX_Controller {
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("usuario/manageGroups/{$idUser}");
+		redirect("auth/userController/manageGroups/{$idUser}");
 	}
 
 	public function removeUserFromGroup($idUser, $idGroup){
@@ -210,7 +200,7 @@ class UserController extends MX_Controller {
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("usuario/listUsersOfGroup/{$idGroup}");
+		redirect("auth/userController/listUsersOfGroup/{$idGroup}");
 	}
 
 	public function checkIfUserExists($idUser){
@@ -229,7 +219,7 @@ class UserController extends MX_Controller {
 
 	public function getUsersToBeSecretaries(){
 
-		$this->load->model("module_model");
+		$this->load->model("auth/module_model");
 		$groupData = $this->module_model->getGroupByGroupName(GroupConstants::SECRETARY_GROUP);
 		$idGroup = $groupData['id_group'];
 
@@ -246,8 +236,6 @@ class UserController extends MX_Controller {
 	}
 
 	public function getUserStatus($userId){
-
-		$this->load->model('usuarios_model');
 
 		$userStatus = $this->usuarios_model->getUserStatus($userId);
 
@@ -301,16 +289,16 @@ class UserController extends MX_Controller {
 				}
 				else{
 					$session->showFlashMessage("danger", "Não foi possível enviar o email. Tente novamente.");	
-					redirect("usuario/restorePassword");
+					redirect("auth/userController/restorePassword");
 				}
 			}
 			else{
 				$session->showFlashMessage("danger", "Não foi encontrado nenhum usuário com esse email.");
-				redirect("usuario/restorePassword");
+				redirect("auth/userController/restorePassword");
 			}
 		}
 		else{
-			$this->load->template("usuario/restore_password");
+			$this->load->template("auth/userController/restore_password");
 		}
 
 	}
@@ -368,17 +356,17 @@ class UserController extends MX_Controller {
 				}
 				else{
 					$session->showFlashMessage("danger", "Não foi possível alterar a senha. Tente novamente.");
-					redirect('usuario/changePassword');
+					redirect('auth/userController/changePassword');
 				}
 			}
 			else{
 				$session->showFlashMessage("danger", "As senhas devem ser iguais.");
-				redirect('usuario/changePassword');
+				redirect('auth/userController/changePassword');
 			}
 		}
 		else{
 			
-			$this->load->template('usuario/change_password');
+			$this->load->template('auth/userController/change_password');
 		}
 	}
 	public function validatePasswordField(){
@@ -558,16 +546,12 @@ class UserController extends MX_Controller {
 
 	public function getUserByName($userName){
 
-		$this->load->model('usuarios_model');
-
 		$foundUser = $this->usuarios_model->getUserByName($userName);
 
 		return $foundUser;
 	}
 
 	public function getUsersOfGroup($idGroup, $name = FALSE){
-
-		$this->load->model('usuarios_model');
 
 		$groups = $this->usuarios_model->getUsersOfGroup($idGroup, $name);
 
@@ -576,15 +560,12 @@ class UserController extends MX_Controller {
 
 	public function getUserById($userId){
 
-		$this->load->model('usuarios_model');
-
 		$foundUser = $this->usuarios_model->getUserById($userId);
 
 		return $foundUser;
 	}
 
 	public function getUserGroupNameByIdGroup($groupId){
-		$this->load->model('usuarios_model');
 
 		$groupName = $this->usuarios_model->getUserGroupNameByIdGroup($groupId);
 
@@ -614,7 +595,6 @@ class UserController extends MX_Controller {
 	}
 
 	public function getUserNameById($idUser){
-		$this->load->model('usuarios_model');
 		$userName = $this->usuarios_model->getNameByUserId($idUser);
 
 		return $userName;
@@ -668,7 +648,7 @@ class UserController extends MX_Controller {
 
 					if ($new_password != $blank_password && $password != $user->getPassword()) {
 						$session->showFlashMessage("danger", "Senha atual incorreta");
-						redirect("usuario/profile");
+						redirect("auth/userController/profile");
 					} 
 					else if ($new_password == $blank_password) {
 						$new_password = $user->getPassword();
@@ -698,18 +678,18 @@ class UserController extends MX_Controller {
 					}
 					catch(UserException $e){
 						$session->showFlashMessage("danger", $e->getMessage());
-						redirect("usuario/conta");
+						redirect("auth/userController/conta");
 					}
 
 				}
 				else{
 					$session->showFlashMessage("danger", "Senha atual incorreta.");
-					redirect("usuario/conta");
+					redirect("auth/userController/conta");
 				}
 			}
 			catch(LoginException $e){
 				$session->showFlashMessage("danger", "Senha atual incorreta.");
-				redirect("usuario/conta");
+				redirect("auth/userController/conta");
 			}
 		}
 		else{
