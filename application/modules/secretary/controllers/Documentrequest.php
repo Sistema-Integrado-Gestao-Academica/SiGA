@@ -148,7 +148,8 @@ class DocumentRequest extends MX_Controller {
 		$student = $documentRequestData["id_student"];
 		$course = $documentRequestData["id_course"];
 
-		$this->navbarnotification->documentRequestNotification($student, $course, $requestedDoc);
+		$this->load->module("notification/notification");
+		$this->notification->documentRequestNotification($student, $course, $requestedDoc);
 
 		return $wasSaved;
 	}

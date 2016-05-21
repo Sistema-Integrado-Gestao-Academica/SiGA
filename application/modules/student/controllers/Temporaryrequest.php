@@ -94,6 +94,7 @@ class TemporaryRequest extends MX_Controller {
 
 			// Get the requested discipline hours
 			$this->load->module("secretary/schedule");
+
 			$this->schedule->getDisciplineHours($idOfferDiscipline);
 			$requestedDisciplineSchedule = $this->schedule->getDisciplineSchedule();
 
@@ -107,7 +108,7 @@ class TemporaryRequest extends MX_Controller {
 				$insertedDisciplines[] = $disciplineSchedule;
 			}
 
-			$conflicts = $schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
+			$conflicts = $this->schedule->checkHourConflits($requestedDisciplineSchedule, $insertedDisciplines);
 
 			$tryToSave = FALSE;
 			if($conflicts !== FALSE){
@@ -166,7 +167,6 @@ class TemporaryRequest extends MX_Controller {
 
 	public function removeDisciplineFromTempRequest($userId, $courseId, $semesterId, $disciplineId, $disciplineClass){
 
-
 		$this->load->model("secretary/offer_model");
 		$foundOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
 
@@ -205,7 +205,7 @@ class TemporaryRequest extends MX_Controller {
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 
-		redirect("request/studentEnrollment/{$courseId}/{$userId}");
+		redirect("secretary/request/studentEnrollment/{$courseId}/{$userId}");
 	}
 
 	private function removeTempRequest($requestToRemove){

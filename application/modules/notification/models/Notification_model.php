@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/data_types/notification/ActionNotification.php");
+require_once(MODULESPATH."notification/domain/ActionNotification.php");
 
-class NotificationModel{
+class Notification_model extends CI_Model{
 	
 	const NOTIFICATION_TABLE = "notification";
 	const ID_COLUMN = "id_notification";

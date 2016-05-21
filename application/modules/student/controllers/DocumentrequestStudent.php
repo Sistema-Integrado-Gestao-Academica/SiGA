@@ -113,11 +113,6 @@ class DocumentRequestStudent extends MX_Controller {
 
 				$wasSaved = $this->saveDocumentRequest($requestData);
 
-				/**
-					sendNotification
-					$this->navbarnotification->documentRequestNotification
-				 */
-
 				if($wasSaved){
 					$status = "success";
 					$message = "Solicitação de documento enviada com sucesso.";
@@ -138,7 +133,6 @@ class DocumentRequestStudent extends MX_Controller {
 	}
 
 	private function saveDocumentRequest($documentRequestData){
-	
 		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
 
 		$docRequest = new DocumentConstants();
@@ -148,7 +142,8 @@ class DocumentRequestStudent extends MX_Controller {
 		$student = $documentRequestData["id_student"];
 		$course = $documentRequestData["id_course"];
 
-		$this->navbarnotification->documentRequestNotification($student, $course, $requestedDoc);
+		$this->load->module("notification/notification");
+		$this->notification->documentRequestNotification($student, $course, $requestedDoc);
 
 		return $wasSaved;
 	}

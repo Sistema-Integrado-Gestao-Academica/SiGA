@@ -1,20 +1,20 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once("NotificationModel.php");
-
 require_once(MODULESPATH."auth/domain/User.php");
-
-require_once(APPPATH."/data_types/notification/RegularNotification.php");
-require_once(APPPATH."/data_types/notification/ActionNotification.php");
-
-require_once(APPPATH."/data_types/notification/navbar/DocumentRequestNotification.php");
-
-require_once(APPPATH."/exception/NotificationException.php");
+require_once(MODULESPATH."notification/domain/RegularNotification.php");
+require_once(MODULESPATH."notification/domain/ActionNotification.php");
+require_once(MODULESPATH."notification/domain/navbar/DocumentRequestNotification.php");
+require_once(MODULESPATH."notification/exception/NotificationException.php");
 
 /**
  * Facade class to receive all NavBar notifications request
  */
-class NavBarNotification{
+class Notification extends MX_Controller{
+
+	public function __construct(){
+		parent::__construct();
+		$this->load->model("notification/notification_model", "model");
+	}
 
 	/**
 	 * Notify the secretaries of the given course that the request student requested a document
@@ -24,13 +24,11 @@ class NavBarNotification{
 	 */
 	public function documentRequestNotification($requestStudent, $courseToNotify, $requestedDoc){
 
-
 		// Get request student name
 		$this->load->model("auth/usuarios_model");
 		$student = $this->usuarios_model->getUserById($requestStudent);
 		$studentName = $student["name"];
 		
-
 		// Get all secretaries of the course
 		$this->load->model("program/course_model");
 		$secretaries = $this->course_model->getCourseSecretaries($courseToNotify);
@@ -38,7 +36,6 @@ class NavBarNotification{
 		if($secretaries !== FALSE){
 
 			foreach($secretaries as $secretary){
-
 
 				try{
 					$userId = $secretary["id_user"];
@@ -81,27 +78,21 @@ class NavBarNotification{
 
 	public function sendNotification($notification){
 
-		$model = new NotificationModel();
-
-		$saved = $model->saveNotification($notification);
+		$saved = $this->model->saveNotification($notification);
 
 		return $saved;
 	}
 
 	public function setNotificationSeen($notificationId){
 
-		$model = new NotificationModel();
-
-		$updated = $model->setNotificationSeen($notificationId);
+		$updated = $this->model->setNotificationSeen($notificationId);
 
 		return $updated;
 	}
 
 	public function getUserNotifications($user){
-
-		$model = new NotificationModel();
 		
-		$foundNotifications = $model->getUserNotifications($user);
+		$foundNotifications = $this->model->getUserNotifications($user);
 		
 		$notifications = array();
 		$notSeenNotifications = 0;
@@ -109,12 +100,12 @@ class NavBarNotification{
 
 			foreach($foundNotifications as $notification){
 
-				$id = $notification[NotificationModel::ID_COLUMN];
-				$userId = $notification[NotificationModel::USER_COLUMN];
-				$content = $notification[NotificationModel::CONTENT_COLUMN];
-				$seen = $notification[NotificationModel::SEEN_COLUMN];
-				$link = $notification[NotificationModel::LINK_COLUMN];
-				$type = $notification[NotificationModel::TYPE_COLUMN];
+				$id = $notification[Notification_model::ID_COLUMN];
+				$userId = $notification[Notification_model::USER_COLUMN];
+				$content = $notification[Notification_model::CONTENT_COLUMN];
+				$seen = $notification[Notification_model::SEEN_COLUMN];
+				$link = $notification[Notification_model::LINK_COLUMN];
+				$type = $notification[Notification_model::TYPE_COLUMN];
 
 				switch($type){
 					case DocumentRequestNotification::class:

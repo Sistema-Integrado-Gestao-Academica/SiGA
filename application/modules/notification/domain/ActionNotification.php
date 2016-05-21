@@ -2,7 +2,7 @@
 
 require_once("BarNotification.php");
 
-require_once(APPPATH."/exception/NotificationException.php");
+require_once(MODULESPATH."notification/exception/NotificationException.php");
 
 class ActionNotification extends BarNotification{
 

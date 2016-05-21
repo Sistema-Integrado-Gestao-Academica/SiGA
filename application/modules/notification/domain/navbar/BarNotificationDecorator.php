@@ -1,6 +1,6 @@
 <?php
 
-require_once APPPATH."/data_types/notification/BarNotification.php";
+require_once MODULESPATH."notification/domain/BarNotification.php";
 
 abstract class BarNotificationDecorator extends BarNotification{
 	

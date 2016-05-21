@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/exception/LoginException.php");
-require_once(MODULESPATH."/auth/controllers/SessionManager.php");
 
 class Semester extends MX_Controller {
 
@@ -9,13 +8,6 @@ class Semester extends MX_Controller {
 		parent::__construct();
 		$this->load->model('program/semester_model');
 		
-	}
-
-	public function getCurrentSemester(){
-
-		$currentSemester = $this->semester_model->getCurrentSemester();
-
-		return $currentSemester;
 	}
 
 	public function saveSemester() {

@@ -1,10 +1,9 @@
 <?php
 
-require_once("Notification.php");
+require_once("BaseNotification.php");
+require_once(MODULESPATH."notification/exception/NotificationException.php");
 
-require_once(APPPATH."/exception/NotificationException.php");
-
-abstract class BarNotification extends Notification{
+abstract class BarNotification extends BaseNotification{
 
 	const INVALID_ID = "O ID da notificação deve ser um número maior que zero.";
 	const INVALID_CONTENT = "Não pode existir uma notificação vazia. Deve conter um texto.";
@@ -86,9 +85,8 @@ abstract class BarNotification extends Notification{
 
 	public function notify(){
 
-		$ci =& get_instance();
-
-		$sent = $ci->navbarnotification->sendNotification($this);
+		// On notification_helper
+		$sent = sendNotification($this);
 
 		if(!$sent){
 			throw new NotificationException(self::COULDNT_SEND_NOTIFICATION);	

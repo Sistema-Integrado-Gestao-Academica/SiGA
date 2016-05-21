@@ -7,8 +7,8 @@ require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/domain/User.php");
 
-require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
-require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
+require_once(MODULESPATH."notification/domain/emails/RestorePasswordEmail.php");
+require_once(MODULESPATH."notification/domain/emails/ConfirmSignUpEmail.php");
 
 require_once(MODULESPATH."auth/exception/UserException.php");
 require_once(MODULESPATH."auth/exception/LoginException.php");
@@ -263,10 +263,17 @@ class UserController extends MX_Controller {
 	}
 
 	public function profile() {
-		$loggedUser = getSession();
-		$userId = $loggedUser['user']['id'];	 
+
+		$session = getSession();
+		$loggedUser = $session->getUserData();
+		$userId = $loggedUser->getId();
+
 		$user = $this->usuarios_model->getObjectUser($userId);
-		$data = array('user' => $user);
+		
+		$data = array(
+			'user' => $user
+		);
+		
 		$this->load->template("auth/user/conta", $data);
 	}
 
@@ -492,30 +499,32 @@ class UserController extends MX_Controller {
 	}
 
 	public function updateProfile(){
-		
+
 		$user = $this->getAccountForm();
-			if(!is_null($user)){
 
-				$updated = $this->usuarios_model->update($user);
+		if(!is_null($user)){
 
-				$session = getSession();
-				if ($updated) {
-					$session->login($user);
-					$session->showFlashMessage("success", "Os dados foram alterados");
-				} 
-				else if (!$updated){
-					$session->showFlashMessage("danger", "Os dados não foram alterados");
-				}
-				redirect('usuario/profile');
+			$updated = $this->usuarios_model->update($user);
+
+			$session = getSession();
+			if ($updated) {
+				$session->login($user);
+				$session->showFlashMessage("success", "Os dados foram alterados");
+			} 
+			else if (!$updated){
+				$session->showFlashMessage("danger", "Os dados não foram alterados");
 			}
-			else{
-				
-				$this->profile();
-			}
+			redirect('profile');
+		}
+		else{
+			
+			$this->profile();
+		}
 	}
 
 	private function validateEmailField($oldEmail, $newEmail){
 		$this->load->library("form_validation");
+
 		$this->form_validation->set_rules("name", "Nome", "trim|valid_name");
 		
 		if($oldEmail != $newEmail){
@@ -523,7 +532,6 @@ class UserController extends MX_Controller {
 		}
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
-
 		return $success;
 	}
 
@@ -621,7 +629,7 @@ class UserController extends MX_Controller {
 	}
 
 	private function getAccountForm() {
-		
+
 		$id = $this->input->post("id");
 		$name = $this->input->post("name");
 		$oldEmail = $this->input->post("oldEmail");
@@ -634,63 +642,51 @@ class UserController extends MX_Controller {
 
 		$success = $this->validateEmailField($oldEmail, $email);
 
+
 		if($success){
 
-			$user = $this->usuarios_model->getObjectUser($id);
+			$session = getSession();
+			$user = $session->getUserData();
+			$userId = $user->getId();
+
+			$user = $this->usuarios_model->getObjectUser($userId);
 			$login = $user->getLogin();
 
-			$session = getSession();
+			if ($new_password != $blank_password && $password != $user->getPassword()) {
+				$session->showFlashMessage("danger", "Senha atual incorreta");
+				redirect("profile");
+			} 
+			else if ($new_password == $blank_password) {
+				$new_password = $user->getPassword();
+			}
 
+			if (empty($name)) {
+				$name = $user->getName();
+			}
+
+			if (empty($email)) {
+				$email = $user->getEmail();
+			}
+			
+			if (empty($homePhone)) {
+				$homePhone = $user->getHomePhone();
+			}
+			
+			if (empty($cellPhone)) {
+				$cellPhone = $user->getCellPhone();
+			}
+			
 			try{
-				$foundUser = $this->validateUser($login, $password);
+				$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 
-				if($foundUser !== FALSE){
+				return $user;
 
-					if ($new_password != $blank_password && $password != $user->getPassword()) {
-						$session->showFlashMessage("danger", "Senha atual incorreta");
-						redirect("auth/userController/profile");
-					} 
-					else if ($new_password == $blank_password) {
-						$new_password = $user->getPassword();
-					}
-
-					if (empty($name)) {
-						$name = $user->getName();
-					}
-
-					if (empty($email)) {
-						$email = $user->getEmail();
-					}
-					
-					if (empty($homePhone)) {
-						$homePhone = $user->getHomePhone();
-					}
-					
-					if (empty($cellPhone)) {
-						$cellPhone = $user->getCellPhone();
-					}
-					
-					try{
-						$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
-
-						return $user;
-
-					}
-					catch(UserException $e){
-						$session->showFlashMessage("danger", $e->getMessage());
-						redirect("auth/userController/conta");
-					}
-
-				}
-				else{
-					$session->showFlashMessage("danger", "Senha atual incorreta.");
-					redirect("auth/userController/conta");
-				}
 			}
-			catch(LoginException $e){
-				$session->showFlashMessage("danger", "Senha atual incorreta.");
-				redirect("auth/userController/conta");
+			catch(UserException $e){
+				$session->showFlashMessage("danger", $e->getMessage());
+				redirect("profile");
 			}
+
 		}
 		else{
 			$user = NULL;

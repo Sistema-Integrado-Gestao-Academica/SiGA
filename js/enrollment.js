@@ -26,7 +26,7 @@ function searchGuestsToEnroll(){
 
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/ajax/enrollmentajax/searchGuestUsersToEnroll";
+	var urlToPost = siteUrl + "/secretary/ajax/enrollmentajax/searchGuestUsersToEnroll";
 
 	$.post(
 		urlToPost,
@@ -47,7 +47,7 @@ function searchDisciplineClasses(){
 	var userId = $("#userId").val();
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/ajax/enrollmentajax/searchDisciplinesToRequest";
+	var urlToPost = siteUrl + "/secretary/ajax/enrollmentajax/searchDisciplinesToRequest";
 
 	$.post(
 		urlToPost,

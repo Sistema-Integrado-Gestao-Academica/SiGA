@@ -1,6 +1,6 @@
 <?php
 
-require_once APPPATH."/data_types/notification/EmailNotification.php";
+require_once MODULESPATH."notification/domain/EmailNotification.php";
 
 class RestorePasswordEmail extends EmailNotification{
 

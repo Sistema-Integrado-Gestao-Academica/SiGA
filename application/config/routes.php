@@ -55,11 +55,13 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['conta'] = 'auth/userController/conta';
 $route['profile'] = 'auth/userController/profile';
+$route['update_user_profile'] = 'auth/userController/updateProfile';
 $route['logout'] = 'auth/login/logout';
 $route['register'] = 'auth/userController/register';
 $route['register_user'] = 'auth/userController/newUser';
-$route['confirm_register'] = 'useractivation/confirm';
-$route['resent_confirmation_email/(:num)'] = 'useractivation/resentEmail/$1/';
+$route['confirm_register'] = 'auth/useractivation/confirm';
+$route['resent_confirmation_email/(:num)'] = 'auth/useractivation/resentEmail/$1/';
+
 $route['configuracoes'] = 'program/settings';
 $route['cursos'] = 'program/course/index';
 $route['departamentos'] = 'departamento/formulario';
@@ -141,6 +143,11 @@ $route['documents_request'] = "student/documentrequestStudent/index";
  * Selection Process functionalities routes
  */
 $route['selection_process'] = 'program/selectiveprocess/index';
+
+/*
+ * Enrollment routes
+ */
+$route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/$2';
 
 /*
  * Test report routes

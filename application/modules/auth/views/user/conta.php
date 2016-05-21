@@ -1,7 +1,7 @@
 <h2 class="text-center">Conta</h2>
 
 <?php
-echo form_open("usuario/updateProfile");
+echo form_open("update_user_profile");
 
 echo form_hidden('id', $user->getId());
 echo form_hidden('oldEmail', $user->getEmail());
@@ -101,7 +101,7 @@ echo form_close();
 
 /* ------------------------------------------------------------------------ */
 
-echo form_open("usuario/remove", "onsubmit='return deleteAccount()'");
+echo form_open("userController/remove", "onsubmit='return deleteAccount()'");
 
 echo form_button(array(
 	"id" => "delete",
