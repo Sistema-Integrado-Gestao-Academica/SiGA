@@ -1,7 +1,5 @@
 <?php 
 
-require_once(MODULESPATH."program/controllers/Semester.php");
-
 function printCurrentSemester(){
 
 	$ci =& get_instance();
