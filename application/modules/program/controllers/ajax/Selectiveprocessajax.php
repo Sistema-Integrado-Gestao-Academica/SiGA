@@ -1,22 +1,22 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/SelectionProcessConstants.php");
-require_once(APPPATH."/exception/SelectionProcessException.php");
+require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
+require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
 
-require_once(APPPATH."/data_types/selection_process/SelectionProcess.php");
-require_once(APPPATH."/data_types/selection_process/RegularStudentProcess.php");
-require_once(APPPATH."/data_types/selection_process/SpecialStudentProcess.php");
-require_once(APPPATH."/data_types/selection_process/ProcessSettings.php");
-
-require_once(APPPATH."/data_types/selection_process/phases/ProcessPhase.php");
-require_once(APPPATH."/data_types/selection_process/phases/Homologation.php");
-require_once(APPPATH."/data_types/selection_process/phases/WeightedPhase.php");
-require_once(APPPATH."/data_types/selection_process/phases/PreProjectEvaluation.php");
-require_once(APPPATH."/data_types/selection_process/phases/WrittenTest.php");
-require_once(APPPATH."/data_types/selection_process/phases/OralTest.php");
+require_once(MODULESPATH."/program/domain/selection_process/SelectionProcess.php");
+require_once(MODULESPATH."/program/domain/selection_process/RegularStudentProcess.php");
+require_once(MODULESPATH."/program/domain/selection_process/SpecialStudentProcess.php");
+require_once(MODULESPATH."/program/domain/selection_process/ProcessSettings.php");
 
 
-class SelectiveProcessAjax extends CI_Controller {
+require_once(MODULESPATH."/program/domain/selection_process/phases/ProcessPhase.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/Homologation.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/WeightedPhase.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/PreProjectEvaluation.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/WrittenTest.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/OralTest.php");
+
+class SelectiveProcessAjax extends MX_Controller {
 
     public function getPhasesToSort(){
 

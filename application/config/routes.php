@@ -81,8 +81,8 @@ $route['user_report'] = 'auth/userController/usersReport';
 $route['enrollMastermind/(:num)'] = 'program/mastermind/enrollMastermindToStudent/$1';
 $route['checkMastermind/(:num)'] = 'program/mastermind/displayMastermindPage/$1';
 $route['mastermind_home'] = 'program/mastermind/index';
-$route['coordinator_home'] = 'coordinator/index';
-$route['course_report'] = 'coordinator/course_report';
+$route['coordinator_home'] = 'program/coordinator/index';
+$route['course_report'] = 'program/coordinator/course_report';
 $route['program'] = 'program/index';
 $route['research_lines'] = 'program/course/research_lines';
 

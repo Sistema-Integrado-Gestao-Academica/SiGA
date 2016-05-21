@@ -32,18 +32,18 @@ class Coordinator extends MX_Controller {
 	}
 	
 	public function getCoordinatorCourseData($idCoordinator){
-		$this->load->model("coordinator_model");
+		$this->load->model("program/coordinator_model");
 		
 		$courseId = $this->coordinator_model->getCoordinatorCourse($idCoordinator);
 		
-		$this->load->model("course_model");
+		$this->load->model("program/course_model");
 		$course = $this->course_model->getCourseById($courseId);
 		
 		return $course;
 	}
 	
 	public function getCourseSecretaries($courseId){
-		$this->load->model("course_model");
+		$this->load->model("program/course_model");
 		
 		$secretaries = $this->course_model->getCourseSecretaries($courseId);
 		
@@ -51,7 +51,7 @@ class Coordinator extends MX_Controller {
 	}
 	
 	public function getTotalStudents($idCoordinator){
-		$this->load->model("coordinator_model");
+		$this->load->model("program/coordinator_model");
 		
 		$students = $this->coordinator_model->getTotalCourseStudents($idCoordinator);
 		
@@ -59,7 +59,7 @@ class Coordinator extends MX_Controller {
 	}
 	
 	public function getTotalMasterminds($idCoordinator){
-		$this->load->model("coordinator_model");
+		$this->load->model("program/coordinator_model");
 		
 		$masterminds = $this->coordinator_model->getTotalCourseMasterminds($idCoordinator);
 		
@@ -68,7 +68,7 @@ class Coordinator extends MX_Controller {
 	}
 	
 	public function getMastermindStudents($mastermindId){
-		$this->load->model('mastermind_model');
+		$this->load->model('program/mastermind_model');
 
 		$students = $this->mastermind_model->getStutentsByIdMastermind($mastermindId);
 		
@@ -76,7 +76,7 @@ class Coordinator extends MX_Controller {
 	}
 	
 	public function getEnroledStudents($idCoordinator){
-		$this->load->model("coordinator_model");
+		$this->load->model("program/coordinator_model");
 		
 		$students = $this->coordinator_model->getTotalEnroledStudents($idCoordinator);
 		
@@ -85,7 +85,7 @@ class Coordinator extends MX_Controller {
 	}
 	
 	public function getNotEnroledStudents($idCoordinator){
-		$this->load->model("coordinator_model");
+		$this->load->model("program/coordinator_model");
 	
 		$students = $this->coordinator_model->getTotalNotEnroledStudents($idCoordinator);
 	
@@ -95,7 +95,7 @@ class Coordinator extends MX_Controller {
 	
 	public function manageDimensions(){
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
 
@@ -111,7 +111,7 @@ class Coordinator extends MX_Controller {
 		$dimensionName = $this->input->post('new_dimension_name');
 		$dimensionWeight = $this->input->post('dimension_weight');
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$wasSaved = $this->evaluation->newDimensionType($dimensionName, $dimensionWeight);
 
@@ -123,14 +123,14 @@ class Coordinator extends MX_Controller {
 			$message = "Não foi possível criar a dimensão. Não é permitido nomes iguais, cheque o nome informado.";
 		}
 		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("coordinator/manageDimensions");
+		redirect("program/coordinator/manageDimensions");
 	}
 
 	public function addDimensionToEvaluation($programId, $evaluationId, $dimensionType, $dimensionWeight = 0){
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$wasAdded = $this->evaluation->addDimensionTypeToEvaluation($evaluationId, $dimensionType, $dimensionWeight);
 
@@ -142,18 +142,18 @@ class Coordinator extends MX_Controller {
 			$message = "Não foi possível adicionar a dimensão à essa avaliação.";
 		}
 				
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("coordinator/program_evaluation_index/{$programId}/{$evaluationId}");
+		redirect("program/coordinator/program_evaluation_index/{$programId}/{$evaluationId}");
 	}
 
 	public function coordinator_programs(){
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$userData = $session->getUserData();
 		$coordinatorId = $userData->getId();
 
-		$this->load->model('program_model');
+		$this->load->model('program/program_model');
 		$programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 		
 		$data = array(
@@ -167,7 +167,7 @@ class Coordinator extends MX_Controller {
 
 	public function program_evaluation_index($programId, $programEvaluationId){
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getDimensionTypesForEvaluation($programEvaluationId);
 		$allDimensionsTypes = $this->evaluation->getAllDimensionTypes();
@@ -188,7 +188,7 @@ class Coordinator extends MX_Controller {
 
 	public function evaluationDimensionData($evaluationId, $dimensionType, $programId){
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$dimensionData = $this->evaluation->getDimensionData($evaluationId, $dimensionType);
 		$allDimensionsTypes = $this->evaluation->getAllDimensionTypes();
@@ -217,7 +217,7 @@ class Coordinator extends MX_Controller {
 			$weightsSum = 0;
 		}
 
-		$this->load->model('program_model');
+		$this->load->model('program/program_model');
 		$evaluationData = $this->program_model->getProgramEvaluation($evaluationId);
 
 		$data = array(
@@ -233,7 +233,7 @@ class Coordinator extends MX_Controller {
 
 	public function disableDimension($evaluationId, $dimensionType, $dimensionId, $programId){
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$wasDisabled = $this->evaluation->disableDimension($dimensionId);
 
@@ -245,14 +245,14 @@ class Coordinator extends MX_Controller {
 			$message = "Não foi possível desativar a dimensão.";
 		}
 		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}/{$programId}");
+		redirect("program/coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}/{$programId}");
 	}
 
 	public function createProgramEvaluation($programId){
 
-		$this->load->model('program_model');
+		$this->load->model('program/program_model');
 		$programData = $this->program_model->getProgramById($programId);
 
 		$data = array(
@@ -264,7 +264,7 @@ class Coordinator extends MX_Controller {
 	
 	public function updateProgramArea($programId){
 
-		$this->load->model('program_model');
+		$this->load->model('program/program_model');
 		$programData = $this->program_model->getProgramById($programId);
 		
 		$programAareas = $this->program_model->getAllProgramAreas();
@@ -328,14 +328,14 @@ class Coordinator extends MX_Controller {
 			$message = "Não foi possível salvar a avaliação. Tente novamente.";
 		}
 		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect('coordinator/coordinator_programs');
+		redirect('program/coordinator/coordinator_programs');
 	}
 
 	private function initiateDimensionsToEvaluation($evaluationId){
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
 
@@ -361,7 +361,7 @@ class Coordinator extends MX_Controller {
 		$programId = $this->input->post('programId');
 		$newWeight = $this->input->post('dimension_new_weight');
 		
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/program_evaluation_model', 'evaluation');
 
 		$wasChanged = $this->evaluation->updateDimensionWeight($dimensionId, $newWeight);
 
@@ -373,14 +373,14 @@ class Coordinator extends MX_Controller {
 			$message = "Não foi possível alterar o peso da dimensão. Tente novamente.";
 		}
 		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
-		redirect("coordinator/evaluationDimensionData/{$programEvaluationId}/{$dimensionType}/{$programId}");
+		redirect("program/coordinator/evaluationDimensionData/{$programEvaluationId}/{$dimensionType}/{$programId}");
 	}
 
 	public function displayProgramCourses($programId){
 
-		$this->load->model('program_model');
+		$this->load->model('program/program_model');
 		$programData = $this->program_model->getProgramById($programId);
 
 		$programCourses = $this->program_model->getProgramCourses($programId);
@@ -395,10 +395,9 @@ class Coordinator extends MX_Controller {
 
 	public function displayCourseStudents($courseId){
 
-		$course = new Course();
-
-		$courseStudents = $course->getCourseStudents($courseId);
-		$courseData = $course->getCourseById($courseId);
+		$this->load->model("program/course_model");
+		$courseStudents = $this->course_model->getCourseStudents($courseId);
+		$courseData = $this->course_model->getCourseById($courseId);
 
 		$data = array(
 			'courseStudents' => $courseStudents,

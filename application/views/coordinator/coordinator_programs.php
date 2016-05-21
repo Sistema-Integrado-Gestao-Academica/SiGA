@@ -58,7 +58,7 @@
 			                        	foreach($evaluationsPeriods as $evaluationId => $period){
 			                        		echo "<li>";
 							    				echo anchor(
-							    					"coordinator/program_evaluation_index/{$program['id_program']}/{$evaluationId}",
+							    					"program/coordinator/program_evaluation_index/{$program['id_program']}/{$evaluationId}",
 							    					$period
 							    				);
 			                        		echo "</li>";
@@ -69,10 +69,10 @@
 				    			}else{
 				    				echo "<div class='callout callout-info'>";
 				    					echo "<h4>Nenhuma avaliação para o programa.</h4>";
-				    					echo anchor("coordinator/createProgramEvaluation/{$program['id_program']}", "Criar Avaliação", "class='btn btn-primary btn-flat'");
+				    					echo anchor("program/coordinator/createProgramEvaluation/{$program['id_program']}", "Criar Avaliação", "class='btn btn-primary btn-flat'");
 				    				echo "</div>";
 				    			}
-				    			echo anchor("coordinator/updateProgramArea/{$program['id_program']}", "Atualizar área do programa", "class='btn btn-primary btn-flat'");
+				    			echo anchor("program/coordinator/updateProgramArea/{$program['id_program']}", "Atualizar área do programa", "class='btn btn-primary btn-flat'");
 				    		echo "</td>";
 			    		echo "</tr>";	
 			    	}
