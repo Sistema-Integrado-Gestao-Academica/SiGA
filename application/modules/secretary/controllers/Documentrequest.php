@@ -29,8 +29,6 @@ class DocumentRequest extends MX_Controller {
 
 	public function requestDocument($courseId, $userId){
 
-		
-
 		$studentRequests = $this->doc_request_model->getStudentsRequestOfCourse($userId, $courseId);
 
 		$types = $this->doc_request_model->allNonDeclarationTypes();
@@ -141,8 +139,6 @@ class DocumentRequest extends MX_Controller {
 
 	private function saveDocumentRequest($documentRequestData){
 
-		
-
 		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
 
 		$docRequest = new DocumentConstants();
@@ -152,14 +148,13 @@ class DocumentRequest extends MX_Controller {
 		$student = $documentRequestData["id_student"];
 		$course = $documentRequestData["id_course"];
 
-		$this->navbarnotification->documentRequestNotification($student, $course, $requestedDoc);
+		$this->load->module("notification/notification");
+		$this->notification->documentRequestNotification($student, $course, $requestedDoc);
 
 		return $wasSaved;
 	}
 
 	public function cancelRequest($requestId, $courseId, $studentId){
-
-		
 
 		$wasDeleted = $this->doc_request_model->deleteRequest($requestId);
 

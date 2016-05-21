@@ -3,7 +3,7 @@
 <?php
 	require_once(MODULESPATH."auth/Auth.php");
 	require_once(MODULESPATH."auth/constants/GroupConstants.php");
-	require_once(APPPATH."/data_types/notification/ActionNotification.php");
+	require_once(MODULESPATH."notification/domain/ActionNotification.php");
 
 	$session = getSession();
 
@@ -15,14 +15,13 @@
         $userId = $user->getId();
 
         $userGroups = $session->getUserGroups();
-		
 
 		// Getting user notifications
-		$userNotifications = $this->navbarnotification->getUserNotifications($user);
+		$userNotifications = getUserNotifications();
 
 		$notifications = $userNotifications["notifications"];
 		$notSeenNotifications = $userNotifications["not_seen"];
-		
+
 		echo form_input(array(
 			'id' => "notifications_amount",
 			'name' => "notifications_amount",

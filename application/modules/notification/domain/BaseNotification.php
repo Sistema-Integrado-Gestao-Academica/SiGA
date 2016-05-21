@@ -1,9 +1,9 @@
 <?php
 
-require_once(APPPATH."/exception/NotificationException.php");
+require_once(MODULESPATH."notification/exception/NotificationException.php");
 require_once(MODULESPATH."auth/domain/User.php");
 
-abstract class Notification{
+abstract class BaseNotification{
 
 	const INVALID_USER = "Usuário da notificação inválido. Uma notificação deve ser enviada para um usuário do sistema.";
 

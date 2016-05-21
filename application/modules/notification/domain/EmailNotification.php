@@ -1,11 +1,11 @@
 <?php
 
-require_once APPPATH."/exception/EmailNotificationException.php";
+require_once("BaseNotification.php");
 require_once APPPATH."/constants/EmailConstants.php";
 require_once APPPATH."/constants/EmailSenderData.php";
-require_once("Notification.php");
+require_once MODULESPATH."notification/exception/EmailNotificationException.php";
 
-abstract class EmailNotification extends Notification{
+abstract class EmailNotification extends BaseNotification{
 
 	// Error messages 
 	const EMPTY_NAME = "O nome não pode ser nulo nem vazio.";

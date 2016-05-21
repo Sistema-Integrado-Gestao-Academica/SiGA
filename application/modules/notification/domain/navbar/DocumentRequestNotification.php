@@ -2,7 +2,7 @@
 
 require_once ("BarNotificationDecorator.php");
 
-require_once (APPPATH."/data_types/notification/RegularNotification.php");
+require_once (MODULESPATH."notification/domain/RegularNotification.php");
 
 class DocumentRequestNotification extends BarNotificationDecorator{
 	

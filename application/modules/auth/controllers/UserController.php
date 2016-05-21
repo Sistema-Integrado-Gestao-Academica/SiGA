@@ -7,8 +7,8 @@ require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/domain/User.php");
 
-require_once(APPPATH."/data_types/notification/emails/RestorePasswordEmail.php");
-require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
+require_once(MODULESPATH."notification/domain/emails/RestorePasswordEmail.php");
+require_once(MODULESPATH."notification/domain/emails/ConfirmSignUpEmail.php");
 
 require_once(MODULESPATH."auth/exception/UserException.php");
 require_once(MODULESPATH."auth/exception/LoginException.php");
