@@ -33,7 +33,7 @@ class Enrollment extends MX_Controller {
 			'guests' => $guests
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'enrollment/enroll_student', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'secretary/enrollment/enroll_student', $data);
 	}
 
 	/**
@@ -115,12 +115,12 @@ class Enrollment extends MX_Controller {
 	 */
 	private function addStudentGroupToNewStudent($userId){
 
-	  	$group = new Module();
+	  	$this->load->module("auth/module");
 
 	  	$studentGroup = GroupConstants::STUDENT_GROUP;
-		$group->addGroupToUser($studentGroup, $userId);
+		$this->module->addGroupToUser($studentGroup, $userId);
 
 		$guestGroup = GroupConstants::GUEST_GROUP;
-		$group->deleteGroupOfUser($guestGroup, $userId);
+		$this->module->deleteGroupOfUser($guestGroup, $userId);
 	}
 }

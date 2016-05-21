@@ -2,6 +2,8 @@
 
 class PermissionConstants{
 
+	const USER_PERMISSION = "user_report";
+	
 	// Secretary functionalities permissions
 	const ENROLL_STUDENT_PERMISSION = "enroll_student";
 	const STUDENT_LIST_PERMISSION = "student_list";

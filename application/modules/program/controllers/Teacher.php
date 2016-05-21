@@ -18,7 +18,7 @@ class Teacher extends MX_Controller {
 
 		$infoProfile = $this->getInfoProfile($teacher);
 		
-		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'teacher/update_profile', $infoProfile);
+		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'program/teacher/update_profile', $infoProfile);
 	}
 
 	public function saveProfile(){

@@ -2,7 +2,7 @@
 
 class UserActivation extends MX_Controller {
 
-	const MODEL_NAME = "useractivation_model";
+	const MODEL_NAME = "auth/useractivation_model";
 
 	public function __construct(){
 		parent::__construct();
@@ -62,7 +62,7 @@ class UserActivation extends MX_Controller {
 				'user' => $user
 			);
 
-			$this->load->template("usuario/resent_email", $data);
+			$this->load->template("auth/user/resent_email", $data);
 		}else{
 
 			$status = "danger";

@@ -66,7 +66,7 @@ class UserController extends MX_Controller {
 			'allGroups' => $groups
 		);
 
-		loadTemplateSafelyByPermission('user_report','usuario/user_report', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::USER_PERMISSION,'auth/user/user_report', $data);
 	}
 
 	public function manageGroups($idUser){
@@ -87,7 +87,7 @@ class UserController extends MX_Controller {
 			'allGroups' => $groups
 		);
 
-		loadTemplateSafelyByPermission('user_report','usuario/manage_user_groups', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::USER_PERMISSION,'auth/user/manage_user_groups', $data);
 	}
 
 	public function listUsersOfGroup($idGroup){
@@ -99,7 +99,7 @@ class UserController extends MX_Controller {
 			'usersOfGroup' => $usersOfGroup
 		);
 
-		loadTemplateSafelyByPermission('user_report', 'usuario/users_of_group', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::USER_PERMISSION,'auth/user/users_of_group', $data);
 	}
 
 	public function removeAllUsersOfGroup($idGroup){
@@ -249,7 +249,7 @@ class UserController extends MX_Controller {
 			'user_groups' => $userGroups
 		);
 
-		$this->load->template("usuario/new_user", $data);
+		$this->load->template("auth/user/new_user", $data);
 	}
 
 	public function conta(){
@@ -259,7 +259,7 @@ class UserController extends MX_Controller {
 
 		$data = array("user" => $loggedUser);
 
-		$this->load->template("usuario/conta", $data);
+		$this->load->template("auth/user/conta", $data);
 	}
 
 	public function profile() {
@@ -267,7 +267,7 @@ class UserController extends MX_Controller {
 		$userId = $loggedUser['user']['id'];	 
 		$user = $this->usuarios_model->getObjectUser($userId);
 		$data = array('user' => $user);
-		$this->load->template("usuario/conta", $data);
+		$this->load->template("auth/user/conta", $data);
 	}
 
 
@@ -298,7 +298,7 @@ class UserController extends MX_Controller {
 			}
 		}
 		else{
-			$this->load->template("auth/userController/restore_password");
+			$this->load->template("auth/user/restore_password");
 		}
 
 	}
@@ -366,7 +366,7 @@ class UserController extends MX_Controller {
 		}
 		else{
 			
-			$this->load->template('auth/userController/change_password');
+			$this->load->template("auth/user/change_password");
 		}
 	}
 	public function validatePasswordField(){
@@ -539,7 +539,7 @@ class UserController extends MX_Controller {
 		} 
 		else {
 			$dados = array('user' => $user);
-			$this->load->template("usuario/conta", $dados);
+			$this->load->template("auth/user/conta", $dados);
 		}
 
 	}

@@ -64,8 +64,8 @@ class MasterMind extends MX_Controller {
 
 		$this->load->model('auth/usuarios_model');
 
-		$course = new Course();
-		$courseStudents = $course->getCourseStudents($courseId);
+		$this->load->model("program/course_model");
+		$courseStudents = $this->course_model->getCourseStudents($courseId);
 
 		if($courseStudents !== FALSE){
 
@@ -93,7 +93,7 @@ class MasterMind extends MX_Controller {
 			'courseId' => $courseId
 		);
 
-		loadTemplateSafelyByPermission("cursos",'mastermind/enroll_mastermind_to_student.php', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION,'program/mastermind/enroll_mastermind_to_student.php', $courseData);
 	}
 
 	public function displayMastermindPage($courseId){
@@ -112,12 +112,12 @@ class MasterMind extends MX_Controller {
 				'courseId' => $courseId
 		);
 
-		loadTemplateSafelyByPermission("cursos", 'mastermind/check_mastermind.php', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION, 'program/mastermind/check_mastermind.php', $data);
 	}
 
 	public function index(){
 
-		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, 'mastermind/index');
+		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, 'program/mastermind/index');
 	}
 
 	public function titlingArea(){
@@ -140,7 +140,7 @@ class MasterMind extends MX_Controller {
 
 		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
 
-		loadTemplateSafelyByPermission("mastermind", "mastermind/titling.php", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, "program/mastermind/titling.php", $data);
 
 
 	}
@@ -163,7 +163,7 @@ class MasterMind extends MX_Controller {
 
 		$data = array('areas' => $areasResult, 'currentArea' => $mastermindTitlingArea);
 
-		loadTemplateSafelyByGroup("courseSecretaryAcademic", "mastermind/titling.php", $data);
+		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, "program/mastermind/titling.php", $data);
 
 	}
 
@@ -226,7 +226,7 @@ class MasterMind extends MX_Controller {
 			'idMastermind' => $user->getId()
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, 'mastermind/display_mastermind_students', $requestData);
+		loadTemplateSafelyByPermission(PermissionConstants::MASTERMIND_PERMISSION, 'program/mastermind/display_mastermind_students', $requestData);
 	}
 
 	public function getMastermindMessage($mastermindId, $requestId){
@@ -252,12 +252,12 @@ class MasterMind extends MX_Controller {
 		$mastermindId = $this->input->post('mastermindId');
 		$mastermindMessage = $this->input->post('mastermind_message');
 
-		$request = new Request();
-		$wasFinalized = $request->finalizeRequestToMastermind($requestId);
+		$this->load->model("secretary/request_model");
+		$wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
 
 		if($wasFinalized){
 
-			$messageSaved = $request->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
+			$messageSaved = $this->request_model->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
 
 			if($messageSaved){
 

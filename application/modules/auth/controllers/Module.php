@@ -6,6 +6,11 @@ require_once("SessionManager.php");
 
 class Module extends MX_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		$this->load->model("auth/module_model");
+	}
+
 	public function checkUserGroup($requiredGroup){
 
 		$groupExists = $this->checkIfGroupExistsByName($requiredGroup);
@@ -44,8 +49,7 @@ class Module extends MX_Controller {
 
 	public function getGroupById($idGroup){
 
-		$this->load->model('module_model');
-
+		
 		$group = $this->module_model->getGroupById($idGroup);
 
 		return $group;
@@ -54,8 +58,7 @@ class Module extends MX_Controller {
 	public function addGroupToUser($groupName, $userId){
 
 		// Validar o $groupName
-		$this->load->model("module_model");
-
+		
 		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		if($group !== FALSE){
@@ -75,8 +78,7 @@ class Module extends MX_Controller {
 	public function deleteGroupOfUser($groupName, $userId){
 
 		// Validar o $groupName
-		$this->load->model("module_model");
-
+		
 		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		if($group !== FALSE){
@@ -95,8 +97,7 @@ class Module extends MX_Controller {
 
 	public function getGroupByName($groupName){
 
-		$this->load->model("module_model");
-
+		
 		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		return $group;
@@ -109,8 +110,7 @@ class Module extends MX_Controller {
 	  */
 	public function checkModules($user_id){
 
-		$this->load->model('module_model');
-		$registered_modules = $this->module_model->getUserModuleNames($user_id);
+				$registered_modules = $this->module_model->getUserModuleNames($user_id);
 
 		return $registered_modules;
 	}
@@ -121,16 +121,13 @@ class Module extends MX_Controller {
 	 */
 	public function getExistingModules(){
 
-		$this->load->model('module_model');
-		$existing_modules = $this->module_model->getAllModules();
+				$existing_modules = $this->module_model->getAllModules();
 		$existing_modules_form = $this->turnCourseTypesToArray($existing_modules);
 
 		return $existing_modules_form;
 	}
 
 	public function getUserGroups($idUser){
-
-		$this->load->model('module_model');
 
 		$groups = $this->module_model->getUserGroups($idUser);
 
@@ -139,8 +136,7 @@ class Module extends MX_Controller {
 
 	public function checkIfGroupExists($idGroup){
 
-		$this->load->model('module_model');
-
+		
 		$groupExists = $this->module_model->checkIfGroupExists($idUser);
 
 		return $groupExists;

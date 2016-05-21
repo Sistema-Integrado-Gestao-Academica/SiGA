@@ -1,7 +1,8 @@
 <?php
 
-require_once("Groupcontroller.php");
 require_once(MODULESPATH."auth/exception/GroupException.php");
+require_once(MODULESPATH."auth/domain/Permission.php");
+require_once(MODULESPATH."auth/domain/Group.php");
 
 class SessionManager extends MX_Controller{
 
@@ -28,11 +29,11 @@ class SessionManager extends MX_Controller{
 
     public function login($user){
 
-        $groupController = new GroupController();
+        $this->load->module("auth/groupController");
 
         $userId = $user->getId();
 
-        $userGroups = $groupController->getUserGroups($userId);
+        $userGroups = $this->groupcontroller->getUserGroups($userId);
 
         if($userGroups !== FALSE){
 

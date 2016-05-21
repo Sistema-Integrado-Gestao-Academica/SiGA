@@ -46,7 +46,7 @@ class PaymentAjax extends MX_Controller {
                             "content" => "<i class='fa fa-plus-circle'></i> Pagamento para <b>".$employee['name']."</b>",
                             "type" => "submit"
                         );
-                        echo form_open("payment/employeePayment");
+                        echo form_open("finantial/payment/employeePayment");
                             echo form_hidden("employee", $employee);
                             echo form_hidden("budgetplanId", $budgetplanId);
                             echo form_hidden("expenseId", $expenseId);

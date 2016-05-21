@@ -246,7 +246,7 @@ class Offer_model extends CI_Model {
 
 		$offerExists = $this->checkIfOfferExists($classData['id_offer']);
 
-		$this->load->model('discipline_model');
+		$this->load->model('program/discipline_model');
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
 		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
 
@@ -275,7 +275,7 @@ class Offer_model extends CI_Model {
 
 		$offerExists = $this->checkIfOfferExists($classData['id_offer']);
 
-		$this->load->model('discipline_model');
+		$this->load->model('program/discipline_model');
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($classData['id_discipline']);
 
 		$classAlreadyExists = $this->checkIfClassExists($classData['id_offer'], $classData['id_discipline'], $classData['class']);
@@ -359,7 +359,7 @@ class Offer_model extends CI_Model {
 
 		$offerExists = $this->checkIfOfferExists($idOffer);
 
-		$this->load->model('discipline_model');
+		$this->load->model('program/discipline_model');
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($idDiscipline);
 
 		$dataIsOk = $offerExists && $disciplineExists;

@@ -1,17 +1,12 @@
 <?php
 
-// require_once('Syllabus.php');
-// require_once('Offer.php');
-// require_once('Module.php');
-
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
-
 require_once(MODULESPATH."secretary/exception/DisciplineException.php");
 
 class Discipline extends MX_Controller {
 
-	const MODEL_NAME = "discipline_model";
+	const MODEL_NAME = "program/discipline_model";
 
 	public function __construct(){
 		parent::__construct();
@@ -38,7 +33,7 @@ class Discipline extends MX_Controller {
 			'userIsAdmin' => $userIsAdmin
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "discipline/index_discipline", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "program/discipline/index_discipline", $data);
 	}
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
@@ -64,7 +59,7 @@ class Discipline extends MX_Controller {
 			'disciplineData' => $disciplineData
 		);
 
-		loadTemplateSafelyByGroup('estudante', 'discipline/discipline_classes_enroll', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'program/discipline/discipline_classes_enroll', $data);
 	}
 
 	/**
@@ -229,7 +224,7 @@ class Discipline extends MX_Controller {
 				'url' => $site_url
 		);
 
-		loadTemplateSafelyByPermission("discipline",'discipline/update_discipline', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION,'program/discipline/update_discipline', $data);
 
 	}
 
@@ -247,7 +242,7 @@ class Discipline extends MX_Controller {
 			$coursesResult = FALSE;
 		}
 
-		loadTemplateSafelyByPermission("discipline", "discipline/register_discipline", array('courses'=>$coursesResult));
+		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "program/discipline/register_discipline", array('courses'=>$coursesResult));
 	}
 
 	public function getDisciplineByCode($disciplineCode){
@@ -259,16 +254,12 @@ class Discipline extends MX_Controller {
 
 	public function checkIfDisciplineExists($disciplineId){
 
-
-
 		$disciplineExists = $this->discipline_model->checkIfDisciplineExists($disciplineId);
 
 		return $disciplineExists;
 	}
 
 	public function getDisciplineResearchLines($disciplineCode){
-
-
 
 		$disciplineResearchLines = $this->discipline_model->getDisciplineResearchLines($disciplineCode);
 
@@ -277,13 +268,11 @@ class Discipline extends MX_Controller {
 
 	public function saveDisciplineResearchRelation($relationToSave){
 
-
 		$saved = $this->discipline_model->saveDisciplineResearchLine($relationToSave);
 		return $saved;
 	}
 
 	public function deleteDisciplineResearchRelation($researchRelation){
-
 
 		$deleted = $this->discipline_model->deleteDisciplineResearchLine($researchRelation);
 		return $deleted;

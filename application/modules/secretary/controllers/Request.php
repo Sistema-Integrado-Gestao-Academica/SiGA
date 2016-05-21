@@ -5,7 +5,6 @@ require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 
 class Request extends MX_Controller {
 
-
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('secretary/request_model');
@@ -13,7 +12,6 @@ class Request extends MX_Controller {
 
 	public function approveAllRequest($requestId, $courseId){
 
-		
 		$wasApproved = $this->request_model->approveAllRequest($requestId);
 
 		if($wasApproved){
@@ -31,7 +29,6 @@ class Request extends MX_Controller {
 	}
 
 	public function refuseAllRequest($requestId, $courseId){
-
 		
 		$wasRefused = $this->request_model->refuseAllRequest($requestId);
 
@@ -149,8 +146,6 @@ class Request extends MX_Controller {
 
 	public function finalizeRequestToMastermind($requestId){
 
-		$this->load->model('request_model');
-
 		$wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
 
 		return $wasFinalized;
@@ -158,7 +153,6 @@ class Request extends MX_Controller {
 
 	public function finalizeRequestSecretary($requestId, $courseId){
 
-		$this->load->model('request_model');
 
 		$wasFinalized = $this->request_model->finalizeRequestSecretary($requestId);
 
@@ -202,7 +196,7 @@ class Request extends MX_Controller {
 			'users' => $users
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'request/course_requests', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/request/course_requests', $data);
 	}
 
 	private function getUsersRequest($requests){
@@ -215,7 +209,7 @@ class Request extends MX_Controller {
 				$requestId = $request['id_request'];
 				$userId = $request['id_student'];
 
-				$this->load->model("student_model");
+				$this->load->model("student/student_model");
 				$user = $this->student_model->getNameAndEnrollment($userId);
 		
 				$users[$requestId]['name'] = $user[0]['name'];
@@ -238,7 +232,7 @@ class Request extends MX_Controller {
 
 		$courseId = $this->input->post('courseId');
 
-		$this->load->model("semester_model");
+		$this->load->model("program/semester_model");
 		$currentSemester = $this->semester_model->getCurrentSemester();
 
 		define("SEARCH_BY_STUDENT_ENROLLMENT", "by_enrollment");
@@ -249,7 +243,7 @@ class Request extends MX_Controller {
 		switch($searchType){
 			case SEARCH_BY_STUDENT_ENROLLMENT:
 
-				$this->load->model("student_model");
+				$this->load->model("student/student_model");
 				$foundUser = $this->student_model->getUserByEnrollment($student);
 
 				$courseRequests = $this->getStudentsIdsForSearchRequests($courseId, $currentSemester['id_semester'], $foundUser);
@@ -258,7 +252,7 @@ class Request extends MX_Controller {
 
 			case SEARCH_BY_STUDENT_NAME:
 
-				$this->load->model("usuarios_model");
+				$this->load->model("auth/usuarios_model");
 				$foundUser = $this->usuarios_model->getUserByName($student);
 
 				$courseRequests = $this->getStudentsIdsForSearchRequests($courseId, $currentSemester['id_semester'], $foundUser);
@@ -269,7 +263,7 @@ class Request extends MX_Controller {
 				break;
 		}
 
-		$this->load->model("course_model");
+		$this->load->model("program/course_model");
 		$courseData = $this->course_model->getCourseById($courseId);
 
 		$users = $this->getUsersRequest($courseRequests);
@@ -280,7 +274,7 @@ class Request extends MX_Controller {
 			'users' => $users
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'request/course_requests', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/request/course_requests', $data);
 	}
 
 	private function getStudentsIdsForSearchRequests($courseId, $semesterId, $users){
@@ -376,7 +370,7 @@ class Request extends MX_Controller {
 			$data['requestStatus'] = FALSE;
 		}
 
-		loadTemplateSafelyByGroup("estudante", 'request/enrollment_request', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'secretary/request/enrollment_request', $data);
 	}
 
 	private function getUserRequestDisciplines($userId, $courseId, $semesterId){
@@ -417,8 +411,7 @@ class Request extends MX_Controller {
 			$course = $userRequest[0]['id_course'];
 			$semester = $userRequest[0]['id_semester'];
 
-			$this->load->model('request_model');
-
+	
 			// Check in the offer if the request needs to be approved by mastermind first
 			$offer = new Offer();
 			$requestedOffer = $offer->getOfferBySemesterAndCourse($semester, $course);
@@ -474,7 +467,7 @@ class Request extends MX_Controller {
 		$i = 0;
 		$savedRequestDisciplines = $this->getRequestDisciplines($requestId);
 		if($savedRequestDisciplines !== FALSE){
-			$offer = new Offer();
+			$this->load->model("secretary/offer_model");
 			foreach($userRequest as $tempRequest){
 
 				$idOfferDiscipline = $tempRequest['discipline_class'];
@@ -490,7 +483,7 @@ class Request extends MX_Controller {
 				if($wasSaved){
 					// Nothing to do because was saved
 				}else{
-					$missedDisciplineClass = $offer->getOfferDisciplineById($idOfferDiscipline);
+					$missedDisciplineClass = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
 					$noSavedDisciplines[$i] = $missedDisciplineClass;
 					$i++;
 				}
@@ -538,8 +531,8 @@ class Request extends MX_Controller {
 
 			if($canSubtract){
 
-				$offer = new Offer();
-				$wasSubtracted = $offer->subtractOneVacancy($idOfferDiscipline);
+				$this->load->model("secretary/offer_model");
+				$wasSubtracted = $this->offer_model->subtractOneVacancy($idOfferDiscipline);
 
 				if($wasSubtracted){
 					$disciplineWasAdded = TRUE;

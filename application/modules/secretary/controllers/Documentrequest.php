@@ -24,12 +24,10 @@ class DocumentRequest extends MX_Controller {
 			'courses' => $userCourse
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/index", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "secretary/documentrequest/index", $data);
 	}
 
 	public function requestDocument($courseId, $userId){
-
-		
 
 		$studentRequests = $this->doc_request_model->getStudentsRequestOfCourse($userId, $courseId);
 
@@ -50,7 +48,7 @@ class DocumentRequest extends MX_Controller {
 			'userId' => $userId
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/request_document", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "secretary/documentrequest/request_document", $data);
 	}
 
 	public function newDocumentRequest(){
@@ -141,8 +139,6 @@ class DocumentRequest extends MX_Controller {
 
 	private function saveDocumentRequest($documentRequestData){
 
-		
-
 		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
 
 		$docRequest = new DocumentConstants();
@@ -158,8 +154,6 @@ class DocumentRequest extends MX_Controller {
 	}
 
 	public function cancelRequest($requestId, $courseId, $studentId){
-
-		
 
 		$wasDeleted = $this->doc_request_model->deleteRequest($requestId);
 
@@ -178,8 +172,6 @@ class DocumentRequest extends MX_Controller {
 	}
 
 	public function archiveRequest($requestId, $courseId, $studentId){
-
-		
 
 		$wasArchived = $this->doc_request_model->archiveRequest($requestId);
 
@@ -206,7 +198,7 @@ class DocumentRequest extends MX_Controller {
 			'studentId' => $studentId
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/archived_requests", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "secretary/documentrequest/archived_requests", $data);
 	}
 
 	// Functions to secretary //
@@ -225,7 +217,7 @@ class DocumentRequest extends MX_Controller {
 			'userData' => $currentUser
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "secretary/documentrequest/doc_request", $data);
 	}
 
 	public function documentRequestReport($courseId){
@@ -242,12 +234,10 @@ class DocumentRequest extends MX_Controller {
 			'user' => $users
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "secretary/documentrequest/doc_request_report", $data);
 	}
 
 	public function documentReady($requestId, $courseId){
-
-		
 
 		$documentIsReady = $this->doc_request_model->setDocumentReady($requestId);
 
@@ -275,7 +265,7 @@ class DocumentRequest extends MX_Controller {
 			'user' => $users
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/answered_requests", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "secretary/documentrequest/answered_requests", $data);
 	}
 
 	// Other methods

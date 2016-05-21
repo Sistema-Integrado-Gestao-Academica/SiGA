@@ -5,9 +5,13 @@ require_once(MODULESPATH."/auth/controllers/SessionManager.php");
 
 class Semester extends MX_Controller {
 
-	public function getCurrentSemester(){
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('program/semester_model');
+		
+	}
 
-		$this->load->model('semester_model');
+	public function getCurrentSemester(){
 
 		$currentSemester = $this->semester_model->getCurrentSemester();
 
@@ -22,8 +26,7 @@ class Semester extends MX_Controller {
 		$password = $this->input->post('password');
 		
 		$this->load->model('auth/usuarios_model');
-		$this->load->model('program/semester_model');
-
+		
 		try{
 
 			$user = $this->usuarios_model->validateUser($loggedUserLogin, $password);

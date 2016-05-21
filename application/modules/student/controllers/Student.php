@@ -30,7 +30,7 @@ class Student extends MX_Controller {
 			'userCourses' => $userCourses
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_home', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student/student_home', $data);
 	}
 
 	public function studentCoursePage($courseId, $userId){
@@ -46,7 +46,7 @@ class Student extends MX_Controller {
 			'user' => $userData
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_course_page', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student/student_course_page', $data);
 	}
 
 	public function student_offerList($courseId){
@@ -71,7 +71,7 @@ class Student extends MX_Controller {
 			'userId' => $userId
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_offer_list', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student/student_offer_list', $data);
 	}
 
 	public function registerEnrollment(){
@@ -84,8 +84,8 @@ class Student extends MX_Controller {
 
 			$registration = new StudentRegistration($enrollment);
 
-			$enrollment = new Enrollment();
-			$enrollment->updateRegistration($registration, $course, $student);
+			$this->load->model("secretary/enrollment_model");
+			$this->enrollment_model->saveRegistration($registration, $course, $student);
 
 			$status = "success";
 			$message = "Matrícula atualizada com sucesso!";
@@ -124,7 +124,7 @@ class Student extends MX_Controller {
 		);
 
 		// On auth_helper
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student_specific_data_form', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'student/student/student_specific_data_form', $data);
 	}
 
 	public function saveBasicInfo(){

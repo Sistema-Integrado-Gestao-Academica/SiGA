@@ -1,7 +1,26 @@
 <?php
 
 class Permissions_model extends CI_Model {
+    
+    public function getAllPermissionsRoutes(){
+      $allPermissions = $this->getAllPermissions();
 
+      $permissions = array();
+      foreach($allPermissions as $permission){
+
+        $permissions[$permission['id_permission']] = $permission['route'];
+      }
+      $permissions = checkArray($permissions);
+      return $permissions;
+    }
+
+    private function getAllPermissions(){
+      $searchResult = $this->db->get('permission');
+
+      $permissions = $searchResult->result_array();
+      $permissions = checkArray($permissions);
+      return $permissions;
+    }
     /**
       * Search on database for the permissions of a group
       * @param $groupId - The group id to get the permissions

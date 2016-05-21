@@ -29,7 +29,7 @@ class SelectiveProcess extends MX_Controller {
             'programs' => $programs
         );
 
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/index", $data);
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/index", $data);
     }
 
     public function programCourses($programId){
@@ -59,7 +59,7 @@ class SelectiveProcess extends MX_Controller {
             'courses' => $courses
         );
 
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/program_courses", $data);
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/program_courses", $data);
     }
 
     public function courseSelectiveProcesses($courseId){
@@ -74,7 +74,7 @@ class SelectiveProcess extends MX_Controller {
             'selectiveProcesses' => $selectiveProcesses
         );
 
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/course_process", $data);
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
     }
 
     public function openSelectiveProcess($courseId){
@@ -90,7 +90,7 @@ class SelectiveProcess extends MX_Controller {
             'phases' => $phases
         );
 
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/new", $data);
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/new", $data);
     }
 
     private function setUploadOptions($fileName, $programId, $courseId, $processId){
@@ -199,7 +199,7 @@ class SelectiveProcess extends MX_Controller {
             'process' => $process
         );
 
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "selection_process/upload_notice", $data);
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/upload_notice", $data);
     }
 
     private function getCourseSelectiveProcesses($courseId){

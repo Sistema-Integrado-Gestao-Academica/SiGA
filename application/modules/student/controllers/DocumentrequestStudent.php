@@ -24,12 +24,10 @@ class DocumentRequestStudent extends MX_Controller {
 			'courses' => $userCourse
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/index", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "student/documentrequest/index", $data);
 	}
 
 	public function requestDocument($courseId, $userId){
-
-		
 
 		$studentRequests = $this->doc_request_model->getStudentsRequestOfCourse($userId, $courseId);
 
@@ -50,7 +48,7 @@ class DocumentRequestStudent extends MX_Controller {
 			'userId' => $userId
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/request_document", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "student/documentrequest/request_document", $data);
 	}
 
 	public function newDocumentRequest(){
@@ -140,9 +138,7 @@ class DocumentRequestStudent extends MX_Controller {
 	}
 
 	private function saveDocumentRequest($documentRequestData){
-
-		
-
+	
 		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
 
 		$docRequest = new DocumentConstants();
@@ -158,9 +154,7 @@ class DocumentRequestStudent extends MX_Controller {
 	}
 
 	public function cancelRequest($requestId, $courseId, $studentId){
-
-		
-
+	
 		$wasDeleted = $this->doc_request_model->deleteRequest($requestId);
 
 		if($wasDeleted){
@@ -204,7 +198,7 @@ class DocumentRequestStudent extends MX_Controller {
 			'studentId' => $studentId
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "documentrequest/archived_requests", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_PERMISSION, "student/documentrequest/archived_requests", $data);
 	}
 
 	// Functions to secretary //
@@ -223,7 +217,7 @@ class DocumentRequestStudent extends MX_Controller {
 			'userData' => $currentUser
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "student/documentrequest/doc_request", $data);
 	}
 
 	public function documentRequestReport($courseId){
@@ -240,12 +234,10 @@ class DocumentRequestStudent extends MX_Controller {
 			'user' => $users
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/doc_request_report", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "student/documentrequest/doc_request_report", $data);
 	}
 
 	public function documentReady($requestId, $courseId){
-
-		
 
 		$documentIsReady = $this->doc_request_model->setDocumentReady($requestId);
 
@@ -273,7 +265,7 @@ class DocumentRequestStudent extends MX_Controller {
 			'user' => $users
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "documentrequest/answered_requests", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "student/documentrequest/answered_requests", $data);
 	}
 
 	// Other methods

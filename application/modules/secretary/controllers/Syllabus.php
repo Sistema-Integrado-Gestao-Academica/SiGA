@@ -1,6 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."/auth/constants/GroupConstants.php");
+
 class Syllabus extends MX_Controller {
+
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('secretary/syllabus_model');
+	}
 
 	public function courseSyllabus($courseId){
 
@@ -20,7 +27,7 @@ class Syllabus extends MX_Controller {
 			'course' => $foundCourse,
 		);
 
-		loadTemplateSafelyByGroup("estudante",'syllabus/course_syllabus_disciplines_student', $data);
+		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP,'secretary/syllabus/course_syllabus_disciplines_student', $data);
 	}
 
 	public function secretaryCourseSyllabus(){
@@ -56,13 +63,11 @@ class Syllabus extends MX_Controller {
 			'user' => $loggedUserData
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::COURSE_SYLLABUS_PERMISSION,'secretary/secretary_course_syllabus', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSE_SYLLABUS_PERMISSION,'secretary/secretary/secretary_course_syllabus', $data);
 	}
 
 
 	public function getCourseSyllabus($courseId){
-
-		$this->load->model('syllabus_model');
 
 		$courseSyllabus = $this->syllabus_model->getCourseSyllabus($courseId);
 
@@ -71,16 +76,12 @@ class Syllabus extends MX_Controller {
 
 	public function getSyllabusCourse($syllabusId){
 
-		$this->load->model('syllabus_model');
-
 		$syllabusCourse = $this->syllabus_model->getSyllabusCourse($syllabusId);
 
 		return $syllabusCourse;
 	}
 
 	public function newSyllabus($courseId){
-
-		$this->load->model('syllabus_model');
 
 		$wasSaved = $this->syllabus_model->newSyllabus($courseId);
 
@@ -110,7 +111,7 @@ class Syllabus extends MX_Controller {
 			'course' => $foundCourse
 		);
 
-		loadTemplateSafelyByGroup("secretario",'syllabus/course_syllabus_disciplines', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/syllabus/course_syllabus_disciplines', $data);
 	}
 
 	public function addDisciplines($syllabusId, $courseId){
@@ -124,7 +125,7 @@ class Syllabus extends MX_Controller {
 			'courseId' => $courseId
 		);
 
-		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/syllabus/add_syllabus_disciplines', $data);
 	}
 
 	public function relateDisciplineToResearchLine($disciplineCode,$syllabusId, $courseId){
@@ -145,25 +146,25 @@ class Syllabus extends MX_Controller {
 			'disciplineResearchLines' => $disciplineResearchLines
 		);
 
-		loadTemplateSafelyByGroup("secretario",'syllabus/disciplines_research_line', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/syllabus/disciplines_research_line', $data);
 	}
 
 	private function getDiscipineResearchLinesIds($disciplineCode){
-		$discipline = new Discipline();
-
-		$disciplineResearchLines = $discipline->getDisciplineResearchLines($disciplineCode);
+		
+		$this->load->model("program/discipline_model");
+		$disciplineResearchLines = $this->discipline_model->getDisciplineResearchLines($disciplineCode);
 
 		return $disciplineResearchLines;
 	}
 
 	public function getDiscipineResearchLinesNames($disciplineResearchLinesIds){
 
-		$course = new Course();
+		$this->load->module("program/course");
 
 		if($disciplineResearchLinesIds !== FALSE){
 			foreach ($disciplineResearchLinesIds as $quantity => $researchLines){
 
-				$disciplinesResearchLines[$researchLines['id_research_line']] = $course->getResearchLineNameById($researchLines['id_research_line']);
+				$disciplinesResearchLines[$researchLines['id_research_line']] = $this->course->getResearchLineNameById($researchLines['id_research_line']);
 			}
 		}else{
 			$disciplinesResearchLines = FALSE;
@@ -173,16 +174,16 @@ class Syllabus extends MX_Controller {
 	}
 
 	private function getCurrentDiscipline($disciplineCode){
-		$discipline = new Discipline();
-
-		$currentDiscipline = $discipline->getDisciplineByCode($disciplineCode);
+		
+		$this->load->model("program/discipline_model");
+		$currentDiscipline = $this->discipline_model->getDisciplineByCode($disciplineCode);
 
 		return $currentDiscipline;
 	}
 
 	private function getResearchLines(){
-		$this->load->model("course_model");
-
+		
+		$this->load->model("program/course_model");
 		$researchLines = $this->course_model->getAllResearchLines();
 
 		$research[0] = "Escolha uma Linha de Pesquisa";
@@ -235,14 +236,14 @@ class Syllabus extends MX_Controller {
 	}
 
 	public function removeDisciplineResearchLine($researchLineId, $disciplineCode, $syllabusId, $courseId){
-		$discipline = new Discipline();
 
+		$this->load->model("program/discipline_model");
 		$researchRelation = array(
 				'id_research_line' => $researchLineId,
 				'discipline_code' => $disciplineCode
 		);
 
-		$deleted = $discipline->deleteDisciplineResearchRelation($researchRelation);
+		$deleted = $this->discipline_model->deleteDisciplineResearchLine($researchRelation);
 		if ($deleted){
 			$status = "success";
 			$message = "Disciplina desrelacionada com sucesso.";
@@ -257,9 +258,9 @@ class Syllabus extends MX_Controller {
 	}
 
 	private function saveDisciplineResearchRelation($relationToSave){
-		$discipline = new Discipline();
-
-		$saved = $discipline->saveDisciplineResearchRelation($relationToSave);
+		
+		$this->load->model("program/discipline_model");
+		$saved = $this->discipline_model->saveDisciplineResearchLine($relationToSave);
 
 		return $saved;
 	}
@@ -273,11 +274,11 @@ class Syllabus extends MX_Controller {
 		define("SEARCH_FOR_DISCIPLINE_ID", "by_id");
 		define("SEARCH_FOR_DISCIPLINE_NAME", "by_name");
 
-		$discipline = new Discipline();
+		$this->load->model("program/discipline_model");
 		switch($searchType){
 			case SEARCH_FOR_DISCIPLINE_ID:
 				$disciplineId = $this->input->post('discipline_to_search');
-				$foundDiscipline = $discipline->getDisciplineByCode($disciplineId);
+				$foundDiscipline = $this->discipline_model->getDisciplineByCode($disciplineId);
 
 				if($foundDiscipline !== FALSE){
 					$disciplines[] = $foundDiscipline;
@@ -288,7 +289,7 @@ class Syllabus extends MX_Controller {
 
 			case SEARCH_FOR_DISCIPLINE_NAME:
 				$disciplineName = $this->input->post('discipline_to_search');
-				$disciplines = $discipline->getDisciplineByPartialName($disciplineName);
+				$disciplines = $this->discipline_model->getDisciplineByPartialName($disciplineName);
 				break;
 
 			default:
@@ -302,12 +303,10 @@ class Syllabus extends MX_Controller {
 			'courseId' => $courseId
 		);
 
-		loadTemplateSafelyByGroup("secretario",'syllabus/add_syllabus_disciplines', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/syllabus/add_syllabus_disciplines', $data);
 	}
 
 	public function addDisciplineToSyllabus($syllabusId, $disciplineId, $courseId){
-
-		$this->load->model('syllabus_model');
 
 		$wasSaved = $this->syllabus_model->addDisciplineToSyllabus($syllabusId, $disciplineId);
 
@@ -326,8 +325,6 @@ class Syllabus extends MX_Controller {
 
 	public function removeDisciplineFromSyllabus($syllabusId, $disciplineId, $courseId){
 
-		$this->load->model('syllabus_model');
-
 		$wasRemoved = $this->syllabus_model->removeDisciplineFromSyllabus($syllabusId, $disciplineId);
 
 		if($wasRemoved){
@@ -345,16 +342,12 @@ class Syllabus extends MX_Controller {
 
 	public function disciplineExistsInSyllabus($idDiscipline, $syllabusId){
 
-		$this->load->model('syllabus_model');
-
 		$disciplineExists = $this->syllabus_model->disciplineExistsInSyllabus($idDiscipline, $syllabusId);
 
 		return $disciplineExists;
 	}
 
 	private function getSyllabusDisciplines($syllabusId){
-
-		$this->load->model("syllabus_model");
 
 		$foundDisciplines = $this->syllabus_model->getSyllabusDisciplines($syllabusId);
 

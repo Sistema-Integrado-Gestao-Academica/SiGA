@@ -24,8 +24,7 @@ class Schedule extends MX_Controller {
 
 	public function getDisciplineHours($idOfferDiscipline){
 
-		$this->load->model('schedule_model');
-
+		$this->load->model('secretary/schedule_model');
 		$disciplineHours = $this->schedule_model->getDisciplineHours($idOfferDiscipline);
 
 		if($disciplineHours !== FALSE){
@@ -333,7 +332,7 @@ class Schedule extends MX_Controller {
 
 	private function updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal){
 
-		$this->load->model('schedule_model');
+		$this->load->model('secretary/schedule_model');
 
 		$wasUpdated = $this->schedule_model->updateClassLocal($idOfferDiscipline, $idClassHour, $newClassLocal);
 
@@ -342,7 +341,7 @@ class Schedule extends MX_Controller {
 
 	public function removeClassHourFromSchedule($idOfferDiscipline, $idClassHour, $idOffer, $idDiscipline, $class, $courseId){
 
-		$this->load->model('schedule_model');
+		$this->load->model('secretary/schedule_model');
 
 		$wasRemoved = $this->schedule_model->removeClassHourFromSchedule($idOfferDiscipline, $idClassHour);
 
@@ -415,7 +414,7 @@ class Schedule extends MX_Controller {
 
 	private function saveClassHour($classHour, $idOfferDiscipline){
 
-		$this->load->model('schedule_model');
+		$this->load->model('secretary/schedule_model');
 
 		$wasSaved = $this->schedule_model->saveClassHour($classHour, $idOfferDiscipline);
 
@@ -424,7 +423,7 @@ class Schedule extends MX_Controller {
 
 	private function getClassHourInSchedule($idOfferDiscipline, $hour, $day){
 
-		$this->load->model('schedule_model');
+		$this->load->model('secretary/schedule_model');
 
 		$hourIsOnSchedule = $this->schedule_model->getClassHourInSchedule($idOfferDiscipline, $hour, $day);
 

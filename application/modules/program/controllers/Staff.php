@@ -9,7 +9,7 @@ class Staff extends MX_Controller {
 		$staffs = $this->getRegisteredStaffs();
 		$guests = $this->getGuestUsers();
 		$data = array('staffs' => $staffs, 'guestUsers'=>$guests);
-		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP ,'staffs/new_staff', $data);
+		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP ,'program/staffs/new_staff', $data);
 	}
 
 	public function editStaff($id) {
@@ -24,7 +24,7 @@ class Staff extends MX_Controller {
 			'staff' => $staff,
 			'user' => $user
 		);
-		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP , 'staffs/edit_staff', $data);
+		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP , 'program/staffs/edit_staff', $data);
 	}
 	
 	public function newStaff() {

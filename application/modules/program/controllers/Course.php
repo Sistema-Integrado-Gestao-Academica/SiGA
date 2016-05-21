@@ -5,7 +5,6 @@ require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
 require_once(APPPATH."/data_types/StudentRegistration.php");
-
 require_once(APPPATH."/exception/CourseNameException.php");
 require_once(APPPATH."/exception/StudentRegistrationException.php");
 
@@ -13,7 +12,7 @@ class Course extends MX_Controller {
 
 	public function __construct(){
 		parent::__construct();
-		$this->load->model("course_model");
+		$this->load->model("program/course_model");
 	}
 
 	public function index() {
@@ -38,7 +37,7 @@ class Course extends MX_Controller {
 			'isAdmin' => $userIsAdmin
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION, 'course/course_index', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION, 'program/course/course_index', $data);
 	}
 
 	public function getCourseTeachers($courseId){
@@ -82,14 +81,14 @@ class Course extends MX_Controller {
 			'course' => $courseData
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/course_students', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'program/course/course_students', $data);
 	}
 
 	private function addStatusCourseStudents($students){
 
 		if($students !== FALSE){
 			foreach ($students as $key => $student) {
-				$this->load->model("usuarios_model");
+				$this->load->model("auth/usuarios_model");
 
 				$id = $student['id'];
 				$status = $this->usuarios_model->getUserStatus($id);
@@ -102,8 +101,6 @@ class Course extends MX_Controller {
 
 	public function formToRegisterNewCourse(){
 
-		
-
 		$courseTypes = $this->course_model->getAllCourseTypes();
 
 		if($courseTypes !== FALSE){
@@ -115,7 +112,7 @@ class Course extends MX_Controller {
 			$formCourseTypes = array('Nenhum tipo de curso cadastrado.');
 		}
 
-		$this->load->model("program_model");
+		$this->load->model("program/program_model");
 		$registeredPrograms = $this->program_model->getAllPrograms();
 
 		if($registeredPrograms !== FALSE){
@@ -132,7 +129,7 @@ class Course extends MX_Controller {
 			'registeredPrograms' => $registeredProgramsForm
 		);
 
-		loadTemplateSafelyByPermission("cursos",'course/register_course', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION,'program/course/register_course', $data);
 	}
 
 	/**
@@ -167,7 +164,7 @@ class Course extends MX_Controller {
 		$originalCourseType = $this->course_model->getCourseTypeByCourseId($courseId);
 		$originalCourseTypeId = $originalCourseType['id'];
 
-		$this->load->model("program_model");
+		$this->load->model("program/program_model");
 		$registeredPrograms = $this->program_model->getAllPrograms();
 
 		if($registeredPrograms !== FALSE){
@@ -186,7 +183,7 @@ class Course extends MX_Controller {
 			'registeredPrograms' => $registeredProgramsForm
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION,'course/update_course', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION,'program/course/update_course', $data);
 	}
 
 
@@ -255,10 +252,10 @@ class Course extends MX_Controller {
 			$insertMessage = "Dados na forma incorreta.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($insertStatus, $insertMessage);
 
-		redirect('cursos');
+		redirect(PermissionConstants::COURSES_PERMISSION);
 	}
 
 	public function saveAcademicSecretary(){
@@ -284,7 +281,7 @@ class Course extends MX_Controller {
 			$saveMessage = $caughtException->getMessage();
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($saveStatus, $saveMessage);
 		redirect('program/course/formToEditCourse/'.$idCourse);
 	}
@@ -294,8 +291,6 @@ class Course extends MX_Controller {
 		$financialSecretary = $this->input->post('financial_secretary');
 		$idCourse = $this->input->post('id_course');
 		$courseName = $this->input->post('course_name');
-
-		
 
 		try{
 			$wasSaved = $this->course_model->saveCourseFinancialSecretary($financialSecretary, $idCourse, $courseName);
@@ -313,7 +308,7 @@ class Course extends MX_Controller {
 			$saveMessage = $caughtException->getMessage();
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($saveStatus, $saveMessage);
 		redirect('program/course/formToEditCourse/'.$idCourse);
 	}
@@ -393,8 +388,6 @@ class Course extends MX_Controller {
 
 	public function getCourseResearchLines($courseId){
 
-		
-
 		$researchLines = $this->course_model->getCourseResearchLines($courseId);
 
 		$researchLineNames = array();
@@ -412,7 +405,6 @@ class Course extends MX_Controller {
 
 	public function getResearchLineNameById($researchLinesId){
 		
-
 		$researchLinesName = $this->course_model->getResearchLineNameById($researchLinesId);
 
 		return $researchLinesName['description'];
@@ -429,7 +421,7 @@ class Course extends MX_Controller {
 	 */
 	private function updateCourseToOtherCourseType($id_course, $courseType, $courseToUpdate, $commonAttributes=NULL, $post_graduation_type=NULL){
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		switch ($courseType){
 			case GRADUATION:
 				try{
@@ -519,7 +511,7 @@ class Course extends MX_Controller {
 			$deleteMessage = "Não foi possível excluir este curso.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('cursos');
@@ -527,8 +519,6 @@ class Course extends MX_Controller {
 
 	public function getCourseSecretaries($courseId){
 
-		
-		
 		$secretary = $this->course_model->getCourseSecretaries($courseId);
 
 		return $secretary;
@@ -556,11 +546,10 @@ class Course extends MX_Controller {
 			$deleteMessage = "Não foi possível excluir este secretário.";
 		}
 
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('program/course/formToEditCourse/'.$course_id);
-
 
 	}
 
@@ -573,16 +562,12 @@ class Course extends MX_Controller {
 
 	public function getCourseStudents($courseId){
 
-		
-
 		$courseStudents = $this->course_model->getCourseStudents($courseId);
 
 		return $courseStudents;
 	}
 
 	public function getCourseByName($courseName){
-
-		
 
 		$course = $this->course_model->getCourseByName($courseName);
 
@@ -591,16 +576,12 @@ class Course extends MX_Controller {
 
 	public function getCourseById($courseId){
 
-		
-
 		$course = $this->course_model->getCourse(array('id_course' => $courseId));
 
 		return $course;
 	}
 
 	public function checkIfCourseExists($courseId){
-
-		
 
 		$courseExists = $this->course_model->checkIfCourseExists($courseId);
 
@@ -613,8 +594,6 @@ class Course extends MX_Controller {
 	 * @return true if the exclusion was made right and false if does not
 	 */
 	public function deleteCourseFromDb($course_id){
-
-		
 
 		$deletedCourse = $this->course_model->deleteCourseById($course_id);
 
@@ -638,8 +617,6 @@ class Course extends MX_Controller {
 
 	public function getCourseTypeByCourseId($courseId){
 
-		
-
 		$courseType = $this->course_model->getCourseTypeByCourseId($courseId);
 
 		return $courseType;
@@ -647,16 +624,12 @@ class Course extends MX_Controller {
 
 	public function getCoursesToProgram($programId){
 
-		
-
 		$programCourses = $this->course_model->getCoursesToProgram($programId);
 
 		return $programCourses;
 	}
 
 	public function createCourseResearchLine(){
-		$this->load->model("course_model");
-
 		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
@@ -676,12 +649,11 @@ class Course extends MX_Controller {
 			'courses'=> $course
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'course/create_research_line', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'program/course/create_research_line', $data);
 	}
 
 
 	public function updateCourseResearchLine($researchId, $courseId){
-		$this->load->model("course_model");
 
 		$actualCourse = $this->course_model->getCourseById($courseId);
 		$actualCourseForm = $actualCourse['id_course'];
@@ -705,12 +677,10 @@ class Course extends MX_Controller {
 			'courses' => $course
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'course/update_research_line', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'program/course/update_research_line', $data);
 	}
 
 	public function removeCourseResearchLine($researchLineId,$course){
-
-		$this->load->model("course_model");
 
 		$wasRemoved = $this->course_model->removeCourseResearchLine($researchLineId);
 
@@ -730,8 +700,6 @@ class Course extends MX_Controller {
 
 	public function research_lines(){
 		
-		$this->load->model("course_model");
-
 		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$userId = $loggedUserData->getId();
@@ -742,7 +710,6 @@ class Course extends MX_Controller {
 	}
 
 	public function loadResearchLinesPage($secretaryCourses){
-		$this->load->model("course_model");
 
 		if($secretaryCourses !== FALSE){
 
@@ -761,13 +728,12 @@ class Course extends MX_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'secretary/secretary_research_lines', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::RESEARCH_LINES_PERMISSION, 'secretary/secretary/secretary_research_lines', $data);
 	}
 
 	public function saveResearchLine(){
 
 		$success = $this->validateReseachLineData();
-		$this->load->model("course_model");
 		$session = getSession();
 		if ($success) {
 			$researchLine  = $this->input->post("researchLine");
@@ -811,7 +777,6 @@ class Course extends MX_Controller {
 	public function updateResearchLine(){
 		
 		$success = $this->validateReseachLineData();
-		$this->load->model("course_model");
 		$session = getSession();
 		$researchCourse   = $this->input->post("research_course");
 		$researchLineId = $this->input->post("id_research_line");

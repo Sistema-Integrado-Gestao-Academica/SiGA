@@ -84,7 +84,7 @@ class Offer extends MX_Controller {
 			'user' => $loggedUserData
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::OFFER_LIST_PERMISSION, 'offer/secretary_offer_list', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::OFFER_LIST_PERMISSION, 'secretary/offer/secretary_offer_list', $data);
 	}
 
 	public function approveOfferList($idOffer){
@@ -162,7 +162,7 @@ class Offer extends MX_Controller {
 				'idCourse'			  => $idCourse
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'offer/offer_update_discipline_classes', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/offer_update_discipline_classes', $data);
 
 	}
 
@@ -195,7 +195,7 @@ class Offer extends MX_Controller {
 			'disciplines' => $disciplines
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'offer/new_offer', $offerData);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/new_offer', $offerData);
 	}
 
 	public function displayDisciplineClasses($idDiscipline, $idOffer, $idCourse){
@@ -238,7 +238,7 @@ class Offer extends MX_Controller {
 			'idCourse' => $idCourse
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'offer/offer_discipline_classes', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/offer_discipline_classes', $data);
 	}
 
 	public function newOfferDisciplineClass($idDiscipline, $idOffer, $idCourse){
@@ -331,7 +331,6 @@ class Offer extends MX_Controller {
 				$classData['secondary_teacher'] = NULL;
 			}
 
-			$this->load->model('offer_model');
 			$wasUpdated = $this->offer_model->updateOfferDisciplineClass($classData, $oldClass);
 
 		if($wasUpdated){
@@ -384,11 +383,11 @@ class Offer extends MX_Controller {
 
 	public function addDisciplines($idOffer, $courseId){
 
-		$discipline = new Discipline();
-		$allDisciplines = $discipline->getCourseSyllabusDisciplines($courseId);
+		$this->load->module("program/discipline");
+		$allDisciplines = $this->discipline->getCourseSyllabusDisciplines($courseId);
 
-		$course = new Course();
-		$offerCourse = $course->getCourseById($courseId);
+		$this->load->model("program/course_model");
+		$offerCourse = $this->course_model->getCourseById($courseId);
 
 		$data = array(
 			'allDisciplines' => $allDisciplines,
@@ -396,7 +395,7 @@ class Offer extends MX_Controller {
 			'idOffer' => $idOffer
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'offer/offer_disciplines', $data);
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/offer_disciplines', $data);
 	}
 
 	public function checkAvailableVacancies($idOfferDiscipline){

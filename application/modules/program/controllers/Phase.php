@@ -11,7 +11,7 @@ require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
 
 class Phase extends MX_Controller {
 
-    const MODEL_NAME = "phase_model";
+    const MODEL_NAME = "program/phase_model";
 
     public function __construct(){
         parent::__construct();

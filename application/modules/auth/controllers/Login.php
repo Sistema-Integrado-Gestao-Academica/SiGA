@@ -1,8 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-// require_once("Usuario.php");
 require_once(MODULESPATH."auth/exception/LoginException.php");
-
 require_once(MODULESPATH."auth/domain/User.php");
 require_once(MODULESPATH."auth/Auth.php");
 
@@ -13,13 +11,13 @@ class Login extends MX_Controller {
 		$login = $this->input->post("login");
 		$password = $this->input->post("password");
 
-		$this->load->model("usuarios_model");
+		$this->load->model("auth/usuarios_model");
 
 		$session = getSession();
 
 		try{
 
-			$this->load->model("usuarios_model");
+			$this->load->model("auth/usuarios_model");
 			$user = $this->usuarios_model->validateUser($login, $password);
 
 			if($user !== FALSE){
@@ -36,7 +34,7 @@ class Login extends MX_Controller {
 						redirect('/');
 					}
 					else{
-						redirect('usuario/changePassword');
+						redirect('userController/changePassword');
 					}	
 					
 				}else{

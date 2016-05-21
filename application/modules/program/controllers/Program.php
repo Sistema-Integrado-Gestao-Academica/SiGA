@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once('Teacher.php');
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/Auth.php");
@@ -22,7 +21,7 @@ class Program extends MX_Controller {
 			'programs' => $programs
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::PROGRAMS_PERMISSION,'program/index', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::PROGRAMS_PERMISSION,'program/program/index', $data);
 	}
 
 	public function getAllPrograms(){
@@ -182,7 +181,7 @@ class Program extends MX_Controller {
 			$usersForCoordinator = FALSE;
 		}
 
-		$this->load->model("course_model");
+		$this->load->model("program/course_model");
 		$courses = $this->course_model->getCoursesToProgram($programId);
 
 		$data = array(
@@ -194,7 +193,7 @@ class Program extends MX_Controller {
 
 		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
 
-		loadTemplateSafelyByGroup($groups, "program/edit_program", $data);
+		loadTemplateSafelyByGroup($groups, "program/program/edit_program", $data);
 	}
 
 	public function updateProgram(){
@@ -325,7 +324,7 @@ class Program extends MX_Controller {
 			'users' => $usersForCoordinator
 		);
 
-		loadTemplateSafelyByPermission('cursos', "program/new_program", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::COURSES_PERMISSION, "program/program/new_program", $data);
 	}
 
 	public function newProgram(){
@@ -469,8 +468,7 @@ class Program extends MX_Controller {
 
 	public function getCoordinatorsForHomepage($programs){
 		
-		$this->load->module("program/coordinator");
-		$this->load->model("coordinator_model");
+		$this->load->model("program/coordinator_model");
 		
 		$coordinators = $this->coordinator_model->getCoordinatorsForHomepage($programs);
 		
@@ -570,7 +568,7 @@ class Program extends MX_Controller {
 
 			foreach ($coursesId as $id) {
 							
-				$this->load->model('course_model');
+				$this->load->model('program/course_model');
 				$secretaries[$id] = $this->course_model->getAcademicSecretaryName($id);
 			}
 

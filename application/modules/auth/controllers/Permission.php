@@ -37,7 +37,9 @@ class PermissionOld extends MX_Controller {
 	}
 
 	private function checkIfPermissionRouteExists($permission){
-		$allPermissions = $this->getAllPermissionsRoutes();
+	
+		$this->load->model('auth/permissions_model');
+		$allPermissions = $this->permissions_model->getAllPermissionsRoutes();
 
 		$permissionExists = FALSE;
 		foreach($allPermissions as $idPermission => $permissionRoute){
@@ -48,13 +50,6 @@ class PermissionOld extends MX_Controller {
 		}
 
 		return $permissionExists;
-	}
-
-	private function getAllPermissionsRoutes(){
-		$this->load->model('permission_model');
-		$permissionsRoutes = $this->permission_model->getAllPermissionsRoutes();
-
-		return $permissionsRoutes;
 	}
 
 }

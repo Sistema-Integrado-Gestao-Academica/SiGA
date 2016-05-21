@@ -1,14 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
-
 require_once(MODULESPATH."finantial/domain/ServicePayment.php");
 
 class Payment extends MX_Controller {
 
 	public function expensePayments($expenseId, $budgetplanId){
 
-		$this->load->model('payment_model');
+		$this->load->model('finantial/payment_model');
 
 		$payments = $this->payment_model->getExpensePayments($expenseId);
 
@@ -18,7 +17,8 @@ class Payment extends MX_Controller {
 			'expenseId' => $expenseId
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'payment/payments', $data);
+
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'finantial/payment/payments', $data);
 	}
 
 	public function newPayment($budgetplanId, $expenseId){
@@ -28,12 +28,12 @@ class Payment extends MX_Controller {
 			'expenseId' => $expenseId
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'payment/new_payment', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'finantial/payment/new_payment', $data);
 	}
 
 	public function repayment($paymentId, $budgetplanId, $expenseId){
 
-		$this->load->model('payment_model');
+		$this->load->model('finantial/payment_model');
 
 		$paymentData = $this->payment_model->getPayment($paymentId);
 
@@ -43,7 +43,7 @@ class Payment extends MX_Controller {
 			'payment' => $paymentData
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "payment/repayment", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "finantial/payment/repayment", $data);
 	}
 
 	public function employeePayment(){
@@ -58,7 +58,7 @@ class Payment extends MX_Controller {
 			'employee' => $employee
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "payment/employee_payment", $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, "finantial/payment/employee_payment", $data);
 	}
 
 	public function registerPayment(){
@@ -152,7 +152,7 @@ class Payment extends MX_Controller {
 			$installment1, $installment2, $installment3, $installment4, $installment5
 		);
 
-		$this->load->model("payment_model");
+		$this->load->model("finantial/payment_model");
 		$wasSaved = $this->payment_model->savePayment($expense, $payment);
 
 		if($wasSaved){
@@ -259,7 +259,7 @@ class Payment extends MX_Controller {
 			$installment1, $installment2, $installment3, $installment4, $installment5
 		);
 
-		$this->load->model("payment_model");
+		$this->load->model("finantial/payment_model");
 		$wasSaved = $this->payment_model->savePayment($expense, $payment);
 
 		if($wasSaved){
@@ -277,7 +277,7 @@ class Payment extends MX_Controller {
 
 	public function generateSpreadsheet($paymentId){
 
-		$this->load->model("payment_model");
+		$this->load->model("finantial/payment_model");
 		$paymentData = $this->payment_model->getPayment($paymentId);
 
 		$userType = $paymentData["userType"];

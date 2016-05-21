@@ -12,7 +12,7 @@ class Settings extends MX_Controller {
 		$edit = $this->module->checkUserGroup(GroupConstants::ADMIN_GROUP);
 		
 		$data = array('current_semester' => $current_semester, 'edit' => $edit);
-		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP, 'settings/index', $data);
+		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP, 'program/settings/index', $data);
 	}
 
 	public function saveSemester() {

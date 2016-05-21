@@ -41,7 +41,7 @@ class EnrolledStudentEmail extends EmailNotification{
         if(!is_null($course)){
 
             $ci =& get_instance();
-            $ci->load->model("course_model");
+            $ci->load->model("program/course_model");
 
             $course = $ci->course_model->getCourseName($course);
             $this->course = $course;

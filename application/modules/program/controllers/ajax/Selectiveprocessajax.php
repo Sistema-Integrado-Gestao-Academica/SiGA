@@ -144,7 +144,7 @@ class SelectiveProcessAjax extends MX_Controller {
                         'course' => $courseId
                     );
 
-                    echo form_open_multipart("selectiveprocess/saveNoticeFile");
+                    echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
 
                         echo form_hidden($hidden);
 
@@ -162,7 +162,7 @@ class SelectiveProcessAjax extends MX_Controller {
                             "style" => "margin-top: 5%;"
                         );
 
-                        include(APPPATH."/views/selection_process/_upload_notice_file.php");
+                        include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
 
                     echo form_close();
                     echo "<br>";

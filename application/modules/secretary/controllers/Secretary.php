@@ -9,7 +9,7 @@ class Secretary extends MX_Controller {
 
 	public function index(){
 
-		loadTemplateSafelyByGroup("secretario",'secretary/secretary_home');
+		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/secretary/secretary_home');
 	}
 
 	public function guest_index(){
@@ -29,7 +29,7 @@ class Secretary extends MX_Controller {
 			'userName' => $userName
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::REQUEST_REPORT_PERMISSION, 'request/secretary_courses_request', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::REQUEST_REPORT_PERMISSION, 'secretary/request/secretary_courses_request', $courseData);
 	}
 
 	public function enrollTeacher(){
@@ -44,7 +44,7 @@ class Secretary extends MX_Controller {
 			'user' => $user
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/enroll_teacher', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/secretary/enroll_teacher', $courseData);
 	}
 
 	public function enrollStudent(){
@@ -55,7 +55,7 @@ class Secretary extends MX_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'secretary/secretary_enroll_student', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'secretary/secretary/secretary_enroll_student', $courseData);
 	}
 
 	public function enrollMasterMinds(){
@@ -66,7 +66,7 @@ class Secretary extends MX_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::DEFINE_MASTERMIND_PERMISSION, 'secretary/secretary_enroll_master_mind', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::DEFINE_MASTERMIND_PERMISSION, 'secretary/secretary/secretary_enroll_master_mind', $courseData);
 	}
 
 	public function coursesStudents(){
@@ -80,7 +80,7 @@ class Secretary extends MX_Controller {
 			'courses' => $courses
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/secretary_courses_students', $courseData);
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/secretary/secretary_courses_students', $courseData);
 	}
 
 	private function loadCourses(){
@@ -171,7 +171,7 @@ class Secretary extends MX_Controller {
 			'allTeachers' => $allTeachers
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/course_teachers', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_TEACHER_PERMISSION, 'secretary/secretary/course_teachers', $data);
 	}
 
 	public function enrollTeacherToCourse(){
@@ -249,7 +249,7 @@ class Secretary extends MX_Controller {
 			'programs' => $programs
 		);
 
-		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, 'secretary/secretary_programs', $data);
+		loadTemplateSafelyByGroup(GroupConstants::ACADEMIC_SECRETARY_GROUP, 'secretary/secretary/secretary_programs', $data);
 	}
 
 	public function getSecretaryPrograms(){

@@ -5,10 +5,14 @@ require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
 class Budgetplan extends MX_Controller {
 
-	public function index() {
+	public function __construct(){
+		parent::__construct();
+		$this->load->model("finantial/budgetplan_model");
+	}
 
-		$this->load->model("budgetplan_model");
-		$this->load->model("course_model");
+	public function index() {
+		
+		$this->load->model("program/course_model");
 
 		$budgetplans = $this->budgetplan_model->all();
 		foreach ($budgetplans as $key => $b) {
@@ -23,7 +27,6 @@ class Budgetplan extends MX_Controller {
 			array_push($status, $s['description']);
 		}
 
-		$this->load->model('course_model');
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array();
 
@@ -59,7 +62,7 @@ class Budgetplan extends MX_Controller {
 			"userController" => $this->usercontroller
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'budgetplan/index', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'finantial/budgetplan/index', $data);
 	}
 
 	public function save() {
@@ -85,8 +88,6 @@ class Budgetplan extends MX_Controller {
 			$budgetplan['manager'] = $manager;
 		}
 
-		$this->load->model('budgetplan_model');
-
 		if ($this->budgetplan_model->save($budgetplan)) {				
 
 			$status = "success";
@@ -104,9 +105,6 @@ class Budgetplan extends MX_Controller {
 
 	public function edit($id) {
 
-		$this->load->model('budgetplan_model');
-		$this->load->model('course_model');
-		$this->load->model('expense_model');
 
 		$budgetplan = $this->budgetplan_model->get('id', $id);
 
@@ -115,6 +113,8 @@ class Budgetplan extends MX_Controller {
 		foreach ($status_options as $s) {
 			array_push($status, $s['description']);
 		}
+
+		$this->load->model("program/course_model");
 
 		$courses_options = $this->course_model->getAllCourses();
 		$courses = array("Nenhum");
@@ -148,7 +148,7 @@ class Budgetplan extends MX_Controller {
 			'managers' => $managers
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'budgetplan/edit', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'finantial/budgetplan/edit', $data);
 	}
 
 	public function update() {
@@ -183,8 +183,6 @@ class Budgetplan extends MX_Controller {
 			$budgetplan['manager'] = $manager;
 		}
 
-		$this->load->model('budgetplan_model');
-		
 		
 		if ($this->budgetplan_model->update($budgetplan)) {
 			$status = "success";
@@ -203,8 +201,7 @@ class Budgetplan extends MX_Controller {
 	public function delete() {
 
 		$id = $this->input->post("budgetplan_id");
-		$this->load->model('budgetplan_model');
-		$this->load->model('expense_model');
+		$this->load->model('finantial/expense_model');
 
 		$expenses = $this->budgetplan_model->getExpenses($id);
 		foreach ($expenses as $expense) {
@@ -222,8 +219,8 @@ class Budgetplan extends MX_Controller {
 
 	public function budgetplanExpenses($budgetplanId){
 
-		$this->load->model("budgetplan_model");
-		$this->load->model('expense_model');
+		
+		$this->load->model('finantial/expense_model');
 
 		$budgetplan = $this->budgetplan_model->get('id', $budgetplanId);
 
@@ -241,12 +238,12 @@ class Budgetplan extends MX_Controller {
 			'expenses' => $expenses
 		);
 
-		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'budgetplan/budgetplan_expenses', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::BUDGETPLAN_PERMISSION, 'finantial/budgetplan/budgetplan_expenses', $data);
 	}
 
 	public function deleteBudgetplanByCourseId($courseId){
 
-		 $this->load->model("budgetplan_model");
+		 
 		 $this->budgetplan_model->deleteByCourseId($courseId);
 	}
 
