@@ -5,14 +5,13 @@ require_once(MODULESPATH."/program/controllers/Course.php");
 require_once(MODULESPATH."/auth/controllers/UserController.php");
 require_once(MODULESPATH."/secretary/controllers/Schedule.php");
 require_once(MODULESPATH."/secretary/controllers/Offer.php");
-// require_once(APPPATH."/controllers/Request.php");
-// require_once(APPPATH."/controllers/Program.php");
-// require_once(APPPATH."/controllers/Syllabus.php");
-// require_once(APPPATH."/controllers/Module.php");
-// require_once(APPPATH."/controllers/Mastermind.php");
-// require_once(APPPATH."/controllers/Coordinator.php");
-
-// require_once(APPPATH."/constants/GroupConstants.php");
+require_once(MODULESPATH."/secretary/controllers/Request.php");
+require_once(MODULESPATH."/program/controllers/Program.php");
+require_once(MODULESPATH."/secretary/controllers/Syllabus.php");
+require_once(MODULESPATH."/auth/controllers/Module.php");
+require_once(MODULESPATH."/program/controllers/Mastermind.php");
+require_once(MODULESPATH."/program/controllers/Coordinator.php");
+require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."/secretary/constants/OfferConstants.php");
 
@@ -132,109 +131,6 @@ function showCapesAvaliationsNews($atualizations){
 	}
 }
 
-function studentsReportsTable($idCoordinator){
-	$coordinator = new Coordinator();
-
-	$totalStudent = $coordinator->getTotalStudents($idCoordinator);
-	$enroledStudents = $coordinator->getEnroledStudents($idCoordinator);
-	$notEnroledStudents = $coordinator->getNotEnroledStudents($idCoordinator);
-
-	echo "<h4> Painel de quantidades de alunos </h4>";
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Total de estudantes',
-		'Total de matriculados',
-		'Total de atrasados'
-	));
-
-	echo "<tr>";
-		echo "<td>";
-		echo $totalStudent;
-		echo "</td>";
-		echo "<td>";
-		echo $enroledStudents;
-		echo "</td>";
-		echo "<td>";
-		echo $notEnroledStudents;
-		echo "</td>";
-	echo "</tr>";
-
-	buildTableEndDeclaration();
-}
-
-function secretaryReportsTable($idCoordinator){
-	$coordinator = new Coordinator();
-
-	$course = $coordinator->getCoordinatorCourseData($idCoordinator);
-	$secretaries = $coordinator->getCourseSecretaries($course['id_course']);
-
-	echo "<div class=\"col-lg-12 col-xs-6\">";
-	echo "<div class='panel panel-primary'>";
-	echo "<div class='panel-heading'><h4>Relação de secretários do curso: ". $course['course_name'] ." </h4></div>";
-	echo "<div class='panel-body'>";
-	echo "<div class=\"modal-info\">";
-	echo "<div class=\"modal-content\">";
-
-	if($secretaries !== FALSE){
-		foreach ($secretaries as $key => $secretary){
-			$userData = new UserController();
-			$secretaryData = $userData->getUserById($secretary['id_user']);
-			$secretaryGroup = $userData->getUserGroupNameByIdGroup($secretary['id_group']);
-			echo "<div class=\"modal-header bg-news\">";
-				echo "<h4 class=\"model-title\"> Secretário : ". ucfirst($secretaryData['name']) ."</h4>";
-			echo "</div>";
-			echo "<div class=\"modal-body\">";
-				echo "<h4>";
-					switch ($secretaryGroup) {
-						case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-							echo "Secretaria acadêmica";
-							break;
-						case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-							echo "Secretaria financeira";
-							break;
-						default:
-							break;
-					}
-				echo "</h4>";
-			echo "</div>";
-
-		}
-	}else{
-		callout("info", "Nenhum secretário para este curso.");
-	}
-
-					echo "</div>";
-				echo "</div>";
-			echo "</div>";
-		echo "</div>";
-	echo "</div>";
-
-}
-
-function mastermindReportsTable($idCoordinator){
-	$coordinator = new Coordinator();
-
-	$totalMasterminds = $coordinator->getTotalMasterminds($idCoordinator);
-
-	echo "<div class=\"col-lg-12 col-xs-6\">";
-		echo "<div class=\"modal-info\">";
-			echo "<div class=\"modal-content\">";
-				echo "<div class=\"modal-header bg-news\">";
-					echo "<h4 class=\"model-title\">Total de Professores do Curso: </h4>";
-				echo "</div>";
-				echo "<div class=\"modal-body\">";
-					echo "<h4>";
-						echo "Existem no momento " . sizeof($totalMasterminds) . " professores cadastrados para este curso.";
-					echo "</h4>";
-				echo "</div>";
-			echo "</div>";
-		echo "</div>";
-	echo "</div>";
-	showMastermindsStudents($totalMasterminds);
-
-}
 
 function showMastermindsStudents($masterminds){
 

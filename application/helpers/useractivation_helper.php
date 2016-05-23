@@ -1,7 +1,7 @@
 <?php
 
-require_once(APPPATH."/controllers/useractivation.php");
-require_once(APPPATH."/data_types/notification/emails/ConfirmSignUpEmail.php");
+require_once(MODULESPATH."auth/controllers/Useractivation.php");
+require_once(MODULESPATH."notification/domain/emails/ConfirmSignUpEmail.php");
 
 function sendConfirmationEmail($user, $activation){
 

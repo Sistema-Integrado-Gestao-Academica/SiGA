@@ -19,7 +19,7 @@
 	<div id=<?="resent_email_form"?> class="panel-collapse collapse" aria-expanded="false">
 		<div class="box-body">		
 
-			<?php include(APPPATH.'views/usuario/_resent_email_form.php'); ?>
+			<?php include(MODULESPATH.'auth/views/user/_resent_email_form.php'); ?>
 
 		</div>
 	</div>
@@ -36,7 +36,7 @@
 	<div id=<?="cancel_register_form"?> class="panel-collapse collapse" aria-expanded="false">
 		<div class="box-body">		
 
-			<?php include(APPPATH.'views/usuario/_cancel_register_form.php'); ?>
+			<?php include(MODULESPATH.'auth/views/user/_cancel_register_form.php'); ?>
 
 		</div>
 	</div>

@@ -5,7 +5,7 @@
 	<?php
 		if($isAdmin){
 			echo anchor(
-				"course/formToRegisterNewCourse",
+				"program/course/formToRegisterNewCourse",
 				"<i class='fa fa-plus-circle'></i> Cadastrar Curso",
 				"class='btn-lg'"
 			);

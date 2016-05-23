@@ -67,7 +67,7 @@ if($registeredPrograms !== FALSE){
 <div class="form-box" id="login-box">
 
 	<div class="header">Cadastrar um novo Curso</div>
-	<?= form_open("course/newCourse") ?>
+	<?= form_open("program/course/newCourse") ?>
 		<div class="body bg-gray">
 			<div class="form-group">	
 				<?= form_label("Nome do Curso", "courseName") ?>

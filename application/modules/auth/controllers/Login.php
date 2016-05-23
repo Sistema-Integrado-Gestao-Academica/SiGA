@@ -34,7 +34,7 @@ class Login extends MX_Controller {
 						redirect('/');
 					}
 					else{
-						redirect('userController/changePassword');
+						redirect('auth/userController/changePassword');
 					}	
 					
 				}else{

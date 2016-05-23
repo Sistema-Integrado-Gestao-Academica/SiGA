@@ -244,7 +244,7 @@
 								<div class="col-lg-4">
 									<div class="row">
 									<?php
-										echo anchor("auth/user/restorePassword", "<i class='fa fa-question-circle'></i>", "id='link_restore_password' data-toggle=\"popover\" data-placement=\"bottom\" data-trigger=\"hover\"
+										echo anchor("auth/userController/restorePassword", "<i class='fa fa-question-circle'></i>", "id='link_restore_password' data-toggle=\"popover\" data-placement=\"bottom\" data-trigger=\"hover\"
 	     								data-content=\"Clique se tiver esquecido sua senha.\"");
 
 										echo form_button(array(

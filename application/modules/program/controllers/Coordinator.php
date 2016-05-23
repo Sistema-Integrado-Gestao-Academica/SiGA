@@ -17,18 +17,55 @@ class Coordinator extends MX_Controller {
 	}
 
 	public function students_report(){
+
+		$session = getSession();
+		$user = $session->getUserData();
+		$idCoordinator = $user->getId();
+		$totalStudent = $this->getTotalStudents($idCoordinator);
+		$enroledStudents = $this->getEnroledStudents($idCoordinator);
+		$notEnroledStudents = $this->getNotEnroledStudents($idCoordinator);
 		
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/students_reports");
+		$data = array(
+
+				'totalStudent' => $totalStudent,
+				'enroledStudents' => $enroledStudents,
+				'notEnroledStudents' => $notEnroledStudents
+			);
+
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/students_reports", $data);
 	}
 	
 	public function mastermind_report(){
 	
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_reports");
+		$session = getSession();
+		$user = $session->getUserData();
+		$idCoordinator = $user->getId();
+		$totalMasterminds = $this->getTotalMasterminds($idCoordinator);
+
+		$data = array(
+			'totalMasterminds' => $totalMasterminds
+
+		);
+
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_reports", $data);
 	}
 	
 	public function secretary_report(){
-	
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_reports");
+		
+		$session = getSession();
+		$user = $session->getUserData();
+		$idCoordinator = $user->getId();
+		$course = $this->getCoordinatorCourseData($idCoordinator);
+		$secretaries = $this->getCourseSecretaries($course['id_course']);
+
+		$data = array(
+
+			'course' => $course,
+			'secretaries' => $secretaries
+
+		);
+
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_reports", $data);
 	}
 	
 	public function getCoordinatorCourseData($idCoordinator){
