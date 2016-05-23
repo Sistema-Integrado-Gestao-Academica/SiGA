@@ -217,7 +217,8 @@ class MasterMind extends MX_Controller {
 
 		$currentSemester = $this->semester_model->getCurrentSemester();
 
-		$students = $this->mastermind_model->getStutentsByIdMastermind($user->getId());
+		$userId = $user->getId();
+		$students = $this->mastermind_model->getStutentsByIdMastermind($userId);
 
 		$studentsRequests = $this->getStudentsRequests($students,$currentSemester['id_semester']);
 

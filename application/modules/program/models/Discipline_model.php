@@ -154,7 +154,7 @@ class Discipline_model extends CI_Model {
 	 * @return boolean $disciplinWasDeleted - TRUE for deleted discipline
 	 */
 	public function deleteDiscipline($disciplineCode){
-		$disciplineCodeExists = $this->disciplineExists($disciplineCode);
+		$disciplineCodeExists = $this->checkIfDisciplineExists($disciplineCode);
 
 		if ($disciplineCodeExists['code']){
 			$this->db->delete('discipline', array('discipline_code' => $disciplineCode));

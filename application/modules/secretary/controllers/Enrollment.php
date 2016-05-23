@@ -2,7 +2,7 @@
 
 require_once(MODULESPATH."/secretary/domain/StudentRegistration.php");
 require_once(MODULESPATH."/secretary/exception/StudentRegistrationException.php");
-require_once(MODULESPATH."/secretary/domain/notification/EnrolledStudentEmail.php");
+require_once(MODULESPATH."/notification/domain/emails/EnrolledStudentEmail.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 

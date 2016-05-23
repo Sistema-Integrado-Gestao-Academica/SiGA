@@ -9,7 +9,7 @@ class Staff extends MX_Controller {
 		$staffs = $this->getRegisteredStaffs();
 		$guests = $this->getGuestUsers();
 		$data = array('staffs' => $staffs, 'guestUsers'=>$guests);
-		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP ,'program/staffs/new_staff', $data);
+		loadTemplateSafelyByGroup(GroupConstants::ADMIN_GROUP,'program/staffs/new_staff', $data);
 	}
 
 	public function editStaff($id) {
@@ -62,7 +62,7 @@ class Staff extends MX_Controller {
 			if ($staffExiste) {
 				$session->showFlashMessage('danger', 'Este funcionário já está cadastrado');
 			} else if ($this->staffs_model->saveNewStaff($saveData)) {
-				$session->showFlashMessage('success', "Funcionário \"$nome\" salvo com sucesso");
+				$session->showFlashMessage('success', "Funcionário salvo com sucesso");
 			}
 		}
 

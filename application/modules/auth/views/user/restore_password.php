@@ -5,7 +5,7 @@
     <p> Digite o email utilizado no cadastro. </p>
 </div>
     <div class="header"></div>
-    <?= form_open("usuario/restorePassword") ?>
+    <?= form_open("auth/userController/restorePassword") ?>
         <div class="body bg-gray">
             <div class="form-group">
                 <?= form_label("E-mail", "email") ?>

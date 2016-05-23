@@ -1,6 +1,6 @@
 <div class="form-box" id="login-box"> 
     <div class="header">Definir uma nova senha</div>
-    <?= form_open("usuario/changePassword") ?>
+    <?= form_open("auth/userController/changePassword") ?>
         <div class="body bg-gray">
             <div class="form-group">
                 <?= form_label("Digite sua nova senha", "password") ?>

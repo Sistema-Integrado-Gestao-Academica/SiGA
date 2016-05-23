@@ -184,7 +184,7 @@ function mastermindMessageForm($requestId, $mastermindId, $isFinalized, $masterm
 		);
 	}
 
-	echo form_open('mastermind/finalizeRequest','',$hidden);
+	echo form_open('program/mastermind/finalizeRequest','',$hidden);
 	echo form_label('Mensagem:', 'mastermind_message');
 	echo "<br>";
 	echo "<br>";
@@ -674,14 +674,15 @@ function loadStaffRegistrationForm($users){
 				echo form_error("pis");
 			echo "</div>";
 			echo "<div class='form-group'>";
-				echo form_label("Selecione o Funcionário", "staff");
-				if($users !== FALSE){
+			echo form_label("Selecione o Funcionário", "staff");
+			if($users !== FALSE){
 
-					echo form_dropdown("staff", $users, "id='staff'");
-				}else{
-					echo form_dropdown("staff", array("Não há usuários para cadastrar como funcionário"), "id='staff'");
-				}
-				echo form_error("staff");
+				echo form_dropdown("staff", $users, "id='staff'");
+			}
+			else{
+				echo form_dropdown("staff", array("Não há usuários para cadastrar como funcionário"), "id='staff'");
+			}
+			echo form_error("staff");
 			echo "</div>";
 			echo "<div class='form-group'>";
 				echo form_label("Matrícula", "registration");
@@ -730,7 +731,9 @@ function loadStaffRegistrationForm($users){
 		echo "</div>";
 
 		echo form_close();
-		callout("danger", "Não há usuários para cadastrar como funcionário.", "Apenas usuários do grupo convidado podem ser cadastrados com funcionários.");
+		if($users == FALSE){
+			callout("danger", "Não há usuários para cadastrar como funcionário.", "Apenas usuários do grupo convidado podem ser cadastrados com funcionários.");
+		}
 	echo "</div>";
 
 }
