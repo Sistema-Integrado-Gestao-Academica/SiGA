@@ -5,7 +5,7 @@ class Migration_Cria_coluna_rota_do_perfil_de_grupos extends CI_Migration {
 	public function up() {
 		
 		$profile_route_column = array(
-			'profile_route' => array('type' => 'varchar(20)','NULL'=>TRUE)
+			'profile_route' => array('type' => 'varchar(20)','NULL' => FALSE, 'default' => "no_route")
 		);
 
 		$this->dbforge->add_column('group', $profile_route_column);

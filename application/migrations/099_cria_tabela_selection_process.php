@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/SelectionProcessConstants.php");
+require_once(MODULESPATH."program/constants/SelectionProcessConstants.php");
 
 class Migration_cria_tabela_selection_process extends CI_Migration {
 

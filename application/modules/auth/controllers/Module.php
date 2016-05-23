@@ -2,7 +2,6 @@
 
 require_once(MODULESPATH."auth/domain/User.php");
 require_once(MODULESPATH."auth/domain/Group.php");
-require_once("SessionManager.php");
 
 class Module extends MX_Controller {
 
@@ -49,7 +48,6 @@ class Module extends MX_Controller {
 
 	public function getGroupById($idGroup){
 
-		
 		$group = $this->module_model->getGroupById($idGroup);
 
 		return $group;
@@ -97,7 +95,6 @@ class Module extends MX_Controller {
 
 	public function getGroupByName($groupName){
 
-		
 		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		return $group;
@@ -110,7 +107,7 @@ class Module extends MX_Controller {
 	  */
 	public function checkModules($user_id){
 
-				$registered_modules = $this->module_model->getUserModuleNames($user_id);
+		$registered_modules = $this->module_model->getUserModuleNames($user_id);
 
 		return $registered_modules;
 	}
@@ -121,10 +118,13 @@ class Module extends MX_Controller {
 	 */
 	public function getExistingModules(){
 
-				$existing_modules = $this->module_model->getAllModules();
-		$existing_modules_form = $this->turnCourseTypesToArray($existing_modules);
+		$modules = $this->module_model->getAllModules();
 
-		return $existing_modules_form;
+		foreach ($modules as $module){
+			$modules[$module['id_group']] = $module['group_name'];
+		}
+
+		return $modules;
 	}
 
 	public function getUserGroups($idUser){
@@ -135,31 +135,9 @@ class Module extends MX_Controller {
 	}
 
 	public function checkIfGroupExists($idGroup){
-
 		
 		$groupExists = $this->module_model->checkIfGroupExists($idUser);
 
 		return $groupExists;
 	}
-
-	/**
-	 * Join the id's and names of modules (groups) into an array as key => value.
-	 * Used to the update course form
-	 * @param $modules - The array that contains the tuples of modules
-	 * @return An array with the id's and modules names as id => module_name
-	 */
-	private function turnCourseTypesToArray($modules){
-		// Quantity of course types registered
-		$quantity_of_course_types = sizeof($modules);
-
-		for($cont = 0; $cont < $quantity_of_course_types; $cont++){
-			$keys[$cont] = $modules[$cont]['id_group'];
-			$values[$cont] = $modules[$cont]['group_name'];
-		}
-
-		$form_modules = array_combine($keys, $values);
-
-		return $form_modules;
-	}
-
 }

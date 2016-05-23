@@ -5,7 +5,7 @@ class Utils extends MX_Controller {
 	public function migrate() {
 		$this->load->library('migration');
 		if ($this->migration->current()) {
-			echo "Migrado com sucesso";
+			$this->load->test_template("migration_status");
 		} else {
 			show_error($this->migration->error_string());
 		}
@@ -16,14 +16,11 @@ class Utils extends MX_Controller {
 	}
 	
 	public function loadAvaliationAreas(){
-		$this->load->model("program_model");
+		$this->load->model("program/program_model");
 		
 		$lines = file(base_url("area_avaliacao.txt"));
 		foreach ($lines as $lineID => $areaName){
-			$saved = $this->program_model->parseProgramAreas($areaName);
-			if ($saved){
-				echo "Área : " . $areaName . " salva com sucesso! <br>";
-			}
+			$this->program_model->parseProgramAreas($areaName);
 		}
 		
 	}
