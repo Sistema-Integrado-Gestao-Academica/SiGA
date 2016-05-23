@@ -14,6 +14,15 @@ class MY_Form_validation extends CI_Form_validation {
 
 	// --------------------------------------------------------------------
 
+    function valid_name($str){
+        
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('valid_name', 'O {field} deve conter apenas caracteres alfabéticos.');
+
+        return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+    }
+
 	/**
      *
      * valid_cpf
@@ -27,7 +36,7 @@ class MY_Form_validation extends CI_Form_validation {
     {
         $CI =& get_instance();
 
-        $CI->form_validation->set_message('valid_cpf', 'O %s informado não é válido.');
+        $CI->form_validation->set_message('valid_cpf', 'O {field} informado não é válido.');
 
         $cpf = preg_replace('/[^0-9]/','',$cpf);
 
@@ -60,7 +69,7 @@ class MY_Form_validation extends CI_Form_validation {
 
         $CI =& get_instance();
 
-        $CI->form_validation->set_message('verify_if_cpf_no_exists', 'Já existe um usuário com o %s informado.');
+        $CI->form_validation->set_message('verify_if_cpf_no_exists', 'Já existe um usuário com o {field} informado.');
 
         $CI->db->select('cpf');
         $foundUsers = $CI->db->get('users')->result_array();
@@ -90,7 +99,7 @@ class MY_Form_validation extends CI_Form_validation {
 
         $CI =& get_instance();
 
-        $CI->form_validation->set_message('verify_if_login_no_exists', 'Já existe um usuário com o %s informado.');
+        $CI->form_validation->set_message('verify_if_login_no_exists', 'Já existe um usuário com o {field} informado.');
 
         $CI->db->select('login');
         $foundUsers = $CI->db->get('users')->result_array();
@@ -119,7 +128,7 @@ class MY_Form_validation extends CI_Form_validation {
 
         $CI =& get_instance();
 
-        $CI->form_validation->set_message('verify_if_email_no_exists', 'Já existe um usuário com o %s informado.');
+        $CI->form_validation->set_message('verify_if_email_no_exists', 'Já existe um usuário com o {field} informado.');
 
         $CI->db->select('email');
         $foundUsers = $CI->db->get('users')->result_array();

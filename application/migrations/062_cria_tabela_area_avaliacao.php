@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH."/controllers/utils.php");
+require_once(APPPATH."/controllers/Utils.php");
 
 class Migration_Cria_tabela_area_avaliacao extends CI_Migration {
 

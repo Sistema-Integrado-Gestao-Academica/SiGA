@@ -5,9 +5,9 @@ user_guide
 .buildpath
 .project
 .settings/
-application/config/*.php
 siga.sublime-workspace
 
 /application/upload_files
 /vendor-dependencies
 /application/constants/EmailSenderData.php
+application/third_party/

@@ -2,7 +2,7 @@
 
 require_once(APPPATH."/exception/PhoneException.php");
 
-class Phone{
+class PhoneOld{
 	
 	// Valid number lengths
 	const MIN_NUM_LENGTH = 8;

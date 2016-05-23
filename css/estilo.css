@@ -1,6 +1,11 @@
 body {
 	padding-top: 50px;
 }
+
+#user_side_bar{
+  overflow-y : scroll;
+}
+
 #class_hour_table{
     overflow-x : scroll;
 }
@@ -91,10 +96,6 @@ td {
 
 .side-nav>li>ul>li>a:hover {
     color: #fff;
-}
-
-#update_doctorate_btn{
-    margin-right: 10px;
 }
 
 .list-group-item{

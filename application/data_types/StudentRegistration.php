@@ -1,8 +1,8 @@
 <?php
 
-require_once(APPPATH."/exception/StudentRegistrationException.php");
+require_once(MODULESPATH."secretary/exception/StudentRegistrationException.php");
 
-class StudentRegistration{
+class StudentRegistrationOld{
 
     const COULDNT_GET_CURRENT_YEAR = "Não foi possível recuperar o ano atual para compor a matrícula. Contate o administrador.";
     const REGISTRATION_CANT_BE_EMPTY = "A matrícula do aluno não pode estar vazia.";

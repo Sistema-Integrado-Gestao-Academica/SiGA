@@ -9,7 +9,7 @@ function bold($string){
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
 	$discipline = array(
-		"name" => "discipline_to_search",
+		"name" => "discipline_tomo_search",
 		"id" => "discipline_to_search",
 		"type" => "text",
 		"class" => "form-campo form-control",
@@ -28,7 +28,7 @@ function searchForDisciplineByNameForm($syllabusId, $courseId){
 	define("SEARCH_BY_NAME", "by_name");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por nome da disciplina</h4>";
-	echo form_open("syllabus/searchForDiscipline");
+	echo form_open("secretary/syllabus/searchForDiscipline");
 		echo form_hidden('searchType', SEARCH_BY_NAME);
 		echo form_hidden('syllabusId', $syllabusId);
 		echo form_hidden('courseId', $courseId);
@@ -64,7 +64,7 @@ function searchForDisciplineByIdForm($syllabusId, $courseId){
 	define("SEARCH_BY_ID", "by_id");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por código da disciplina</h4>";
-	echo form_open("syllabus/searchForDiscipline");
+	echo form_open("secretary/syllabus/searchForDiscipline");
 		echo form_hidden('searchType', SEARCH_BY_ID);
 		echo form_hidden('syllabusId', $syllabusId);
 		echo form_hidden('courseId', $courseId);
@@ -98,11 +98,11 @@ function searchForStudentRequestByIdForm($courseId){
 		"type" => "submit"
 	);
 
-	define("SEARCH_BY_ID", "by_id");
+	define("SEARCH_BY_ENROLLMENT", "by_enrollment");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por matrícula do aluno</h4>";
-	echo form_open("request/searchForStudentRequest");
-		echo form_hidden('searchType', SEARCH_BY_ID);
+	echo form_open("secretary/request/searchForStudentRequest");
+		echo form_hidden('searchType', SEARCH_BY_ENROLLMENT);
 		echo form_hidden('courseId', $courseId);
 
 		echo "<div class='form-group'>";
@@ -137,7 +137,7 @@ function searchForStudentRequestByNameForm($courseId){
 	define("SEARCH_BY_NAME", "by_name");
 
 	echo "<h4><i class='fa fa-search'></i> Pesquisar por nome do aluno</h4>";
-	echo form_open("request/searchForStudentRequest");
+	echo form_open("secretary/request/searchForStudentRequest");
 		echo form_hidden('searchType', SEARCH_BY_NAME);
 		echo form_hidden('courseId', $courseId);
 
@@ -148,70 +148,6 @@ function searchForStudentRequestByNameForm($courseId){
 
 		echo form_button($searchForStudentBtn);
 	echo form_close();
-}
-
-function displayEnrollMastermindToStudentForm($students, $masterminds, $courseId){
-
-	$submitBtn = array(
-		"class" => "btn bg-olive btn-block",
-		"content" => "Relacionar",
-		"type" => "submit"
-	);
-
-	if($students === FALSE){
-		$thereIsNoStudents = TRUE;
-		$students = array("Nenhum aluno neste curso.");
-		$submitBtn['disabled'] = TRUE;
-	}else{
-		$thereIsNoStudents = FALSE;
-	}
-
-	if($masterminds === FALSE){
-		$thereIsNoMasterminds = TRUE;
-		$masterminds = array("Nenhum orientador cadastrado.");
-		$submitBtn['disabled'] = TRUE;
-	}else{
-		$thereIsNoMasterminds = FALSE;
-	}
-
-	echo "<div class='form-box' id='login-box'>";
-		echo "<div class='header'>Relacionar Orientador a Aluno</div>";
-
-		echo form_open('mastermind/saveMastermindToStudent','',array('courseId'=>$courseId));
-		echo "<div class='body bg-gray'>";
-			echo "<div class='form-group'>";
-				echo form_label("Aluno do curso", "course_student") . "<br>";
-				echo form_dropdown("course_student", $students, '', "id='course_student'");
-				echo form_error("course_student");
-				echo "<br>";
-				echo "<br>";
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Orientador para este aluno", "student_mastermind") . "<br>";
-				echo form_dropdown("student_mastermind", $masterminds, '', "id='student_mastermind'");
-				echo form_error("student_mastermind");
-				echo "<br>";
-				echo "<br>";
-			echo "</div>";
-		echo "</div>";
-		echo "<div class='footer body bg-gray'>";
-			echo form_button($submitBtn);
-		echo "</div>";
-
-		if($thereIsNoStudents){
-			echo "<div class='callout callout-danger'>";
-				echo "<h4>Não é possível relacionar orientadores sem alunos.</h4>";
-			echo "</div>";
-		}
-		if($thereIsNoMasterminds){
-			echo "<div class='callout callout-danger'>";
-				echo "<h4>Não é possível relacionar orientadores sem orientadores.</h4>";
-			echo "</div>";
-		}
-
-		echo form_close();
-	echo "</div>";
-
 }
 
 function mastermindMessageForm($requestId, $mastermindId, $isFinalized, $mastermindMessage = ""){
@@ -428,7 +364,7 @@ function formToNewOfferDisciplineClass($idDiscipline, $idOffer, $teachers, $idCo
 		"content" => "Cadastrar turma"
 	);
 
-	echo form_open("offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}/{$idCourse}");
+	echo form_open("secretary/offer/newOfferDisciplineClass/{$idDiscipline}/{$idOffer}/{$idCourse}");
 
 		echo "<div class='form-box'>";
 			echo"<div class='header'>Nova turma para oferta</div>";
@@ -494,6 +430,11 @@ function createResearchLineForm($courses){
 			"type" => "submit"
 	);
 
+	if($courses === FALSE){
+		$courses = array("Não há cursos para este secretário.");
+		$submitBtn['disabled'] = TRUE;
+	}
+
 	$researchLine = array(
 			"name" => "researchLine",
 			"id" => "researchLine",
@@ -507,7 +448,7 @@ function createResearchLineForm($courses){
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
 
-		echo form_open('secretary/saveResearchLine','');
+		echo form_open('program/course/saveResearchLine','');
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
 			echo form_label("Linha de Pesquisa", "research_line");
@@ -553,7 +494,7 @@ function updateResearchLineForm($researchId, $description, $actualCourseForm, $c
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
 
-		echo form_open('secretary/updateResearchLine','',$hidden);
+		echo form_open('program/course/updateResearchLine','',$hidden);
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
 				echo form_label("Linha de Pesquisa", "research_line");
@@ -597,7 +538,7 @@ function relateDisciplineToResearchLineForm($researchLines, $discipline, $syllab
 			echo "<div class='form-box' id='login-box'>";
 				echo "<div class='header'>Cadastrar nova Linha de Pesquisa</div>";
 
-				echo form_open('syllabus/saveDisciplineResearchLine','',$hidden);
+				echo form_open('secretary/syllabus/saveDisciplineResearchLine','',$hidden);
 				echo "<div class='body bg-gray'>";
 					echo "<div class='form-group'>";
 						echo $discipline['discipline_code']." - ".$discipline['discipline_name']." (".$discipline['name_abbreviation'].")";
@@ -725,7 +666,7 @@ function loadStaffRegistrationForm($users){
 	echo "<div class='form-box' id='login-box'>";
 		echo "<div class='header'>Cadastrar novo Funcionário</div>";
 
-		echo form_open('staff/newStaff','');
+		echo form_open('program/staff/newStaff','');
 		echo "<div class='body bg-gray'>";
 			echo "<div class='form-group'>";
 				echo form_label("PIS/INSS", "pis");
@@ -792,168 +733,6 @@ function loadStaffRegistrationForm($users){
 		callout("danger", "Não há usuários para cadastrar como funcionário.", "Apenas usuários do grupo convidado podem ser cadastrados com funcionários.");
 	echo "</div>";
 
-}
-
-function loadStaffEditForm($staff, $staffUserData){
-	/**
-	 *	Staff Labels
-	 */
-	$submitBtn = array(
-			"class" => "btn bg-olive btn-block",
-			"content" => "Salvar",
-			"type" => "submit"
-	);
-
-	$pisNumber = array(
-			"name" => "pis",
-			"id" => "pis",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "20",
-			"value" => $staff['pisPasep']
-	);
-
-	$registration = array(
-			"name" => "registration",
-			"id" => "registration",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "10",
-			"placeholder" => "Opcional",
-			"value" => $staff['registration']
-	);
-
-	$landingDate = array(
-			"name" => "landingDate",
-			"id" => "arrivalInBrazil",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"placeholder" => "Opcional",
-			"value" => $staff['brazil_landing']
-	);
-
-	$address = array(
-			"name" => "address",
-			"id" => "address",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "50",
-			"value" => $staff['address']
-	);
-
-	$phone = array(
-			"name" => "telephone",
-			"id" => "telephone",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "15",
-			"value" => $staff['telephone']
-	);
-
-	/**
-	 *	Bank labels
-	 */
-
-	$bank = array(
-			"name" => "bank",
-			"id" => "bank",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "25",
-			"value" => $staff['bank']
-	);
-
-	$agency = array(
-			"name" => "agency",
-			"id" => "agency",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "10",
-			"value" => $staff['agency']
-	);
-
-	$checkingAccount = array(
-			"name" => "accountNumber",
-			"id" => "accountNumber",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control",
-			"maxlength" => "15",
-			"value" => $staff['account_number']
-	);
-
-	$hidden = array('user_id' => $staffUserData['id'], 'staff_id'=>$staff['id_staff']);
-
-	echo "<div class='form-box' id='login-box'>";
-		echo "<div class='header'> Alterar dados de Funcionário</div>";
-
-		echo form_open('staff/updateStaff','',$hidden);
-		echo "<div class='body bg-gray'>";
-			echo "<div class='form-group'>";
-				echo form_label("PIS/INSS", "pis_number");
-				echo form_input($pisNumber);
-				echo form_error("pis_number");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Nome do Funcionário", "staff");
-				echo "<h4>".$staffUserData['name']."</h4>";
-				echo form_error("staff");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Matrícula", "registration");
-				echo form_input($registration);
-				echo form_error("registration");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Chegada ao Brasil", "landingDate");
-				echo form_input($landingDate);
-				echo form_error("landingDate");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Endereço", "address");
-				echo form_input($address);
-				echo form_error("address");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Telefone", "telephone");
-				echo form_input($phone);
-				echo form_error("telephone");
-			echo "</div>";
-
-			echo "<hr>";
-			echo "<h3>Dados Bancários</h3> (Opcionais)";
-
-			echo "<div class='form-group'>";
-				echo form_label("Banco", "bank");
-				echo form_input($bank);
-				echo form_error("bank");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Agência", "agency");
-				echo form_input($agency);
-				echo form_error("agency");
-			echo "</div>";
-			echo "<div class='form-group'>";
-				echo form_label("Conta Corrente", "accountNumber");
-				echo form_input($checkingAccount);
-				echo form_error("accountNumber");
-			echo "</div>";
-
-		echo "</div>";
-
-		echo "<div class='footer body bg-gray'>";
-		echo form_button($submitBtn);
-		echo "</div>";
-
-		echo form_close();
-	echo "</div>";
 }
 
 function emptyDiv(){

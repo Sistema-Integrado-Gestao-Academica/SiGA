@@ -1,6 +1,6 @@
 <?php
 
-class PhoneException extends Exception{
+class PhoneExceptionOld extends Exception{
 
 	public function __construct($message, $exception_code = 0){
 		parent::__construct($message, $exception_code);

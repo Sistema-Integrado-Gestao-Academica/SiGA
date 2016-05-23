@@ -35,7 +35,7 @@ function checkInstallments(){
 	var quantityOfInstallments = $("#installments_quantity").val();
 
 	var siteUrl = $("#site_url").val();
-	var urlToPost = siteUrl + "/ajax/paymentajax/checkInstallmentQuantity";
+	var urlToPost = siteUrl + "/finantial/ajax/paymentajax/checkInstallmentQuantity";
 
 	$.post(
 		urlToPost,
@@ -103,7 +103,7 @@ function checkInstallmentValue(){
 	var installment_value_5 = $("#installment_value_5").val();
 
 	var siteUrl = $("#site_url").val();
-	var urlToPost = siteUrl + "/ajax/paymentajax/checkInstallmentValues";
+	var urlToPost = siteUrl + "/finantial/ajax/paymentajax/checkInstallmentValues";
 
 	$.post(
 		urlToPost,
@@ -130,7 +130,7 @@ function searchEmployeeToPayment(){
 
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/ajax/paymentajax/newStaffPaymentForm";
+	var urlToPost = siteUrl + "/finantial/ajax/paymentajax/newStaffPaymentForm";
 
 	$.post(
 		urlToPost,

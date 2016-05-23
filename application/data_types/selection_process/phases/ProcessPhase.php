@@ -2,7 +2,7 @@
 require_once(APPPATH."/constants/SelectionProcessConstants.php");
 require_once(APPPATH."/exception/SelectionProcessException.php");
 
-abstract class ProcessPhase{
+abstract class ProcessPhaseOld{
 
 	const INVALID_PHASE_NAME = "Fase inválida. Fases disponíveis: Homologação, Avaliação de Pré-Projeto, Prova escrita e Prova oral.";
 	const INVALID_ID = "O ID da fase deve ser um número maior que zero.";

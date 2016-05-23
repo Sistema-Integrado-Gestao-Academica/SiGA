@@ -2,7 +2,7 @@
 
 require_once('Constants.php');
 
-class SelectionProcessConstants extends Constants{
+class SelectionProcessConstantsOld extends Constants{
 
 	const HOMOLOGATION_PHASE = "Homologação";
 	const PRE_PROJECT_EVALUATION_PHASE = "Avaliação de Pré-Projeto";

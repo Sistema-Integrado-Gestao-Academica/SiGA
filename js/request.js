@@ -10,7 +10,7 @@ function checkDocumentType(){
 	var currentType = $("#documentType").val();
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/ajax/requestajax/checkDocumentType";
+	var urlToPost = siteUrl + "/student/ajax/requestajax/checkDocumentType";
 
 	$.post(
 		urlToPost,

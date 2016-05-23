@@ -1,4 +1,6 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
@@ -17,13 +19,13 @@
 |
 | Please see the user guide for complete details:
 |
-|	http://codeigniter.com/user_guide/general/routing.html
+|	https://codeigniter.com/user_guide/general/routing.html
 |
 | -------------------------------------------------------------------------
 | RESERVED ROUTES
 | -------------------------------------------------------------------------
 |
-| There area two reserved routes:
+| There are three reserved routes:
 |
 |	$route['default_controller'] = 'welcome';
 |
@@ -33,84 +35,126 @@
 |
 |	$route['404_override'] = 'errors/page_missing';
 |
-| This route will tell the Router what URI segments to use if those provided
-| in the URL cannot be matched to a valid route.
+| This route will tell the Router which controller/method to use if those
+| provided in the URL cannot be matched to a valid route.
 |
+|	$route['translate_uri_dashes'] = FALSE;
+|
+| This is not exactly a route, but allows you to automatically route
+| controller and method names that contain dashes. '-' isn't a valid
+| class or method name character, so it requires translation.
+| When you set this option to TRUE, it will replace ALL dashes in the
+| controller and method URI segments.
+|
+| Examples:	my-controller/index	-> my_controller/index
+|		my-controller/my-method	-> my_controller/my_method
 */
-
-// Default for all users
-$route['default_controller'] = "login";
+$route['default_controller'] = 'home';
 $route['404_override'] = '';
-$route['conta'] = 'usuario/conta';
-$route['profile'] = 'usuario/profile';
-$route['logout'] = 'login/logout';
+$route['translate_uri_dashes'] = FALSE;
 
-$route['register'] = 'usuario/register';
-$route['register_user'] = 'usuario/newUser';
-$route['confirm_register'] = 'useractivation/confirm';
-$route['reconfirm_register/(:num)'] = 'useractivation/reconfirmRegister/$1/';
-$route['cancel_register/(:num)'] = 'useractivation/cancelRegister/$1/';
-$route['configuracoes'] = 'settings';
-$route['cursos'] = 'course/index';
+/*
+ * Authentication routes
+ */
+$route['conta'] = 'auth/userController/conta';
+$route['profile'] = 'auth/userController/profile';
+$route['update_user_profile'] = 'auth/userController/updateProfile';
+$route['logout'] = 'auth/login/logout';
+$route['register'] = 'auth/userController/register';
+$route['register_user'] = 'auth/userController/newUser';
+$route['confirm_register'] = 'auth/useractivation/confirm';
+$route['resent_confirmation_email/(:num)'] = 'auth/useractivation/resentEmail/$1/';
+$route['reconfirm_register/(:num)'] = 'auth/useractivation/reconfirmRegister/$1/';
+$route['cancel_register/(:num)'] = 'auth/useractivation/cancelRegister/$1/';
+$route['user_report'] = 'auth/userController/usersReport';
+
+// useless
 $route['departamentos'] = 'departamento/formulario';
 $route['departamentos/(:num)'] = 'departamento/formulario_altera/$1';
-$route['discipline'] = 'discipline/discipline_index';
-$route['discipline/(:num)'] = 'discipline/formToEditDiscipline/$1';
-$route['enrollStudent/(:num)'] = 'enrollment/enrollStudentToCourse/$1';
-$route['staffs'] = 'staff/staffsLoadPage';
-$route['staffs/(:num)'] = 'staff/editStaff/$1';
 $route['funcoes'] = 'funcao/formulario';
 $route['funcoes/(:num)'] = 'funcao/formulario_altera/$1';
-$route['guest_home'] = 'usuario/guest_index';
-$route['planoorcamentario'] = 'budgetplan';
-$route['planoorcamentario/(:num)'] = 'budgetplan/edit/$1';
-$route['planoorcamentario/(:num)/novadespesa'] = 'expense/index/$1';
-$route['registerDoctorateCourse/(:num)'] = 'course/formToCreateDoctorateCourse/$1';
-$route['secretaria'] = 'utils/loadSecretaria';
-$route['secretary_home'] = 'usuario/secretary_index';
 $route['setores'] = 'setor/formulario';
 $route['setores/(:num)'] = 'setor/formulario_altera/$1';
-$route['updateDoctorateCourse/(:num)'] = 'course/formToUpdateDoctorateCourse/$1';
-$route['user_report'] = 'usuario/usersReport';
-$route['enrollMastermind/(:num)'] = 'mastermind/enrollMastermindToStudent/$1';
-$route['checkMastermind/(:num)'] = 'mastermind/displayMastermindPage/$1';
-$route['mastermind_home'] = 'mastermind/index';
-$route['coordinator_home'] = 'coordinator/index';
-$route['course_report'] = 'coordinator/course_report';
+
+$route['configuracoes'] = 'program/settings';
+$route['cursos'] = 'program/course/index';
+$route['discipline'] = 'program/discipline/discipline_index';
+$route['discipline/(:num)'] = 'program/discipline/formToEditDiscipline/$1';
+$route['staffs'] = 'program/staff/staffsLoadPage';
+$route['staffs/(:num)'] = 'program/staff/editStaff/$1';
+$route['enrollMastermind/(:num)'] = 'program/mastermind/enrollMastermindToStudent/$1';
+$route['checkMastermind/(:num)'] = 'program/mastermind/displayMastermindPage/$1';
+$route['mastermind_home'] = 'program/mastermind/index';
+$route['coordinator_home'] = 'program/coordinator/index';
+$route['course_report'] = 'program/coordinator/course_report';
 $route['program'] = 'program/index';
+$route['research_lines'] = 'program/course/research_lines';
+
+
+/*
+ * Budgetplan routes
+ */
+$route['budgetplan_expenses/(:num)'] = 'finantial/budgetplan/budgetplanExpenses/$1';
+$route['budgetplan'] = 'finantial/budgetplan';
+$route['budgetplan/(:num)'] = 'finantial/budgetplan/edit/$1';
+$route['budgetplan/new_expense/(:num)'] = 'finantial/expense/index/$1';
+
+/*
+ * Expense routes
+ */
+$route['delete_expense'] = 'finantial/expense/delete';
+$route['save_expense'] = 'finantial/expense/save';
+
+/*
+ * Payment routes
+ */
+$route['expense_payments/(:num)/(:num)'] = 'finantial/payment/expensePayments/$1/$2';
+$route['new_payment/(:num)/(:num)'] = 'finantial/payment/newPayment/$1/$2';
+$route['register_payment'] = 'finantial/payment/registerPayment';
+$route['register_repayment'] = 'finantial/payment/registerRepayment';
+$route['repayment/(:num)/(:num)/(:num)'] = 'finantial/payment/repayment/$1/$2/$3';
+$route['generate_spreadsheet/(:num)'] = 'finantial/payment/generateSpreadsheet/$1';
 
 /*
  * Secretary functionalities routes
  */
-$route['enroll_student'] = "usuario/secretary_enrollStudent";
-$route['student_list'] = 'usuario/secretary_coursesStudents';
-$route['request_report'] = 'usuario/secretary_requestReport';
-$route['offer_list'] = 'usuario/secretary_offerList';
-$route['course_syllabus'] = 'usuario/secretary_courseSyllabus';
-$route['enroll_mastermind'] = 'usuario/secretary_enrollMasterMinds';
-$route['enroll_teacher'] = 'usuario/secretary_enrollTeacher';
-$route['documents_report'] = 'documentrequest/documentRequestSecretary';
-$route['research_lines'] = 'usuario/secretary_research_lines';
-$route['secretary_programs'] = 'secretary/secretaryPrograms';
+$route['enrollStudent/(:num)'] = 'secretary/enrollment/enrollStudentToCourse/$1';
+$route['guest_home'] = 'secretary/secretary/guest_index';
+$route['secretaria'] = 'utils/loadSecretaria';
+$route['secretary_home'] = 'secretary/secretary/index';
+$route['enroll_student'] = "secretary/secretary/enrollStudent";
+$route['student_list'] = 'secretary/secretary/coursesStudents';
+$route['request_report'] = 'secretary/secretary/requestReport';
+$route['offer_list'] = 'secretary/offer/offerList';
+$route['course_syllabus'] = 'secretary/syllabus/secretaryCourseSyllabus';
+$route['enroll_mastermind'] = 'secretary/secretary/enrollMasterMinds';
+$route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
+$route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
+$route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
 /*
  * Mastermind functionalities routes
  */
-$route['mastermind'] = 'mastermind/displayMastermindStudents';
-$route['titling_area'] = 'mastermind/titlingArea';
-$route['update_profile'] = 'teacher/updateProfile';
+$route['mastermind'] = 'program/mastermind/displayMastermindStudents';
+$route['titling_area'] = 'program/mastermind/titlingArea';
+$route['update_profile'] = 'program/teacher/updateProfile';
 
 /*
  * Student functionalities routes
  */
-$route['student'] = 'student/index';
-$route['student_information'] = 'student/studentInformation';
-$route['documents_request'] = "documentrequest/index";
+$route['student'] = 'student/student/index';
+$route['student_information'] = 'student/student/studentInformation';
+$route['documents_request'] = "student/documentrequestStudent/index";
 
 /*
  * Selection Process functionalities routes
  */
-$route['selection_process'] = 'selectiveprocess/index';
+$route['selection_process'] = 'program/selectiveprocess/index';
+
+/*
+ * Enrollment routes
+ */
+$route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/$2';
 
 /*
  * Test report routes
@@ -121,12 +165,11 @@ $route['department_test'] = 'tests/department_test';
 $route['employee_test'] = 'tests/employee_test';
 $route['function_test'] = 'tests/function_test';
 $route['login_test'] = 'tests/login_test';
-$route['module_test'] = 'tests/module_test';
-$route['permission_test'] = 'tests/permission_test';
 $route['sector_test'] = 'tests/sector_test';
 $route['course_test'] = 'tests/course_test';
 $route['classHour_test'] = 'tests/ClassHour_test';
 $route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
+
 $route['selection_process_test'] = 'tests/SelectionProcess_Test';
 $route['process_settings_test'] = 'tests/ProcessSettings_Test';
 $route['process_phase_test'] = 'tests/ProcessPhase_Test';
@@ -136,7 +179,6 @@ $route['enrolled_student_email_test'] = 'tests/EnrolledStudentEmail_Test';
 $route['secretary_email_notification_test'] = 'tests/SecretaryEmailNotification_Test';
 $route['phone_test'] = 'tests/Phone_Test';
 $route['bar_notification_test'] = 'tests/BarNotification_Test';
-// $route['test'] = 'test_report';
 
-/* End of file routes.php */
-/* Location: ./application/config/routes.php */
+$route['permission_test'] = 'tests/Permission_test';
+$route['group_test'] = 'tests/Group_test';

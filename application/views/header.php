@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <br>
 <?php
-	require_once(APPPATH."/constants/GroupConstants.php");
-	require_once(APPPATH."/data_types/notification/ActionNotification.php");
-	require_once(APPPATH."/data_types/User.php");
+	require_once(MODULESPATH."auth/Auth.php");
+	require_once(MODULESPATH."auth/constants/GroupConstants.php");
+	require_once(MODULESPATH."notification/domain/ActionNotification.php");
 
-	$session = $this->session->userdata("current_user");
+	$session = getSession();
 
-	if($session){
-		$user = $session['user'];
+    if($session->isLogged()){
+        $user = $session->getUserData();
+
+        $userName = $user->getName();
+        $userEmail = $user->getEmail();
+        $userId = $user->getId();
+
+        $userGroups = $session->getUserGroups();
 
 		// Getting user notifications
-		$userObj = new User($user['id'], $user['name'], FALSE, $user['email']);	
-		$userNotifications = $this->navbarnotification->getUserNotifications($userObj);
+		$userNotifications = getUserNotifications();
 
 		$notifications = $userNotifications["notifications"];
 		$notSeenNotifications = $userNotifications["not_seen"];
-		
+
 		echo form_input(array(
 			'id' => "notifications_amount",
 			'name' => "notifications_amount",
@@ -72,16 +77,17 @@
 			<div class="navbar-btn sidebar-toggle" role="button">
 				<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-					<li>
-					<a href="<?php echo base_url('/');?>">
-					<?php $logo_image = base_url('img/logo_home.png');?>
+				<li>
+				<a href="<?php echo base_url('/');?>">
+
+                <?php if ($session->isLogged()) {?>
+				</li>
+					<img src="<?php echo base_url('img/logo_home.png'); ?>" alt="Logo SiGA" class="navbar-brand" id="logo_logged_home"/>
+				</a>
 					
-					<?php if ($session) { ?>
-					</li>	
-						<img src="<?php echo $logo_image;?>" alt="Logo SiGA" class="navbar-brand" id="logo_logged_home"/>
-					</a>
 				</ul>
-				<ul class="nav navbar-nav navbar-right">
+					
+					<ul class="nav navbar-nav navbar-right">
 
 						<li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -146,37 +152,35 @@
 						<li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
-                                <span><?=ucfirst($session['user']['name'])?><i class="caret"></i></span>
+                                <span><?=ucfirst($userName)?><i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header ">
                                     <p>
                                         <?php
-                                        	echo ucfirst($session['user']['name']);
+                                        	echo ucfirst($userName);
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
-                                        	if($session['user_groups'] !== FALSE){
-                                        		
-	                                        	foreach($session['user_groups'] as $group){
-	                                        		switch ($group['group_name']) {
-	                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-	                                        				$groupNameToDisplay = "Secretaria acadêmica";
-	                                        				break;
-	                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-	                                        				$groupNameToDisplay = "Secretaria financeira";
-	                                        				break;
-	                                        			default:
-	                                        				$groupNameToDisplay = $group['group_name'];
-	                                        				break;
-	                                        		}
-	                                        		echo ucfirst($groupNameToDisplay);
-	                                        		echo "<br>";
-	                                        	}
+ 
+                                        	foreach($userGroups as $group){
+                                        		switch ($group->getName()) {
+                                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria acadêmica";
+                                        				break;
+                                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        				$groupNameToDisplay = "Secretaria financeira";
+                                        				break;
+                                        			default:
+                                        				$groupNameToDisplay = $group->getName();
+                                        				break;
+                                        		}
+                                        		echo ucfirst($groupNameToDisplay);
+                                        		echo "<br>";
                                         	}
                                         ?>
                                         <br>
-                                        <small><?php echo $session['user']['email']?></small>
+                                        <small><?php echo $userEmail;?></small>
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
@@ -190,18 +194,22 @@
                                 </li>
                             </ul>
                         </li>
+
 					</ul>
 				<?php } else { ?>
-					</li>	
-						<img src="<?php echo $logo_image; ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
-					</a>
+
 					</li>
+						<img src="<?php echo base_url('img/logo_home.png'); ?>" alt="Logo SiGA" class="navbar-brand" id="logo_home"/>
+					</a>
+
 					<li><?=anchor("register", "Cadastro", "class='navbar-brand'")?></li>
+					
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right" id="login_menu">
+
 					<?php
-						echo form_open("login/authenticate");?>
+						echo form_open("auth/login/authenticate");?>
 							<div class="row">
         						<div class="col-lg-4">
 								<?php
@@ -236,7 +244,7 @@
 								<div class="col-lg-4">
 									<div class="row">
 									<?php
-										echo anchor("usuario/restorePassword", "<i class='fa fa-question-circle'></i>", "id='link_restore_password' data-toggle=\"popover\" data-placement=\"bottom\" data-trigger=\"hover\"
+										echo anchor("auth/user/restorePassword", "<i class='fa fa-question-circle'></i>", "id='link_restore_password' data-toggle=\"popover\" data-placement=\"bottom\" data-trigger=\"hover\"
 	     								data-content=\"Clique se tiver esquecido sua senha.\"");
 
 										echo form_button(array(
@@ -265,7 +273,7 @@
 	</header>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
-            <?php if($session){?>
+            <?php if($session->isLogged()){?>
 	            <aside class="left-side sidebar-offcanvas sidebar-fixed">
 	                <!-- sidebar: style can be found in sidebar.less -->
 	                <section class="sidebar">
@@ -273,7 +281,7 @@
 	                    <div class="user-panel">
 	                        <div class="pull-left info">
 	                            <br>
-	                            <p>Olá, <?=ucfirst($session['user']['name'])?></p>
+	                            <p>Olá, <?=ucfirst($userName)?></p>
 
 	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 
@@ -284,9 +292,9 @@
 
 		                            <ul class="dropdown-menu">
 		                            	<?php
-		                            		foreach($session['user_groups'] as $group){
+		                            		foreach($userGroups as $group){
 		                            			echo "<li>";
-		                            			switch ($group['group_name']) {
+		                            			switch ($group->getName()) {
                                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
                                         				$groupNameToDisplay = "Secretaria acadêmica";
                                         				break;
@@ -294,13 +302,13 @@
                                         				$groupNameToDisplay = "Secretaria financeira";
                                         				break;
                                         			default:
-                                        				$groupNameToDisplay = $group['group_name'];
+                                        				$groupNameToDisplay = $group->getName();
                                         				break;
                                         		}
-		                            			if($group['group_name'] == GroupConstants::SECRETARY_GROUP){
+		                            			if($group->getName() == GroupConstants::SECRETARY_GROUP){
 													continue;
 												}else{
-		                            				echo anchor($group['profile_route'], ucfirst($groupNameToDisplay));
+		                            				echo anchor($group->getProfileRoute(), ucfirst($groupNameToDisplay));
 		                            			}
 		                            			echo "</li>";
 		                            		}
@@ -309,73 +317,59 @@
 	                            </div>
 	                        </div>
 	                    </div>
-	                    <!-- search form -->
-<!-- 	                    <form action="#" method="get" class="sidebar-form">
-	                        <div class="input-group">
-	                            <input type="text" name="q" class="form-control" placeholder="Search..."/>
-	                            <span class="input-group-btn">
-	                                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
-	                            </span>
-	                        </div>
-	                    </form> -->
-	                    <!-- /.search form -->
-	                    <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-	                <?php
-	                	if($session['user_permissions'] !== FALSE){
+                    <?php
 
-							foreach($session['user_permissions'] as $groupName => $groupPermissions){
-	                			if($groupName == GroupConstants::SECRETARY_GROUP){
-									continue;
-								}else{
-									echo "<li class='treeview'>";
+                        foreach($userGroups as $group){
+                            $groupName = $group->getName();
+                            if($groupName == GroupConstants::SECRETARY_GROUP){
+                                continue;
+                            }else{
+                                echo "<li class='treeview'>";
 
-									switch ($groupName) {
-	                        			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
-	                        				$groupNameToShow = "Secretaria acadêmica";
-	                        				break;
-	                        			case GroupConstants::FINANCIAL_SECRETARY_GROUP:
-	                        				$groupNameToShow = "Secretaria financeira";
-	                        				break;
-	                        			default:
-	                        				$groupNameToShow = $groupName;
-	                        				break;
-	                        		}
-									echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
+                                switch ($groupName) {
+                                    case GroupConstants::ACADEMIC_SECRETARY_GROUP:
+                                        $groupNameToShow = "Secretaria acadêmica";
+                                        break;
+                                    case GroupConstants::FINANCIAL_SECRETARY_GROUP:
+                                        $groupNameToShow = "Secretaria financeira";
+                                        break;
+                                    default:
+                                        $groupNameToShow = $groupName;
+                                        break;
+                                }
+                                echo anchor("", ucfirst($groupNameToShow),"class='fa fa-folder-o'");
 
-										echo "<ul class='treeview-menu'>";
+                                    echo "<ul class='treeview-menu'>";
 
-										if($groupPermissions !== FALSE){
+                                    $groupPermissions = $group->getPermissions();
+                                    foreach($groupPermissions as $permission){
 
-											foreach($groupPermissions as $permission){
+                                        echo "<li>";
+                                            if ($permission->getFunctionality() == PermissionConstants::RESEARCH_LINES_PERMISSION){
+                                                continue;
+                                            }else{
+                                                echo anchor($permission->getFunctionality(), $permission->getName(), "class='fa fa-caret-right'");
+                                            }
+                                        echo "</li>";
+                                    }
 
-												echo "<li>";
-													if ($permission['route'] == PermissionConstants::RESEARCH_LINES_PERMISSION){
-														continue;
-													}else{
-														echo anchor($permission['route'], $permission['permission_name'], "class='fa fa-caret-right'");
-													}
-												echo "</li>";
-											}
-										}
 
-										echo "</ul>";
+                                    echo "</ul>";
 
-									echo "</li>";
-								}
-							}
+                                echo "</li>";
+                            }
+                        }
 
-	                	}
-					?>
-                  	</ul>
-	                </section>
-	                <!-- /.sidebar -->
-	            </aside>
+                    ?>
+                    </ul>
+                    </section>
+                    <!-- /.sidebar -->
+                </aside>
             <?php }?>
             <aside class="right-side">
-            	<div class="container">
-<br>
-<br>
+                <div class="container">
+
 <?php
 if ($this->session->flashdata("success")) : ?>
 	<p class="alert alert-success text-center"><?= $this->session->flashdata("success") ?></p>

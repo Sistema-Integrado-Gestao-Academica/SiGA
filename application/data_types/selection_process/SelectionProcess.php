@@ -3,7 +3,7 @@
 require_once APPPATH."/exception/SelectionProcessException.php";
 require_once "ProcessSettings.php";
 
-abstract class SelectionProcess{
+abstract class SelectionProcessOld{
 	
 	const INVALID_NAME = "O nome do edital não pode estar em branco.";
 	const INVALID_COURSE = "Um processo seletivo deve estar vinculado à algum curso de um programa.";

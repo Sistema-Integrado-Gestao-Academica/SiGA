@@ -1,9 +1,9 @@
 <?php
 
 require_once('Constants.php');
-require_once(APPPATH.'/controllers/documentrequest.php');
+require_once(APPPATH.'/controllers/Documentrequest.php');
 
-class DocumentConstants extends Constants{
+class DocumentConstantsOld extends Constants{
 
 	const REQUEST_ARCHIVED = 1;
 	const REQUEST_NON_ARCHIVED = 0;

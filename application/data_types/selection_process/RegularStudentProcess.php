@@ -3,7 +3,7 @@
 require_once "SelectionProcess.php";
 require_once(APPPATH."/constants/SelectionProcessConstants.php");
 
-class RegularStudentProcess extends SelectionProcess{
+class RegularStudentProcessOld extends SelectionProcess{
 	
 	public function __construct($course = FALSE, $name = "", $id = FALSE){
 		parent::__construct($course, $name, $id);

@@ -71,7 +71,7 @@ function saveSelectiveProcess(){
 	
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/newSelectionProcess";
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/newSelectionProcess";
 
 	$.post(
 		urlToPost,
@@ -107,7 +107,7 @@ function getPhasesToSort(){
 
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/ajax/selectiveprocessajax/getPhasesToSort";
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/getPhasesToSort";
 
 	$.post(
 		urlToPost,

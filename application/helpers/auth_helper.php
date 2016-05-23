@@ -1,18 +1,16 @@
-<?php 
+<?php
 
-require_once(APPPATH."/controllers/login.php");
-require_once(APPPATH."/controllers/permission.php");
-require_once(APPPATH."/controllers/module.php");
-require_once(APPPATH."/controllers/request.php");
+require_once(MODULESPATH."auth/controllers/Login.php");
+require_once(MODULESPATH."auth/controllers/Permission.php");
+require_once(MODULESPATH."auth/controllers/Module.php");
+require_once MODULESPATH."auth/controllers/SessionManager.php";
+// require_once(APPPATH."/controllers/Request.php");
 
-function session() {
-	$ci = get_instance();
-	$user = $ci->session->userdata("current_user");
-	if (!$user) {
-		$ci->session->set_flashdata("danger", "Você não está logado!");
-		redirect("/");
-	}
-	return $user;
+function getSession() {
+
+	$session = SessionManager::getInstance();
+
+	return $session;
 }
 
 /**
@@ -23,8 +21,7 @@ function session() {
  */
 function loadTemplateSafelyByPermission($requiredPermission, $template, $data = array()){
 
-	$permission = new Permission();
-	
+	$permission = new PermissionOld();
 	$ci = get_instance();
 
 	$userHasPermission = $permission->checkUserPermission($requiredPermission);

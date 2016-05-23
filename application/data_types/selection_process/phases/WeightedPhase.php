@@ -4,7 +4,7 @@ require_once "ProcessPhase.php";
 require_once(APPPATH."/constants/SelectionProcessConstants.php");
 require_once(APPPATH."/exception/SelectionProcessException.php");
 
-abstract class WeightedPhase extends ProcessPhase{
+abstract class WeightedPhaseOld extends ProcessPhase{
 	
     const MIN_WEIGHT = 1;
     const MAX_WEIGHT = 5;

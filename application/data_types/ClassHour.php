@@ -8,7 +8,7 @@
 
 require_once(APPPATH."/exception/ClassHourException.php");
 
-class ClassHour{
+class ClassHourOld{
 
 	private $hour; // Hour interval of day that this class happens (References the line 'i')
 	private $day; // Day of the week that this class happens (References the column 'j')
