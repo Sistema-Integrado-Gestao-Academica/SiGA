@@ -163,10 +163,11 @@ $route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/
  * To display the tests results of a class type in the url: ../class_test
  */
 /* Auth tests */ 
-$route['user_test'] = 'test/auth/user_test_report';
-$route['login_test'] = 'test/auth/login_test';
+$route['user_test'] = 'test/auth/User_test';
+$route['login_test'] = 'test/auth/Login_test';
 $route['permission_test'] = 'test/auth/Permission_test';
 $route['group_test'] = 'test/auth/Group_test';
+$route['module_test'] = 'test/auth/Module_test';
 
 /* Program tests */
 $route['department_test'] = 'test/program/department_test';
@@ -187,7 +188,7 @@ $route['secretary_email_notification_test'] = 'test/notification/SecretaryEmailN
 $route['bar_notification_test'] = 'test/notification/BarNotification_Test';
 
 /* Student tests */
-$route['studentRegistration_test'] = 'test/student/StudentRegistration_Test';
+$route['student_registration_test'] = 'test/student/StudentRegistration_Test';
 $route['phone_test'] = 'test/student/Phone_Test';
 
 /* Secretary tests */

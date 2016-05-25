@@ -9,7 +9,6 @@
  */
 
 require_once(MODULESPATH."/test/controllers/TestCase.php");
-
 require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
 
