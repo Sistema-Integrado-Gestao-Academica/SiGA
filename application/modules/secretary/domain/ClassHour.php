@@ -6,7 +6,7 @@
  * with the class hours (in an interval of 2 hours each) as lines and the days of week as columns (except sunday), totaling a 9x6 matrix.
  */
 
-require_once(APPPATH."/exception/ClassHourException.php");
+require_once(MODULESPATH."secretary/exception/ClassHourException.php");
 
 class ClassHour{
 

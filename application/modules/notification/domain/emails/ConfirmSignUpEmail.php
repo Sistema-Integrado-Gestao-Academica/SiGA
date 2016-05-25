@@ -1,6 +1,6 @@
 <?php
 
-require_once APPPATH."/constants/EmailConstants.php";
+require_once MODULESPATH."notification/constants/EmailConstants.php";
 require_once MODULESPATH."notification/exception/EmailNotificationException.php";
 require_once MODULESPATH."notification/domain/EmailNotification.php";
 

@@ -102,6 +102,9 @@ class CI_Unit_test {
 		'notes'
 	);
 
+	protected $passed_tests = 0;
+ 	protected $total_tests = 0;
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -166,6 +169,12 @@ class CI_Unit_test {
 
 		$back = $this->_backtrace();
 
+		$this->total_tests += 1;
+ 
+ 		if($result === TRUE){
+ 			$this->passed_tests += 1;
+ 		}
+
 		$report = array (
 			'test_name'     => $test_name,
 			'test_datatype' => gettype($test),
@@ -229,6 +238,29 @@ class CI_Unit_test {
 		}
 
 		return $r;
+	}
+
+	// --------------------------------------------------------------------
+	/** Get the quantity of passed tests
+	 *
+	 * Return the number of passed tests
+	 *
+	 * @access	public
+	 * @return	int
+	 */
+	function passed_tests(){
+		return $this->passed_tests;
+	}
+	// --------------------------------------------------------------------
+	/** Get the quantity of failed tests
+	 *
+	 * Return the number of failed tests
+	 *
+	 * @access	public
+	 * @return	int
+	 */
+	function failed_tests(){
+		return ($this->total_tests - $this->passed_tests);
 	}
 
 	// --------------------------------------------------------------------

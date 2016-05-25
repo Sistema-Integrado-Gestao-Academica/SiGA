@@ -1,8 +1,8 @@
 <?php
 
 require_once "ProcessPhase.php";
-require_once(APPPATH."/constants/SelectionProcessConstants.php");
-require_once(APPPATH."/exception/SelectionProcessException.php");
+require_once(MODULESPATH."program/constants/SelectionProcessConstants.php");
+require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
 
 class Homologation extends ProcessPhase{
 	

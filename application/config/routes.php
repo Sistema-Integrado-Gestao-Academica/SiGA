@@ -162,25 +162,33 @@ $route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test
  */
-$route['user_test'] = 'tests/user_test';
-$route['department_test'] = 'tests/department_test';
-$route['employee_test'] = 'tests/employee_test';
-$route['function_test'] = 'tests/function_test';
-$route['login_test'] = 'tests/login_test';
-$route['sector_test'] = 'tests/sector_test';
-$route['course_test'] = 'tests/course_test';
-$route['classHour_test'] = 'tests/ClassHour_test';
-$route['StudentRegistration_test'] = 'tests/StudentRegistration_Test';
+/* Auth tests */ 
+$route['user_test'] = 'test/auth/user_test_report';
+$route['login_test'] = 'test/auth/login_test';
+$route['permission_test'] = 'test/auth/Permission_test';
+$route['group_test'] = 'test/auth/Group_test';
 
-$route['selection_process_test'] = 'tests/SelectionProcess_Test';
-$route['process_settings_test'] = 'tests/ProcessSettings_Test';
-$route['process_phase_test'] = 'tests/ProcessPhase_Test';
-$route['email_notification_test'] = 'tests/EmailNotification_Test';
-$route['restore_password_email_test'] = 'tests/RestorePasswordEmail_Test';
-$route['enrolled_student_email_test'] = 'tests/EnrolledStudentEmail_Test';
-$route['secretary_email_notification_test'] = 'tests/SecretaryEmailNotification_Test';
-$route['phone_test'] = 'tests/Phone_Test';
-$route['bar_notification_test'] = 'tests/BarNotification_Test';
+/* Program tests */
+$route['department_test'] = 'test/program/department_test';
+$route['employee_test'] = 'test/program/employee_test';
+$route['function_test'] = 'test/program/function_test';
+$route['sector_test'] = 'test/program/sector_test';
+$route['course_test'] = 'test/program/course_test';
+$route['selection_process_test'] = 'test/program/SelectionProcess_Test';
+$route['process_settings_test'] = 'test/program/ProcessSettings_Test';
+$route['process_phase_test'] = 'test/program/ProcessPhase_Test';
 
-$route['permission_test'] = 'tests/Permission_test';
-$route['group_test'] = 'tests/Group_test';
+
+/* Notification tests */
+$route['email_notification_test'] = 'test/notification/EmailNotification_Test';
+$route['restore_password_email_test'] = 'test/notification/RestorePasswordEmail_Test';
+$route['enrolled_student_email_test'] = 'test/notification/EnrolledStudentEmail_Test';
+$route['secretary_email_notification_test'] = 'test/notification/SecretaryEmailNotification_Test';
+$route['bar_notification_test'] = 'test/notification/BarNotification_Test';
+
+/* Student tests */
+$route['StudentRegistration_test'] = 'test/student/StudentRegistration_Test';
+$route['phone_test'] = 'test/student/Phone_Test';
+
+/* Secretary tests */
+$route['classHour_test'] = 'test/secretary/ClassHour_test';
