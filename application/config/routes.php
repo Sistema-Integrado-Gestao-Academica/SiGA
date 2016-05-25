@@ -187,7 +187,7 @@ $route['secretary_email_notification_test'] = 'test/notification/SecretaryEmailN
 $route['bar_notification_test'] = 'test/notification/BarNotification_Test';
 
 /* Student tests */
-$route['StudentRegistration_test'] = 'test/student/StudentRegistration_Test';
+$route['studentRegistration_test'] = 'test/student/StudentRegistration_Test';
 $route['phone_test'] = 'test/student/Phone_Test';
 
 /* Secretary tests */

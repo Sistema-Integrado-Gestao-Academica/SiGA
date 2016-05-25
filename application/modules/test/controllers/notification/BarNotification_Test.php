@@ -617,8 +617,7 @@ class BarNotification_Test extends TestCase{
         $notes = "";
         try{
 
-            $this->load->library("navBarNotification", "", "notification");
-
+            $this->load->module("notification/notification");
             // Uncomment to test if creates a notification
             // $this->notification->documentRequestNotification($user, $courseToNotify, $requestedDoc);
 
@@ -642,7 +641,7 @@ class BarNotification_Test extends TestCase{
     //     $notes = "";
     //     try{
 
-    //         $this->load->library("navBarNotification", "", "notification");
+    //         $this->load->module("notification/notification");
 
     //         $notifications = $this->notification->getUserNotifications($user);
 

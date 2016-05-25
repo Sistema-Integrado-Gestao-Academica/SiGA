@@ -116,7 +116,7 @@ class Schedule extends MX_Controller {
 
 	/**
 	 * Add a day hour pair on the schedule
-	 * @param $fullSchedule - The schedule (9 x 6 matrix) to fill
+	 * @param $fullSchedule - The schedule (6 x 6 matrix) to fill
 	 * @param $classHour - ClassHour object to insert on the schedule
 	 * @return the schedule with the day hour pair added
 	 */
