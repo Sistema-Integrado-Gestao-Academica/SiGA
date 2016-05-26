@@ -1,10 +1,8 @@
 <?php
 
 require_once(MODULESPATH."auth/controllers/Login.php");
-require_once(MODULESPATH."auth/controllers/Permission.php");
+require_once(MODULESPATH."auth/controllers/UserPermission.php");
 require_once(MODULESPATH."auth/controllers/Module.php");
-require_once MODULESPATH."auth/controllers/SessionManager.php";
-// require_once(APPPATH."/controllers/Request.php");
 
 function getSession() {
 
@@ -21,7 +19,7 @@ function getSession() {
  */
 function loadTemplateSafelyByPermission($requiredPermission, $template, $data = array()){
 
-	$permission = new PermissionOld();
+	$permission = new UserPermission();
 	$ci = get_instance();
 
 	$userHasPermission = $permission->checkUserPermission($requiredPermission);

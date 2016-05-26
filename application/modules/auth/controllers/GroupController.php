@@ -19,7 +19,7 @@ class GroupController extends MX_Controller {
      */
     public function getUserGroups($user){
 
-        $this->load->module("auth/permissionController");
+        $this->load->module("auth/userPermission");
 
         $foundGroups = $this->group_model->getUserGroups($user);    
 
@@ -33,7 +33,7 @@ class GroupController extends MX_Controller {
                     $groupName = $foundGroup['group_name'];
                     $groupProfileRoute = $foundGroup['profile_route'];
 
-                    $permissions = $this->permissioncontroller->getGroupPermissions($groupId);
+                    $permissions = $this->userpermission->getGroupPermissions($groupId);
 
                     $group = new Group($groupId, $groupName, $groupProfileRoute, $permissions);
 
