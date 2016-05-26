@@ -3,6 +3,7 @@
 require_once(MODULESPATH."auth/controllers/Login.php");
 require_once(MODULESPATH."auth/controllers/UserPermission.php");
 require_once(MODULESPATH."auth/controllers/Module.php");
+require_once(MODULESPATH."auth/controllers/SessionManager.php");
 
 function getSession() {
 

@@ -1,7 +1,5 @@
 <?php
 
-// require_once APPPATH.'controllers/Capesavaliation.php';
-
 $session = getSession();
 
 if ($session->isLogged()) {
@@ -14,13 +12,13 @@ if ($session->isLogged()) {
 
 	<?php
 
-	 // if ($userData->getLogin() == 'admin'){
-	 // 	$admin = new CapesAvaliation();
+	 if ($userData->getLogin() == 'admin'){
 
-	 // 	$atualizations = $admin->getCapesAvaliationsNews();
+	 	$this->load->module("program/capesAvaliation");
+	 	$atualizations = $this->capesavaliation->getCapesAvaliationsNews();
 
-	 // 	showCapesAvaliationsNews($atualizations);
-	 // }
+	 	showCapesAvaliationsNews($atualizations);
+	 }
 		?>
 
 <?php } else { ?>
