@@ -37,18 +37,18 @@ class Module_model extends CI_Model {
 		return $userPermissions;
 	}
 
-	public function getUserGroups($user_id){
-		$this->db->select('group.*');
-		$this->db->from('group');
-		$this->db->join('user_group', 'group.id_group = user_group.id_group');
-		$this->db->where('user_group.id_user', $user_id);
+	public function getUserGroups($userId){
+        $this->db->select('group.*');
+        $this->db->from('group');
+        $this->db->join('user_group', 'group.id_group = user_group.id_group');
+        $this->db->where('user_group.id_user', $userId);
 
-		$foundGroups = $this->db->get()->result_array();
+        $foundGroups = $this->db->get()->result_array();
 
-		$foundGroups = checkArray($foundGroups);
+        $foundGroups = checkArray($foundGroups);
 
-		return $foundGroups;
-	}
+        return $foundGroups;
+    }
 
 	public function getGroupById($idGroup){
 
@@ -61,118 +61,6 @@ class Module_model extends CI_Model {
 		return $foundGroup;
 	}
 	
-	/**
-	 *	LINES 70 -> 180   ARE ALL DEPRECATED CODE 
-	 * 
-	 *
-	 * Function to save new secretary groups for one course
-	 * @param String $courseName
-	 * @return boolean 
-	 *
-	public function saveNewCourseGroups($courseName){
-		$courseName = strtolower($courseName);
-		$separatedName = explode(' ', $courseName);
-		
-		if ($separatedName){
-			$groupsNames = $this->prepareGroupName($separatedName);
-		}else {
-			$groupsNames = $this->prepareGroupName($courseName,TRUE);
-		}
-		
-		
-		$savedGroups = $this->saveNewGroupsOnDB($groupsNames);
-		$grantedPremissions = $this->grantGroupsPermissions($groupsNames);
-		
-		$savedGroupsAndPermissions = $savedGroups && $grantedPremissions;
-		
-		return $savedGroupsAndPermissions;
-	}
-	
-	/**
-	 * Function to get a course name and make a new group name by taking first 3 letters of any name
-	 * and concatenate them with 'Academic' and 'Financial' to make new academic and financial groups for the course
-	 * @param mixed $separatedName
-	 * @param boolean $singleName
-	 * @return array:string
-	 *
-	public function prepareGroupName($separatedName,$singleName = FALSE){
-		
-		if($singleName){
-			$letters = str_split($separatedName);
-			$newGroupName = $letters[0].$letters[1].$letters[2];
-		}else{
-			$length = count($separatedName);
-			$newGroupName = '';
-			for ($i=0; $i < $length; $i++){
-				$letters = str_split($separatedName[$i]);
-				$first3Letters[$i] = $letters[0].$letters[1].$letters[2];
-				$newGroupName = $newGroupName . $first3Letters[$i];
-			}
-			
-		}
-		
-		$academicGroupName = $newGroupName."Academico";
-		$financialGroupName = $newGroupName."Financeiro";
-		
-		$groupNames = array('academic'  => $academicGroupName,
-							'financial' => $financialGroupName);
-		
-		return $groupNames;
-	}
-	
-	public function saveNewGroupsOnDB($groupsNames){
-		$academic = array('group_name' => $groupsNames['academic']);
-		$financial = array('group_name' => $groupsNames['financial']);
-		
-		$savedAcademic = $this->db->insert('group',$academic);
-		$savedFinancial = $this->db->insert('group',$financial);
-		
-		$savedGroups = $savedAcademic && $savedFinancial;
-		
-		return $savedGroups;
-	}
-	
-	private function grantGroupsPermissions($groupsNames){
-		
-		$idGroups = $this->getGroupIdByName($groupsNames);
-		
-		/**
-		 * Granting permissions to academic secretary
-		 * Academic permissions ids: 2, 3, 4, 5, 6, 9
-		 *
-		$academicPermissions = array(
-				
-				array('id_group'=>$idGroups['academic'], 'id_permission'=>2),
-				array('id_group'=>$idGroups['academic'], 'id_permission'=>3),
-				array('id_group'=>$idGroups['academic'], 'id_permission'=>4),
-				array('id_group'=>$idGroups['academic'], 'id_permission'=>5),
-				array('id_group'=>$idGroups['academic'], 'id_permission'=>6),
-				array('id_group'=>$idGroups['academic'], 'id_permission'=>9)
-				
-		);
-		
-		$savedAcademicPermissions = $this->db->insert_batch('group_permission', $academicPermissions);
-		
-		/**
-		 * Granting permissions to financial secretary
-		 * Academic permissions ids: 2 , 4 , 7  
-		 *
-		$financialPermissions = array(
-			
-				array('id_group'=>$idGroups['financial'], 'id_permission'=>2),
-				array('id_group'=>$idGroups['financial'], 'id_permission'=>4),
-				array('id_group'=>$idGroups['financial'], 'id_permission'=>7)
-				
-		);
-		
-		$savedFinancialPermissions = $this->db->insert_batch('group_permission', $financialPermissions);
-		
-		$savedPermissions = $savedAcademicPermissions && $savedFinancialPermissions;
-		
-		return $savedPermissions;
-	}
-	*/
-	
 	public function getGroupByGroupName($groupName){
 		
 		$searchResult = $this->db->get_where("group", array('group_name' => $groupName));
@@ -183,7 +71,6 @@ class Module_model extends CI_Model {
 
 		return $foundGroup;
 	}
-
 
 	public function getGroupIdByName($groupsNames){
 		$academicGroupId = $this->db->get_where('group',array('group_name'=>$groupsNames['academic']))->row_array();

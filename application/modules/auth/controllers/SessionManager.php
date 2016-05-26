@@ -29,11 +29,11 @@ class SessionManager extends MX_Controller{
 
     public function login($user){
 
-        $this->load->module("auth/groupController");
+        $this->load->module("auth/module");
 
         $userId = $user->getId();
 
-        $userGroups = $this->groupcontroller->getUserGroups($userId);
+        $userGroups = $this->module->loadUserGroups($userId);
 
         if($userGroups !== FALSE){
 

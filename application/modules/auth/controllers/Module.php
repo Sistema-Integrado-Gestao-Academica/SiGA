@@ -2,13 +2,54 @@
 
 require_once(MODULESPATH."auth/domain/User.php");
 require_once(MODULESPATH."auth/domain/Group.php");
+require_once(MODULESPATH."auth/exception/GroupException.php");
 
 class Module extends MX_Controller {
 
-	public function __construct(){
-		parent::__construct();
-		$this->load->model("auth/module_model");
-	}
+	const MODEL_NAME = "auth/module_model";
+
+    public function __construct(){
+        parent::__construct();
+        $this->load->model(self::MODEL_NAME);
+    }
+
+    /**
+     * Get the groups of an user
+     * @param $user - The user to get the groups of
+     * @return An array of Group objects or FALSE if none groups is found for the user
+     */
+    public function loadUserGroups($user){
+
+        $this->load->module("auth/userPermission");
+
+        $foundGroups = $this->module_model->getUserGroups($user);    
+
+        if($foundGroups !== FALSE){
+
+            $groups = array();
+            foreach($foundGroups as $foundGroup){
+                try{
+
+                    $groupId = $foundGroup['id_group'];
+                    $groupName = $foundGroup['group_name'];
+                    $groupProfileRoute = $foundGroup['profile_route'];
+
+                    $permissions = $this->userpermission->getGroupPermissions($groupId);
+
+                    $group = new Group($groupId, $groupName, $groupProfileRoute, $permissions);
+
+                    $groups[] = $group;
+
+                }catch(GroupException $e){
+                    GroupException::handle($e);
+                }
+            }
+        }else{
+            $groups = FALSE;
+        }
+
+        return $groups;
+    }
 
 	public function checkUserGroup($requiredGroup){
 
@@ -44,13 +85,6 @@ class Module extends MX_Controller {
 		}
 
 		return $groupExists;
-	}
-
-	public function getGroupById($idGroup){
-
-		$group = $this->module_model->getGroupById($idGroup);
-
-		return $group;
 	}
 
 	public function addGroupToUser($groupName, $userId){
@@ -93,25 +127,6 @@ class Module extends MX_Controller {
 		$this->module_model->deleteGroupOfUser($groupToUser);
 	}
 
-	public function getGroupByName($groupName){
-
-		$group = $this->module_model->getGroupByGroupName($groupName);
-
-		return $group;
-	}
-
-	/**
-	  * Check the modules registered to an user
-	  * @param $user_id - User id to check the modules
-	  * @return
-	  */
-	public function checkModules($user_id){
-
-		$registered_modules = $this->module_model->getUserModuleNames($user_id);
-
-		return $registered_modules;
-	}
-
 	/**
 	 * Check existing modules (groups) in the database
 	 * @return array with the modules (groups) names
@@ -125,19 +140,5 @@ class Module extends MX_Controller {
 		}
 
 		return $modules;
-	}
-
-	public function getUserGroups($idUser){
-
-		$groups = $this->module_model->getUserGroups($idUser);
-
-		return $groups;
-	}
-
-	public function checkIfGroupExists($idGroup){
-		
-		$groupExists = $this->module_model->checkIfGroupExists($idUser);
-
-		return $groupExists;
 	}
 }

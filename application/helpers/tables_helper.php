@@ -1767,8 +1767,9 @@ function displayAllGroupsToUser($idUser, $allGroups, $userGroups){
 
 function displayUsersOfGroup($idGroup, $usersOfGroup){
 
-	$group = new Module();
-	$foundGroup = $group->getGroupById($idGroup);
+	$ci =& get_instance();
+	$ci->load->model("module_model");
+	$foundGroup = $ci->module_model->getGroupById($idGroup);
 	echo "<h3>Usuários do grupo <b>".$foundGroup['group_name']."</b>:</h3>";
 	echo "<br>";
 
