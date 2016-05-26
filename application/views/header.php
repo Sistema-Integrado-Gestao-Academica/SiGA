@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <br>
 <?php
-	require_once(MODULESPATH."auth/Auth.php");
 	require_once(MODULESPATH."auth/constants/GroupConstants.php");
 	require_once(MODULESPATH."notification/domain/ActionNotification.php");
 

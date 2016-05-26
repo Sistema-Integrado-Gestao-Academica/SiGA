@@ -2,7 +2,6 @@
 
 require_once(MODULESPATH."auth/exception/LoginException.php");
 require_once(MODULESPATH."auth/domain/User.php");
-require_once(MODULESPATH."auth/Auth.php");
 
 class Login extends MX_Controller {
 

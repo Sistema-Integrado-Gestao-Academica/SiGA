@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(MODULESPATH."auth/Auth.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 

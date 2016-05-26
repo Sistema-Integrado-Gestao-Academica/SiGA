@@ -2,7 +2,6 @@
 
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
-require_once(MODULESPATH."auth/Auth.php");
 
 class Program extends MX_Controller {
 
@@ -11,7 +10,6 @@ class Program extends MX_Controller {
 		$this->load->model('program/program_model');
 		
 	}
-
 
 	public function index(){
 

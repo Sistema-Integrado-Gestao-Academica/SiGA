@@ -1,7 +1,6 @@
 <?php
 
 // require_once APPPATH.'controllers/Capesavaliation.php';
-require_once(MODULESPATH."auth/Auth.php");
 
 $session = getSession();
 

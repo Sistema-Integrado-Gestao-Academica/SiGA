@@ -2,7 +2,6 @@
 
 require_once('Useractivation.php');
 
-require_once(MODULESPATH."auth/Auth.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/domain/User.php");
