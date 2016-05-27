@@ -40,4 +40,19 @@ class Semester_model extends CI_Model {
 
 		return $semesterExists;
 	}
+
+	public function getNextSemester(){
+
+		$currentSemester = $this->getCurrentSemester(); 
+
+		$this->db->select('semester.*');
+		$this->db->from('semester');
+		$this->db->where('id_semester', ($currentSemester['id_semester'] + 1));
+		$nextSemester = $this->db->get()->row_array();
+
+		$nextSemester = checkArray($nextSemester);
+
+		return $nextSemester;
+
+	}
 }

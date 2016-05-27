@@ -26,7 +26,7 @@
 
 		echo "<h4>Cursos para o secretário <b>".$userName."</b>:</h4>";
 
-		displayOffersList($proposedOffers);
+		displayOffersList($proposedOffers, $current_semester['description'], $next_semester['description']);
 
 	}else{
 ?>
