@@ -95,8 +95,52 @@
 						    		"<i class='fa fa-check'></i> Expedir documento",
 						    		"class='btn btn-success'"
 					    		);
-					    		echo "<p>Permite que o aluno saiba que o documento está pronto.</p>";
+					    		echo "<p>Permite que o aluno saiba que o documento está pronto para buscar.</p>";
+
+					    		echo "<b>ou</b><br><br>";
+
+					    		echo anchor(
+				    				"#upload_doc_".$request['id_request'],
+				    				"<i class='fa fa-globe'></i> Disponibilizar online",
+									"class='btn-md'
+				    				data-toggle='collapse'
+				    				aria-expanded='false'
+				    				aria-controls='upload_doc'"
+				    			);
+					    		echo "<p>Disponibiliza uma versão digital do documento.</p>";
 				    		}
+
+				    		echo "<div class='collapse' id='upload_doc_".$request['id_request']."'>";
+				    			echo form_open_multipart("provide_doc_online");
+
+								// $hidden = array(
+								// );
+
+								// echo form_hidden($hidden);
+
+								$noticeFile = array(
+									"name" => "requested_doc",
+									"id" => "requested_doc",
+									"type" => "file"
+								);
+								
+								$submitFileBtn = array(
+									"id" => "provide_online_btn",
+									"class" => "btn btn-info btn-flat",
+									"content" => "<i class='fa fa-globe'></i> Expedir online",
+									"type" => "submit"
+									// "style" => "margin-top: 5%;"
+								);
+
+								echo form_label("Enviar documento <small><i>(Arquivos '.pdf', '.png' e '.jpg' apenas)</i></small>:", "requested_doc");
+
+								echo form_input($noticeFile);
+								echo "<br>";
+
+								echo form_button($submitFileBtn);
+
+								echo form_close();
+				    		echo "</div>";
 				    		echo "</div>";
 				    		echo "</td>";
 			    		echo "</tr>";

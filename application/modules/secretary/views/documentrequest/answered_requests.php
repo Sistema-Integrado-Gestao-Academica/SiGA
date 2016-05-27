@@ -88,4 +88,4 @@
 	</div>
 <?php }?>
 
-<?= anchor("secretary/documentrequest/documentRequestReport/{$courseId}", 'Voltar', "class='btn btn-danger'")?>
+<?= anchor("secretary_doc_requests/{$courseId}", 'Voltar', "class='btn btn-danger'")?>

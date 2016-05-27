@@ -39,7 +39,7 @@
 
 			    		echo "<td>";
 			    		echo anchor(
-			    			"secretary/documentrequest/documentRequestReport/{$courseId}",
+			    			"secretary_doc_requests/{$courseId}",
 			    			"<i class='fa fa-list'></i> Visualizar Solicitações",
 			    			"class='btn-lg'"
 			    		);

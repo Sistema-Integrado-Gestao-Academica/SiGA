@@ -252,7 +252,7 @@ class DocumentRequest extends MX_Controller {
 		$session = getSession();
 
 		$session->showFlashMessage($status, $message);
-		redirect("secretary/documentrequest/documentRequestReport/{$courseId}");
+		redirect("secretary_doc_requests/{$courseId}");
 	}
 
 	public function displayAnsweredRequests($courseId){
@@ -267,6 +267,11 @@ class DocumentRequest extends MX_Controller {
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "secretary/documentrequest/answered_requests", $data);
+	}
+
+	public function provideOnline(){
+		//  CONTIINUAR DAQUI
+		echo "CONTINUAR DAQUI";
 	}
 
 	// Other methods

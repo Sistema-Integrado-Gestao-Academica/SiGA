@@ -246,7 +246,7 @@ class DocumentRequestStudent extends MX_Controller {
 		$session = getSession();
 
 		$session->showFlashMessage($status, $message);
-		redirect("secretary/documentrequest/documentRequestReport/{$courseId}");
+		redirect("secretary_doc_requests/{$courseId}");
 	}
 
 	public function displayAnsweredRequests($courseId){

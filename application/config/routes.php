@@ -134,6 +134,10 @@ $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
+// Document requests routes
+$route['secretary_doc_requests/(:num)'] = 'secretary/documentrequest/documentRequestReport/$1';
+$route['provide_doc_online'] = 'secretary/documentrequest/provideOnline';
+
 /*
  * Mastermind functionalities routes
  */
