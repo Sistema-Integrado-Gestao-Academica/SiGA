@@ -1479,12 +1479,9 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 
 	buildTableHeaders(array(
 		'Curso',
-		$currentSemester,
-		$nextSemester
+		"Semestre atual - ".$currentSemester['description'],
+		"Semestre seguinte - ".$nextSemester['description']
 	));
-
-	$ci =& get_instance();
-	$offer_status_pt = $ci->lang->load('offer_status_lang', 'portuguese');
 
 	    foreach($offers as $courseName => $offer){
 
@@ -1500,23 +1497,21 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 		    	echo "<td>";
 					$currentOffer = $offer['current_semester'];
 					if($currentOffer !== FALSE){
-		    			displayOfferListBySemester($currentOffer, $courseId, $currentSemester);
+		    			displayOfferListBySemester($currentOffer, $courseId);
 
 		    		}
 	    			else{
-	    				$status = $ci->lang->line(OfferConstants::PROPOSED_OFFER);
-	    				formToAddNewOffer($status, $currentOffer, $courseId, $currentSemester);
+	    				formToAddNewOffer(OfferConstants::PROPOSED_OFFER, $currentOffer, $courseId, $currentSemester);
 			    	}
 	    		echo "</td>";
 
 	    		echo "<td>";
 			    	$nextOffer = $offer['next_semester'];
 			    	if($nextOffer !== FALSE){
-		    			displayOfferListBySemester($nextOffer, $courseId, $nextSemester);
+		    			displayOfferListBySemester($nextOffer, $courseId);
 					}
 					else{	
-	    				$status = $ci->lang->line(OfferConstants::PLANNED_OFFER);
-	    				formToAddNewOffer($status, $currentOffer, $courseId, $nextSemester);
+	    				formToAddNewOffer(OfferConstants::PLANNED_OFFER, $currentOffer, $courseId, $nextSemester);
 	    			}
 	    		echo "</td>";
 
@@ -1526,23 +1521,19 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 	buildTableEndDeclaration();
 }
 
-function displayOfferListBySemester($offer, $courseId, $semester){
-
-	$ci =& get_instance();
-	$offer_status_pt = $ci->lang->load('offer_status_lang', 'portuguese');
+function displayOfferListBySemester($offer, $courseId){
 
 	$status = $offer['offer_status'];
-	echo "<b> Status: </b>".$ci->lang->line($status);;
 
 	if($status === OfferConstants::APPROVED_OFFER){
 		$content = anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
-	    $principalMessage = FALSE;
+	    $principalMessage = "Lista de ofertas aprovada";
 	    $aditionalMessage = "<b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/>";
 	}
 	else{
 		$content = anchor("secretary/offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-		$principalMessage = "Editar";
-	    $aditionalMessage = "<b><i>Aqui é possível adicionar <br>disciplinas a lista de oferta e aprová-la.</i><b/>";
+		$principalMessage = "Editar Oferta ".lang($status);
+	    $aditionalMessage = "<b><i>Aqui é possível adicionar <br>disciplinas a lista de oferta.</i><b/>";
 	}
 
 	$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
@@ -1550,11 +1541,18 @@ function displayOfferListBySemester($offer, $courseId, $semester){
 }
 
 function formToAddNewOffer($status, $offer, $courseId, $semester){
-		
+	
+	if($status == OfferConstants::PLANNED_OFFER){
+		$btn_content = "Planejar";
+	}
+	else{
+		$btn_content = "Criar";
+	}
+
 	$newOfferBtn = array(
 		"id" => "new_offer_btn",
 		"class" => "btn btn-primary",
-		"content" => "Nova Lista de Ofertas",
+		"content" =>  $btn_content." lista de ofertas",
 		"type" => "submit"
 	);
 
@@ -1566,24 +1564,22 @@ function formToAddNewOffer($status, $offer, $courseId, $semester){
 	    'style' => 'margin:15px',
     );
 
-		$principalMessage = "Nenhuma lista de ofertas ".$status." para o semestre ".$semester;
-		$aditionalMessage = "<b><i>OBS.: A lista de oferta será criada para o semestre </i><b/>".$semester;
+	    $status_pt = lang($status);
+		$principalMessage = "Nenhuma lista de ofertas ".$status_pt." para o semestre ".$semester['description'];
+		$aditionalMessage = "<b><i>OBS.: A lista de oferta será criada para o semestre </i><b/>".$semester['description'];
 		$callout = wrapperCallout("info", FALSE, $principalMessage, $aditionalMessage);
 
 		$callout->writeCalloutDeclaration();
 		$callout->writePrincipalMessage();
 
-			$warningCallout = wrapperCallout("warning");
-			$warningCallout->writeCalloutDeclaration();
-				echo form_open("secretary/offer/newOffer/{$courseId}");
-				echo form_checkbox($needsMastermindApprovalCheckBox);
-				echo form_hidden("semester", $semester);
-				echo form_hidden("status", $status);
-				echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
-				echo "<br>";
-				echo form_button($newOfferBtn);
-				echo form_close();
-			$warningCallout->writeCalloutEndDeclaration();
+		echo form_open("secretary/offer/newOffer/{$courseId}");
+		echo form_checkbox($needsMastermindApprovalCheckBox);
+		echo form_hidden("semester", $semester['id_semester']);
+		echo form_hidden("status", $status);
+		echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
+		echo "<br>";
+		echo form_button($newOfferBtn);
+		echo form_close();
 
 		$callout->writeAditionalMessage();
 		$callout->writeCalloutEndDeclaration();
@@ -1649,15 +1645,19 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 
 	echo "<div class=\"row\">";
 		echo "<div class=\"col-xs-3\">";
-			if($disciplines !== FALSE){
+			$status = $offerData['offer_status'];
+			if($status === OfferConstants::PROPOSED_OFFER){
+				if($disciplines !== FALSE){
 
-				echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
-		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-		             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
-			}else{
-				echo anchor("", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
-		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\" disabled='true'
-		             data-content=\"Não é possível aprovar uma lista sem disciplinas.\"");
+					echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+			             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+			             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
+				}
+				else{
+						echo anchor("", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+				             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\" disabled='true'
+				             data-content=\"Não é possível aprovar uma lista sem disciplinas.\"");
+				}
 			}
 		echo "</div>";
 		echo "<div class=\"col-xs-3\">";

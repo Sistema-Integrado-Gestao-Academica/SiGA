@@ -18,13 +18,13 @@ class Offer extends MX_Controller {
 			$needsMastermindApproval = EnrollmentConstants::DONT_NEED_MASTERMIND_APPROVAL;
 		}
 
-		$this->load->model("program/semester_model");
-		$currentSemester = $this->semester_model->getCurrentSemester();
+		$semester = $this->input->post("semester");
+		$status = $this->input->post("status");
 
 		$offer = array(
-			'semester' => $currentSemester['id_semester'],
+			'semester' => $semester,
 			'course' => $courseId,
-			'offer_status' => "proposed",
+			'offer_status' => $status,
 			'needs_mastermind_approval' => $needsMastermindApproval
 		);
 
