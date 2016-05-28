@@ -19,6 +19,28 @@ class UserController extends MX_Controller {
 		$this->load->model('auth/usuarios_model');
 	}
 
+	public function guest_index(){
+
+		$this->load->model("program/course_model");
+		$availableCourses = $this->course_model->getAllCourses();
+
+		$coursesName = array();
+		foreach ($availableCourses as $id => $course) {
+			$coursesName[$id] = $course['course_name'];
+		}
+
+		$session = getSession();
+		$user = $session->getUserData();
+
+		$data = array(
+			'courses' => $availableCourses,
+			'coursesName' => $coursesName,
+			'user' => $user
+		);
+		loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP,'auth/user/guest_index', $data);
+
+	}
+
 	public function validateUser($login, $password){
 
 		try{
