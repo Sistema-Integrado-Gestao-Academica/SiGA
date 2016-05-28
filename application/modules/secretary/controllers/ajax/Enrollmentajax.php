@@ -10,9 +10,9 @@ class EnrollmentAjax extends MX_Controller {
         $course = $this->input->post("course");
 
         $this->load->model("auth/usuarios_model");
-        $guests = $this->usuarios_model->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID, $guestName);
+        $courseGuests = $this->usuarios_model->getCourseGuests($course, $guestName);
 
-        if($guests !== FALSE){
+        if($courseGuests !== FALSE){
             echo "<h3><i class='fa fa-users'></i> Usuários que podem ser matriculados com o nome '{$guestName}':</h3><br>";
 
             buildTableDeclaration();
@@ -23,7 +23,7 @@ class EnrollmentAjax extends MX_Controller {
                 'Ações'
             ));
 
-            foreach ($guests as $user){
+            foreach ($courseGuests as $user){
                 echo "<tr>";
                     echo "<td>";
                         echo $user['name'];

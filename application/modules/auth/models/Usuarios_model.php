@@ -357,13 +357,17 @@ class Usuarios_model extends CI_Model {
 		return $success;
 	}
 
-	public function getCourseGuests($courseId){
+	public function getCourseGuests($courseId, $guestName = FALSE){
 		
 		$this->db->select('users.id, users.name, users.cpf, users.email');
 		$this->db->from('users');
 		$this->db->join('course_guest', "users.id = course_guest.id_user");
 		$this->db->where('course_guest.id_course', $courseId);
 
+		if($guestName !== FALSE){
+			$this->db->like('users.name', $guestName);
+		}
+		
 		$users = $this->db->get()->result_array();
 
 		$users = checkArray($users);
