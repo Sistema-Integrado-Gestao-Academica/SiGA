@@ -345,6 +345,18 @@ class Usuarios_model extends CI_Model {
 		return $wasFound;
 	}
 
+	public function addCourseToGuest($userId, $courseId){
+
+		$courseGuest = array(
+			'id_user' => $userId,
+			'id_course' => $courseId
+		);
+
+		$success = $this->db->insert('course_guest', $courseGuest);
+
+		return $success;
+	}
+
 	public function getUserCourse($userId){
 
 		$this->db->select("course.*, course_student.enroll_date, course_student.enrollment");

@@ -21,24 +21,50 @@ class UserController extends MX_Controller {
 
 	public function guest_index(){
 
-		$this->load->model("program/course_model");
-		$availableCourses = $this->course_model->getAllCourses();
-
-		$coursesName = array();
-		foreach ($availableCourses as $id => $course) {
-			$coursesName[$id] = $course['course_name'];
-		}
-
+		$coursesName = $this->getCoursesName();
 		$session = getSession();
 		$user = $session->getUserData();
 
 		$data = array(
-			'courses' => $availableCourses,
 			'coursesName' => $coursesName,
 			'user' => $user
 		);
 		loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP,'auth/user/guest_index', $data);
 
+	}
+
+	private function getCoursesName(){
+
+		$this->load->model("program/course_model");
+		$availableCourses = $this->course_model->getAllCourses();
+
+		$coursesName = array();
+		foreach ($availableCourses as $course) {
+			$id = $course['id_course'];
+			$coursesName[$id] = $course['course_name'];
+		}
+
+		return $coursesName;
+	}
+
+	public function courseForGuest(){
+
+		$courseId = $this->input->post("courses_name");
+
+		$session = getSession();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+		
+		$success = $this->usuarios_model->addCourseToGuest($userId, $courseId);
+
+		if($success){
+			$session->showFlashMessage("success", "Inscrição solicitada com sucesso!");
+			redirect("/");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível solicitar sua inscrição!");
+			redirect("guest_home");
+		}
 	}
 
 	public function validateUser($login, $password){
