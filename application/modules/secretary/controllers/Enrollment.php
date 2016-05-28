@@ -125,4 +125,18 @@ class Enrollment extends MX_Controller {
 		$guestGroup = GroupConstants::GUEST_GROUP;
 		$this->module->deleteGroupOfUser($guestGroup, $userId);
 	}
+
+
+    public function setUserAsUnknown(){
+
+        $userId = $this->input->post("user");
+        $courseId = $this->input->post("course");
+
+        $this->load->model("auth/usuarios_model");
+
+        $success = $this->usuarios_model->setGuestAsUnknown($userId);        
+
+        $this->enrollStudentToCourse($courseId);
+    }
+
 }

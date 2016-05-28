@@ -365,6 +365,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->from('users');
 		$this->db->join('course_guest', "users.id = course_guest.id_user");
 		$this->db->where('course_guest.id_course', $courseId);
+		$this->db->where('course_guest.status', EnrollmentConstants::CANDIDATE_STATUS);
 
 		if($guestName !== FALSE){
 			$this->db->like('users.name', $guestName);
@@ -746,6 +747,16 @@ class Usuarios_model extends CI_Model {
 		}
 
 		return $user;
+	}
+
+	public function setGuestAsUnknown($userId){
+		
+		$this->db->where('id_user', $userId);
+		$success = $this->db->update("course_guest", array(
+			'status' => EnrollmentConstants::UNKNOWN_STATUS
+		));
+
+		return $success;		
 	}
 
 }

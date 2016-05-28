@@ -1882,3 +1882,58 @@ function displayResearchLinesByCourse($research_lines,$courses){
 	buildTableEndDeclaration();
 }
 
+function displayGuestForEnrollment($guests, $courseId){
+	buildTableDeclaration();
+
+	buildTableHeaders(array(
+		'Nome',
+		'E-mail',
+		'Ações'
+	));
+
+	$markUnknownUser = array(
+		"id" => "mark_user_as_unknown_btn",
+		"class" => "btn bg-warning",
+		"content" => "Marcar como desconhecido",
+		"type" => "submit"
+	);
+	foreach ($guests as $user){
+
+		?> 
+		<tr>
+
+			<td>
+				<?= $user['name'] ?>
+			</td>
+			<td>
+				<?= $user['email'] ?>
+			</td>
+			<td>
+				<?php
+				
+				echo anchor("secretary/enrollment/enrollStudent/{$courseId}/{$user['id']}", "Matricular", "class='btn btn-primary'"); 
+
+				?>
+				
+				<button data-toggle="collapse" data-target=<?="#confirmation".$user['id']?> class="btn btn-warning" >
+					<span class="fa fa-user"></span><span class="fa fa-question-circle"></span> Desconhecido 
+				</button>
+				
+				<div id=<?="confirmation".$user['id']?> class="collapse">
+					<?= form_open("secretary/enrollment/setUserAsUnknown") ?>
+					<?= form_hidden("course", $courseId) ?>
+					<?= form_hidden("user", $user['id']) ?>
+					<br>
+					Não conhece este usuário? Marque-o como desconhecido.
+					<br>
+					<?= form_button($markUnknownUser) ?>
+					<?= form_close() ?>
+				</div>
+			</td>
+		</tr>
+	<?php
+	}
+
+	buildTableEndDeclaration();
+
+}
