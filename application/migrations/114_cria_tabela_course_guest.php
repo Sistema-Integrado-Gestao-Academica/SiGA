@@ -7,6 +7,7 @@ class Migration_cria_tabela_course_guest extends CI_Migration {
         $this->dbforge->add_field(array(
             'id_user' => array('type' => 'INT'),
             'id_course' => array('type' => 'INT'),
+            'status' => array('type' => 'varchar(10)')
         ));
 
 		// Creating table course_guest

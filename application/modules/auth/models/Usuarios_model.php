@@ -1,6 +1,7 @@
 <?php
 
 require_once(MODULESPATH."auth/exception/LoginException.php");
+require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 
 class Usuarios_model extends CI_Model {
 
@@ -349,7 +350,8 @@ class Usuarios_model extends CI_Model {
 
 		$courseGuest = array(
 			'id_user' => $userId,
-			'id_course' => $courseId
+			'id_course' => $courseId,
+			'status' => EnrollmentConstants::CANDIDATE_STATUS
 		);
 
 		$success = $this->db->insert('course_guest', $courseGuest);
