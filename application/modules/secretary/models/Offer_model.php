@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."/secretary/constants/OfferConstants.php");
+
 class Offer_model extends CI_Model {
 
 	public function newOffer($offer){
@@ -59,6 +61,33 @@ class Offer_model extends CI_Model {
 
 		$this->db->where('id_offer', $idOffer);
 		$this->db->update('offer', array('offer_status' => $newStatus));
+	}
+
+	public function updatePlannedOffers($semesterId){
+
+		$semesterOffers = $this->getAllSemesterOffers($semesterId);
+
+		foreach ($semesterOffers as $offer) {
+			$status = $offer['offer_status'];
+			if($status === OfferConstants::PLANNED_OFFER){
+
+				$this->db->where('id_offer', $offer['id_offer']);
+				$this->db->update('offer', array('offer_status' => OfferConstants::PROPOSED_OFFER));
+			
+			}
+		}
+
+	}
+
+	private function getAllSemesterOffers($semesterId){
+
+		$semesterOffers = $this->db->get_where('offer', array('semester' => $semesterId));
+
+		$semesterOffers = $semesterOffers->result_array();
+
+		$semesterOffers = checkArray($semesterOffers);
+
+		return $semesterOffers;
 	}
 
 	private function checkIfOfferHaveDiscipline($idOffer){

@@ -32,6 +32,8 @@ class Settings extends MX_Controller {
 		$semester_id = $this->input->post('current_semester_id') + 1;
 		$object = array('id_semester' => $semester_id);
 		if ($this->db->update('current_semester', $object)) {
+			$this->load->model("secretary/offer_model");
+			$this->offer_model->updatePlannedOffers($semester_id);
 			$session->showFlashMessage("success", "Semestre corrente alterado");
 		}
 		redirect('configuracoes');
