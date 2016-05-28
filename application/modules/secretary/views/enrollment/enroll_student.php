@@ -40,7 +40,7 @@
 <div id="guests_table">
 	
 <?php
-if($guests !== FALSE){
+if($courseGuests !== FALSE){
 	echo "<h3><i class='fa fa-users'></i> Lista de Usuários que podem ser matriculados:</h3><br>";
 
 	buildTableDeclaration();
@@ -51,7 +51,7 @@ if($guests !== FALSE){
 		'Ações'
 	));
 
-	foreach ($guests as $user){
+	foreach ($courseGuests as $user){
 		echo "<tr>";
 			echo "<td>";
 				echo $user['name'];

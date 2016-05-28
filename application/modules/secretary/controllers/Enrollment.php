@@ -22,7 +22,7 @@ class Enrollment extends MX_Controller {
 	public function enrollStudentToCourse($courseId){
 
 		$this->load->model("auth/usuarios_model");
-		$guests = $this->usuarios_model->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
+		$courseGuests = $this->usuarios_model->getCourseGuests($courseId);
 
 		$this->load->model("program/course_model");
 		$foundCourse = $this->course_model->getCourseById($courseId);
@@ -30,7 +30,7 @@ class Enrollment extends MX_Controller {
 
 		$data = array(
 			'course' => $foundCourse,
-			'guests' => $guests
+			'courseGuests' => $courseGuests
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::ENROLL_STUDENT_PERMISSION, 'secretary/enrollment/enroll_student', $data);
@@ -51,6 +51,8 @@ class Enrollment extends MX_Controller {
 		$this->db->trans_start();
 
 		$this->enrollment_model->enrollStudentIntoCourse($course, $user);
+
+		$this->usuarios_model->deleteUserFromCourseGuest($user);
 
 		$this->addStudentGroupToNewStudent($user);
 
