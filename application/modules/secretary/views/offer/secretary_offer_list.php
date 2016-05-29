@@ -1,11 +1,9 @@
-<br>
-<h4 align="center"><b>Lista de ofertas</b></h4>
-<br>
+<h2 class="principal"><b>Lista de ofertas</b></h2>
 
 <?=	form_open('program/semester/saveSemester') ?>
 	<?= form_hidden('current_semester_id', $current_semester['id_semester']) ?>
 	<?= form_hidden('password') ?>
-	<?= form_label('Semestre atual') ?>
+	<h4><span class="fa fa-calendar-o"> <?= form_label(' Semestre atual')?></span></h4>
 	<h4><?=$current_semester['description']?></h4>
 	<?php if ($isAdmin): ?>
 		<?= form_button(array(
@@ -22,11 +20,19 @@
 <?php 
 	$userName = $user->getName();
 
-	if($courses !== FALSE){		
+	if($courses !== FALSE){
 
-		echo "<h4>Cursos para o secretário <b>".$userName."</b>:</h4>";
+?>
 
-		displayOffersList($proposedOffers);
+	<div class='alert alert-info alert-dismissible' role='alert'>
+		<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+		<i class="fa fa-info"></i> <strong>Lembre-se,</strong> aqui é possível montar a lista de oferta para o semestre atual e também planejar a lista de oferta para o semestre seguinte.
+	</div>
+
+
+<?php 
+		echo "<h4><span class='fa fa-graduation-cap'> Cursos para o secretário <b>".$userName."</b>:</h4></span>";
+		displayOffersList($proposedOffers, $current_semester, $next_semester);
 
 	}else{
 ?>

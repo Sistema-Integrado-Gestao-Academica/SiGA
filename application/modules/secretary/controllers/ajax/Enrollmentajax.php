@@ -10,36 +10,15 @@ class EnrollmentAjax extends MX_Controller {
         $course = $this->input->post("course");
 
         $this->load->model("auth/usuarios_model");
-        $guests = $this->usuarios_model->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID, $guestName);
+        $courseGuests = $this->usuarios_model->getCourseGuests($course, $guestName);
 
-        if($guests !== FALSE){
+        if($courseGuests !== FALSE){
             echo "<h3><i class='fa fa-users'></i> Usuários que podem ser matriculados com o nome '{$guestName}':</h3><br>";
 
-            buildTableDeclaration();
+            displayGuestForEnrollment($courseGuests, $course);  
 
-            buildTableHeaders(array(
-                'Nome',
-                'E-mail',
-                'Ações'
-            ));
-
-            foreach ($guests as $user){
-                echo "<tr>";
-                    echo "<td>";
-                        echo $user['name'];
-                    echo "</td>";
-                    echo "<td>";
-                        echo $user['email'];
-                    echo "</td>";
-                    echo "<td>";
-                        echo anchor("enroll_student/{$course}/{$user['id']}", "Matricular", "class='btn btn-primary'");
-                    echo "</td>";
-
-                echo "</tr>";
-            }
-
-            buildTableEndDeclaration();
-        }else{
+        }
+        else{
             echo "<br>";
             callout("info", "Não existem usuários disponíveis para matrícula com o nome '{$guestName}' no momento.");
         }

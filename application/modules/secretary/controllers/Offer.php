@@ -18,13 +18,13 @@ class Offer extends MX_Controller {
 			$needsMastermindApproval = EnrollmentConstants::DONT_NEED_MASTERMIND_APPROVAL;
 		}
 
-		$this->load->model("program/semester_model");
-		$currentSemester = $this->semester_model->getCurrentSemester();
+		$semester = $this->input->post("semester");
+		$status = $this->input->post("status");
 
 		$offer = array(
-			'semester' => $currentSemester['id_semester'],
+			'semester' => $semester,
 			'course' => $courseId,
-			'offer_status' => "proposed",
+			'offer_status' => $status,
 			'needs_mastermind_approval' => $needsMastermindApproval
 		);
 
@@ -48,6 +48,7 @@ class Offer extends MX_Controller {
 
 		$this->load->model("program/semester_model");
 		$currentSemester = $this->semester_model->getCurrentSemester();
+		$nextSemester = $this->semester_model->getNextSemester();
 
 		// Check if the logged user have admin permission
 		$this->load->module("auth/module");
@@ -69,7 +70,8 @@ class Offer extends MX_Controller {
 			foreach($courses as $course){
 				$courseId = $course['id_course'];
 				$courseName = $course['course_name'];
-				$proposedOffers[$courseName] = $this->offer_model->getCourseOfferList($courseId, $currentSemester['id_semester']);
+				$proposedOffers[$courseName]['current_semester'] = $this->offer_model->getCourseOfferList($courseId, $currentSemester['id_semester']);
+				$proposedOffers[$courseName]['next_semester'] = $this->offer_model->getCourseOfferList($courseId, $nextSemester['id_semester']);
 			}
 
 		}else{
@@ -78,6 +80,7 @@ class Offer extends MX_Controller {
 
 		$data = array(
 			'current_semester' => $currentSemester,
+			'next_semester' => $nextSemester,
 			'isAdmin' => $isAdmin,
 			'proposedOffers' => $proposedOffers,
 			'courses' => $courses,
@@ -99,7 +102,7 @@ class Offer extends MX_Controller {
 			$message = "Não foi possível aprovar essa lista de ofertas. Verifique se há discisplinas adicionadas a essa lista, não é possível aprovar uma lista sem disciplinas.";
 		}
 		
-		$session = SessionManager::getInstance();
+		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect('secretary/offer/offerList');
 	}

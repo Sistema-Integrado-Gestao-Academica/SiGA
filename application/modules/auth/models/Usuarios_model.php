@@ -1,6 +1,7 @@
 <?php
 
 require_once(MODULESPATH."auth/exception/LoginException.php");
+require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 
 class Usuarios_model extends CI_Model {
 
@@ -343,6 +344,48 @@ class Usuarios_model extends CI_Model {
 		$wasFound = sizeof($foundLogin) > 0;
 
 		return $wasFound;
+	}
+
+	public function addCourseToGuest($userId, $courseId){
+
+		$courseGuest = array(
+			'id_user' => $userId,
+			'id_course' => $courseId,
+			'status' => EnrollmentConstants::CANDIDATE_STATUS
+		);
+
+		$success = $this->db->insert('course_guest', $courseGuest);
+
+		return $success;
+	}
+
+	public function getCourseGuests($courseId, $guestName = FALSE){
+		
+		$this->db->select('users.id, users.name, users.cpf, users.email');
+		$this->db->from('users');
+		$this->db->join('course_guest', "users.id = course_guest.id_user");
+		$this->db->where('course_guest.id_course', $courseId);
+		$this->db->where('course_guest.status', EnrollmentConstants::CANDIDATE_STATUS);
+
+		if($guestName !== FALSE){
+			$this->db->like('users.name', $guestName);
+		}
+		
+		$users = $this->db->get()->result_array();
+
+		$users = checkArray($users);
+
+		return $users;
+
+	}
+
+	public function deleteUserFromCourseGuest($userId){
+		
+		$courseGuest = array(
+			'id_user' => $userId,
+		);
+
+		$this->db->delete('course_guest', $courseGuest);
 	}
 
 	public function getUserCourse($userId){
@@ -704,6 +747,16 @@ class Usuarios_model extends CI_Model {
 		}
 
 		return $user;
+	}
+
+	public function setGuestAsUnknown($userId){
+		
+		$this->db->where('id_user', $userId);
+		$success = $this->db->update("course_guest", array(
+			'status' => EnrollmentConstants::UNKNOWN_STATUS
+		));
+
+		return $success;		
 	}
 
 }

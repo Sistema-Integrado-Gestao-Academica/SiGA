@@ -38,36 +38,15 @@
 	</div>
 
 <div id="guests_table">
+<!-- <div id="guests_table_known"> -->
 	
 <?php
-if($guests !== FALSE){
+if($courseGuests !== FALSE){
 	echo "<h3><i class='fa fa-users'></i> Lista de Usuários que podem ser matriculados:</h3><br>";
 
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Nome',
-		'E-mail',
-		'Ações'
-	));
-
-	foreach ($guests as $user){
-		echo "<tr>";
-			echo "<td>";
-				echo $user['name'];
-			echo "</td>";
-			echo "<td>";
-				echo $user['email'];
-			echo "</td>";
-			echo "<td>";
-				echo anchor("secretary/enrollment/enrollStudent/{$course['id_course']}/{$user['id']}", "Matricular", "class='btn btn-primary'");
-			echo "</td>";
-
-		echo "</tr>";
-	}
-
-	buildTableEndDeclaration();
-}else{
+	displayGuestForEnrollment($courseGuests, $course['id_course']);	
+}
+else{
 	callout("info", "Não existem usuários disponíveis para matrícula no momento.");
 }
 ?>

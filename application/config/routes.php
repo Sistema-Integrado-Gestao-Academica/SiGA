@@ -69,6 +69,7 @@ $route['resent_confirmation_email/(:num)'] = 'auth/useractivation/resentEmail/$1
 $route['reconfirm_register/(:num)'] = 'auth/useractivation/reconfirmRegister/$1/';
 $route['cancel_register/(:num)'] = 'auth/useractivation/cancelRegister/$1/';
 $route['user_report'] = 'auth/userController/usersReport';
+$route['guest_home'] = 'auth/userController/guest_index';
 
 // useless
 $route['departamentos'] = 'departamento/formulario';
@@ -121,7 +122,6 @@ $route['generate_spreadsheet/(:num)'] = 'finantial/payment/generateSpreadsheet/$
  * Secretary functionalities routes
  */
 $route['enrollStudent/(:num)'] = 'secretary/enrollment/enrollStudentToCourse/$1';
-$route['guest_home'] = 'secretary/secretary/guest_index';
 $route['secretaria'] = 'utils/loadSecretaria';
 $route['secretary_home'] = 'secretary/secretary/index';
 $route['enroll_student'] = "secretary/secretary/enrollStudent";

@@ -1471,20 +1471,16 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
     buildTableEndDeclaration();
 }
 
-function displayOffersList($offers){
-
-	define("PROPOSED", OfferConstants::PROPOSED_OFFER);
-	define("APPROVED", OfferConstants::APPROVED_OFFER);
-
+function displayOffersList($offers, $currentSemester, $nextSemester){
+	
 	$course = new Course();
 
 	buildTableDeclaration();
 
 	buildTableHeaders(array(
 		'Curso',
-		'Lista de Oferta',
-		'Status',
-		'Ações'
+		"Semestre atual - ".$currentSemester['description'],
+		"Semestre seguinte - ".$nextSemester['description']
 	));
 
 	    foreach($offers as $courseName => $offer){
@@ -1498,89 +1494,95 @@ function displayOffersList($offers){
 	    			echo $courseName;
 	    		echo "</td>";
 
-	    		if($offer !== FALSE){
+		    	echo "<td>";
+					$currentOffer = $offer['current_semester'];
+					if($currentOffer !== FALSE){
+		    			displayOfferListBySemester($currentOffer, $courseId);
 
-	    			switch($offer['offer_status']){
-						case PROPOSED:
-							$status = "Proposta";
-							break;
+		    		}
+	    			else{
+	    				formToAddNewOffer(OfferConstants::PROPOSED_OFFER, $currentOffer, $courseId, $currentSemester);
+			    	}
+	    		echo "</td>";
 
-						case APPROVED:
-							$status = "Aprovada";
-							break;
-
-						default:
-							$status = "-";
-							break;
+	    		echo "<td>";
+			    	$nextOffer = $offer['next_semester'];
+			    	if($nextOffer !== FALSE){
+		    			displayOfferListBySemester($nextOffer, $courseId);
 					}
-
-		    		echo "<td>";
-		    			echo $offer['id_offer'];
-		    		echo "</td>";
-
-		    		echo "<td>";
-		    			echo $status;
-		    		echo "</td>";
-
-		    		echo "<td>";
-		    			if($offer['offer_status'] === PROPOSED){
-	    					$content = anchor("secretary/offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-							$principalMessage = "Editar";
-						    $aditionalMessage = "<b><i>Aqui é possível adicionar disciplinas a lista de oferta e aprová-la.</i><b/>";
-		    			}else{
-	    					$content = anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
-						    $principalMessage = FALSE;
-						    $aditionalMessage = "<b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/>";
-		    			}
-
-						$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
-						$callout->draw();
-		    		echo "</td>";
-
-	    		}else{
-
-	    			$newOfferBtn = array(
-						"id" => "new_offer_btn",
-						"class" => "btn btn-primary",
-						"content" => "Nova Lista de Ofertas",
-						"type" => "submit"
-					);
-
-	    			$needsMastermindApprovalCheckBox = array(
-					    'name' => 'needs_mastermind_approval_ckbox',
-					    'id' => 'needs_mastermind_approval_ckbox',
-					    'value' => EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL,
-					    'checked' => TRUE,
-					    'style' => 'margin:15px',
-				    );
-
-	    			echo "<td colspan=3>";
-	    				$principalMessage = "Nenhuma lista de ofertas proposta para o semestre atual.";
-	    				$aditionalMessage = "<b><i>OBS.: A lista de oferta será criada para o semestre atual.</i><b/>";
-	    				$callout = wrapperCallout("info", FALSE, $principalMessage, $aditionalMessage);
-
-	    				$callout->writeCalloutDeclaration();
-	    				$callout->writePrincipalMessage();
-
-	    					$warningCallout = wrapperCallout("warning");
-	    					$warningCallout->writeCalloutDeclaration();
-								echo form_open("secretary/offer/newOffer/{$courseId}");
-								echo form_checkbox($needsMastermindApprovalCheckBox);
-								echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
-								echo "<br>";
-								echo form_button($newOfferBtn);
-								echo form_close();
-							$warningCallout->writeCalloutEndDeclaration();
-
-						$callout->writeAditionalMessage();
-						$callout->writeCalloutEndDeclaration();
-	    			echo "</td>";
-	    		}
+					else{	
+	    				formToAddNewOffer(OfferConstants::PLANNED_OFFER, $currentOffer, $courseId, $nextSemester);
+	    			}
+	    		echo "</td>";
 
 	    	echo "</tr>";
 	    }
 
 	buildTableEndDeclaration();
+}
+
+function displayOfferListBySemester($offer, $courseId){
+
+	$status = $offer['offer_status'];
+
+	if($status === OfferConstants::APPROVED_OFFER){
+		$content = anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
+	    $principalMessage = "Lista de ofertas aprovada";
+	    $aditionalMessage = "<b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/>";
+	}
+	else{
+		$content = anchor("secretary/offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+		$principalMessage = "Editar Oferta ".lang($status);
+	    $aditionalMessage = "<b><i>Aqui é possível adicionar <br>disciplinas a lista de oferta.</i><b/>";
+	}
+
+	$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);
+	$callout->draw();
+}
+
+function formToAddNewOffer($status, $offer, $courseId, $semester){
+	
+	if($status == OfferConstants::PLANNED_OFFER){
+		$btn_content = "Planejar";
+	}
+	else{
+		$btn_content = "Criar";
+	}
+
+	$newOfferBtn = array(
+		"id" => "new_offer_btn",
+		"class" => "btn btn-primary",
+		"content" =>  $btn_content." lista de ofertas",
+		"type" => "submit"
+	);
+
+	$needsMastermindApprovalCheckBox = array(
+	    'name' => 'needs_mastermind_approval_ckbox',
+	    'id' => 'needs_mastermind_approval_ckbox',
+	    'value' => EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL,
+	    'checked' => TRUE,
+	    'style' => 'margin:15px',
+    );
+
+	    $status_pt = lang($status);
+		$principalMessage = "Nenhuma lista de ofertas ".$status_pt." para o semestre ".$semester['description'];
+		$aditionalMessage = "<b><i>OBS.: A lista de oferta será criada para o semestre </i><b/>".$semester['description'];
+		$callout = wrapperCallout("info", FALSE, $principalMessage, $aditionalMessage);
+
+		$callout->writeCalloutDeclaration();
+		$callout->writePrincipalMessage();
+
+		echo form_open("secretary/offer/newOffer/{$courseId}");
+		echo form_checkbox($needsMastermindApprovalCheckBox);
+		echo form_hidden("semester", $semester['id_semester']);
+		echo form_hidden("status", $status);
+		echo form_label('Necessita de aprovação do orientador.', 'needs_mastermind_approval_ckbox');
+		echo "<br>";
+		echo form_button($newOfferBtn);
+		echo form_close();
+
+		$callout->writeAditionalMessage();
+		$callout->writeCalloutEndDeclaration();
 }
 
 function displayOfferDisciplines($idOffer, $course, $disciplines){
@@ -1643,15 +1645,19 @@ function displayOfferDisciplines($idOffer, $course, $disciplines){
 
 	echo "<div class=\"row\">";
 		echo "<div class=\"col-xs-3\">";
-			if($disciplines !== FALSE){
+			$status = $offerData['offer_status'];
+			if($status === OfferConstants::PROPOSED_OFFER){
+				if($disciplines !== FALSE){
 
-				echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
-		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-		             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
-			}else{
-				echo anchor("", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
-		             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\" disabled='true'
-		             data-content=\"Não é possível aprovar uma lista sem disciplinas.\"");
+					echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+			             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
+			             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
+				}
+				else{
+						echo anchor("", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
+				             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\" disabled='true'
+				             data-content=\"Não é possível aprovar uma lista sem disciplinas.\"");
+				}
 			}
 		echo "</div>";
 		echo "<div class=\"col-xs-3\">";
@@ -1876,3 +1882,58 @@ function displayResearchLinesByCourse($research_lines,$courses){
 	buildTableEndDeclaration();
 }
 
+function displayGuestForEnrollment($guests, $courseId){
+	buildTableDeclaration();
+
+	buildTableHeaders(array(
+		'Nome',
+		'E-mail',
+		'Ações'
+	));
+
+	$markUnknownUser = array(
+		"id" => "mark_user_as_unknown_btn",
+		"class" => "btn bg-warning",
+		"content" => "Marcar como desconhecido",
+		"type" => "submit"
+	);
+	foreach ($guests as $user){
+
+		?> 
+		<tr>
+
+			<td>
+				<?= $user['name'] ?>
+			</td>
+			<td>
+				<?= $user['email'] ?>
+			</td>
+			<td>
+				<?php
+				
+				echo anchor("secretary/enrollment/enrollStudent/{$courseId}/{$user['id']}", "Matricular", "class='btn btn-primary'"); 
+
+				?>
+				
+				<button data-toggle="collapse" data-target=<?="#confirmation".$user['id']?> class="btn btn-warning" >
+					<span class="fa fa-user"></span><span class="fa fa-question-circle"></span> Desconhecido 
+				</button>
+				
+				<div id=<?="confirmation".$user['id']?> class="collapse">
+					<?= form_open("secretary/enrollment/setUserAsUnknown") ?>
+					<?= form_hidden("course", $courseId) ?>
+					<?= form_hidden("user", $user['id']) ?>
+					<br>
+					Não conhece este usuário? Marque-o como desconhecido.
+					<br>
+					<?= form_button($markUnknownUser) ?>
+					<?= form_close() ?>
+				</div>
+			</td>
+		</tr>
+	<?php
+	}
+
+	buildTableEndDeclaration();
+
+}

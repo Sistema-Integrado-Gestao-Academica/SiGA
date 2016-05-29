@@ -12,10 +12,6 @@ class Secretary extends MX_Controller {
 		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/secretary/secretary_home');
 	}
 
-	public function guest_index(){
-
-	}
-
 	public function requestReport(){
 
 		$session = getSession();
