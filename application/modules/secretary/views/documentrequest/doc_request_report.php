@@ -111,36 +111,11 @@
 				    		}
 
 				    		echo "<div class='collapse' id='upload_doc_".$request['id_request']."'>";
-				    			echo form_open_multipart("provide_doc_online");
 
-								// $hidden = array(
-								// );
-
-								// echo form_hidden($hidden);
-
-								$noticeFile = array(
-									"name" => "requested_doc",
-									"id" => "requested_doc",
-									"type" => "file"
-								);
-								
-								$submitFileBtn = array(
-									"id" => "provide_online_btn",
-									"class" => "btn btn-info btn-flat",
-									"content" => "<i class='fa fa-globe'></i> Expedir online",
-									"type" => "submit"
-									// "style" => "margin-top: 5%;"
-								);
-
-								echo form_label("Enviar documento <small><i>(Arquivos '.pdf', '.png' e '.jpg' apenas)</i></small>:", "requested_doc");
-
-								echo form_input($noticeFile);
-								echo "<br>";
-
-								echo form_button($submitFileBtn);
-
-								echo form_close();
+				    			provideDocOnlineForm($request['id_request'], $courseData['id_course']);
+				    			
 				    		echo "</div>";
+
 				    		echo "</div>";
 				    		echo "</td>";
 			    		echo "</tr>";

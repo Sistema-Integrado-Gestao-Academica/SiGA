@@ -130,7 +130,7 @@ class SelectiveProcess extends MX_Controller {
                 $auxPath = $desiredPath;
             }
             else{
-                mkdir($auxPath.$pathToAdd, 0777, TRUE);
+                mkdir($auxPath.$pathToAdd, 0755, TRUE);
                 $desiredPath .= $pathToAdd;
             }
         }

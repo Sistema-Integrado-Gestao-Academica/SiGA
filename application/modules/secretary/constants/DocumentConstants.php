@@ -17,6 +17,7 @@ class DocumentConstants{
 	// Document request status
 	const REQUEST_OPEN = "open";
 	const REQUEST_READY = "ready";
+	const REQUEST_READY_ONLINE = "ready online";
 
 	// Non declaration Docs ids
 	const QUALIFICATION_JURY = 1;

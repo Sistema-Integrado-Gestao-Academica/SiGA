@@ -4,6 +4,8 @@ require_once(MODULESPATH."secretary/constants/DocumentConstants.php");
 
 class DocumentRequest_model extends CI_Model {
 
+	const DOC_REQUEST_TABLE = "document_request";
+
 	public function allNonDeclarationTypes(){
 
 		$types = $this->db->get_where('document_type', array('declaration' => DocumentConstants::NON_DECLARATION))->result_array();
@@ -30,21 +32,35 @@ class DocumentRequest_model extends CI_Model {
 
 		$this->db->insert("document_request", $documentRequestData);
 
-		$foundRequest = $this->getDocumentRequest($documentRequestData);
+		$foundRequest = $this->getDocumentRequest($documentRequestData, FALSE, FALSE);
 
 		$wasSaved = $foundRequest !== FALSE;
 
 		return $wasSaved;
 	}
 
+	public function updateDocFile($requestId, $path){
+
+		$this->db->where("id_request", $requestId);
+		$updated = $this->db->update("document_request", array(
+			'doc_path' => $path
+		));
+
+		return $updated;
+	}
+
 	public function getStudentsRequestOfCourse($studentId, $courseId){
 
 		$this->db->order_by('status', "asc");
-		$requests = $this->getDocumentRequest(array(
-			'id_student' => $studentId,
-			'id_course' => $courseId,
-			'disabled' => DocumentConstants::REQUEST_NON_ARCHIVED
-		));
+		$requests = $this->getDocumentRequest(
+			array(
+				'id_student' => $studentId,
+				'id_course' => $courseId,
+				'disabled' => DocumentConstants::REQUEST_NON_ARCHIVED
+			),
+			FALSE,
+			FALSE
+		);
 
 		return $requests;
 	}
@@ -56,7 +72,7 @@ class DocumentRequest_model extends CI_Model {
 			'id_student' => $studentId,
 			'id_course' => $courseId,
 			'disabled' => DocumentConstants::REQUEST_ARCHIVED
-		));
+		), FALSE, FALSE);
 
 		return $requests;
 	}
@@ -65,7 +81,7 @@ class DocumentRequest_model extends CI_Model {
 
 		$this->db->delete('document_request', array('id_request' => $requestId));
 
-		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId));
+		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId), FALSE, FALSE);
 
 		$wasDeleted = $foundRequest === FALSE;
 
@@ -79,7 +95,7 @@ class DocumentRequest_model extends CI_Model {
 		$requests = $this->getDocumentRequest(array(
 			'id_course' => $courseId,
 			'answered' => DocumentConstants::NOT_ANSWERED
-		));
+		), FALSE, FALSE);
 
 		return $requests;
 	}
@@ -89,25 +105,25 @@ class DocumentRequest_model extends CI_Model {
 		$requests = $this->getDocumentRequest(array(
 			'id_course' => $courseId,
 			'answered' => DocumentConstants::ANSWERED
-		));
+		), FALSE, FALSE);
 
 		return $requests;
 	}
 
-	public function setDocumentReady($requestId){
+	public function setDocumentReady($requestId, $status = DocumentConstants::REQUEST_READY){
 
 		$this->db->where('id_request', $requestId);
 		$this->db->update(
 			'document_request',
-			array('status' => DocumentConstants::REQUEST_READY, 'answered' => DocumentConstants::ANSWERED)
+			array('status' => $status, 'answered' => DocumentConstants::ANSWERED)
 		);
 
-		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId));
+		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId), FALSE, FALSE);
 
 		if($foundRequest !== FALSE){
 			// Since we used the id of the request to the search, will be only one or none result in this array
 			foreach($foundRequest as $request){
-				$documentIsReady = $request['status'] === DocumentConstants::REQUEST_READY;
+				$documentIsReady = $request['status'] === $status;
 			}
 		}else{
 			$documentIsReady = FALSE;
@@ -121,7 +137,7 @@ class DocumentRequest_model extends CI_Model {
 		$this->db->where('id_request', $requestId);
 		$this->db->update('document_request', array('disabled' => DocumentConstants::REQUEST_ARCHIVED));
 
-		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId));
+		$foundRequest = $this->getDocumentRequest(array('id_request' => $requestId), FALSE, FALSE);
 
 		if($foundRequest !== FALSE){
 			// Since we used the id of the request to the search, will be only one or none result in this array
@@ -135,12 +151,29 @@ class DocumentRequest_model extends CI_Model {
 		return $documentIsArchived;
 	}
 
-	private function getDocumentRequest($requestData){
+	public function getDocRequestById($requestId){
 
-		$documentRequest = $this->db->get_where('document_request', $requestData)->result_array();
+		$request = $this->getDocumentRequest("id_request", $requestId);
 
-		$documentRequest = checkArray($documentRequest);
-
-		return $documentRequest;
+		return $request;
 	}
-};
+
+	private function getDocumentRequest($attr, $value = FALSE, $unique = TRUE){
+
+		if(is_array($attr)){
+			$foundRequest = $this->db->get_where(self::DOC_REQUEST_TABLE, $attr);
+		}else{
+			$foundRequest = $this->db->get_where(self::DOC_REQUEST_TABLE, array($attr => $value));
+		}
+
+		if($unique){
+			$foundRequest = $foundRequest->row_array();
+		}else{
+			$foundRequest = $foundRequest->result_array();
+		}
+
+		$foundRequest = checkArray($foundRequest);
+
+		return $foundRequest;
+	}
+}

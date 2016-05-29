@@ -24,8 +24,8 @@ class MY_Loader extends MX_Loader {
 	 * @return void
 	 */
 	public function test_template($pageContent, $data = array()) {
-		$this->view("test_header.php");
+		$this->view("test/test_header.php");
 		$this->view($pageContent, $data);
-		$this->view("test_footer.php");
+		$this->view("test/test_footer.php");
 	}
 }

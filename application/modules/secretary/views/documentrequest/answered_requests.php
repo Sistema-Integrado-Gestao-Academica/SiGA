@@ -53,6 +53,9 @@
 				    			case DocumentConstants::REQUEST_READY:
 				    				echo "<span class='label label-success'>Pronto</span>";
 				    				break;
+				    			case DocumentConstants::REQUEST_READY_ONLINE:
+				    				echo "<span class='label label-info'>Pronto Online</span>";
+				    				break;
 				    			default:
 				    				echo "-";
 				    				break;
@@ -72,6 +75,13 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
+				    			if($request['status'] === DocumentConstants::REQUEST_READY_ONLINE){
+				    				echo anchor(
+				    					"secretary_download_doc/{$request['id_request']}",
+			    						"<i class='fa fa-cloud-download'></i> Baixar documento",
+			    						"class='btn btn-info'"
+				    				);
+				    			}
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}

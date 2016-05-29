@@ -5,6 +5,9 @@ require_once(MODULESPATH."/secretary/constants/DocumentConstants.php");
 
 class DocumentRequest extends MX_Controller {
 
+	const DOC_NAME_PREFIX = "document_";
+	const DOCS_UPLOAD_PATH = "upload_files/docrequests";
+
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('secretary/documentrequest_model', "doc_request_model");
@@ -269,9 +272,88 @@ class DocumentRequest extends MX_Controller {
 		loadTemplateSafelyByPermission(PermissionConstants::DOCUMENT_REQUEST_REPORT_PERMISSION, "secretary/documentrequest/answered_requests", $data);
 	}
 
+	private function uploadOptions($fileName, $requestId){
+
+		$path = APPPATH.self::DOCS_UPLOAD_PATH;
+
+		$path = $this->createFolders($path, $requestId);
+
+		$config['upload_path'] = $path;
+        $config['file_name'] = $fileName;
+        $config['allowed_types'] = 'pdf|png|jpg|jpeg';
+        $config['max_size'] = '6000';
+        $config['remove_spaces'] = TRUE;
+        $config['overwrite'] = TRUE;
+
+        return $config;
+	}
+
+	private function createFolders($path, $requestId){
+
+		// Create the folder to the request if it not exists
+		if(!is_dir($path)){
+			mkdir($path, 0755, TRUE);
+		}
+
+		$pathToAdd = "r".$requestId;		
+		$newPath = $path."/".$pathToAdd;
+
+		// Create the new path if it not exists
+		if(!is_dir($newPath)){
+			mkdir($newPath, 0755, TRUE);
+		}
+		
+		return $newPath;
+	}
+
 	public function provideOnline(){
-		//  CONTIINUAR DAQUI
-		echo "CONTINUAR DAQUI";
+		
+		$this->load->library('upload');
+
+		$courseId = $this->input->post("course");
+		$requestId = $this->input->post("request");
+
+		$fileName = self::DOC_NAME_PREFIX.$requestId;
+
+		$config = $this->uploadOptions($fileName, $requestId);
+
+        $this->upload->initialize($config);
+
+        if($this->upload->do_upload("requested_doc")){
+
+            $doc = $this->upload->data();
+            $docPath = $doc['full_path'];
+
+            $wasUpdated = $this->doc_request_model->updateDocFile($requestId, $docPath);
+            $documentIsReady = $this->doc_request_model->setDocumentReady($requestId, DocumentConstants::REQUEST_READY_ONLINE);
+
+            if($wasUpdated && $documentIsReady){
+                $status = "success";
+                $message = "Documento salvo e expedido com sucesso!";
+            }else{
+                $status = "danger";
+                $message = "Não foi possível salvar o documento. Tente novamente.";
+            }
+
+        }else{
+            
+            $status = "danger";
+            $message = "Não foi possível salvar o documento. Os formatos aceitos são <b>'.pdf', '.png', '.jpeg' e '.jpg'</b>. Tente novamente.";
+        }
+
+        $this->session->set_flashdata($status, $message);
+        redirect("secretary_doc_requests/{$courseId}");
+	}
+
+	public function downloadDoc($requestId){
+
+		$request = $this->doc_request_model->getDocRequestById($requestId);
+
+		$docPath = $request['doc_path'];
+
+		$this->load->helper('download');
+
+		force_download($docPath, NULL);
 	}
 
 	// Other methods

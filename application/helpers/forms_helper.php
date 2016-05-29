@@ -6,6 +6,41 @@ function bold($string){
 	return "<b>".$string."</b>";
 }
 
+function provideDocOnlineForm($request, $course){
+
+	echo form_open_multipart("provide_doc_online");
+
+	$hidden = array(
+		'course' => $course,
+		'request' => $request
+	);
+
+	echo form_hidden($hidden);
+
+	$file = array(
+		"name" => "requested_doc",
+		"id" => "requested_doc",
+		"type" => "file"
+	);
+	
+	$submitFileBtn = array(
+		"id" => "provide_online_btn",
+		"class" => "btn btn-info btn-flat",
+		"content" => "<i class='fa fa-globe'></i> Expedir online",
+		"type" => "submit"
+		// "style" => "margin-top: 5%;"
+	);
+
+	echo form_label("Selecionar documento <small><i>('.pdf', '.png' e '.jpg' apenas)</i></small>:", "requested_doc");
+
+	echo form_input($file);
+	echo "<br>";
+
+	echo form_button($submitFileBtn);
+
+	echo form_close();
+}
+
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
 	$discipline = array(
