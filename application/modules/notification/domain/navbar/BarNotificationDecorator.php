@@ -1,6 +1,7 @@
 <?php
 
 require_once MODULESPATH."notification/domain/BarNotification.php";
+require_once MODULESPATH."notification/domain/ActionNotification.php";
 
 abstract class BarNotificationDecorator extends BarNotification{
 	

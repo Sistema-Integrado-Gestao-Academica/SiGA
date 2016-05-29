@@ -4,6 +4,7 @@ require_once(MODULESPATH."auth/domain/User.php");
 require_once(MODULESPATH."notification/domain/RegularNotification.php");
 require_once(MODULESPATH."notification/domain/ActionNotification.php");
 require_once(MODULESPATH."notification/domain/navbar/DocumentRequestNotification.php");
+require_once(MODULESPATH."notification/domain/navbar/OnlineDocumentRequestNotification.php");
 require_once(MODULESPATH."notification/exception/NotificationException.php");
 
 /**
@@ -51,6 +52,38 @@ class Notification extends MX_Controller{
 					throw $e;
 				}
 			}
+		}
+	}
+
+	public function secretaryOnlineDocRequestNotification($requestId){
+
+		$this->load->model("secretary/documentrequest_model");
+		$request = $this->documentrequest_model->getDocRequestById($requestId);
+
+		if($request !== FALSE){
+			$type = $this->documentrequest_model->getDocumentType($request['document_type']);
+			$type = $type["document_type"];
+
+			// Get request student
+			$this->load->model("auth/usuarios_model");
+			$student = $this->usuarios_model->getUserById($request['id_student']);
+
+			try{
+				$userId = $student["id"];
+				$userName = $student["name"];
+
+				$user = new User($userId, $userName);
+				$link = "download_doc/".$requestId;
+
+				$notification = $this->newActionNotification($user, $link);
+				$notification = new OnlineDocumentRequestNotification($notification, $type);
+				$notification->notify();
+
+			}catch(NotificationException $e){
+				throw $e;
+			}
+		}else{
+			// Do not create the notification because the request does not exists
 		}
 	}
 
@@ -113,6 +146,7 @@ class Notification extends MX_Controller{
 						$notifications[] = new RegularNotification($user, $id, $seen, $content);
 						break;
 					
+					case OnlineDocumentRequestNotification::class:
 					case ActionNotification::class:
 						$notifications[] = new ActionNotification($user, $link, $id, $seen, $content);
 						break;

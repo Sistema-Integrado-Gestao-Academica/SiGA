@@ -327,6 +327,9 @@ class DocumentRequest extends MX_Controller {
             $wasUpdated = $this->doc_request_model->updateDocFile($requestId, $docPath);
             $documentIsReady = $this->doc_request_model->setDocumentReady($requestId, DocumentConstants::REQUEST_READY_ONLINE);
 
+            $this->load->module("notification/notification");
+            $this->notification->secretaryOnlineDocRequestNotification($requestId);
+
             if($wasUpdated && $documentIsReady){
                 $status = "success";
                 $message = "Documento salvo e expedido com sucesso!";
@@ -347,12 +350,11 @@ class DocumentRequest extends MX_Controller {
 
 	public function downloadDoc($requestId){
 
+		$requestId = $requestId;
 		$request = $this->doc_request_model->getDocRequestById($requestId);
-
 		$docPath = $request['doc_path'];
 
 		$this->load->helper('download');
-
 		force_download($docPath, NULL);
 	}
 

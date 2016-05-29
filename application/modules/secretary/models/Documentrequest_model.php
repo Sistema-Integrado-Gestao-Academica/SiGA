@@ -5,6 +5,18 @@ require_once(MODULESPATH."secretary/constants/DocumentConstants.php");
 class DocumentRequest_model extends CI_Model {
 
 	const DOC_REQUEST_TABLE = "document_request";
+	const DOC_TYPE_TABLE = "document_type";
+
+	public function getDocumentType($typeId){
+
+		$type = $this->db->get_where(self::DOC_TYPE_TABLE, array(
+			'id_type' => $typeId
+		))->row_array();
+
+		$type = checkArray($type);
+
+		return $type;
+	}
 
 	public function allNonDeclarationTypes(){
 

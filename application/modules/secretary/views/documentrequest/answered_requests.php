@@ -76,8 +76,10 @@
 
 				    		echo "<td>";
 				    			if($request['status'] === DocumentConstants::REQUEST_READY_ONLINE){
+
+				    				$requestId = $request['id_request'];
 				    				echo anchor(
-				    					"secretary_download_doc/{$request['id_request']}",
+				    					"download_doc/{$requestId}",
 			    						"<i class='fa fa-cloud-download'></i> Baixar documento",
 			    						"class='btn btn-info'"
 				    				);

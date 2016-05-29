@@ -54,6 +54,9 @@
 				    			case DocumentConstants::REQUEST_READY:
 				    				echo "<span class='label label-success'>Pronto</span>";
 				    				break;
+				    			case DocumentConstants::REQUEST_READY_ONLINE:
+				    				echo "<span class='label label-info'>Pronto online</span>";
+				    				break;
 				    			default:
 				    				echo "-";
 				    				break;
@@ -73,7 +76,8 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		if($request['status'] === DocumentConstants::REQUEST_READY){
+				    		if($request['status'] === DocumentConstants::REQUEST_READY
+				    		   || $request['status'] === DocumentConstants::REQUEST_READY_ONLINE){
 				    			echo anchor(
 					    			"student/documentrequestStudent/archiveRequest/{$request['id_request']}/{$courseId}/{$userId}",
 						    		"<i class='fa fa-archive'></i> Arquivar",

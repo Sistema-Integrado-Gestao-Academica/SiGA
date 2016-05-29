@@ -137,7 +137,7 @@ $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 // Document requests routes
 $route['secretary_doc_requests/(:num)'] = 'secretary/documentrequest/documentRequestReport/$1';
 $route['provide_doc_online'] = 'secretary/documentrequest/provideOnline';
-$route['secretary_download_doc/(:num)'] = 'secretary/documentrequest/downloadDoc/$1';
+$route['download_doc/(:num)'] = 'secretary/documentrequest/downloadDoc/$1';
 
 /*
  * Mastermind functionalities routes
