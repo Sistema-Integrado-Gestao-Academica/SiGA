@@ -343,6 +343,37 @@ class DocumentRequest extends MX_Controller {
         redirect("secretary_doc_requests/{$courseId}");
 	}
 
+	private function findAvailableDocs($docPath){
+
+		$docPathExploded = explode('.', $docPath);
+
+		// Path without the extension (.png, .pdf, .jpg or .jpeg)
+		$docPath = $docPathExploded[0];
+		// Doc registered extension
+		$docExtension = $docPathExploded[1];
+
+		// Files extension priority: PDF, PNG, JPG, JPEG
+		$extensions = array(
+			"pdf" => ".pdf",
+			"png" => ".png",
+			"jpg" => ".jpg",
+			"jpeg" => ".jpeg"
+		);
+		// Take out the doc extension because it already wasn't found
+		unset($extensions[$docExtension]);
+
+		// Trying to find a file with all permitted extensions
+		$path = FALSE;
+		foreach ($extensions as $extension){
+			if(file_exists($docPath.$extension)){
+				$path = $docPath.$extension;
+				break;
+			}
+		}
+
+		return $path;
+	}
+
 	public function downloadDoc($requestId){
 
 		$requestId = $requestId;
@@ -350,7 +381,21 @@ class DocumentRequest extends MX_Controller {
 		$docPath = $request['doc_path'];
 
 		$this->load->helper('download');
-		force_download($docPath, NULL);
+		if(file_exists($docPath)){
+			force_download($docPath, NULL);
+		}else{
+
+			$availableDoc = $this->findAvailableDocs($docPath);
+
+			if($availableDoc !== FALSE){
+				force_download($availableDoc, NULL);
+			}else{
+				$status = "danger";
+				$message = "Nenhum arquivo encontrado com as extensões permitidas. Comunique a secretaria.";
+				$this->session->set_flashdata($status, $message);
+	        	redirect("");
+			}
+		}
 	}
 
 	// Other methods
