@@ -163,7 +163,7 @@ class DocumentRequestStudent extends MX_Controller {
 		$session = getSession();
 
 		$session->showFlashMessage($status, $message);
-		redirect("secretary/documentrequest/requestDocument/{$courseId}/{$studentId}");
+		redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 	}
 
 	public function archiveRequest($requestId, $courseId, $studentId){
@@ -180,7 +180,7 @@ class DocumentRequestStudent extends MX_Controller {
 		$session = getSession();
 
 		$session->showFlashMessage($status, $message);
-		redirect("secretary/documentrequest/requestDocument/{$courseId}/{$studentId}");
+		redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 	}
 
 	public function displayArchivedRequests($courseId, $studentId){

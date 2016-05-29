@@ -36,18 +36,24 @@ class Notification extends MX_Controller{
 
 		if($secretaries !== FALSE){
 
+			$alreadyNotified = array();
+
 			foreach($secretaries as $secretary){
 
 				try{
 					$userId = $secretary["id_user"];
+					
+					if(!$alreadyNotified[$userId]){
 
-					// The secretary name does not matter to the notification, this is a arbitrary name 
-					$user = new User($userId, "secretaryname");
+						// The secretary name does not matter to the notification, this is a arbitrary name 
+						$user = new User($userId, "secretaryname");
 
-					$notification = $this->newRegularNotification($user);
-					$notification = new DocumentRequestNotification($notification, $requestedDoc, $studentName);
-					$notification->notify();
+						$notification = $this->newRegularNotification($user);
+						$notification = new DocumentRequestNotification($notification, $requestedDoc, $studentName);
+						$notification->notify();
 
+						$alreadyNotified[$userId] = TRUE;
+					}
 				}catch(NotificationException $e){
 					throw $e;
 				}

@@ -122,15 +122,16 @@
                                     			$notificationId = $notification->id();
 
                                     			if($notification->type() == ActionNotification::class){
-													echo "<a onclick='setNotificationSeen({$notificationId});' id='{$notificationLinkId}' href='".$notification->link()."'>";
+													echo anchor(
+														$notification->link(),
+														$notification->content(),
+														"onclick='setNotificationSeen({$notificationId});' id='{$notificationLinkId}'"
+													);
                                     			}else{
                                     				echo "<a id='{$notificationLinkId}' onclick='setNotificationSeen({$notificationId});'>";
+                                    				echo $notification->content();
+                                    				echo "</a>";
                                     			}
-
-                                    			// echo "<i class='fa fa-bell info'></i>";
-                                    			echo $notification->content();
-
-                                    			echo "</a>";
                                         		echo "</li>";
 
                                         		$i++;

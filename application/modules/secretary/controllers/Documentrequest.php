@@ -116,11 +116,6 @@ class DocumentRequest extends MX_Controller {
 
 				$wasSaved = $this->saveDocumentRequest($requestData);
 
-				/**
-					sendNotification
-					$this->navbarnotification->documentRequestNotification
-				 */
-
 				if($wasSaved){
 					$status = "success";
 					$message = "Solicitação de documento enviada com sucesso.";

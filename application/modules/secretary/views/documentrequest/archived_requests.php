@@ -31,29 +31,14 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		switch($request['status']){
-				    			case DocumentConstants::REQUEST_OPEN:
-				    				echo "<span class='label label-info'>Aberta</span>";
-				    				break;
-				    			case DocumentConstants::REQUEST_READY:
-				    				echo "<span class='label label-success'>Pronto</span>";
-				    				break;
-				    			default:
-				    				echo "-";
-				    				break;
-				    		}
+				    			$status = $request['status'];
+				    			echo prettyDocStatus($status);
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		switch($request['document_type']){
-				    			case DocumentConstants::OTHER_DOCS:
-				    				echo "<b>Documento solicitado: </b>".$request['other_name'];
-				    				break;
-				    			
-				    			default:
-				    				echo "-";
-				    				break;
-				    		}
+				    			$type = $request['document_type'];
+				    			$docName = $request['other_name'];
+				    			echo prettyDocType($type, $docName);
 				    		echo "</td>";
 
 				    		echo "<td>";

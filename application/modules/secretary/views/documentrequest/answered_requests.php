@@ -46,44 +46,18 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		switch($request['status']){
-				    			case DocumentConstants::REQUEST_OPEN:
-				    				echo "<span class='label label-info'>Aberta</span>";
-				    				break;
-				    			case DocumentConstants::REQUEST_READY:
-				    				echo "<span class='label label-success'>Pronto</span>";
-				    				break;
-				    			case DocumentConstants::REQUEST_READY_ONLINE:
-				    				echo "<span class='label label-info'>Pronto Online</span>";
-				    				break;
-				    			default:
-				    				echo "-";
-				    				break;
-				    		}
+				    			$status = $request['status'];
+				    			echo prettyDocStatus($status);
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		switch($request['document_type']){
-				    			case DocumentConstants::OTHER_DOCS:
-				    				echo "<b>Documento solicitado: </b>".$request['other_name'];
-				    				break;
-				    			
-				    			default:
-				    				echo "-";
-				    				break;
-				    		}
+				    			$type = $request['document_type'];
+				    			$docName = $request['other_name'];
+				    			echo prettyDocType($type, $docName);
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    			if($request['status'] === DocumentConstants::REQUEST_READY_ONLINE){
-
-				    				$requestId = $request['id_request'];
-				    				echo anchor(
-				    					"download_doc/{$requestId}",
-			    						"<i class='fa fa-cloud-download'></i> Baixar documento",
-			    						"class='btn btn-info'"
-				    				);
-				    			}
+				    			prettyDocDownload($request);
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
