@@ -24,10 +24,12 @@ class UserController extends MX_Controller {
 		$coursesName = $this->getCoursesName();
 		$session = getSession();
 		$user = $session->getUserData();
+		$courseGuest = $this->usuarios_model->checkIfUserChooseCourse($user->getId());
 
 		$data = array(
 			'coursesName' => $coursesName,
-			'user' => $user
+			'user' => $user,
+			'courseGuest' => $courseGuest
 		);
 		loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP,'auth/user/guest_index', $data);
 

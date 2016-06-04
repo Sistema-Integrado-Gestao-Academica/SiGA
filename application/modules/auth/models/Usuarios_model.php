@@ -379,6 +379,19 @@ class Usuarios_model extends CI_Model {
 
 	}
 
+	public function checkIfUserChooseCourse($userId){
+
+		$this->db->select('course_guest.*');
+		$this->db->from('course_guest');
+		$this->db->where('course_guest.id_user', $userId);
+		
+		$user = $this->db->get()->result_array();
+
+		$user = checkArray($user);
+		return $user;
+
+	}
+
 	public function deleteUserFromCourseGuest($userId){
 		
 		$courseGuest = array(
