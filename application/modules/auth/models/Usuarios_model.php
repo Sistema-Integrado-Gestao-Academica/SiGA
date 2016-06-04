@@ -762,12 +762,15 @@ class Usuarios_model extends CI_Model {
 		return $user;
 	}
 
-	public function setGuestAsUnknown($userId){
+	public function updateCourseGuest($userId, $courseId, $status){
 		
 		$this->db->where('id_user', $userId);
-		$success = $this->db->update("course_guest", array(
-			'status' => EnrollmentConstants::UNKNOWN_STATUS
-		));
+		$data = array(
+					'id_course' => $courseId,	
+					'status' => $status
+					);
+		
+		$success = $this->db->update("course_guest", $data);
 
 		return $success;		
 	}

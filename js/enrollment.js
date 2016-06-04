@@ -1,5 +1,9 @@
 $(document).ready(function(){
 
+	$("#solicit_inscription").click(function(){
+		solicitCourseForGuest();
+	});
+
 	$("#guest_name").keypress(function(){
 		searchGuestsToEnroll();
 	});
@@ -58,6 +62,24 @@ function searchDisciplineClasses(){
 		},
 		function(data){
 			$("#discipline_search_result").html(data);
+		}
+	);
+}
+
+function solicitCourseForGuest(){
+	
+	var courseId = $('#courses_name option:selected').val();
+	var courseName = $('#courses_name option:selected').text();
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/secretary/ajax/enrollmentajax/courseForGuest";
+	$.post(
+		urlToPost,
+		{
+			courseId: courseId,
+			courseName: courseName
+		},
+		function(data){
+			$("#choosen_course").html(data);
 		}
 	);
 }
