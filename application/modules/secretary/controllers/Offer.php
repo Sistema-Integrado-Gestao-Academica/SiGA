@@ -185,22 +185,6 @@ class Offer extends MX_Controller {
 		return $disciplines;
 	}
 
-	public function displayDisciplines($idOffer, $courseId){
-
-		$disciplines = $this->getOfferDisciplines($idOffer);
-
-		$this->load->model("program/course_model");
-		$offerCourse = $this->course_model->getCourseById($courseId);
-
-		$offerData = array(
-			'idOffer' => $idOffer,
-			'course' => $offerCourse,
-			'disciplines' => $disciplines
-		);
-
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/new_offer', $offerData);
-	}
-
 	public function displayDisciplineClasses($idDiscipline, $idOffer, $idCourse){
 
 		// Get the classes of a discipline in an offer
@@ -386,6 +370,8 @@ class Offer extends MX_Controller {
 
 	public function addDisciplines($idOffer, $courseId){
 
+		$offerData = $this->offer_model->getOffer($idOffer);
+
 		$this->load->module("program/discipline");
 		$allDisciplines = $this->discipline->getCourseSyllabusDisciplines($courseId);
 
@@ -395,7 +381,7 @@ class Offer extends MX_Controller {
 		$data = array(
 			'allDisciplines' => $allDisciplines,
 			'course' => $offerCourse,
-			'idOffer' => $idOffer
+			'offerData' => $offerData
 		);
 
 		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/offer_disciplines', $data);

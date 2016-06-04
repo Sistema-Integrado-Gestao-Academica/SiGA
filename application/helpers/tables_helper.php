@@ -1525,14 +1525,14 @@ function displayOfferListBySemester($offer, $courseId){
 
 	$status = $offer['offer_status'];
 
+	$principalMessage = "Editar oferta ".lang($status);
+	
 	if($status === OfferConstants::APPROVED_OFFER){
-		$content = anchor("", "<i class='fa fa-edit'></i>", "class='btn btn-danger disabled'");
-	    $principalMessage = "Lista de ofertas aprovada";
-	    $aditionalMessage = "<b><i>Somente as listas de ofertas com status \"proposta\" podem ser alteradas.</i><b/>";
+		$content = anchor("secretary/offer/addDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
+	    $aditionalMessage = "<b><i>Esta lista de ofertas já foi aprovada. Somente o local e o professor das disciplinas podem ser alterados.</i><b/>";
 	}
 	else{
-		$content = anchor("secretary/offer/displayDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-		$principalMessage = "Editar Oferta ".lang($status);
+		$content = anchor("secretary/offer/addDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
 	    $aditionalMessage = "<b><i>Aqui é possível adicionar <br>disciplinas a lista de oferta.</i><b/>";
 	}
 
@@ -1583,87 +1583,6 @@ function formToAddNewOffer($status, $offer, $courseId, $semester){
 
 		$callout->writeAditionalMessage();
 		$callout->writeCalloutEndDeclaration();
-}
-
-function displayOfferDisciplines($idOffer, $course, $disciplines){
-
-	$offer = new Offer();
-	$offerData = $offer->getOffer($idOffer);
-
-	echo "<h2 class='principal'>Lista de Oferta</h2>";
-	echo "<h3><b>Curso</b>: ".$course['course_name']."</h3>";
-
-	if($offerData['needs_mastermind_approval'] === EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL){
-		$needsMastermindApproval = "Sim.";
-	}else{
-		$needsMastermindApproval = "Não.";
-	}
-	echo "<h4><b>Necessita de aprovação do orientador?</b>: ".$needsMastermindApproval."</h3>";
-
-	echo "<br>";
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		"Código da Lista: ".$idOffer,
-		'Status: Proposta'
-	));
-
-    echo "<tr>";
-    	echo "<td colspan=2> <b>Disciplinas</b> </td>";
-    echo "</tr>";
-
-    if($disciplines !== FALSE){
-
-	    foreach($disciplines as $discipline){
-
-		    echo "<tr>";
-		    	echo "<td colspan=2>";
-	    		echo $discipline['discipline_code']." - ".$discipline['discipline_name']."(".$discipline['name_abbreviation'].")";
-		    	echo "</td>";
-		    echo "</tr>";
-	    }
-
-	    echo "<tr>";
-			echo "<td colspan=2>";
-            echo anchor("secretary/offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
-            echo "</td>";
-	    echo "</tr>";
-    }else{
-
-    	echo "<tr>";
-    	echo "<td colspan=2>";
-            $content = anchor("secretary/offer/addDisciplines/{$idOffer}/{$course['id_course']}",'Adicionar disciplinas', "class='btn btn-primary'");
-  			$principalMessage = "Nenhuma disciplina adicionada a essa lista de oferta no momento.";
-    		$callout = wrapperCallout("info", $content, $principalMessage);
-    		$callout->draw();
-    	echo "</td>";
-		echo "</tr>";
-    }
-
-	buildTableEndDeclaration();
-
-	echo "<div class=\"row\">";
-		echo "<div class=\"col-xs-3\">";
-			$status = $offerData['offer_status'];
-			if($status === OfferConstants::PROPOSED_OFFER){
-				if($disciplines !== FALSE){
-
-					echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
-			             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
-			             data-content=\"OBS.: Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas.\"");
-				}
-				else{
-						echo anchor("", "Aprovar lista de oferta", "id='approve_offer_list_btn' class='btn btn-primary' data-container=\"body\"
-				             data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\" disabled='true'
-				             data-content=\"Não é possível aprovar uma lista sem disciplinas.\"");
-				}
-			}
-		echo "</div>";
-		echo "<div class=\"col-xs-3\">";
-			echo anchor("offer_list", "Voltar", "class='btn btn-danger'");
-		echo "</div>";
-	echo "</div>";
 }
 
 function displayUserGroups($idUser, $userGroups){
