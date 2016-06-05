@@ -289,11 +289,18 @@ class UserController extends MX_Controller {
 		return $userStatus;
 	}
 
-	public function register(){
-		$userGroups = $this->getAllowedUserGroupsForFirstRegistration();
+	public function register($groups=array(), $email="", $hidden=array()){
+
+		if(!empty($groups)){
+			$userGroups = $groups;
+		}else{
+			$userGroups = $this->usuarios_model->getAllowedUserGroupsForFirstRegistration();
+		}
 
 		$data = array(
-			'user_groups' => $userGroups
+			'userGroups' => $userGroups,
+			'email' => $email,
+			'hidden' => $hidden
 		);
 
 		$this->load->template("auth/user/new_user", $data);
@@ -468,14 +475,21 @@ class UserController extends MX_Controller {
 			'password' 	 => $password,
 			'active' => 0
 		);
+		
+		$invitation = $this->input->post("userInvitation");
 
 		$success = $this->validateRegisterUserFields();
 		if($success){
 			$this->registerUser($user, $group);
 		} 
 		else{
-			
-			$this->register();
+
+			if(is_null($invitation)){
+				$this->register();
+			}else{
+				$this->load->module("secretary/userInvitation");
+				$this->userinvitation->register($invitation);
+			}
 		}
 
 	}
@@ -638,15 +652,6 @@ class UserController extends MX_Controller {
 		$user_groups_to_array = $this->turnUserGroupsToArray($user_groups);
 
 		return $user_groups_to_array;
-	}
-
-	public function getAllowedUserGroupsForFirstRegistration(){
-
-		$userGroups = $this->usuarios_model->getAllowedUserGroupsForFirstRegistration();
-
-		$userGroupsArray = $this->turnUserGroupsToArray($userGroups);
-
-		return $userGroupsArray;
 	}
 
 	public function getUserNameById($idUser){

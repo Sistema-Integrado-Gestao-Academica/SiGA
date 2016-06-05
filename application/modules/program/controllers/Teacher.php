@@ -155,11 +155,14 @@ class Teacher extends MX_Controller {
 		
 		$researchLines = array();
 
-		foreach ($courses as $course) {
-			$id = $course['id_course'];
-			$researchLinesCourse = $this->course_model->getCourseResearchLines($id);	 
-			if ($researchLinesCourse !== FALSE){
-				$researchLines[$id] = $researchLinesCourse;
+		if($courses !== FALSE){
+			
+			foreach ($courses as $course) {
+				$id = $course['id_course'];
+				$researchLinesCourse = $this->course_model->getCourseResearchLines($id);	 
+				if ($researchLinesCourse !== FALSE){
+					$researchLines[$id] = $researchLinesCourse;
+				}
 			}
 		}
 

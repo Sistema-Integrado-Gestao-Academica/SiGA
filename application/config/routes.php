@@ -137,6 +137,7 @@ $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 // User Invitation routes
 $route['invite_user'] = 'secretary/userInvitation/index';
 $route['invite'] = 'secretary/userInvitation/invite';
+$route['invitation_register'] = 'secretary/userInvitation/register';
 
 // Document requests routes
 $route['secretary_doc_requests/(:num)'] = 'secretary/documentrequest/documentRequestReport/$1';

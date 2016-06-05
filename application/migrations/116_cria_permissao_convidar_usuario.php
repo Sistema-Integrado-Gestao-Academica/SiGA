@@ -16,6 +16,7 @@ class Migration_cria_permissao_convidar_usuario extends CI_Migration {
             'id_secretary' => array('type' => 'INT'),
             'invited_group' => array('type' => 'INT'),
             'invited_email' => array('type' => 'VARCHAR(50)'),
+            'active' => array('type' => 'TINYINT(1)', 'default' => 0),
             'time' => array('type' => 'TIMESTAMP', "default" => "0000-00-00 00:00:00", "null" => FALSE)
         ));
 		$this->dbforge->add_key('id_invitation', TRUE);

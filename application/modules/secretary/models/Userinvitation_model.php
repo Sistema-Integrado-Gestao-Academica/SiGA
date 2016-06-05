@@ -7,6 +7,7 @@ class UserInvitation_model extends CI_Model {
 	const INVITED_GROUP_COLUMN = "invited_group";
 	const INVITED_EMAIL_COLUMN = "invited_email";
 	const SECRETARY_COLUMN = "id_secretary";
+	const ACTIVE_COLUMN = "active";
 
 	public function save($invitation){
 
@@ -18,6 +19,13 @@ class UserInvitation_model extends CI_Model {
 		$foundInvitation = $this->get(self::ID_COLUMN, $invitation);
 
 		return $foundInvitation !== FALSE;
+	}
+
+	public function getInvitation($invitation){
+
+		$foundInvitation = $this->get(self::ID_COLUMN, $invitation);
+
+		return $foundInvitation;
 	}
 	
 	private function get($attr, $value = FALSE, $unique = TRUE){

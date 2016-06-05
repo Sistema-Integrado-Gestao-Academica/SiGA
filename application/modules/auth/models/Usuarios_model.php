@@ -632,13 +632,20 @@ class Usuarios_model extends CI_Model {
 	public function getAllowedUserGroupsForFirstRegistration(){
 
 		$this->db->select('id_group, group_name');
-		$where= "group_name = 'convidado'";
-		$this->db->where($where);
-
 		$this->db->from('group');
+		$this->db->where("group_name", GroupConstants::GUEST_GROUP);
+
 		$userGroups = $this->db->get()->result_array();
 		$userGroups = checkArray($userGroups);
-		return $userGroups;
+
+		$groups = array();
+		if($userGroups !== FALSE){
+			foreach ($userGroups as $group){
+				$groups[$group['id_group']] = $group["group_name"];
+			}
+		}
+
+		return $groups;
 	}
 
 	/**
