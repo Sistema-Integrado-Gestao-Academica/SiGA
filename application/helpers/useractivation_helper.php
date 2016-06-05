@@ -14,7 +14,6 @@ function sendConfirmationEmail($user, $activation){
 
 	$sent = $email->notify();
 
-
 	$message = array();
 	if($sent){
 		$message['status'] = "success";

@@ -41,11 +41,13 @@
       <div class='form-group'>
         <?= form_label("Convidar usuário para ser:", "invitation_profiles"); ?>
         <?= form_dropdown("invitation_profiles", $invitationGroups, '', "class='form-control'"); ?>
+        <?= form_error("invitation_profiles");?>
       </div>
 
       <div class='form-group'>
         <?= form_label("E-mail para enviar o convite", "email_to_invite"); ?>
         <?= form_input($emailToInvite); ?>
+        <?= form_error("email_to_invite");?>
       </div>
     </div>
 
