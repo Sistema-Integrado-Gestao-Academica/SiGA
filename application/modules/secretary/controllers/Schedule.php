@@ -161,7 +161,7 @@ class Schedule extends MX_Controller {
 		return $schedule;
 	}
 
-	public function drawFullSchedule($offerDiscipline, $idCourse){
+	public function drawFullSchedule($offerDiscipline, $idCourse, $approved=FALSE){
 
 		/* FIXING BUG*/
 		/*This form tags was inserted because the first form inserted on the table was not being accepted*/
@@ -211,12 +211,14 @@ class Schedule extends MX_Controller {
 							    		$idOfferDiscipline = $foundClassHour['id_offer_discipline'];
 							    		$idClassHour = $foundClassHour['id_class_hour'];
 
-							    		// Anchor to remove the class hour
-							    		echo anchor(
-							    			"secretary/schedule/removeClassHourFromSchedule/{$idOfferDiscipline}/{$idClassHour}/{$offerDiscipline['id_offer']}/{$offerDiscipline['id_discipline']}/{$offerDiscipline['class']}/{$idCourse}",
-							    			"Remover Horário",
-							    			"class='btn btn-danger btn-flat'"
-							    		);
+							    		if(!$approved){
+								    		// Anchor to remove the class hour
+								    		echo anchor(
+								    			"secretary/schedule/removeClassHourFromSchedule/{$idOfferDiscipline}/{$idClassHour}/{$offerDiscipline['id_offer']}/{$offerDiscipline['id_discipline']}/{$offerDiscipline['class']}/{$idCourse}",
+								    			"Remover Horário",
+								    			"class='btn btn-danger btn-flat'"
+								    		);
+							    		}
 
 							    		// Form to update the class local
 							    		echo form_open("secretary/schedule/changeClassLocal");
@@ -283,11 +285,16 @@ class Schedule extends MX_Controller {
 												"placeholder" => "Informe o local"
 										    ));
 
-											echo form_button(array(
+										    $addHourBtn = array(
 												"class" => "btn btn-info btn-flat",
 												"type" => "submit",
 												"content" => "Adicionar horário"
-											));
+											);
+
+										    if($approved){
+										    	$addHourBtn['disabled'] = TRUE;
+										    }
+											echo form_button($addHourBtn);
 
 										echo form_close();
 							    	}

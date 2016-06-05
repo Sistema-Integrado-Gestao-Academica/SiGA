@@ -2,6 +2,7 @@
 
 require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."/secretary/constants/OfferConstants.php");
 
 class Offer extends MX_Controller {
 
@@ -137,6 +138,8 @@ class Offer extends MX_Controller {
 		$this->load->model("auth/module_model");
 		$foundGroup = $this->module_model->getGroupByGroupName(GroupConstants::TEACHER_GROUP);
 
+		$offer = $this->getOfferForEdit($idOffer);
+
 		if($foundGroup !== FALSE){
 			$this->load->model("auth/usuarios_model");
 			$teachers = $this->usuarios_model->getUsersOfGroup($foundGroup['id_group']);
@@ -159,14 +162,31 @@ class Offer extends MX_Controller {
 		$data = array(
 				'disciplineData'      => $disciplineData,
 				'offerDisciplineData' => $offerDisciplineClass,
-				'idOffer'             => $idOffer,
+				'offer'               => $offer,
 				'teachers'            => $allTeachers,
 				'class'               => $class,
-				'idCourse'			  => $idCourse
+				'idCourse'			  => $idCourse,
 		);
 
 		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, 'secretary/offer/offer_update_discipline_classes', $data);
 
+	}
+
+	private function getOfferForEdit($idOffer){
+		
+		$offer = $this->offer_model->getOffer($idOffer);
+		
+		$offerApproved = array();
+		$offerApproved['id_offer'] = $offer['id_offer'];
+		
+		if($offer['offer_status'] == OfferConstants::APPROVED_OFFER){
+			$offerApproved['approved'] = TRUE; 
+		}
+		else{
+			$offerApproved['approved'] = FALSE; 
+		}
+
+		return $offerApproved;
 	}
 
 	public function displayOfferedDisciplines($courseId){

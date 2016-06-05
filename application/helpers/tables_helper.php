@@ -1001,21 +1001,20 @@ function displayDisciplineHours($idOfferDiscipline){
 	}
 }
 
-function drawFullScheduleTable($offerDiscipline, $idCourse){
+function drawFullScheduleTable($offerDiscipline, $idCourse, $approved){
 
 	$schedule = new Schedule();
 
-	$schedule->drawFullSchedule($offerDiscipline, $idCourse);
+	$schedule->drawFullSchedule($offerDiscipline, $idCourse, $approved);
 }
 
-function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $offerDisciplineClass, $idCourse){
-
+function formToUpdateOfferDisciplineClass($disciplineId, $offer, $teachers, $offerDisciplineClass, $idCourse){
 	
 	echo "<br>";
 	echo "<br>";
 	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
 	echo "<br>";
-	drawFullScheduleTable($offerDisciplineClass, $idCourse);
+	drawFullScheduleTable($offerDisciplineClass, $idCourse, $offer['approved']);
 
 	$disciplineClass = array(
 		"name" => "disciplineClass",
@@ -1042,6 +1041,8 @@ function formToUpdateOfferDisciplineClass($disciplineId, $idOffer, $teachers, $o
 		"type" => "submit",
 		"content" => "Salvar alterações"
 	);
+
+	$idOffer = $offer['id_offer'];
 
 	echo form_open("secretary/offer/updateOfferDisciplineClass/{$disciplineId}/{$idOffer}/{$offerDisciplineClass['class']}");
 
