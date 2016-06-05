@@ -303,7 +303,11 @@ class UserController extends MX_Controller {
 			'hidden' => $hidden
 		);
 
-		$this->load->template("auth/user/new_user", $data);
+		if(!empty($groups)){
+			$this->load->view("auth/user/new_user", $data);
+		}else{
+			$this->load->template("auth/user/new_user", $data);
+		}
 	}
 
 	public function conta(){
