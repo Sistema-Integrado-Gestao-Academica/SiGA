@@ -21,6 +21,7 @@ class PermissionConstants{
 	const DEPARTMENTS_PERMISSION = "departamentos";
 	const FUNCTIONS_PERMISSION = "funcoes";
 	const SECTOR_PERMISSION = "setores";
+	const INVITE_USER_PERMISSION = "invite_user";
 
 	const SECRETARY_PROGRAMS_PERMISSION = "secretary_programs";
 	

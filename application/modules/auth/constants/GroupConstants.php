@@ -12,9 +12,9 @@ class GroupConstants{
 	const COORDINATOR_GROUP = "coordenador";
 
 
-	const STAFF_GROUP_ID = 12;
-	const GUEST_USER_GROUP_ID = 8;
 	const TEACHER_GROUP_ID = 5;
+	const GUEST_USER_GROUP_ID = 8;
 	const FINANCIAL_SECRETARY_GROUP_ID = 10;
 	const ACADEMIC_SECRETARY_GROUP_ID = 11;
+	const STAFF_GROUP_ID = 12;
 }
