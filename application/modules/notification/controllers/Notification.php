@@ -5,6 +5,7 @@ require_once(MODULESPATH."notification/domain/RegularNotification.php");
 require_once(MODULESPATH."notification/domain/ActionNotification.php");
 require_once(MODULESPATH."notification/domain/navbar/DocumentRequestNotification.php");
 require_once(MODULESPATH."notification/domain/navbar/OnlineDocumentRequestNotification.php");
+require_once(MODULESPATH."notification/domain/navbar/RegisterByInvitationNotification.php");
 require_once(MODULESPATH."notification/exception/NotificationException.php");
 
 /**
@@ -91,6 +92,32 @@ class Notification extends MX_Controller{
 		}else{
 			// Do not create the notification because the request does not exists
 		}
+	}
+
+	public function newRegisterByInvitationNotification($invitationNumber, $invitedName){
+
+		// Get the invitation data
+		$this->load->model("secretary/userInvitation_model", "invitation_model");
+		$invitation = $this->invitation_model->getInvitation($invitationNumber);
+
+		// Get the group that the user was invited to
+		$this->load->model("auth/module_model");
+		$invitedGroup = $invitation[UserInvitation_model::INVITED_GROUP_COLUMN];
+		$invitedGroup = $this->module_model->getGroupById($invitedGroup);
+		$invitedGroupName = ucfirst($invitedGroup["group_name"]);
+		$invitation["invited_group"] = $invitedGroupName;
+
+		// Get the secretary who invited data
+		$this->load->model("auth/usuarios_model");
+		$secretaryId = $invitation[UserInvitation_model::SECRETARY_COLUMN];
+		$secretary = $this->usuarios_model->getUserById($secretaryId);
+
+		// Creating a user object to the notification
+		$user = new User($secretaryId, $secretary["name"], '', $secretary["email"]);
+
+		$notification = $this->newRegularNotification($user);
+		$notification = new RegisterByInvitationNotification($notification, $invitation, $invitedName);
+		$notification->notify();
 	}
 
 	/**

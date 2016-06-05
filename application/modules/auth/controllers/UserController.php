@@ -480,7 +480,7 @@ class UserController extends MX_Controller {
 
 		$success = $this->validateRegisterUserFields();
 		if($success){
-			$this->registerUser($user, $group);
+			$this->registerUser($user, $group, $invitation);
 		} 
 		else{
 
@@ -508,9 +508,11 @@ class UserController extends MX_Controller {
 		return $success;
 	}
 
-	private function registerUser($user, $group){
+	private function registerUser($user, $group, $invitation=NULL){
 
 		$this->load->module("auth/useractivation");
+		$this->load->module("notification/notification");
+		$this->load->model("secretary/userInvitation_model", "invitation_model");
 
 		// Starting transaction
 		$this->db->trans_start();
@@ -521,6 +523,11 @@ class UserController extends MX_Controller {
 
 		$activation = $this->useractivation->generateActivation($savedUser);
 		
+		if(!is_null($invitation)){
+			$this->invitation_model->disable($invitation);
+			$this->notification->newRegisterByInvitationNotification($invitation, $user['name']);
+		}
+
 		// Finishing transaction
 		$this->db->trans_complete();
 
