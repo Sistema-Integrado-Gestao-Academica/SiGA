@@ -103,4 +103,41 @@ class EnrollmentAjax extends MX_Controller {
     }
 
 
+    public function courseForGuest(){
+
+        $courseId = $this->input->post("courseId");
+        $courseName = $this->input->post("courseName");
+        
+        $session = getSession();
+        $user = $session->getUserData();
+        $userId = $user->getId();
+        $userName = $user->getName();
+        
+        $this->load->model("auth/usuarios_model");
+        $success = $this->usuarios_model->updateCourseGuest($userId, $courseId, EnrollmentConstants::CANDIDATE_STATUS);
+
+        echo "<h4>Olá, <b>{$userName}</b>";
+        echo "<br><br>";
+
+        if($success){
+        
+            echo "<div class='panel panel-success' id='course_guest_panel'>";
+            echo "<div class='panel-body' id='course_guest_title'>";
+            echo "<b>Curso solicitado:</b> {$courseName}";
+            echo "</div>";
+            echo "<div class='panel-footer'>";
+            echo "<b> Status da solicitação:</b>";
+            echo "<span class='label label-info'>Aberta</span>";
+            echo "</div>";
+            echo "</div>";
+        }
+        else{
+      
+            echo "<div class='callout callout-info'>";
+            echo "<h4>Não foi possível solicitar sua inscrição</h4>";
+            echo "<p>Tente novamente</p>";
+            echo "</div>";
+        }
+    }
+
 }

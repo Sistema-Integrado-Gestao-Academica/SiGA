@@ -379,6 +379,19 @@ class Usuarios_model extends CI_Model {
 
 	}
 
+	public function checkIfUserChooseCourse($userId){
+
+		$this->db->select('course_guest.*');
+		$this->db->from('course_guest');
+		$this->db->where('course_guest.id_user', $userId);
+		
+		$user = $this->db->get()->result_array();
+
+		$user = checkArray($user);
+		return $user;
+
+	}
+
 	public function deleteUserFromCourseGuest($userId){
 		
 		$courseGuest = array(
@@ -749,12 +762,15 @@ class Usuarios_model extends CI_Model {
 		return $user;
 	}
 
-	public function setGuestAsUnknown($userId){
+	public function updateCourseGuest($userId, $courseId, $status){
 		
 		$this->db->where('id_user', $userId);
-		$success = $this->db->update("course_guest", array(
-			'status' => EnrollmentConstants::UNKNOWN_STATUS
-		));
+		$data = array(
+					'id_course' => $courseId,	
+					'status' => $status
+					);
+		
+		$success = $this->db->update("course_guest", $data);
 
 		return $success;		
 	}

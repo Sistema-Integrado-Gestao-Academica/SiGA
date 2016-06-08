@@ -2,7 +2,11 @@
 
 require_once(MODULESPATH."/secretary/domain/StudentRegistration.php");
 require_once(MODULESPATH."/secretary/exception/StudentRegistrationException.php");
+
 require_once(MODULESPATH."/notification/domain/emails/EnrolledStudentEmail.php");
+require_once(MODULESPATH."/notification/domain/emails/UnknownUserEmail.php");
+
+require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
@@ -126,6 +130,26 @@ class Enrollment extends MX_Controller {
 		$this->module->deleteGroupOfUser($guestGroup, $userId);
 	}
 
+	public function newCourseForGuest(){
+
+        $courseId = $this->input->post("courses_name");
+        $session = getSession();
+        $user = $session->getUserData();
+        $userId = $user->getId();
+	
+		$this->load->model("auth/usuarios_model");    
+        $success = $this->usuarios_model->addCourseToGuest($userId, $courseId);
+
+        if($success){
+            $session->showFlashMessage("success", "Inscrição solicitada com sucesso!");
+            redirect("/");
+        }
+        else{
+            $session->showFlashMessage("danger", "Não foi possível solicitar sua inscrição. Tente novamente!");
+            redirect("guest_home");
+        }
+    }
+
 
     public function setUserAsUnknown(){
 
@@ -134,8 +158,19 @@ class Enrollment extends MX_Controller {
 
         $this->load->model("auth/usuarios_model");
 
-        $success = $this->usuarios_model->setGuestAsUnknown($userId);        
+        $success = $this->usuarios_model->updateCourseGuest($userId, $courseId, EnrollmentConstants::UNKNOWN_STATUS);        
 
+        if($success){
+        	$user = $this->usuarios_model->getObjectUser($userId);
+        	$email = new UnknownUserEmail($user, $courseId);
+			$success = $email->notify();
+        }
+        else{
+        	$session = getSession();
+        	$session->showFlashMessage("danger", "Não foi possível marcar o aluno como desconhecido");
+        }
+
+        // Refresh page
         $this->enrollStudentToCourse($courseId);
     }
 

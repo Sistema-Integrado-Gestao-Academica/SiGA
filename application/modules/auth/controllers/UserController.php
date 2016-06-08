@@ -4,6 +4,7 @@ require_once('Useractivation.php');
 
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."auth/domain/User.php");
 
 require_once(MODULESPATH."notification/domain/emails/RestorePasswordEmail.php");
@@ -24,10 +25,12 @@ class UserController extends MX_Controller {
 		$coursesName = $this->getCoursesName();
 		$session = getSession();
 		$user = $session->getUserData();
+		$courseGuest = $this->usuarios_model->checkIfUserChooseCourse($user->getId());
 
 		$data = array(
 			'coursesName' => $coursesName,
-			'user' => $user
+			'user' => $user,
+			'courseGuest' => $courseGuest
 		);
 		loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP,'auth/user/guest_index', $data);
 
@@ -45,26 +48,6 @@ class UserController extends MX_Controller {
 		}
 
 		return $coursesName;
-	}
-
-	public function courseForGuest(){
-
-		$courseId = $this->input->post("courses_name");
-
-		$session = getSession();
-		$user = $session->getUserData();
-		$userId = $user->getId();
-		
-		$success = $this->usuarios_model->addCourseToGuest($userId, $courseId);
-
-		if($success){
-			$session->showFlashMessage("success", "Inscrição solicitada com sucesso!");
-			redirect("/");
-		}
-		else{
-			$session->showFlashMessage("danger", "Não foi possível solicitar sua inscrição!");
-			redirect("guest_home");
-		}
 	}
 
 	public function validateUser($login, $password){

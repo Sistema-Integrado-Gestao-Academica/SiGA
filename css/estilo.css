@@ -167,6 +167,14 @@ td {
 .popover-content {
     color: black;
 }
+
+#course_guest_panel{
+  width: 50%;
+}
+#course_guest_title{
+  background-color: #3d9970;
+  color: white;
+}
 /*
  * Skin: Green (from AdminLTE)
  * -----------
