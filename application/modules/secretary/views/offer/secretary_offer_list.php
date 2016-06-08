@@ -1,18 +1,14 @@
 <h2 class="principal"><b>Lista de ofertas</b></h2>
-
-<?=	form_open('program/semester/saveSemester') ?>
-	<?= form_hidden('current_semester_id', $current_semester['id_semester']) ?>
-	<?= form_hidden('password') ?>
-	<h4><span class="fa fa-calendar-o"> <?= form_label(' Semestre atual')?></span></h4>
-	<h4><?=$current_semester['description']?></h4>
-	<?php if ($isAdmin): ?>
-		<?= form_button(array(
-			'type' => 'password',
-			'content' => 'Avançar semestre',
-			'onClick' => "passwordRequest()"
-		)) ?>
-	<?php endif ?>
-<?= form_close() ?>
+	
+	<?php if ($isAdmin){
+		include (MODULESPATH."/program/views/settings/_forward_semester.php");
+	} 
+	else{ ?>
+		
+		<h4><span class="fa fa-calendar-o"> <b> Semestre atual </b></span></h4>
+		<h4><?=$current_semester['description']?></h4>
+	
+	<?php }?>
 
 <br>
 <br>
