@@ -11,7 +11,14 @@ abstract class UnitCaseTest extends PHPUnit_Framework_TestCase{
         $name = str_replace("Test", "", $className);
         $lowerName = strtolower($name);
 
-        require_once APPPATH."controllers/".$lowerName.".php";
+        $controllerfile = APPPATH."controllers/".$lowerName.".php";
+
+        if(file_exists($controllerfile)){
+
+            require_once $controllerfile;
+        }else{
+            // show_error
+        }
 
         $this->testClass = new $name();
     }
