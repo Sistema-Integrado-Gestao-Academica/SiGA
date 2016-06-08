@@ -2,7 +2,10 @@
 
 require_once(MODULESPATH."/secretary/domain/StudentRegistration.php");
 require_once(MODULESPATH."/secretary/exception/StudentRegistrationException.php");
+
 require_once(MODULESPATH."/notification/domain/emails/EnrolledStudentEmail.php");
+require_once(MODULESPATH."/notification/domain/emails/UnknownUserEmail.php");
+
 require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
@@ -157,6 +160,17 @@ class Enrollment extends MX_Controller {
 
         $success = $this->usuarios_model->updateCourseGuest($userId, $courseId, EnrollmentConstants::UNKNOWN_STATUS);        
 
+        if($success){
+        	$user = $this->usuarios_model->getObjectUser($userId);
+        	$email = new UnknownUserEmail($user, $courseId);
+			$success = $email->notify();
+        }
+        else{
+        	$session = getSession();
+        	$session->showFlashMessage("danger", "Não foi possível marcar o aluno como desconhecido");
+        }
+
+        // Refresh page
         $this->enrollStudentToCourse($courseId);
     }
 
