@@ -17,4 +17,5 @@ class GroupConstants{
 	const FINANCIAL_SECRETARY_GROUP_ID = 10;
 	const ACADEMIC_SECRETARY_GROUP_ID = 11;
 	const STAFF_GROUP_ID = 12;
+	const TRAINEE_GROUP_DEFAULT_ID = 0;
 }

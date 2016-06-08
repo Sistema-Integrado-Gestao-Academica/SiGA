@@ -31,4 +31,8 @@ class PermissionConstants{
 	const MASTERMIND_PERMISSION = "mastermind";
 
 	const SELECTION_PROCESS_PERMISSION = "selection_process";
+
+	/* IDS */
+	const OFFER_LIST_ID = 18;
+    const DOCUMENT_REQUEST_ID = 24;
 }

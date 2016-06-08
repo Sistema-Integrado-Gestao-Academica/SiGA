@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
+
 class Permissions_model extends CI_Model {
     
     public function getAllPermissionsRoutes(){
@@ -37,5 +39,21 @@ class Permissions_model extends CI_Model {
         $groupPermissions = checkArray($groupPermissions);
 
         return $groupPermissions;
+    }
+
+
+    public function addDefaultTraineePermissions($groupId){
+
+      $this->addTraineePermissions($groupId, PermissionConstants::OFFER_LIST_ID);
+      $this->addTraineePermissions($groupId, PermissionConstants::DOCUMENT_REQUEST_ID);
+
+    }
+
+
+    public function addTraineePermissions($groupId, $permissionId){
+        
+        $permission = array('id_group' => $groupId,
+                            'id_permission' => $permissionId);
+        $this->db->insert("group_permission", $permission);
     }
 }

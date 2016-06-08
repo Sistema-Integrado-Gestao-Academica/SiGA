@@ -14,7 +14,8 @@ class UserInvitation extends MX_Controller {
 
 		$invitationGroups = array(
 			GroupConstants::GUEST_USER_GROUP_ID => "Convidado",
-			GroupConstants::TEACHER_GROUP_ID => "Docente"
+			GroupConstants::TEACHER_GROUP_ID => "Docente",
+			GroupConstants::TRAINEE_GROUP_DEFAULT_ID => "Estagiário"
 		);
 
 		$data = array(
@@ -42,6 +43,12 @@ class UserInvitation extends MX_Controller {
 			$invitationGroup = $this->input->post("invitation_profiles");
 			$emailToInvite = $this->input->post("email_to_invite");
 			$invitationNumber = $this->generateInvitationNumber();
+
+			// If the choice is a trainee
+			if($invitationGroup == GroupConstants::TRAINEE_GROUP_DEFAULT_ID){
+				$this->load->module("secretary/trainee");
+				$invitationGroup = $this->trainee->getTraineeGroup($secretaryId);
+			}
 
 			$invitationData = array(
 				UserInvitation_model::ID_COLUMN => $invitationNumber,

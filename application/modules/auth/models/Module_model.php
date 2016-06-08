@@ -84,6 +84,28 @@ class Module_model extends CI_Model {
 		return $groupsIds;
 	}
 	
+	/* For trainees */ 
+	public function getGroupBySecretaryId($secretaryId){
+		$searchResult = $this->db->get_where("group", array('id_secretary' => $secretaryId));
+
+		$foundGroup = $searchResult->result_array();
+
+		$foundGroup = checkArray($foundGroup);
+
+		return $foundGroup;
+	}
+
+	public function addNewGroupOfTrainee($secretaryId){
+		
+		$newGroup = array('group_name' => "trainee".$secretaryId,
+						  'profile_route' => "trainee_home",
+						  'id_secretary' => $secretaryId);
+
+		$success = $this->db->insert('group', $newGroup);
+
+		return $success;
+	}
+
 	/**
 	  * Search on database for the modules names of an user
 	  * @param $user_id - User id to look for modules names
