@@ -9,7 +9,10 @@ class Secretary extends MX_Controller {
 
 	public function index(){
 
-		loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP,'secretary/secretary/secretary_home');
+		loadTemplateSafelyByGroup(
+			GroupConstants::SECRETARY_GROUP,
+			'secretary/secretary/secretary_home'
+		);
 	}
 
 	public function requestReport(){
