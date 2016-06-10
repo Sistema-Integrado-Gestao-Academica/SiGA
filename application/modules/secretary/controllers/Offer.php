@@ -172,7 +172,7 @@ class Offer extends MX_Controller {
 
 	}
 
-	private function getOfferForEdit($idOffer){
+	public function getOfferForEdit($idOffer){
 		
 		$offer = $this->offer_model->getOffer($idOffer);
 		

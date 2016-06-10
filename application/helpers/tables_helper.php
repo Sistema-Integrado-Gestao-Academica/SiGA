@@ -941,7 +941,12 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
 
 		    	echo "<td>";
     			echo anchor("secretary/offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
-    			echo anchor("secretary/offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
+    			$offer = new Offer();
+				$offer = $offer->getOfferForEdit($idOffer);
+				
+				if(!$offer['approved']){
+	    			echo anchor("secretary/offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
+				}
 		    	echo "</td>";
 
 		    echo "</tr>";
