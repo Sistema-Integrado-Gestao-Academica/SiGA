@@ -1,6 +1,6 @@
 <div class="form-box" id="login-box"> 
 	<div class="header">Cadastrar um novo usuário</div>
-	<?= form_open("register_user") ?>
+	<?= form_open("register_user", '', $hidden) ?>
 		<div class="body bg-gray">
 			<div class="form-group">
 				<?= form_label("Nome", "name") ?>
@@ -11,7 +11,8 @@
 					"class" => "form-campo",
 					"maxlength" => "70",
 					"class" => "form-control",
-					"value" => set_value("name", "")
+					"value" => set_value("name", ""),
+					"placeholder" => "Informe seu nome"
 				)) ?>
 				<?= form_error("name") ?>
 			</div>
@@ -26,7 +27,7 @@
 					"maxlength" => "11",
 					"value" => set_value("cpf", ""),
 					"class" => "form-control",
-					"placeholder" => "Somente Números"
+					"placeholder" => "Somente os números"
 				)) ?>
 				<?= form_error("cpf") ?>
 			</div>
@@ -40,14 +41,14 @@
 					"class" => "form-campo",
 					"maxlength" => "50",
 					"class" => "form-control",
-					"value" => set_value("email", "")
+					"value" => set_value("email", $email)
 				)) ?>
 				<?= form_error("email") ?>
 			</div>
 
 			<div class="form-group">
 				<?= form_label("Tipo de Usuário", "userGroup"); ?><br>
-				<?= form_dropdown("userGroup", $user_groups) ?>
+				<?= form_dropdown("userGroup", $userGroups, '', "class='form-control'") ?>
 				<br>
 				<?= "* Para adicionar mais de um grupo, contate o administrador" ?>
 				<?= form_error("userGroup") ?>
