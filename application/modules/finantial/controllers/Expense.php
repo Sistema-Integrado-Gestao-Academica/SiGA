@@ -1,13 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 class Expense extends MX_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('finantial/expense_model');
+		$this->load->model('finantial/budgetplan_model');
+		
+	}
+
 	public function index($budgetplan_id) {
 		
-		$this->load->model('finantial/budgetplan_model');
-		$this->load->model('finantial/expense_model');
 		$budgetplan = $this->budgetplan_model->get('id', $budgetplan_id);
 
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -43,12 +49,9 @@ class Expense extends MX_Controller {
 		$id = $expense['budgetplan_id'];
 		$expense['month'] = $months[$this->input->post("month")];
 
-		$this->load->model('finantial/budgetplan_model');
 		$budgetplan = $this->budgetplan_model->get('id', $id);
 		$budgetplan['spending'] += $expense['value'];
 		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
-
-		$this->load->model('finantial/expense_model');
 
 		$session = getSession();
 		if ($this->expense_model->save($expense) && $this->budgetplan_model->update($budgetplan)) {
@@ -63,9 +66,6 @@ class Expense extends MX_Controller {
 	public function delete() {
 		$expense_id = $this->input->post('expense_id');
 		$budgetplan_id = $this->input->post('budgetplan_id');
-
-		$this->load->model('finantial/expense_model');
-		$this->load->model('finantial/budgetplan_model');
 
 		$expense = $this->expense_model->get('id', $expense_id);
 		$budgetplan = $this->budgetplan_model->get('id', $budgetplan_id);
@@ -82,6 +82,19 @@ class Expense extends MX_Controller {
 		}
 
 		redirect("budgetplan_expenses/{$budgetplan_id}");
+	}
+
+	public function expensesNature(){
+
+		$expensesTypes = $this->expense_model->getAllExpenseTypes();
+		
+		$data = array(
+
+			'expensesTypes' => $expensesTypes
+
+		);
+		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/expenses_nature.php', $data);
+
 	}
 
 }

@@ -107,6 +107,9 @@ $route['budgetplan/new_expense/(:num)'] = 'finantial/expense/index/$1';
  */
 $route['delete_expense'] = 'finantial/expense/delete';
 $route['save_expense'] = 'finantial/expense/save';
+$route['expense_nature'] = 'finantial/expense/expensesNature';
+$route['delete_expense_nature/(:num)'] = 'finantial/expense/deleteExpenseNature/$1';
+$route['edit_expense_nature/(:num)'] = 'finantial/expense/editExpenseNature/$1';
 
 /*
  * Payment routes
