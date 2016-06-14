@@ -153,4 +153,33 @@ class MY_Form_validation extends CI_Form_validation {
 
         return $emailNoExists;
     }
+
+
+    function verify_if_code_no_exists($code){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('verify_if_code_no_exists', 'Já existe uma natureza de despesa com o {field} informado.');
+
+        $CI->db->select('code');
+        $expenseTypes = $CI->db->get('expense_type')->result_array();
+
+        $expenseTypes = checkArray($expenseTypes);
+
+        $codeNoExists = TRUE;
+
+        if($expenseTypes !== FALSE){
+
+            foreach ($expenseTypes as $expenseType) {
+                
+                if($expenseType['code'] == $code){
+                    $codeNoExists = FALSE;
+                    break;
+                }   
+
+            }
+        }
+
+        return $codeNoExists;
+    }
 }
