@@ -1,6 +1,6 @@
 <h2 class="principal">Naturezas das Despesas do Plano Orçamentário</h2>
 
-<!-- <?= anchor("budgetplan/new_expense/{$budgetplan['id']}", "<i class='fa fa-plus-circle'></i> Adicionar despesa", "class='btn-lg'") ?> -->
+<?= anchor("new_expense_nature", "<i class='fa fa-plus-circle'></i> Adicionar natureza de despesa", "class='btn-lg'") ?>
 
 <?php if ($expensesTypes): ?>
 	<br>
