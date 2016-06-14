@@ -112,4 +112,60 @@ class Expense extends MX_Controller {
 		redirect('expense_nature');
 	}
 
+	public function editExpenseNature($expenseId){
+
+		$expenseType = $this->expense_model->getExpenseType($expenseId);
+
+		$data = array(
+
+			'expenseType' => $expenseType
+
+		);
+		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/edit_expense_nature.php', $data);
+		
+	}
+
+	public function updateExpenseNature($expenseId){
+
+		$valid = $this->validateExpenseNatureData();
+		if($valid){
+
+			$code = $this->input->post("code");
+			$description = $this->input->post("description");
+
+			$data = array(
+				'code' => $code,
+				'description' => $description
+			);
+			
+			$success = $this->expense_model->updateExpenseType($expenseId, $data);
+
+			$session = getSession();
+			if($success){
+				$session->showFlashMessage("success", "Natureza de despesa atualizada com sucesso.");
+				redirect('expense_nature');
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível atualizar a natureza de despesa.");	
+				redirect('edit_expense_nature/{$expenseId}');
+			}
+		}
+		else{
+			$this->editExpenseNature($expenseId);
+		}
+
+	}
+
+
+	private function validateExpenseNatureData(){
+
+		$this->load->library("form_validation");
+
+		$this->form_validation->set_rules("description", "Descrição da despesa", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+
+		$success = $this->form_validation->run();
+
+		return $success;
+	}
 }

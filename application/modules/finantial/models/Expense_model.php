@@ -34,6 +34,13 @@ class Expense_model extends CI_Model {
 		$this->db->where('id', $expenseTypeId);
 		return $this->db->delete('expense_type');
 	}
+
+	public function updateExpenseType($expenseTypeId, $data){
+		
+		$this->db->where('id', $expenseTypeId);
+		$updated = $this->db->update('expense_type', $data);
+		return $updated;
+	}
 }
 
 /* End of file expense.php */
