@@ -127,7 +127,12 @@ class Expense extends MX_Controller {
 
 	public function updateExpenseNature($expenseId){
 
-		$valid = $this->validateExpenseNatureData();
+		$code = $this->input->post("code");
+		$oldCode = $this->input->post("old_code");
+		$isToCheckCode = $this->checkCode($code, $oldCode);
+
+		$valid = $this->validateExpenseNatureData($isToCheckCode);
+		
 		if($valid){
 
 			$code = $this->input->post("code");
@@ -156,12 +161,58 @@ class Expense extends MX_Controller {
 
 	}
 
+	private function checkCode($code, $oldCode){
 
-	private function validateExpenseNatureData(){
+		if($code == $oldCode){
+			$checkCode = FALSE;
+		}
+		else{
+			$checkCode = TRUE;
+		}
+		
+		return $checkCode;
+	}
+	
+	public function newExpenseNature(){
+
+		$valid = $this->validateExpenseNatureData();
+
+		if($valid){
+
+			$description = $this->input->post("description");
+
+			$data = array(
+				'code' => $code,
+				'description' => $description
+			);
+			
+			$success = $this->expense_model->createExpenseType($data);
+
+			$session = getSession();
+			if($success){
+				$session->showFlashMessage("success", "Natureza de despesa criada com sucesso.");
+				redirect('expense_nature');
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível criar a natureza de despesa.");	
+				redirect('new_expense_nature');
+			}
+		}
+		else{
+
+			loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/new_expense_nature.php');
+		}
+		
+	}
+
+	private function validateExpenseNatureData($checkCode=TRUE){
 
 		$this->load->library("form_validation");
 
 		$this->form_validation->set_rules("description", "Descrição da despesa", "required");
+		if($checkCode){
+			$this->form_validation->set_rules("code", "Código", "verify_if_code_no_exists");
+		}
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 
 		$success = $this->form_validation->run();
