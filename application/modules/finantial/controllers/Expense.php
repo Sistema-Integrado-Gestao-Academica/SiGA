@@ -97,4 +97,19 @@ class Expense extends MX_Controller {
 
 	}
 
+	public function deleteExpenseNature($expenseId){
+
+		$success = $this->expense_model->deleteExpenseType($expenseId);
+
+		$session = getSession();
+		if($success){
+			$session->showFlashMessage("success", "Natureza de despesa removida com sucesso.");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível remover natureza de despesa.");	
+		}
+
+		redirect('expense_nature');
+	}
+
 }

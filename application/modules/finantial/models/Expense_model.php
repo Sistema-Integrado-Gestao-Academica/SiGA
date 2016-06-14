@@ -29,6 +29,11 @@ class Expense_model extends CI_Model {
 		$objectToReturn = checkArray($objectToReturn);
 		return $objectToReturn;
 	}
+
+	public function deleteExpenseType($expenseTypeId) {
+		$this->db->where('id', $expenseTypeId);
+		return $this->db->delete('expense_type');
+	}
 }
 
 /* End of file expense.php */

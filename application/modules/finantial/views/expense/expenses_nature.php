@@ -19,7 +19,7 @@
 	
 		<?php foreach ($expensesTypes as $expense): ?>
 			<tr>
-				<td><?=$expense['id']?></td>
+				<td><?=$expense['code']?></td>
 				<td><?=$expense['description']?></td>
 				<td>
 					<?php echo anchor("edit_expense_nature/{$expense['id']}", "<i class='fa fa-pencil'> Editar </i>", "class='btn btn-primary'");?>
@@ -29,8 +29,7 @@
 					</button>
 					
 					<div id=<?="confirmation".$expense['id']?> class="collapse">
-						<?= form_open('delete_expense_nature') ?>
-						<?= form_hidden('expense_id', $expense['id']) ?>
+						<?= form_open("delete_expense_nature/{$expense['id']}") ?>
 						<br>
 						Deseja Realmente remover a natureza de despesa?
 						<br>
