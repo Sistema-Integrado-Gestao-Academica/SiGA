@@ -22,6 +22,10 @@ class Schedule extends MX_Controller {
 		return $this->disciplineSchedule;
 	}
 
+	public function emptySchedule(){
+		$this->disciplineSchedule = array();
+	}
+
 	public function getDisciplineHours($idOfferDiscipline){
 
 		$this->load->model('secretary/schedule_model');
