@@ -1,3 +1,5 @@
+<?php require_once(MODULESPATH."/finantial/constants/ExpenseNatureConstants.php"); ?>
+
 <h2 class="principal">Naturezas das Despesas do Plano Orçamentário</h2>
 
 <?= anchor("new_expense_nature", "<i class='fa fa-plus-circle'></i> Adicionar natureza de despesa", "class='btn-lg'") ?>
@@ -24,22 +26,45 @@
 				<td>
 					<?php echo anchor("edit_expense_nature/{$expense['id']}", "<i class='fa fa-pencil'> Editar </i>", "class='btn btn-primary'");?>
 
-					<button data-toggle="collapse" data-target=<?="#confirmation".$expense['id']?> class="btn btn-danger">
-						<i class='fa fa-remove'> Remover </i>
-					</button>
+					<?php 
+					$status = $expense['status'];
+					if($status != ExpenseNatureConstants::DEFAULT_STATUS) { 
+						if($status == ExpenseNatureConstants::ACTIVE){
+							$class = "btn bg-danger btn-block";
+							echo "<button data-toggle='collapse' data-target=#confirmation{$expense['id']} class='btn btn-danger'>";
+							$message = "Se você desativar essa natureza não poderá adicionar despesas para ela.";
+						}
+						else{
+							$class = "btn bg-success btn-block";
+							echo "<button data-toggle='collapse' data-target=#confirmation{$expense['id']} class='btn btn-success'>";
+							$message = "";
+						}
+						?>
+							<?= lang('toButton'.$status) ?>
+						</button>
+						
+						<div id=<?="confirmation".$expense['id']?> class="collapse">
+							<?= form_open("update_status_expense_nature/{$expense['id']}") ?>
+							<br>
+							<?= $message ?>
+							<br>
+							Deseja realmente <?= lang('toButton'.$status)?> a natureza de despesa?
+							<br>
+							<?= form_button(array(
+											"class" => $class,
+											"type" => "submit",
+											"content" => lang('toButton'.$status),
+										)) ?>
+							<?= form_hidden('status', $status);?>
+							<?= form_close() ?>
+						</div>
 					
-					<div id=<?="confirmation".$expense['id']?> class="collapse">
-						<?= form_open("delete_expense_nature/{$expense['id']}") ?>
-						<br>
-						Deseja Realmente remover a natureza de despesa?
-						<br>
-						<?= form_button(array(
-										"class" => "btn bg-danger btn-block",
-										"type" => "submit",
-										"content" => "Excluir",
-									)) ?>
-						<?= form_close() ?>
-					</div>
+					<?php 
+					} 
+					?>
+
+
+
 				</td>
 			</tr>
 		<?php endforeach ?>
