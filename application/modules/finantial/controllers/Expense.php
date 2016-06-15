@@ -214,7 +214,6 @@ class Expense extends MX_Controller {
 			}
 		}
 		else{
-
 			loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/new_expense_nature.php');
 		}
 		
