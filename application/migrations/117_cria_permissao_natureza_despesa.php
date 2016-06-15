@@ -12,11 +12,37 @@ class Migration_cria_permissao_natureza_despesa extends CI_Migration {
 
 		// Adding a column to expense nature (type) code
 		$this->dbforge->add_column('expense_type', array(
-			'code' => array('type' => 'int', "null" => TRUE)
+			'code' => array('type' => 'int', "null" => TRUE),
+			'status' => array('type' => 'varchar(10)')
 		));
 
 		// Copy id column to code column
 		$this->db->query("UPDATE expense_type SET code = id");
+
+		// Adding status default to default expense types
+		$object = array('status' => 'default');
+		
+		$this->db->where('id', 339014);
+		$this->db->update('expense_type', $object);
+		
+		$this->db->where('id', 339030);
+		$this->db->update('expense_type', $object);
+		
+		$this->db->where('id', 339033);
+		$this->db->update('expense_type', $object);
+		
+		$this->db->where('id', 339036);
+		$this->db->update('expense_type', $object);
+		
+		$this->db->where('id', 339039);
+		$this->db->update('expense_type', $object);
+		
+		$this->db->where('id', 339147);
+		$this->db->update('expense_type', $object);
+		
+		$this->db->where('id', 449052);
+		$this->db->update('expense_type', $object);
+
 
 	}
 

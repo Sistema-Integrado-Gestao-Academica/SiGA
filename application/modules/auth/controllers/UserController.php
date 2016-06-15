@@ -323,6 +323,7 @@ class UserController extends MX_Controller {
 		$validData = $this->validateDataForRestorePassword();
 
 		if($validData){
+			$session = getSession();
 			$email = $this->input->post("email");
 			$user = $this->usuarios_model->getUserByEmail($email);
 			if($user !== FALSE){
@@ -330,7 +331,6 @@ class UserController extends MX_Controller {
 				$email = new RestorePasswordEmail($user);
 				$success = $email->notify();
 				
-				$session = getSession();
 				if($success){
 					$session->showFlashMessage("success", "Email enviado com sucesso.");	
 					redirect("/");

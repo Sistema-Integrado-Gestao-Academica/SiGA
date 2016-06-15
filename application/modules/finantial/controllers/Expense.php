@@ -2,6 +2,7 @@
 
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
+require_once(MODULESPATH."/finantial/constants/ExpenseNatureConstants.php");
 
 class Expense extends MX_Controller {
 
@@ -19,9 +20,9 @@ class Expense extends MX_Controller {
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 
-		$types = $this->expense_model->getAllExpenseTypes();
+		$active_types = $this->expense_model->getAllExpenseTypes($onlyActives=TRUE);
 		$expenseTypes = array();
-		foreach ($types as $type) {
+		foreach ($active_types as $type) {
 			$expenseTypes[$type['id']] = $type['id'] . " - " . $type['description'];
 		}
 
@@ -97,16 +98,29 @@ class Expense extends MX_Controller {
 
 	}
 
-	public function deleteExpenseNature($expenseId){
+	public function updateStatusExpenseNature($expenseId){
 
-		$success = $this->expense_model->deleteExpenseType($expenseId);
+		$status = $this->input->post('status');
+		
+		$new_status = null;
+		
+		if($status == ExpenseNatureConstants::ACTIVE){
+			$new_status = ExpenseNatureConstants::ACTIVE_INVERSE;
+		}
+		else if($status == ExpenseNatureConstants::INACTIVE){
+			$new_status = ExpenseNatureConstants::INACTIVE_INVERSE;
+		}
+		
+		$data = array('status' => $new_status);
+		$success = $this->expense_model->updateExpenseType($expenseId, $data);
 
 		$session = getSession();
+
 		if($success){
-			$session->showFlashMessage("success", "Natureza de despesa removida com sucesso.");
+			$session->showFlashMessage("success", "Natureza de despesa ".lang('toMessage'.$new_status)." com sucesso.");
 		}
 		else{
-			$session->showFlashMessage("danger", "Não foi possível remover natureza de despesa.");	
+			$session->showFlashMessage("danger", "Natureza de despesa não foi ".lang('toMessage'.$new_status).". Tente novamente.");	
 		}
 
 		redirect('expense_nature');
@@ -183,7 +197,8 @@ class Expense extends MX_Controller {
 
 			$data = array(
 				'code' => $code,
-				'description' => $description
+				'description' => $description,
+				'status' => ExpenseNatureConstants::ACTIVE
 			);
 			
 			$success = $this->expense_model->createExpenseType($data);
@@ -199,7 +214,6 @@ class Expense extends MX_Controller {
 			}
 		}
 		else{
-
 			loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/new_expense_nature.php');
 		}
 		

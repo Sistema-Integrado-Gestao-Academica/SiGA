@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(MODULESPATH."/finantial/constants/ExpenseNatureConstants.php");
 
 class Expense_model extends CI_Model {
 
@@ -18,21 +19,24 @@ class Expense_model extends CI_Model {
 		return $objectToReturn;
 	}
 
-	public function getAllExpenseTypes() {
-		$objectToReturn = $this->db->get('expense_type')->result_array();
-		$objectToReturn = checkArray($objectToReturn);
-		return $objectToReturn;
+	public function getAllExpenseTypes($onlyActives=FALSE) {
+		
+		$this->db->select('expense_type.*');
+		$this->db->from('expense_type');
+		if($onlyActives){
+			$this->db->where('status !=', ExpenseNatureConstants::INACTIVE);
+		}
+		$expenseTypes = $this->db->get()->result_array();
+
+		$expenseTypes = checkArray($expenseTypes);
+		
+		return $expenseTypes;
 	}
 
 	public function getExpenseType($value) {
 		$objectToReturn = $this->db->get_where("expense_type", array('id' => $value))->row_array();
 		$objectToReturn = checkArray($objectToReturn);
 		return $objectToReturn;
-	}
-
-	public function deleteExpenseType($expenseTypeId) {
-		$this->db->where('id', $expenseTypeId);
-		return $this->db->delete('expense_type');
 	}
 
 	public function updateExpenseType($expenseTypeId, $data){
