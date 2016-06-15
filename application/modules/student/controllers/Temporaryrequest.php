@@ -98,13 +98,19 @@ class TemporaryRequest extends MX_Controller {
 			$this->schedule->getDisciplineHours($idOfferDiscipline);
 			$requestedDisciplineSchedule = $this->schedule->getDisciplineSchedule();
 
+			/**
+			 * Empty the schedule to add the already inserted disciplines, in order to dont have
+			 *  both the disciplines requested and the disciplines to insert in the same array.
+			 * If this happens, it would give a conflict hour. 
+			 */
+			$this->schedule->emptySchedule();
+
 			// Get disciplines hours from already inserted to resquest disciplines
 			$insertedDisciplines = array();
 			foreach($userTempRequest as $registeredRequest){
 
 				$this->schedule->getDisciplineHours($registeredRequest['discipline_class']);
 				$disciplineSchedule = $this->schedule->getDisciplineSchedule();
-
 				$insertedDisciplines[] = $disciplineSchedule;
 			}
 
