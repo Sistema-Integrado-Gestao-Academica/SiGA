@@ -13,6 +13,7 @@ abstract class EmailNotification extends BaseNotification{
 	const INVALID_EMAIL = "Email inválido.";
 	const EMPTY_SUBJECT = "O assunto não pode ser nulo nem vazio.";
 	const EMPTY_MESSAGE = "A mensagem não pode ser nula nem vazia.";
+	const EMAIL_TIMEOUT = 15; // Time to try sending the email in seconds
 
 	protected $senderName;
 	protected $senderEmail;
@@ -144,6 +145,7 @@ abstract class EmailNotification extends BaseNotification{
         $mail->Username = EmailSenderData::USER;
         $mail->Password = EmailSenderData::PASSWORD;
         $mail->CharSet = 'UTF-8';
+        $mail->Timeout = self::EMAIL_TIMEOUT;
     	
     	return $mail;
     }
