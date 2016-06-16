@@ -32,7 +32,7 @@ class Group{
     public function addPermission($permission){
 
         if(is_object($permission)){
-            if(get_class($permission) === Permission::class){
+            if(get_class($permission) == "Permission"){
                 $this->permissions[] = $permission;
             }else{
                 throw new GroupException(self::INVALID_PERMISSIONS);
@@ -100,7 +100,7 @@ class Group{
                 foreach ($permissions as $permission){
                     if(is_object($permission)){
 
-                        if(!(get_class($permission) === Permission::class) ){
+                        if(!(get_class($permission) == "Permission") ){
                             $isAPermission = FALSE;
                             break;
                         }

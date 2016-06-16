@@ -121,7 +121,7 @@
 
                                     			$notificationId = $notification->id();
 
-                                    			if($notification->type() == ActionNotification::class){
+                                    			if($notification->type() == "ActionNotification"){
 													echo anchor(
 														$notification->link(),
 														$notification->content(),

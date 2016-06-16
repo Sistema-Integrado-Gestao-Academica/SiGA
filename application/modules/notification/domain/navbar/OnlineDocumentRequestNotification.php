@@ -40,6 +40,6 @@ class OnlineDocumentRequestNotification extends BarNotificationDecorator{
 	}
 
 	public function type(){
-		return self::class;
+		return get_class($this);
 	}
 }

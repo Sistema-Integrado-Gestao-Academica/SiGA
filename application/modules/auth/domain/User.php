@@ -35,7 +35,7 @@ class User{
 	
 	public function addGroup($group){
 		if(is_object($group)){
-			if(get_class($group) === Group::class){
+			if(get_class($group) === "Group"){
 				$this->groups[] = $group;
 			}else{
 				throw new UserException(self::INVALID_GROUP);

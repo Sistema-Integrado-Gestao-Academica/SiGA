@@ -41,6 +41,6 @@ class ActionNotification extends BarNotification{
 	}
 
 	public function type(){
-		return self::class;
+		return get_class($this);
 	}
 }

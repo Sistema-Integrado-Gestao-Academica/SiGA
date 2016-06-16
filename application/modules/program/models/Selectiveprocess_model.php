@@ -1,12 +1,12 @@
 
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/SelectionProcessConstants.php");
-require_once(APPPATH."/exception/SelectionProcessException.php");
-require_once(APPPATH."/data_types/selection_process/SelectionProcess.php");
-require_once(APPPATH."/data_types/selection_process/RegularStudentProcess.php");
-require_once(APPPATH."/data_types/selection_process/SpecialStudentProcess.php");
-require_once(APPPATH."/data_types/selection_process/ProcessSettings.php");
+require_once(MODULESPATH."program/constants/SelectionProcessConstants.php");
+require_once(MODULESPATH."program/exception/SelectionProcessException.php");
+require_once(MODULESPATH."program/domain/selection_process/SelectionProcess.php");
+require_once(MODULESPATH."program/domain/selection_process/RegularStudentProcess.php");
+require_once(MODULESPATH."program/domain/selection_process/SpecialStudentProcess.php");
+require_once(MODULESPATH."program/domain/selection_process/ProcessSettings.php");
 
 class SelectiveProcess_model extends CI_Model {
 

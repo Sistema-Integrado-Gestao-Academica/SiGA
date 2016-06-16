@@ -19,7 +19,7 @@ abstract class BaseNotification{
 
 	private function setUser($user){
 		if(!is_null($user) && is_object($user)){
-			if(get_class($user) === User::class){
+			if(get_class($user) == "User"){
 				$this->user = $user;
 			}else{
 				throw new NotificationException(self::INVALID_USER);

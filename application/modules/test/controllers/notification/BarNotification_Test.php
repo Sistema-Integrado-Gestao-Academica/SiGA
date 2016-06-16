@@ -584,7 +584,7 @@ class BarNotification_Test extends TestCase{
 
         $test_name = "Test if return RegularNotification type";
 
-        $this->unit->run(RegularNotification::class, $notification->type(), $test_name, $notes);
+        $this->unit->run("RegularNotification", $notification->type(), $test_name, $notes);
     }
 
     public function shouldReturnActionNotificationType(){
@@ -605,7 +605,7 @@ class BarNotification_Test extends TestCase{
 
         $test_name = "Test if return ActionNotification type";
 
-        $this->unit->run(ActionNotification::class, $notification->type(), $test_name, $notes);
+        $this->unit->run("ActionNotification", $notification->type(), $test_name, $notes);
     }
 
     public function shouldSaveRegularNotification(){

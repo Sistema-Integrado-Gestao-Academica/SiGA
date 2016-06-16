@@ -28,7 +28,7 @@ class ProcessSettings{
 	public function addPhase($phase){
 
 		$parentClass = get_parent_class($phase);
-		if($parentClass === ProcessPhase::class || $parentClass === WeightedPhase::class){
+		if($parentClass == "ProcessPhase" || $parentClass == "WeightedPhase"){
 			
 			if(!is_null($phase)){
 				$this->phases[] = $phase;

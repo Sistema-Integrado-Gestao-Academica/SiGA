@@ -26,6 +26,6 @@ abstract class BarNotificationDecorator extends BarNotification{
 
 	// Override
 	public function type(){
-		return self::class;
+		return get_class($this);
 	}
 }

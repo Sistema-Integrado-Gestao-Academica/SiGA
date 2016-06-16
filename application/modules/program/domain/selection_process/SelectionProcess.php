@@ -30,7 +30,7 @@ abstract class SelectionProcess{
 
 	public function addSettings($settings){
 
-		if(is_object($settings) && get_class($settings) === ProcessSettings::class && !is_null($settings)){
+		if(is_object($settings) && get_class($settings) == "ProcessSettings" && !is_null($settings)){
 			$this->settings = $settings;
 		}else{
 			throw new SelectionProcessException(self::INVALID_SETTINGS);

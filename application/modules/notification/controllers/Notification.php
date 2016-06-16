@@ -174,13 +174,13 @@ class Notification extends MX_Controller{
 				$type = $notification[Notification_model::TYPE_COLUMN];
 
 				switch($type){
-					case DocumentRequestNotification::class:
-					case RegularNotification::class:
+					case "DocumentRequestNotification":
+					case "RegularNotification":
 						$notifications[] = new RegularNotification($user, $id, $seen, $content);
 						break;
 					
-					case OnlineDocumentRequestNotification::class:
-					case ActionNotification::class:
+					case "OnlineDocumentRequestNotification":
+					case "ActionNotification":
 						$notifications[] = new ActionNotification($user, $link, $id, $seen, $content);
 						break;
 

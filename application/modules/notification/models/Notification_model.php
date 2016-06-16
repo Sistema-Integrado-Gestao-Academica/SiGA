@@ -53,7 +53,7 @@ class Notification_model extends CI_Model{
 
 		$saveNotification = "INSERT INTO ".self::NOTIFICATION_TABLE."(".self::USER_COLUMN.", ".self::CONTENT_COLUMN.", ".self::SEEN_COLUMN.", ".self::TYPE_COLUMN.", ";
 
-		if($notification->type() === ActionNotification::class){
+		if($notification->type() == "ActionNotification"){
 			$saveNotification .= self::LINK_COLUMN.", ";
 		}
 		
@@ -64,7 +64,7 @@ class Notification_model extends CI_Model{
 		$saveNotification .= $seen.", '";
 		$saveNotification .= $notification->type()."', ";
 
-		if($notification->type() === ActionNotification::class){
+		if($notification->type() == "ActionNotification"){
 			$saveNotification .= "'".$notification->link()."', ";
 		}
 
