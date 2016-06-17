@@ -19,6 +19,7 @@
  *
  */
 	define('ENVIRONMENT', 'testing');
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
@@ -202,7 +203,8 @@ if (defined('ENVIRONMENT'))
  * And away we go...
  *
  */
+ 
 require_once BASEPATH.'core/CodeIgniter.php';
-
+include('config_ignitest.php');
 /* End of file index.php */
 /* Location: ./index.php */
