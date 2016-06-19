@@ -32,6 +32,7 @@
 		</div>
     <div class="footer">
         <?= form_button(array(
+            "id" => "new_expense_nature",
             "class" => "btn bg-olive btn-block",
             "content" => "Salvar",
             "type" => "submit"
