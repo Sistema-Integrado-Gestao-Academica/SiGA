@@ -20,10 +20,14 @@ class Expense extends MX_Controller {
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 
-		$active_types = $this->expense_model->getAllExpenseTypes($onlyActives=TRUE);
+		$activeTypes = $this->expense_model->getAllExpenseTypes($onlyActives=TRUE);
 		$expenseTypes = array();
-		foreach ($active_types as $type) {
-			$expenseTypes[$type['id']] = $type['id'] . " - " . $type['description'];
+		foreach ($activeTypes as $type) {
+			$code = $type['code'];
+			if($code == NULL){
+				$code = "Sem código";
+			}
+			$expenseTypes[$type['id']] = $code . " - " . $type['description'];
 		}
 
 		$data = array('budgetplan' => $budgetplan, 'months' => $months, 'types' => $expenseTypes);
@@ -149,9 +153,12 @@ class Expense extends MX_Controller {
 		
 		if($valid){
 
-			$code = $this->input->post("code");
 			$description = $this->input->post("description");
-
+			
+			if($code == ""){
+				$code = NULL;
+			}
+			
 			$data = array(
 				'code' => $code,
 				'description' => $description
@@ -161,11 +168,11 @@ class Expense extends MX_Controller {
 
 			$session = getSession();
 			if($success){
-				$session->showFlashMessage("success", "Natureza de despesa atualizada com sucesso.");
+				$session->showFlashMessage("success", ExpenseNatureConstants::EXPENSE_NATURE_SUCCESS);
 				redirect('expense_nature');
 			}
 			else{
-				$session->showFlashMessage("danger", "Não foi possível atualizar a natureza de despesa.");	
+				$session->showFlashMessage("danger", ExpenseNatureConstants::EXPENSE_NATURE_FAIL);	
 				redirect('edit_expense_nature/{$expenseId}');
 			}
 		}
@@ -192,17 +199,8 @@ class Expense extends MX_Controller {
 		$valid = $this->validateExpenseNatureData();
 
 		if($valid){
-
-			$description = $this->input->post("description");
-
-			$data = array(
-				'code' => $code,
-				'description' => $description,
-				'status' => ExpenseNatureConstants::ACTIVE
-			);
 			
-			$success = $this->expense_model->createExpenseType($data);
-
+			$success = $this->createExpenseNature();
 			$session = getSession();
 			if($success){
 				$session->showFlashMessage("success", "Natureza de despesa criada com sucesso.");
@@ -217,6 +215,76 @@ class Expense extends MX_Controller {
 			loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/new_expense_nature.php');
 		}
 		
+	}
+
+	public function newExpenseNatureFromModal(){
+
+		$valid = $this->validateExpenseNatureData();
+
+		if($valid){
+			$success = $this->createExpenseNature();
+			if($success){
+				$divalert = "<div class='alert alert-success'> ";
+				$enddiv = "</div>";
+
+				$data = $this->expense_model->getLastExpenseType();
+
+				$message = $divalert.ExpenseNatureConstants::EXPENSE_NATURE_SUCCESS.$enddiv;
+
+				$json = array (
+					'status' => "success",
+					'id'=> $data['id'],
+					'code' => $data['code'],
+					'description' => $data['description'],
+					'message' => $message
+					);
+    			echo json_encode($json);
+			}
+			else{
+				$divalert = "<div class='alert alert-danger'> ";
+				$enddiv = "<\/div>";
+				$message = $divalert.ExpenseNatureConstants::EXPENSE_NATURE_FAIL.$enddiv;
+				
+				$json = array (
+					'status' => "failed",
+					'message' => $message
+				);
+    			echo json_encode($json);
+			}
+		}
+		else{
+			$divalert = "<div class='alert alert-danger'> ";
+			$errors = validation_errors(); 
+			$enddiv = "</div>";
+            $message = $divalert.$errors.$enddiv;
+				
+			$json = array (
+				'status' => "failed",
+				'message' => $message
+			);
+			echo json_encode($json);
+		}
+
+	}
+
+	private function createExpenseNature(){
+		
+		$code = $this->input->post("code");
+		$description = $this->input->post("description");
+
+		if(empty($code)){
+			$code = NULL;
+		}
+
+		$data = array(
+			'code' => $code,
+			'description' => $description,
+			'status' => ExpenseNatureConstants::ACTIVE
+		);
+		
+		$success = $this->expense_model->createExpenseType($data);
+
+		return $success;
 	}
 
 	private function validateExpenseNatureData($checkCode=TRUE){
