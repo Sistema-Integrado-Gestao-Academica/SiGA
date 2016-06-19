@@ -6,5 +6,9 @@
     "require": {
         "phpoffice/phpexcel": "^1.8",
         "phpmailer/phpmailer": "^5.2"
+    },
+
+    "require-dev": {
+        "phpunit/dbunit": ">=1.2"
     }
 }
