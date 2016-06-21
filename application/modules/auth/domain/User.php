@@ -68,7 +68,7 @@ class User{
 				$nameIsOk = TRUE;
 				foreach($nameParts as $part){
 					// Check if is only letters
-					if(ctype_alpha($part)){
+					if( preg_match('/^[a-zA-ZáéíóúàâêôãõüçÁÉÍÓÚÀÂÊÔÃÕÜÇ]*$/', $part) ){
 						continue;
 					}else{
 						$nameIsOk = FALSE;
