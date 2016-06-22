@@ -88,6 +88,26 @@ class Expense extends MX_Controller {
 
 		redirect("budgetplan_expenses/{$budgetplan_id}");
 	}
+	
+	public function expenseDetails($expenseId, $budgetplanId){
+
+		$expense = $this->expense_model->get('id', $expenseId);
+
+		$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
+		// var_dump($type); exit();
+		$expense['expense_type_id'] = $type['id'];
+		$expense['expense_type_description'] = $type['description'];
+
+		$this->load->helper(array("currency"));
+
+		$data = array('expense' => $expense);
+
+		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/expense_details.php', $data);
+	}
+
+	public function newExpenseDetails($expenseId){
+
+	}
 
 	public function expensesNature(){
 
