@@ -48,10 +48,12 @@
 			            <div class="modal-content">
 			                <div class="modal-header">
 			                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			                    <h4 class="modal-title"></h4>
+			                    <h4 class="modal-title">
+			                    	Nova Natureza de Despesa
+			                    </h4>
 			                </div>
 			                <div class="modal-body">
-			                    <?php include MODULESPATH."finantial/views/expense/new_expense_nature.php";?>
+			                    <?php include MODULESPATH."finantial/views/expense/_form_expense_nature.php";?>
 			                    <div id="alert-msg">
 			                    <p class="text-warning"><medium>Não se esqueça de clicar em salvar para que a nova natureza de despesa seja criada.</medium></p>
 			                </div>
@@ -127,6 +129,9 @@
         	var expense_nature = JSON.parse(data);
         	var status = expense_nature.status;
             $('#alert-msg').html(expense_nature.message);
+            if(expense_nature.code == null){
+            	expense_nature.code = "Sem código";
+            }
         	if(status == "success"){	
 	            $('#types').append($('<option>', {
 			        value: expense_nature.id,
