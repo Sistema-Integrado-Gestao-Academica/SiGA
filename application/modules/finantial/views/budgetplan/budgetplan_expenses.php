@@ -51,7 +51,7 @@
 						}
 
 						echo anchor(
-							"expense_details/{$expense['id']}/{$budgetplan['id']}",
+							"expense_details/{$expense['id']}",
 							"<i class='fa fa-dollar'> Despesas</i>",
 							"class='btn btn-success btn-sm' style='margin-top:5%;'"
 						);

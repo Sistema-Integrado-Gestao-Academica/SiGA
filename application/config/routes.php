@@ -113,8 +113,9 @@ $route['edit_expense_nature/(:num)'] = 'finantial/expense/editExpenseNature/$1';
 $route['update_expense_nature/(:num)'] = 'finantial/expense/updateExpenseNature/$1';
 $route['new_expense_nature'] = 'finantial/expense/newExpenseNature';
 $route['create_expense_type'] = 'finantial/expense/createExpenseNature';
-$route['expense_details/(:num)/(:num)'] = 'finantial/expense/expenseDetails/$1/$2';
+$route['expense_details/(:num)'] = 'finantial/expense/expenseDetails/$1';
 $route['new_expense_details/(:num)'] = 'finantial/expense/newExpenseDetails/$1';
+$route['save_expense_detail'] = 'finantial/expense/saveDetail';
 /*
  * Payment routes
  */

@@ -3,6 +3,8 @@
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/finantial/constants/ExpenseNatureConstants.php");
+require_once(MODULESPATH."/finantial/domain/ExpenseDetail.php");
+require_once MODULESPATH.'finantial/exception/ExpenseException.php';
 
 class Expense extends MX_Controller {
 
@@ -85,24 +87,75 @@ class Expense extends MX_Controller {
 		redirect("budgetplan_expenses/{$budgetplan_id}");
 	}
 	
-	public function expenseDetails($expenseId, $budgetplanId){
+	public function expenseDetails($expenseId){
 
 		$expense = $this->expense_model->get('id', $expenseId);
 
 		$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
-		// var_dump($type); exit();
 		$expense['expense_type_id'] = $type['id'];
 		$expense['expense_type_description'] = $type['description'];
 
 		$this->load->helper(array("currency"));
 
-		$data = array('expense' => $expense);
+		$expenses = $this->expense_model->getAllExpensesFromAExpense($expenseId);
+
+		$data = array('expense' => $expense, 'expenses' => $expenses);
 
 		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/expense_details.php', $data);
 	}
 
 	public function newExpenseDetails($expenseId){
 
+		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/new_expense_detail.php');
+	}
+
+	public function saveDetail(){
+		
+		$valid = $this->validateExpenseDetailData();
+		$expenseId = $this->input->post("id");
+		if($valid){
+			$note = $this->input->post("note");
+			$emissionDate = $this->input->post("expense_detail_emission_date"); 
+			$seiProcess = $this->input->post("sei_process");
+			$value = $this->input->post("value");
+			$description = $this->input->post("description");
+
+			$session = getSession();
+			try{
+				$expense = new ExpenseDetail($note, $emissionDate, $seiProcess, $value, $description);
+
+				if(!empty($emissionDate) && !is_null($emissionDate)){
+					$date = $expense->getYMDEmissionDate();
+				}
+				else{
+					$date = "";
+				}
+
+				$data = array(
+					'note' => $expense->getNote(),
+					'emission_date' => $date,
+					'sei_process' => $expense->getSEIProcess(),
+					'value' => $expense->getValue(),
+					'expense_id' => $expenseId
+				);
+				$success = $this->expense_model->createExpenseDetail($data);
+				if($success){
+					$session->showFlashMessage("success", "Despesa criada com sucesso.");
+					redirect('expense_details/'.$expenseId);
+				}
+				else{
+					$session->showFlashMessage("danger", "Não foi possível criar a despesa.");
+					redirect('expense_details'.$expenseId);
+				}
+			}
+			catch(ExpenseException $exception){
+				$session->showFlashMessage("danger", $exception->getMessage());
+				redirect('expense_details/'.$expenseId);
+			}
+		}
+		else{
+			$this->expenseDetails($expenseId);
+		}
 	}
 
 	public function expensesNature(){
@@ -253,4 +306,18 @@ class Expense extends MX_Controller {
 
 		return $success;
 	}
+
+	private function validateExpenseDetailData(){
+
+		$this->load->library("form_validation");
+
+		$this->form_validation->set_rules("value", "Valor", "required");
+		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+
+		$success = $this->form_validation->run();
+
+		return $success;
+	}
+
+
 }
