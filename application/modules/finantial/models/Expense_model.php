@@ -49,6 +49,18 @@ class Expense_model extends CI_Model {
 	public function createExpenseType($data){
 		return $this->db->insert("expense_type", $data);
 	}
+
+	public function getLastExpenseType(){
+		
+		$query = $this->db->query("SELECT MAX(id) FROM expense_type");
+		$row = $query->row_array();
+	    $lastId = $row["MAX(id)"];
+
+	    $expenseType = $this->getExpenseType($lastId);
+		$expenseType = checkArray($expenseType);
+
+		return $expenseType;
+	}
 }
 
 /* End of file expense.php */
