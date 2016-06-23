@@ -60,6 +60,22 @@ class Expense_model extends CI_Model {
 		$expenseType = checkArray($expenseType);
 
 		return $expenseType;
+
+	}
+	public function createExpenseDetail($data){
+		return $this->db->insert("expense_detail", $data);
+	}
+
+	public function getAllExpensesFromAExpense($expenseId){
+
+		$this->db->select('expense_detail.*');
+		$this->db->from('expense_detail');
+		$this->db->where('expense_detail.expense_id', $expenseId);
+		$expenses = $this->db->get()->result_array();
+
+		$expenses = checkArray($expenses);
+		
+		return $expenses;
 	}
 }
 

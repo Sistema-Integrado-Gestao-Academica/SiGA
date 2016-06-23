@@ -27,6 +27,11 @@ $(document).ready(function(){
 	$("#installments_quantity").change(function(){
 		checkInstallments();
 	});
+
+	$("#expense_detail_emission_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
 });
 
 function checkInstallments(){
