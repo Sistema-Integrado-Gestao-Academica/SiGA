@@ -20,6 +20,15 @@ $(document).ready(function(){
 		searchDisciplineClasses();
 	});
 
+	$("#discipline_name_search").keypress(function(event){
+		var ENTER_PRESSED = 13;
+		if(event.which == ENTER_PRESSED){
+			event.preventDefault();
+			$("#discipline_search_btn").trigger('click');
+		}
+		searchDisciplineClasses();
+	});
+
 });
 
 
