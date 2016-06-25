@@ -28,10 +28,14 @@ $(document).ready(function(){
 		checkInstallments();
 	});
 
-
 	$('#new_expense_nature').click(function() {
 		newExpenseNature();
 	});
+
+	$("#expense_detail_emission_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
 });
 
 function checkInstallments(){
