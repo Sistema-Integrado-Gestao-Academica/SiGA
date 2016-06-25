@@ -42,31 +42,6 @@
 				 <a href="#myModal" data-toggle="modal">  <i class="fa fa-plus-circle"></i></a>	
 				<?= form_dropdown('type', $types, "", ['class' => "form-control", 'id' => "types"]) ?>
 
-				    <!-- Modal HTML -->
-			    <div id="myModal" class="modal fade">
-			        <div class="modal-dialog">
-			            <div class="modal-content">
-			                <div class="modal-header">
-			                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			                    <h4 class="modal-title">
-			                    	Nova Natureza de Despesa
-			                    </h4>
-			                </div>
-			                <div class="modal-body">
-			                    <?php include MODULESPATH."finantial/views/expense/_form_expense_nature.php";?>
-			                    <div id="alert-msg">
-			                    <p class="text-warning"><medium>Não se esqueça de clicar em salvar para que a nova natureza de despesa seja criada.</medium></p>
-			                </div>
-			                <div class="modal-footer">
-			                    <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
-			                </div>
-			            </div>
-			        </div>
-			    </div>
-			</div>
-
-
-
 			<div class="form-group">
 				<?= form_label("Ano", "year") ?>
 				<?= form_input(array(
@@ -87,8 +62,9 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<?= form_button(array(
+							"id" => "new_expense",
 							"class" => "btn bg-olive btn-block",
-							"type" => "sumbit",
+							"type" => "submit",
 							"content" => "Salvar",
 							"onclick" => "confirmation()"
 						)) ?>
@@ -103,8 +79,44 @@
 </div>
 
 </div>
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">
+            	Nova Natureza de Despesa
+            </h4>
+        </div>
+        <div class="modal-body">
+            <?php include MODULESPATH."finantial/views/expense/_form_expense_nature.php";?>
+            <div id="alert-msg">
+            <p class="text-warning"><medium>Não se esqueça de clicar em salvar para que a nova natureza de despesa seja criada.</medium></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+</div>
+</div>
+</div>
 
 <script>
+
+	$('#new_expense').click(function() {
+    var form_data = {
+        year: $('#year').val(),
+        value: $('#value').val(),
+        expense_type_id: $('#type').val(),
+		budgetplan_id : $("#budgetplan_id").val()
+    };
+    $.ajax({
+        url: "<?php echo site_url('finantial/expense/save'); ?>",
+        type: 'POST',
+        data: form_data
+    });
+
 	function confirmation() {
 		var value = parseInt(document.getElementById("value").value);
 		var balance = parseInt(document.getElementById("balance").value);
@@ -116,30 +128,4 @@
 		}
 	}
 
-	$('#new_expense_nature').click(function() {
-    var form_data = {
-        code: $('#code').val(),
-        description: $('#description').val(),
-    };
-    $.ajax({
-        url: "<?php echo site_url('finantial/expense/newExpenseNatureFromModal'); ?>",
-        type: 'POST',
-        data: form_data,
-        success: function(data) {
-        	var expense_nature = JSON.parse(data);
-        	var status = expense_nature.status;
-            $('#alert-msg').html(expense_nature.message);
-            if(expense_nature.code == null){
-            	expense_nature.code = "Sem código";
-            }
-        	if(status == "success"){	
-	            $('#types').append($('<option>', {
-			        value: expense_nature.id,
-			        text: expense_nature.code + " - " + expense_nature.description
-			    }));
-        	}
-        }
-    });
-    return false;
-	});
 </script>

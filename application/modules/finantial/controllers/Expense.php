@@ -217,56 +217,7 @@ class Expense extends MX_Controller {
 		
 	}
 
-	public function newExpenseNatureFromModal(){
-
-		$valid = $this->validateExpenseNatureData();
-
-		if($valid){
-			$success = $this->createExpenseNature();
-			if($success){
-				$divalert = "<div class='alert alert-success'> ";
-				$enddiv = "</div>";
-
-				$data = $this->expense_model->getLastExpenseType();
-
-				$message = $divalert.ExpenseNatureConstants::EXPENSE_NATURE_SUCCESS.$enddiv;
-
-				$json = array (
-					'status' => "success",
-					'id'=> $data['id'],
-					'code' => $data['code'],
-					'description' => $data['description'],
-					'message' => $message
-					);
-    			echo json_encode($json);
-			}
-			else{
-				$divalert = "<div class='alert alert-danger'> ";
-				$enddiv = "<\/div>";
-				$message = $divalert.ExpenseNatureConstants::EXPENSE_NATURE_FAIL.$enddiv;
-				
-				$json = array (
-					'status' => "failed",
-					'message' => $message
-				);
-    			echo json_encode($json);
-			}
-		}
-		else{
-			$divalert = "<div class='alert alert-danger'> ";
-			$errors = validation_errors(); 
-			$enddiv = "</div>";
-            $message = $divalert.$errors.$enddiv;
-				
-			$json = array (
-				'status' => "failed",
-				'message' => $message
-			);
-			echo json_encode($json);
-		}
-
-	}
-
+	
 	private function createExpenseNature(){
 		
 		$code = $this->input->post("code");

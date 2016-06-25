@@ -1,4 +1,4 @@
- <div class="form-group">
+     <div class="form-group">
             <?= form_label("Código", "code") ?>
             <?= form_input(array(
                 "name" => "code",

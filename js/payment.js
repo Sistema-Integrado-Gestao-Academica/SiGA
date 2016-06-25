@@ -27,6 +27,11 @@ $(document).ready(function(){
 	$("#installments_quantity").change(function(){
 		checkInstallments();
 	});
+
+
+	$('#new_expense_nature').click(function() {
+		newExpenseNature();
+	});
 });
 
 function checkInstallments(){
@@ -141,6 +146,37 @@ function searchEmployeeToPayment(){
 		},
 		function(data){
 			$("#employee_search_result").html(data);
+		}
+	);
+}
+
+
+function newExpenseNature(){
+	
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/finantial/ajax/expenseajax/newExpenseNatureFromModal";
+	var code = $('#code').val();
+	var description = $('#description').val();
+
+    $.post(
+		urlToPost,
+		{
+	        code: code,
+	        description: description
+		},
+		function(data){
+        	var expense_nature = JSON.parse(data);
+        	var status = expense_nature.status;
+            $('#alert-msg').html(expense_nature.message);
+        	if(status == "success"){	
+            	if(expense_nature.code == null){
+            	expense_nature.code = "Sem código";
+        	    }
+		        $('#types').append($('<option>', {
+			        value: expense_nature.id,
+			        text: expense_nature.code + " - " + expense_nature.description
+			    }));
+        	}
 		}
 	);
 }
