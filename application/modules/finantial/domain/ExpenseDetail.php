@@ -13,15 +13,17 @@ class ExpenseDetail{
 	private $seiProcess;
 	private $value;
 	private $description;
+	private $id;
 
 	public function __construct($note = FALSE, $emissionDate = FALSE, 
-								$seiProcess = FALSE, $value, $description = FALSE){
+								$seiProcess = FALSE, $value, $description = FALSE, $id = FALSE){
 		
 		$this->setNote($note);
 		$this->setEmissionDate($emissionDate);
 		$this->setSEIProcess($seiProcess);
 		$this->setValue($value);
 		$this->setDescription($description);
+		$this->setId($id);
 
 	}
 
@@ -64,7 +66,7 @@ class ExpenseDetail{
 
 			if(!is_null($value) && !empty($value)){
 
-				if($value > 0.0){
+				if($value >= 0.0){
 					$this->value = $value;
 				}
 				else{
@@ -87,10 +89,13 @@ class ExpenseDetail{
 	
 	}
 
+	private function setId($id){
+		$this->id = $id;
+	}
+
 	private function validateDate($emissionDate){
 
 		$date = date_parse_from_format("d/m/Y", $emissionDate);
-
 		$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE 
 					   && $date["day"] !== FALSE && $date["error_count"] === 0 
 					   && $date["warning_count"] === 0;
@@ -139,9 +144,41 @@ class ExpenseDetail{
 		
 		$date = $this->getEmissionDate();
 
-		$formattedDate = $date->format("Y/m/d");
+		if(!empty($date)){
+			
+			$formattedDate = $date->format("Y/m/d");
+		}
+		else{
+			$formattedDate = $date;
+		}
 
 		return $formattedDate;
+	}
+
+	public function getDMYEmissionDate(){
+		$date = $this->getEmissionDate();
+
+		if(!empty($date)){
+			
+			$formattedDate = $date->format("d/m/Y");
+		}
+		else{
+			$formattedDate = $date;
+		}
+		
+
+		return $formattedDate;
+	}
+
+	public static function formatDateToBR($date){
+
+		$date = explode("-", $date);
+		$year = $date[0];
+		$month = $date[1];
+		$day = $date[2];
+
+		return $day."/".$month."/".$year;
+
 	}
 
 	public function getSEIProcess(){
@@ -150,5 +187,13 @@ class ExpenseDetail{
 
 	public function getValue(){
 		return $this->value;
+	}
+
+	public function getDescription(){
+		return $this->description;
+	}
+
+	public function getId(){
+		return $this->id;
 	}
 }

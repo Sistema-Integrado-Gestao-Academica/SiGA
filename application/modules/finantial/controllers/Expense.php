@@ -102,21 +102,87 @@ class Expense extends MX_Controller {
 		$this->load->helper(array("currency"));
 
 		$expenses = $this->expense_model->getAllExpensesFromAExpense($expenseId);
-
+		
 		$data = array('expense' => $expense, 'expenses' => $expenses);
 
 		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/expense_details.php', $data);
 	}
 
-	public function newExpenseDetails($expenseId){
+	public function saveExpenseDetail(){
+		
+		$expenseId = $this->input->post("id");
+		$data = $this->getExpenseDetailData($expenseId);
+		$session = getSession();
 
-		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/new_expense_detail.php');
+		if($data['valid']){
+
+			$success = $this->expense_model->createExpenseDetail($data['expense']);
+			$session = getSession();
+			if($success){
+				$status = "success";
+				$message = "Despesa criada com sucesso.";
+			}
+			else{
+				$status = "danger";
+				$message = "Não foi possível criar a despesa.";
+			}
+			$session->showFlashMessage($status, $message);
+			redirect('expense_details/'.$expenseId);
+
+		}
+		else{
+			if(!empty($data['message'])){
+
+				$session->showFlashMessage("danger", $data['message']);
+			}
+			redirect('expense_details/'.$expenseId);
+		}
 	}
 
-	public function saveDetail(){
+	public function editExpenseDetails($expenseDetailId){
+
+		$expense = $this->expense_model->getExpenseDetail($expenseDetailId);
+
+		$data = array('expense' => $expense);
+
+		loadTemplateSafelyByGroup(GroupConstants::FINANCIAL_SECRETARY_GROUP, 'finantial/expense/edit_expense_detail.php', $data);
+	}
+
+	public function updateExpenseDetails($expenseDetailId){
 		
+		$expenseId = $this->expense_model->getExpenseIdOfAExpenseDetail($expenseDetailId);
+		$data = $this->getExpenseDetailData($expenseId);
+		$session = getSession();
+
+		if($data['valid']){
+
+			$success = $this->expense_model->updateExpenseDetail($expenseDetailId, $data['expense']);
+			$session = getSession();
+			if($success){
+				$status = "success";
+				$message = "Despesa criada com sucesso.";
+			}
+			else{
+				$status = "danger";
+				$message = "Não foi possível criar a despesa.";
+			}
+			$session->showFlashMessage($status, $message);
+			redirect('expense_details/'.$expenseId);
+
+		}
+		else{
+			if(!empty($data['message'])){
+
+				$session->showFlashMessage("danger", $data['message']);
+			}
+			redirect('expense_details/'.$expenseId);
+		}
+	}
+
+	private function getExpenseDetailData($expenseId){
+
 		$valid = $this->validateExpenseDetailData();
-		$expenseId = $this->input->post("id");
+		
 		if($valid){
 			$note = $this->input->post("note");
 			$emissionDate = $this->input->post("expense_detail_emission_date"); 
@@ -124,7 +190,6 @@ class Expense extends MX_Controller {
 			$value = $this->input->post("value");
 			$description = $this->input->post("description");
 
-			$session = getSession();
 			try{
 				$expense = new ExpenseDetail($note, $emissionDate, $seiProcess, $value, $description);
 
@@ -135,31 +200,35 @@ class Expense extends MX_Controller {
 					$date = "";
 				}
 
-				$data = array(
+				$expenseArray = array(
 					'note' => $expense->getNote(),
 					'emission_date' => $date,
 					'sei_process' => $expense->getSEIProcess(),
 					'value' => $expense->getValue(),
+					'description' => $expense->getDescription(),
 					'expense_id' => $expenseId
 				);
-				$success = $this->expense_model->createExpenseDetail($data);
-				if($success){
-					$session->showFlashMessage("success", "Despesa criada com sucesso.");
-					redirect('expense_details/'.$expenseId);
-				}
-				else{
-					$session->showFlashMessage("danger", "Não foi possível criar a despesa.");
-					redirect('expense_details'.$expenseId);
-				}
+
+				$data = array(
+					'valid' => TRUE,
+					'expense' => $expenseArray
+				);
 			}
 			catch(ExpenseException $exception){
-				$session->showFlashMessage("danger", $exception->getMessage());
-				redirect('expense_details/'.$expenseId);
+				$data = array(
+					'valid' => FALSE,
+					'message' => $exception->getMessage()
+				);
 			}
 		}
 		else{
-			$this->expenseDetails($expenseId);
+			$data = array(
+				'valid' => FALSE,
+				'message' => ""
+			);
 		}
+
+		return $data;
 	}
 
 	public function expensesNature(){

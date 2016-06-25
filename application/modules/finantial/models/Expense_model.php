@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 require_once(MODULESPATH."/finantial/constants/ExpenseNatureConstants.php");
+require_once(MODULESPATH."/finantial/domain/ExpenseDetail.php");
 
 class Expense_model extends CI_Model {
 
@@ -66,16 +68,76 @@ class Expense_model extends CI_Model {
 		return $this->db->insert("expense_detail", $data);
 	}
 
+	public function updateExpenseDetail($expenseDetailId, $data){
+		$this->db->where('id', $expenseDetailId);
+		return $this->db->update("expense_detail", $data);
+	}
+
+	public function getExpenseDetail($expenseDetailId){
+		
+		$this->db->select('expense_detail.*');
+		$this->db->from('expense_detail');
+		$this->db->where('expense_detail.id', $expenseDetailId);
+		$foundExpenses = $this->db->get()->result_array();
+
+		$foundExpenses = checkArray($foundExpenses);
+
+		foreach ($foundExpenses as $foundExpense) {
+				
+			$expense = $this->createObjectExpenseDetail($foundExpense);
+
+		}
+
+		return $expense;		
+	}
+
+	public function getExpenseIdOfAExpenseDetail($expenseDetailId){
+
+		$this->db->select('expense_detail.expense_id');
+		$this->db->from('expense_detail');
+		$this->db->where('expense_detail.id', $expenseDetailId);
+		$foundExpense = $this->db->get()->result_array();
+
+		$foundExpense = checkArray($foundExpense);
+
+		return $foundExpense[0]['expense_id'];
+	}
+
 	public function getAllExpensesFromAExpense($expenseId){
 
 		$this->db->select('expense_detail.*');
 		$this->db->from('expense_detail');
 		$this->db->where('expense_detail.expense_id', $expenseId);
-		$expenses = $this->db->get()->result_array();
+		$foundExpenses = $this->db->get()->result_array();
 
-		$expenses = checkArray($expenses);
+		$foundExpenses = checkArray($foundExpenses);
 		
+		$expenses = array();
+		if($foundExpenses !== FALSE){
+			
+			foreach ($foundExpenses as $foundExpense) {
+				
+				$expense = $this->createObjectExpenseDetail($foundExpense);
+				array_push($expenses, $expense);
+
+			}
+		}
+
 		return $expenses;
+	}
+
+	private function createObjectExpenseDetail($expenseArray){
+		
+		$emissionDate = $expenseArray['emission_date'];
+		$emissionDate = ExpenseDetail::formatDateToBR($emissionDate);
+		if($emissionDate == "00/00/0000"){
+			$emissionDate = "";
+		}
+
+		$expense = new ExpenseDetail($expenseArray['note'], $emissionDate, $expenseArray['sei_process'],
+								$expenseArray['value'], $expenseArray['description'], $expenseArray['id']);
+
+		return $expense;
 	}
 }
 
