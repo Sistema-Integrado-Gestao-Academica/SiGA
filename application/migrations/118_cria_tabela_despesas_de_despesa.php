@@ -10,6 +10,7 @@ class Migration_Cria_tabela_despesas_de_despesa extends CI_Migration {
 			'emission_date' => array('type' => 'DATE'),
 			'sei_process' => array('type' => 'VARCHAR(20)', 'NULL' => true),
 			'value' => array('type' => 'DECIMAL(10,2)'),
+			'description' => array('type' => 'VARCHAR(255)', 'NULL' => true),
 			'expense_id' => array('type' => 'INT')
 		));
 
