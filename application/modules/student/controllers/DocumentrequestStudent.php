@@ -133,12 +133,13 @@ class DocumentRequestStudent extends MX_Controller {
 	}
 
 	private function saveDocumentRequest($documentRequestData){
+
 		$wasSaved = $this->doc_request_model->saveDocumentRequest($documentRequestData);
 
 		$docRequest = new DocumentConstants();
 		$types = $docRequest->getAllTypes();
 		$requestedDoc = $types[$documentRequestData['document_type']];
-
+	
 		$student = $documentRequestData["id_student"];
 		$course = $documentRequestData["id_course"];
 

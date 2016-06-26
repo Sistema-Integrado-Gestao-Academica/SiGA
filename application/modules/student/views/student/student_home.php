@@ -20,8 +20,7 @@
 
 			foreach ($userCourses as $course) {
 
-
-				if($course['enrollment'] !== NULL){
+				if(!empty($course['enrollment'])){
 
 					echo anchor("student/studentCoursePage/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
 					echo "<br>";

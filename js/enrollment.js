@@ -20,6 +20,23 @@ $(document).ready(function(){
 		searchDisciplineClasses();
 	});
 
+	$("#discipline_name_search").keypress(function(event){
+		var ENTER_PRESSED = 13;
+		if(event.which == ENTER_PRESSED){
+			event.preventDefault();
+			$("#discipline_search_btn").trigger('click');
+		}
+		searchDisciplineClasses();
+	});
+
+	$("#confirm_enrollment_request_btn").click(function(event){
+		var confirmed = confirm("Deseja solicitar as disciplinas adicionadas? \n\n\
+		Após confirmar a solicitação não é possível adicionar ou retirar disciplinas.");
+		if(!confirmed){
+			event.preventDefault();
+		}
+	});
+
 });
 
 

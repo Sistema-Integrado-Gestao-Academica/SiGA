@@ -153,7 +153,6 @@ class Request extends MX_Controller {
 
 	public function finalizeRequestSecretary($requestId, $courseId){
 
-
 		$wasFinalized = $this->request_model->finalizeRequestSecretary($requestId);
 
 		if($wasFinalized){
