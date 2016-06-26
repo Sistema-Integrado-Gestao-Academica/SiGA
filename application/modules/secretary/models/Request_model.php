@@ -163,8 +163,7 @@ class Request_model extends CI_Model {
 
 		if($requestDisciplines !== FALSE){
 
-			foreach($requestDisciplines as $discipline){
-				
+			foreach($requestDisciplines as $discipline){	
 				// Add one vacancy to the the offer discipline class for each refused request
 				if($discipline['status'] === EnrollmentConstants::REFUSED_STATUS){
 					$this->addOneVacancy($discipline['discipline_class']);
@@ -179,16 +178,11 @@ class Request_model extends CI_Model {
 		$offerDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
 
 		if($offerDiscipline !== FALSE){
-
 			$currentVacancies = $offerDiscipline['current_vacancies'];
-
-			// Just add one vacancy back to the discipline offer if it is different from 0
-			if($currentVacancies != 0){
-				$oldClass = $offerDiscipline['class'];
-				$newVacancies = $currentVacancies + 1;
-				$offerDiscipline['current_vacancies'] = $newVacancies;
-				$this->offer_model->updateOfferDisciplineClass($offerDiscipline, $oldClass);
-			}
+			$oldClass = $offerDiscipline['class'];
+			$newVacancies = $currentVacancies + 1;
+			$offerDiscipline['current_vacancies'] = $newVacancies;
+			$this->offer_model->updateOfferDisciplineClass($offerDiscipline, $oldClass);
 		}
 	}
 
