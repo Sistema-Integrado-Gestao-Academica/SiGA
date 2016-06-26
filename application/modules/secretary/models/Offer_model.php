@@ -316,6 +316,7 @@ class Offer_model extends CI_Model {
 		$dataIsOk = $offerExists && $disciplineExists && $classIsOk;
 
 		if($dataIsOk){
+
 			$updated = $this->updateOfferDisciplineClassOnDb($classData, $oldClass);
 
 			if ($updated !== FALSE){

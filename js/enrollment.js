@@ -29,6 +29,14 @@ $(document).ready(function(){
 		searchDisciplineClasses();
 	});
 
+	$("#confirm_enrollment_request_btn").click(function(event){
+		var confirmed = confirm("Deseja solicitar as disciplinas adicionadas? \n\n\
+		Após confirmar a solicitação não é possível adicionar ou retirar disciplinas.");
+		if(!confirmed){
+			event.preventDefault();
+		}
+	});
+
 });
 
 

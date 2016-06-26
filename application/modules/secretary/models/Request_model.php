@@ -147,11 +147,49 @@ class Request_model extends CI_Model {
 
 	public function finalizeRequestSecretary($requestId){
 
+		$this->updateVacancies($requestId);
+
 		$wasApproved = $this->secretaryApproval($requestId);
 
 		$this->checkRequestGeneralStatus($requestId);
 
+
 		return $wasApproved;
+	}
+
+	private function updateVacancies($requestId){
+
+		$requestDisciplines = $this->getRequestDisciplinesById($requestId);
+
+		if($requestDisciplines !== FALSE){
+
+			foreach($requestDisciplines as $discipline){
+				
+				// Add one vacancy to the the offer discipline class for each refused request
+				if($discipline['status'] === EnrollmentConstants::REFUSED_STATUS){
+					$this->addOneVacancy($discipline['discipline_class']);
+				}
+			}
+		}
+	}
+
+	private function addOneVacancy($idOfferDiscipline){
+		
+		$this->load->model("secretary/offer_model");
+		$offerDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
+
+		if($offerDiscipline !== FALSE){
+
+			$currentVacancies = $offerDiscipline['current_vacancies'];
+
+			// Just add one vacancy back to the discipline offer if it is different from 0
+			if($currentVacancies != 0){
+				$oldClass = $offerDiscipline['class'];
+				$newVacancies = $currentVacancies + 1;
+				$offerDiscipline['current_vacancies'] = $newVacancies;
+				$this->offer_model->updateOfferDisciplineClass($offerDiscipline, $oldClass);
+			}
+		}
 	}
 
 	private function secretaryApproval($requestId){
@@ -165,34 +203,6 @@ class Request_model extends CI_Model {
 
 		return $wasFinalized;
 	}
-
-	/*private function changeStudentRequestsStatus($studentId, $currentSemester, $newStatus, $requestId){
-		$hasRequests = $this->checkStudentHasRequest($studentId);
-
-		if ($hasRequests ==! FALSE){
-			$requestDisciplines = $this->getRequestDisciplinesById($requestId);
-			if ($requestDisciplines){
-				foreach ($requestDisciplines as $requestedDisciplines){
-					$this->changeRequestDisciplineStatus($requestId, $requestedDisciplines['discipline_class'], $newStatus);
-				}
-				$this->changeStudentStatusRequest($studentId, $currentSemester, $newStatus);
-				$wasChanged = TRUE;
-			}else{
-				$wasChanged = FALSE;
-			}
-		}else{
-			$wasChanged = FALSE;
-		}
-
-		return $wasChanged;
-	}*/
-
-	/*private function changeStudentStatusRequest($studentId, $currentSemester, $newStatus){
-		$where = array('id_student'=>$studentId, 'id_semester'=> $currentSemester);
-		$change = array('request_status'=>$newStatus);
-		$this->db->where($where);
-		$this->db->update('student_request', $change);
-	}*/
 
 	private function checkStudentHasRequest($studentId){
 		$this->db->select('id_request');
