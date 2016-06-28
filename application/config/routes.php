@@ -198,7 +198,7 @@ $route['course_test'] = 'test/program/course_test';
 $route['selection_process_test'] = 'test/program/SelectionProcess_Test';
 $route['process_settings_test'] = 'test/program/ProcessSettings_Test';
 $route['process_phase_test'] = 'test/program/ProcessPhase_Test';
-
+$route['intellectual_production_test'] = 'test/program/IntellectualProduction_Test';
 
 /* Notification tests */
 $route['email_notification_test'] = 'test/notification/EmailNotification_Test';

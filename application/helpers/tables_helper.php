@@ -1193,9 +1193,9 @@ function displayRegisteredPrograms($programs, $canRemove){
 
 					echo "<td>";
 
-					$summaryNonExists = isEmpty($program['summary']);
-					$historyNonExists = isEmpty($program['history']);
-					$contactNonExists = isEmpty($program['contact']);
+					$summaryNonExists = empty($program['summary']);
+					$historyNonExists = empty($program['history']);
+					$contactNonExists = empty($program['contact']);
 
 					if($summaryNonExists || $historyNonExists || $contactNonExists){
 						echo "<span class='label label-warning' data-container=\"body\" data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
