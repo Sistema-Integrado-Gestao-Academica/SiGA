@@ -21,8 +21,8 @@ class ProductionType{
 
     private static $SUBTYPES = array(
 
-    	0 => self::BOOK,
-    	1 => self::JOURNAL_ARTICLE,
+    	0 => self::JOURNAL_ARTICLE,
+        1 => self::BOOK,
     	2 => self::PERIODIC_ARTICLE,
     	3 => self::WORK_IN_PROCEEDINGS,
 		4 => self::OTHER,

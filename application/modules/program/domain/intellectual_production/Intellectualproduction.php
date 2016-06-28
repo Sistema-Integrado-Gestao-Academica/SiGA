@@ -74,14 +74,15 @@ class IntellectualProduction{
 
 	private function setType($typeId){
 
-		if($typeId != FALSE && !isEmpty($typeId)){
+		if($typeId !== FALSE){
 
+			$typeId = (int) $typeId;
 			$types = ProductionType::getTypes();
 
 			if($typeId <= (count($types) - 1)){
 				
 				$type = $types[$typeId];
-				$this->type = $type;
+				$this->type = $typeId;
 			}
 			else{
 
@@ -116,13 +117,15 @@ class IntellectualProduction{
 
 	private function setSubtype($subtypeId){
 
-		if($subtypeId != FALSE && !isEmpty($subtypeId)){
+		if($subtypeId !== FALSE){
+			
+			$subtypeId = (int) $subtypeId;
 			$subtypes = ProductionType::getSubtypes();
 			
 			if($subtypeId <= (count($subtypes) - 1)){
 			
 				$subtype = $subtypes[$subtypeId];
-				$this->subtype = $subtype;
+				$this->subtype = $subtypeId;
 			} 
 			else{
 				throw new IntellectualProductionException(self::INVALID_SUBTYPE);
@@ -138,7 +141,7 @@ class IntellectualProduction{
 	private function setQualis($qualis){
 		
 
-		if($qualis != FALSE && !isEmpty($qualis)){
+		if($qualis !== FALSE && !isEmpty($qualis)){
 
 			if(strlen($qualis) == self::QUALIS_LENGTH){
 				$this->qualis = $qualis;
