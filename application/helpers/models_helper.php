@@ -41,13 +41,13 @@ function hasNext($array){
 }
 
 /**
- * Check if the attribute is empty
+ * Check if the attribute is empty or null
  * @param $attribute - Attribute to check
- * @return TRUE if the attribute is empty
+ * @return TRUE if the attribute is empty or null
  */
 function isEmpty($attribute){
     
-    if($attribute != ""){
+    if(!empty($attribute) && !is_null($attribute)){
         $isEmpty = FALSE;
     }
     else{
