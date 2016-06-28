@@ -22,10 +22,10 @@ class Migration_cria_tabela_e_permissao_producao_intelectual extends CI_Migratio
 			'type' => array('type' => 'VARCHAR(25)', 'NULL' => true),
 			'subtype' => array('type' => 'VARCHAR(25)', 'NULL' => true),
 			'title' => array('type' => 'VARCHAR(255)'),
-			'ano' => array('type' => 'INT', 'NULL' => true),
+			'year' => array('type' => 'INT(4)', 'NULL' => true),
 			'periodic' => array('type' => 'VARCHAR(55)', 'NULL' => true),
 			'qualis' => array('type' => 'VARCHAR(2)', 'NULL' => true),
-			'identifier' => array('type' => 'INT', 'NULL' => true),
+			'identifier' => array('type' => 'INT(13)', 'NULL' => true),
 			'author' => array('type' => 'INT')
 		));
 
