@@ -16,10 +16,16 @@ class Production extends MX_Controller {
 
 		$groups = array(GroupConstants::TEACHER_GROUP, GroupConstants::STUDENT_GROUP);
 
+		$session = getSession();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+
+		$productions = $this->production_model->getUserProductions($userId);
 		$data = array(
 
 			'types' => ProductionType::getTypes(),
-			'subtypes' => ProductionType::getSubtypes()
+			'subtypes' => ProductionType::getSubtypes(),
+			'productions' => $productions
 		);
 
 		loadTemplateSafelyByGroup($groups, "program/intellectual_production/intellectual_production", $data);
@@ -56,11 +62,11 @@ class Production extends MX_Controller {
 				else{
 					$session->showFlashMessage("danger", "Não foi possível adicionar a produção intelectual");
 				}
-				$this->index();
 			}
 			catch(IntellectualProductionException $exception){
 				$session->showFlashMessage("danger", $exception->getMessage());
 			}
+			$this->index();
 
 		}
 		else{
