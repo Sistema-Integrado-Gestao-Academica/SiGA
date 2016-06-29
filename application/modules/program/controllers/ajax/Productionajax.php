@@ -24,4 +24,26 @@ class ProductionAjax extends MX_Controller {
 
 	}
 
+	public function getPeriodicNameAndQualis(){
+
+		$issn = $this->input->post("issn");
+
+		$this->load->model("program/production_model");
+		$qualis = $this->production_model->getQualisByISSN($issn);
+
+		$json = array();
+		if($qualis !== FALSE){
+
+	        $json = array (
+	            'qualis'=> $qualis[0]['qualis'],
+	            'periodic' => $qualis[0]['periodic']
+	        );
+	        echo json_encode($json);
+		}
+		else{
+	        echo json_encode($json);
+		}
+
+	}
+
 }

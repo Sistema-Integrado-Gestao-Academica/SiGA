@@ -64,4 +64,29 @@ class Production_model extends CI_Model {
 		return $production;
 	}
 
+	public function getQualisByPeriodicName($periodic){
+
+		$this->db->select("qualis, issn");
+		$this->db->from("periodic_qualis");
+		$this->db->where("periodic", $periodic);
+		$qualis = $this->db->get()->result_array();
+
+		$qualis = checkArray($qualis);
+
+		return $qualis;
+	}
+
+	public function getQualisByISSN($issn){
+
+		$this->db->select("periodic, qualis");
+		$this->db->from("periodic_qualis");
+		$this->db->where("issn", $issn);
+		$qualis = $this->db->get()->result_array();
+
+		$qualis = checkArray($qualis);
+
+		return $qualis;
+	}
+
+
 }

@@ -1,7 +1,5 @@
 <?= form_open("save_production") ?>
 	<div class="header"></div>
-	<div class="body bg-gray">
-
 		<div class="form-group">
 			<?= form_label("Título da produção", "title") ?>
 			<?= form_input(array(
@@ -63,10 +61,10 @@
 				"id" => "qualis",	
 				"type" => "text",
 				"class" => "form-control",
+				"readonly" => "readonly"
 			))?>					
 		</div>
 		
-		</div>
 		<div class="footer">
 		<?= form_button(array(
 		"id" => "new_expense_detail",
@@ -74,7 +72,9 @@
 		"type" => "submit",
 		"content" => "Salvar"
 		)) ?>
-	</div>
+		</div>
 
 
 <?= form_close() ?>
+
+<br><br><br>

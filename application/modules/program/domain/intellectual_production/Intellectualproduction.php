@@ -168,6 +168,7 @@ class IntellectualProduction{
 
 		if($identifier !== FALSE && !isEmpty($identifier)){
 
+			$identifier = str_replace("-", "", $identifier);
 			$validLength = strlen($identifier) == self::MAX_IDENTIFIER_LENGTH || 
 							strlen($identifier) == self::MIN_IDENTIFIER_LENGTH;
 			
