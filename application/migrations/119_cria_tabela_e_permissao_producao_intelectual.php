@@ -25,7 +25,7 @@ class Migration_cria_tabela_e_permissao_producao_intelectual extends CI_Migratio
 			'year' => array('type' => 'INT(4)', 'NULL' => true),
 			'periodic' => array('type' => 'VARCHAR(55)', 'NULL' => true),
 			'qualis' => array('type' => 'VARCHAR(2)', 'NULL' => true),
-			'identifier' => array('type' => 'INT(13)', 'NULL' => true),
+			'identifier' => array('type' => 'VARCHAR(13)', 'NULL' => true),
 			'author' => array('type' => 'INT')
 		));
 

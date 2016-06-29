@@ -27,10 +27,10 @@ class IntellectualProduction{
 	private $qualis;
 	private $periodic;
 	private $identifier; // ISSN ou ISBN
-
+	private $id;
 
 	public function __construct($author, $title, $type = FALSE, $year = FALSE, $subtype = FALSE,
-								$qualis = FALSE, $periodic = FALSE, $identifier = FALSE){
+								$qualis = FALSE, $periodic = FALSE, $identifier = FALSE, $id = FALSE){
 
 
 		$this->setAuthor($author);
@@ -41,7 +41,7 @@ class IntellectualProduction{
 		$this->setQualis($qualis);
 		$this->setPeriodic($periodic);
 		$this->setIdentifier($identifier);
-
+		$this->setId($id);
 	}
 
 	private function setAuthor($author){
@@ -173,7 +173,7 @@ class IntellectualProduction{
 			
 			if(is_numeric($identifier) && $validLength){		
 
-				$this->identifier = (int) $identifier;
+				$this->identifier = $identifier;
 
 			}
 			else{
@@ -184,6 +184,10 @@ class IntellectualProduction{
 		else{
 			$this->identifier = NULL;			
 		}
+	}
+
+	private function setId($id){
+		$this->id = $id;
 	}
 
 	public function getTitle(){
@@ -216,5 +220,30 @@ class IntellectualProduction{
 
 	public function getIdentifier(){
 		return $this->identifier;
+	}
+
+	public function getTypeName(){
+
+		$typeId = $this->getType();
+
+		$types = ProductionType::getTypes();
+
+		$type = $types[$typeId];
+
+		return $type;
+	}
+
+	public function getSubtypeName(){
+		$subtypeId = $this->getSubtype();
+
+		$subtypes = ProductionType::getSubtypes();
+
+		$subtype = $subtypes[$subtypeId];
+
+		return $subtype;
+	}
+
+	public function getId(){
+		return $this->id;
 	}
 }
