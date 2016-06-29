@@ -8,13 +8,13 @@ class Migration_cria_tabela_e_permissao_producao_intelectual extends CI_Migratio
 		$this->db->query("ALTER TABLE permission MODIFY route varchar(30)");
 
 		// Creating permission
-		$this->db->insert('permission', array('permission_name' => "Produção Intelectual", 'route' => "intellectual_production", "id_permission"=>33));
+		$this->db->insert('permission', array('permission_name' => "Produção Intelectual", 'route' => "intellectual_production", "id_permission"=>34));
 		
 		// Adding permission to teacher
-		$this->db->insert('group_permission', array('id_group' => 5, 'id_permission' => 33));
+		$this->db->insert('group_permission', array('id_group' => 5, 'id_permission' => 34));
 		
 		// Adding permission to student
-		$this->db->insert('group_permission', array('id_group' => 7, 'id_permission' => 33));
+		$this->db->insert('group_permission', array('id_group' => 7, 'id_permission' => 34));
 
 		// Expense details table
 		$this->dbforge->add_field(array(

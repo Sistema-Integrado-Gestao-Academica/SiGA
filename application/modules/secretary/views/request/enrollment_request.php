@@ -23,7 +23,7 @@
 			echo anchor(
 				"student/temporaryrequest/confirmEnrollmentRequest/{$userId}/{$courseId}/{$semester['id_semester']}",
 				"Confirmar solicitação",
-				"class='btn btn-primary btn-flat'"
+				"id='confirm_enrollment_request_btn' class='btn btn-primary btn-flat'"
 			);
 		}
 		?>

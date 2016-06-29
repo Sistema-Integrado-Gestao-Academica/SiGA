@@ -80,11 +80,13 @@ class EnrollmentAjax extends MX_Controller {
                             echo "</td>";
 
                             echo "<td>";
-                            echo $class['current_vacancies'];
+                            $currentVacancies = $class['current_vacancies'];
+                            echo $currentVacancies;
                             echo "</td>";
 
+                            $attrs = "class='btn btn-primary'";
                             echo "<td>";
-                            echo anchor("student/temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}","Adicionar à matrícula", "class='btn btn-primary'");
+                            echo anchor("student/temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}","Adicionar à matrícula", $attrs);
                             echo "</td>";
                         echo "</tr>";
                     }
