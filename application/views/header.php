@@ -61,7 +61,7 @@
 	<script src=<?=base_url("js/jquery.tablesorter.min.js")?>></script>
 	<script src=<?=base_url("js/jquery-ui.min.js")?>></script>
 	<script src=<?=base_url("js/datepicker-pt-BR.js")?>></script>
-
+	<script src=<?=base_url("js/bootstrap-filestyle.min.js")?>></script>
 	<link rel="icon" href="<?=base_url()?>/favicon.ico" type="image/ico">
 </head>
 
@@ -84,9 +84,9 @@
 				</li>
 					<img src="<?php echo base_url('img/logo_home.png'); ?>" alt="Logo SiGA" class="navbar-brand" id="logo_logged_home"/>
 				</a>
-					
+
 				</ul>
-					
+
 					<ul class="nav navbar-nav navbar-right">
 
 						<li class="dropdown notifications-menu">
@@ -102,12 +102,12 @@
                             <ul class="dropdown-menu">
 
                                 <li class="header"><?php echo "<b>Você tem ".$notSeenNotifications." notificação(ões) não vista(s).</b>";?></li>
-                                <li>                                
+                                <li>
                                     <!-- inner menu: contains the actual data -->
                                     <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
 
                                     <ul style="overflow-y: scroll; width: 100%; height: 200px;" class="menu">
-                                        
+
                                         <?php
                                         	$i = 1;
                                         	foreach ($notifications as $notification){
@@ -139,7 +139,7 @@
                                         	}
 
                                         ?>
-                                        
+
                                     </ul>
 
                                     <div style="background: rgb(0, 0, 0) none repeat scroll 0% 0%; width: 3px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 0px; z-index: 99; right: 1px; height: 156.863px;" class="slimScrollBar"></div>
@@ -163,7 +163,7 @@
                                         	echo ucfirst($userName);
 
                                         	echo "<br><br><small><b>	Grupos cadastrados:</b></small>";
- 
+
                                         	foreach($userGroups as $group){
                                         		switch ($group->getName()) {
                                         			case GroupConstants::ACADEMIC_SECRETARY_GROUP:
@@ -204,7 +204,7 @@
 					</a>
 
 					<li><?=anchor("register", "Cadastro", "class='navbar-brand'")?></li>
-					
+
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right" id="login_menu">
@@ -254,8 +254,8 @@
 											"content" => "Entrar",
 											"type" => "submit"
 										));
-									
-									
+
+
 									?>
 									</div>
 								</div>
