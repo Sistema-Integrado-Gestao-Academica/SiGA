@@ -143,6 +143,10 @@ $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
+// Qualis routes
+$route['import_qualis'] = 'program/importQualis/index';
+$route['upload_qualis'] = 'program/importQualis/upload';
+
 // User Invitation routes
 $route['invite_user'] = 'secretary/userInvitation/index';
 $route['invite'] = 'secretary/userInvitation/invite';
@@ -182,7 +186,7 @@ $route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test
  */
-/* Auth tests */ 
+/* Auth tests */
 $route['user_test'] = 'test/auth/User_test';
 $route['login_test'] = 'test/auth/Login_test';
 $route['permission_test'] = 'test/auth/Permission_test';

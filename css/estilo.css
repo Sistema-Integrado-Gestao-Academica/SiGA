@@ -2,6 +2,11 @@ body {
 	padding-top: 50px;
 }
 
+#not_saved_periodics{
+  height: 200px;
+  overflow-y : scroll;
+}
+
 #user_side_bar{
   overflow-y : scroll;
 }
@@ -145,7 +150,7 @@ td {
 
 #login_btn{
    margin-left: 10%;
- 
+
 }
 
 #logo_home{

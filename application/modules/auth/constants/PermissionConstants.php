@@ -3,7 +3,7 @@
 class PermissionConstants{
 
 	const USER_PERMISSION = "user_report";
-	
+
 	// Secretary functionalities permissions
 	const ENROLL_STUDENT_PERMISSION = "enroll_student";
 	const STUDENT_LIST_PERMISSION = "student_list";
@@ -22,9 +22,10 @@ class PermissionConstants{
 	const FUNCTIONS_PERMISSION = "funcoes";
 	const SECTOR_PERMISSION = "setores";
 	const INVITE_USER_PERMISSION = "invite_user";
+	const IMPORT_QUALIS_PERMISSION = "import_qualis";
 
 	const SECRETARY_PROGRAMS_PERMISSION = "secretary_programs";
-	
+
 	// Student functionalities permissions
 	const DOCUMENT_REQUEST_PERMISSION = "documents_request";
 
