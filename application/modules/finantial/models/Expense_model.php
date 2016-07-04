@@ -64,6 +64,7 @@ class Expense_model extends CI_Model {
 		return $expenseType;
 
 	}
+
 	public function createExpenseDetail($data){
 		return $this->db->insert("expense_detail", $data);
 	}

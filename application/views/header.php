@@ -60,7 +60,7 @@
 	<script src=<?=base_url("js/jquery.mask.min.js")?>></script>
 	<script src=<?=base_url("js/jquery.tablesorter.min.js")?>></script>
 	<script src=<?=base_url("js/jquery-ui.min.js")?>></script>
-	<script src=<?=base_url("js/datepicker-pt-BR.js")?>></script>
+    <script src=<?=base_url("js/datepicker-pt-BR.js")?>></script>
 	<script src=<?=base_url("js/bootstrap-filestyle.min.js")?>></script>
 	<link rel="icon" href="<?=base_url()?>/favicon.ico" type="image/ico">
 </head>
