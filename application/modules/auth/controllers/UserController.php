@@ -41,10 +41,14 @@ class UserController extends MX_Controller {
 		$this->load->model("program/course_model");
 		$availableCourses = $this->course_model->getAllCourses();
 
+		$this->load->model('program/program_model');
+		
 		$coursesName = array();
 		foreach ($availableCourses as $course) {
 			$id = $course['id_course'];
-			$coursesName[$id] = $course['course_name'];
+			$program = $this->program_model->getProgramById($course['id_program']);
+			$programAcronym = $program['acronym'];
+			$coursesName[$id] = $programAcronym." - ".$course['course_name'];
 		}
 
 		return $coursesName;

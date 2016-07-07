@@ -23,7 +23,7 @@
 	<div class="body bg-gray">
 		<div class="form-group">
 			<?= form_label("Cursos ", "course_name") ?>
-			<?= form_dropdown("courses_name", $coursesName, '#', 'id="courses_name"','name="courses_name"') ?>
+			<?= form_dropdown("courses_name", $coursesName, '#', ['class' => "form-control", 'id' => "courses_name", 'name' => "courses_name"]) ?>
 			<?= form_error("course_name") ?>
 
 		</div>
