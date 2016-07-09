@@ -70,7 +70,26 @@
 				</div>
 				</div>
 				</div>
-				<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'> Editar</i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+				<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'> </i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+			
+				<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger" >
+					<span class="fa fa-remove"></span> 
+				</button>
+				
+				<div id=<?="confirmation".$id?> class="collapse">
+					<?= form_open("delete_production") ?>
+					<?= form_hidden("id", $id) ?>
+					<br>
+					Deseja realmente remover essa produção?
+					<br>
+					<?= form_button(array(
+							"id" => "delete_production_btn",
+							"class" => "btn bg-danger",
+							"content" => "Remover produção",
+							"type" => "submit"
+						))?>
+					<?= form_close() ?>
+				</div>
 			</td>
 
 			</tr>

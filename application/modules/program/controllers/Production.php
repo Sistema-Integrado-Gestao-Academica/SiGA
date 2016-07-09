@@ -90,6 +90,21 @@ class Production extends MX_Controller {
 		}
 	}
 
+	public function delete(){
+
+		$productionId = $this->input->post('id');
+		$success = $this->production_model->deleteProduction($productionId);
+		$session = getSession();
+		
+		if($success){
+			$session->showFlashMessage("success", "Produção intelectual removida com sucesso!");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível remover a produção intelectual");
+		}
+		$this->index();
+	}
+
 	private function getProductionData($productionId = FALSE){
 		
 		$valid = $this->validateProductionData();

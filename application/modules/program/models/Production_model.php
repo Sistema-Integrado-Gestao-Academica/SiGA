@@ -63,6 +63,14 @@ class Production_model extends CI_Model {
 		return $foundProduction;
 	}
 
+	public function deleteProduction($id) {
+		
+		$this->db->where('id', $id);
+		$deleted = $this->db->delete('intellectual_production');
+		
+		return $deleted;
+	}
+
 
 	private function convertToArray($production){
 
