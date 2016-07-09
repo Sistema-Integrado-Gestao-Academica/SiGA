@@ -13,6 +13,16 @@ class Production_model extends CI_Model {
 		return $success;
 	}
 
+	public function updateProduction($production){
+		
+		$this->db->where('id', $production->getId());
+		$data = $this->convertToArray($production);
+		
+		$updated = $this->db->update('intellectual_production', $data);
+		
+		return $updated;
+	}
+
 	public function getUserProductions($userId){
 
 		$this->db->select("intellectual_production.*");
@@ -31,6 +41,26 @@ class Production_model extends CI_Model {
 		}
 
 		return $productions;
+	}
+
+	public function getProductionById($productionId){
+
+		$this->db->select("intellectual_production.*");
+		$this->db->from("intellectual_production");
+		$this->db->where("id", $productionId);
+
+		$foundProduction = $this->db->get()->result_array();
+
+		$foundProduction = checkArray($foundProduction);
+
+		if($foundProduction !== FALSE){
+			foreach ($foundProduction as $id => $production) {
+				$production = $this->convertToObject($production);
+				$foundProduction[$id] = $production;
+			}
+		}
+
+		return $foundProduction;
 	}
 
 
