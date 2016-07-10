@@ -38,7 +38,10 @@
 				    		echo "<td>";
 				    			$type = $request['document_type'];
 				    			$docName = $request['other_name'];
+				    			$receiveOption = $request['provide_online'];
 				    			echo prettyDocType($type, $docName);
+				    			echo "<br><br>";
+				    			echo prettyReceiveOption($receiveOption);
 				    		echo "</td>";
 
 				    		echo "<td>";
@@ -46,7 +49,7 @@
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
-?>			    
+?>
 			</tbody>
 		</table>
 		</div>

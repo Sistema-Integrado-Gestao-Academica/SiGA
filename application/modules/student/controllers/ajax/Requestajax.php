@@ -8,6 +8,32 @@ class RequestAjax extends MX_Controller {
 
         $documentType = $this->input->post('documentType');
 
+        $submitBtn = function(){
+            $btn = array(
+                "id" => "request_document_btn",
+                "class" => "btn bg-primary btn-flat",
+                "content" => "Solicitar documento",
+                "type" => "submit"
+            );
+
+            echo form_button($btn);
+        };
+
+        $receiveDocumentOption = function(){
+            $option = array(
+                'name' => 'receive_option',
+                'id' => 'receive_option',
+                'value' => TRUE,
+                'checked' => TRUE,
+            );
+
+            echo "<div class='form-group'>";
+            echo form_checkbox($option);
+            echo form_label("Este documento pode ser disponibilizado online.", "receive_option");
+            echo "<span class='help-block'>Caso contrário você terá que buscar o documento na secretaria.</span>";
+            echo "</div>";
+        };
+
         switch($documentType){
 
             case DocumentConstants::QUALIFICATION_JURY:
@@ -24,13 +50,6 @@ class RequestAjax extends MX_Controller {
 
             case DocumentConstants::DECLARATIONS:
 
-                $submitBtn = array(
-                    "id" => "request_document_btn",
-                    "class" => "btn bg-primary btn-flat",
-                    "content" => "Solicitar documento",
-                    "type" => "submit"
-                );
-
                 $docRequest = new DocumentConstants();
                 $declarationTypes = $docRequest->getDeclarationTypes();
 
@@ -39,8 +58,8 @@ class RequestAjax extends MX_Controller {
                 echo form_dropdown("declarationType", $declarationTypes, '', "id='declarationType' class='form-control' style='width:40%;'");
                 echo"</div>";
 
-                echo form_button($submitBtn);
-
+                $receiveDocumentOption();
+                $submitBtn();
                 break;
 
             case DocumentConstants::OTHER_DOCS:
@@ -56,19 +75,13 @@ class RequestAjax extends MX_Controller {
                     'required' => TRUE
                 );
 
-                $submitBtn = array(
-                    "id" => "request_document_btn",
-                    "class" => "btn bg-primary btn-flat",
-                    "content" => "Solicitar documento",
-                    "type" => "submit"
-                );
-
                 echo "<div class='form-group'>";
                 echo form_label("Informe o documento desejado:", "other_document_request");
                 echo form_input($otherDocument);
                 echo "</div>";
 
-                echo form_button($submitBtn);
+                $receiveDocumentOption();
+                $submitBtn();
                 break;
 
             default:

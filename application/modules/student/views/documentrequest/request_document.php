@@ -3,12 +3,12 @@
 <h2 class="principal">Solicitação de Documentos</h2>
 
 <h3><i class="fa fa-list"></i> Documentos já solicitados</h3>
-<?php 
+<?php
 	echo anchor(
 		"student/documentrequestStudent/displayArchivedRequests/{$courseId}/{$userId}",
 		"Solicitações arquivadas",
 		"class='btn btn-success'"
-	); 
+	);
 ?>
 <?php if($documentRequests !== FALSE){ ?>
 
@@ -34,7 +34,7 @@
 				    		echo "<td>";
 					    		$docConstants = new DocumentConstants();
 					    		$allTypes = $docConstants->getAllTypes();
-					    		
+
 					    		if($allTypes !== FALSE){
 					    			echo $allTypes[$request['document_type']];
 					    		}else{
@@ -54,7 +54,10 @@
 				    		echo "<td>";
 				    			$type = $request['document_type'];
 				    			$docName = $request['other_name'];
+				    			$receiveOption = $request['provide_online'];
 				    			echo prettyDocType($type, $docName);
+				    			echo "<br><br>";
+				    			echo prettyReceiveOption($receiveOption);
 				    		echo "</td>";
 
 				    		echo "<td>";
@@ -77,7 +80,7 @@
 				    		echo "</td>";
 			    		echo "</tr>";
 			    	}
-?>			    
+?>
 			</tbody>
 		</table>
 		</div>
@@ -94,10 +97,10 @@
 <h3><i class="fa fa-plus-circle"></i> Nova solicitação</h3>
 <br>
 <?= form_open('student/documentrequestStudent/newDocumentRequest') ?>
-	
+
 	<?= form_hidden("courseId", $courseId)?>
 	<?= form_hidden("studentId", $userId)?>
-	
+
 	<div class='form-group'>
 		<?= form_label("Escolha o tipo de documento:", "documentTypes") ?>
 		<?= form_dropdown("documentType", $documentTypes, '', "id='documentType' class='form-control' style='width:40%;'"); ?>

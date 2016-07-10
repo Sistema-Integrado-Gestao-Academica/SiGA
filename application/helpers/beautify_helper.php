@@ -28,13 +28,26 @@ function prettyDocType($type, $docName = ""){
 		case DocumentConstants::OTHER_DOCS:
 			$beautifulType = "<b>Documento solicitado: </b>".$docName;
 			break;
-		
+
 		default:
 			$beautifulType = "-";
 			break;
 	}
 
 	return $beautifulType;
+}
+
+function prettyReceiveOption($receiveOption){
+
+	// This means that the document can be provided online
+	$option = "<b>Entrega do documento</b>: ";
+	if($receiveOption){
+		$option .=  "<span class='label label-primary'>Online</span>";
+	}else{
+		$option .=  "<span class='label label-default'>Em mãos</span>";
+	}
+
+	return $option;
 }
 
 function prettyDocDownload($request){

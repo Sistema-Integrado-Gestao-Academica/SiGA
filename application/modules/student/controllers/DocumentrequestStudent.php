@@ -58,6 +58,16 @@ class DocumentRequestStudent extends MX_Controller {
 
 		$documentType = $this->input->post('documentType');
 
+		$canProvideOnline = function(){
+			$receiveOption = $this->input->post('receive_option');
+			if($receiveOption != NULL){
+				$can = TRUE;
+			}else{
+				$can = FALSE;
+			}
+			return $can;
+		};
+
 		switch($documentType){
 
 			case DocumentConstants::QUALIFICATION_JURY:
@@ -80,7 +90,8 @@ class DocumentRequestStudent extends MX_Controller {
 					'id_student' =>	$studentId,
 					'id_course' => $courseId,
 					'document_type' => $declarationType,
-					'status' => DocumentConstants::REQUEST_OPEN
+					'status' => DocumentConstants::REQUEST_OPEN,
+					'provide_online' => $canProvideOnline()
 				);
 
 				$wasSaved = $this->saveDocumentRequest($requestData);
@@ -95,7 +106,7 @@ class DocumentRequestStudent extends MX_Controller {
 
 				$session = getSession();
 				$session->showFlashMessage($status, $message);
-				redirect("secretary/documentrequest/requestDocument/{$courseId}/{$studentId}");
+				redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 
 				break;
 
@@ -108,7 +119,8 @@ class DocumentRequestStudent extends MX_Controller {
 					'id_course' => $courseId,
 					'document_type' => $documentType,
 					'status' => DocumentConstants::REQUEST_OPEN,
-					'other_name' => $otherDocumentName
+					'other_name' => $otherDocumentName,
+					'provide_online' => $canProvideOnline()
 				);
 
 				$wasSaved = $this->saveDocumentRequest($requestData);
@@ -120,10 +132,10 @@ class DocumentRequestStudent extends MX_Controller {
 					$status = "danger";
 					$message = "Não foi possível enviar a solicitação de documento informada.";
 				}
-				
+
 				$session = getSession();
 				$session->showFlashMessage($status, $message);
-				redirect("secretary/documentrequest/requestDocument/{$courseId}/{$studentId}");
+				redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 
 				break;
 
@@ -139,7 +151,7 @@ class DocumentRequestStudent extends MX_Controller {
 		$docRequest = new DocumentConstants();
 		$types = $docRequest->getAllTypes();
 		$requestedDoc = $types[$documentRequestData['document_type']];
-	
+
 		$student = $documentRequestData["id_student"];
 		$course = $documentRequestData["id_course"];
 
@@ -150,7 +162,7 @@ class DocumentRequestStudent extends MX_Controller {
 	}
 
 	public function cancelRequest($requestId, $courseId, $studentId){
-	
+
 		$wasDeleted = $this->doc_request_model->deleteRequest($requestId);
 
 		if($wasDeleted){
@@ -286,10 +298,10 @@ class DocumentRequestStudent extends MX_Controller {
 		if($requests !== FALSE){
 
 			foreach ($requests as $request) {
-				
+
 				$requestId = $request['id_request'];
 				$userId = $request['id_student'];
-		
+
 				$this->load->model("auth/usuarios_model");
 				$users[$requestId] = $this->usuarios_model->getUserById($userId);
 			}
