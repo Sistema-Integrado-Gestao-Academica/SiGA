@@ -27,8 +27,7 @@ class ConfirmSignUpEmail extends EmailNotification{
         $userId = $user->getId();
         $activation = $this->activation;
         
-        $initializationVector = bin2hex(openssl_random_pseudo_bytes(8));
-        $initializationVector = $initializationVector.$userId;
+        $initializationVector = bin2hex(openssl_random_pseudo_bytes(4));
         
         $encryptedUser = openssl_encrypt($userId, "AES128", $activation, $options = 0, $initializationVector);
 
