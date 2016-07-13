@@ -26,6 +26,7 @@ class Notification extends MX_Controller{
 	 */
 	public function documentRequestNotification($requestStudent, $courseToNotify, $requestedDoc){
 
+
 		// Get request student name
 		$this->load->model("auth/usuarios_model");
 		$student = $this->usuarios_model->getUserById($requestStudent);
@@ -43,8 +44,7 @@ class Notification extends MX_Controller{
 
 				try{
 					$userId = $secretary["id_user"];
-					
-					if(isset($alreadyNotified[$userId]) && !$alreadyNotified[$userId]){
+					if(!array_key_exists($userId, $alreadyNotified)){
 
 						// The secretary name does not matter to the notification, this is a arbitrary name 
 						$user = new User($userId, "secretaryname");
