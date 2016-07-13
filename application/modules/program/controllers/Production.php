@@ -9,12 +9,12 @@ class Production extends MX_Controller {
 
 	public function __construct(){
 		$this->load->model("program/production_model");
+		$this->groups = array(GroupConstants::TEACHER_GROUP, GroupConstants::STUDENT_GROUP);
 	}
 
 
 	public function index(){
 
-		$groups = array(GroupConstants::TEACHER_GROUP, GroupConstants::STUDENT_GROUP);
 
 		$session = getSession();
 		$user = $session->getUserData();
@@ -28,12 +28,85 @@ class Production extends MX_Controller {
 			'productions' => $productions
 		);
 
-		loadTemplateSafelyByGroup($groups, "program/intellectual_production/intellectual_production", $data);
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);
 
 	}
 
 	public function save(){
 
+		$production = $this->getProductionData();
+
+		if($production !== FALSE){
+
+			$success = $this->production_model->createProduction($production);
+			$session = getSession();
+			if($success){
+				$session->showFlashMessage("success", "Produção intelectual adicionada com sucesso!");
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível adicionar a produção intelectual");
+			}
+			$this->index();
+		}
+		else{
+			$this->index();
+		}
+		
+	}
+
+	public function edit($productionId){
+
+		$production = $this->production_model->getProductionById($productionId);
+
+		$data = array(
+			'production' => $production,
+			'types' => ProductionType::getTypes(),
+			'subtypes' => ProductionType::getSubtypes()
+		);
+
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_intellectual_production", $data);
+	}
+
+	public function update(){
+
+		$productionId = $this->input->post('id');
+		$production = $this->getProductionData($productionId);
+
+		if($production !== FALSE){
+
+			$success = $this->production_model->updateProduction($production);
+			$session = getSession();
+			
+			if($success){
+				$session->showFlashMessage("success", "Produção intelectual editada com sucesso!");
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível editar a produção intelectual");
+			}
+			$this->index();
+		}
+		else{
+			$this->index();
+		}
+	}
+
+	public function delete(){
+
+		$productionId = $this->input->post('id');
+		$success = $this->production_model->deleteProduction($productionId);
+		$session = getSession();
+		
+		if($success){
+			$session->showFlashMessage("success", "Produção intelectual removida com sucesso!");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível remover a produção intelectual");
+		}
+		$this->index();
+	}
+
+	private function getProductionData($productionId = FALSE){
+		
 		$valid = $this->validateProductionData();
 
 		if($valid){
@@ -53,27 +126,17 @@ class Production extends MX_Controller {
 			try{
 				
 				$production = new IntellectualProduction($author, $title, $type, $year, $subtype,
-															$qualis, $periodic, $identifier);
-				$success = $this->production_model->createProduction($production);
-				
-				if($success){
-					$session->showFlashMessage("success", "Produção intelectual adicionada com sucesso!");
-				}
-				else{
-					$session->showFlashMessage("danger", "Não foi possível adicionar a produção intelectual");
-				}
+															$qualis, $periodic, $identifier, $productionId);
 			}
 			catch(IntellectualProductionException $exception){
 				$session->showFlashMessage("danger", $exception->getMessage());
 			}
-			$this->index();
-
 		}
 		else{
-			$this->index();
+			$production = FALSE;
 		}
 
-
+		return $production;
 	}
 
 	private function validateProductionData(){

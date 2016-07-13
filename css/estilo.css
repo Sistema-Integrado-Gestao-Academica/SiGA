@@ -180,6 +180,14 @@ td {
   background-color: #3d9970;
   color: white;
 }
+
+#center_form{
+  margin-left: 30%;
+}
+
+#center_btn_form{
+  margin-left: 30%; 
+}
 /*
  * Skin: Green (from AdminLTE)
  * -----------

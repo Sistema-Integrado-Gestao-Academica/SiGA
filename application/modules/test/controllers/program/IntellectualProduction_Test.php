@@ -28,7 +28,7 @@ class IntellectualProduction_Test extends TestCase{
         $this->subtype = 1; // Journal Article
         $this->qualis = "B1";
         $this->periodic = "Molejo";
-        $this->identifier = "01245678"; // ISSN
+        $this->identifier = "0124-5678"; // ISSN
     }
 
 
@@ -211,8 +211,7 @@ class IntellectualProduction_Test extends TestCase{
         }
 
         $test_name = "Test if instantiate with isbn identifier";
-
-        $this->unit->run(1234567891234, $production->getIdentifier(), $test_name, $notes);
+        $this->unit->run("1234567891234", $production->getIdentifier(), $test_name, $notes);
     }
 
     public function shouldNotCreateIntellectualProductionWithInvalidIdentifier(){

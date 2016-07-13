@@ -4,17 +4,8 @@
 
 	<h4><a href="#form" data-toggle="collapse">  <i class="fa fa-plus-circle">Adicionar produção intelectual</i></a>	</h4>
 
-    <div id="form" class="collapse">
-
-    	<div class="row">
-
-			<div class="col-lg-6">
-			
-				<?php include '_new_intellectual_production_form.php'; ?>
-			</div>
-		</div>
-    </div>
-
+	<?php include 'new_intellectual_production.php'; ?>
+    
     <?php if($productions !== FALSE){ ?>
 
 
@@ -57,8 +48,8 @@
 			</td>
 
 			<td> 
-				<!-- Modal -->
-				 <a href=<?="#myModal".$id?> data-toggle="modal">  <i class="fa fa-search"></i></a>	
+				<!-- Modal to see production-->
+				 <a href=<?="#myModal".$id?> data-toggle="modal" class="btn btn-success">  <i class="fa fa-search"></i> </a>	
 				 <!-- Modal HTML -->
 				<div id=<?="myModal".$id?> class="modal fade">
 				<div class="modal-dialog">
@@ -78,6 +69,26 @@
 				    </div>
 				</div>
 				</div>
+				</div>
+				<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'> </i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+			
+				<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger" >
+					<span class="fa fa-remove"></span> 
+				</button>
+				
+				<div id=<?="confirmation".$id?> class="collapse">
+					<?= form_open("delete_production") ?>
+					<?= form_hidden("id", $id) ?>
+					<br>
+					Deseja realmente remover essa produção?
+					<br>
+					<?= form_button(array(
+							"id" => "delete_production_btn",
+							"class" => "btn bg-danger",
+							"content" => "Remover produção",
+							"type" => "submit"
+						))?>
+					<?= form_close() ?>
 				</div>
 			</td>
 
