@@ -24,11 +24,11 @@
 				}else{
 					echo "<h4> Curso: <b>{$course['course_name']}</b></h4>";
 
-					$userName = $userData['name'];
-					$studentId = $userData['id'];
+					$userName = $userData->getName();
+					$studentId = $userData->getId();
 					$courseId = $course['id_course'];
 
-					include(APPPATH."/views/student/_inform_enrollment.php");
+					include(MODULESPATH."student/views/student/_inform_enrollment.php");
 				}
 				
 				echo "<hr>";
