@@ -23,6 +23,7 @@ class PermissionConstants{
 	const SECTOR_PERMISSION = "setores";
 	const INVITE_USER_PERMISSION = "invite_user";
 	const IMPORT_QUALIS_PERMISSION = "import_qualis";
+	const ACADEMIC_PROJECT_PERMISSION = "academic_projects";
 
 	const SECRETARY_PROGRAMS_PERMISSION = "secretary_programs";
 

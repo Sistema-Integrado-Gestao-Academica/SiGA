@@ -182,6 +182,10 @@ $route['selection_process'] = 'program/selectiveprocess/index';
  */
 $route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/$2';
 
+/**
+ * Project routes
+ */
+$route['academic_projects'] = 'program/project/index';
 
 /**
  * Intellectual Production routes
