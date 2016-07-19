@@ -2,7 +2,7 @@
 
 class UserInvitation_model extends CI_Model {
 
-	const INVITATION_TABLE = "user_invitation";
+	public $TABLE = "user_invitation";
 	const ID_COLUMN = "id_invitation";
 	const INVITED_GROUP_COLUMN = "invited_group";
 	const INVITED_EMAIL_COLUMN = "invited_email";
@@ -10,12 +10,12 @@ class UserInvitation_model extends CI_Model {
 	const ACTIVE_COLUMN = "active";
 
 	public function save($invitation){
-		$this->db->insert(self::INVITATION_TABLE, $invitation);
+		$this->db->insert($this->$TABLE, $invitation);
 	}
 
 	public function disable($invitation){
 		$this->db->where(self::ID_COLUMN, $invitation);
-		$this->db->update(self::INVITATION_TABLE, array(
+		$this->db->update($this->$TABLE, array(
 			self::ACTIVE_COLUMN => FALSE
 		));
 	}
@@ -33,23 +33,4 @@ class UserInvitation_model extends CI_Model {
 
 		return $foundInvitation;
 	}
-	
-	private function get($attr, $value = FALSE, $unique = TRUE){
-
-		if(is_array($attr)){
-			$foundInvitation = $this->db->get_where(self::INVITATION_TABLE, $attr);
-		}else{
-			$foundInvitation = $this->db->get_where(self::INVITATION_TABLE, array($attr => $value));
-		}
-
-		if($unique){
-			$foundInvitation = $foundInvitation->row_array();
-		}else{
-			$foundInvitation = $foundInvitation->result_array();
-		}
-
-		$foundInvitation = checkArray($foundInvitation);
-
-		return $foundInvitation;
-	}	
 }

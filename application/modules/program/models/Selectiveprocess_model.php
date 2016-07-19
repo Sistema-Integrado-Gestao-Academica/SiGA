@@ -10,7 +10,7 @@ require_once(MODULESPATH."program/domain/selection_process/ProcessSettings.php")
 
 class SelectiveProcess_model extends CI_Model {
 
-	const SELECTION_PROCESS_TABLE = "selection_process";
+	public $TABLE = "selection_process";
 
 	const ID_ATTR = "id_process";
 	const COURSE_ATTR = "id_course";
@@ -31,7 +31,7 @@ class SelectiveProcess_model extends CI_Model {
 	const REPEATED_NOTICE_NAME = "O nome do edital informado já existe. Nome informado: ";
 
 	public function save($process){
-		
+
 		$courseId = $process->getCourse();
 		$processType = $process->getType();
 		$noticeName = $process->getName();
@@ -39,7 +39,7 @@ class SelectiveProcess_model extends CI_Model {
 		$endDate = $process->getSettings()->getYMDEndDate();
 		$phasesOrder = serialize($process->getSettings()->getPhasesOrder());
 
-		
+
 		$processToSave = array(
 			self::COURSE_ATTR => $courseId,
 			self::PROCESS_TYPE_ATTR => $processType,
@@ -48,15 +48,15 @@ class SelectiveProcess_model extends CI_Model {
 			self::END_DATE_ATTR => $endDate,
 			self::PHASE_ORDER_ATTR => $phasesOrder
 		);
-		
+
 		$previousProcess = $this->getByName($noticeName);
 
-		
+
 		// Does not exists this selection process yet
 		if($previousProcess === FALSE){
 
 			// Saves the selection process basic data
-			$this->db->insert(self::SELECTION_PROCESS_TABLE, $processToSave);
+			$this->db->insert($this->$TABLE, $processToSave);
 
 			$savedProcess = $this->getByName($noticeName);
 
@@ -102,7 +102,7 @@ class SelectiveProcess_model extends CI_Model {
 	public function updateNoticeFile($processId, $noticePath){
 
 		$this->db->where(self::ID_ATTR, $processId);
-		$updated = $this->db->update(self::SELECTION_PROCESS_TABLE, array(
+		$updated = $this->db->update($this->$TABLE, array(
 			self::NOTICE_PATH_ATTR => $noticePath
 		));
 
@@ -154,32 +154,12 @@ class SelectiveProcess_model extends CI_Model {
 		}
 
 		return $selectiveProcess;
-	} 
+	}
 
 	private function getByName($name){
 
 		$process = $this->get(self::NOTICE_NAME_ATTR, $name);
 
 		return $process;
-	}
-
-	private function get($attr, $value = FALSE, $unique = TRUE){
-
-		if(is_array($attr)){
-			$foundProcess = $this->db->get_where(self::SELECTION_PROCESS_TABLE, $attr);
-		}else{
-			
-			$foundProcess = $this->db->get_where(self::SELECTION_PROCESS_TABLE, array($attr => $value));
-		}
-
-		if($unique){
-			$foundProcess = $foundProcess->row_array();
-		}else{
-			$foundProcess = $foundProcess->result_array();
-		}
-
-		$foundProcess = checkArray($foundProcess);
-
-		return $foundProcess;
 	}
 }

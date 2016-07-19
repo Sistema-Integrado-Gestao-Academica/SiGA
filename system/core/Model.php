@@ -77,4 +77,22 @@ class CI_Model {
 		return get_instance()->$key;
 	}
 
+	protected function get($attr, $value = FALSE, $unique = TRUE){
+
+        if(is_array($attr)){
+            $foundData = $this->db->get_where($this->TABLE, $attr);
+        }else{
+            $foundData = $this->db->get_where($this->TABLE, array($attr => $value));
+        }
+
+        if($unique){
+            $foundData = $foundData->row_array();
+        }else{
+            $foundData = $foundData->result_array();
+        }
+
+        $foundData = checkArray($foundData);
+
+        return $foundData;
+    }
 }

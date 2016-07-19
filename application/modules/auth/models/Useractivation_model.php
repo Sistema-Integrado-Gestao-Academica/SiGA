@@ -2,7 +2,7 @@
 
 class UserActivation_model extends CI_Model {
 
-	const ACTIVATION_TABLE = "user_activation";
+	public $TABLE = "user_activation";
 
 	const USER_COLUMN = "id_user";
 	const ACTIVATION_COLUMN = "activation";
@@ -16,7 +16,7 @@ class UserActivation_model extends CI_Model {
 			self::ACTIVATION_COLUMN => $activation
 		);
 
-		$saved = $this->db->insert(self::ACTIVATION_TABLE, $newActivation);
+		$saved = $this->db->insert($this->$TABLE, $newActivation);
 
 		return $saved;
 	}
@@ -42,7 +42,7 @@ class UserActivation_model extends CI_Model {
 		));
 
 		if($foundActivation !== FALSE){
-			
+
 			$confirmed = $this->activateUser($userId);
 
 			$this->activation_model->cleanUsedActivation($activationKey);
@@ -58,7 +58,7 @@ class UserActivation_model extends CI_Model {
 		$this->load->model("usuarios_model");
 
 		$this->db->where(Usuarios_model::USER_ID_COLUMN, $userId);
-		
+
 		$activated = $this->db->update(Usuarios_model::USER_TABLE, array(
 			Usuarios_model::ACTIVE_COLUMN => TRUE
 		));
@@ -69,32 +69,13 @@ class UserActivation_model extends CI_Model {
 	public function cleanUsedActivation($activationKey){
 
 		$this->db->where(self::ACTIVATION_COLUMN, $activationKey);
-		$this->db->delete(self::ACTIVATION_TABLE);
-	}
-
-	private function get($attr, $value = FALSE, $unique = TRUE){
-
-		if(is_array($attr)){
-			$foundActivation = $this->db->get_where(self::ACTIVATION_TABLE, $attr);
-		}else{
-			$foundActivation = $this->db->get_where(self::ACTIVATION_TABLE, array($attr => $value));
-		}
-
-		if($unique){
-			$foundActivation = $foundActivation->row_array();
-		}else{
-			$foundActivation = $foundActivation->result_array();
-		}
-
-		$foundActivation = checkArray($foundActivation);
-
-		return $foundActivation;
+		$this->db->delete($this->$TABLE);
 	}
 
 	public function deleteUserActivation($userId){
 
 		$this->db->where(self::USER_COLUMN, $userId);
-		$deleted = $this->db->delete(self::ACTIVATION_TABLE);
+		$deleted = $this->db->delete($this->$TABLE);
 
 		return $deleted;
 	}

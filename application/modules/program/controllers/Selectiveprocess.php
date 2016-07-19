@@ -21,7 +21,7 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function index() {
-        
+
         $this->load->module("secretary/secretary");
         $programsAndCourses = $this->secretary->getSecretaryPrograms();
         $programs = $programsAndCourses['programs'];
@@ -47,9 +47,9 @@ class SelectiveProcess extends MX_Controller {
 
         $courses = array();
         foreach($secretaryCourses as $secretaryCourse){
-            
+
             foreach($programCourses as $programCourse){
-                
+
                 if($secretaryCourse == $programCourse){
                     $courses[] = $programCourse;
                 }
@@ -84,7 +84,7 @@ class SelectiveProcess extends MX_Controller {
         $course = $this->course_model->getCourseById($courseId);
 
         $this->load->module("program/phase");
-        $phases = $this->phase->getAllPhases(); 
+        $phases = $this->phase->getAllPhases();
 
         $data = array(
             'course' => $course,
@@ -95,10 +95,10 @@ class SelectiveProcess extends MX_Controller {
     }
 
     private function setUploadOptions($fileName, $programId, $courseId, $processId){
-        
+
         // Remember to give the proper permission to the /upload_files folder
         define("NOTICES_UPLOAD_FOLDER_PATH", "upload_files/notices");
-        
+
         $desiredPath = APPPATH.NOTICES_UPLOAD_FOLDER_PATH;
 
         $ids = array(
@@ -121,7 +121,7 @@ class SelectiveProcess extends MX_Controller {
     private function createFolders($desiredPath, $ids){
 
         foreach ($ids as $folderType => $id) {
-            
+
             $auxPath = $desiredPath;
 
             $pathToAdd = "/".$folderType."_".$id;
@@ -150,9 +150,9 @@ class SelectiveProcess extends MX_Controller {
 
         $this->load->model("program/course_model");
         $course = $this->course_model->getCourseById($courseId);
-        
+
         $config = $this->setUploadOptions($process->getName(), $course["id_program"], $course["id_course"], $processId);
-        
+
         $this->upload->initialize($config);
 
         if($this->upload->do_upload("notice_file")){
@@ -175,7 +175,7 @@ class SelectiveProcess extends MX_Controller {
         }else{
             // Errors on file upload
             $errors = $this->upload->display_errors();
-            
+
             $status = "danger";
             $message = $errors."<br>Tente novamente.";
             $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
@@ -209,15 +209,15 @@ class SelectiveProcess extends MX_Controller {
 
 
         if($processes !== FALSE){
- 
+
             $selectiveProcesses = array();
 
             foreach($processes as $process){
-                
+
                 if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
 
                     try{
-                        
+
                         $selectionProcess = new RegularStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
@@ -241,11 +241,11 @@ class SelectiveProcess extends MX_Controller {
                 }
 
                 if($selectionProcess !== FALSE){
-                    $selectiveProcesses[] = $selectionProcess;                    
+                    $selectiveProcesses[] = $selectionProcess;
                 }else{
                     // Something is wrong with the data registered on database
                     // Should not have wrong data because the data is validated before inserting, using the same class.
-                    show_error("O banco de dados retornou um valor inválido da tabela ".SelectiveProcess_model::SELECTION_PROCESS_TABLE.". Contate o administrador.", 500, "Algo de errado com o banco de dados");
+                    show_error("O banco de dados retornou um valor inválido da tabela ".$this->process_model->TABLE.". Contate o administrador.", 500, "Algo de errado com o banco de dados");
                 }
             }
 
