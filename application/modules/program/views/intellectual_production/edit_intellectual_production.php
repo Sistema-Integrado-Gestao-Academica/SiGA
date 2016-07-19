@@ -51,26 +51,23 @@
 ?>
 
 <div id="form" align="center">
-<div id="center_form">
 
-		<div class="row">
+	<div class="row">
 
-			<div class="col-lg-7">
-				<?= form_open("update_production") ?>
-					
-					<div class="principal"><h2>Editar produção</h2></div>
-					<?php include '_intellectual_production_form.php'; ?>
-					
-					<?= form_hidden('id', $production->getId()); ?>
+		<div class="col-lg-10">
+			<?= form_open("update_production") ?>
+				
+				<div class="principal"><h2>Editar produção</h2></div>
+				<?php include '_intellectual_production_form.php'; ?>
+				
+				<?= form_hidden('id', $production->getId()); ?>
 
-				<?= form_close() ?>
-				<br>
-				<div class="col-lg-4" id="center_btn_form">
-					<?= anchor("intellectual_production", 'Voltar', "class='btn btn-danger btn-block'") ?>
-				</div>
+			<?= form_close() ?>
+			<br>
+			<div class="col-lg-5" id="center_btn_form">
+				<?= anchor("intellectual_production", 'Voltar', "class='btn btn-danger btn-block'") ?>
 			</div>
 		</div>
 	</div>
-
 
 </div>

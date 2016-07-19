@@ -142,11 +142,12 @@ class Usuarios_model extends CI_Model {
 				try{
 					$id = $userData['id'];
 					$name = $userData['name'];
+					$cpf = $userData['cpf'];
 					$login = $userData['login'];
 					$email = $userData['email'];
 					$active = $userData['active'];
 
-					$user = new User($id, $name, FALSE, $email, $login, FALSE, FALSE, FALSE, FALSE, $active);
+					$user = new User($id, $name, $cpf, $email, $login, FALSE, FALSE, FALSE, FALSE, $active);
 
 				}catch(UserException $e){
 					$user = FALSE;
@@ -294,7 +295,7 @@ class Usuarios_model extends CI_Model {
 	 * @return An array with the user data if exists or FALSE if does not
 	 */
 	public function getUserDataByLogin($login){
-		$this->db->select('id, name, email, login, active');
+		$this->db->select('id, name, email, cpf, login, active');
 		$this->db->where("login", $login);
 		$foundUser = $this->db->get("users")->row_array();
 

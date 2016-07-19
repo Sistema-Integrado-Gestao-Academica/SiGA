@@ -126,5 +126,20 @@ class Production_model extends CI_Model {
 		return $qualis;
 	}
 
+	public function getLastProduction($production){
+		
+		$query = $this->db->query("SELECT MAX(id) FROM intellectual_production");
+		$row = $query->row_array();
+	    $lastId = $row["MAX(id)"];
+
+	    $intellectual_production = $this->getProductionById($lastId);
+
+		if($intellectual_production[0]->getTitle() != $production->getTitle()){
+			$lastId = FALSE;
+		}
+
+		return $lastId;
+	}
+
 
 }

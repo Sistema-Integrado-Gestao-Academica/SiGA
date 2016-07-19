@@ -8,6 +8,15 @@ $(document).ready(function(){
 		getPeriodicAndQualis();
 	});
 
+
+	$('#add_coauthor').click(function() {
+		addAuthor();
+		
+	});
+
+	$(document).on('change', '#cpfField', function() {
+		getAuthorByCpf();
+	});
 });
 
 function getISSNAndQualis(){
@@ -67,4 +76,15 @@ function getPeriodicAndQualis(){
 }
 
 
-	
+function addAuthor(){
+    var form_data = {
+        cpf: $('#cpf').val(),
+        name: $('#name').val(),
+        production_id: $('#production_id').val()
+    };
+    $.ajax({
+        url: "<?php echo site_url('program/intellectual_production/saveCoauthor'); ?>",
+        type: 'POST',
+        data: form_data
+    });
+}

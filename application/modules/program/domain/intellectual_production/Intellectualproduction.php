@@ -28,9 +28,10 @@ class IntellectualProduction{
 	private $periodic;
 	private $identifier; // ISSN ou ISBN
 	private $id;
+	private $coauthors;
 
 	public function __construct($author, $title, $type = FALSE, $year = FALSE, $subtype = FALSE,
-								$qualis = FALSE, $periodic = FALSE, $identifier = FALSE, $id = FALSE){
+								$qualis = FALSE, $periodic = FALSE, $identifier = FALSE, $id = FALSE, $coauthors = FALSE){
 
 
 		$this->setAuthor($author);
@@ -42,6 +43,7 @@ class IntellectualProduction{
 		$this->setPeriodic($periodic);
 		$this->setIdentifier($identifier);
 		$this->setId($id);
+		$this->setCoauthors($coauthors);
 	}
 
 	private function setAuthor($author){
@@ -191,6 +193,10 @@ class IntellectualProduction{
 		$this->id = $id;
 	}
 
+	private function setCoauthors($coauthors){
+		$this->coauthors = $coauthors;
+	}
+
 	public function getTitle(){
 		return $this->title;
 	}
@@ -246,5 +252,9 @@ class IntellectualProduction{
 
 	public function getId(){
 		return $this->id;
+	}
+
+	public function getCoauthors(){
+		return $this->coauthors;
 	}
 }

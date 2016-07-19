@@ -46,4 +46,8 @@ class ProductionAjax extends MX_Controller {
 
 	}
 
+	public function getAuthorByCpf($cpfs){
+		
+	}
+
 }

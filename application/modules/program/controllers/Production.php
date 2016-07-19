@@ -14,8 +14,6 @@ class Production extends MX_Controller {
 
 
 	public function index(){
-
-
 		$session = getSession();
 		$user = $session->getUserData();
 		$userId = $user->getId();
@@ -42,11 +40,12 @@ class Production extends MX_Controller {
 			$session = getSession();
 			if($success){
 				$session->showFlashMessage("success", "Produção intelectual adicionada com sucesso!");
+				$this->addCoauthors($production);
 			}
 			else{
 				$session->showFlashMessage("danger", "Não foi possível adicionar a produção intelectual");
+				$this->index();
 			}
-			$this->index();
 		}
 		else{
 			$this->index();
@@ -54,14 +53,37 @@ class Production extends MX_Controller {
 		
 	}
 
-	public function edit($productionId){
+	public function addCoauthors($production){
 
+		$session = getSession();
+		$user = $session->getUserData();
+
+		$productionId = $this->production_model->getLastProduction($production);
+		$data = array(
+			'productionId' => $productionId,
+			'author' => $user
+		);
+
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/add_coauthors", $data);
+	}
+
+	public function saveCoauthor(){
+		$productionId = $this->input->post('production_id');
+		var_dump($productionId);
+
+	}
+
+	public function edit($productionId){
+		
+		$session = getSession();
+		$user = $session->getUserData();
 		$production = $this->production_model->getProductionById($productionId);
 
 		$data = array(
 			'production' => $production,
 			'types' => ProductionType::getTypes(),
-			'subtypes' => ProductionType::getSubtypes()
+			'subtypes' => ProductionType::getSubtypes(),
+			'user' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_intellectual_production", $data);
