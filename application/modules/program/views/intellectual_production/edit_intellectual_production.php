@@ -54,7 +54,7 @@
 
 	<div class="row">
 
-		<div class="col-lg-10">
+		<div class="col-lg-12">
 			<?= form_open("update_production") ?>
 				
 				<div class="principal"><h2>Editar produção</h2></div>
@@ -62,10 +62,19 @@
 				
 				<?= form_hidden('id', $production->getId()); ?>
 
+			
 			<?= form_close() ?>
 			<br>
-			<div class="col-lg-5" id="center_btn_form">
-				<?= anchor("intellectual_production", 'Voltar', "class='btn btn-danger btn-block'") ?>
+			<div class="col-lg-7" id="center_btn_form">
+
+				<div class="col-lg-3">
+					<?= anchor("intellectual_production", 'Voltar', "class='btn btn-danger btn-block'") ?>
+				</div>
+				
+				<div class="col-lg-5">
+
+					<?= anchor("edit_coauthors", 'Editar autores', "class='btn btn-primary btn-block'") ?>
+				</div>
 			</div>
 		</div>
 	</div>

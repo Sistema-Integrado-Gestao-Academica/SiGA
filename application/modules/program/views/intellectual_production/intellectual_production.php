@@ -8,8 +8,6 @@
     
     <?php if($productions !== FALSE){ ?>
 
-
-
     <div class="box-body table-responsive no-padding">
 		<table id="expenses" class="table table-bordered table-hover tablesorter" >
 			<thead>

@@ -35,6 +35,7 @@ echo "<tbody>";
 buildTableHeaders(array(
 	'CPF',
 	'Nome',
+	'',
 ));
 
 echo "<tr>";
@@ -44,6 +45,10 @@ echo "<tr>";
 
 	echo "<td>";
 	echo $author->getName();
+	echo "</td>";
+
+	echo "<td>";
+	echo "";
 	echo "</td>";
 
 echo "</tr>";

@@ -68,10 +68,19 @@ class Production extends MX_Controller {
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/add_coauthors", $data);
 	}
 
-	public function saveCoauthor(){
+	public function editCoauthors(){
+		$session = getSession();
+		$user = $session->getUserData();
 
+		$productionId = $this->production_model->getLastProduction($production);
+		$data = array(
+			'productionId' => $productionId,
+			'author' => $user
+		);
+
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/add_coauthors", $data);
 	}
-
+	
 	public function edit($productionId){
 		
 		$session = getSession();
@@ -82,7 +91,8 @@ class Production extends MX_Controller {
 			'production' => $production,
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
-			'user' => $user
+			'productionId' => $productionId,
+			'author' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_intellectual_production", $data);

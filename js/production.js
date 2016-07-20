@@ -25,6 +25,19 @@ $(document).ready(function(){
     	$(this).find('form')[0].reset();
     	$('#alert-msg').empty();
 	});
+
+	(function($) {
+
+	  RemoveTableRow = function(handler) {
+	    var tr = $(handler).closest('tr');
+	    var name = tr.find('td[data-name]').data('name');
+	    var productionId = tr.find('td[data-id]').data('id');
+
+	    deleteAuthor(productionId, name, tr);
+
+	    return false;
+	  };
+	})(jQuery);
 });
 
 function getISSNAndQualis(){
@@ -101,19 +114,24 @@ function addAuthor(){
 	        production_id: productionId
 		},
 		function(data){
-            $('#alert-msg').html(data);
-
         	var author = JSON.parse(data);
         	var status = author.status;
             $('#alert-msg').html(author.message);
         	if(status == "success"){	
+
             	var newRow = $("<tr>");
 
-			    var colCpf = '<td>' + author.cpf + '</td>';
-			    var colName = '<td>' + author.name + '</td>';
-
+			    var colCpf = '<td data-id=' + author.production_id +'>' + author.cpf + '</td>';
+			    var colName = '<td data-name=' + author.name +'>' + author.name + '</td>';
+			    var dataToRemove = author.production_id + '/' + author.name;
+				var removeBtn = '<td>';
+				removeBtn += "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
+				removeBtn += '</td>';
+				
 			    newRow.append(colCpf);
 			    newRow.append(colName);
+			    newRow.append(removeBtn);
+
 			    $("#authors_table").append(newRow);
 			    return false;
 			}
@@ -149,7 +167,6 @@ function getAuthorByCPF(){
 function getAuthorByName(){
 	
 	var name = $("#name").val(); 
-
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/productionajax/getAuthorCPFByName";
 
@@ -166,6 +183,28 @@ function getAuthorByName(){
 			}
 			else{
 				document.getElementById('cpf').value = "";
+			}
+		}
+	);
+}
+
+function deleteAuthor(productionId, name, tr){
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/productionajax/deleteAuthor";
+
+	$.post(
+		urlToPost,
+		{
+			production_id: productionId,
+			name: name
+		},
+		function(data){
+  			var success = 1;
+			if(data == success){
+			    tr.fadeOut(400, function(){ 
+			      tr.remove(); 
+			    }); 
 			}
 		}
 	);

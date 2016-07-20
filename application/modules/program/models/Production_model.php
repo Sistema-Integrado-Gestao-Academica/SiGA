@@ -176,4 +176,13 @@ class Production_model extends CI_Model {
 
 		return $authors;
 	}
+
+	public function deleteCoauthor($productionId, $name){
+
+		$this->db->where("production_id", $productionId);
+		$this->db->where("author_name", $name);		
+		$deleted = $this->db->delete('production_coauthor');
+
+		return $deleted;
+	}
 }

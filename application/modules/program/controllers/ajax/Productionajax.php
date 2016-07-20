@@ -93,16 +93,15 @@ class ProductionAjax extends MX_Controller {
 
                 $productionId = $this->input->post("production_id");
        			$name = $this->input->post("name");
-
-                $this->load->model('program/production_model');
-                $data = $this->production_model->getAuthorByProductionAndName($productionId, $name);
+       			$cpf = $this->input->post("cpf");
 
                 $message = $divalert."Autor adicionado com sucesso".$enddiv;
 
                 $json = array (
                     'status' => "success",
-                    'cpf' => $data[0]['cpf'],
-                    'name' => $data[0]['author_name'],
+                    'cpf' => $cpf,
+                    'name' => $name,
+                    'production_id' => $productionId,
                     'message' => $message
                 );
                 echo json_encode($json);
@@ -163,6 +162,15 @@ class ProductionAjax extends MX_Controller {
        
 
         return $success;
+    }
+
+    public function deleteAuthor(){
+    	$productionId = $this->input->post("production_id");
+        $name = $this->input->post("name");
+
+		$this->load->model("program/production_model");
+		$success = $this->production_model->deleteCoauthor($productionId, $name);
+		echo $success;
     }
 
 }
