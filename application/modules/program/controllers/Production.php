@@ -23,7 +23,8 @@ class Production extends MX_Controller {
 
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
-			'productions' => $productions
+			'productions' => $productions,
+			'user' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);

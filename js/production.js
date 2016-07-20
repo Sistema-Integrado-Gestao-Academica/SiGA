@@ -20,7 +20,11 @@ $(document).ready(function(){
 	$("#name").change(function(){
 		getAuthorByName();
 	});
-
+	
+	$("#author_modal").on('hide.bs.modal', function () {
+    	$(this).find('form')[0].reset();
+    	$('#alert-msg').empty();
+	});
 });
 
 function getISSNAndQualis(){

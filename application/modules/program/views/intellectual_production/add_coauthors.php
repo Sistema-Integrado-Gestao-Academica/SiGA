@@ -26,7 +26,7 @@ $hidden = array(
 ?>
 
 <h3 class="principal"> Autores </h3>
-<h4> <a href="#myModal" data-toggle="modal">  <i class="fa fa-plus-circle"></i>Adicionar Autor</a> </h4>
+<h4> <a href="#author_modal" data-toggle="modal">  <i class="fa fa-plus-circle"></i>Adicionar Autor</a> </h4>
 <?php 
 echo "<div class=\"box-body table-responsive no-padding\">";
 echo "<table class=\"table table-bordered table-hover\" id=\"authors_table\">";
@@ -52,7 +52,7 @@ buildTableEndDeclaration();
 ?>
 	
 <!-- Modal HTML -->
-<div id="myModal" class="modal fade">
+<div id="author_modal" class="modal fade">
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -61,7 +61,7 @@ buildTableEndDeclaration();
             	Novo autor
         </div>
         <div class="modal-body">
-            
+            <form id='form'> 
 				<div class="col-lg-5">
 
 					<?= form_input($hidden); ?>
@@ -80,6 +80,7 @@ buildTableEndDeclaration();
 					</div>
 
 				</div>	
+            </form>
             <p class="text-warning"><medium>Não se esqueça de clicar em adicionar.</medium></p>
         </div>
         <div class="modal-footer">

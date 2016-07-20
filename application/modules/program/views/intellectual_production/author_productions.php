@@ -67,6 +67,28 @@
         <?= $subtype ?>
       </p>     
 
+      <hr>
+
+      <strong>Autores</strong>
+
+      <p class="text">
+        <?= $user->getName(); ?>
+
+        <?php
+
+          $coauthors = $production->getCoauthors(); 
+          if($coauthors !== FALSE){
+
+            foreach ($coauthors as $coauthor) {
+                echo "<br>";
+                echo $coauthor['author_name'];               
+            }
+
+          } 
+
+        ?>
+      </p>     
+
     </div>
 </div>
 

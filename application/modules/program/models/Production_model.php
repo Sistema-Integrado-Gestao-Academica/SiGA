@@ -35,7 +35,8 @@ class Production_model extends CI_Model {
 
 		if($productions !== FALSE){
 			foreach ($productions as $id => $production) {
-				$production = $this->convertToObject($production);
+				$authors = $this->getAuthorsNameByProductionId($production['id']);
+				$production = $this->convertToObject($production, $authors);
 				$productions[$id] = $production;
 			}
 		}
@@ -89,11 +90,11 @@ class Production_model extends CI_Model {
 		return $productionArray;
 	}
 
-	private function convertToObject($production){
+	private function convertToObject($production, $authors = FALSE){
 
 		try{
 			$production = new IntellectualProduction($production['author'], $production['title'], $production['type'], $production['year'],
-												$production['subtype'], $production['qualis'], $production['periodic'], $production['identifier'], $production['id']);
+												$production['subtype'], $production['qualis'], $production['periodic'], $production['identifier'], $production['id'], $authors);
 		}
 		catch(IntellectualProductionException $exception){
 			$production = FALSE;
@@ -161,5 +162,18 @@ class Production_model extends CI_Model {
 		$author = checkArray($author);
 
 		return $author;
+	}
+
+	public function getAuthorsNameByProductionId($productionId){
+
+		$this->db->select("production_coauthor.author_name");
+		$this->db->from("production_coauthor");
+		$this->db->where("production_id", $productionId);
+		
+		$authors = $this->db->get()->result_array();
+
+		$authors = checkArray($authors);
+
+		return $authors;
 	}
 }
