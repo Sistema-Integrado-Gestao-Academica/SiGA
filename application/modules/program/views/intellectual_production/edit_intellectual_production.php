@@ -48,6 +48,8 @@
 		"readonly" => "readonly",
 		"value" => $production->getQualis()
 	);				
+
+	$productionId = $production->getId();	
 ?>
 
 <div id="form" align="center">
@@ -60,7 +62,7 @@
 				<div class="principal"><h2>Editar produção</h2></div>
 				<?php include '_intellectual_production_form.php'; ?>
 				
-				<?= form_hidden('id', $production->getId()); ?>
+				<?= form_hidden('id', $productionId); ?>
 
 			
 			<?= form_close() ?>
@@ -73,7 +75,7 @@
 				
 				<div class="col-lg-5">
 
-					<?= anchor("edit_coauthors", 'Editar autores', "class='btn btn-primary btn-block'") ?>
+					<?= anchor("edit_coauthors/{$productionId}", 'Editar autores', "class='btn btn-primary btn-block'") ?>
 				</div>
 			</div>
 		</div>

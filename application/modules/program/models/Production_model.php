@@ -35,7 +35,7 @@ class Production_model extends CI_Model {
 
 		if($productions !== FALSE){
 			foreach ($productions as $id => $production) {
-				$authors = $this->getAuthorsNameByProductionId($production['id']);
+				$authors = $this->getAuthorsByProductionId($production['id']);
 				$production = $this->convertToObject($production, $authors);
 				$productions[$id] = $production;
 			}
@@ -164,9 +164,9 @@ class Production_model extends CI_Model {
 		return $author;
 	}
 
-	public function getAuthorsNameByProductionId($productionId){
+	public function getAuthorsByProductionId($productionId){
 
-		$this->db->select("production_coauthor.author_name");
+		$this->db->select("author_name, cpf");
 		$this->db->from("production_coauthor");
 		$this->db->where("production_id", $productionId);
 		

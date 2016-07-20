@@ -53,6 +53,29 @@ echo "<tr>";
 
 echo "</tr>";
 
+if($authors !== FALSE){
+	
+	foreach ($authors as $coauthor) {
+		
+		echo "<tr>";
+
+		echo "<td data-id={$productionId}>";
+		echo $coauthor['cpf'];
+		echo "</td>";
+
+
+		echo "<td data-name={$coauthor['author_name']}>";
+		echo $coauthor['author_name'];
+		echo "</td>";
+		
+		echo '<td>';
+		echo "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
+		echo '</td>';
+
+		echo "</tr>";
+	}
+}
+
 buildTableEndDeclaration();
 ?>
 	
@@ -100,8 +123,3 @@ buildTableEndDeclaration();
 </div>
 
 <br>
-
-<div class="col-lg-3" id="center_btn_form">
-
-	<?= anchor("intellectual_production", 'Finalizar adição de autores', "class='btn btn-success btn-block'") ?>
-</div>

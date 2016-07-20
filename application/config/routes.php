@@ -191,7 +191,7 @@ $route['save_production'] = 'program/production/save';
 $route['edit_production/(:num)'] = 'program/production/edit/$1';
 $route['update_production'] = 'program/production/update';
 $route['delete_production'] = 'program/production/delete';
-$route['edit_coauthor'] = 'program/production/editCoauthors';
+$route['edit_coauthors/(:num)'] = 'program/production/editCoauthors/$1';
 
 /*
  * Test report routes

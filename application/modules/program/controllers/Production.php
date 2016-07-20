@@ -56,31 +56,30 @@ class Production extends MX_Controller {
 
 	public function addCoauthors($production){
 
-		$session = getSession();
-		$user = $session->getUserData();
-
 		$productionId = $this->production_model->getLastProduction($production);
-		$data = array(
-			'productionId' => $productionId,
-			'author' => $user
-		);
-
-		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/add_coauthors", $data);
+		$this->loadPageCoauthors($productionId, "new_coauthors");
 	}
 
-	public function editCoauthors(){
-		$session = getSession();
-		$user = $session->getUserData();
-
-		$productionId = $this->production_model->getLastProduction($production);
-		$data = array(
-			'productionId' => $productionId,
-			'author' => $user
-		);
-
-		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/add_coauthors", $data);
+	public function editCoauthors($productionId){
+		$this->loadPageCoauthors($productionId, "edit_coauthors");
 	}
 	
+	private function loadPageCoauthors($productionId, $file){
+		
+		$session = getSession();
+		$user = $session->getUserData();
+
+		$authors = $this->production_model->getAuthorsByProductionId($productionId);
+
+		$data = array(
+			'productionId' => $productionId,
+			'author' => $user,
+			'authors' => $authors
+		);
+
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/{$file}", $data);
+	}
+
 	public function edit($productionId){
 		
 		$session = getSession();
