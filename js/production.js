@@ -10,13 +10,13 @@ $(document).ready(function(){
 
 
 	$('#add_coauthor').click(function() {
-		addAuthor();
-		
+		addAuthor();		
 	});
 
-	$(document).on('change', '#cpfField', function() {
-		getAuthorByCpf();
+	$("#cpf").change(function(){
 	});
+
+
 });
 
 function getISSNAndQualis(){
@@ -77,14 +77,38 @@ function getPeriodicAndQualis(){
 
 
 function addAuthor(){
-    var form_data = {
-        cpf: $('#cpf').val(),
-        name: $('#name').val(),
-        production_id: $('#production_id').val()
-    };
-    $.ajax({
-        url: "<?php echo site_url('program/intellectual_production/saveCoauthor'); ?>",
-        type: 'POST',
-        data: form_data
-    });
+
+    var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/productionajax/saveAuthor";
+
+	var cpf = $('#cpf').val();
+	var name = $('#name').val();
+	var productionId = $('#production_id').val();
+
+    $.post(
+		urlToPost,
+		{
+	        cpf: cpf,
+	        name: name,
+	        production_id: productionId
+		},
+		function(data){
+            $('#alert-msg').html(data);
+
+        	var author = JSON.parse(data);
+        	var status = author.status;
+            $('#alert-msg').html(author.message);
+        	if(status == "success"){	
+            	var newRow = $("<tr>");
+
+			    var colCpf = '<td>' + author.cpf + '</td>';
+			    var colName = '<td>' + author.name + '</td>';
+
+			    newRow.append(colCpf);
+			    newRow.append(colName);
+			    $("#authors_table").append(newRow);
+			    return false;
+			}
+		}
+	);
 }

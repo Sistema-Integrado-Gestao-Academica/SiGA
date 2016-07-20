@@ -142,4 +142,24 @@ class Production_model extends CI_Model {
 	}
 
 
+	public function saveAuthors($data){
+
+		$success = $this->db->insert('production_coauthor', $data);
+		
+		return $success;
+	}
+
+	public function getAuthorByProductionAndName($production, $name){
+
+		$this->db->select("production_coauthor.*");
+		$this->db->from("production_coauthor");
+		$this->db->where("production_id", $production);
+		$this->db->where("author_name", $name);
+		
+		$author = $this->db->get()->result_array();
+
+		$author = checkArray($author);
+
+		return $author;
+	}
 }

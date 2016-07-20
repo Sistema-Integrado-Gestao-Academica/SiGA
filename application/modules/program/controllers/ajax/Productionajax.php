@@ -50,4 +50,88 @@ class ProductionAjax extends MX_Controller {
 		
 	}
 
+	public function saveAuthor(){
+
+		$valid = $this->validateAuthor();
+
+        if($valid){
+            $success = $this->createAuthor();
+            if($success){
+                $divalert = "<div class='alert alert-success'> ";
+                $enddiv = "</div>";
+
+                $productionId = $this->input->post("production_id");
+       			$name = $this->input->post("name");
+
+                $this->load->model('program/production_model');
+                $data = $this->production_model->getAuthorByProductionAndName($productionId, $name);
+
+                $message = $divalert."Autor adicionado com sucesso".$enddiv;
+
+                $json = array (
+                    'status' => "success",
+                    'cpf' => $data[0]['cpf'],
+                    'name' => $data[0]['author_name'],
+                    'message' => $message
+                );
+                echo json_encode($json);
+            }
+            else{
+                $divalert = "<div class='alert alert-danger'> ";
+                $enddiv = "<\/div>";
+                $message = $divalert."Não foi possível adicionar o autor".$enddiv;
+                
+                $json = array (
+                    'status' => "failed",
+                    'message' => $message
+                );
+                echo json_encode($json);
+            }
+        }
+        else{
+            $divalert = "<div class='alert alert-danger'> ";
+            $errors = validation_errors(); 
+            $enddiv = "</div>";
+            $message = $divalert.$errors.$enddiv;
+                
+            $json = array (
+                'status' => "failed",
+                'message' => $message
+            );
+            echo json_encode($json);
+        }
+	}
+
+    private function validateAuthor(){
+
+        $this->load->library("form_validation");
+
+        $this->form_validation->set_rules("name", "Nome", "required");
+ 
+        $this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+
+        $success = $this->form_validation->run();
+
+        return $success;
+    }
+
+    private function createAuthor(){
+
+        $productionId = $this->input->post("production_id");
+        $name = $this->input->post("name");
+        $cpf = $this->input->post("cpf");
+
+        $data = array(
+            'production_id' => $productionId,
+            'author_name' => $name,
+            'cpf' => $cpf
+        );
+        
+		$this->load->model("program/production_model");
+        $success = $this->production_model->saveAuthors($data);
+       
+
+        return $success;
+    }
+
 }

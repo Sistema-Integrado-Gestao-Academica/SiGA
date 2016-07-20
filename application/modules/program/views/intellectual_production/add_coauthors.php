@@ -1,27 +1,36 @@
 <script src=<?=base_url("js/production.js")?>></script>
 
 <?php
-	$name = array(
-		"name" => "name",
-		"id" => "name",	
-		"type" => "text",
-		"class" => "form-control",
-	);	
 
-	$cpf = array(
-		"name" => "cpf",
-		"id" => "cpf",	
-		"type" => "text",
-		"class" => "form-control",
-	);	
+$name = array(
+	"name" => "name",
+	"id" => "name",	
+	"type" => "text",
+	"class" => "form-control",
+);	
 
+$cpf = array(
+	"name" => "cpf",
+	"id" => "cpf",	
+	"type" => "text",
+	"class" => "form-control",
+);	
+
+$hidden = array(
+	"id" => "production_id",
+	"name" => "production_id",
+	"type" => "hidden",
+	"value" => $productionId
+);
 
 ?>
 
 <h4 class="principal"> Autores </h4>
 
 <?php 
-buildTableDeclaration();
+echo "<div class=\"box-body table-responsive no-padding\">";
+echo "<table class=\"table table-bordered table-hover\" id=\"authors_table\">";
+echo "<tbody>";
 
 buildTableHeaders(array(
 	'CPF',
@@ -56,6 +65,7 @@ buildTableEndDeclaration();
             
 				<div class="col-lg-5">
 
+						<?= form_input($hidden); ?>
 					<div class="form-group">
 						<?= form_label("CPF", "cpf") ?>
 						<?= form_input($cpf)?>
@@ -71,16 +81,13 @@ buildTableEndDeclaration();
 					</div>
 
 				</div>	
-
-
-				<?= form_hidden("production_id", $productionId); ?>
-            <div id="alert-msg">
             <p class="text-warning"><medium>Não se esqueça de clicar em adicionar.</medium></p>
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-success" id="add_coauthor">Adicionar</button>
 			<?= form_close() ?>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+            <div id="alert-msg">
         </div>
     </div>
 </div>

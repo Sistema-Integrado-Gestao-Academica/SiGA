@@ -68,8 +68,6 @@ class Production extends MX_Controller {
 	}
 
 	public function saveCoauthor(){
-		$productionId = $this->input->post('production_id');
-		var_dump($productionId);
 
 	}
 
