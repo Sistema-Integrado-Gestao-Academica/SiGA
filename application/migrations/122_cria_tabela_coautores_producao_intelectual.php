@@ -14,7 +14,7 @@ class Migration_cria_tabela_coautores_producao_intelectual extends CI_Migration 
 
 		$this->dbforge->create_table('production_coauthor', true);
 
-		$this->db->query("ALTER TABLE production_coauthor ADD CONSTRAINT ID_PRODUCTION_COAUTHOR_FK FOREIGN KEY (production_id) REFERENCES intellectual_production(id)");
+		$this->db->query("ALTER TABLE production_coauthor ADD CONSTRAINT ID_PRODUCTION_COAUTHOR_FK FOREIGN KEY (production_id) REFERENCES intellectual_production(id) ON DELETE CASCADE ON UPDATE RESTRICT");
 
 		$this->db->query("ALTER TABLE production_coauthor ADD CONSTRAINT ID_USER_COAUTHOR_FK FOREIGN KEY (user_id) REFERENCES users(id)");
 	}

@@ -46,9 +46,40 @@ class ProductionAjax extends MX_Controller {
 
 	}
 
-	public function getAuthorByCpf($cpfs){
+	public function getAuthorNameByCPF(){
 		
+		$cpf = $this->input->post("cpf");
+
+		$this->load->model("auth/usuarios_model");
+		$authorName = $this->usuarios_model->getNameByCpf($cpf);
+
+		$json = array();
+		if($authorName !== FALSE){
+
+	        $json = array (
+	            'name'=> $authorName
+	        );
+		}
+	    echo json_encode($json);
 	}
+
+	public function getAuthorCPFByName(){
+		
+		$name = $this->input->post("name");
+
+		$this->load->model("auth/usuarios_model");
+		$authorCPF = $this->usuarios_model->getCpfByName($name);
+
+		$json = array();
+		if($authorCPF !== FALSE){
+
+	        $json = array (
+	            'cpf'=> $authorCPF
+	        );
+		}
+	    echo json_encode($json);
+	}
+	
 
 	public function saveAuthor(){
 

@@ -262,6 +262,22 @@ class Usuarios_model extends CI_Model {
 		return $foundName[0]['name'];
 	}
 
+	public function getNameByCpf($cpf){
+		$this->db->select('name');
+		$this->db->where('cpf', $cpf);
+		$foundName = $this->db->get('users')->result_array();
+		$foundName = checkArray($foundName);
+		return $foundName[0]['name'];
+	}
+
+	public function getCpfByName($name){
+		$this->db->select('cpf');
+		$this->db->where('name', $name);
+		$foundName = $this->db->get('users')->result_array();
+		$foundName = checkArray($foundName);
+		return $foundName[0]['cpf'];
+	}
+
 	private function getUserByPartialName($userName){
 		$this->db->select('id, name');
 		$this->db->like('name', $userName);

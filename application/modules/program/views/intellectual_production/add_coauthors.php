@@ -25,8 +25,8 @@ $hidden = array(
 
 ?>
 
-<h4 class="principal"> Autores </h4>
-
+<h3 class="principal"> Autores </h3>
+<h4> <a href="#myModal" data-toggle="modal">  <i class="fa fa-plus-circle"></i>Adicionar Autor</a> </h4>
 <?php 
 echo "<div class=\"box-body table-responsive no-padding\">";
 echo "<table class=\"table table-bordered table-hover\" id=\"authors_table\">";
@@ -50,7 +50,6 @@ echo "</tr>";
 
 buildTableEndDeclaration();
 ?>
-<a href="#myModal" data-toggle="modal">  <i class="fa fa-plus-circle"></i>Adicionar Autor</a>	
 	
 <!-- Modal HTML -->
 <div id="myModal" class="modal fade">
@@ -65,7 +64,7 @@ buildTableEndDeclaration();
             
 				<div class="col-lg-5">
 
-						<?= form_input($hidden); ?>
+					<?= form_input($hidden); ?>
 					<div class="form-group">
 						<?= form_label("CPF", "cpf") ?>
 						<?= form_input($cpf)?>
@@ -95,3 +94,8 @@ buildTableEndDeclaration();
 </div>
 
 <br>
+
+<div class="col-lg-3" id="center_btn_form">
+
+	<?= anchor("intellectual_production", 'Finalizar adição de autores', "class='btn btn-success btn-block'") ?>
+</div>

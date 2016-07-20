@@ -14,8 +14,12 @@ $(document).ready(function(){
 	});
 
 	$("#cpf").change(function(){
+		getAuthorByCPF();
 	});
 
+	$("#name").change(function(){
+		getAuthorByName();
+	});
 
 });
 
@@ -108,6 +112,56 @@ function addAuthor(){
 			    newRow.append(colName);
 			    $("#authors_table").append(newRow);
 			    return false;
+			}
+		}
+	);
+}
+
+function getAuthorByCPF(){
+	
+	var cpf = $("#cpf").val(); 
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/productionajax/getAuthorNameByCPF";
+
+	$.post(
+		urlToPost,
+		{
+			cpf: cpf,
+		},
+		function(data){
+			var emptyJsonLength = 3;
+        	var author = JSON.parse(data);
+			if(data.length > emptyJsonLength){
+				document.getElementById('name').value = author.name;
+			}
+			else{
+				document.getElementById('name').value = "";
+			}
+		}
+	);
+}
+
+function getAuthorByName(){
+	
+	var name = $("#name").val(); 
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/productionajax/getAuthorCPFByName";
+
+	$.post(
+		urlToPost,
+		{
+			name: name,
+		},
+		function(data){
+			var emptyJsonLength = 3;
+        	var author = JSON.parse(data);
+			if(data.length > emptyJsonLength){
+				document.getElementById('cpf').value = author.cpf;
+			}
+			else{
+				document.getElementById('cpf').value = "";
 			}
 		}
 	);
