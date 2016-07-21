@@ -21,9 +21,13 @@ if($projects !== FALSE){
 
             echo "<td>";
                 echo $project['name'];
+                if($project['coordinator']){
+                    echo " <span class='label label-primary'>Coordenador</span>";
+                }
             echo "</td>";
 
             echo "<td>";
+                echo anchor("", "<i class='fa fa-group'></i> Equipe", "class='btn btn-warning'");
             echo "</td>";
 
         echo "</tr>";
