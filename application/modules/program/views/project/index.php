@@ -27,7 +27,7 @@ if($projects !== FALSE){
             echo "</td>";
 
             echo "<td>";
-                echo anchor("", "<i class='fa fa-group'></i> Equipe", "class='btn btn-warning'");
+                echo anchor("project_team/{$project['id']}", "<i class='fa fa-group'></i> Equipe", "class='btn btn-warning'");
             echo "</td>";
 
         echo "</tr>";

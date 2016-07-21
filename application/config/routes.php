@@ -187,6 +187,8 @@ $route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/
  */
 $route['academic_projects'] = 'program/project/index';
 $route['new_project'] = 'program/project/newProject';
+$route['project_team/(:num)'] = 'program/project/projectTeam/$1';
+$route['add_to_team'] = 'program/project/addMemberToTeam';
 
 /**
  * Intellectual Production routes

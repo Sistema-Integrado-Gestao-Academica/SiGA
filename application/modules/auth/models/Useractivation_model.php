@@ -59,7 +59,7 @@ class UserActivation_model extends CI_Model {
 
 		$this->db->where(Usuarios_model::USER_ID_COLUMN, $userId);
 
-		$activated = $this->db->update(Usuarios_model::USER_TABLE, array(
+		$activated = $this->db->update($this->usuarios_model->TABLE, array(
 			Usuarios_model::ACTIVE_COLUMN => TRUE
 		));
 

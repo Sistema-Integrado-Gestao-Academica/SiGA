@@ -77,12 +77,24 @@ class CI_Model {
 		return get_instance()->$key;
 	}
 
-	protected function get($attr, $value = FALSE, $unique = TRUE){
+	protected function get($attr, $value = FALSE, $unique = TRUE, $like=FALSE, $otherTable = FALSE){
+
+        if($otherTable !== FALSE){
+            $table = $otherTable;
+        }else{
+            $table = $this->TABLE;
+        }
 
         if(is_array($attr)){
-            $foundData = $this->db->get_where($this->TABLE, $attr);
+            $foundData = $this->db->get_where($table, $attr);
         }else{
-            $foundData = $this->db->get_where($this->TABLE, array($attr => $value));
+            if($like){
+                $unique = FALSE;
+                $this->db->like($attr, $value);
+                $foundData = $this->db->get($table);
+            }else{
+                $foundData = $this->db->get_where($table, array($attr => $value));
+            }
         }
 
         if($unique){

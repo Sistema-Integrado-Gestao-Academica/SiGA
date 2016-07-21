@@ -5,7 +5,7 @@ require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 
 class Usuarios_model extends CI_Model {
 
-	const USER_TABLE = "users";
+	public $TABLE = "users";
 
 	const USER_ID_COLUMN = "id";
 	const ACTIVE_COLUMN = "active";
@@ -253,6 +253,11 @@ class Usuarios_model extends CI_Model {
 		return $foundUser;
 	}
 
+	public function getUserByCPF($cpf){
+		$users = $this->get("cpf", $cpf, FALSE, TRUE);
+		return $users;
+	}
+
 	public function getNameByUserId($userId){
 		$this->db->select('name');
 		$this->db->where('id', $userId);
@@ -262,7 +267,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	private function getUserByPartialName($userName){
-		$this->db->select('id, name');
+		$this->db->select('id, name, cpf');
 		$this->db->like('name', $userName);
 		$foundUser = $this->db->get('users')->result_array();
 
@@ -270,7 +275,7 @@ class Usuarios_model extends CI_Model {
 
 		return $foundUser;
 	}
-	
+
 	public function getUserByEmail($email){
 
 		$this->db->select('id, email, name');
@@ -279,7 +284,7 @@ class Usuarios_model extends CI_Model {
 
 		$foundUser = $this->db->get()->row_array();
 		$foundUser = checkArray($foundUser);
-	
+
 		if($foundUser !== FALSE){
 
 			$foundUser = $this->getUserDataForEmail($foundUser);
@@ -310,7 +315,7 @@ class Usuarios_model extends CI_Model {
 	 * @return TRUE if the passwords match or FALSE if does not
 	 */
 	public function checkPasswordForThisLogin($password, $login){
-		
+
 		$this->db->select('password');
 		$searchResult = $this->db->get_where('users', array('login' => $login));
 
@@ -360,7 +365,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function getCourseGuests($courseId, $guestName = FALSE){
-		
+
 		$this->db->select('users.id, users.name, users.cpf, users.email');
 		$this->db->from('users');
 		$this->db->join('course_guest', "users.id = course_guest.id_user");
@@ -370,7 +375,7 @@ class Usuarios_model extends CI_Model {
 		if($guestName !== FALSE){
 			$this->db->like('users.name', $guestName);
 		}
-		
+
 		$users = $this->db->get()->result_array();
 
 		$users = checkArray($users);
@@ -384,7 +389,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('course_guest.*');
 		$this->db->from('course_guest');
 		$this->db->where('course_guest.id_user', $userId);
-		
+
 		$user = $this->db->get()->result_array();
 
 		$user = checkArray($user);
@@ -393,7 +398,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function deleteUserFromCourseGuest($userId){
-		
+
 		$courseGuest = array(
 			'id_user' => $userId,
 		);
@@ -546,7 +551,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function getUserById($id_user){
-		
+
 		$this->db->select('id, name, email, login, active');
 
 		$foundUser = $this->db->get_where('users',array('id'=>$id_user))->row_array();
@@ -575,7 +580,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function update($user) {
-		
+
 		$this->db->where('id', $user->getId());
 		$result = $this->db->update("users", array(
 			'name' => $user->getName(),
@@ -588,22 +593,22 @@ class Usuarios_model extends CI_Model {
 		return $result;
 	}
 
-	public function remove($usuario) {		
+	public function remove($usuario) {
 		$res = $this->db->delete("users", array("login" => $usuario['login']));
 		return $res;
 	}
 
-	public function deleteUserById($userId) {		
-		
+	public function deleteUserById($userId) {
+
 		$userDeleted = $this->removeUserGroup($userId, GroupConstants::GUEST_USER_GROUP_ID);
 		$this->db->where('id', $userId);
 		$userDeleted = $this->db->delete("users");
-		
+
 		return $userDeleted;
 	}
 
 	public function updatePassword($id, $newPassword, $temporaryPassword){
-		
+
 		$this->db->where('id', $id);
 		$this->db->update("users", array(
 			'password' => $newPassword,
@@ -699,7 +704,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function getUserDataForEmail($foundUser){
-		
+
 		if($foundUser != FALSE){
 
 			$id = $foundUser['id'];
@@ -746,9 +751,9 @@ class Usuarios_model extends CI_Model {
 	public function getObjectUser($userId){
 
 		$foundUsers = $this->getUserDataById($userId);
-		
+
 		if($foundUsers != FALSE){
-			
+
 			foreach ($foundUsers as $foundUser) {
 				$id = $foundUser['id'];
 				$name = $foundUser['name'];
@@ -770,16 +775,16 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function updateCourseGuest($userId, $courseId, $status){
-		
+
 		$this->db->where('id_user', $userId);
 		$data = array(
-					'id_course' => $courseId,	
+					'id_course' => $courseId,
 					'status' => $status
 					);
-		
+
 		$success = $this->db->update("course_guest", $data);
 
-		return $success;		
+		return $success;
 	}
 
 }
