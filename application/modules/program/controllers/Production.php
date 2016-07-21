@@ -12,9 +12,7 @@ class Production extends MX_Controller {
 		$this->groups = array(GroupConstants::TEACHER_GROUP, GroupConstants::STUDENT_GROUP);
 	}
 
-
 	public function index(){
-
 
 		$session = getSession();
 		$user = $session->getUserData();
@@ -29,7 +27,6 @@ class Production extends MX_Controller {
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);
-
 	}
 
 	public function save(){
@@ -51,7 +48,7 @@ class Production extends MX_Controller {
 		else{
 			$this->index();
 		}
-		
+
 	}
 
 	public function edit($productionId){
@@ -76,7 +73,7 @@ class Production extends MX_Controller {
 
 			$success = $this->production_model->updateProduction($production);
 			$session = getSession();
-			
+
 			if($success){
 				$session->showFlashMessage("success", "Produção intelectual editada com sucesso!");
 			}
@@ -95,7 +92,7 @@ class Production extends MX_Controller {
 		$productionId = $this->input->post('id');
 		$success = $this->production_model->deleteProduction($productionId);
 		$session = getSession();
-		
+
 		if($success){
 			$session->showFlashMessage("success", "Produção intelectual removida com sucesso!");
 		}
@@ -106,7 +103,7 @@ class Production extends MX_Controller {
 	}
 
 	private function getProductionData($productionId = FALSE){
-		
+
 		$valid = $this->validateProductionData();
 
 		if($valid){
@@ -124,7 +121,7 @@ class Production extends MX_Controller {
 			$author = $user->getId();
 
 			try{
-				
+
 				$production = new IntellectualProduction($author, $title, $type, $year, $subtype,
 															$qualis, $periodic, $identifier, $productionId);
 			}
@@ -143,7 +140,7 @@ class Production extends MX_Controller {
 
 		// form validation
 		$this->load->library("form_validation");
-		
+
 		$this->form_validation->set_rules("title", "Título da produção", "required|trim");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$valid = $this->form_validation->run();

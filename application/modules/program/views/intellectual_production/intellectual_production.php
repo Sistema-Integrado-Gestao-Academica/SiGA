@@ -5,10 +5,8 @@
 	<h4><a href="#form" data-toggle="collapse">  <i class="fa fa-plus-circle">Adicionar produção intelectual</i></a>	</h4>
 
 	<?php include 'new_intellectual_production.php'; ?>
-    
+
     <?php if($productions !== FALSE){ ?>
-
-
 
     <div class="box-body table-responsive no-padding">
 		<table id="expenses" class="table table-bordered table-hover tablesorter" >
@@ -21,35 +19,35 @@
 					<th class="text-center">Ações</th>
 				</tr>
 			</thead>
-			
+
 			<tbody>
 
-    		<?php foreach ($productions as $production) { 
+    		<?php foreach ($productions as $production) {
 
     			$id = $production->getId();
     		?>
 
 			<tr>
 
-			<td> 
+			<td>
 				<?= $production->getTitle()?>
 			</td>
 
-			<td> 
+			<td>
 				<?= $production->getTypeName()?>
 			</td>
 
-			<td> 
+			<td>
 				<?= $production->getSubtypeName()?>
 			</td>
 
-			<td> 
+			<td>
 				<?= $production->getYear()?>
 			</td>
 
-			<td> 
+			<td>
 				<!-- Modal to see production-->
-				 <a href=<?="#myModal".$id?> data-toggle="modal" class="btn btn-success">  <i class="fa fa-search"></i> </a>	
+				 <a href=<?="#myModal".$id?> data-toggle="modal" class="btn btn-success">  <i class="fa fa-search"></i> </a>
 				 <!-- Modal HTML -->
 				<div id=<?="myModal".$id?> class="modal fade">
 				<div class="modal-dialog">
@@ -71,11 +69,11 @@
 				</div>
 				</div>
 				<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'> </i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
-			
+
 				<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger" >
-					<span class="fa fa-remove"></span> 
+					<span class="fa fa-remove"></span>
 				</button>
-				
+
 				<div id=<?="confirmation".$id?> class="collapse">
 					<?= form_open("delete_production") ?>
 					<?= form_hidden("id", $id) ?>
@@ -93,12 +91,12 @@
 			</td>
 
 			</tr>
-    			
+
     		<?php } ?>
 
 			</tbody>
 
 		</table>
-	</div>	
+	</div>
 
 	<?php } ?>

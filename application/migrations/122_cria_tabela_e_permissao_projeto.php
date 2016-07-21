@@ -13,7 +13,7 @@ class Migration_cria_tabela_e_permissao_projeto extends CI_Migration {
         // Projects table
         $this->dbforge->add_field(array(
             'id' => array('type' => 'INT', 'auto_increment' => TRUE),
-            'financing' => array('type' => 'VARCHAR(60)'),
+            'financing' => array('type' => 'VARCHAR(60)', 'NULL' => TRUE),
             'name' => array('type' => 'VARCHAR(200)'),
             'start_date' => array('type' => 'date'),
             'end_date' => array('type' => 'date', 'NULL' => TRUE),
@@ -24,6 +24,8 @@ class Migration_cria_tabela_e_permissao_projeto extends CI_Migration {
         ));
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table('academic_project', TRUE);
+
+        $this->db->query("ALTER TABLE academic_project ADD CONSTRAINT PROJECT_NAME_UK UNIQUE(name)");
 
         // Project team table
         $this->dbforge->add_field(array(

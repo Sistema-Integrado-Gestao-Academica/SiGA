@@ -186,6 +186,7 @@ $route['enroll_student/(:num)/(:num)'] = 'secretary/enrollment/enrollStudent/$1/
  * Project routes
  */
 $route['academic_projects'] = 'program/project/index';
+$route['new_project'] = 'program/project/newProject';
 
 /**
  * Intellectual Production routes

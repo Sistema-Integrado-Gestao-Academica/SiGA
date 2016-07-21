@@ -1,5 +1,9 @@
 <h2 class="principal">Projetos participantes</h2>
 
+<?= anchor('#new_project_form', "<i class='fa fa-plus-circle'></i> Novo projeto", "class='btn-lg' data-toggle='collapse'") ?>
+
+<?php include 'new_project_form.php'; ?>
+
 <h4><i class="fa fa-list"></i> Veja os projetos que você participa:</h4>
 <?php
 
@@ -20,13 +24,6 @@ if($projects !== FALSE){
             echo "</td>";
 
             echo "<td>";
-
-                echo anchor(
-                    "program/selectiveprocess/programCourses/{$program['id_program']}",
-                    "<i class='fa fa-group'></i> Equipe",
-                    "class='btn btn-warning'"
-                );
-
             echo "</td>";
 
         echo "</tr>";

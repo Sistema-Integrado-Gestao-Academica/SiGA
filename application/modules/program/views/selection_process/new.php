@@ -4,7 +4,7 @@
 <h2 class="principal">Novo Processo Seletivo para o curso <b><i><?php echo $course['course_name'];?></i></b> </h2>
 
 <?php
-	
+
 	$studentType = array(
 		SelectionProcessConstants::REGULAR_STUDENT => 'Alunos Regulares',
 		SelectionProcessConstants::SPECIAL_STUDENT => 'Alunos Especiais'
@@ -108,22 +108,22 @@
 <div class="row">
 	<div class="col-md-8">
 		<?= form_label("Selecione as fases que comporão o processo seletivo:"); ?>
-		
+
 		<h4><small><b>
 		Marque as fases desejadas como "Sim".<br>
 		Ao lado do nome da fase, informe o peso da mesma.<br>
 		Os pesos definidos são os pesos padrão.<br>
 		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
 		</b></small></h4>
-		
+
 	<?php
 		if(!empty($phases)){
 
 			foreach($phases as $phase){
-				
+
 				// Homologation phase is obrigatory and do not have weight
 				if($phase->getPhaseName() !== SelectionProcessConstants::HOMOLOGATION_PHASE){
-				
+
 				$selectName = "phase_".$phase->getPhaseId();
 				$selectId = $selectName;
 				$selectedItem = TRUE;
@@ -132,33 +132,33 @@
 					TRUE => "Sim",
 					FALSE => "Não",
 				);
-				
+
 				$phaseWeight["id"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["name"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["value"] = $phase->getWeight();
 	?>
 				<div class="row">
-					
+
 					<div class="col-md-10">
 						<div class="input-group">
 						<span class="input-group-addon">
-							
+
 							<?= form_label($phase->getPhaseName(), $selectName); ?>
 							<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}'"); ?>
 						</span>
-						
+
 						<?= form_input($phaseWeight); ?>
 						</div>
 					</div>
 				</div>
-				
+
 			<?php   }else{ ?>
 
 					<div class="row">
 						<div class="col-md-10">
 							<div class="input-group">
 							<span class="input-group-addon">
-							
+
 								<?= form_label($phase->getPhaseName()); ?>
 							<span class="label label-default">Fase obrigatória e sem peso.</span>
 							</span>

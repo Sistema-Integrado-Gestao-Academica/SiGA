@@ -5,6 +5,10 @@
  * Extends Form_Validation library
  *
  */
+
+require_once(APPPATH."data_types/basic/StartEndDate.php");
+require_once(APPPATH."exception/DateException.php");
+
 class MY_Form_validation extends CI_Form_validation {
 
 	function __construct()
@@ -14,8 +18,26 @@ class MY_Form_validation extends CI_Form_validation {
 
 	// --------------------------------------------------------------------
 
+    function valid_date_interval(){
+
+        $CI =& get_instance();
+
+        $startDate = $CI->input->post('project_start_date');
+        $endDate = $CI->input->post('project_end_date');
+
+        try{
+            $dates = new StartEndDate($startDate, $endDate);
+            $validDate = TRUE;
+        }catch(DateException $e){
+            $CI->form_validation->set_message('valid_date_interval', $e->getMessage());
+            $validDate = FALSE;
+        }
+
+        return $validDate;
+    }
+
     function valid_name($str){
-        
+
         $CI =& get_instance();
 
         $CI->form_validation->set_message('valid_name', 'O {field} deve conter apenas caracteres alfabéticos.');
@@ -81,12 +103,12 @@ class MY_Form_validation extends CI_Form_validation {
         if($foundUsers !== FALSE){
 
             foreach ($foundUsers as $user) {
-                
+
                 $userCpf = $user['cpf'];
                 if($userCpf == $cpf){
                     $cpfNoExists = FALSE;
                     break;
-                }   
+                }
 
             }
         }
@@ -111,12 +133,12 @@ class MY_Form_validation extends CI_Form_validation {
         if($foundUsers !== FALSE){
 
             foreach ($foundUsers as $user) {
-                
+
                 $userLogin = $user['login'];
                 if($userLogin == $login){
                     $loginNoExists = FALSE;
                     break;
-                }   
+                }
 
             }
         }
@@ -141,12 +163,12 @@ class MY_Form_validation extends CI_Form_validation {
 
 
             foreach ($foundUsers as $user) {
-                
+
                 $userEmail = $user['email'];
                 if($userEmail == $email){
                     $emailNoExists = FALSE;
                     break;
-                }   
+                }
 
             }
         }
@@ -171,11 +193,11 @@ class MY_Form_validation extends CI_Form_validation {
         if($expenseTypes !== FALSE){
 
             foreach ($expenseTypes as $expenseType) {
-                
+
                 if($expenseType['code'] == $code){
                     $codeNoExists = FALSE;
                     break;
-                }   
+                }
 
             }
         }
