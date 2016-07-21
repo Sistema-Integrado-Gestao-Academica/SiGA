@@ -27,6 +27,11 @@
 	</div>
 	<div class="col-lg-5">
 
+		<div class="form-group">
+			<?= form_label("Projeto relacionado", "project") ?>
+			<?= form_dropdown("projects", $projects, $projectValue, ['class' => "form-control", 'id' => "projects"]) ?>
+
+		</div>
 
 		<div class="form-group">
 			<?= form_label("Título do periódico", "periodic") ?>

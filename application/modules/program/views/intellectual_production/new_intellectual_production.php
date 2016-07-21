@@ -17,6 +17,7 @@
 
 	$typeValue = array();
 	$subtypeValue = array();
+	$projectValue = array();
 
 	$periodic = array(
 		"name" => "periodic",

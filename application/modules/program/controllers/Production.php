@@ -19,15 +19,42 @@ class Production extends MX_Controller {
 		$userId = $user->getId();
 
 		$productions = $this->production_model->getUserProductions($userId);
+		$projects = $this->getUserProjects($user);
 		$data = array(
 
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
 			'productions' => $productions,
+			'projects' => $projects,
 			'user' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);
+	}
+
+	private function getUserProjects($user){
+
+		$id = $user->getId();
+		$groups = $user->getGroups();
+
+		$this->load->model("program/project_model");	
+		$this->load->model("program/program_model");	
+		$programs = $this->program_model->getUserProgram($id, $groups);
+
+		$projects = array();
+		if($programs !== FALSE){
+			foreach ($programs as $id => $program) {
+				$foundProjects = $this->project_model->getProjectByProgram($id);
+				if($foundProjects != FALSE){
+					foreach ($foundProjects as $foundProject) {
+						$projects[$foundProject['id']] = $foundProject['name'];
+					}
+				}
+
+			}
+		}
+
+		return $projects;
 	}
 
 	public function save(){
@@ -147,6 +174,7 @@ class Production extends MX_Controller {
 			$periodic = $this->input->post("periodic");
 			$qualis = $this->input->post("qualis");
 			$identifier = $this->input->post("identifier");
+			$project = $this->input->post("projects");
 
 			$session = getSession();
 			$user = $session->getUserData();
@@ -155,7 +183,7 @@ class Production extends MX_Controller {
 			try{
 
 				$production = new IntellectualProduction($author, $title, $type, $year, $subtype,
-															$qualis, $periodic, $identifier, $productionId);
+															$qualis, $periodic, $identifier, $productionId, FALSE, $project);
 			}
 			catch(IntellectualProductionException $exception){
 				$session->showFlashMessage("danger", $exception->getMessage());

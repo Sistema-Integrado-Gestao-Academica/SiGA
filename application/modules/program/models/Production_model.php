@@ -92,7 +92,8 @@ class Production_model extends CI_Model {
 			'periodic' => $production->getPeriodic(),
 			'qualis' => $production->getQualis(),
 			'identifier' => $production->getIdentifier(),
-			'author' => $production->getAuthor()
+			'author' => $production->getAuthor(),
+			'project' => $production->getProject()
 		);
 
 		return $productionArray;
@@ -102,7 +103,7 @@ class Production_model extends CI_Model {
 
 		try{
 			$production = new IntellectualProduction($production['author'], $production['title'], $production['type'], $production['year'],
-												$production['subtype'], $production['qualis'], $production['periodic'], $production['identifier'], $production['id'], $authors);
+												$production['subtype'], $production['qualis'], $production['periodic'], $production['identifier'], $production['id'], $authors, $production['project']);
 		}
 		catch(IntellectualProductionException $exception){
 			$production = FALSE;

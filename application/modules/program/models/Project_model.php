@@ -49,6 +49,19 @@ class Project_model extends CI_Model {
         }
     }
 
+    public function getProjectByProgram($programId){
+        
+        $this->db->select('*');
+        $this->db->from($this->TABLE);
+        $this->db->where("program_id", $programId);
+
+        $projects = $this->db->get()->result_array();
+
+        $projects = checkArray($projects);
+
+        return $projects;
+    }
+
     private function saveCoordinator($project, $coordinatorId){
 
         $foundProject = $this->get($project);
