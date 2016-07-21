@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."auth/domain/User.php");
+require_once(MODULESPATH."auth/exception/UserException.php");
+
 class ProductionAjax extends MX_Controller {
 
 	public function getISSNAndQualis(){
@@ -51,13 +54,13 @@ class ProductionAjax extends MX_Controller {
 		$cpf = $this->input->post("cpf");
 
 		$this->load->model("auth/usuarios_model");
-		$authorName = $this->usuarios_model->getNameByCpf($cpf);
+		$authorName = $this->usuarios_model->getUserByCpf($cpf);
 
 		$json = array();
 		if($authorName !== FALSE){
 
 	        $json = array (
-	            'name'=> $authorName
+	            'name'=> $authorName['name']
 	        );
 		}
 	    echo json_encode($json);
@@ -86,8 +89,8 @@ class ProductionAjax extends MX_Controller {
 		$valid = $this->validateAuthor();
 
         if($valid){
-            $success = $this->createAuthor();
-            if($success){
+            try {
+            	$this->createAuthor();
                 $divalert = "<div class='alert alert-success'> ";
                 $enddiv = "</div>";
 
@@ -105,17 +108,18 @@ class ProductionAjax extends MX_Controller {
                     'message' => $message
                 );
                 echo json_encode($json);
-            }
-            else{
+            } 
+            catch (UserException $e) {
+            	echo $e;
                 $divalert = "<div class='alert alert-danger'> ";
-                $enddiv = "<\/div>";
-                $message = $divalert."Não foi possível adicionar o autor".$enddiv;
+                $enddiv = "</div>";
+                $message = $divalert.$e->getMessage().$enddiv;
                 
                 $json = array (
                     'status' => "failed",
                     'message' => $message
                 );
-                echo json_encode($json);
+                echo json_encode($json);            	
             }
         }
         else{
@@ -137,6 +141,7 @@ class ProductionAjax extends MX_Controller {
         $this->load->library("form_validation");
 
         $this->form_validation->set_rules("name", "Nome", "required");
+        $this->form_validation->set_rules("cpf", "Cpf", "valid_cpf");
  
         $this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 
@@ -151,17 +156,18 @@ class ProductionAjax extends MX_Controller {
         $name = $this->input->post("name");
         $cpf = $this->input->post("cpf");
 
-        $data = array(
-            'production_id' => $productionId,
-            'author_name' => $name,
-            'cpf' => $cpf
-        );
-        
-		$this->load->model("program/production_model");
-        $success = $this->production_model->saveAuthors($data);
-       
+		$this->load->model("auth/usuarios_model");
+		$user = $this->usuarios_model->getUserByCpf($cpf);
 
-        return $success;
+        $id = FALSE;
+		if($user !== NULL){
+			$id = $user['id'];
+		}
+        $author = new User($id, $name, $cpf);
+
+		$this->load->model("program/production_model");
+		$this->production_model->saveAuthors($author, $productionId);
+      
     }
 
     public function deleteAuthor(){

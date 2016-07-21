@@ -72,8 +72,6 @@
       <strong>Autores</strong>
 
       <p class="text">
-        <?= $user->getName(); ?>
-
         <?php
 
           $coauthors = $production->getCoauthors(); 

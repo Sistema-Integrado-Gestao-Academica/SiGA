@@ -152,13 +152,9 @@ function getAuthorByCPF(){
 			cpf: cpf,
 		},
 		function(data){
-			var emptyJsonLength = 3;
         	var author = JSON.parse(data);
-			if(data.length > emptyJsonLength){
+			if(author.name != null){
 				document.getElementById('name').value = author.name;
-			}
-			else{
-				document.getElementById('name').value = "";
 			}
 		}
 	);
@@ -176,13 +172,9 @@ function getAuthorByName(){
 			name: name,
 		},
 		function(data){
-			var emptyJsonLength = 3;
         	var author = JSON.parse(data);
-			if(data.length > emptyJsonLength){
+			if(author.cpf != null){
 				document.getElementById('cpf').value = author.cpf;
-			}
-			else{
-				document.getElementById('cpf').value = "";
 			}
 		}
 	);

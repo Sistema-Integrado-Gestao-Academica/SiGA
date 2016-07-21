@@ -38,23 +38,7 @@ buildTableHeaders(array(
 	'',
 ));
 
-echo "<tr>";
-	echo "<td>";
-	echo $author->getCpf();
-	echo "</td>";
-
-	echo "<td>";
-	echo $author->getName();
-	echo "</td>";
-
-	echo "<td>";
-	echo "";
-	echo "</td>";
-
-echo "</tr>";
-
 if($authors !== FALSE){
-	
 	foreach ($authors as $coauthor) {
 		
 		echo "<tr>";
@@ -64,12 +48,14 @@ if($authors !== FALSE){
 		echo "</td>";
 
 
-		echo "<td data-name={$coauthor['author_name']}>";
+		echo "<td data-name='{$coauthor['author_name']}'>";
 		echo $coauthor['author_name'];
 		echo "</td>";
 		
 		echo '<td>';
-		echo "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
+		if($coauthor['first_author'] !== TRUE){
+			echo "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
+		}
 		echo '</td>';
 
 		echo "</tr>";

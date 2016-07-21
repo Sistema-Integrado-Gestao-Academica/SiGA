@@ -33,6 +33,8 @@ class Production_model extends CI_Model {
 
 		$productions = checkArray($productions);
 
+		$productions = $this->getCoauthorProductions($userId, $productions);
+
 		if($productions !== FALSE){
 			foreach ($productions as $id => $production) {
 				$authors = $this->getAuthorsByProductionId($production['id']);
@@ -46,13 +48,7 @@ class Production_model extends CI_Model {
 
 	public function getProductionById($productionId){
 
-		$this->db->select("intellectual_production.*");
-		$this->db->from("intellectual_production");
-		$this->db->where("id", $productionId);
-
-		$foundProduction = $this->db->get()->result_array();
-
-		$foundProduction = checkArray($foundProduction);
+		$foundProduction = $this->getProduction($productionId);
 
 		if($foundProduction !== FALSE){
 			foreach ($foundProduction as $id => $production) {
@@ -61,6 +57,18 @@ class Production_model extends CI_Model {
 			}
 		}
 
+		return $foundProduction;
+	}
+
+	private function getProduction($productionId){
+		$this->db->select("intellectual_production.*");
+		$this->db->from("intellectual_production");
+		$this->db->where("id", $productionId);
+
+		$foundProduction = $this->db->get()->result_array();
+
+		$foundProduction = checkArray($foundProduction);
+	
 		return $foundProduction;
 	}
 
@@ -142,8 +150,40 @@ class Production_model extends CI_Model {
 		return $lastId;
 	}
 
+	public function getCoauthorProductions($userId, $productions){
 
-	public function saveAuthors($data){
+		$this->db->select("production_id");
+		$this->db->from("production_coauthor");
+		$this->db->where("user_id", $userId);
+		$productionIds = $this->db->get()->result_array();
+		$productionIds = checkArray($productionIds);
+		
+		if($productionIds !== FALSE){
+			foreach ($productionIds as $productionId) {
+				$production = $this->getProduction($productionId['production_id']);
+				array_push($productions, $production[0]);
+			}
+		}
+
+		return $productions;
+	}
+
+
+	public function saveAuthors($author, $productionId){
+
+		$id = NULL;
+
+		$author_id = $author->getId(); 
+		if($author_id !== FALSE){
+			$id = $author_id;
+		}
+
+        $data = array(
+            'production_id' => $productionId,
+            'author_name' => $author->getName(),
+            'cpf' => $author->getCpf(),
+            'user_id' => $id
+        );
 
 		$success = $this->db->insert('production_coauthor', $data);
 		
@@ -171,8 +211,37 @@ class Production_model extends CI_Model {
 		$this->db->where("production_id", $productionId);
 		
 		$authors = $this->db->get()->result_array();
-
 		$authors = checkArray($authors);
+
+		$authors = $this->addFirstAuthor($authors, $productionId);	
+
+		return $authors;
+	}
+
+	private function addFirstAuthor($authors, $productionId){
+
+		if($authors == FALSE){
+			$authors = array();
+		}
+		else{
+			foreach ($authors as $id => $author) {
+				$authors[$id]['first_author'] = FALSE;
+			}
+		}
+
+		$production = $this->getProduction($productionId);
+		$userId = $production[0]['author'];
+
+		$this->load->model("auth/usuarios_model");
+		$user = $this->usuarios_model->getObjectUser($userId);
+		
+		$firstAuthor = array(
+			'author_name' => $user->getName(),
+			'cpf' => $user->getCpf(),
+			'first_author' => TRUE
+		); 
+
+		array_push($authors, $firstAuthor);		
 
 		return $authors;
 	}

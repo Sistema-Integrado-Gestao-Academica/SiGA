@@ -262,12 +262,15 @@ class Usuarios_model extends CI_Model {
 		return $foundName[0]['name'];
 	}
 
-	public function getNameByCpf($cpf){
-		$this->db->select('name');
+	public function getUserByCpf($cpf){
+		
+		$this->db->select('id , name');
 		$this->db->where('cpf', $cpf);
-		$foundName = $this->db->get('users')->result_array();
-		$foundName = checkArray($foundName);
-		return $foundName[0]['name'];
+		
+		$user = $this->db->get('users')->result_array();
+		$user = checkArray($user);
+
+		return $user[0];
 	}
 
 	public function getCpfByName($name){
