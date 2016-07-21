@@ -38,24 +38,22 @@
 		"type" => "text",
 		"class" => "form-control",
 		"readonly" => "readonly"
-	);				
+	);	
+		
 ?>
 
 <div id="form" class="collapse">
 
-	<div id="center_form">
+	<div class="row">
 
-		<div class="row">
+		<div class="col-lg-10">
+			<?= form_open("save_production") ?>
+				<div class="header"></div>
+				<?php include '_intellectual_production_form.php'; ?>
 
-			<div class="col-lg-7">
-				<?= form_open("save_production") ?>
-					<div class="header"></div>
-					<?php include '_intellectual_production_form.php'; ?>
+			<?= form_close() ?>
+			<br><br><br>
 
-				<?= form_close() ?>
-				<br><br><br>
-
-			</div>
 		</div>
 	</div>
 </div>

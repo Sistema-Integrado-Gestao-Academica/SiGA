@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."auth/domain/User.php");
+require_once(MODULESPATH."auth/exception/UserException.php");
+
 class ProductionAjax extends MX_Controller {
 
 	public function getISSNAndQualis(){
@@ -45,5 +48,135 @@ class ProductionAjax extends MX_Controller {
 		}
 
 	}
+
+	public function getAuthorNameByCPF(){
+		
+		$cpf = $this->input->post("cpf");
+
+		$this->load->model("auth/usuarios_model");
+		$authorName = $this->usuarios_model->getUserByCpf($cpf);
+
+		$json = array();
+		if($authorName !== FALSE){
+
+	        $json = array (
+	            'name'=> $authorName['name']
+	        );
+		}
+	    echo json_encode($json);
+	}
+
+	public function getAuthorCPFByName(){
+		
+		$name = $this->input->post("name");
+
+		$this->load->model("auth/usuarios_model");
+		$authorCPF = $this->usuarios_model->getCpfByName($name);
+
+		$json = array();
+		if($authorCPF !== FALSE){
+
+	        $json = array (
+	            'cpf'=> $authorCPF
+	        );
+		}
+	    echo json_encode($json);
+	}
+	
+
+	public function saveAuthor(){
+
+		$valid = $this->validateAuthor();
+
+        if($valid){
+            try {
+            	$this->createAuthor();
+                $divalert = "<div class='alert alert-success'> ";
+                $enddiv = "</div>";
+
+                $productionId = $this->input->post("production_id");
+       			$name = $this->input->post("name");
+       			$cpf = $this->input->post("cpf");
+
+                $message = $divalert."Autor adicionado com sucesso".$enddiv;
+
+                $json = array (
+                    'status' => "success",
+                    'cpf' => $cpf,
+                    'name' => $name,
+                    'production_id' => $productionId,
+                    'message' => $message
+                );
+                echo json_encode($json);
+            } 
+            catch (UserException $e) {
+            	echo $e;
+                $divalert = "<div class='alert alert-danger'> ";
+                $enddiv = "</div>";
+                $message = $divalert.$e->getMessage().$enddiv;
+                
+                $json = array (
+                    'status' => "failed",
+                    'message' => $message
+                );
+                echo json_encode($json);            	
+            }
+        }
+        else{
+            $divalert = "<div class='alert alert-danger'> ";
+            $errors = validation_errors(); 
+            $enddiv = "</div>";
+            $message = $divalert.$errors.$enddiv;
+                
+            $json = array (
+                'status' => "failed",
+                'message' => $message
+            );
+            echo json_encode($json);
+        }
+	}
+
+    private function validateAuthor(){
+
+        $this->load->library("form_validation");
+
+        $this->form_validation->set_rules("name", "Nome", "required");
+        $this->form_validation->set_rules("cpf", "Cpf", "valid_cpf");
+ 
+        $this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+
+        $success = $this->form_validation->run();
+
+        return $success;
+    }
+
+    private function createAuthor(){
+
+        $productionId = $this->input->post("production_id");
+        $name = $this->input->post("name");
+        $cpf = $this->input->post("cpf");
+
+		$this->load->model("auth/usuarios_model");
+		$user = $this->usuarios_model->getUserByCpf($cpf);
+
+        $id = FALSE;
+		if($user !== NULL){
+			$id = $user['id'];
+		}
+        $author = new User($id, $name, $cpf);
+
+		$this->load->model("program/production_model");
+		$this->production_model->saveAuthors($author, $productionId);
+      
+    }
+
+    public function deleteAuthor(){
+    	$productionId = $this->input->post("production_id");
+        $name = $this->input->post("name");
+
+		$this->load->model("program/production_model");
+		$success = $this->production_model->deleteCoauthor($productionId, $name);
+		echo $success;
+    }
 
 }

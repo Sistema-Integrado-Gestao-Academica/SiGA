@@ -48,29 +48,37 @@
 		"readonly" => "readonly",
 		"value" => $production->getQualis()
 	);				
+
+	$productionId = $production->getId();	
 ?>
 
 <div id="form" align="center">
-<div id="center_form">
 
-		<div class="row">
+	<div class="row">
 
-			<div class="col-lg-7">
-				<?= form_open("update_production") ?>
-					
-					<div class="principal"><h2>Editar produção</h2></div>
-					<?php include '_intellectual_production_form.php'; ?>
-					
-					<?= form_hidden('id', $production->getId()); ?>
+		<div class="col-lg-12">
+			<?= form_open("update_production") ?>
+				
+				<div class="principal"><h2>Editar produção</h2></div>
+				<?php include '_intellectual_production_form.php'; ?>
+				
+				<?= form_hidden('id', $productionId); ?>
 
-				<?= form_close() ?>
-				<br>
-				<div class="col-lg-4" id="center_btn_form">
+			
+			<?= form_close() ?>
+			<br>
+			<div class="col-lg-7" id="center_btn_form">
+
+				<div class="col-lg-3">
 					<?= anchor("intellectual_production", 'Voltar', "class='btn btn-danger btn-block'") ?>
+				</div>
+				
+				<div class="col-lg-5">
+
+					<?= anchor("edit_coauthors/{$productionId}", 'Editar autores', "class='btn btn-primary btn-block'") ?>
 				</div>
 			</div>
 		</div>
 	</div>
-
 
 </div>

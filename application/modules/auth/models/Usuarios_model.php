@@ -142,11 +142,12 @@ class Usuarios_model extends CI_Model {
 				try{
 					$id = $userData['id'];
 					$name = $userData['name'];
+					$cpf = $userData['cpf'];
 					$login = $userData['login'];
 					$email = $userData['email'];
 					$active = $userData['active'];
 
-					$user = new User($id, $name, FALSE, $email, $login, FALSE, FALSE, FALSE, FALSE, $active);
+					$user = new User($id, $name, $cpf, $email, $login, FALSE, FALSE, FALSE, FALSE, $active);
 
 				}catch(UserException $e){
 					$user = FALSE;
@@ -261,6 +262,25 @@ class Usuarios_model extends CI_Model {
 		return $foundName[0]['name'];
 	}
 
+	public function getUserByCpf($cpf){
+		
+		$this->db->select('id , name');
+		$this->db->where('cpf', $cpf);
+		
+		$user = $this->db->get('users')->result_array();
+		$user = checkArray($user);
+
+		return $user[0];
+	}
+
+	public function getCpfByName($name){
+		$this->db->select('cpf');
+		$this->db->where('name', $name);
+		$foundName = $this->db->get('users')->result_array();
+		$foundName = checkArray($foundName);
+		return $foundName[0]['cpf'];
+	}
+
 	private function getUserByPartialName($userName){
 		$this->db->select('id, name');
 		$this->db->like('name', $userName);
@@ -294,7 +314,7 @@ class Usuarios_model extends CI_Model {
 	 * @return An array with the user data if exists or FALSE if does not
 	 */
 	public function getUserDataByLogin($login){
-		$this->db->select('id, name, email, login, active');
+		$this->db->select('id, name, email, cpf, login, active');
 		$this->db->where("login", $login);
 		$foundUser = $this->db->get("users")->row_array();
 

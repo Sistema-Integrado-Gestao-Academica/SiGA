@@ -47,16 +47,22 @@ class User{
 
 	// Setters
 	private function setId($id){
-		// Id must be a number or a string number
-		if(is_numeric($id)){
-			// Id must be greater than zero
-			if($id >= self::MINIMUN_ID){
-				$this->id = $id;
+
+		if($id !== FALSE){	
+			// Id must be a number or a string number
+			if(is_numeric($id)){
+				// Id must be greater than zero
+				if($id >= self::MINIMUN_ID){
+					$this->id = $id;
+				}else{
+					throw new UserException(self::INVALID_ID);
+				}
 			}else{
 				throw new UserException(self::INVALID_ID);
 			}
-		}else{
-			throw new UserException(self::INVALID_ID);
+		}
+		else{
+			$this->id = $id;
 		}
 	}
 

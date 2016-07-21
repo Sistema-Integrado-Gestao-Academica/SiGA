@@ -22,8 +22,7 @@
 
 			<tbody>
 
-    		<?php foreach ($productions as $production) {
-
+    		<?php foreach ($productions as $production) { 
     			$id = $production->getId();
     		?>
 

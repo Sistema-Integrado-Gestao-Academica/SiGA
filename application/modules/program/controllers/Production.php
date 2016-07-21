@@ -23,7 +23,8 @@ class Production extends MX_Controller {
 
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
-			'productions' => $productions
+			'productions' => $productions,
+			'user' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);
@@ -39,11 +40,12 @@ class Production extends MX_Controller {
 			$session = getSession();
 			if($success){
 				$session->showFlashMessage("success", "Produção intelectual adicionada com sucesso!");
+				$this->addCoauthors($production);
 			}
 			else{
 				$session->showFlashMessage("danger", "Não foi possível adicionar a produção intelectual");
+				$this->index();
 			}
-			$this->index();
 		}
 		else{
 			$this->index();
@@ -51,14 +53,44 @@ class Production extends MX_Controller {
 
 	}
 
-	public function edit($productionId){
+	public function addCoauthors($production){
 
+		$productionId = $this->production_model->getLastProduction($production);
+		$this->loadPageCoauthors($productionId, "new_coauthors");
+	}
+
+	public function editCoauthors($productionId){
+		$this->loadPageCoauthors($productionId, "edit_coauthors");
+	}
+	
+	private function loadPageCoauthors($productionId, $file){
+		
+		$session = getSession();
+		$user = $session->getUserData();
+
+		$authors = $this->production_model->getAuthorsByProductionId($productionId);
+
+		$data = array(
+			'productionId' => $productionId,
+			'author' => $user,
+			'authors' => $authors
+		);
+
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/{$file}", $data);
+	}
+
+	public function edit($productionId){
+		
+		$session = getSession();
+		$user = $session->getUserData();
 		$production = $this->production_model->getProductionById($productionId);
 
 		$data = array(
 			'production' => $production,
 			'types' => ProductionType::getTypes(),
-			'subtypes' => ProductionType::getSubtypes()
+			'subtypes' => ProductionType::getSubtypes(),
+			'productionId' => $productionId,
+			'author' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_intellectual_production", $data);
