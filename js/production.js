@@ -104,6 +104,7 @@ function addAuthor(){
 
 	var cpf = $('#cpf').val();
 	var name = $('#name').val();
+	var order = $('#order').val();
 	var productionId = $('#production_id').val();
 
     $.post(
@@ -111,6 +112,7 @@ function addAuthor(){
 		{
 	        cpf: cpf,
 	        name: name,
+	        order: order,
 	        production_id: productionId
 		},
 		function(data){
@@ -123,11 +125,13 @@ function addAuthor(){
 
 			    var colCpf = '<td data-id=' + author.production_id +'>' + author.cpf + '</td>';
 			    var colName = '<td data-name=' + author.name +'>' + author.name + '</td>';
+			    var colOrder = '<td>' + author.order + '</td>';
 			    var dataToRemove = author.production_id + '/' + author.name;
 				var removeBtn = '<td>';
 				removeBtn += "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
 				removeBtn += '</td>';
 				
+			    newRow.append(colOrder);
 			    newRow.append(colCpf);
 			    newRow.append(colName);
 			    newRow.append(removeBtn);

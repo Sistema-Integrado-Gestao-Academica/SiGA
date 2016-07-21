@@ -40,7 +40,7 @@ class MY_Form_validation extends CI_Form_validation {
 
         $CI =& get_instance();
 
-        $CI->form_validation->set_message('valid_name', 'O {field} deve conter apenas caracteres alfabéticos.');
+        $CI->form_validation->set_message('valid_name', 'A {field} deve conter apenas caracteres alfabéticos.');
 
         return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
     }
@@ -86,6 +86,22 @@ class MY_Form_validation extends CI_Form_validation {
         return $digit[9] == ((int)$cpf[9]) && $digit[10] == ((int)$cpf[10]);
     }
 
+
+    function valid_order_coauthor($order){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('valid_order_coauthor', 'O {field} deve ser maior ou igual a 2.');
+
+        if($order >= 2){
+            $valid = TRUE;
+        }
+        else{
+            $valid = FALSE;
+        }
+
+        return $valid;
+    }
 
     function verify_if_cpf_no_exists($cpf){
 

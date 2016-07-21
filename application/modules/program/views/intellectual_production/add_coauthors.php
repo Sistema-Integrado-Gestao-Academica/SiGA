@@ -16,6 +16,14 @@ $cpf = array(
 	"class" => "form-control",
 );	
 
+$order = array(
+	"name" => "order",
+	"id" => "order",	
+	"type" => "number",
+	"class" => "form-control",
+	"min" => 2
+);	
+
 $hidden = array(
 	"id" => "production_id",
 	"name" => "production_id",
@@ -33,6 +41,7 @@ echo "<table class=\"table table-bordered table-hover\" id=\"authors_table\">";
 echo "<tbody>";
 
 buildTableHeaders(array(
+	'Ordem',
 	'CPF',
 	'Nome',
 	'',
@@ -42,6 +51,10 @@ if($authors !== FALSE){
 	foreach ($authors as $coauthor) {
 		
 		echo "<tr>";
+
+		echo '<td>';
+		echo $coauthor['order'];
+		echo '</td>';
 
 		echo "<td data-id={$productionId}>";
 		echo $coauthor['cpf'];
@@ -76,7 +89,15 @@ buildTableEndDeclaration();
         </div>
         <div class="modal-body">
             <form id='form'> 
-				<div class="col-lg-5">
+
+
+	            	<div class="form-group">
+				<div class="col-lg-3">
+							<?= form_label("Ordem de autoria", "order") ?>
+							<?= form_input($order)?>
+					</div>
+				</div>
+				<div class="col-lg-3">
 
 					<?= form_input($hidden); ?>
 					<div class="form-group">
@@ -86,7 +107,7 @@ buildTableEndDeclaration();
 
 				</div>	
 
-				<div class="col-lg-7">
+				<div class="col-lg-6">
 
 					<div class="form-group">
 						<?= form_label("Nome", "name") ?>
@@ -95,6 +116,8 @@ buildTableEndDeclaration();
 
 				</div>	
             </form>
+            <br>
+            <br>
             <p class="text-warning"><medium>Não se esqueça de clicar em adicionar.</medium></p>
         </div>
         <div class="modal-footer">

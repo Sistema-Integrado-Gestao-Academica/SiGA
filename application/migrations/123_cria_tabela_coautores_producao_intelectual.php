@@ -8,6 +8,7 @@ class Migration_cria_tabela_coautores_producao_intelectual extends CI_Migration 
 		$this->dbforge->add_field(array(
 			'author_name' => array('type' => 'VARCHAR(100)'),
 			'cpf' => array('type' => 'VARCHAR(11)', 'NULL' => true),
+			'order' => array('type' => 'INT'),
 			'user_id' => array('type' => 'INT', 'NULL' => true),
 			'production_id' => array('type' => 'INT')
 		));

@@ -90,27 +90,18 @@ class ProductionAjax extends MX_Controller {
 
         if($valid){
             try {
-            	$this->createAuthor();
+            	$data = $this->createAuthor();
                 $divalert = "<div class='alert alert-success'> ";
                 $enddiv = "</div>";
 
-                $productionId = $this->input->post("production_id");
-       			$name = $this->input->post("name");
-       			$cpf = $this->input->post("cpf");
-
                 $message = $divalert."Autor adicionado com sucesso".$enddiv;
 
-                $json = array (
-                    'status' => "success",
-                    'cpf' => $cpf,
-                    'name' => $name,
-                    'production_id' => $productionId,
-                    'message' => $message
-                );
-                echo json_encode($json);
+                $data['message'] = $message;
+                $data['status'] = "success";
+
+                echo json_encode($data);
             } 
             catch (UserException $e) {
-            	echo $e;
                 $divalert = "<div class='alert alert-danger'> ";
                 $enddiv = "</div>";
                 $message = $divalert.$e->getMessage().$enddiv;
@@ -140,6 +131,7 @@ class ProductionAjax extends MX_Controller {
 
         $this->load->library("form_validation");
 
+        $this->form_validation->set_rules("order", "Ordem de Coautoria", "valid_order_coauthor");
         $this->form_validation->set_rules("name", "Nome", "required");
         $this->form_validation->set_rules("cpf", "Cpf", "valid_cpf");
  
@@ -155,6 +147,7 @@ class ProductionAjax extends MX_Controller {
         $productionId = $this->input->post("production_id");
         $name = $this->input->post("name");
         $cpf = $this->input->post("cpf");
+        $order = $this->input->post("order");
 
 		$this->load->model("auth/usuarios_model");
 		$user = $this->usuarios_model->getUserByCpf($cpf);
@@ -165,9 +158,26 @@ class ProductionAjax extends MX_Controller {
 		}
         $author = new User($id, $name, $cpf);
 
+        $data = array();
 		$this->load->model("program/production_model");
-		$this->production_model->saveAuthors($author, $productionId);
-      
+        $exists = $this->production_model->checkIfOrderExists($order, $productionId);
+	
+		if($exists){
+			throw new UserException("Coautor existente na ordem informada");
+		}
+		else{
+
+			$this->production_model->saveAuthors($author, $productionId, $order);
+
+	        $data = array (
+		        'cpf' => $cpf,
+		        'name' => $name,
+		        'order' => $order,
+		        'production_id' => $productionId,
+	    	);
+	    	 
+		}
+    	return $data;
     }
 
     public function deleteAuthor(){

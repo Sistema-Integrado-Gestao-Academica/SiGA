@@ -169,7 +169,7 @@ class Production_model extends CI_Model {
 	}
 
 
-	public function saveAuthors($author, $productionId){
+	public function saveAuthors($author, $productionId, $order){
 
 		$id = NULL;
 
@@ -182,6 +182,7 @@ class Production_model extends CI_Model {
             'production_id' => $productionId,
             'author_name' => $author->getName(),
             'cpf' => $author->getCpf(),
+            'order' => $order,
             'user_id' => $id
         );
 
@@ -205,29 +206,31 @@ class Production_model extends CI_Model {
 	}
 
 	public function getAuthorsByProductionId($productionId){
-
-		$this->db->select("author_name, cpf");
+		
+		$this->db->select("author_name, cpf, order");
 		$this->db->from("production_coauthor");
+		$this->db->order_by("order", "asc");
 		$this->db->where("production_id", $productionId);
 		
-		$authors = $this->db->get()->result_array();
-		$authors = checkArray($authors);
+		$foundAuthors = $this->db->get()->result_array();
+		$foundAuthors = checkArray($foundAuthors);
 
-		$authors = $this->addFirstAuthor($authors, $productionId);	
+		if($foundAuthors !== FALSE){
+			foreach ($foundAuthors as $id => $author) {
+				$foundAuthors[$id]['first_author'] = FALSE;
+			}
+		}
+		else{
+			$foundAuthors = array();
+		}
+
+		$authors = $this->getFirstAuthor($productionId);	
+		$authors = array_merge($authors, $foundAuthors);
 
 		return $authors;
 	}
 
-	private function addFirstAuthor($authors, $productionId){
-
-		if($authors == FALSE){
-			$authors = array();
-		}
-		else{
-			foreach ($authors as $id => $author) {
-				$authors[$id]['first_author'] = FALSE;
-			}
-		}
+	private function getFirstAuthor($productionId){
 
 		$production = $this->getProduction($productionId);
 		$userId = $production[0]['author'];
@@ -238,10 +241,12 @@ class Production_model extends CI_Model {
 		$firstAuthor = array(
 			'author_name' => $user->getName(),
 			'cpf' => $user->getCpf(),
+			'order' => 1,
 			'first_author' => TRUE
 		); 
 
-		array_push($authors, $firstAuthor);		
+		$authors = array(); 
+		array_push($authors, $firstAuthor);
 
 		return $authors;
 	}
@@ -253,5 +258,25 @@ class Production_model extends CI_Model {
 		$deleted = $this->db->delete('production_coauthor');
 
 		return $deleted;
+	}
+
+	public function checkIfOrderExists($order, $productionId){
+
+		$this->db->select("production_coauthor.order");
+		$this->db->from("production_coauthor");
+		$this->db->where("production_id", $productionId);
+		$this->db->where("order", $order);
+
+		$foundOrder = $this->db->get()->result_array();
+		$foundOrder = checkArray($foundOrder);
+		
+		if($foundOrder !== FALSE){
+			$exists = TRUE;
+		}
+		else{
+			$exists = FALSE;
+		}
+
+		return $exists;
 	}
 }

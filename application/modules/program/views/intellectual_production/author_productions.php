@@ -79,7 +79,7 @@
 
             foreach ($coauthors as $coauthor) {
                 echo "<br>";
-                echo $coauthor['author_name'];               
+                echo $coauthor['order']."-".$coauthor['author_name'];               
             }
 
           } 
