@@ -15,11 +15,15 @@ class Project extends MX_Controller {
 
         $session = getSession();
         $userId = $session->getUserData()->getId();
+        $userGroups = $session->getUserData()->getGroups();
 
         $projects = $this->project_model->getProjects($userId, TRUE);
 
+        $this->load->model('program/program_model');
+        $programs = $this->program_model->getUserProgram($userId, $userGroups);
         $data = array(
-            'projects' => $projects
+            'projects' => $projects,
+            'programs' => $programs
         );
 
         loadTemplateSafelyByPermission(
@@ -42,12 +46,14 @@ class Project extends MX_Controller {
             $justification = $this->input->post('justification');
             $procedures = $this->input->post('procedures');
             $results = $this->input->post('expected_results');
+            $program = $this->input->post('programs');
 
             $dates = new StartEndDate($startDate, $endDate);
 
             $project = array(
                 Project_model::NAME_COLUMN => $projectName,
                 Project_model::START_DATE_COLUMN => $dates->getYMDStartDate(),
+                Project_model::PROGRAM_COLUMN => $program
             );
 
             // Check is the attrs are empty and set them to NULL if so

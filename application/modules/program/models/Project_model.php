@@ -14,6 +14,7 @@ class Project_model extends CI_Model {
     const JUSTIFICATION_COLUMN = "justification";
     const PROCEDURES_COLUMN = "procedures";
     const EXPECTED_RESULTS_COLUMN = "expected_results";
+    const PROGRAM_COLUMN = "program_id";
 
     const TEAM_TABLE = "project_team";
 

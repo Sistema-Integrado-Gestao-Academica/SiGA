@@ -103,6 +103,7 @@
         </div>
       </div>
 
+
       <div class="col-md-6 col-sm-6">
         <div class="form-group">
           <?= form_label("Possui Financiamento? Se sim, informe qual:", "financing"); ?>
@@ -112,6 +113,15 @@
       </div>
     </div>
 
+    <div class="row">
+
+      <div class="col-md-7 col-sm-8">
+          <div class="form-group">
+            <?= form_label("Programa*", "program") ?>
+            <?= form_dropdown("programs", $programs, "", ['class' => "form-control", 'id' => "programs"]) ?>
+          </div>
+      </div>
+    </div>
     <br>
     <h4><i class="fa fa-calendar"></i> Datas do projeto</h4>
     <br>

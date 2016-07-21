@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
+require_once(MODULESPATH."auth/domain/Group.php");
+
 class Program_model extends CI_Model {
 
 	public function getAllPrograms(){
@@ -223,6 +226,65 @@ class Program_model extends CI_Model {
 		
 		return $programArea;
 	}
+
+	public function getUserProgram($userId, $userGroups){
+
+		$programs = array();
+
+		$isTeacher = FALSE;
+		foreach ($userGroups as $group) {
+			$id = $group->getId();
+			if($id == GroupConstants::TEACHER_GROUP_ID){
+				$isTeacher = TRUE;
+				break;
+			}
+		}
+
+		if($isTeacher){
+			$programsIds = $this->getTeacherPrograms($userId);
+		}
+		else{
+			$programsIds = $this->getStudentProgram($userId);
+		}
+        if($programsIds !== FALSE){
+            foreach ($programsIds as $programId) {
+                $id = $programId['id_program'];
+                $program = $this->getProgramById($id);
+                $programs[$id] = $program['acronym']."-".$program['program_name'];
+            }
+        }
+
+        return $programs;
+	}
+
+	private function getTeacherPrograms($teacherId){
+		
+		$this->db->select('id_program');
+		$this->db->from("course");
+        $this->db->join('teacher_course', 'course.id_course = teacher_course.id_course');
+		$this->db->where("teacher_course.id_user", $teacherId);
+
+		$programsIds = $this->db->get()->result_array();
+		$programsIds = checkArray($programsIds);
+
+		return $programsIds;
+ 		
+	}
+
+	private function getStudentProgram($studentId){
+		
+		$this->db->select('id_program');
+		$this->db->from("course");
+        $this->db->join('course_student', 'course.id_course = course_student.id_course');
+		$this->db->where("course_student.id_user", $studentId);
+
+		$programsIds = $this->db->get()->result_array();
+		$programsIds = checkArray($programsIds);
+
+		return $programsIds;
+ 		
+	}
+
 
 	private function insertProgram($program){
 		
