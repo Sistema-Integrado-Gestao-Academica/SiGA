@@ -22,6 +22,7 @@
 
 	$typeValue = $production->getType();
 	$subtypeValue = $production->getSubtype();
+	$projectValue = $production->getProject();
 
 	$periodic = array(
 		"name" => "periodic",

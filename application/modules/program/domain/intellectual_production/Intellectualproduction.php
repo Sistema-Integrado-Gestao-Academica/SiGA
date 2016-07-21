@@ -268,4 +268,15 @@ class IntellectualProduction{
 	public function getProject(){
 		return $this->project;
 	}
+
+	public function getProjectName(){
+
+		$projectId = $this->getProject();
+
+		$ci = get_instance();
+		$ci->load->model("program/project_model");
+		$project = $ci->project_model->getProjectById($projectId);
+
+		return $project[0]['name'];
+	}
 }

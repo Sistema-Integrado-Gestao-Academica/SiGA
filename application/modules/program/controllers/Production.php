@@ -111,12 +111,14 @@ class Production extends MX_Controller {
 		$session = getSession();
 		$user = $session->getUserData();
 		$production = $this->production_model->getProductionById($productionId);
+		$projects = $this->getUserProjects($user);
 
 		$data = array(
 			'production' => $production,
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
 			'productionId' => $productionId,
+			'projects' => $projects,
 			'author' => $user
 		);
 

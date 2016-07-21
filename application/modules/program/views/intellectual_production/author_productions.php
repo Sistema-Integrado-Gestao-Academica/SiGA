@@ -124,3 +124,20 @@
     </div>
     <!-- /.box-body -->
 </div>
+
+<strong><h4> Contexto </h4></strong>
+<div class="box box-success">
+    <div class="box-header with-border">
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+
+      <strong>Projeto de Pesquisa</strong>
+      
+      <p class="text">
+        <?= $production->getProjectName(); ?>
+      </p>
+
+    </div>
+    <!-- /.box-body -->
+</div>

@@ -36,6 +36,19 @@ class Project_model extends CI_Model {
         return $projects;
     }
 
+    public function getProjectById($projectId){
+
+        $this->db->select('*');
+        $this->db->from($this->TABLE);
+        $this->db->where(self::ID_COLUMN, $projectId);
+
+        $project = $this->db->get()->result_array();
+
+        $project = checkArray($project);
+
+        return $project;
+    }
+
     public function save($project, $coordinatorId){
 
         $projectName = $project[self::NAME_COLUMN];
