@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once MODULESPATH."auth/constants/GroupConstants.php";
+
 class ProjectAjax extends MX_Controller {
 
     public function searchMember(){
@@ -11,24 +13,17 @@ class ProjectAjax extends MX_Controller {
         if(!empty($memberToSearch)){
             $this->load->model("auth/usuarios_model");
 
-            /**
-
-
-                TEM QUE FILTRAR OS USUÀRIOS POR GRUPO (DISCENTE E DOCENTE APENAS)
-
-
-            */
-
-            // Try to find by name first
-            $users = $this->usuarios_model->getUserByName($memberToSearch);
-            if($users === FALSE){
-                // Try to find by CPF
-                $users = $this->usuarios_model->getUserByCPF($memberToSearch);
-            }
+            // Get the users of teacher and student group only
+            $groups = array(
+                GroupConstants::STUDENT_GROUP_ID,
+                GroupConstants::TEACHER_GROUP_ID
+            );
+            $users = $this->usuarios_model->getUsersOfGroup($groups, $memberToSearch, $memberToSearch);
 
             if($users !== FALSE){
 
-                echo "<h4><i class='fa fa-list'></i> Usuários encontrados:</h4>";
+                $quantityOfUsers = count($users);
+                echo "<h4><i class='fa fa-list'></i> <b>{$quantityOfUsers}</b> usuário(s) encontrado(s):</h4>";
 
                 buildTableDeclaration("add_member_search_table");
 

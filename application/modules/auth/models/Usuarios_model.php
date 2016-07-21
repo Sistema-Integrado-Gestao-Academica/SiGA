@@ -176,20 +176,44 @@ class Usuarios_model extends CI_Model {
 
 	}
 
-	public function getUsersOfGroup($idGroup, $name = FALSE){
+	public function getUsersOfGroup($group, $name=FALSE, $cpf=FALSE){
 
 		$this->db->distinct();
 		$this->db->select('users.id, users.name, users.cpf, users.email');
 		$this->db->from('users');
 		$this->db->join('user_group', "users.id = user_group.id_user");
-		$this->db->where('user_group.id_group', $idGroup);
 
-		if($name !== FALSE){
-			$this->db->like('users.name', $name);
+		if(is_array($group)){
+			$first = TRUE;
+			$where = "";
+			foreach ($group as $groupId){
+				if($first){
+					$where .= "(user_group.id_group='{$groupId}'";
+				}else{
+					$where .= " OR user_group.id_group='{$groupId}'";
+				}
+				$first = FALSE;
+			}
+			$where .= ")";
+			$this->db->where($where);
+		}else{
+			$this->db->where('user_group.id_group', $group);
 		}
 
-		$foundUsers = $this->db->get()->result_array();
+		if($name !== FALSE){
+			$like = "(users.name LIKE '%{$name}%' ";
+		}
 
+		if($cpf !== FALSE){
+			if($name !== FALSE){
+				$like .= " OR users.cpf LIKE '%{$cpf}%')";
+			}else{
+				$like = " AND users.cpf LIKE '%{$cpf}%' ";
+			}
+		}
+		$this->db->where($like);
+
+		$foundUsers = $this->db->get()->result_array();
 		$foundUsers = checkArray($foundUsers);
 
 		return $foundUsers;
