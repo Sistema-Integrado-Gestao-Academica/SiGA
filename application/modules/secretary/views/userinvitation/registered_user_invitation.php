@@ -68,7 +68,7 @@
       <div class='form-group'>
         <?= form_label("E-mail para enviar o convite", "email_to_invite"); ?>
         <?= form_input($emailToInvite); ?>
-        <?= form_error("email_to_invite");?>
+        <?= form_error("emails_to_invite");?>
       </div>
 
       <div class='form-group'>

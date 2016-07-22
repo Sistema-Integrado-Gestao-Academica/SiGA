@@ -16,7 +16,7 @@ class UserActivation_model extends CI_Model {
 			self::ACTIVATION_COLUMN => $activation
 		);
 
-		$saved = $this->db->insert($this->$TABLE, $newActivation);
+		$saved = $this->db->insert($this->TABLE, $newActivation);
 
 		return $saved;
 	}
@@ -69,13 +69,13 @@ class UserActivation_model extends CI_Model {
 	public function cleanUsedActivation($activationKey){
 
 		$this->db->where(self::ACTIVATION_COLUMN, $activationKey);
-		$this->db->delete($this->$TABLE);
+		$this->db->delete($this->TABLE);
 	}
 
 	public function deleteUserActivation($userId){
 
 		$this->db->where(self::USER_COLUMN, $userId);
-		$deleted = $this->db->delete($this->$TABLE);
+		$deleted = $this->db->delete($this->TABLE);
 
 		return $deleted;
 	}

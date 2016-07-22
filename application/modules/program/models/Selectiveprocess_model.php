@@ -56,7 +56,7 @@ class SelectiveProcess_model extends CI_Model {
 		if($previousProcess === FALSE){
 
 			// Saves the selection process basic data
-			$this->db->insert($this->$TABLE, $processToSave);
+			$this->db->insert($this->TABLE, $processToSave);
 
 			$savedProcess = $this->getByName($noticeName);
 
@@ -102,7 +102,7 @@ class SelectiveProcess_model extends CI_Model {
 	public function updateNoticeFile($processId, $noticePath){
 
 		$this->db->where(self::ID_ATTR, $processId);
-		$updated = $this->db->update($this->$TABLE, array(
+		$updated = $this->db->update($this->TABLE, array(
 			self::NOTICE_PATH_ATTR => $noticePath
 		));
 

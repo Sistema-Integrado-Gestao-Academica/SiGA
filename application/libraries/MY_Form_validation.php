@@ -86,6 +86,25 @@ class MY_Form_validation extends CI_Form_validation {
         return $digit[9] == ((int)$cpf[9]) && $digit[10] == ((int)$cpf[10]);
     }
 
+    function valid_multiple_emails($emails){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('valid_multiple_emails', 'Os emails informados não são válidos. Verifique os emails digitados.');
+        $validEmail = TRUE;
+
+        $emails = explode(";", $emails);
+        foreach ($emails as $email) {
+            $validEmail = $this->valid_email($email);
+            if(!$validEmail){
+                $validEmail = FALSE;
+                break;
+            }
+        }
+
+        return $validEmail;
+    }
+
 
     function valid_order_coauthor($order){
 
@@ -191,7 +210,6 @@ class MY_Form_validation extends CI_Form_validation {
 
         return $emailNoExists;
     }
-
 
     function verify_if_code_no_exists($code){
 
