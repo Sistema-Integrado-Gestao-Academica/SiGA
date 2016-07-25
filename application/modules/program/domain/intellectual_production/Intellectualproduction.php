@@ -32,7 +32,7 @@ class IntellectualProduction{
 	private $project;
 
 	public function __construct($author, $title, $type = FALSE, $year = FALSE, $subtype = FALSE,
-								$qualis = FALSE, $periodic = FALSE, $identifier = FALSE, $id = FALSE, 
+								$qualis = FALSE, $periodic = FALSE, $identifier = FALSE, $id = FALSE,
 								$coauthors = FALSE, $project = FALSE){
 
 
@@ -59,7 +59,7 @@ class IntellectualProduction{
 		}
 		else{
 			throw new IntellectualProductionException(self::AUTHOR_CANT_BE_NULL);
-			
+
 		}
 
 	}
@@ -73,9 +73,9 @@ class IntellectualProduction{
 		}
 		else{
 			throw new IntellectualProductionException(self::TITLE_CANT_BE_NULL);
-			
+
 		}
-	} 
+	}
 
 	private function setType($typeId){
 
@@ -85,7 +85,7 @@ class IntellectualProduction{
 			$types = ProductionType::getTypes();
 
 			if($typeId <= (count($types) - 1)){
-				
+
 				$type = $types[$typeId];
 				$this->type = $typeId;
 			}
@@ -96,7 +96,7 @@ class IntellectualProduction{
 		}
 		else{
 			$this->type = NULL;
-		}		
+		}
 
 	}
 
@@ -115,7 +115,7 @@ class IntellectualProduction{
 			}
 		}
 		else{
-			$this->year = NULL;			
+			$this->year = NULL;
 		}
 
 	}
@@ -123,15 +123,15 @@ class IntellectualProduction{
 	private function setSubtype($subtypeId){
 
 		if($subtypeId !== FALSE){
-			
+
 			$subtypeId = (int) $subtypeId;
 			$subtypes = ProductionType::getSubtypes();
-			
+
 			if($subtypeId <= (count($subtypes) - 1)){
-			
+
 				$subtype = $subtypes[$subtypeId];
 				$this->subtype = $subtypeId;
-			} 
+			}
 			else{
 				throw new IntellectualProductionException(self::INVALID_SUBTYPE);
 			}
@@ -144,7 +144,7 @@ class IntellectualProduction{
 	}
 
 	private function setQualis($qualis){
-		
+
 
 		if($qualis !== FALSE && !isEmpty($qualis)){
 
@@ -159,7 +159,7 @@ class IntellectualProduction{
 			$this->qualis = NULL;
 		}
 	}
-	
+
 	private function setPeriodic($periodic){
 		if($periodic !== FALSE && !isEmpty($periodic)){
 			$this->periodic = $periodic;
@@ -174,10 +174,10 @@ class IntellectualProduction{
 		if($identifier !== FALSE && !isEmpty($identifier)){
 
 			$identifier = str_replace("-", "", $identifier);
-			$validLength = strlen($identifier) == self::MAX_IDENTIFIER_LENGTH || 
+			$validLength = strlen($identifier) == self::MAX_IDENTIFIER_LENGTH ||
 							strlen($identifier) == self::MIN_IDENTIFIER_LENGTH;
-			
-			if(is_numeric($identifier) && $validLength){		
+
+			if(is_numeric($identifier) && $validLength){
 
 				$this->identifier = $identifier;
 
@@ -188,7 +188,7 @@ class IntellectualProduction{
 			}
 		}
 		else{
-			$this->identifier = NULL;			
+			$this->identifier = NULL;
 		}
 	}
 
@@ -275,7 +275,7 @@ class IntellectualProduction{
 
 		$ci = get_instance();
 		$ci->load->model("program/project_model");
-		$project = $ci->project_model->getProjectById($projectId);
+		$project = $ci->project_model->getProject($projectId);
 
 		return $project[0]['name'];
 	}

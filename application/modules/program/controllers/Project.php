@@ -33,6 +33,41 @@ class Project extends MX_Controller {
         );
     }
 
+    public function projectTeam($projectId){
+
+        $project = $this->project_model->getProject($projectId);
+        $members = $this->project_model->getProjectMembers($projectId);
+
+        $data = array(
+            'project' => $project,
+            'members' => $members
+        );
+
+        loadTemplateSafelyByPermission(
+            PermissionConstants::ACADEMIC_PROJECT_PERMISSION,
+            "program/project/team",
+            $data
+        );
+    }
+
+    public function addMemberToTeam(){
+
+        $userId = $this->input->post("user");
+        $projectId = $this->input->post("project");
+
+        try{
+            $this->project_model->addMemberToTeam($projectId, $userId);
+            $status = "success";
+            $message = "Membro adicionado com sucesso!";
+        }catch(ProjectException $e){
+            $status = "warning";
+            $message = $e->getMessage();
+        }
+
+        getSession()->showFlashMessage($status, $message);
+        redirect("project_team/{$projectId}");
+    }
+
     public function newProject(){
 
         $dataIsOk = $this->validateProjectData();

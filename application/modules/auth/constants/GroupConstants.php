@@ -13,6 +13,7 @@ class GroupConstants{
 
 
 	const TEACHER_GROUP_ID = 5;
+	const STUDENT_GROUP_ID = 7;
 	const GUEST_USER_GROUP_ID = 8;
 	const FINANCIAL_SECRETARY_GROUP_ID = 10;
 	const ACADEMIC_SECRETARY_GROUP_ID = 11;

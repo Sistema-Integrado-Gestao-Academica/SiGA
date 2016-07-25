@@ -377,4 +377,7 @@ if ($this->session->flashdata("success")) : ?>
 <?php endif;
 if ($this->session->flashdata("danger")) : ?>
 	<p class="alert alert-danger text-center"><?= $this->session->flashdata("danger") ?></p>
+<?php endif;
+if ($this->session->flashdata("warning")) : ?>
+    <p class="alert alert-warning text-center"><?= $this->session->flashdata("warning") ?></p>
 <?php endif; ?>

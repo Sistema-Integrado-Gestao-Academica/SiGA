@@ -19,6 +19,7 @@ class Project_model extends CI_Model {
     const TEAM_TABLE = "project_team";
 
     const PROJECT_NAME_ALREADY_EXISTS = "O nome do projeto informado já existe no sistema.";
+    const ALREADY_MEMBER = "Este usuário já é membro do projeto.";
 
     public function getProjects($memberId, $coordinator=FALSE){
 
@@ -36,17 +37,47 @@ class Project_model extends CI_Model {
         return $projects;
     }
 
-    public function getProjectById($projectId){
-
-        $this->db->select('*');
-        $this->db->from($this->TABLE);
-        $this->db->where(self::ID_COLUMN, $projectId);
-
-        $project = $this->db->get()->result_array();
-
-        $project = checkArray($project);
-
+    public function getProject($projectId){
+        $project = $this->get(self::ID_COLUMN, $projectId);
         return $project;
+    }
+
+    public function getProjectMembers($projectId){
+        $this->db->select('project_team.*, users.name');
+        $this->db->from('users');
+        $this->db->join(self::TEAM_TABLE, "project_team.member = users.id");
+        $this->db->where("project_team.id_project", $projectId);
+        $members = $this->db->get()->result_array();
+
+        $members = checkArray($members);
+
+        return $members;
+    }
+
+    public function addMemberToTeam($project, $member){
+
+        $isMember = $this->checkIfIsAlreadyMember($project, $member);
+
+        if(!$isMember){
+            $this->db->insert(self::TEAM_TABLE, array(
+                "id_project" => $project,
+                "member" => $member,
+                "coordinator" => FALSE
+            ));
+        }else{
+            throw new ProjectException(self::ALREADY_MEMBER);
+        }
+    }
+
+    private function checkIfIsAlreadyMember($project, $member){
+        $search = array(
+            "id_project" => $project,
+            "member" => $member
+        );
+
+        $foundMember = $this->get($search, FALSE, TRUE, FALSE, self::TEAM_TABLE);
+
+        return $foundMember !== FALSE;
     }
 
     public function save($project, $coordinatorId){
@@ -63,7 +94,7 @@ class Project_model extends CI_Model {
     }
 
     public function getProjectByProgram($programId){
-        
+
         $this->db->select('*');
         $this->db->from($this->TABLE);
         $this->db->where("program_id", $programId);
