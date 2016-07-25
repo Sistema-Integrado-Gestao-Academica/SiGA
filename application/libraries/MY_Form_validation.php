@@ -42,7 +42,7 @@ class MY_Form_validation extends CI_Form_validation {
 
         $CI->form_validation->set_message('valid_name', 'A {field} deve conter apenas caracteres alfabéticos.');
 
-        return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
+        return ( ! preg_match("/^[a-zA-ZáéíóúàâêôãõüçÁÉÍÓÚÀÂÊÔÃÕÜÇ ]*$/i", $str)) ? FALSE : TRUE;
     }
 
 	/**
