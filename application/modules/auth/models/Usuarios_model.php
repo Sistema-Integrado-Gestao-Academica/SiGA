@@ -287,13 +287,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function getUserByCpf($cpf){
-
-		$this->db->select('id , name');
-		$this->db->where('cpf', $cpf);
-		$user = $this->db->get('users')->row_array();
-
-		$user = checkArray($user);
-
+		$user = $this->get('cpf', $cpf, TRUE);
 		return $user;
 	}
 

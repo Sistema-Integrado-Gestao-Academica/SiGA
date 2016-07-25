@@ -10,12 +10,12 @@ class UserInvitation_model extends CI_Model {
 	const ACTIVE_COLUMN = "active";
 
 	public function save($invitation){
-		$this->db->insert($this->$TABLE, $invitation);
+		$this->db->insert($this->TABLE, $invitation);
 	}
 
 	public function disable($invitation){
 		$this->db->where(self::ID_COLUMN, $invitation);
-		$this->db->update($this->$TABLE, array(
+		$this->db->update($this->TABLE, array(
 			self::ACTIVE_COLUMN => FALSE
 		));
 	}
