@@ -52,22 +52,24 @@ if($authors !== FALSE){
 		
 		echo "<tr>";
 
-		echo '<td>';
+		echo "<td data-order={$coauthor['order']}>";
 		echo $coauthor['order'];
 		echo '</td>';
 
-		echo "<td data-id={$productionId}>";
+		echo "<td data-cpf={$coauthor['cpf']}>";
 		echo $coauthor['cpf'];
 		echo "</td>";
 
 
-		echo "<td data-name='{$coauthor['author_name']}'>";
+		echo "<td data-id='{$productionId}'>";
 		echo $coauthor['author_name'];
 		echo "</td>";
-		
+				
 		echo '<td>';
 		if($coauthor['first_author'] !== TRUE){
-			echo "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
+			echo anchor("edit_coauthor/{$productionId}/{$coauthor['order']}","Editar", "class='btn btn-primary'");
+			echo " <button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
+
 		}
 		echo '</td>';
 
@@ -88,38 +90,15 @@ buildTableEndDeclaration();
             	Novo autor
         </div>
         <div class="modal-body">
-            <form id='form'> 
-
-
-	            	<div class="form-group">
-				<div class="col-lg-3">
-							<?= form_label("Ordem de autoria", "order") ?>
-							<?= form_input($order)?>
-					</div>
-				</div>
-				<div class="col-lg-3">
-
-					<?= form_input($hidden); ?>
-					<div class="form-group">
-						<?= form_label("CPF", "cpf") ?>
-						<?= form_input($cpf)?>
-					</div>
-
-				</div>	
-
-				<div class="col-lg-6">
-
-					<div class="form-group">
-						<?= form_label("Nome", "name") ?>
-						<?= form_input($name)?>
-					</div>
-
-				</div>	
-            </form>
-            <br>
-            <br>
-            <p class="text-warning"><medium>Não se esqueça de clicar em adicionar.</medium></p>
-        </div>
+		    <form id='form'> 
+		        <?php 
+			        include '_coauthor_modal.php'; 
+			    ?>
+	       </form>
+		    <br>
+		    <br>
+		</div>
+    	<p class="text-warning"><medium>Não se esqueça de clicar em adicionar.</medium></p>
         <div class="modal-footer">
             <button type="submit" class="btn btn-success" id="add_coauthor">Adicionar</button>
 			<?= form_close() ?>
@@ -130,5 +109,3 @@ buildTableEndDeclaration();
 </div>
 </div>
 </div>
-
-<br>

@@ -30,10 +30,10 @@ $(document).ready(function(){
 
 	  RemoveTableRow = function(handler) {
 	    var tr = $(handler).closest('tr');
-	    var name = tr.find('td[data-name]').data('name');
+	    var order = tr.find('td[data-order]').data('order');
 	    var productionId = tr.find('td[data-id]').data('id');
 
-	    deleteAuthor(productionId, name, tr);
+	    deleteAuthor(productionId, order, tr);
 
 	    return false;
 	  };
@@ -123,18 +123,19 @@ function addAuthor(){
 
             	var newRow = $("<tr>");
 
-			    var colCpf = '<td data-id=' + author.production_id +'>' + author.cpf + '</td>';
-			    var colName = '<td data-name=' + author.name +'>' + author.name + '</td>';
-			    var colOrder = '<td>' + author.order + '</td>';
+			    var colCpf = '<td data-cpf=' + author.cpf + '>' + author.cpf + '</td>';
+			    var colName = '<td data-id=' + author.production_id +'>' + author.name + '</td>';
+			    var colOrder = '<td data-order=' + author.order +'>' + author.order + '</td>';
 			    var dataToRemove = author.production_id + '/' + author.name;
-				var removeBtn = '<td>';
-				removeBtn += "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>";
-				removeBtn += '</td>';
+				var buttons = '<td>';
+				buttons += "<a href='" + siteUrl + "/edit_coauthor/" + author.production_id + "/" + author.order + "' class='btn btn-primary'>Editar</a> "
+				buttons += "<button onclick='RemoveTableRow(this)' type='button' class='btn btn-danger'>Remover</button>"; // Remove button
+				buttons += '</td>';
 				
 			    newRow.append(colOrder);
 			    newRow.append(colCpf);
 			    newRow.append(colName);
-			    newRow.append(removeBtn);
+			    newRow.append(buttons);
 
 			    $("#authors_table").append(newRow);
 			    return false;
@@ -184,7 +185,7 @@ function getAuthorByName(){
 	);
 }
 
-function deleteAuthor(productionId, name, tr){
+function deleteAuthor(productionId, order, tr){
 
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/productionajax/deleteAuthor";
@@ -193,7 +194,7 @@ function deleteAuthor(productionId, name, tr){
 		urlToPost,
 		{
 			production_id: productionId,
-			name: name
+			order: order
 		},
 		function(data){
   			var success = 1;
