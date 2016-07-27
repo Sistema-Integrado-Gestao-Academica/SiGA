@@ -2,8 +2,11 @@
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."secretary/exception/DisciplineException.php");
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 class Discipline_model extends CI_Model {
+
+	public $TABLE = "discipline";
 
 	/**
 	 * Function to list in an array all the disciplines registered in the database
@@ -20,16 +23,27 @@ class Discipline_model extends CI_Model {
 		return $registeredDisciplines;
 	}
 
+	public function makeRestrict($disciplineId){
+		$discipline = $this->get('discipline_code', $disciplineId);
+
+		$newStatus = ! boolval($discipline['restrict']);
+
+		$this->db->where('discipline_code', $disciplineId);
+		$this->db->update($this->TABLE, array(
+			'restrict' => $newStatus
+		));
+	}
+
 	public function getDisciplinesBySecretary($secretaryUserId){
 
-		$secretaryCourses = $this->getSecreteryCourses($secretaryUserId);
+		$secretaryCourses = $this->getSecretaryCourses($secretaryUserId);
 
 		foreach ($secretaryCourses as $course){
-			$disciplines[$course['id_course']] = $this->getCourseDisciplines($course['id_course']);
+			$courseDisciplines = $this->getCourseDisciplines($course['id_course']);
+			$disciplines[$course['id_course']] = $courseDisciplines;
 		}
 
 		return $disciplines;
-
 	}
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
@@ -65,11 +79,10 @@ class Discipline_model extends CI_Model {
 		return $disciplines;
 	}
 
-	private function getSecreteryCourses($secretaryUserId){
-		define('ACADEMICSECRETARYGROUP', 11);
+	private function getSecretaryCourses($secretaryUserId){
 		$this->db->select('id_course');
 		$courses = $this->db->get_where('secretary_course',
-					 array('id_user'=>$secretaryUserId, 'id_group'=>ACADEMICSECRETARYGROUP))->result_array();
+					 array('id_user'=>$secretaryUserId, 'id_group'=>GroupConstants::ACADEMIC_SECRETARY_GROUP_ID))->result_array();
 
 		return $courses;
 

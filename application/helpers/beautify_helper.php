@@ -62,3 +62,15 @@ function prettyDocDownload($request){
 		);
 	}
 }
+
+function prettyDisciplineRestrict($restrict){
+
+	$status = "";
+	if($restrict){
+		$status .= "<h4><span class='label label-default'>Restrita do curso</span></h4>";
+	}else{
+		$status .= "<h4><span class='label label-primary'>Livre para o programa</span></h4>";
+	}
+
+	return $status;
+}

@@ -16,6 +16,8 @@ class Discipline extends MX_Controller {
 	//Function to load index page of disciplines
 	public function discipline_index(){
 
+		$this->load->model("program/course_model"); // Used on view
+
 		$this->load->module("auth/module");
 		$userIsAdmin = $this->module->checkUserGroup(GroupConstants::ADMIN_GROUP);
 
@@ -34,6 +36,13 @@ class Discipline extends MX_Controller {
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "program/discipline/index_discipline", $data);
+	}
+
+	public function makeRestrict($disciplineId){
+		$this->discipline_model->makeRestrict($disciplineId);
+
+		getSession()->showFlashMessage("success", "Restrição da disciplina atualizada com sucesso!");
+		redirect('discipline');
 	}
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
@@ -174,7 +183,7 @@ class Discipline extends MX_Controller {
 			try{
 
 				$updated = $this->discipline_model->updateDisciplineData($disciplineCode,$disciplineToUpdate);
-				
+
 				$updateStatus = "success";
 				$updateMessage = "Disciplina \"{$disciplineName}\" alterada com sucesso";
 			}catch(DisciplineException $e){
