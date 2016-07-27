@@ -20,12 +20,7 @@ $(document).ready(function(){
 		searchDisciplineClasses();
 	});
 
-	$("#discipline_name_search").keypress(function(event){
-		var ENTER_PRESSED = 13;
-		if(event.which == ENTER_PRESSED){
-			event.preventDefault();
-			$("#discipline_search_btn").trigger('click');
-		}
+	$("#discipline_name_search").on('input', function(event){
 		searchDisciplineClasses();
 	});
 
@@ -84,7 +79,7 @@ function searchDisciplineClasses(){
 }
 
 function solicitCourseForGuest(){
-	
+
 	var courseId = $('#courses_name option:selected').val();
 	var courseName = $('#courses_name option:selected').text();
 	var siteUrl = $("#site_url").val();
