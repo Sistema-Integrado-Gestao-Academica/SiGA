@@ -219,15 +219,16 @@ class Offer extends MX_Controller {
 		$foundGroup = $this->module_model->getGroupByGroupName(GroupConstants::TEACHER_GROUP);
 
 		if($foundGroup !== FALSE){
-			$this->load->model("auth/usuarios_model");
-			$teachers = $this->usuarios_model->getUsersOfGroup($foundGroup['id_group']);
+			$this->load->model("program/course_model");
+			$teachers = $this->course_model->getCourseTeachers($idCourse);
+			sort($teachers);			
 
 			if($teachers !== FALSE){
 
 				$allTeachers = array();
 
 				foreach($teachers as $teacher){
-					$allTeachers[$teacher['id']] = $teacher['name'];
+					$allTeachers[$teacher['id_user']] = $teacher['name'];
 				}
 			}else{
 				$allTeachers = FALSE;
