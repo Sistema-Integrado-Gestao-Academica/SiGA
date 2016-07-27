@@ -15,7 +15,6 @@
 	<tr>
 		<th class="text-center">Código da Disciplina</th>
 		<th class="text-center">Nome da Disciplina</th>
-		<th class="text-center">Curso pertencente</th>
 		<th class="text-center">Carga Horária Semestral</th>
 		<th class="text-center">Restrição</th>
 		<th class="text-center">Ações</th>
@@ -30,11 +29,6 @@
 
 	        echo "<td>";
 	        echo $discipline['discipline_name'] . " (". $discipline['name_abbreviation'] . ")";
-	        echo "</td>";
-
-	        echo "<td>";
-	        $course = $this->course_model->getCourseById($discipline['id_course_discipline']);
-	        echo $course['course_name'];
 	        echo "</td>";
 
 	        echo "<td>";

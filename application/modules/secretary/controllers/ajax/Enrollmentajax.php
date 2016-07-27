@@ -75,7 +75,7 @@ class EnrollmentAjax extends MX_Controller {
                             echo "</td>";
 
                             echo "<td>";
-                            echo $class['discipline_name']."-".$class["name_abbreviation"];
+                            echo $class['discipline_code']." - ".$class['discipline_name']." - ".$class["name_abbreviation"];
                             echo "</td>";
 
                             echo "<td>";

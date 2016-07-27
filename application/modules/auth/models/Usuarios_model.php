@@ -176,7 +176,7 @@ class Usuarios_model extends CI_Model {
 
 	}
 
-	public function getUsersOfGroup($idGroup, $name = FALSE){
+	public function getUsersOfGroup($idGroup, $name = FALSE, $cpf=FALSE){
 
 		$this->db->distinct();
 		$this->db->select('users.id, users.name, users.cpf, users.email');

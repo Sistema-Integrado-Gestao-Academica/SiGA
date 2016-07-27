@@ -24,7 +24,7 @@ class Discipline_model extends CI_Model {
 	}
 
 	public function makeRestrict($disciplineId){
-		$discipline = $this->get('discipline_code', $disciplineId);
+		$discipline = $this->getDisciplineByCode($disciplineId);
 
 		$newStatus = ! boolval($discipline['restrict']);
 
@@ -51,15 +51,22 @@ class Discipline_model extends CI_Model {
 		$this->load->model("secretary/offer_model");
 		$offer = $this->offer_model->getOffer($offerId);
 		$offerSemester = $offer['semester'];
+		$offerCourse = $offer['course'];
+
+
+		$this->load->model("program/course_model");
+		$course = $this->course_model->getCourseById($offerCourse);
+		$offerProgram = $course['id_program'];
 
 		$this->db->distinct();
 		$this->db->select("offer_discipline.*, discipline.*");
 		$this->db->from("offer_discipline");
 		$this->db->join('discipline', 'discipline.discipline_code = offer_discipline.id_discipline');
 		$this->db->join('offer', 'offer_discipline.id_offer = offer.id_offer');
+		$this->db->join('course', 'offer.course = course.id_course');
 
 		$approved = EnrollmentConstants::APPROVED_STATUS;
-		$where = "((offer.offer_status = '{$approved}' AND offer_discipline.id_offer = '{$offerId}') OR (discipline.restrict = '0' AND offer.semester = '{$offerSemester}') ) AND discipline.discipline_name LIKE '%{$disciplineName}%'";
+		$where = "((offer.offer_status = '{$approved}' AND offer_discipline.id_offer = '{$offerId}') OR (discipline.restrict = '0' AND offer.semester = '{$offerSemester}' AND course.id_program = '{$offerProgram}') ) AND discipline.discipline_name LIKE '%{$disciplineName}%'";
 		$this->db->where($where);
 		$disciplineClasses = $this->db->get()->result_array();
 
@@ -90,11 +97,13 @@ class Discipline_model extends CI_Model {
 
 	private function getCourseDisciplines($courseId){
 
-		$disciplines = $this->db->get_where('discipline', array('id_course_discipline'=>$courseId))->result_array();
+		$this->load->model("secretary/syllabus_model");
+
+		$courseSyllabus = $this->syllabus_model->getCourseSyllabus($courseId);
+
+		$disciplines = $this->getCourseSyllabusDisciplines($courseSyllabus['id_syllabus']);
 
 		return $disciplines;
-
-
 	}
 
 	public function getCourseSyllabusDisciplines($syllabusId){
