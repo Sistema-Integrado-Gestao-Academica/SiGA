@@ -617,29 +617,10 @@ class Usuarios_model extends CI_Model {
 	public function updatePassword($id, $newPassword, $temporaryPassword){
 
 		$this->db->where('id', $id);
-		$this->db->update("users", array(
+		$isUpdated = $this->db->update("users", array(
 			'password' => $newPassword,
 			'temporary_password' => $temporaryPassword
 		));
-
-		$isUpdated = $this->checkIfUpdatePassword($id, $newPassword);
-
-		return $isUpdated;
-	}
-
-	public function checkIfUpdatePassword($id, $newPassword){
-
-		$this->db->select('password');
-		$foundUser = $this->db->get_where('users', array('id' => $id));
-		$foundPassword = $foundUser->row_array();
-
-		if($foundPassword['password'] == $newPassword){
-
-			$isUpdated = TRUE;
-		}
-		else{
-			$isUpdated = FALSE;
-		}
 
 		return $isUpdated;
 	}

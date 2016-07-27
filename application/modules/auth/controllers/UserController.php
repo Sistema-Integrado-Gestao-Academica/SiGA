@@ -331,13 +331,23 @@ class UserController extends MX_Controller {
 			$email = $this->input->post("email");
 			$user = $this->usuarios_model->getUserByEmail($email);
 			if($user !== FALSE){
-				$user = $this->generateNewPassword($user);
-				$email = new RestorePasswordEmail($user);
+				$userWithNewPassword = $this->generateNewPassword($user);
+				$email = new RestorePasswordEmail($userWithNewPassword);
 				$success = $email->notify();
-				
 				if($success){
-					$session->showFlashMessage("success", "Email enviado com sucesso.");	
-					redirect("/");
+					$id = $user->getId();
+					$newPassword = $userWithNewPassword->getPassword();
+					$encryptedPassword = md5($newPassword);
+        			$updated = $this->usuarios_model->updatePassword($id, $encryptedPassword, TRUE); // Saving new temporary password
+					if($updated){
+						$session->showFlashMessage("success", "Email enviado com sucesso.");
+						redirect("/");
+					}
+					else{
+						$session->showFlashMessage("danger", "O email foi enviado, mas houve um problema com a definição da nova senha. Solicite o envio novamente.");
+						redirect("auth/userController/restorePassword");
+					}
+
 				}
 				else{
 					$session->showFlashMessage("danger", "Não foi possível enviar o email. Tente novamente.");	
@@ -361,13 +371,7 @@ class UserController extends MX_Controller {
         
         $newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
 
-        // Changing the user password
-        $encryptedPassword = md5($newPassword);
-        $userPassword = $encryptedPassword;
-        $temporaryPassword = TRUE;
-
         $id = $user->getId();
-        $this->usuarios_model->updatePassword($id, $userPassword, $temporaryPassword);
 
         $user = new User($id, $user->getName(), FALSE, $user->getEmail(), FALSE, $newPassword, FALSE);
 
