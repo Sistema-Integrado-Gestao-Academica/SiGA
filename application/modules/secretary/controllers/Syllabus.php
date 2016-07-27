@@ -150,7 +150,7 @@ class Syllabus extends MX_Controller {
 	}
 
 	private function getDiscipineResearchLinesIds($disciplineCode){
-		
+
 		$this->load->model("program/discipline_model");
 		$disciplineResearchLines = $this->discipline_model->getDisciplineResearchLines($disciplineCode);
 
@@ -174,7 +174,7 @@ class Syllabus extends MX_Controller {
 	}
 
 	private function getCurrentDiscipline($disciplineCode){
-		
+
 		$this->load->model("program/discipline_model");
 		$currentDiscipline = $this->discipline_model->getDisciplineByCode($disciplineCode);
 
@@ -182,7 +182,7 @@ class Syllabus extends MX_Controller {
 	}
 
 	private function getResearchLines(){
-		
+
 		$this->load->model("program/course_model");
 		$researchLines = $this->course_model->getAllResearchLines();
 
@@ -258,7 +258,7 @@ class Syllabus extends MX_Controller {
 	}
 
 	private function saveDisciplineResearchRelation($relationToSave){
-		
+
 		$this->load->model("program/discipline_model");
 		$saved = $this->discipline_model->saveDisciplineResearchLine($relationToSave);
 
