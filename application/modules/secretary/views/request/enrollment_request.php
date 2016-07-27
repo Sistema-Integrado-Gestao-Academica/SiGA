@@ -39,14 +39,6 @@
 			"class" => "form-control"
 		);
 
-		$searchBtn = array(
-			"id" => "discipline_search_btn",
-			"class" => "btn bg-olive btn-block",
-			"content" => "Procurar disciplina",
-			"type" => "submit",
-			"style" => "width:80%"
-		);
-
 		$courseHidden = array(
 			"id" => "courseId",
 			"name" => "courseId",
@@ -66,7 +58,7 @@
 	<br>
 
 	<div class='row'>
-		<div class='col-lg-6'>
+		<div class='col-md-6 col-sm-6'>
 			<div class='input-group input-group-sm'>
 				<?= form_label("Nome da disciplina", "discipline_name_search");?>
 				<?= form_input($disciplineSearch) ?>
@@ -75,16 +67,8 @@
 			</div>
 		</div>
 	</div>
-	<br>
-	<div class='row'>
-		<div class='col-lg-3'>
-			<?= form_button($searchBtn); ?>
-		</div>
-	</div>
 
 	<br>
-	<h4><i class='fa fa-list'> </i> Turmas disponíveis</h4>
-
 	<div id='discipline_search_result'>
 
 <!-- In this case, the student has requested enrollment -->

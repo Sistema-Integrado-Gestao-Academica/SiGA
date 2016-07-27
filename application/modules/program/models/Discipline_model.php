@@ -34,13 +34,19 @@ class Discipline_model extends CI_Model {
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
 
+		$this->load->model("secretary/offer_model");
+		$offer = $this->offer_model->getOffer($offerId);
+		$offerSemester = $offer['semester'];
+
+		$this->db->distinct();
 		$this->db->select("offer_discipline.*, discipline.*");
 		$this->db->from("offer_discipline");
 		$this->db->join('discipline', 'discipline.discipline_code = offer_discipline.id_discipline');
 		$this->db->join('offer', 'offer_discipline.id_offer = offer.id_offer');
-		$this->db->where('offer.offer_status', EnrollmentConstants::APPROVED_STATUS);
-		$this->db->where('offer_discipline.id_offer', $offerId);
-		$this->db->like("discipline.discipline_name", $disciplineName);
+
+		$approved = EnrollmentConstants::APPROVED_STATUS;
+		$where = "((offer.offer_status = '{$approved}' AND offer_discipline.id_offer = '{$offerId}') OR (discipline.restrict = '0' AND offer.semester = '{$offerSemester}') ) AND discipline.discipline_name LIKE '%{$disciplineName}%'";
+		$this->db->where($where);
 		$disciplineClasses = $this->db->get()->result_array();
 
 		$disciplineClasses = checkArray($disciplineClasses);
