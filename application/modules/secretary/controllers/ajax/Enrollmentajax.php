@@ -15,7 +15,7 @@ class EnrollmentAjax extends MX_Controller {
         if($courseGuests !== FALSE){
             echo "<h3><i class='fa fa-users'></i> Usuários que podem ser matriculados com o nome '{$guestName}':</h3><br>";
 
-            displayGuestForEnrollment($courseGuests, $course);  
+            displayGuestForEnrollment($courseGuests, $course);
 
         }
         else{
@@ -48,10 +48,13 @@ class EnrollmentAjax extends MX_Controller {
             $disciplinesClasses = $this->discipline_model->getClassesByDisciplineName($disciplineName, $offerId);
 
         }else{
-            $disciplineClasses = FALSE;
+            $disciplinesClasses = FALSE;
         }
 
         if($disciplinesClasses !== FALSE){
+
+            $quantityOfClasses = count($disciplinesClasses);
+            echo "<h4><i class='fa fa-list'> </i> Turmas disponíveis <b>({$quantityOfClasses})<b></h4>";
 
             echo "<div class=\"box-body table-responsive no-padding\">";
             echo "<table class=\"table table-bordered table-hover\">";
@@ -72,7 +75,7 @@ class EnrollmentAjax extends MX_Controller {
                             echo "</td>";
 
                             echo "<td>";
-                            echo $class['discipline_name']."-".$class["name_abbreviation"];
+                            echo $class['discipline_code']." - ".$class['discipline_name']." - ".$class["name_abbreviation"];
                             echo "</td>";
 
                             echo "<td>";
@@ -109,12 +112,12 @@ class EnrollmentAjax extends MX_Controller {
 
         $courseId = $this->input->post("courseId");
         $courseName = $this->input->post("courseName");
-        
+
         $session = getSession();
         $user = $session->getUserData();
         $userId = $user->getId();
         $userName = $user->getName();
-        
+
         $this->load->model("auth/usuarios_model");
         $success = $this->usuarios_model->updateCourseGuest($userId, $courseId, EnrollmentConstants::CANDIDATE_STATUS);
 
@@ -122,7 +125,7 @@ class EnrollmentAjax extends MX_Controller {
         echo "<br><br>";
 
         if($success){
-        
+
             echo "<div class='panel panel-success' id='course_guest_panel'>";
             echo "<div class='panel-body' id='course_guest_title'>";
             echo "<b>Curso solicitado:</b> {$courseName}";
@@ -134,7 +137,7 @@ class EnrollmentAjax extends MX_Controller {
             echo "</div>";
         }
         else{
-      
+
             echo "<div class='callout callout-info'>";
             echo "<h4>Não foi possível solicitar sua inscrição</h4>";
             echo "<p>Tente novamente</p>";

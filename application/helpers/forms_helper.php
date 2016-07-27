@@ -22,7 +22,7 @@ function provideDocOnlineForm($request, $course){
 		"id" => "requested_doc",
 		"type" => "file"
 	);
-	
+
 	$submitFileBtn = array(
 		"id" => "provide_online_btn",
 		"class" => "btn btn-info btn-flat",
@@ -44,7 +44,7 @@ function provideDocOnlineForm($request, $course){
 function searchForDisciplineByNameForm($syllabusId, $courseId){
 
 	$discipline = array(
-		"name" => "discipline_tomo_search",
+		"name" => "discipline_to_search",
 		"id" => "discipline_to_search",
 		"type" => "text",
 		"class" => "form-campo form-control",
@@ -266,7 +266,7 @@ function studentBasicInfoForm($path, $hiddenData, $previousData = FALSE){
 			echo form_input($homePhone);
 			echo form_error("home_phone_number");
 		echo "</div>";
-		
+
 		echo "<div class='form-group'>";
 			echo form_label("Telefone Celular", "cell_phone_number") . "<br>";
 			echo form_input($cellPhone);

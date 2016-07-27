@@ -58,12 +58,6 @@ $submit_button_array_to_form = array(
 	<div class="body bg-gray">
 
 		<div class="form-group">
-				<?= form_label("Curso pertencente", "course_prolongs") ?>
-				<?= form_dropdown("course_prolongs", $courses) ?>
-				<?= form_error("course_prolongs") ?>
-		</div>
-
-		<div class="form-group">
 				<?php
 				// Name field
 				echo form_label("Nome da disciplina", "discipline_name");

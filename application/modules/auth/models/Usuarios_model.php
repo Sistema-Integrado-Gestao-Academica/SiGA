@@ -201,18 +201,21 @@ class Usuarios_model extends CI_Model {
 			$this->db->where('user_group.id_group', $group);
 		}
 
-		if($name !== FALSE){
-			$like = "(users.name LIKE '%{$name}%' ";
-		}
-
-		if($cpf !== FALSE){
+		if($name !== FALSE || $cpf !== FALSE){
 			if($name !== FALSE){
-				$like .= " OR users.cpf LIKE '%{$cpf}%')";
-			}else{
-				$like = " AND users.cpf LIKE '%{$cpf}%' ";
+				$like = "(users.name LIKE '%{$name}%' ";
 			}
+
+			if($cpf !== FALSE){
+				if($name !== FALSE){
+					$like .= " OR users.cpf LIKE '%{$cpf}%')";
+				}else{
+					$like = " AND users.cpf LIKE '%{$cpf}%' ";
+				}
+			}
+			$this->db->where($like);
+
 		}
-		$this->db->where($like);
 
 		$foundUsers = $this->db->get()->result_array();
 		$foundUsers = checkArray($foundUsers);

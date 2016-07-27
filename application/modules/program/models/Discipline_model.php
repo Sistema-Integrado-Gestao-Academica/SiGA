@@ -2,8 +2,11 @@
 
 require_once(APPPATH."/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."secretary/exception/DisciplineException.php");
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 class Discipline_model extends CI_Model {
+
+	public $TABLE = "discipline";
 
 	/**
 	 * Function to list in an array all the disciplines registered in the database
@@ -20,27 +23,51 @@ class Discipline_model extends CI_Model {
 		return $registeredDisciplines;
 	}
 
+	public function makeRestrict($disciplineId){
+		$discipline = $this->getDisciplineByCode($disciplineId);
+
+		$newStatus = ! boolval($discipline['restrict']);
+
+		$this->db->where('discipline_code', $disciplineId);
+		$this->db->update($this->TABLE, array(
+			'restrict' => $newStatus
+		));
+	}
+
 	public function getDisciplinesBySecretary($secretaryUserId){
 
-		$secretaryCourses = $this->getSecreteryCourses($secretaryUserId);
+		$secretaryCourses = $this->getSecretaryCourses($secretaryUserId);
 
 		foreach ($secretaryCourses as $course){
-			$disciplines[$course['id_course']] = $this->getCourseDisciplines($course['id_course']);
+			$courseDisciplines = $this->getCourseDisciplines($course['id_course']);
+			$disciplines[$course['id_course']] = $courseDisciplines;
 		}
 
 		return $disciplines;
-
 	}
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
 
+		$this->load->model("secretary/offer_model");
+		$offer = $this->offer_model->getOffer($offerId);
+		$offerSemester = $offer['semester'];
+		$offerCourse = $offer['course'];
+
+
+		$this->load->model("program/course_model");
+		$course = $this->course_model->getCourseById($offerCourse);
+		$offerProgram = $course['id_program'];
+
+		$this->db->distinct();
 		$this->db->select("offer_discipline.*, discipline.*");
 		$this->db->from("offer_discipline");
 		$this->db->join('discipline', 'discipline.discipline_code = offer_discipline.id_discipline');
 		$this->db->join('offer', 'offer_discipline.id_offer = offer.id_offer');
-		$this->db->where('offer.offer_status', EnrollmentConstants::APPROVED_STATUS);
-		$this->db->where('offer_discipline.id_offer', $offerId);
-		$this->db->like("discipline.discipline_name", $disciplineName);
+		$this->db->join('course', 'offer.course = course.id_course');
+
+		$approved = EnrollmentConstants::APPROVED_STATUS;
+		$where = "((offer.offer_status = '{$approved}' AND offer_discipline.id_offer = '{$offerId}') OR (discipline.restrict = '0' AND offer.semester = '{$offerSemester}' AND course.id_program = '{$offerProgram}') ) AND discipline.discipline_name LIKE '%{$disciplineName}%'";
+		$this->db->where($where);
 		$disciplineClasses = $this->db->get()->result_array();
 
 		$disciplineClasses = checkArray($disciplineClasses);
@@ -59,11 +86,10 @@ class Discipline_model extends CI_Model {
 		return $disciplines;
 	}
 
-	private function getSecreteryCourses($secretaryUserId){
-		define('ACADEMICSECRETARYGROUP', 11);
+	private function getSecretaryCourses($secretaryUserId){
 		$this->db->select('id_course');
 		$courses = $this->db->get_where('secretary_course',
-					 array('id_user'=>$secretaryUserId, 'id_group'=>ACADEMICSECRETARYGROUP))->result_array();
+					 array('id_user'=>$secretaryUserId, 'id_group'=>GroupConstants::ACADEMIC_SECRETARY_GROUP_ID))->result_array();
 
 		return $courses;
 
@@ -71,11 +97,13 @@ class Discipline_model extends CI_Model {
 
 	private function getCourseDisciplines($courseId){
 
-		$disciplines = $this->db->get_where('discipline', array('id_course_discipline'=>$courseId))->result_array();
+		$this->load->model("secretary/syllabus_model");
+
+		$courseSyllabus = $this->syllabus_model->getCourseSyllabus($courseId);
+
+		$disciplines = $this->getCourseSyllabusDisciplines($courseSyllabus['id_syllabus']);
 
 		return $disciplines;
-
-
 	}
 
 	public function getCourseSyllabusDisciplines($syllabusId){

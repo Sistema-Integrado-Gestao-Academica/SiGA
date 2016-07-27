@@ -25,7 +25,7 @@ class Discipline extends MX_Controller {
 			$session = getSession();
 			$user = $session->getUserData();
 			$userId = $user->getId();
-			$disciplines = $this->getDisciplinesBySecretary($userId);
+			$disciplines = $this->discipline_model->getDisciplinesBySecretary($userId);
 		}
 
 		$data = array(
@@ -34,6 +34,13 @@ class Discipline extends MX_Controller {
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "program/discipline/index_discipline", $data);
+	}
+
+	public function makeRestrict($disciplineId){
+		$this->discipline_model->makeRestrict($disciplineId);
+
+		getSession()->showFlashMessage("success", "Restrição da disciplina atualizada com sucesso!");
+		redirect('discipline');
 	}
 
 	public function getClassesByDisciplineName($disciplineName, $offerId){
@@ -80,13 +87,6 @@ class Discipline extends MX_Controller {
 		return $disciplines;
 	}
 
-	public function getDisciplinesBySecretary($userId){
-
-		$disciplines = $this->discipline_model->getDisciplinesBySecretary($userId);
-
-		return $disciplines;
-	}
-
 	public function getCourseSyllabusDisciplines($courseId){
 
 		$this->load->model("secretary/syllabus_model");
@@ -117,7 +117,6 @@ class Discipline extends MX_Controller {
 			$disciplineCode = $this->input->post('discipline_code');
 			$acronym 		 = $this->input->post('name_abbreviation');
 			$credits		 = $this->input->post('credits');
-			$disciplineCourse = $this->input->post('course_prolongs');
 			$workload 		 = $credits * WORKLOAD_PER_CREDIT;
 
 			$disciplineToRegister = array(
@@ -126,7 +125,6 @@ class Discipline extends MX_Controller {
 				'name_abbreviation' => $acronym,
 				'credits'			=> $credits,
 				'workload' 		    => $workload,
-				'id_course_discipline' => $disciplineCourse
 			);
 
 
@@ -174,7 +172,7 @@ class Discipline extends MX_Controller {
 			try{
 
 				$updated = $this->discipline_model->updateDisciplineData($disciplineCode,$disciplineToUpdate);
-				
+
 				$updateStatus = "success";
 				$updateMessage = "Disciplina \"{$disciplineName}\" alterada com sucesso";
 			}catch(DisciplineException $e){
@@ -230,19 +228,8 @@ class Discipline extends MX_Controller {
 
 	// Function to load a view form to register a discipline
 	public function formToRegisterNewDiscipline(){
-		$this->load->model('course_model');
 
-		$courses = $this->course_model->getAllCourses();
-		if($courses !== FALSE){
-			foreach ($courses as $course){
-
-				$coursesResult[$course['id_course']] = $course['course_name'];
-			}
-		}else{
-			$coursesResult = FALSE;
-		}
-
-		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "program/discipline/register_discipline", array('courses'=>$coursesResult));
+		loadTemplateSafelyByPermission(PermissionConstants::DISCIPLINE_PERMISSION, "program/discipline/register_discipline");
 	}
 
 	public function getDisciplineByCode($disciplineCode){
