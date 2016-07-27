@@ -13,95 +13,69 @@
 			<h3>Disciplinas Cadastradas</h3>
 	</tr>
 	<tr>
-		<th class="text-center">
-			Nome da Disciplina
-		</th>
-		<th class="text-center">
-			Código da Disciplina
-		</th>
-		<th class="text-center">
-			Carga Horária Semestral
-		</th>
-		<th class="text-center">
-			Ações
-		</th>
+		<th class="text-center">Código da Disciplina</th>
+		<th class="text-center">Nome da Disciplina</th>
+		<th class="text-center">Curso pertencente</th>
+		<th class="text-center">Carga Horária Semestral</th>
+		<th class="text-center">Restrição</th>
+		<th class="text-center">Ações</th>
 	</tr>
 	<?php
+
+	$tableContent = function($discipline){
+	    echo "<tr>";
+	        echo "<td>";
+	        echo $discipline['discipline_code'];
+	        echo "</td>";
+
+	        echo "<td>";
+	        echo $discipline['discipline_name'] . " (". $discipline['name_abbreviation'] . ")";
+	        echo "</td>";
+
+	        echo "<td>";
+	        $course = $this->course_model->getCourseById($discipline['id_course_discipline']);
+	        echo $course['course_name'];
+	        echo "</td>";
+
+	        echo "<td>";
+	        echo $discipline['workload']." h";
+	        echo "</td>";
+
+	        echo "<td>";
+	        echo prettyDisciplineRestrict($discipline['restrict']);
+	        echo anchor(
+	        	"make_discipline_restrict/{$discipline['discipline_code']}",
+	        	$discipline['restrict'] ? "Marcar como livre" : "Marcar como restrita",
+                "class='btn btn-default'"
+            );
+	        echo "</td>";
+
+	        echo "<td>";		        echo anchor("discipline/{$discipline['discipline_code']}", "Editar", array(
+	                "class" => "btn btn-primary",
+	                "content" => "Editar"
+		        ));
+
+	        	echo form_open("program/discipline/deleteDiscipline");
+		        echo form_hidden("discipline_code", $discipline['discipline_code']);
+		        echo form_button(array(
+	                "class" => "btn btn-danger",
+	                "type" => "submit",
+	                "content" => "Remover"
+		        ));
+		        echo form_close();
+	        echo "</td>";
+	    echo "</tr>";
+	};
+
 	if($disciplines){
 		if ($userIsAdmin){
-			foreach($disciplines as $discipline => $indexes){
-
-				echo "<tr>";
-
-					echo "<td>";
-					echo $indexes['discipline_name'] . " (". $indexes['name_abbreviation'] . ")";
-					echo "</td>";
-
-					echo "<td>";
-					echo $indexes['discipline_code'];
-					echo "</td>";
-
-					echo "<td>";
-					echo $indexes['workload']." h";
-					echo "</td>";
-
-					echo "<td>";
-
-						echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
-						"class" => "btn btn-primary btn-editar",
-						"type" => "submit",
-						"content" => "Editar"
-						));
-
-						echo form_open("program/discipline/deleteDiscipline");
-						echo form_hidden("discipline_code", $indexes['discipline_code']);
-						echo form_button(array(
-							"class" => "btn btn-danger btn-remover",
-							"type" => "submit",
-							"content" => "Remover"
-						));
-						echo form_close();
-					echo "</td>";
-
-				echo "</tr>";
+			foreach($disciplines as $courseDisciplines){
+				$tableContent($courseDisciplines);
 			}
 		}else{
 			foreach ($disciplines as $courses){
-				foreach($courses as $discipline => $indexes){
-
-					echo "<tr>";
-
-					echo "<td>";
-					echo $indexes['discipline_name'] . " (". $indexes['name_abbreviation'] . ")";
-					echo "</td>";
-
-					echo "<td>";
-					echo $indexes['discipline_code'];
-					echo "</td>";
-
-					echo "<td>";
-					echo $indexes['workload']." h";
-					echo "</td>";
-
-					echo "<td>";
-
-					echo anchor("discipline/{$indexes['discipline_code']}", "Editar", array(
-							"class" => "btn btn-primary btn-editar",
-							"type" => "submit",
-							"content" => "Editar"
-					));
-
-					echo form_open("program/discipline/deleteDiscipline");
-					echo form_hidden("discipline_code", $indexes['discipline_code']);
-					echo form_button(array(
-							"class" => "btn btn-danger btn-remover",
-							"type" => "submit",
-							"content" => "Remover"
-					));
-					echo form_close();
-					echo "</td>";
-
-					echo "</tr>";
+				foreach($courses as $courseDisciplines){
+					$tableContent($courseDisciplines);
 				}
 			}
 		}

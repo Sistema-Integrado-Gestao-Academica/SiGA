@@ -83,6 +83,8 @@ $route['configuracoes'] = 'program/settings';
 $route['cursos'] = 'program/course/index';
 $route['discipline'] = 'program/discipline/discipline_index';
 $route['discipline/(:num)'] = 'program/discipline/formToEditDiscipline/$1';
+$route['make_discipline_restrict/(:num)'] = 'program/discipline/makeRestrict/$1';
+
 $route['staffs'] = 'program/staff/staffsLoadPage';
 $route['staffs/(:num)'] = 'program/staff/editStaff/$1';
 $route['enrollMastermind/(:num)'] = 'program/mastermind/enrollMastermindToStudent/$1';
