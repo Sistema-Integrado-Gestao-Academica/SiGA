@@ -29,7 +29,7 @@ class Request extends MX_Controller {
 	}
 
 	public function refuseAllRequest($requestId, $courseId){
-		
+
 		$wasRefused = $this->request_model->refuseAllRequest($requestId);
 
 		if($wasRefused){
@@ -48,7 +48,7 @@ class Request extends MX_Controller {
 
 	public function approveAllStudentRequestsByMastermind($requestId, $studentId){
 
-		
+
 		$wasApproved = $this->request_model->mastermindApproveAllCurrentStudentRequest($requestId);
 
 		if($wasApproved){
@@ -66,7 +66,7 @@ class Request extends MX_Controller {
 
 	public function refuseAllStudentRequestsByMastermind($requestId, $studentId){
 
-		
+
 		$wasRefused = $this->request_model->mastermindRefuseAllCurrentStudentRequest($requestId);
 
 		if($wasRefused){
@@ -112,7 +112,7 @@ class Request extends MX_Controller {
 
 	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 
-		
+
 		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasApproved){
@@ -129,7 +129,7 @@ class Request extends MX_Controller {
 
 	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea){
 
-		
+
 		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea);
 
 		if($wasRefused){
@@ -170,7 +170,7 @@ class Request extends MX_Controller {
 
 	public function saveMastermindMessage($mastermindId, $requestId, $message){
 
-		
+
 		$messageSaved = $this->request_model->saveMastermindMessage($mastermindId, $requestId, $message);
 
 		return $messageSaved;
@@ -178,7 +178,7 @@ class Request extends MX_Controller {
 
 	public function courseRequests($courseId){
 
-		
+
 		$this->load->model("program/semester_model");
 		$currentSemester = $this->semester_model->getCurrentSemester();
 
@@ -204,13 +204,13 @@ class Request extends MX_Controller {
 		if($requests !== FALSE){
 
 			foreach ($requests as $request) {
-				
+
 				$requestId = $request['id_request'];
 				$userId = $request['id_student'];
 
 				$this->load->model("student/student_model");
 				$user = $this->student_model->getNameAndEnrollment($userId);
-		
+
 				$users[$requestId]['name'] = $user[0]['name'];
 				$users[$requestId]['enrollment'] = $user[0]['enrollment'];
 
@@ -226,7 +226,7 @@ class Request extends MX_Controller {
 
 	public function searchForStudentRequest(){
 
-		
+
 		$searchType = $this->input->post('searchType');
 
 		$courseId = $this->input->post('courseId');
@@ -236,7 +236,7 @@ class Request extends MX_Controller {
 
 		define("SEARCH_BY_STUDENT_ENROLLMENT", "by_enrollment");
 		define("SEARCH_BY_STUDENT_NAME", "by_name");
-		
+
 		$student = $this->input->post('student_identifier');
 		$courseRequests = array();
 		switch($searchType){
@@ -295,13 +295,18 @@ class Request extends MX_Controller {
 
 	public function getCourseRequests($courseId, $semesterId){
 
-		
+
 		$courseRequests = $this->request_model->getCourseRequests($courseId, $semesterId);
 
 		return $courseRequests;
 	}
 
 	public function studentEnrollment($courseId, $userId){
+
+		//----/ Used in the view
+		$this->load->model('secretary/offer_model');
+		$this->load->model('program/discipline_model');
+		//----/
 
 		$this->load->model('secretary/request_model');
 
@@ -410,7 +415,7 @@ class Request extends MX_Controller {
 			$course = $userRequest[0]['id_course'];
 			$semester = $userRequest[0]['id_semester'];
 
-	
+
 			// Check in the offer if the request needs to be approved by mastermind first
 			$offer = new Offer();
 			$requestedOffer = $offer->getOfferBySemesterAndCourse($semester, $course);
