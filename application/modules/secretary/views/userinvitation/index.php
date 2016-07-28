@@ -27,7 +27,6 @@
       "type" => "text",
       "class" => "form-campo",
       "class" => "form-control",
-      "maxlength" => "50",
       "required" => TRUE
   );
 ?>

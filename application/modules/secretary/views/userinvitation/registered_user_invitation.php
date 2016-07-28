@@ -1,19 +1,4 @@
-
-<br>
-<br>
-<div class="row">
-  <div class="col-md-10">
-    <div class='alert alert-info'>
-      <i class='fa fa-info'></i>
-      <b>
-        <p>Aqui você pode convidar alguém para se cadastrar no sistema!</p>
-        <p>O convite será enviado por e-mail. </p>
-        <p>Você pode escolher um grupo específico para que o novo usuário se cadastre.</p>
-      </b>
-    </div>
-  </div>
-</div>
-
+<br><br><br>
 <?php 
   $submitBtn = array(
       "id" => "confirm_invite_btn",
@@ -23,15 +8,14 @@
       "class" => "btn btn-lg bg-olive btn-block"
   );
 
-  $emailToInvite = array(
-      "name" => "email_to_invite_",
-      "id" => "email_to_invite_",
+  $emailsToInvite = array(
+      "name" => "emails_to_invite_",
+      "id" => "emails_to_invite_",
       "type" => "text",
       "class" => "form-campo",
       "class" => "form-control",
-      "maxlength" => "50",
       "required" => TRUE,
-      "value" => $userToInvite->getEmail(),
+      "value" => $emails,
       "disabled" => TRUE
   );
 
@@ -42,32 +26,51 @@
     'checked' => FALSE,
     'required' => TRUE
   );
-?>
+
+if(!empty($usersInGroup)){
+  
+  echo "<div class='alert alert-danger'>";
+  echo "<i class='fa fa-info'></i>";
+      $allUsersInGroup = "";
+      foreach ($usersInGroup as $email) {
+          $allUsersInGroup .= $email.",";
+      }
+      $allUsersInGroup = substr($allUsersInGroup, 0, -1);
+
+      if(strpos($allUsersInGroup, ",")){ 
+        echo "<p>Os emails {$allUsersInGroup} já são de usuários do sistema que estão no grupo solicitado.</p>";
+        echo "<p>O convite não será enviado para eles.</p>";
+      }
+      else{
+        echo "<p>O email {$allUsersInGroup} já é de um usuário do sistema que está no grupo solicitado.</p>";
+        echo "<p>O convite não será enviado para ele.</p>";
+      }
+  echo "</div>";
+} ?>
+
 
 <?= form_open("invite");?>
   
-  <?= form_hidden('email_to_invite', $userToInvite->getEmail()) ?>
+  <?= form_hidden('emails_to_invite', $emails) ?>
 
   <div class='form-box'>
-    <div class='header'>Convidar usuário para o sistema</div>
+    <div class='header'>Convidar usuário(s) para o sistema</div>
 
     <div class='body bg-gray'>
       <div class='form-group'>
-        <?php if(!empty($invitationGroups)){ ?>
-          <?= form_label("Convidar usuário para ser:", "invitation_profiles"); ?>
-          <?= form_dropdown("invitation_profiles", $invitationGroups, '', "class='form-control'"); ?>
+          <?= form_label("Convidar usuários para ser:", "invitation_profiles"); ?>
+          <?= form_dropdown("invitation_profiles", $invitationGroups, $invitationGroup, "class='form-control'"); ?>
           <?= form_error("invitation_profiles");?>
-        <?php 
-              }else{
-                $submitBtn["disabled"] = TRUE;
-                callout("danger", "Este usuário já participa dos grupos possíveis para convite.");
-              }
-        ?>
       </div>
 
+      <?php if(strlen($emails) > 50){ ?>
+        <?= form_textarea($emailsToInvite); ?>
+      <?php  }
+      else{?>
+        <?= form_input($emailsToInvite); ?>
+      <?php }?>
       <div class='form-group'>
-        <?= form_label("E-mail para enviar o convite", "email_to_invite"); ?>
-        <?= form_input($emailToInvite); ?>
+        <?= form_label("E-mail para enviar o convite", "emails_to_invite"); ?>
         <?= form_error("emails_to_invite");?>
       </div>
 
@@ -77,23 +80,30 @@
         <?= form_error("send_invitation_email_confirm");?>
       </div>
       
-      <div class='form-group'>
-        <div class='alert alert-info'>
-          <i class='fa fa-info'></i>
-          <p>O usuário <?= $userToInvite->getName(); ?> já é um usuário do sistema.</p>
-          <p>Este usuário é participante dos grupos: 
-            <?php
-              foreach($userGroups as $group){
-                echo "<br>- ";
-                echo bold(ucfirst($group['group_name']));
-                echo "";
-              } 
-            ?>.
-          </p>
-          <p>Caso envie este convite, você estará o convidando para participar deste novo grupo. Os grupos que este usuário já participa foram removidos das opções</p>.
-        </div>
-      </div>
-    </div>
+      <?php
+        if(!empty($usersToInvite)){
+          echo "<div class='form-group'>";
+            echo "<div class='alert alert-info'>";
+              echo "<i class='fa fa-info'></i>";
+        
+            $allUsersToInvite = "";
+            foreach ($usersToInvite as $user) {
+              $allUsersToInvite .= $user->getEmail().",";
+            }
+            $allUsersToInvite = substr($allUsersToInvite, 0, -1);
+
+            if(strpos($allUsersToInvite, ",")){ 
+              echo "<p>Os emails {$allUsersToInvite} já pertencem a usuários do sistema de outro grupo.</p>";
+              echo "<p>Caso envie este convite, você estará os convidando para participar deste novo grupo.</p>";
+            }
+            else{
+              echo "<p>O email {$allUsersToInvite} já pertence a um usuário do sistema de outro grupo.</p>";
+              echo "<p>Caso envie este convite, você estará o convidando para participar deste novo grupo.</p>";
+            } 
+            echo "</div>";
+          echo "</div>";
+        echo "</div>";
+      } ?>
 
     <div class='footer body bg-gray'>
     <?= form_button($submitBtn);?>
