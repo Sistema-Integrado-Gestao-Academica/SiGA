@@ -106,6 +106,71 @@ class Production extends MX_Controller {
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/{$file}", $data);
 	}
 
+	public function editCoauthor($productionId, $order){
+
+		$author = $this->production_model->getAuthorByProductionAndOrder($productionId, $order);
+
+		$data = array(
+			'productionId' => $productionId,
+			'author' => $author[0],
+		);
+
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_coauthor", $data);
+	}
+
+	public function updateCoauthor($productionId, $order){
+
+		$name = $this->input->post("name");
+        $cpf = $this->input->post("cpf");
+        $newOrder = $this->input->post("order");
+
+		$this->load->model("auth/usuarios_model");
+		$user = $this->usuarios_model->getUserByCpf($cpf);
+
+        $id = FALSE;
+		if($user !== NULL){
+			$id = $user['id'];
+		}
+        $author = new User($id, $name, $cpf);
+
+		if($order !== $newOrder){
+
+        	$exists = $this->production_model->checkIfOrderExists($newOrder, $productionId);
+		}
+		else{
+			$exists = FALSE;
+		}
+		$session = getSession();
+	
+		if($exists){
+			$session->showFlashMessage("danger", "Coautor existente na ordem informada");
+			redirect("edit_coauthor/{$productionId}/{$order}");
+		}
+		else{
+
+	        $data = array (
+		        'cpf' => $cpf,
+		        'author_name' => $name,
+		        'order' => $newOrder,
+		        'production_id' => $productionId,
+		        'user_id' => $id
+	    	);
+
+			$success = $this->production_model->updateCoauthor($productionId, $order, $data);
+	    	 
+			if($success){
+				$session->showFlashMessage("success", "Autor editado com sucesso!");
+				redirect("edit_coauthors/{$productionId}");
+
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível editar o autor.");
+				redirect("edit_coauthor/{$productionId}/{$order}");
+			}
+
+		}
+	}
+
 	public function edit($productionId){
 		
 		$session = getSession();

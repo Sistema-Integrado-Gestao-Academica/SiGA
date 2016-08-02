@@ -131,7 +131,7 @@ class ProductionAjax extends MX_Controller {
 
         $this->load->library("form_validation");
 
-        $this->form_validation->set_rules("order", "Ordem de Coautoria", "valid_order_coauthor");
+        $this->form_validation->set_rules("order", "Ordem de Coautoria", "required|valid_order_coauthor");
         $this->form_validation->set_rules("name", "Nome", "required");
         $this->form_validation->set_rules("cpf", "Cpf", "valid_cpf");
  
@@ -182,10 +182,10 @@ class ProductionAjax extends MX_Controller {
 
     public function deleteAuthor(){
     	$productionId = $this->input->post("production_id");
-        $name = $this->input->post("name");
+        $order = $this->input->post("order");
 
 		$this->load->model("program/production_model");
-		$success = $this->production_model->deleteCoauthor($productionId, $name);
+		$success = $this->production_model->deleteCoauthor($productionId, $order);
 		echo $success;
     }
 

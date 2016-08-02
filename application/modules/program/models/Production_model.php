@@ -206,6 +206,21 @@ class Production_model extends CI_Model {
 		return $author;
 	}
 
+
+	public function getAuthorByProductionAndOrder($production, $order){
+
+		$this->db->select("production_coauthor.*");
+		$this->db->from("production_coauthor");
+		$this->db->where("production_id", $production);
+		$this->db->where("order", $order);
+		
+		$author = $this->db->get()->result_array();
+
+		$author = checkArray($author);
+
+		return $author;
+	}
+
 	public function getAuthorsByProductionId($productionId){
 		
 		$this->db->select("author_name, cpf, order");
@@ -252,10 +267,20 @@ class Production_model extends CI_Model {
 		return $authors;
 	}
 
-	public function deleteCoauthor($productionId, $name){
+	public function	updateCoauthor($productionId, $order, $data){
+
+		$this->db->where('production_id', $productionId);
+		$this->db->where('order', $order);
+		
+		$updated = $this->db->update('production_coauthor', $data);
+		
+		return $updated;
+	}
+
+	public function deleteCoauthor($productionId, $order){
 
 		$this->db->where("production_id", $productionId);
-		$this->db->where("author_name", $name);		
+		$this->db->where("order", $order);		
 		$deleted = $this->db->delete('production_coauthor');
 
 		return $deleted;
