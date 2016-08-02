@@ -30,6 +30,8 @@ class UserInvitation extends MX_Controller {
 
 	public function invite(){
 
+		$emails = $this->input->post("emails_to_invite");
+
 		$emailIsOk = $this->validateInvitationEmail();
 
 		if($emailIsOk){
@@ -38,83 +40,153 @@ class UserInvitation extends MX_Controller {
 			if($confirmed){
 				$confirmed = TRUE;	
 			}
+			$emails = $this->input->post("emails_to_invite");
+        	$emails = explode(";", $emails);
 
-			$emailNotExists = $this->invitationEmailExists();
+			$result = $this->invitationEmailsExists($emails);
 
+			$emailNotExists = $result['emails_not_exists'];
+			$invitationGroup = $this->input->post("invitation_profiles");
 			if($emailNotExists || (!$emailNotExists && $confirmed)){
 				$session = getSession();
 				$user = $session->getUserData();
 				$secretaryName = $user->getName();
 
 				$secretaryId = $user->getId();
-				$invitationGroup = $this->input->post("invitation_profiles");
-				$emailToInvite = $this->input->post("email_to_invite");
-				$invitationNumber = $this->generateInvitationNumber();
+				$invitationStatus = $this->inviteEachUser($emails, $invitationGroup, $secretaryId, $confirmed);
+				
+				$this->showStatusMessage($invitationStatus, $secretaryName);
 
-				$invitationData = array(
-					UserInvitation_model::ID_COLUMN => $invitationNumber,
-					UserInvitation_model::INVITED_GROUP_COLUMN => $invitationGroup,
-					UserInvitation_model::INVITED_EMAIL_COLUMN => $emailToInvite,
-					UserInvitation_model::SECRETARY_COLUMN => $secretaryId,
-					UserInvitation_model::ACTIVE_COLUMN => TRUE
-				);
-
-				// Send email
-				$this->load->module("notification/emailSender");
-				$sent = $this->emailsender->sendUserInvitationEmail($invitationData, $confirmed);
-
-				if($sent){
-					// Save the sent invitation
-					$this->invitation_model->save($invitationData);
-
-					$status = "success";
-					$message = "{$secretaryName}, um email foi enviado para <i><b>{$emailToInvite}</b></i> convidando-o(a) para se cadastrar no sistema.";
-				}
-				else{
-					$status = "danger";
-					$message = "{$secretaryName}, não foi possível enviar o email para <i><b>{$emailToInvite}</b></i> convidando-o(a) para se cadastrar no sistema. Cheque o e-mail informado e tente novamente.";
-				}
-
-				$session = getSession();
-				$session->showFlashMessage($status, $message);
-				redirect("secretary/userInvitation/index");
-
-			}else{
-				$emailToInvite = $this->input->post("email_to_invite");
-				$this->inviteRegisteredUser($emailToInvite);
+			}
+			else{
+				$this->inviteRegisteredUser($result, $invitationGroup);
 			}
 		}else{
 			$this->index();
 		}
 	}
 
-	public function inviteRegisteredUser($email){
+	private function inviteEachUser($emails, $invitationGroup, $secretaryId, $confirmed){
+
+		$invitationStatus = array();
+
+		foreach ($emails as $id => $email) {
+			$invitationNumber = $this->generateInvitationNumber();
+			$invitationData = array(
+				UserInvitation_model::ID_COLUMN => $invitationNumber,
+				UserInvitation_model::INVITED_GROUP_COLUMN => $invitationGroup,
+				UserInvitation_model::INVITED_EMAIL_COLUMN => $email,
+				UserInvitation_model::SECRETARY_COLUMN => $secretaryId,
+				UserInvitation_model::ACTIVE_COLUMN => TRUE
+			);
+
+			// Send email
+			$this->load->module("notification/emailSender");
+			$sent = $this->emailsender->sendUserInvitationEmail($invitationData, $confirmed);
+			if($sent){
+				// Save the sent invitation
+				$this->invitation_model->save($invitationData);
+			}	
+
+			$invitationStatus[$email] = $sent;
+		}
+
+		return $invitationStatus;
+	}
+
+	private function showStatusMessage($invitationStatus, $secretaryName){
+		
+		$status = "";
+		$message = "";
+				
+		if(!empty($invitationStatus)){
+			$someEmailNotSent = in_array(FALSE, $invitationStatus);
+			$someEmailAreSent = in_array(TRUE, $invitationStatus);
+
+			if(!$someEmailNotSent){
+				$status = "success";
+				$message = "{$secretaryName}, um email foi enviado para todos os emails digitados para se cadastrar no sistema.";
+			}
+			else if(!$someEmailAreSent){
+				$status = "danger";
+				$message = "{$secretaryName}, não foi possível enviar os emails para os usuários se cadastrarem no sistema. Cheque os e-mails informados e tente novamente.";
+			}
+			else{
+				$message = "{$secretaryName}, um email foi enviado de convite para cadastro no sistema, apenas para os seguintes emails: ";
+				foreach ($invitationStatus as $email => $status) { // The email is the id
+					if($status){
+						$message .= $email.",";
+					}
+				}
+				$status = "success";
+				$message = substr($message, 0, -1);
+			}
+		}
+
+		$session = getSession();
+		$session->showFlashMessage($status, $message);
+		redirect("secretary/userInvitation/index");
+	}
+
+	public function inviteRegisteredUser($result, $invitationGroup){
 
 		$this->load->model("auth/usuarios_model");
 		$this->load->model("auth/module_model");
 
-		// Get the user to be invited'
-		$user = $this->usuarios_model->getUserByEmail($email);
-		$userGroups = $this->module_model->getUserGroups($user->getId());
+		$users = array();
+		$usersInGroup = array();
+
+		$emailsExistents = $result['emails_existents'];
+
+		foreach ($emailsExistents as $id => $email) {
+			$user = $this->usuarios_model->getUserByEmail($email);
+			$userGroups = $this->module_model->getUserGroups($user->getId());
+			$userToInvite = TRUE;
+
+			foreach ($userGroups as $group) {
+				$idGroup = $group['id_group'];
+				if($idGroup == $invitationGroup){
+					unset($emailsExistents[$id]);
+					array_push($usersInGroup, $email);
+					$userToInvite = FALSE;
+					break;
+				}
+			}
+			if($userToInvite){
+				array_push($users, $user);
+			}
+		}
 
 		$invitationGroups = array(
 			GroupConstants::GUEST_USER_GROUP_ID => "Convidado",
 			GroupConstants::TEACHER_GROUP_ID => "Docente"
 		);
 
-		// Take out the groups that the user is already enrolled
-		foreach ($invitationGroups as $groupId => $group){
-			foreach ($userGroups as $group){
-				if($groupId == $group['id_group']){
-					unset($invitationGroups[$groupId]);
-				}
+		$emailsNotExistents = $result['emails_not_existents'];
+		if(!empty($emailsExistents)){
+
+			$emails = array_merge($emailsNotExistents, $emailsExistents);
+		}
+		else{
+			$emails = $emailsNotExistents;
+		}
+
+		$emailsToInvite = "";
+		if(!empty($emails)){
+
+			foreach ($emails as $email) {
+				$emailsToInvite .= $email.";";
 			}
+			$emailsToInvite = substr($emailsToInvite, 0, -1);
 		}
 
 		$data = array(
+			"emails" => $emailsToInvite,
 			"invitationGroups" => $invitationGroups,
-			"userToInvite" => $user,
-			"userGroups" => $userGroups
+			"invitationGroup" => $invitationGroup,
+			"usersToInvite" => $users,
+			"emailsNotExistents" => $emailsNotExistents,
+			"usersInGroup" => $usersInGroup
 		);
 
 		loadTemplateSafelyByPermission(
@@ -186,21 +258,41 @@ class UserInvitation extends MX_Controller {
 
 	private function validateInvitationEmail(){
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("email_to_invite", "E-mail", "required|valid_email");
+		$emails = $this->input->post("emails_to_invite");
+		$this->form_validation->set_rules("emails_to_invite", "E-mail", "required|valid_multiple_emails");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$status = $this->form_validation->run();
 
 		return $status;
 	}
 	
-	private function invitationEmailExists(){
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("email_to_invite", "E-mail", "required|verify_if_email_no_exists");
-		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
-		$status = $this->form_validation->run();
+	private function invitationEmailsExists($emails){
 
-		return $status;
+		$this->load->library("form_validation");
+		$emailsNotExists = TRUE;
+
+		$emailsExistents = array();
+        foreach ($emails as $id => $email) {
+            $emailNotExists = $this->form_validation->verify_if_email_no_exists($email);
+            if(!$emailNotExists){
+            	array_push($emailsExistents, $email); 
+            	unset($emails[$id]); 
+            }
+        }
+        if(!empty($emailsExistents)){
+            $emailsNotExists = FALSE;
+        }
+
+        $result = array(
+        	'emails_not_exists' => $emailsNotExists,
+        	'emails_existents' => $emailsExistents,
+        	'emails_not_existents' => $emails,
+        );
+
+        return $result;
 	}
+
+	
 
 	public function register($userInvitation=""){
 

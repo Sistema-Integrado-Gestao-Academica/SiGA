@@ -22,12 +22,11 @@
   );
 
   $emailToInvite = array(
-      "name" => "email_to_invite",
-      "id" => "email_to_invite",
+      "name" => "emails_to_invite",
+      "id" => "emails_to_invite",
       "type" => "text",
       "class" => "form-campo",
       "class" => "form-control",
-      "maxlength" => "50",
       "required" => TRUE
   );
 ?>
@@ -39,15 +38,25 @@
 
     <div class='body bg-gray'>
       <div class='form-group'>
-        <?= form_label("Convidar usuário para ser:", "invitation_profiles"); ?>
+        <?= form_label("Convidar usuário(s) para ser:", "invitation_profiles"); ?>
         <?= form_dropdown("invitation_profiles", $invitationGroups, '', "class='form-control'"); ?>
         <?= form_error("invitation_profiles");?>
       </div>
 
       <div class='form-group'>
-        <?= form_label("E-mail para enviar o convite", "email_to_invite"); ?>
+        <?= form_label("E-mail(s) para enviar o convite", "email_to_invite"); ?>
         <?= form_input($emailToInvite); ?>
-        <?= form_error("email_to_invite");?>
+        <?= form_error("emails_to_invite");?>
+        <br>
+        <div class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <i class='fa fa-info'></i>
+          <b>
+            <p class="text">Você pode adicionar vários emails para enviar o convite. Basta colocar ";" entre um email e outro.</p>
+            <p>Exemplo: </p>
+            <p><small>exemplo1@exemplo.com;exemplo2@exemplo.com </small></p>
+          </b>
+        </div>
       </div>
     </div>
 

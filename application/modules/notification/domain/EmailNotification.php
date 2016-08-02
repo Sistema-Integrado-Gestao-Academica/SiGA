@@ -151,6 +151,7 @@ abstract class EmailNotification extends BaseNotification{
     }
 
 	public function notify(){
+
         $emailSent = FALSE;
 
 		$message = $this->getMessage();

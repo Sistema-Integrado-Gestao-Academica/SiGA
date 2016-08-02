@@ -40,7 +40,8 @@ class EmailSender extends MX_Controller{
 
 		if($registeredUserInvitation){
 			$email = new GroupInvitationEmail($user, $invitationNumber, $secretaryName, $groupName);
-		}else{
+		}
+		else{
 			$email = new UserInvitationEmail($user, $invitationNumber, $secretaryName);
 		}
 
