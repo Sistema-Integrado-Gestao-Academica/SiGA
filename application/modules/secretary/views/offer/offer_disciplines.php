@@ -1,9 +1,12 @@
 <script src=<?=base_url("js/offer.js")?>></script>
 
 <h2 class='principal'>Lista de Oferta</h2>
+
+
 <h3><b>Curso</b>: <?= $course['course_name'] ?></h3>
 
 <?php
+
 $idOffer = $offerData['id_offer'];
 
 if($offerData['needs_mastermind_approval'] === EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL){
@@ -12,8 +15,19 @@ if($offerData['needs_mastermind_approval'] === EnrollmentConstants::NEEDS_MASTER
 else{
 	$needsMastermindApproval = "Não.";
 } ?>
-<h4><b>Necessita de aprovação do orientador?</b><?= $needsMastermindApproval ?></h3>
-
+<h4><b>Necessita de aprovação do orientador?</b><?= $needsMastermindApproval ?></h4>
+<?php 
+	$status = $offerData['offer_status']; 
+	$startDate = convertDateTimeToDateBR($offerData['start_date']);
+	$endDate = convertDateTimeToDateBR($offerData['end_date']);
+	$reload = TRUE;
+	if($status == OfferConstants::APPROVED_OFFER){
+		echo "<h4><b>Período de matrículas </b>:".$offerData['enrollment_period']."</h4>";
+		echo "<button data-toggle='modal' data-target='#form_enrollment_period' class='btn btn-primary'>";
+		echo "<i class='fa fa-edit'> Editar período</i>";
+		echo "</button>";
+	}
+?>
 <br>
 <h3>Adicionar disciplinas a lista de oferta</h3>
 
@@ -71,11 +85,6 @@ else{
 
 	buildTableEndDeclaration();
 
-	$offerIdHidden = array(
-		'id' => "offer_id",
-		'type' => "hidden",
-		'value' => $idOffer
-	);
 
 ?>
 <div class="row">
@@ -86,10 +95,7 @@ else{
 
 	<div class="col-xs-9">
 		<?php
-		
-		$status = $offerData['offer_status'];
-		$startDate = convertDateTimeToDateBR($offerData['start_date']);
-		$endDate = convertDateTimeToDateBR($offerData['end_date']);
+	
 		if($status === OfferConstants::PROPOSED_OFFER){ 
 
 			if($allDisciplines !== FALSE){ ?>
@@ -104,42 +110,13 @@ else{
 		    			Se você optar por não definir o período, a matrícula começará com a aprovação da lista e você poderá encerrá-la a qualquer momento.");?>
 					<br>
 					<div class="row">
+
 					<div class="col-lg-6">
-						<h2> Período de matrículas </h2>
-						<div id="alert-msg"> 
-						</div>
-						<div class="form-group">
-							<?= form_label("Data de Início", "enrollment_start_date") ?>
-							<?= form_input(array(
-								"name" => "enrollment_start_date",
-								"id" => "enrollment_start_date",
-								"type" => "text",
-								"class" => "form-control",
-								"value" => $startDate
-							)) ?>
-							<?= form_error("enrollment_start_date"); ?>
-						</div>
-						<div class="form-group">
-							<?= form_label("Data de Fim", "enrollment_end_date") ?>
-							<?= form_input(array(
-								"name" => "enrollment_end_date",
-								"id" => "enrollment_end_date",
-								"type" => "text",
-								"class" => "form-control",
-								"value" => $endDate
-							)) ?>
-							<?= form_error("enrollment_end_date"); ?>
-						</div>
-						<?= form_input($offerIdHidden); ?>
-				        <div class="footer">
-				            <?= form_button(array(
-				                "id" => "new_enrollment_period",
-				                "class" => "btn bg-olive btn-block",
-				                "content" => "Definir período",
-				                "type" => "submit"
-				            )) ?>
-				        </div>
-						<?= form_close() ?>
+						<?php $reload = FALSE; ?>
+						<button id="define_period_btn" data-toggle="modal" data-target="#form_enrollment_period" class="btn bg-olive" >
+							Definir período
+						</button>	
+						<br>
 					<br>
 					</div>
 					<div class="col-lg-3">
@@ -162,3 +139,30 @@ else{
 
 </div>
 
+<!-- Modal HTML -->
+<div id="form_enrollment_period" class="modal fade">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">
+            	Período de matrículas
+        </div>
+        <div class="modal-body">
+		    <form id='form'> 
+		       <?php formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload); ?>
+	       </form>
+		    <br>
+		    <br>
+		</div>
+    	<p class="text-warning"><medium>Não se esqueça de clicar em salvar.</medium></p>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success" id="new_enrollment_period">Salvar</button>
+			<?= form_close() ?>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+            <div id="alert-msg">
+        </div>
+    </div>
+</div>
+</div>
+</div>

@@ -203,6 +203,12 @@ td {
 #back_btn_offer_list{
   width: 50%;
 }
+
+#define_period_btn{
+  width: 50%;
+  margin-left: 30%;
+  margin-top: 14%;
+}
 /*
  * Skin: Green (from AdminLTE)
  * -----------

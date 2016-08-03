@@ -28,16 +28,22 @@ function newEnrollmentPeriod(){
 	var startDate = $('#enrollment_start_date').val();
 	var endDate = $('#enrollment_end_date').val();
 	var offerId = $('#offer_id').val();
+	var reload = $('#reload').val();
 
     $.post(
 		urlToPost,
 		{
 	        enrollment_start_date: startDate,
 	        enrollment_end_date: endDate,
-	        offerId: offerId
+	        offerId: offerId,
 		},
 		function(data){
-            $('#alert-msg').html(data);
+			var period = JSON.parse(data);
+        	var status = period.status;
+            $('#alert-msg').html(period.message);
+        	if(status == true && reload == true){	
+        		location.reload();
+        	}
 		}
 	);
 }

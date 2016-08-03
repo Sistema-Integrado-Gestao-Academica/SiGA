@@ -15,7 +15,12 @@ class OfferAjax extends MX_Controller {
             }
             $enddiv = "</div>";
             $message = $divalert.$result['message'].$enddiv;
-            echo $message;
+
+            $json = array(
+                'status' => $result['status'],
+                'message' => $message
+            );
+            echo json_encode($json);
         }
         else{
             $divalert = "<div class='alert alert-danger'> ";
@@ -23,7 +28,11 @@ class OfferAjax extends MX_Controller {
             $enddiv = "</div>";
             $message = $divalert.$errors.$enddiv;
                 
-            echo ($message);
+            $json = array(
+                'status' => FALSE,
+                'message' => $message
+            );
+            echo json_encode($json);
         }
 
     }

@@ -392,6 +392,7 @@ class Offer extends MX_Controller {
 	public function addDisciplines($idOffer, $courseId){
 
 		$offerData = $this->offer_model->getOffer($idOffer);
+		$offerData = $this->addEnrollmentPeriodOnOfferArray($offerData);
 
 		$this->load->module("program/discipline");
 		$allDisciplines = $this->discipline->getCourseSyllabusDisciplines($courseId);
@@ -468,20 +469,24 @@ class Offer extends MX_Controller {
 
 		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
 		if($offerLists !== FALSE){
-			if(empty($offerLists['start_date']) && empty($offerLists['end_date'])){
-
-				$offerLists['enrollment_period'] = "Não especificado.";	
-			}
-			else{
-				$startDate = date_parse_from_format("Y/m/d", $offerLists['start_date']);
-				$endDate = date_parse_from_format("Y/m/d", $offerLists['end_date']);
-				$startDate = $startDate['day']."/".$startDate['month']."/".$startDate['year'];
-				$endDate = $endDate['day']."/".$endDate['month']."/".$endDate['year'];
-				$offerLists['enrollment_period'] = $startDate." a ".$endDate;	
-			}
+			$offerLists = $this->addEnrollmentPeriodOnOfferArray($offerLists);
 		}
 
 		return $offerLists;
+	}
+
+	private function addEnrollmentPeriodOnOfferArray($offer){
+		
+		if(empty($offer['start_date']) && empty($offer['end_date'])){
+			$offer['enrollment_period'] = "Não especificado.";	
+		}
+		else{
+			$startDate = convertDateTimeToDateBR($offer['start_date']);
+			$endDate = convertDateTimeToDateBR($offer['end_date']);
+			$offer['enrollment_period'] = $startDate." a ".$endDate;	
+		}
+
+		return $offer;
 	}
 
 	public function getOfferBySemesterAndCourse($semesterId, $courseId){
