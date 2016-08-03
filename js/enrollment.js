@@ -59,6 +59,8 @@ function searchGuestsToEnroll(){
 function searchDisciplineClasses(){
 
 	var disciplineName = $("#discipline_name_search").val();
+	var isUpdate = $("#is_update").val();
+	var requestId = $("#request").val();
 	var courseId = $("#courseId").val();
 	var userId = $("#userId").val();
 	var siteUrl = $("#site_url").val();
@@ -70,7 +72,9 @@ function searchDisciplineClasses(){
 		{
 			disciplineName: disciplineName,
 			courseId: courseId,
-			userId: userId
+			userId: userId,
+			requestId: requestId,
+			isUpdate: isUpdate
 		},
 		function(data){
 			$("#discipline_search_result").html(data);

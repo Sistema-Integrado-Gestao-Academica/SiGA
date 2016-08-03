@@ -69,7 +69,7 @@ class Enrollment extends MX_Controller {
 		}else{
 
 			log_message("info", "Student ${user} enrolled in course {$course} successfully.");
-			$notifyUser = new EnrolledStudentEmail($userForEmail, $course);	
+			$notifyUser = new EnrolledStudentEmail($userForEmail, $course);
 			$notifyUser->notify();
 
 			$status = "success";
@@ -136,8 +136,8 @@ class Enrollment extends MX_Controller {
         $session = getSession();
         $user = $session->getUserData();
         $userId = $user->getId();
-	
-		$this->load->model("auth/usuarios_model");    
+
+		$this->load->model("auth/usuarios_model");
         $success = $this->usuarios_model->addCourseToGuest($userId, $courseId);
 
         if($success){
@@ -150,7 +150,6 @@ class Enrollment extends MX_Controller {
         }
     }
 
-
     public function setUserAsUnknown(){
 
         $userId = $this->input->post("user");
@@ -158,7 +157,7 @@ class Enrollment extends MX_Controller {
 
         $this->load->model("auth/usuarios_model");
 
-        $success = $this->usuarios_model->updateCourseGuest($userId, $courseId, EnrollmentConstants::UNKNOWN_STATUS);        
+        $success = $this->usuarios_model->updateCourseGuest($userId, $courseId, EnrollmentConstants::UNKNOWN_STATUS);
 
         if($success){
         	$user = $this->usuarios_model->getObjectUser($userId);

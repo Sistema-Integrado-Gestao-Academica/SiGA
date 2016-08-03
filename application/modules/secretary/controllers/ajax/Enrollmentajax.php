@@ -29,6 +29,7 @@ class EnrollmentAjax extends MX_Controller {
         $disciplineName = $this->input->post('disciplineName');
         $courseId = $this->input->post('courseId');
         $userId = $this->input->post('userId');
+        $isUpdate = $this->input->post('isUpdate');
 
         // Semester data
         $this->load->model("program/semester_model");
@@ -87,9 +88,15 @@ class EnrollmentAjax extends MX_Controller {
                             echo $currentVacancies;
                             echo "</td>";
 
+                            if($isUpdate){
+                                $requestId = $this->input->post('requestId');
+                                $path = "add_discipline_to_request/{$requestId}/{$class['id_offer_discipline']}";
+                            }else{
+                                $path = "student/temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}";
+                            }
                             $attrs = "class='btn btn-primary'";
                             echo "<td>";
-                            echo anchor("student/temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}","Adicionar à matrícula", $attrs);
+                            echo anchor($path,"Adicionar à matrícula", $attrs);
                             echo "</td>";
                         echo "</tr>";
                     }

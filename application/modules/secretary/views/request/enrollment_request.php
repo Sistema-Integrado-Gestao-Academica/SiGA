@@ -13,7 +13,9 @@
 		</div>
 
 		<div class="panel-body">
-			<?php displayDisciplinesToRequest($disciplinesToRequest, $courseId, $userId, $semester['id_semester']); ?>
+			<?php
+				displayDisciplinesToRequest($disciplinesToRequest, $courseId, $userId, $semester['id_semester']);
+			?>
 		</div>
 
 		<div class="panel-footer" align="right">
@@ -30,46 +32,7 @@
 		</div>
 	</div>
 
-	<?php
-		$disciplineSearch = array(
-			"name" => "discipline_name_search",
-			"id" => "discipline_name_search",
-			"type" => "text",
-			"class" => "form-campo",
-			"class" => "form-control"
-		);
-
-		$courseHidden = array(
-			"id" => "courseId",
-			"name" => "courseId",
-			"type" => "hidden",
-			"value" => $courseId
-		);
-
-		$userHidden = array(
-			"id" => "userId",
-			"name" => "userId",
-			"type" => "hidden",
-			"value" => $userId
-		);
-	?>
-
-	<h3><i class='fa fa-search-plus'> </i> Adicionar disciplinas</h3>
-	<br>
-
-	<div class='row'>
-		<div class='col-md-6 col-sm-6'>
-			<div class='input-group input-group-sm'>
-				<?= form_label("Nome da disciplina", "discipline_name_search");?>
-				<?= form_input($disciplineSearch) ?>
-				<?= form_input($courseHidden);?>
-				<?= form_input($userHidden);?>
-			</div>
-		</div>
-	</div>
-
-	<br>
-	<div id='discipline_search_result'>
+	<?php include('search_discipline_form.php'); ?>
 
 <!-- In this case, the student has requested enrollment -->
 <?php }else{ ?>
@@ -98,8 +61,30 @@
 
 		<div class="panel-footer" align="left">
 			<?php if($requestStatus !== FALSE){ ?>
-			<h4>Status da solicitação: <b><i><?php echo $requestStatus?></b></i></h4>
-			<?php } ?>
+			<h4>Status da solicitação: <b><i><?php echo lang($requestStatus)?></b></i></h4>
+			<br>
+
+			<?php if($request['secretary_approval']){
+				echo "<h4 class='text-center'>Solicitação já finalizada pela secretaria.<p><small>Solicitações finalizadas não podem ser editadas.</small></p></h4>";
+			} ?>
+
+			<?php
+				// If there are disciplines refused, the student can request another ones
+				$canUpdateRequest = ($requestStatus == EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS
+					|| $requestStatus == EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS
+					|| $requestStatus == EnrollmentConstants::REQUEST_INCOMPLETE_STATUS) && !$request['secretary_approval'];
+				if($canUpdateRequest){
+			?>
+					<div class="alert alert-info alert-dismissible" role="alert">
+				      <i class="fa fa-info"></i>
+				      <h4 class="text-center">Que pena, você não conseguiu algumas disciplinas. Você pode solicitar outras disciplinas e alterar sua solicitação.<p><small> OBS.: Disciplinas já aprovadas não podem ser removidas.</small></p></h4>
+				      <p align="center">
+				      	<?= anchor("update_enroll_request/{$requestId}", "<i class='fa fa-exchange'></i> Alterar solicitação", "class='btn btn-default btn-flat btn-lg'")?>
+				      </p>
+				    </div>
+			<?php
+				}
+			} ?>
 		</div>
 	</div>
 <?php } ?>

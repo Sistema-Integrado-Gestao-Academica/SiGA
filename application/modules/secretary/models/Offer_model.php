@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."/secretary/constants/OfferConstants.php");
+require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
 
 class Offer_model extends CI_Model {
 
@@ -73,7 +74,7 @@ class Offer_model extends CI_Model {
 
 				$this->db->where('id_offer', $offer['id_offer']);
 				$this->db->update('offer', array('offer_status' => OfferConstants::PROPOSED_OFFER));
-			
+
 			}
 		}
 
@@ -157,6 +158,31 @@ class Offer_model extends CI_Model {
 		}
 
 		return $thereIsVacancy;
+	}
+
+	public function addOneVacancy($idOfferDiscipline){
+
+		$offerDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
+
+		if($offerDiscipline !== FALSE){
+			$currentVacancies = $offerDiscipline['current_vacancies'];
+			$oldClass = $offerDiscipline['class'];
+			$newVacancies = $currentVacancies + 1;
+			$offerDiscipline['current_vacancies'] = $newVacancies;
+			$this->updateOfferDisciplineClass($offerDiscipline, $oldClass);
+
+			$foundOfferDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
+
+			if($foundOfferDiscipline['current_vacancies'] == $newVacancies){
+				$wasAdded = TRUE;
+			}else{
+				$wasAdded = FALSE;
+			}
+		}else{
+			$wasAdded = FALSE;
+		}
+
+		return $wasAdded;
 	}
 
 	public function subtractOneVacancy($idOfferDiscipline){

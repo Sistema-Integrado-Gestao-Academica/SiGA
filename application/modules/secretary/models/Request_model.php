@@ -34,13 +34,14 @@ class Request_model extends CI_Model {
 		return $requestId;
 	}
 
-	public function saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval = 0){
+	public function saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval = 0, $isUpdate=FALSE){
 
 		$requestDiscipline = array(
 			'id_request' => $requestId,
 			'discipline_class' => $idOfferDiscipline,
 			'status' => $status,
-			'mastermind_approval' => $mastermindApproval
+			'mastermind_approval' => $mastermindApproval,
+			'is_update' => $isUpdate
 		);
 
 		$this->db->insert('request_discipline', $requestDiscipline);
@@ -54,6 +55,15 @@ class Request_model extends CI_Model {
 		}
 
 		return $wasSaved;
+	}
+
+	public function removeDisciplineRequest($requestId, $idOfferDiscipline){
+		$where = array(
+			'id_request' => $requestId,
+			'discipline_class' => $idOfferDiscipline,
+			'is_update' => TRUE // Only delete the disciplines that was requested as update
+		);
+		$this->db->delete("request_discipline", $where);
 	}
 
 	public function approveAllRequest($requestId){
@@ -153,7 +163,6 @@ class Request_model extends CI_Model {
 
 		$this->checkRequestGeneralStatus($requestId);
 
-
 		return $wasApproved;
 	}
 
@@ -163,26 +172,14 @@ class Request_model extends CI_Model {
 
 		if($requestDisciplines !== FALSE){
 
-			foreach($requestDisciplines as $discipline){	
-				// Add one vacancy to the the offer discipline class for each refused request
-				if($discipline['status'] === EnrollmentConstants::REFUSED_STATUS){
-					$this->addOneVacancy($discipline['discipline_class']);
+			$this->load->model("secretary/offer_model");
+
+			foreach($requestDisciplines as $discipline){
+				// Subtract one vacancy to the the offer discipline class for each approved request
+				if($discipline['status'] === EnrollmentConstants::APPROVED_STATUS){
+					$this->offer_model->subtractOneVacancy($discipline['discipline_class']);
 				}
 			}
-		}
-	}
-
-	private function addOneVacancy($idOfferDiscipline){
-		
-		$this->load->model("secretary/offer_model");
-		$offerDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
-
-		if($offerDiscipline !== FALSE){
-			$currentVacancies = $offerDiscipline['current_vacancies'];
-			$oldClass = $offerDiscipline['class'];
-			$newVacancies = $currentVacancies + 1;
-			$offerDiscipline['current_vacancies'] = $newVacancies;
-			$this->offer_model->updateOfferDisciplineClass($offerDiscipline, $oldClass);
 		}
 	}
 
@@ -260,22 +257,42 @@ class Request_model extends CI_Model {
 
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
 
+		$this->db->trans_start();
+
 		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::APPROVED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
 
 		$this->requestDisciplineApproval($requestingArea, TRUE, $requestId, $idOfferDiscipline);
 
+		$this->db->trans_complete();
+
+		$transaction_status = $this->db->trans_status();
+
+		if($transaction_status === FALSE){
+			$wasApproved = FALSE;
+		}
+
 		return $wasApproved;
 	}
 
 	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea){
+
+		$this->db->trans_start();
 
 		$wasRefused = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::REFUSED_STATUS);
 
 		$this->checkRequestGeneralStatus($requestId);
 
 		$this->requestDisciplineApproval($requestingArea, FALSE, $requestId, $idOfferDiscipline);
+
+		$this->db->trans_complete();
+
+		$transaction_status = $this->db->trans_status();
+
+		if($transaction_status === FALSE){
+			$wasRefused = FALSE;
+		}
 
 		return $wasRefused;
 	}

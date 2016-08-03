@@ -145,6 +145,12 @@ $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 
+// Request routes
+$route['update_enroll_request/(:num)'] = 'secretary/request/updateRequest/$1';
+$route['add_discipline_to_request/(:num)/(:num)'] = 'secretary/request/addDisciplineToRequest/$1/$2';
+$route['remove_from_request/(:num)/(:num)'] = 'secretary/request/removeDisciplineFromRequest/$1/$2';
+
+
 // Qualis routes
 $route['import_qualis'] = 'program/importQualis/index';
 $route['upload_qualis'] = 'program/importQualis/upload';

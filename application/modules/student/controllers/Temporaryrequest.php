@@ -17,7 +17,6 @@ class TemporaryRequest extends MX_Controller {
 
 		if($userRequest !== FALSE){
 
-
 			$this->load->module("secretary/request");
 			$result = $this->request->receiveStudentRequest($userRequest);
 
@@ -101,7 +100,7 @@ class TemporaryRequest extends MX_Controller {
 			/**
 			 * Empty the schedule to add the already inserted disciplines, in order to dont have
 			 *  both the disciplines requested and the disciplines to insert in the same array.
-			 * If this happens, it would give a conflict hour. 
+			 * If this happens, it would give a conflict hour.
 			 */
 			$this->schedule->emptySchedule();
 
