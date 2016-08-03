@@ -193,6 +193,16 @@ td {
 #center_btn_form{
   margin-left: 30%;
 }
+
+#approve_offer_list_btn{
+  width: 100%;
+  margin-left: 30%;
+  margin-top: 30%;
+}
+
+#back_btn_offer_list{
+  width: 50%;
+}
 /*
  * Skin: Green (from AdminLTE)
  * -----------

@@ -541,4 +541,54 @@ class Offer extends MX_Controller {
 
 		return $offerSemester;
 	}
+
+	public function saveEnrollmentPeriod(){
+
+		$valid = $this->validatePeriodData();
+
+		if($valid){
+			
+			$success = $this->createEnrollmentPeriod();
+			$session = getSession();
+			if($success){
+				$session->showFlashMessage("success", "Período definido com sucesso.");
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível definir o período. Tente novamente.");	
+				redirect('save_enrollment_period');
+			}
+		}
+		else{
+		}		
+	}
+
+	private function validatePeriodData(){
+
+        $this->load->library("form_validation");
+
+        $this->form_validation->set_rules("enrollment_start_date", "Data de início", "required");
+        $this->form_validation->set_rules("enrollment_end_date", "Data de Fim", "required");
+        $this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+
+        $success = $this->form_validation->run();
+
+        return $success;
+    }
+
+    private function createEnrollmentPeriod(){
+        
+        $startDate = $this->input->post("startDate");
+        $endDate = $this->input->post("endDate");
+
+        $offerId = $this->input->post("offerId");
+        $data = array(
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        );
+        
+        $this->load->model("secretary/offer_model");
+        $success = $this->offer_model->saveEnrollmentPeriod($data, $offerId);
+
+        return $success;
+    }
 }

@@ -520,4 +520,12 @@ class Offer_model extends CI_Model {
 
 		return $offerExists;
 	}
+
+	public function saveEnrollmentPeriod($data, $offerId){
+		
+		$this->db->where('id_offer', $offerId);
+		$saved = $this->db->update('offer', $data);
+
+		return $saved;
+	}
 }

@@ -1,3 +1,5 @@
+<script src=<?=base_url("js/offer.js")?>></script>
+
 <h2 class='principal'>Lista de Oferta</h2>
 <h3><b>Curso</b>: <?= $course['course_name'] ?></h3>
 
@@ -69,12 +71,25 @@ else{
 
 	buildTableEndDeclaration();
 
+	$offerIdHidden = array(
+		'id' => "offer_id",
+		'type' => "hidden",
+		'value' => $idOffer
+	);
+
 ?>
 <div class="row">
+	
+	<div class="col-lg-3">
+        <?php echo anchor("offer_list", "Voltar", "id='back_btn_offer_list' class='btn btn-danger'"); ?>
+	</div>
+
 	<div class="col-xs-9">
 		<?php
 		
 		$status = $offerData['offer_status'];
+		$startDate = convertDateTimeToDateBR($offerData['start_date']);
+		$endDate = convertDateTimeToDateBR($offerData['end_date']);
 		if($status === OfferConstants::PROPOSED_OFFER){ 
 
 			if($allDisciplines !== FALSE){ ?>
@@ -85,11 +100,53 @@ else{
 				
 				<div id=<?="confirmation"?> class="collapse">
 					<br>
-		    		<?php callout("warning", "Ao aprovar a lista de oferta não é possível adicionar ou retirar disciplinas. Deseja aprovar?");?>
+		    		<?php callout("info", "Você pode definir um período de matrículas. <br>
+		    			Se você optar por não definir o período, a matrícula começará com a aprovação da lista e você poderá encerrá-la a qualquer momento.");?>
 					<br>
+					<div class="row">
+					<div class="col-lg-6">
+						<h2> Período de matrículas </h2>
+						<div id="alert-msg"> 
+						</div>
+						<div class="form-group">
+							<?= form_label("Data de Início", "enrollment_start_date") ?>
+							<?= form_input(array(
+								"name" => "enrollment_start_date",
+								"id" => "enrollment_start_date",
+								"type" => "text",
+								"class" => "form-control",
+								"value" => $startDate
+							)) ?>
+							<?= form_error("enrollment_start_date"); ?>
+						</div>
+						<div class="form-group">
+							<?= form_label("Data de Fim", "enrollment_end_date") ?>
+							<?= form_input(array(
+								"name" => "enrollment_end_date",
+								"id" => "enrollment_end_date",
+								"type" => "text",
+								"class" => "form-control",
+								"value" => $endDate
+							)) ?>
+							<?= form_error("enrollment_end_date"); ?>
+						</div>
+						<?= form_input($offerIdHidden); ?>
+				        <div class="footer">
+				            <?= form_button(array(
+				                "id" => "new_enrollment_period",
+				                "class" => "btn bg-olive btn-block",
+				                "content" => "Definir período",
+				                "type" => "submit"
+				            )) ?>
+				        </div>
+						<?= form_close() ?>
+					<br>
+					</div>
+					<div class="col-lg-3">
 					<?php
-					echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar", "id='approve_offer_list_btn' class='btn btn-primary'");
-			        ?>
+					echo anchor("secretary/offer/approveOfferList/{$idOffer}", "Aprovar Oferta", "id='approve_offer_list_btn' class='btn btn-primary'"); ?>
+					</div>
+					<br><br>
 				</div>
 			<?php
 			}
@@ -102,9 +159,6 @@ else{
 		
 		?>
 	</div>
-	
-	<div class="col-xs-3">
-		<?php echo anchor("offer_list", "Voltar", "class='btn btn-danger'"); ?>
-	</div>
+
 </div>
 

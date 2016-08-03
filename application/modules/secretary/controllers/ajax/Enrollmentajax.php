@@ -144,5 +144,4 @@ class EnrollmentAjax extends MX_Controller {
             echo "</div>";
         }
     }
-
 }

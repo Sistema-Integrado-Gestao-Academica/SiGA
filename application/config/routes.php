@@ -138,12 +138,14 @@ $route['secretary_home'] = 'secretary/secretary/index';
 $route['enroll_student'] = "secretary/secretary/enrollStudent";
 $route['student_list'] = 'secretary/secretary/coursesStudents';
 $route['request_report'] = 'secretary/secretary/requestReport';
-$route['offer_list'] = 'secretary/offer/offerList';
 $route['course_syllabus'] = 'secretary/syllabus/secretaryCourseSyllabus';
 $route['enroll_mastermind'] = 'secretary/secretary/enrollMasterMinds';
 $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
+// Offer routes
+$route['offer_list'] = 'secretary/offer/offerList';
+$route['save_enrollment_period'] = 'secretary/offer/saveEnrollmentPeriod';
 
 // Qualis routes
 $route['import_qualis'] = 'program/importQualis/index';
