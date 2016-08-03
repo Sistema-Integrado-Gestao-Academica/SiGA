@@ -71,8 +71,8 @@ class Offer extends MX_Controller {
 			foreach($courses as $course){
 				$courseId = $course['id_course'];
 				$courseName = $course['course_name'];
-				$proposedOffers[$courseName]['current_semester'] = $this->offer_model->getCourseOfferList($courseId, $currentSemester['id_semester']);
-				$proposedOffers[$courseName]['next_semester'] = $this->offer_model->getCourseOfferList($courseId, $nextSemester['id_semester']);
+				$proposedOffers[$courseName]['current_semester'] = $this->getCourseOfferList($courseId, $currentSemester['id_semester']);
+				$proposedOffers[$courseName]['next_semester'] = $this->getCourseOfferList($courseId, $nextSemester['id_semester']);
 			}
 
 		}else{
@@ -467,6 +467,19 @@ class Offer extends MX_Controller {
 	public function getCourseOfferList($courseId, $semester){
 
 		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
+		if($offerLists !== FALSE){
+			if(empty($offerLists['start_date']) && empty($offerLists['end_date'])){
+
+				$offerLists['enrollment_period'] = "Não especificado.";	
+			}
+			else{
+				$startDate = date_parse_from_format("Y/m/d", $offerLists['start_date']);
+				$endDate = date_parse_from_format("Y/m/d", $offerLists['end_date']);
+				$startDate = $startDate['day']."/".$startDate['month']."/".$startDate['year'];
+				$endDate = $endDate['day']."/".$endDate['month']."/".$endDate['year'];
+				$offerLists['enrollment_period'] = $startDate." a ".$endDate;	
+			}
+		}
 
 		return $offerLists;
 	}
@@ -482,7 +495,7 @@ class Offer extends MX_Controller {
 
 		define("APPROVED_STATUS", "approved");
 
-		$offer = $this->getCourseOfferList($courseId, $semester);
+		$offer = $this->offer_model->getCourseOfferList($courseId, $semester);
 
 		if($offer !== FALSE){
 
