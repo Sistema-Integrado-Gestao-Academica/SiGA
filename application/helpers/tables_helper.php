@@ -457,6 +457,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 					echo "<td>";
 						$status = switchRequestDisciplineStatus($disciplineClass['status']);
 						echo $status;
+						echo prettyRequestDate($disciplineClass);
 					echo "</td>";
 
 					echo "<td>";
@@ -478,7 +479,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 										// In this case the request was already approved
 									}else{
 										if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
-											echo anchor("secretary/request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+											echo anchor("secretary/request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
 										}else{
 											echo "<div class=\"callout callout-danger\">";
 											echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
@@ -489,7 +490,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already refused
 									}else{
-										echo anchor("secretary/request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+										echo anchor("secretary/request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
 									}
 								}else{
 									echo "<div class=\"callout callout-info\">";
@@ -510,13 +511,13 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
 										// In this case the request was already approved
 									}else{
-										echo anchor("secretary/request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+										echo anchor("secretary/request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
 									}
 
 									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already refused
 									}else{
-										echo anchor("secretary/request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+										echo anchor("secretary/request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
 									}
 								}
 								break;

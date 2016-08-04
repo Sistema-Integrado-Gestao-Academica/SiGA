@@ -187,15 +187,13 @@ class Offer_model extends CI_Model {
 
 	public function subtractOneVacancy($idOfferDiscipline){
 
-		define("NO_VACANCY", 0);
-
 		$offerDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
 
 		if($offerDiscipline !== FALSE){
 
 			$currentVacancies = $offerDiscipline['current_vacancies'];
 
-			if($currentVacancies != NO_VACANCY){
+			if($currentVacancies != EnrollmentConstants::NO_VACANCY){
 
 				$newQuantityOfVacancies = $currentVacancies - 1;
 
