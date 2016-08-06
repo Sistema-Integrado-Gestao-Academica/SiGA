@@ -35,10 +35,58 @@
 		if($thereIsDisciplinesToRequest){
 
 			echo anchor(
-				"student/temporaryrequest/confirmEnrollmentRequest/{$userId}/{$courseId}/{$semester['id_semester']}",
+				"#confirm_request",
 				"Confirmar solicitação",
-				"id='confirm_enrollment_request_btn' class='btn btn-primary btn-flat'"
+				"class='btn btn-primary btn-flat' data-toggle='modal'"
 			);
+		?>
+			<div id="confirm_request" class="modal fade">
+			<div class="modal-dialog">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		            <h2 class="modal-title text-center">
+		            	Confirmar solicitação de matrícula
+		            </h2>
+		        </div>
+		        <div class="modal-body text-center">
+			        <div class="alert alert-info alert-dismissible" role="alert">
+					  <i class="fa fa-question"></i>
+			        	<h3><b>Deseja confirmar as disciplinas solicitadas?</b></h3>
+			        	<br>
+			        	<p align="left"> Disciplinas solicitadas:<br>
+		        		<?php
+		        			foreach ($disciplinesToRequest as $request){
+		        				$class = $this->offer_model->getOfferDisciplineById($request['discipline_class']);
+		        				$discipline = $this->discipline_model->getDisciplineByCode($class['id_discipline']);
+		        				echo prettyDisciplineDescription($discipline, $class);
+		        			}
+		        		?>
+			        	</p>
+			        	<p>
+			        		<br>Após confirmar a solicitação de matrícula <b>NÃO</b> é possível mais adicionar ou retirar disciplinas com vagas garantidas.
+			        	</p>
+					</div>
+		        </div>
+		        <div class="modal-footer">
+		        	<div class='row'>
+			        	<div class='col-md-6 col-sm-6'>
+			        	<?= anchor(
+								"student/temporaryrequest/confirmEnrollmentRequest/{$userId}/{$courseId}/{$semester['id_semester']}",
+								"CONFIRMAR SOLICITAÇÃO",
+								"id='confirm_enrollment_request_btn' class='btn btn-success btn-block btn-lg'"
+							);
+			        	?>
+			        	</div>
+			        	<div class='col-md-6 col-sm-6'>
+			        	<button type="button" class="btn btn-danger btn-block btn-lg" data-dismiss="modal">CANCELAR</button>
+			        	</div>
+		        	</div>
+		        </div>
+		    </div>
+			</div>
+			</div>
+		<?php
 		}
 		?>
 		</div>

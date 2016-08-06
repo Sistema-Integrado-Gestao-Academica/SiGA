@@ -75,6 +75,14 @@ function prettyDisciplineRestrict($restrict){
 	return $status;
 }
 
+function prettyDisciplineDescription($discipline, $class){
+
+	$description = "<i class='fa fa-long-arrow-right'></i> ";
+	$description .= "<b>{$discipline['discipline_code']} - {$discipline['discipline_name']} ({$discipline['name_abbreviation']}) - Turma {$class['class']}</b> <br>";
+
+	return $description;
+}
+
 function prettyRequestDate($request){
 	$msg = "Solicitado em <b>";
 	$msg .= $request['requested_on'] != NULL ? "{$request['requested_on']}" : "-";

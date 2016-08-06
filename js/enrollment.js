@@ -34,8 +34,7 @@ $(document).ready(function(){
 	});
 
 	$("#confirm_enrollment_request_btn").click(function(event){
-		var confirmed = confirm("Deseja solicitar as disciplinas adicionadas? \n\n\
-		Após confirmar a solicitação não é possível adicionar ou retirar disciplinas.");
+		var confirmed = confirm("Confirma a solicitação de matrícula?");
 		if(!confirmed){
 			event.preventDefault();
 		}

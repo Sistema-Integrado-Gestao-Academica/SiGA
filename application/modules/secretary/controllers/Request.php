@@ -298,6 +298,11 @@ class Request extends MX_Controller {
 
 	public function studentEnrollment($courseId, $userId){
 
+		//----/ Used in the view
+		$this->load->model('secretary/offer_model');
+		$this->load->model('program/discipline_model');
+		//----/
+
 		$this->load->model('secretary/request_model');
 
 		$this->load->model("program/semester_model");
@@ -409,7 +414,8 @@ class Request extends MX_Controller {
 			foreach($requestDisciplines as $discipline){
 
 				// Take the disciplines that was refused out, so their schedule be free to other disciplines
-				if($discipline['status'] !== EnrollmentConstants::REFUSED_STATUS){
+				if($discipline['status'] !== EnrollmentConstants::REFUSED_STATUS
+					&& $discipline['status'] !== EnrollmentConstants::NO_VACANCY_STATUS){
 					$this->schedule->getDisciplineHours($discipline['discipline_class']);
 					$disciplineSchedule = $this->schedule->getDisciplineSchedule();
 					$insertedDisciplines[] = $disciplineSchedule;
@@ -495,47 +501,16 @@ class Request extends MX_Controller {
 			// Check in the offer if the request needs to be approved by mastermind first
 			$mastermindApproval = $this->checkMastermindNeed($semester, $course);
 
-/***********************  TURN TO A METHOD *******************************************/
-			// $this->load->model("secretary/offer_model");
-			// $requestedOffer = $this->offer_model->getOfferBySemesterAndCourse($semester, $course);
-			// $needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
-
-			// if($needsMastermindApproval){
-			// 	$mastermindApproval = EnrollmentConstants::REQUEST_NOT_APPROVED_BY_MASTERMIND;
-			// }else{
-			// 	$mastermindApproval = EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
-			// }
-/***********************  TURN TO A METHOD *******************************************/
-
-
 			$requestId = $this->saveNewRequest($student, $course, $semester, $mastermindApproval);
 
 			if($requestId !== FALSE){
-/***********************  TURN TO A METHOD *******************************************/
+
 				foreach($userRequest as $tempRequest){
 
 					$idOfferDiscipline = $tempRequest['discipline_class'];
 
 					$this->checkVacanciesAndSave($requestId, $idOfferDiscipline, $mastermindApproval);
-
-				// 	$class = $offer->getOfferDisciplineById($idOfferDiscipline);
-				// 	$currentVacancies = $class['current_vacancies'];
-
-				// 	// If there is vacancy, enroll student
-				// 	if($currentVacancies >= EnrollmentConstants::MIN_VACANCY_QUANTITY_TO_ENROLL){
-
-				// 		/**
-				// 			CHECAR RETORNO
-				// 		 */
-				// 		$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::PRE_ENROLLED_STATUS, $mastermindApproval);
-
-				// 	}else{
-				// 		$this->saveDisciplineRequest($requestId, $idOfferDiscipline, EnrollmentConstants::NO_VACANCY_STATUS, $mastermindApproval);
-				// 	}
-
 				}
-
-/***********************  TURN TO A METHOD *******************************************/
 
 				$wasReceived = $this->checkIfRequestWasSaved($userRequest, $requestId);
 
