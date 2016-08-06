@@ -1,8 +1,19 @@
-<?php
 
-	echo "<br>";
-	echo "<h3>Solicitações dos alunos orientados:</h3>";
-	echo "<br>";
+<h2 class="principal">Solicitações de matrícula dos alunos orientados</h2>
+
+
+<div class="alert alert-info alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <i class="fa fa-info"></i>
+  <h3 class="text-center"><p><b>INFORMAÇÕES IMPORTANTES</b></p></h3><br>
+
+  <h4> <p>- Ao clicar em <b>Finalizar solicitaçao NÃO </b> será mais possível recusar ou aprovar disciplinas, apenas alterar a mensagem enviada para seu aluno.</p>
+  <p> - Após a solicitação finalizada, a mesma será liberada para edição pela secretaria do curso.</p>
+  <p> - <b>Somente</b> após a finalização da solicitação pela secretaria, as vagas serão computadas e atualizadas.</p>
+  </h4>
+</div>
+
+<?php
 
 	buildTableDeclaration();
 

@@ -82,3 +82,8 @@ function prettyRequestDate($request){
 
 	return $msg;
 }
+
+function prettyRequestIsUpdate($request){
+	$msg = $request['is_update'] ? "<span class='label label-success'>Sim</span>" : "<span class='label label-danger'>Não</span>";
+	return $msg;
+}

@@ -6,6 +6,18 @@
 
 <!-- In this case, the student did not requested enrollment -->
 <?php if($requestDisciplinesClasses === FALSE){ ?>
+
+	<div class="alert alert-info alert-dismissible" role="alert">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	  <i class="fa fa-info"></i>
+	  <h3 class="text-center"><p><b>INFORMAÇÕES IMPORTANTES</b></p></h3><br>
+
+	  <h4>
+	  	<p>- É possível adicionar mais disciplinas na sua solicitação após a confirmação, porém sua matrícula nessas disciplinas dependerá das vagas disponíveis no momento em que sua solicitação for atendida. </p>
+	  	<p>- As disciplinas aqui solicitadas possuem vaga garantida até o(a) orientador(a) e/ou secretario(a) responder e finalizar sua solicitação.</p>
+	  </h4>
+	</div>
+
 	<div class="panel panel-primary">
 
 		<div class="panel-heading">

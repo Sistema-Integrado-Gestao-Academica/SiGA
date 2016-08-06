@@ -222,7 +222,6 @@ class Request extends MX_Controller {
 
 	public function searchForStudentRequest(){
 
-
 		$searchType = $this->input->post('searchType');
 
 		$courseId = $this->input->post('courseId');
@@ -354,18 +353,26 @@ class Request extends MX_Controller {
 		$this->load->model("program/semester_model");
 
 		$request = $this->request_model->getRequest(array('id_request' =>$requestId));
-		$disciplines = $this->request_model->getRequestDisciplinesById($requestId);
-		$currentSemester = $this->semester_model->getCurrentSemester();
 
-		$data = array(
-			"courseId" => $request['id_course'],
-			"userId" => $request['id_student'],
-			"request" => $request,
-			"disciplines" => $disciplines,
-			"semester" => $currentSemester
-		);
+		$user = getSession()->getUserData()->getId();
 
-		loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'secretary/request/update_enrollment_request', $data);
+		if($request['id_student'] == $user){
+
+			$disciplines = $this->request_model->getRequestDisciplinesById($requestId);
+			$currentSemester = $this->semester_model->getCurrentSemester();
+
+			$data = array(
+				"courseId" => $request['id_course'],
+				"userId" => $request['id_student'],
+				"request" => $request,
+				"disciplines" => $disciplines,
+				"semester" => $currentSemester
+			);
+
+			loadTemplateSafelyByGroup(GroupConstants::STUDENT_GROUP, 'secretary/request/update_enrollment_request', $data);
+		}else{
+			show_404();
+		}
 	}
 
 	private function disciplineInRequest($disciplines, $idOfferDiscipline){
@@ -418,7 +425,7 @@ class Request extends MX_Controller {
 				$offerDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
 				$offer = $this->offer_model->getOffer($offerDiscipline['id_offer']);
 
-				$mastermindApproval = $this->checkMastermindNeed($offer['semester'], $offer['course']);
+				$mastermindApproval = $this->checkMastermindNeed($offer['semester'], $offer['course'], $requestId);
 
 				$saved = $this->checkVacanciesAndSave($requestId, $idOfferDiscipline, $mastermindApproval, TRUE);
 
@@ -543,14 +550,26 @@ class Request extends MX_Controller {
 		return $wasReceived;
 	}
 
-	private function checkMastermindNeed($semester, $course){
+	private function checkMastermindNeed($semester, $course, $requestId=FALSE){
 
 		$this->load->model("secretary/offer_model");
 		$requestedOffer = $this->offer_model->getOfferBySemesterAndCourse($semester, $course);
 		$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
 
 		if($needsMastermindApproval){
+
 			$mastermindApproval = EnrollmentConstants::REQUEST_NOT_APPROVED_BY_MASTERMIND;
+
+			if($request !== FALSE){
+				$request = $this->getRequestById($requestId);
+				$mastermindFinalized = $request['mastermind_approval'];
+
+				//If the mastermind already finalized his moves, only the secretary can play with the request
+				if($mastermindFinalized){
+					$mastermindApproval = EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+				}
+			}
+
 		}else{
 			$mastermindApproval = EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 		}

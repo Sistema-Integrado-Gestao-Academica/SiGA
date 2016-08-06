@@ -121,15 +121,18 @@ class Request_model extends CI_Model {
 
 			foreach($requestDisciplines as $requestedDiscipline){
 
-				$this->changeRequestDisciplineStatus($requestId, $requestedDiscipline['discipline_class'], $newStatus);
+				if($requestedDiscipline['status'] !== EnrollmentConstants::NO_VACANCY_STATUS){
 
-				if($newStatus === EnrollmentConstants::APPROVED_STATUS){
-					$isToApprove = TRUE;
-				}else{
-					$isToApprove = FALSE;
+					$this->changeRequestDisciplineStatus($requestId, $requestedDiscipline['discipline_class'], $newStatus, $requestedDiscipline['requested_on']);
+
+					if($newStatus === EnrollmentConstants::APPROVED_STATUS){
+						$isToApprove = TRUE;
+					}else{
+						$isToApprove = FALSE;
+					}
+
+					$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_SECRETARY, $isToApprove, $requestId, $requestedDiscipline['discipline_class']);
 				}
-
-				$this->requestDisciplineApproval(EnrollmentConstants::REQUESTING_AREA_SECRETARY, $isToApprove, $requestId, $requestedDiscipline['discipline_class']);
 			}
 
 			$this->checkRequestGeneralStatus($requestId);
@@ -396,25 +399,34 @@ class Request_model extends CI_Model {
 		return $wasAll;
 	}
 
-	private function changeRequestDisciplineStatus($requestId, $idOfferDiscipline, $newStatus, $requestDate=NULL){
+	private function changeRequestDisciplineStatus($requestId, $idOfferDiscipline, $newStatus, $requestDate=NULL, $request=array()){
 
-		$this->db->where("id_request", $requestId);
-		$this->db->where("discipline_class", $idOfferDiscipline);
-		if($requestDate !== NULL){
-			// The date comes encoded from the URL
-			$requestDate = urldecode($requestDate);
-			$this->db->where("requested_on", $requestDate);
+		if(empty($request)){
+			$this->db->where("id_request", $requestId);
+			$this->db->where("discipline_class", $idOfferDiscipline);
+			if($requestDate !== NULL){
+				// The date comes encoded from the URL
+				$requestDate = urldecode($requestDate);
+				$this->db->where(array("requested_on" => $requestDate));
+			}
+		}else{
+			$this->db->where($request);
 		}
 		$this->db->update('request_discipline', array('status' => $newStatus));
 
-		$requestDisciplineData = array(
-			'id_request' => $requestId,
-			'discipline_class' => $idOfferDiscipline,
-			'status' => $newStatus
-		);
+		if(empty($request)){
+			$requestDisciplineData = array(
+				'id_request' => $requestId,
+				'discipline_class' => $idOfferDiscipline,
+				'status' => $newStatus
+			);
 
-		if($requestDate !== NULL){
-			$requestDisciplineData['requested_on'] = $requestDate;
+			if($requestDate !== NULL){
+				$requestDisciplineData['requested_on'] = $requestDate;
+			}
+		}else{
+			$requestDisciplineData = $request;
+			$requestDisciplineData['status'] = $newStatus;
 		}
 
 		$foundRequestDiscipline = $this->getRequestDisciplines($requestDisciplineData);
