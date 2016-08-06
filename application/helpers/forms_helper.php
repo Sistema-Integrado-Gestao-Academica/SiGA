@@ -778,6 +778,7 @@ function emptyDiv(){
 }
 
 function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
+
 	$startInput = array(
 		"name" => "enrollment_start_date",
 		"id" => "enrollment_start_date",
@@ -807,6 +808,19 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 		'value' => $reload
 	);
 
+	$oldStartDateHidden = array(
+		'id' => "old_start_date",
+		'type' => "hidden",
+		'value' => $startDate
+	);
+
+	$now = new Datetime();
+	$now = $now->format('d/m/Y');
+	// If the start date already passed, the field is not editable  
+	if($now >= $startDate){
+		$startInput['readonly'] = TRUE;
+	}
+
 	echo "<div class='form-group'>";
 		echo form_label('Data de Início', 'enrollment_start_date');
 		echo form_input($startInput);
@@ -819,4 +833,5 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 	echo "</div>";
 	echo form_input($offerIdHidden); 
 	echo form_input($reloadHidden); 
+	echo form_input($oldStartDateHidden); 
 }

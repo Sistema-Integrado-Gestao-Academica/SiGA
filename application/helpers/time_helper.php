@@ -91,3 +91,15 @@ function convertDateTimeToDateBR($date){
 	
 	return $date;
 }
+
+function validateDateInPeriod($date, $startDate, $endDate){
+
+	if($date >= $startDate && $date <= $endDate){
+		$validDate = TRUE;
+	}
+	else{
+		$validDate = FALSE;
+	}
+
+	return $validDate;
+}

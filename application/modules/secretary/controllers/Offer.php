@@ -477,13 +477,14 @@ class Offer extends MX_Controller {
 
 	private function addEnrollmentPeriodOnOfferArray($offer){
 		
-		if(empty($offer['start_date']) && empty($offer['end_date'])){
-			$offer['enrollment_period'] = "Não especificado.";	
+		$startDate = convertDateTimeToDateBR($offer['start_date']);
+		$endDate = convertDateTimeToDateBR($offer['end_date']);
+
+		if(empty($offer['end_date'])){
+			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: Não especificado";	
 		}
 		else{
-			$startDate = convertDateTimeToDateBR($offer['start_date']);
-			$endDate = convertDateTimeToDateBR($offer['end_date']);
-			$offer['enrollment_period'] = $startDate." a ".$endDate;	
+			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: $endDate";
 		}
 
 		return $offer;

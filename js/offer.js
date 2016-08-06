@@ -29,6 +29,7 @@ function newEnrollmentPeriod(){
 	var endDate = $('#enrollment_end_date').val();
 	var offerId = $('#offer_id').val();
 	var reload = $('#reload').val();
+	var oldStartDateHidden = $('#old_start_date').val();
 
     $.post(
 		urlToPost,
@@ -36,6 +37,7 @@ function newEnrollmentPeriod(){
 	        enrollment_start_date: startDate,
 	        enrollment_end_date: endDate,
 	        offerId: offerId,
+	        old_start_date: oldStartDateHidden
 		},
 		function(data){
 			var period = JSON.parse(data);

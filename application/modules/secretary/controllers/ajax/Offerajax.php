@@ -52,47 +52,79 @@ class OfferAjax extends MX_Controller {
 
     private function createEnrollmentPeriod(){
         
+        $oldStartDate = $this->input->post("old_start_date");
         $startDate = $this->input->post("enrollment_start_date");
         $endDate = $this->input->post("enrollment_end_date");
         $offerId = $this->input->post("offerId");
 
+        $oldStartDate = convertDateToDateTime($oldStartDate);
         $startDate = convertDateToDateTime($startDate);
         $endDate = convertDateToDateTime($endDate);
 
-        if(!is_null($startDate) && !is_null($endDate)){
+        $validNewStartDate = $this->checkStartDates($oldStartDate, $startDate);
 
-            $data = array(
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-            );
-            
-            $validDates = validateDatesDiff($startDate, $endDate);
+        if($validNewStartDate){
 
-            if($validDates){
-                $this->load->model("secretary/offer_model");
-                $status = $this->offer_model->saveEnrollmentPeriod($data, $offerId);    
-                if($status){
-                    $message = "Período definido com sucesso";
+            if(!is_null($startDate) && !is_null($endDate)){
+
+                $data = array(
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                );
+                
+                $validDates = validateDatesDiff($startDate, $endDate);
+
+                if($validDates){
+                    $this->load->model("secretary/offer_model");
+                    $status = $this->offer_model->saveEnrollmentPeriod($data, $offerId);    
+                    if($status){
+                        $message = "Período definido com sucesso";
+                    }
+                    else{
+                        $message = "Não foi possível definir o período. Tente novamente.";
+                    }
                 }
                 else{
-                    $message = "Não foi possível definir o período. Tente novamente.";
+                    $status = FALSE;
+                    $message = "A Data Final deve ser maior que a Data Inicial.";   
                 }
             }
             else{
                 $status = FALSE;
-                $message = "A Data Final deve ser maior que a Data Inicial.";   
+                $message = "Data inválida.";   
             }
         }
         else{
             $status = FALSE;
-            $message = "Data inválida.";   
+            $message = "A data de início não pode mais ser modificada.".$validNewStartDate;   
         }
-
+        
         $result = array(
             'status' => $status,
             'message' => $message
         );
 
         return $result;
+    }
+
+    private function checkStartDates($oldStartDate, $startDate){
+
+        $now = new Datetime();
+        $now = $now->format('Y/m/d');
+
+        // If the start date already passed, the field is not editable  
+        if($now >= $startDate){
+            if($oldStartDate != $startDate){
+                $validNewStartDate = FALSE;
+            }
+            else{
+                $validNewStartDate = TRUE;
+            }
+        }
+        else{
+            $validNewStartDate = TRUE;
+        }
+
+        return $validNewStartDate;
     }
 }

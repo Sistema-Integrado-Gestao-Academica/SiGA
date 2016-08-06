@@ -43,6 +43,7 @@ class Offer_model extends CI_Model {
 
 				if($registeredStatus === APPROVED){
 					$wasApproved = TRUE;
+					$this->checkIfEnrollmentHasAPeriod($idOffer);
 				}else{
 					$wasApproved = FALSE;
 				}
@@ -63,6 +64,16 @@ class Offer_model extends CI_Model {
 		$this->db->update('offer', array('offer_status' => $newStatus));
 	}
 
+	private function checkIfEnrollmentHasAPeriod($idOffer){
+
+		$offer = $this->getOffer($idOffer);
+		if(empty($offer['start_date'])){
+			$now = new Datetime();
+			$data = array('start_date' => $now->format('Y/m/d'));
+			$this->saveEnrollmentPeriod($data, $idOffer);;
+		}
+
+	}
 	public function updatePlannedOffers($semesterId){
 
 		$semesterOffers = $this->getAllSemesterOffers($semesterId);
@@ -527,5 +538,34 @@ class Offer_model extends CI_Model {
 		$saved = $this->db->update('offer', $data);
 
 		return $saved;
+	}
+
+	public function checkIfIsInEnrollmentPeriod($offerId){
+
+		$offer = $this->getOffer($offerId);
+
+		$startDate = $offer['start_date'];
+		$endDate = $offer['end_date'];
+		
+		if(empty($startDate) && empty($endDate)){
+			$enrollmentPeriod = TRUE;
+		}
+		else{
+			$startDate = convertDateTimeToDateBR($startDate);
+			$endDate = convertDateTimeToDateBR($endDate);
+			$today = new Datetime();
+			$today = $today->format("d/m/Y");
+			
+			$checkDate = validateDateInPeriod($today, $startDate, $endDate);
+			if($checkDate){
+				$enrollmentPeriod = TRUE;
+			}
+			else{
+				$enrollmentPeriod = FALSE;
+			}
+		}
+		
+
+		return $enrollmentPeriod;
 	}
 }
