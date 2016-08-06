@@ -597,4 +597,26 @@ class Offer extends MX_Controller {
 
         return $success;
     }
+
+    public function finishEnrollmentPeriod($offerId, $courseId){
+        
+        $endDate = new Datetime();
+        $endDate = $endDate->format("Y/m/d");
+        $data = array(
+            'end_date' => $endDate,
+        );
+        
+        $this->load->model("secretary/offer_model");
+        $success = $this->offer_model->saveEnrollmentPeriod($data, $offerId);
+		$session = getSession();
+        if($success){
+			$session->showFlashMessage("success", "Período encerrado com sucesso. Serão aceitas matrículas até o final do dia de hoje.");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível encerrar o período. Tente novamente.");	
+		}
+		
+		$this->addDisciplines($offerId, $courseId);
+		
+    }
 }

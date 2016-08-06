@@ -21,11 +21,21 @@ else{
 	$startDate = convertDateTimeToDateBR($offerData['start_date']);
 	$endDate = convertDateTimeToDateBR($offerData['end_date']);
 	$reload = TRUE;
+	$offerIdHidden = array(
+		'id' => "offer_id",
+		'type' => "hidden",
+		'value' => $idOffer
+	);
 	if($status == OfferConstants::APPROVED_OFFER){
 		echo "<h4><b>Período de matrículas </b>:".$offerData['enrollment_period']."</h4>";
 		echo "<button data-toggle='modal' data-target='#form_enrollment_period' class='btn btn-primary'>";
 		echo "<i class='fa fa-edit'> Editar período</i>";
 		echo "</button>";
+		$now = new Datetime();
+		$now = $now->format("d/m/Y");
+		if(empty($endDate) || $now <= $endDate){
+			echo anchor("secretary/offer/finishEnrollmentPeriod/{$idOffer}/{$course['id_course']}", "<i class='fa fa-times-circle'> Encerrar período</i>", "class='btn btn-danger'");
+		}
 	}
 ?>
 <br>

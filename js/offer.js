@@ -18,6 +18,11 @@ $(document).ready(function(){
 	$("#new_enrollment_period").click(function(){
 		newEnrollmentPeriod();
 	});
+
+	$("#finish_enrollment_period").click(function(){
+		finishEnrollmentPeriod();
+	});
+	
 });
 
 
