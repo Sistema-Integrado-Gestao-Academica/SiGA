@@ -74,3 +74,16 @@ function prettyDisciplineRestrict($restrict){
 
 	return $status;
 }
+
+function prettyRequestDate($request){
+	$msg = "Solicitado em <b>";
+	$msg .= $request['requested_on'] != NULL ? "{$request['requested_on']}" : "-";
+	$msg .= "</b>";
+
+	return $msg;
+}
+
+function prettyRequestIsUpdate($request){
+	$msg = $request['is_update'] ? "<span class='label label-success'>Sim</span>" : "<span class='label label-danger'>Não</span>";
+	return $msg;
+}

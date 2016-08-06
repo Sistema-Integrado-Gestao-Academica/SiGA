@@ -102,7 +102,7 @@ class Offer extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível aprovar essa lista de ofertas. Verifique se há discisplinas adicionadas a essa lista, não é possível aprovar uma lista sem disciplinas.";
 		}
-		
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect('secretary/offer/offerList');
@@ -129,7 +129,7 @@ class Offer extends MX_Controller {
 
 		// Get the classe of a discipline in an offer
 		$offerDisciplineClass = $this->getCourseOfferDisciplineByClass($idDiscipline, $idOffer, $class);
-		
+
 		// Get discipline data
 		$this->load->model("program/discipline_model");
 		$disciplineData = $this->discipline_model->getDisciplineByCode($idDiscipline);
@@ -143,7 +143,7 @@ class Offer extends MX_Controller {
 		if($foundGroup !== FALSE){
 			$this->load->model("auth/usuarios_model");
 			$teachers = $this->usuarios_model->getUsersOfGroup($foundGroup['id_group']);
-		
+
 			if($teachers !== FALSE){
 
 				$allTeachers = array();
@@ -173,17 +173,17 @@ class Offer extends MX_Controller {
 	}
 
 	public function getOfferForEdit($idOffer){
-		
+
 		$offer = $this->offer_model->getOffer($idOffer);
-		
+
 		$offerApproved = array();
 		$offerApproved['id_offer'] = $offer['id_offer'];
-		
+
 		if($offer['offer_status'] == OfferConstants::APPROVED_OFFER){
-			$offerApproved['approved'] = TRUE; 
+			$offerApproved['approved'] = TRUE;
 		}
 		else{
-			$offerApproved['approved'] = FALSE; 
+			$offerApproved['approved'] = FALSE;
 		}
 
 		return $offerApproved;
@@ -411,13 +411,6 @@ class Offer extends MX_Controller {
 	public function checkAvailableVacancies($idOfferDiscipline){
 
 		$wasSubtracted = $this->offer_model->checkAvailableVacancies($idOfferDiscipline);
-
-		return $wasSubtracted;
-	}
-
-	public function subtractOneVacancy($idOfferDiscipline){
-
-		$wasSubtracted = $this->offer_model->subtractOneVacancy($idOfferDiscipline);
 
 		return $wasSubtracted;
 	}

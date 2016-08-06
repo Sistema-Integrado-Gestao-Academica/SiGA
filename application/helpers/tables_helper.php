@@ -350,7 +350,10 @@ function displayCourseRequests($requests, $courseId, $users){
 
 		    		echo "<br>";
 		    		echo "<div class=\"callout callout-info\">";
-		    			echo anchor("secretary/request/finalizeRequestSecretary/{$requestId}/{$courseId}", "Finalizar solicitação", "class='btn btn-primary btn-flat' style='margin-top: 5%;'");
+		    			echo anchor(
+		    				"secretary/request/finalizeRequestSecretary/{$requestId}/{$courseId}",
+		    				"Finalizar solicitação",
+		    				"id='finalize_request' class='btn btn-primary btn-flat' style='margin-top: 5%;'");
 						echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
 					echo "</div>";
     			}else{
@@ -413,6 +416,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 		buildTableHeaders(array(
 			'Código Disciplina',
 			'Disciplina requerida',
+			'Solicitada após',
 			'Turma requerida',
 			'Vagas totais',
 			'Vagas disponíveis',
@@ -443,6 +447,10 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 					}
 
 					echo "<td>";
+					echo prettyRequestIsUpdate($disciplineClass);
+					echo "</td>";
+
+					echo "<td>";
 					echo $disciplineClass['class'];
 					echo "</td>";
 
@@ -457,6 +465,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 					echo "<td>";
 						$status = switchRequestDisciplineStatus($disciplineClass['status']);
 						echo $status;
+						echo prettyRequestDate($disciplineClass);
 					echo "</td>";
 
 					echo "<td>";
@@ -474,11 +483,11 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 								if($requestIsApprovedByMastermind){
 
-									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
-										// In this case the request was already approved
+									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
+										// In this case the request was already approved or do not have vacancy
 									}else{
 										if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
-											echo anchor("secretary/request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+											echo anchor("secretary/request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
 										}else{
 											echo "<div class=\"callout callout-danger\">";
 											echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
@@ -489,7 +498,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already refused
 									}else{
-										echo anchor("secretary/request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+										echo anchor("secretary/request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
 									}
 								}else{
 									echo "<div class=\"callout callout-info\">";
@@ -507,16 +516,16 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									echo "<h6>Solicitação finalizada. Sem ações.</h6>";
 									echo "</div>";
 								}else{
-									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS){
+									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already approved
 									}else{
-										echo anchor("secretary/request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+										echo anchor("secretary/request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
 									}
 
 									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already refused
 									}else{
-										echo anchor("secretary/request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
+										echo anchor("secretary/request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
 									}
 								}
 								break;
@@ -659,6 +668,7 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 		'Código',
 		'Disciplina',
 		'Turma',
+		'Horário',
 		'OBS'
 	));
 
@@ -685,6 +695,10 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 
 	    		echo "<td>";
 	    		echo $disciplineRequestStatus;
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo prettyRequestDate($class);
 	    		echo "</td>";
 
     		echo "</tr>";
@@ -728,10 +742,9 @@ function switchRequestDisciplineStatus($status){
 	return $disciplineRequestStatus;
 }
 
-function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
+function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId, $isUpdate=FALSE){
 
 	$offer = new Offer();
-
 	$discipline = new Discipline();
 
 	buildTableDeclaration();
@@ -745,9 +758,7 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 	));
 
     if($request != FALSE){
-
     	foreach($request as $request){
-
     		$foundClass = $offer->getOfferDisciplineById($request['discipline_class']);
 
     		if($foundClass !== FALSE){
@@ -771,11 +782,34 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId){
 		    		echo "</td>";
 
 		    		echo "<td>";
-		    		echo anchor(
+		    		if(!$isUpdate){
+			    		echo anchor(
 		    				"student/temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
 	    					"Remover Disciplina",
 	    					"class='btn btn-danger btn-flat'"
 		    			);
+		    		}else{
+		    			// In this case the mastermind and the secretary didn't worked with the student request yet, so disciplines can be removed
+		    			if(($request['status'] == EnrollmentConstants::PRE_ENROLLED_STATUS
+		    				|| $request['status'] == EnrollmentConstants::NO_VACANCY_STATUS) && $request['is_update']){
+
+			    			if($request['status'] == EnrollmentConstants::NO_VACANCY_STATUS){
+
+		    					echo switchRequestDisciplineStatus($request['status']);
+			    			}
+
+			    			echo anchor(
+			    				"remove_from_request/{$request['id_request']}/{$request['discipline_class']}",
+		    					"Remover Disciplina",
+		    					"class='btn btn-danger btn-flat'"
+			    			);
+			    			echo "<br>";
+
+		    			}else{
+		    				echo switchRequestDisciplineStatus($request['status']);
+		    			}
+	    				echo prettyRequestDate($request);
+		    		}
 		    		echo "<td>";
 	    		echo "</tr>";
     		}else{
@@ -943,7 +977,7 @@ function displayOfferDisciplineClasses($idDiscipline, $idOffer, $offerDiscipline
     			echo anchor("secretary/offer/formToUpdateDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Editar turma", "class='btn btn-warning' style='margin-right:5%; margin-bottom:10%;'");
     			$offer = new Offer();
 				$offer = $offer->getOfferForEdit($idOffer);
-				
+
 				if(!$offer['approved']){
 	    			echo anchor("secretary/offer/deleteDisciplineClass/{$idOffer}/{$idDiscipline}/{$class['class']}/{$idCourse}","Remover turma", "class='btn btn-danger'");
 				}
@@ -1014,7 +1048,7 @@ function drawFullScheduleTable($offerDiscipline, $idCourse, $approved){
 }
 
 function formToUpdateOfferDisciplineClass($disciplineId, $offer, $teachers, $offerDisciplineClass, $idCourse){
-	
+
 	echo "<br>";
 	echo "<br>";
 	echo "<h3><i class='fa fa-clock-o'></i> Gerenciar horários da turma</h3>";
@@ -1478,7 +1512,7 @@ function displayDisciplinesToSyllabus($syllabusId, $allDisciplines, $courseId){
 }
 
 function displayOffersList($offers, $currentSemester, $nextSemester){
-	
+
 	$course = new Course();
 
 	buildTableDeclaration();
@@ -1516,7 +1550,7 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 			    	if($nextOffer !== FALSE){
 		    			displayOfferListBySemester($nextOffer, $courseId);
 					}
-					else{	
+					else{
 	    				formToAddNewOffer(OfferConstants::PLANNED_OFFER, $currentOffer, $courseId, $nextSemester);
 	    			}
 	    		echo "</td>";
@@ -1532,7 +1566,7 @@ function displayOfferListBySemester($offer, $courseId){
 	$status = $offer['offer_status'];
 
 	$principalMessage = "Editar oferta ".lang($status);
-	
+
 	if($status === OfferConstants::APPROVED_OFFER){
 		$content = anchor("secretary/offer/addDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
 	    $aditionalMessage = "<b><i>Esta lista de ofertas já foi aprovada. Somente o local e o professor das disciplinas podem ser alterados.</i><b/>";
@@ -1547,7 +1581,7 @@ function displayOfferListBySemester($offer, $courseId){
 }
 
 function formToAddNewOffer($status, $offer, $courseId, $semester){
-	
+
 	if($status == OfferConstants::PLANNED_OFFER){
 		$btn_content = "Planejar";
 	}
@@ -1639,7 +1673,7 @@ function displayAllGroupsToUser($idUser, $allGroups, $userGroups){
 	$ci =& get_instance();
 	$ci->load->model("auth/usuarios_model");
 	$foundUser = $ci->usuarios_model->getUserById($idUser);
-		
+
 	echo "<h3>Grupos Existentes:</h3>";
 	echo "<br>";
 
@@ -1824,7 +1858,7 @@ function displayGuestForEnrollment($guests, $courseId){
 	);
 	foreach ($guests as $user){
 
-		?> 
+		?>
 		<tr>
 
 			<td>
@@ -1835,15 +1869,15 @@ function displayGuestForEnrollment($guests, $courseId){
 			</td>
 			<td>
 				<?php
-				
-				echo anchor("secretary/enrollment/enrollStudent/{$courseId}/{$user['id']}", "Matricular", "class='btn btn-primary'"); 
+
+				echo anchor("secretary/enrollment/enrollStudent/{$courseId}/{$user['id']}", "Matricular", "class='btn btn-primary'");
 
 				?>
-				
+
 				<button data-toggle="collapse" data-target=<?="#confirmation".$user['id']?> class="btn btn-warning" >
-					<span class="fa fa-user"></span><span class="fa fa-question-circle"></span> Desconhecido 
+					<span class="fa fa-user"></span><span class="fa fa-question-circle"></span> Desconhecido
 				</button>
-				
+
 				<div id=<?="confirmation".$user['id']?> class="collapse">
 					<?= form_open("secretary/enrollment/setUserAsUnknown") ?>
 					<?= form_hidden("course", $courseId) ?>

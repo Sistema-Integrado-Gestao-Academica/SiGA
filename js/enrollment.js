@@ -24,6 +24,15 @@ $(document).ready(function(){
 		searchDisciplineClasses();
 	});
 
+	$("#finalize_request").click(function(event){
+		alert("fdsfad");
+		var confirmed = confirm("Deseja finalizar a solicitação?! \n\n\
+		Após finalizar a solicitação não é possível recusar ou aprovar disciplinas. O aluno também não poderá mais alterar sua solicitação.");
+		if(!confirmed){
+			event.preventDefault();
+		}
+	});
+
 	$("#confirm_enrollment_request_btn").click(function(event){
 		var confirmed = confirm("Deseja solicitar as disciplinas adicionadas? \n\n\
 		Após confirmar a solicitação não é possível adicionar ou retirar disciplinas.");
@@ -31,7 +40,6 @@ $(document).ready(function(){
 			event.preventDefault();
 		}
 	});
-
 });
 
 
@@ -59,6 +67,8 @@ function searchGuestsToEnroll(){
 function searchDisciplineClasses(){
 
 	var disciplineName = $("#discipline_name_search").val();
+	var isUpdate = $("#is_update").val();
+	var requestId = $("#request").val();
 	var courseId = $("#courseId").val();
 	var userId = $("#userId").val();
 	var siteUrl = $("#site_url").val();
@@ -70,7 +80,9 @@ function searchDisciplineClasses(){
 		{
 			disciplineName: disciplineName,
 			courseId: courseId,
-			userId: userId
+			userId: userId,
+			requestId: requestId,
+			isUpdate: isUpdate
 		},
 		function(data){
 			$("#discipline_search_result").html(data);
