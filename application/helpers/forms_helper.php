@@ -776,3 +776,62 @@ function loadStaffRegistrationForm($users){
 function emptyDiv(){
 	echo "";
 }
+
+function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
+
+	$startInput = array(
+		"name" => "enrollment_start_date",
+		"id" => "enrollment_start_date",
+		"type" => "text",
+		"class" => "form-control",
+		"value" => $startDate
+	);
+
+	$endInput = array(
+		"name" => "enrollment_end_date",
+		"id" => "enrollment_end_date",
+		"type" => "text",
+		"class" => "form-control",
+		"value" => $endDate
+	);
+
+	$offerIdHidden = array(
+		'id' => "offer_id",
+		'type' => "hidden",
+		'value' => $idOffer
+	);
+
+
+	$reloadHidden = array(
+		'id' => "reload",
+		'type' => "hidden",
+		'value' => $reload
+	);
+
+	$oldStartDateHidden = array(
+		'id' => "old_start_date",
+		'type' => "hidden",
+		'value' => $startDate
+	);
+
+	$now = new Datetime();
+	$now = $now->format('d/m/Y');
+	// If the start date already passed, the field is not editable  
+	if($now >= $startDate){
+		$startInput['readonly'] = TRUE;
+	}
+
+	echo "<div class='form-group'>";
+		echo form_label('Data de Início', 'enrollment_start_date');
+		echo form_input($startInput);
+		echo form_error("enrollment_start_date"); 
+	echo "</div>";
+	echo "<div class='form-group'>";
+		echo form_label('Data de Fim', 'enrollment_end_date');
+		echo form_input($endInput);
+		echo form_error("enrollment_end_date"); 
+	echo "</div>";
+	echo form_input($offerIdHidden); 
+	echo form_input($reloadHidden); 
+	echo form_input($oldStartDateHidden); 
+}

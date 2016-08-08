@@ -71,8 +71,8 @@ class Offer extends MX_Controller {
 			foreach($courses as $course){
 				$courseId = $course['id_course'];
 				$courseName = $course['course_name'];
-				$proposedOffers[$courseName]['current_semester'] = $this->offer_model->getCourseOfferList($courseId, $currentSemester['id_semester']);
-				$proposedOffers[$courseName]['next_semester'] = $this->offer_model->getCourseOfferList($courseId, $nextSemester['id_semester']);
+				$proposedOffers[$courseName]['current_semester'] = $this->getCourseOfferList($courseId, $currentSemester['id_semester']);
+				$proposedOffers[$courseName]['next_semester'] = $this->getCourseOfferList($courseId, $nextSemester['id_semester']);
 			}
 
 		}else{
@@ -392,6 +392,7 @@ class Offer extends MX_Controller {
 	public function addDisciplines($idOffer, $courseId){
 
 		$offerData = $this->offer_model->getOffer($idOffer);
+		$offerData = $this->addEnrollmentPeriodOnOfferArray($offerData);
 
 		$this->load->module("program/discipline");
 		$allDisciplines = $this->discipline->getCourseSyllabusDisciplines($courseId);
@@ -460,8 +461,26 @@ class Offer extends MX_Controller {
 	public function getCourseOfferList($courseId, $semester){
 
 		$offerLists = $this->offer_model->getCourseOfferList($courseId, $semester);
+		if($offerLists !== FALSE){
+			$offerLists = $this->addEnrollmentPeriodOnOfferArray($offerLists);
+		}
 
 		return $offerLists;
+	}
+
+	private function addEnrollmentPeriodOnOfferArray($offer){
+		
+		$startDate = convertDateTimeToDateBR($offer['start_date']);
+		$endDate = convertDateTimeToDateBR($offer['end_date']);
+
+		if(empty($offer['end_date'])){
+			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: Não especificado";	
+		}
+		else{
+			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: $endDate";
+		}
+
+		return $offer;
 	}
 
 	public function getOfferBySemesterAndCourse($semesterId, $courseId){
@@ -475,7 +494,7 @@ class Offer extends MX_Controller {
 
 		define("APPROVED_STATUS", "approved");
 
-		$offer = $this->getCourseOfferList($courseId, $semester);
+		$offer = $this->offer_model->getCourseOfferList($courseId, $semester);
 
 		if($offer !== FALSE){
 
@@ -521,4 +540,76 @@ class Offer extends MX_Controller {
 
 		return $offerSemester;
 	}
+
+	public function saveEnrollmentPeriod(){
+
+		$valid = $this->validatePeriodData();
+
+		if($valid){
+			
+			$success = $this->createEnrollmentPeriod();
+			$session = getSession();
+			if($success){
+				$session->showFlashMessage("success", "Período definido com sucesso.");
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível definir o período. Tente novamente.");	
+				redirect('save_enrollment_period');
+			}
+		}
+		else{
+		}		
+	}
+
+	private function validatePeriodData(){
+
+        $this->load->library("form_validation");
+
+        $this->form_validation->set_rules("enrollment_start_date", "Data de início", "required");
+        $this->form_validation->set_rules("enrollment_end_date", "Data de Fim", "required");
+        $this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+
+        $success = $this->form_validation->run();
+
+        return $success;
+    }
+
+    private function createEnrollmentPeriod(){
+        
+        $startDate = $this->input->post("startDate");
+        $endDate = $this->input->post("endDate");
+
+        $offerId = $this->input->post("offerId");
+        $data = array(
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        );
+        
+        $this->load->model("secretary/offer_model");
+        $success = $this->offer_model->saveEnrollmentPeriod($data, $offerId);
+
+        return $success;
+    }
+
+    public function finishEnrollmentPeriod($offerId, $courseId){
+        
+        $endDate = new Datetime();
+        $endDate = $endDate->format("Y/m/d");
+        $data = array(
+            'end_date' => $endDate,
+        );
+        
+        $this->load->model("secretary/offer_model");
+        $success = $this->offer_model->saveEnrollmentPeriod($data, $offerId);
+		$session = getSession();
+        if($success){
+			$session->showFlashMessage("success", "Período encerrado com sucesso. Serão aceitas matrículas até o final do dia de hoje.");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível encerrar o período. Tente novamente.");	
+		}
+		
+		$this->addDisciplines($offerId, $courseId);
+		
+    }
 }

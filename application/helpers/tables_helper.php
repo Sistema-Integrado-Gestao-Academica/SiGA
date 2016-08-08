@@ -1538,10 +1538,13 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 					$currentOffer = $offer['current_semester'];
 					if($currentOffer !== FALSE){
 		    			displayOfferListBySemester($currentOffer, $courseId);
-
 		    		}
 	    			else{
 	    				formToAddNewOffer(OfferConstants::PROPOSED_OFFER, $currentOffer, $courseId, $currentSemester);
+			    	}
+			    	$status = $currentOffer['offer_status'];
+			    	if($status === OfferConstants::APPROVED_OFFER){			
+			    		echo "Período de matrícula: ".$currentOffer['enrollment_period'];
 			    	}
 	    		echo "</td>";
 
@@ -1569,11 +1572,11 @@ function displayOfferListBySemester($offer, $courseId){
 
 	if($status === OfferConstants::APPROVED_OFFER){
 		$content = anchor("secretary/offer/addDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-	    $aditionalMessage = "<b><i>Esta lista de ofertas já foi aprovada. Somente o local e o professor das disciplinas podem ser alterados.</i><b/>";
+	    $aditionalMessage = "<b><i>Esta lista de ofertas já foi aprovada. Somente o período de matrícula, o local e o professor das disciplinas podem ser alterados.</i><b/>";
 	}
 	else{
 		$content = anchor("secretary/offer/addDisciplines/{$offer['id_offer']}/{$courseId}","<i class='fa fa-edit'></i>", "class='btn btn-danger'");
-	    $aditionalMessage = "<b><i>Aqui é possível adicionar <br>disciplinas a lista de oferta.</i><b/>";
+	    $aditionalMessage = "<b><i>Aqui é possível adicionar <br>disciplinas a lista de oferta e editar o período de matrícula.</i><b/>";
 	}
 
 	$callout = wrapperCallout("info", $content, $principalMessage, $aditionalMessage);

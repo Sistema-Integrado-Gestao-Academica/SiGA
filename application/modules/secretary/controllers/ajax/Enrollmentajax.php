@@ -40,15 +40,17 @@ class EnrollmentAjax extends MX_Controller {
         $this->load->model("secretary/offer_model");
         $courseOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
 
+        $offerId = $courseOffer['id_offer'];
+        
+        // Check if the day is in enrollment period
+        $enrollmentPeriod = $this->offer_model->checkIfIsInEnrollmentPeriod($offerId);
+
         $disciplinesClasses = FALSE;
-        if($courseOffer !== FALSE){
-
-            $offerId = $courseOffer['id_offer'];
-
+        if($courseOffer !== FALSE && $enrollmentPeriod){
             $this->load->model("program/discipline_model");
             $disciplinesClasses = $this->discipline_model->getClassesByDisciplineName($disciplineName, $offerId);
-
-        }else{
+        }
+        else{
             $disciplinesClasses = FALSE;
         }
 
@@ -108,8 +110,7 @@ class EnrollmentAjax extends MX_Controller {
         }else{
 
             echo "<div class='callout callout-info'>";
-            echo "<h4>Não foram encontradas disciplinas com o nome '".$disciplineName."' para a oferta do semestre atual.</h4>";
-            echo "<p>Confira se a lista de oferta do semestre atual já foi aprovada.</p>";
+            echo "<h4>Fora do período de matrículas do semestre atual.</h4>";
             echo "</div>";
         }
     }
@@ -151,5 +152,4 @@ class EnrollmentAjax extends MX_Controller {
             echo "</div>";
         }
     }
-
 }
