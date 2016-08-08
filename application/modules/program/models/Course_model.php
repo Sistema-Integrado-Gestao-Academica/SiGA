@@ -24,9 +24,11 @@ class Course_model extends CI_Model {
 
 	public function getTeachers($courseId){
 		
-		$this->db->select('id_user');
-		$this->db->from('teacher_course');
-		$this->db->where('id_course', $courseId);
+		$this->db->select('users.id, users.name, users.email');
+		$this->db->from('users');
+		$this->db->join("teacher_course", "teacher_course.id_user = users.id");
+		$this->db->where('teacher_course.id_course', $courseId);
+		$this->db->order_by("users.name", "asc");
 		$teachers = $this->db->get()->result_array();
 		$teachers = checkArray($teachers);
 
