@@ -393,9 +393,9 @@ class Course extends MX_Controller {
 
 		if($researchLines !== FALSE){
 
-			foreach ($researchLines as $researchLine) {
+			foreach ($researchLines as $id => $researchLine) {
 				$researchLineId = $researchLine['id_research_line'];
-				$researchLineNames = $this->getResearchLineNameById($researchLineId);
+				$researchLineNames[$id] = $this->getResearchLineNameById($researchLineId);
 			}
 		}
 
@@ -521,15 +521,6 @@ class Course extends MX_Controller {
 		$secretary = $this->course_model->getCourseSecretaries($courseId);
 
 		return $secretary;
-	}
-
-
-	public function getCourseAcademicSecretaryName($id_course){
-
-		
-		$secretaryName = $this->course_model->getAcademicSecretaryName($id_course);
-
-		return $secretaryName;
 	}
 
 	public function deleteSecretary(){
