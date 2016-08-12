@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CourseInfo {
+require_once("Portal.php");
+
+class CourseInfo extends Portal{
 
 	private $id;
 	private $name;
@@ -10,23 +12,14 @@ class CourseInfo {
 	private $researchLines;
 
 
-	public function __construct($id = FALSE, $name = "", $programId = FALSE, $academicSecretaries = FALSE, 
+	public function __construct($id = FALSE, $name = "", $programId = FALSE, $academicSecretaries = FALSE,
 								$teachers = FALSE, $researchLines = FALSE){
 
-		$this->setId($id);
-		$this->setName($name);
+		parent::__construct($id, $name);
 		$this->setProgramId($programId);
 		$this->setAcademicSecretaries($academicSecretaries);
 		$this->setTeachers($teachers);
-		$this->setResearchLines($researchLines);		
-	}
-
-	private function setId($id){
-		$this->id = $id;
-	}
-
-	private function setName($name){
-		$this->name = $name;
+		$this->setResearchLines($researchLines);
 	}
 
 	private function setProgramId($programId){
@@ -45,26 +38,18 @@ class CourseInfo {
 		$this->teachers = $teachers;
 	}
 
-	public function getId(){
-		return $this->id;
-	}
-
-	public function getName(){
-		return $this->name;
-	}
-	
 	public function getProgramId(){
 		return $this->programId;
 	}
-	
+
 	public function getAcademicSecretaries(){
 		return $this->academicSecretaries;
 	}
-	
+
 	public function getResearchLines(){
 		return $this->researchLines;
 	}
-	
+
 	public function getTeachers(){
 		return $this->teachers;
 	}

@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class TeacherInfo {
+require_once("Portal.php");
+
+class TeacherInfo extends Portal{
 
 	private $id;
 	private $name;
@@ -10,24 +12,15 @@ class TeacherInfo {
 	private $researchLine;
 
 
-	public function __construct($id = FALSE, $name = "", $email = FALSE, 
+	public function __construct($id = FALSE, $name = "", $email = FALSE,
 								$summary = FALSE, $latteslink = FALSE, $researchLine = FALSE){
 
-		$this->setId($id);
-		$this->setName($name);
+		parent::__construct($id, $name);
 		$this->setEmail($email);
 		$this->setSummary($summary);
 		$this->setLattesLink($latteslink);
-		$this->setResearchLine($researchLine);		
+		$this->setResearchLine($researchLine);
 
-	}
-
-	private function setId($id){
-		$this->id = $id;
-	}
-
-	private function setName($name){
-		$this->name = $name;
 	}
 
 	private function setEmail($email){
@@ -41,27 +34,19 @@ class TeacherInfo {
 	private function setResearchLine($researchLine){
 		$this->researchLine = $researchLine;
 	}
-	
+
 	private function setSummary($summary){
 		$this->summary = $summary;
 	}
 
-	public function getId(){
-		return $this->id;
-	}
-
-	public function getName(){
-		return $this->name;
-	}
-	
 	public function getEmail(){
 		return $this->email;
 	}
-	
+
 	public function getLattesLink(){
 		return $this->latteslink;
 	}
-		
+
 	public function getSummary(){
 		return $this->summary;
 	}
@@ -69,6 +54,6 @@ class TeacherInfo {
 	public function getResearchLine(){
 		return $this->researchLine;
 	}
-	
-	
+
+
 }
