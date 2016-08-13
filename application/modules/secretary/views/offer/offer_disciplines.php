@@ -158,14 +158,22 @@ else{
             <h4 class="modal-title">
             	Período de matrículas
         </div>
+       	<div class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <i class='fa fa-info'></i>
+            <p class="text">Após o período definido os alunos não poderão solicitar mais disciplinas e nem alterar suas solicitações. Portanto, esse período inclui o período para matrícula e ajuste.</p>
+        </div>
         <div class="modal-body">
 		    <form id='form'> 
-		       <?php formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload); ?>
+
+		       <?php 
+		       formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload); ?>
 	       </form>
 		    <br>
 		    <br>
+			<medium><p class="text-warning">Não se esqueça de clicar em salvar.</p></medium>
 		</div>
-    	<p class="text-warning"><medium>Não se esqueça de clicar em salvar.</medium></p>
+
         <div class="modal-footer">
             <button type="submit" class="btn btn-success" id="new_enrollment_period">Salvar</button>
 			<?= form_close() ?>

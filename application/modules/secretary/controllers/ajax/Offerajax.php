@@ -96,7 +96,7 @@ class OfferAjax extends MX_Controller {
         }
         else{
             $status = FALSE;
-            $message = "A data de início não pode mais ser modificada.".$validNewStartDate;   
+            $message = "A data de início não pode mais ser modificada.";   
         }
         
         $result = array(
@@ -113,7 +113,7 @@ class OfferAjax extends MX_Controller {
         $now = $now->format('Y/m/d');
 
         // If the start date already passed, the field is not editable  
-        if($now >= $startDate){
+        if(!empty($oldStartDate) && $now >= $oldStartDate){
             if($oldStartDate != $startDate){
                 $validNewStartDate = FALSE;
             }

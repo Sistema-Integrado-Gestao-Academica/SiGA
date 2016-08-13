@@ -221,10 +221,9 @@ class Offer extends MX_Controller {
 		if($foundGroup !== FALSE){
 			$this->load->model("program/course_model");
 			$teachers = $this->course_model->getCourseTeachers($idCourse);
-			sort($teachers);			
 
 			if($teachers !== FALSE){
-
+				sort($teachers);			
 				$allTeachers = array();
 
 				foreach($teachers as $teacher){

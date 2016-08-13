@@ -816,8 +816,9 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 
 	$now = new Datetime();
 	$now = $now->format('d/m/Y');
+
 	// If the start date already passed, the field is not editable  
-	if($now >= $startDate){
+	if(!is_null($startDate) && $now >= $startDate){
 		$startInput['readonly'] = TRUE;
 	}
 
