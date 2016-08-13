@@ -1,6 +1,6 @@
 <?php            				
 	
-	if(!empty($coursesName)){ 
+	if(!empty($coursesName)){
 		$courses = $coursesName[$programId];
 		if(!empty($courses)){ ?>
 
@@ -21,10 +21,9 @@
 	    			}
 
 	    		?>
-						
 			</div>				
-    			</div>
-  		</div>								
+			</div>
+  		</div>
 <?php
 		}
 	} ?>
@@ -47,12 +46,11 @@
 							$isLattesBlank = empty($coordinator->getLattesLink()) ||  is_null($coordinator->getLattesLink());
 
 							$isResearchLineBlank = empty($coordinator->getResearchLine()) ||  is_null($coordinator->getResearchLine());
-									
 							if (!$isSummaryBlank || !$isLattesBlank || !$isResearchLineBlank){ ?>
 									<?php if (!$isSummaryBlank){ ?>
 										<b>Resumo:</b><br><?= $coordinator->getSummary()?>
 									<?php } ?>
-									<br>	
+									<br>
 									<?php if (!$isResearchLineBlank){ ?>
 										<b>Linha de Pesquisa:</b><br><?= $coordinator->getResearchLine()?>
 									<?php } ?>
@@ -61,7 +59,7 @@
 										<a class="btn btn-primary btn-flat btn-xs" href=<?= $coordinator->getLattesLink()?>>Currículo Lattes</a>
 									<?php } ?>
 							<?php
-							}	?>					
+							}	?>
 				</div>
             </div>
  </div>
@@ -70,9 +68,8 @@
 	if(!empty($teachers)){
 
 		$programTeachers = $teachers[$programId];
-
 		if(!empty($programTeachers)){ ?>
-			
+
 			<div class="panel box box-default">
 	          <div class="box-header with-border">
 	            <h4 class="box-title">
@@ -83,62 +80,55 @@
 	          </div>
 	          <div id=<?="collapseThree".$program->getId()?> class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
 	            <div class="box-body">
-						<?php 
-							foreach ($programTeachers as $teachersCourse) { 
+						<?php
+							foreach ($programTeachers as $teacher) {
 
-								if(!empty($teachersCourse)){
+								if($teacher->getId() != $program->getCoordinatorId()){?>
+								<div class="panel box box-default">
+								          <div class="box-header with-border">
+								            <h4 class="box-title">
 
-									foreach ($teachersCourse as $teacher) {
-										
-										if($teacher->getId() != $program->getCoordinatorId()){?>
-										<div class="panel box box-default">
-										          <div class="box-header with-border">
-										            <h4 class="box-title">
-										              
-			  										<a data-toggle="collapse" href=<?="#teacher".$program->getId().$teacher->getId()?> class="collapsed" aria-expanded="false">
-			                						<?= $teacher->getName()?> <i class=" fa fa-caret-down"></i></a>
-										            </h4>
-										          </div>
-											<?php 
-											
-											$isSummaryBlank = empty($teacher->getSummary()) || is_null($teacher->getSummary());
-											$isLattesBlank = empty($teacher->getLattesLink()) ||  is_null($teacher->getLattesLink());
+	  										<a data-toggle="collapse" href=<?="#teacher".$program->getId().$teacher->getId()?> class="collapsed" aria-expanded="false">
+	                						<?= $teacher->getName()?> <i class=" fa fa-caret-down"></i></a>
+								            </h4>
+								          </div>
+									<?php
 
-											$isResearchLineBlank = empty($teacher->getResearchLine()) ||  is_null($teacher->getResearchLine());
-											
-											if (!$isSummaryBlank || !$isLattesBlank || $isResearchLineBlank){ ?>
+									$isSummaryBlank = empty($teacher->getSummary()) || is_null($teacher->getSummary());
+									$isLattesBlank = empty($teacher->getLattesLink()) ||  is_null($teacher->getLattesLink());
 
-												<div id=<?="teacher".$program->getId().$teacher->getId()?> class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
-												    <div class="box-body">
-														<b>Email:</b><br><?= $teacher->getEmail()?> <br>
-														<?php if (!$isSummaryBlank){ ?>
-															<b>Resumo:</b><br><?= $teacher->getSummary()?>
-														<?php } ?>
-														<br>	
-														<?php if (!$isResearchLineBlank){ ?>
-															<b>Linha de Pesquisa:</b><br><?= $teacher->getResearchLine()?>
-														<?php } ?>
-														<br><br>
-														<?php if (!$isLattesBlank){ ?>
-															<a class="btn btn-primary btn-flat btn-xs" href=<?= $teacher->getLattesLink()?>>Currículo Lattes</a>
-														<?php } ?>
-													</div>
-												</div>
-											<?php
-											}	?>	
+									$isResearchLineBlank = empty($teacher->getResearchLine()) ||  is_null($teacher->getResearchLine());
 
-											</div>							         				
-							<?php	
-										}
-									}
-								}
+									if (!$isSummaryBlank || !$isLattesBlank || $isResearchLineBlank){ ?>
+
+										<div id=<?="teacher".$program->getId().$teacher->getId()?> class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+										    <div class="box-body">
+												<b>Email:</b><br><?= $teacher->getEmail()?> <br>
+												<?php if (!$isSummaryBlank){ ?>
+													<b>Resumo:</b><br><?= $teacher->getSummary()?>
+												<?php } ?>
+												<br>
+												<?php if (!$isResearchLineBlank){ ?>
+													<b>Linha de Pesquisa:</b><br><?= $teacher->getResearchLine()?>
+												<?php } ?>
+												<br><br>
+												<?php if (!$isLattesBlank){ ?>
+													<a class="btn btn-primary btn-flat btn-xs" href=<?= $teacher->getLattesLink()?>>Currículo Lattes</a>
+												<?php } ?>
+											</div>
+										</div>
+									<?php
+									}	?>
+
+									</div>
+					<?php
 							}
-						?>							
+							}
+						?>
 					</div>
 	            </div>
 	          </div>
 	<?php
-		} 
+		}
 	}?>
-                
 

@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class ProgramInfo {
+require_once("Portal.php");
 
-	private $id;
-	private $name;
+class ProgramInfo extends Portal{
+
 	private $acronym;
 	private $coordinatorId;
 	private $contact;
@@ -14,26 +14,17 @@ class ProgramInfo {
 	private $coordinatorData;
 
 
-	public function __construct($id = FALSE, $name = "", $acronym = FALSE, 
-								$coordinatorId = FALSE, $contact = FALSE, 
+	public function __construct($id = FALSE, $name = "", $acronym = FALSE,
+								$coordinatorId = FALSE, $contact = FALSE,
 								$history = FALSE, $summary = FALSE, $researchLine = FALSE, $courses = FALSE, $coordinatorData = FALSE){
 
-		$this->setId($id);
-		$this->setName($name);
+		parent::__construct($id, $name);
 		$this->setAcronym($acronym);
 		$this->setCoordinatorId($coordinatorId);
 		$this->setHistory($history);
 		$this->setContact($contact);
 		$this->setSummary($summary);
 		$this->setResearchLine($researchLine);
-	}
-
-	private function setId($id){
-		$this->id = $id;
-	}
-
-	private function setName($name){
-		$this->name = $name;
 	}
 
 	private function setAcronym($acronym){
@@ -68,30 +59,22 @@ class ProgramInfo {
 		$this->coordinatorData = $coordinatorData;
 	}
 
-	public function getId(){
-		return $this->id;
-	}
-
-	public function getName(){
-		return $this->name;
-	}
-	
 	public function getCoordinatorId(){
 		return $this->coordinatorId;
 	}
-	
+
 	public function getAcronym(){
 		return $this->acronym;
 	}
-	
+
 	public function getHistory(){
 		return $this->history;
 	}
-	
+
 	public function getResearchLine(){
 		return $this->researchLine;
 	}
-	
+
 	public function getContact(){
 		return $this->contact;
 	}
