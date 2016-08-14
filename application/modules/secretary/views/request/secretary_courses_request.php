@@ -1,10 +1,10 @@
 <h2 class="principal">Relatório de solicitações de matrícula</h2>
 
 <h4>Cursos para o(a) secretário(a) <b><?php echo $userName?></b>:</h4>
-<?php 
+<?php
 
 	if($courses !== FALSE){
-		secretaryCoursesToRequestReport($courses);
+		secretaryCoursesTable($courses, TRUE);
  	}else{
 ?>
 	<div class="callout callout-info">

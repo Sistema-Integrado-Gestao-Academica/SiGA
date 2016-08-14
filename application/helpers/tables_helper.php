@@ -179,7 +179,7 @@ function showMastermindsStudents($masterminds){
 
 }
 
-function secretaryCoursesToRequestReport($courses){
+function secretaryCoursesTable($courses, $enrollmentSolicitation = FALSE){
 
 	$courseController = new Course();
 
@@ -213,7 +213,12 @@ function secretaryCoursesToRequestReport($courses){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		echo anchor("secretary/request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
+	    		if($enrollmentSolicitation){
+	    			echo anchor("secretary/request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
+	    		}
+	    		else{
+	    		 	echo anchor("secretary/request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Disciplinas</i>", "class='btn btn-primary'");
+	    		}
 	    		echo "</td>";
 			echo "</tr>";
 		}
@@ -1543,7 +1548,7 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 	    				formToAddNewOffer(OfferConstants::PROPOSED_OFFER, $currentOffer, $courseId, $currentSemester);
 			    	}
 			    	$status = $currentOffer['offer_status'];
-			    	if($status === OfferConstants::APPROVED_OFFER){			
+			    	if($status === OfferConstants::APPROVED_OFFER){
 			    		echo "Período de matrícula: ".$currentOffer['enrollment_period'];
 			    	}
 	    		echo "</td>";
