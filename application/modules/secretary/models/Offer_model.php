@@ -557,7 +557,7 @@ class Offer_model extends CI_Model {
 	}
 
 	public function saveEnrollmentPeriod($data, $offerId){
-		
+
 		$this->db->where('id_offer', $offerId);
 		$saved = $this->db->update('offer', $data);
 
@@ -570,8 +570,8 @@ class Offer_model extends CI_Model {
 
 		$startDate = $offer['start_date'];
 		$endDate = $offer['end_date'];
-		
-		if(empty($startDate) && empty($endDate)){
+
+		if((empty($startDate) || is_null($endDate)) && (empty($endDate) || is_null($endDate))){
 			$enrollmentPeriod = TRUE;
 		}
 		else{
@@ -579,7 +579,7 @@ class Offer_model extends CI_Model {
 			$endDate = convertDateTimeToDateBR($endDate);
 			$today = new Datetime();
 			$today = $today->format("d/m/Y");
-			
+
 			$checkDate = validateDateInPeriod($today, $startDate, $endDate);
 			if($checkDate){
 				$enrollmentPeriod = TRUE;
@@ -588,7 +588,7 @@ class Offer_model extends CI_Model {
 				$enrollmentPeriod = FALSE;
 			}
 		}
-		
+
 
 		return $enrollmentPeriod;
 	}

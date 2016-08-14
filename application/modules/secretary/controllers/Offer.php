@@ -223,7 +223,7 @@ class Offer extends MX_Controller {
 			$teachers = $this->course_model->getCourseTeachers($idCourse);
 
 			if($teachers !== FALSE){
-				sort($teachers);			
+				sort($teachers);
 				$allTeachers = array();
 
 				foreach($teachers as $teacher){
@@ -311,12 +311,11 @@ class Offer extends MX_Controller {
 		if($dataIsOk){
 			$disciplineClass = $this->input->post('disciplineClass');
 			$totalVacancies = $this->input->post('totalVacancies');
+			$filledVacancies = $this->input->post('filledVacancies');
 			$mainTeacher = $this->input->post('mainTeacher');
 			$secondaryTeacher = $this->input->post('secondaryTeacher');
 
-			// As this code is only reached when the offer list is proposed, the current vacancies does not change
-			$currentVacancies = $totalVacancies;
-
+			$currentVacancies = $totalVacancies - $filledVacancies;
 			$classData = array(
 				'id_offer' => $idOffer,
 				'id_discipline' => $idDiscipline,
@@ -468,12 +467,12 @@ class Offer extends MX_Controller {
 	}
 
 	private function addEnrollmentPeriodOnOfferArray($offer){
-		
+
 		$startDate = convertDateTimeToDateBR($offer['start_date']);
 		$endDate = convertDateTimeToDateBR($offer['end_date']);
 
 		if(empty($offer['end_date'])){
-			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: Não especificado";	
+			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: Não especificado";
 		}
 		else{
 			$offer['enrollment_period'] = "<br>Início: $startDate"."<br> Final: $endDate";
@@ -545,19 +544,19 @@ class Offer extends MX_Controller {
 		$valid = $this->validatePeriodData();
 
 		if($valid){
-			
+
 			$success = $this->createEnrollmentPeriod();
 			$session = getSession();
 			if($success){
 				$session->showFlashMessage("success", "Período definido com sucesso.");
 			}
 			else{
-				$session->showFlashMessage("danger", "Não foi possível definir o período. Tente novamente.");	
+				$session->showFlashMessage("danger", "Não foi possível definir o período. Tente novamente.");
 				redirect('save_enrollment_period');
 			}
 		}
 		else{
-		}		
+		}
 	}
 
 	private function validatePeriodData(){
@@ -574,7 +573,7 @@ class Offer extends MX_Controller {
     }
 
     private function createEnrollmentPeriod(){
-        
+
         $startDate = $this->input->post("startDate");
         $endDate = $this->input->post("endDate");
 
@@ -583,7 +582,7 @@ class Offer extends MX_Controller {
             'startDate' => $startDate,
             'endDate' => $endDate,
         );
-        
+
         $this->load->model("secretary/offer_model");
         $success = $this->offer_model->saveEnrollmentPeriod($data, $offerId);
 
@@ -591,13 +590,13 @@ class Offer extends MX_Controller {
     }
 
     public function finishEnrollmentPeriod($offerId, $courseId){
-        
+
         $endDate = new Datetime();
         $endDate = $endDate->format("Y/m/d");
         $data = array(
             'end_date' => $endDate,
         );
-        
+
         $this->load->model("secretary/offer_model");
         $success = $this->offer_model->saveEnrollmentPeriod($data, $offerId);
 		$session = getSession();
@@ -605,10 +604,10 @@ class Offer extends MX_Controller {
 			$session->showFlashMessage("success", "Período encerrado com sucesso. Serão aceitas matrículas até o final do dia de hoje.");
 		}
 		else{
-			$session->showFlashMessage("danger", "Não foi possível encerrar o período. Tente novamente.");	
+			$session->showFlashMessage("danger", "Não foi possível encerrar o período. Tente novamente.");
 		}
-		
+
 		$this->addDisciplines($offerId, $courseId);
-		
+
     }
 }

@@ -1065,14 +1065,18 @@ function formToUpdateOfferDisciplineClass($disciplineId, $offer, $teachers, $off
 		"value" => $offerDisciplineClass['class']
 	);
 
+	$oldTotalVacancies = $offerDisciplineClass['total_vacancies'];
+	$oldCurrentVacancies = $offerDisciplineClass['current_vacancies'];
+	$filledVacancies = $oldTotalVacancies - $oldCurrentVacancies;
+
 	$totalVacancies = array(
 		"name" => "totalVacancies",
 		"id" => "totalVacancies",
 		"type" => "number",
 		"class" => "form-campo",
 		"class" => "form-control",
-		"min" => "0",
-		"value" => $offerDisciplineClass['total_vacancies']
+		"min" => $filledVacancies,
+		"value" => $oldTotalVacancies
 	);
 
 	$submitBtn = array(
@@ -1086,6 +1090,7 @@ function formToUpdateOfferDisciplineClass($disciplineId, $offer, $teachers, $off
 	echo form_open("secretary/offer/updateOfferDisciplineClass/{$disciplineId}/{$idOffer}/{$offerDisciplineClass['class']}");
 
 	echo form_hidden('course', $idCourse);
+	echo form_hidden('filledVacancies', $filledVacancies);
 
 	echo "<div class='form-box'>";
 	echo"<div class='header'>Editar turma para oferta</div>";
@@ -1543,7 +1548,7 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 	    				formToAddNewOffer(OfferConstants::PROPOSED_OFFER, $currentOffer, $courseId, $currentSemester);
 			    	}
 			    	$status = $currentOffer['offer_status'];
-			    	if($status === OfferConstants::APPROVED_OFFER){			
+			    	if($status === OfferConstants::APPROVED_OFFER){
 			    		echo "Período de matrícula: ".$currentOffer['enrollment_period'];
 			    	}
 	    		echo "</td>";
