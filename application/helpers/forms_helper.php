@@ -201,25 +201,17 @@ function mastermindMessageForm($requestId, $mastermindId, $isFinalized, $masterm
 		'style' => 'height: 70px; margin-top:-10%;'
 	);
 
-	if($isFinalized){
+	$submitBtn = array(
+		"class" => "btn btn-warning btn-flat",
+		"content" => "Enviar mensagem",
+		"type" => "submit"
+	);
 
+	if(!empty($mastermindMessage)){
 		$message['value'] = $mastermindMessage;
-
-		$submitBtn = array(
-			"class" => "btn btn-warning btn-flat",
-			"content" => "Alterar mensagem",
-			"type" => "submit"
-		);
-
-	}else{
-		$submitBtn = array(
-			"class" => "btn btn-primary btn-flat",
-			"content" => "Finalizar solicitação",
-			"type" => "submit"
-		);
+		$submitBtn['content'] = "Atualizar mensagem";
 	}
-
-	echo form_open('program/mastermind/finalizeRequest','',$hidden);
+	echo form_open('program/mastermind/sendMessageToStudent','',$hidden);
 	echo form_label('Mensagem:', 'mastermind_message');
 	echo "<br>";
 	echo "<br>";

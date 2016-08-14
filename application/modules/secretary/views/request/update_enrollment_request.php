@@ -6,7 +6,10 @@ if(!$request['secretary_approval']){
 ?>
     <div class="alert alert-info alert-dismissible" role="alert">
       <i class="fa fa-info"></i>
-      <h4 class="text-center">A sua solicitação original não pode ser alterada até que o seu orientador e/ou secretaria do seu curso responda sua solicitação.</h4>
+      <h4 class="text-center">A sua solicitação original não pode ser alterada até que o seu orientador e/ou secretaria do seu curso responda sua solicitação.
+      <br>
+      <br>
+      <p>Caso alguma disciplina for recusada pelo orientador e/ou secretaria, você pode removê-la e adicionar outra disciplina.</p></h4>
     </div>
 
 <?php

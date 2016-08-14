@@ -384,7 +384,6 @@ class Request extends MX_Controller {
 		$inRequest = FALSE;
 		foreach($disciplines as $discipline){
 			if($discipline['discipline_class'] == $idOfferDiscipline
-				&& $discipline['status'] !== EnrollmentConstants::REFUSED_STATUS
 				&& $discipline['status'] !== EnrollmentConstants::NO_VACANCY_STATUS){
 				$inRequest = TRUE;
 				break;

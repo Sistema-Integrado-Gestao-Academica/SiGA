@@ -53,7 +53,6 @@ class EnrollmentAjax extends MX_Controller {
         else{
             $disciplinesClasses = FALSE;
         }
-
         if($disciplinesClasses !== FALSE){
 
             $quantityOfClasses = count($disciplinesClasses);
@@ -96,7 +95,8 @@ class EnrollmentAjax extends MX_Controller {
                             }else{
                                 $path = "student/temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}";
                             }
-                            $attrs = "class='btn btn-primary'";
+                            $attrs = "class='btn btn-primary' ";
+                            $attrs .= $currentVacancies == 0 ? "disabled='true'" : "";
                             echo "<td>";
                             echo anchor($path,"Adicionar à matrícula", $attrs);
                             echo "</td>";

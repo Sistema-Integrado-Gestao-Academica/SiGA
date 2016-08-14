@@ -247,31 +247,24 @@ class MasterMind extends MX_Controller {
 		return $message;
 	}
 
-	public function finalizeRequest(){
+	public function sendMessageToStudent(){
 
 		$requestId = $this->input->post('requestId');
 		$mastermindId = $this->input->post('mastermindId');
 		$mastermindMessage = $this->input->post('mastermind_message');
 
 		$this->load->model("secretary/request_model");
-		$wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
+		// $wasFinalized = $this->request_model->finalizeRequestToMastermind($requestId);
 
-		if($wasFinalized){
+		$messageSaved = $this->request_model->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
 
-			$messageSaved = $this->request_model->saveMastermindMessage($mastermindId, $requestId, $mastermindMessage);
+		if($messageSaved){
 
-			if($messageSaved){
-
-				$status = "success";
-				$message = "Solicitação finalizada e mensagem salva com sucesso.";
-			}else{
-				$status = "success";
-				$message = "Solicitação finalizada com sucesso, mas não foi possível salvar a mensagem.";
-			}
-
+			$status = "success";
+			$message = "Mensagem salva com sucesso.";
 		}else{
 			$status = "danger";
-			$message = "A solicitação não pôde ser finalizada.";
+			$message = "Não foi possível salvar a mensagem.";
 		}
 
 		$session = getSession();

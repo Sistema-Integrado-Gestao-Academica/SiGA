@@ -416,7 +416,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 		buildTableHeaders(array(
 			'Código Disciplina',
 			'Disciplina requerida',
-			'Solicitada após',
+			'Solicitada depois',
 			'Turma requerida',
 			'Vagas totais',
 			'Vagas disponíveis',
@@ -510,12 +510,12 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 							case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
 
-								if($requestIsApprovedByMastermind){
+								// if($requestIsApprovedByMastermind){
 
-									echo "<div class=\"callout callout-warning\">";
-									echo "<h6>Solicitação finalizada. Sem ações.</h6>";
-									echo "</div>";
-								}else{
+								// 	echo "<div class=\"callout callout-warning\">";
+								// 	echo "<h6>Solicitação finalizada. Sem ações.</h6>";
+								// 	echo "</div>";
+								// }else{
 									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already approved
 									}else{
@@ -527,7 +527,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									}else{
 										echo anchor("secretary/request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
 									}
-								}
+								// }
 								break;
 
 							default:
@@ -668,7 +668,7 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 		'Código',
 		'Disciplina',
 		'Turma',
-		'Horário',
+		'Status',
 		'OBS'
 	));
 
@@ -790,21 +790,27 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId, 
 		    			);
 		    		}else{
 		    			// In this case the mastermind and the secretary didn't worked with the student request yet, so disciplines can be removed
-		    			if(($request['status'] == EnrollmentConstants::PRE_ENROLLED_STATUS
-		    				|| $request['status'] == EnrollmentConstants::NO_VACANCY_STATUS) && $request['is_update']){
 
-			    			if($request['status'] == EnrollmentConstants::NO_VACANCY_STATUS){
-
-		    					echo switchRequestDisciplineStatus($request['status']);
-			    			}
-
-			    			echo anchor(
+		    			$removeDisciplineBtn = function($request){
+		    				echo anchor(
 			    				"remove_from_request/{$request['id_request']}/{$request['discipline_class']}",
 		    					"Remover Disciplina",
 		    					"class='btn btn-danger btn-flat'"
 			    			);
 			    			echo "<br>";
+		    			};
+		    			if(($request['status'] == EnrollmentConstants::PRE_ENROLLED_STATUS
+		    				|| $request['status'] == EnrollmentConstants::NO_VACANCY_STATUS) && $request['is_update']){
 
+			    			if($request['status'] == EnrollmentConstants::NO_VACANCY_STATUS){
+		    					echo switchRequestDisciplineStatus($request['status']);
+			    			}
+
+		    				$removeDisciplineBtn($request);
+
+		    			}else if($request['status'] == EnrollmentConstants::REFUSED_STATUS){
+	    					echo switchRequestDisciplineStatus($request['status']);
+		    				$removeDisciplineBtn($request);
 		    			}else{
 		    				echo switchRequestDisciplineStatus($request['status']);
 		    			}

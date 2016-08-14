@@ -23,7 +23,6 @@
 		'Matrícula aluno',
 		'Status da solicitação',
 		'Ações',
-		'Finalizar'
 	));
 
 	if($requests !== FALSE){
@@ -72,11 +71,8 @@
 					$status = switchRequestGeneralStatus($studentRequest['request_status']);
 
 					if($requestIsApprovedByMastermind){
-						if($needsMastermindApproval){
-							$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
-						}else{
-							$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
-						}
+						$status .= "<h4><span class='label label-primary'>Liberado para secretaria</span></h4>";
+						$status .= !$needsMastermindApproval ? "<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>" : "";
 						echo $status;
 					}else{
 						echo $status;
@@ -112,37 +108,28 @@
 
 					echo "<td rowspan=2>";
 
-						if($requestIsApprovedByMastermind){
+						$this->load->module("program/mastermind");
+						$message = $this->mastermind->getMastermindMessage($idMastermind, $requestId);
+						// if($requestIsApprovedByMastermind){
 
 							if($needsMastermindApproval){
-
-								$this->load->module("program/mastermind");
-
-								$message = $this->mastermind->getMastermindMessage($idMastermind, $requestId);
-
 								$isFinalized = TRUE;
-
 								$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
-
 								$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
 
 								$callout->writeCalloutDeclaration();
 								mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
 								$callout->writeCalloutEndDeclaration();
-
 							}else{
 								callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
 							}
 
-						}else{
-							$isFinalized = FALSE;
-							$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
-
-							$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
-							$callout->writeCalloutDeclaration();
-							mastermindMessageForm($requestId, $idMastermind, $isFinalized);
-							$callout->writeCalloutEndDeclaration();
-						}
+						// }else{
+						// 	$isFinalized = FALSE;
+						// 	$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
+						// 	$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
+						// }
+						
 					echo "</td>";
 
 					echo "</tr>";
