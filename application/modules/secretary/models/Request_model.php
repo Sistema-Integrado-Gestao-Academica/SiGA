@@ -679,4 +679,49 @@ class Request_model extends CI_Model {
 
 		return $savedMessage;
 	}
+
+	public function getStudentsEnrolledByClass($idOfferDiscipline){
+
+		$this->db->distinct();
+		$this->db->select("student_request.id_student");
+		$this->db->from("student_request");
+		$this->db->join("request_discipline", "student_request.id_request = request_discipline.id_request");
+		$this->db->where("request_discipline.discipline_class", $idOfferDiscipline);
+		$this->db->where("request_discipline.status", "approved");
+
+		$studentsIds = $this->db->get()->result_array();
+		$studentsIds = checkArray($studentsIds);
+		$studentsIds = $this->pushToUniqueArray($studentsIds);
+
+		$students = array();
+		$this->load->model('auth/usuarios_model');
+		if($studentsIds !== FALSE){
+			foreach ($studentsIds as $studentId) {
+
+				$student = $this->usuarios_model->getNameByUserId($studentId);
+				array_push($students, $student);
+			}
+		}
+
+		return $students;
+	}
+
+	private function pushToUniqueArray($array){
+
+		$finalArray = array();
+		if($array !== FALSE){
+
+			foreach ($array as $arrayElement) {
+
+				foreach ($arrayElement as $element) {
+
+					array_push($finalArray, $element);
+
+				}
+
+			}
+		}
+
+		return $finalArray;
+	}
 }
