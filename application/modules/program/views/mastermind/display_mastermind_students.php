@@ -1,14 +1,13 @@
 
 <h2 class="principal">Solicitações de matrícula dos alunos orientados</h2>
 
-
 <div class="alert alert-info alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <i class="fa fa-info"></i>
   <h3 class="text-center"><p><b>INFORMAÇÕES IMPORTANTES</b></p></h3><br>
 
-  <h4> <p>- Ao clicar em <b>Finalizar solicitaçao NÃO </b> será mais possível recusar ou aprovar disciplinas, apenas alterar a mensagem enviada para seu aluno.</p>
-  <p> - Após a solicitação finalizada, a mesma será liberada para edição pela secretaria do curso.</p>
+  <h4>
+  <p>- Quando todas as disciplinas forem aprovadas, a solicitação será liberada para a secretaria do curso fazer alterações e consolidar a matrícula.</p>
   <p> - <b>Somente</b> após a finalização da solicitação pela secretaria, as vagas serão computadas e atualizadas.</p>
   </h4>
 </div>
@@ -37,6 +36,8 @@
 
 					$requestId = $studentRequest['id_request'];
 
+					$newStatus = $this->request_model->updateStatus($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+
 					$semesterId = $studentRequest['id_semester'];
 					$courseId = $studentRequest['id_course'];
 					$requestedOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
@@ -50,7 +51,7 @@
 
 					$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
-					echo "<tr>";
+					echo "<tr id='{$requestId}'>";
 
 					echo "<td>";
 					echo $requestId;
@@ -68,7 +69,7 @@
 
 					echo "<td>";
 
-					$status = switchRequestGeneralStatus($studentRequest['request_status']);
+					$status = switchRequestGeneralStatus($newStatus);
 
 					if($requestIsApprovedByMastermind){
 						$status .= "<h4><span class='label label-primary'>Liberado para secretaria</span></h4>";
@@ -129,7 +130,7 @@
 						// 	$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
 						// 	$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
 						// }
-						
+
 					echo "</td>";
 
 					echo "</tr>";

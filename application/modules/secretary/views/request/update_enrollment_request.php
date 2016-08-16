@@ -6,10 +6,16 @@ if(!$request['secretary_approval']){
 ?>
     <div class="alert alert-info alert-dismissible" role="alert">
       <i class="fa fa-info"></i>
-      <h4 class="text-center">A sua solicitação original não pode ser alterada até que o seu orientador e/ou secretaria do seu curso responda sua solicitação.
+      <h3 class="text-center"><b>INFORMAÇÕES IMPORTANTES!</b></h3>
+      <h4 class="text-left">
+      <p>- A sua solicitação original não pode ser alterada até que o seu orientador e/ou secretaria do seu curso responda sua solicitação.</p>
       <br>
+      <p>- O campo <b>'Solicitado depois'</b> informa se a disciplina foi solicitada após a confirmação da solicitação de matrícula ou não. A solicitação original é composta pelas disciplinas marcadas como não solicitadas depois.</p>
       <br>
-      <p>Caso alguma disciplina for recusada pelo orientador e/ou secretaria, você pode removê-la e adicionar outra disciplina.</p></h4>
+      <p>- Disciplinas já aprovadas <b>NÃO</b> podem ser retiradas pelo aluno.</p>
+      <br>
+      <p>- Caso alguma disciplina for recusada pelo orientador e/ou secretaria, você pode removê-la e adicionar outra disciplina.</p>
+      </h4>
     </div>
 
 <?php

@@ -294,7 +294,7 @@ function displayCourseRequests($requests, $courseId, $users){
 
     		$requestId = $request['id_request'];
 
-    		echo "<tr>";
+    		echo "<tr id='{$requestId}'>";
 
     		echo "<td>";
     		echo $requestId;
@@ -463,7 +463,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 					echo "</td>";
 
 					echo "<td>";
-						$status = switchRequestDisciplineStatus($disciplineClass['status']);
+						$status = switchRequestDisciplineStatus($disciplineClass);
 						echo $status;
 						echo prettyRequestDate($disciplineClass);
 					echo "</td>";
@@ -502,7 +502,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									}
 								}else{
 									echo "<div class=\"callout callout-info\">";
-									echo "<h6>Não aprovado pelo orientador. Sem ações.</h6>";
+									echo "<h6>Não liberado para secretaria pelo orientador. Sem ações.</h6>";
 									echo "</div>";
 								}
 
@@ -678,7 +678,7 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 
 			$foundDiscipline = $discipline->getDisciplineByCode($class['id_discipline']);
 
-			$disciplineRequestStatus = switchRequestDisciplineStatus($class['status']);
+			$disciplineRequestStatus = switchRequestDisciplineStatus($class);
 
 			echo "<tr>";
 	    		echo "<td>";
@@ -715,8 +715,12 @@ function displaySentDisciplinesToEnrollmentRequest($requestDisciplinesClasses){
 	buildTableEndDeclaration();
 }
 
-function switchRequestDisciplineStatus($status){
+function switchRequestDisciplineStatus($request){
 
+	$mastermindApproval = $request['mastermind_approval'];
+	$secretaryApproval = $request['secretary_approval'];
+
+	$status = $request['status'];
 	switch($status){
 		case EnrollmentConstants::PRE_ENROLLED_STATUS:
 			$disciplineRequestStatus = "<h4><span class='label label-info'>Pré-matriculado</span></h4>";
@@ -727,11 +731,25 @@ function switchRequestDisciplineStatus($status){
 			break;
 
 		case EnrollmentConstants::APPROVED_STATUS:
-			$disciplineRequestStatus = "<h4><span class='label label-success'>Disciplina aprovada</span></h4>";
+			if($mastermindApproval && !$secretaryApproval){
+				$msg = "Aprovada pelo orientador";
+			}elseif($mastermindApproval && $secretaryApproval){
+				$msg = "Aprovada pelo orientador e secretaria";
+			}else{
+				$msg = "Aprovada pela secretaria";
+			}
+			$disciplineRequestStatus = "<h4><span class='label label-success'>{$msg}</span></h4>";
 			break;
 
 		case EnrollmentConstants::REFUSED_STATUS:
-			$disciplineRequestStatus = "<h4><span class='label label-danger'>Disciplina recusada</span></h4>";
+			if(!$mastermindApproval){
+				$msg = "Recusado pelo orientador";
+			}elseif($mastermindApproval && !$secretaryApproval){
+				$msg = "Recusado pela secretaria";
+			}else{
+				$msg = "Recusado";
+			}
+			$disciplineRequestStatus = "<h4><span class='label label-danger'>{$msg}</span></h4>";
 			break;
 
 		default:
@@ -749,13 +767,20 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId, 
 
 	buildTableDeclaration();
 
-	buildTableHeaders(array(
+	$headers = array(
 		'Código',
 		'Disciplina',
 		'Turma',
 		'Horário',
 		'Ações'
-	));
+	);
+
+	if($isUpdate){
+		$headers[4] = 'Solicitado depois';
+		$headers[5] = 'Ações';
+	}
+
+	buildTableHeaders($headers);
 
     if($request != FALSE){
     	foreach($request as $request){
@@ -781,6 +806,12 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId, 
 		    		displayDisciplineHours($foundClass['id_offer_discipline']);
 		    		echo "</td>";
 
+		    		if($isUpdate){
+		    			echo "<td>";
+		    			echo prettyRequestIsUpdate($request);
+		    			echo "</td>";
+		    		}
+
 		    		echo "<td>";
 		    		if(!$isUpdate){
 			    		echo anchor(
@@ -803,16 +834,16 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId, 
 		    				|| $request['status'] == EnrollmentConstants::NO_VACANCY_STATUS) && $request['is_update']){
 
 			    			if($request['status'] == EnrollmentConstants::NO_VACANCY_STATUS){
-		    					echo switchRequestDisciplineStatus($request['status']);
+		    					echo switchRequestDisciplineStatus($request);
 			    			}
 
 		    				$removeDisciplineBtn($request);
 
 		    			}else if($request['status'] == EnrollmentConstants::REFUSED_STATUS){
-	    					echo switchRequestDisciplineStatus($request['status']);
+	    					echo switchRequestDisciplineStatus($request);
 		    				$removeDisciplineBtn($request);
 		    			}else{
-		    				echo switchRequestDisciplineStatus($request['status']);
+		    				echo switchRequestDisciplineStatus($request);
 		    			}
 	    				echo prettyRequestDate($request);
 		    		}
@@ -1549,7 +1580,7 @@ function displayOffersList($offers, $currentSemester, $nextSemester){
 	    				formToAddNewOffer(OfferConstants::PROPOSED_OFFER, $currentOffer, $courseId, $currentSemester);
 			    	}
 			    	$status = $currentOffer['offer_status'];
-			    	if($status === OfferConstants::APPROVED_OFFER){			
+			    	if($status === OfferConstants::APPROVED_OFFER){
 			    		echo "Período de matrícula: ".$currentOffer['enrollment_period'];
 			    	}
 	    		echo "</td>";

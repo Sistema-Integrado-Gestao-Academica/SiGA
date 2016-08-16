@@ -325,6 +325,10 @@ class Request_model extends CI_Model {
 		return $wasRefused;
 	}
 
+	public function updateStatus($requestId, $requestingArea){
+		return $this->checkRequestGeneralStatus($requestId, $requestingArea);
+	}
+
 	private function checkRequestGeneralStatus($requestId, $requestingArea=""){
 
 		$foundRequest = $this->getRequest(array('id_request' => $requestId));
@@ -343,6 +347,7 @@ class Request_model extends CI_Model {
 				}else{
 
 					$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
+
 					if(!empty($requestingArea) && $requestingArea === EnrollmentConstants::REQUESTING_AREA_MASTERMIND){
 						// If mastermind approved all request, finalize it
 						$this->finalizeRequestToMastermind($requestId);
@@ -357,7 +362,11 @@ class Request_model extends CI_Model {
 			}
 
 			$this->changeRequestGeneralStatus($requestId, $status);
+		}else{
+			$status = "";
 		}
+
+		return $status;
 	}
 
 	private function changeRequestGeneralStatus($requestId, $newStatus){
