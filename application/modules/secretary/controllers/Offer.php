@@ -680,6 +680,7 @@ class Offer extends MX_Controller {
     			foreach ($classes as $class) {
 	    			$idOfferDiscipline = $class['id_offer_discipline'];
 			    	$students = $this->request_model->getStudentsEnrolledByClass($idOfferDiscipline);
+    				sort($students);
 			    	$classStudents[$idOfferDiscipline] = $students;
     			}
     		}

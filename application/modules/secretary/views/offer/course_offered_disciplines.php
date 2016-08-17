@@ -30,29 +30,32 @@ if($disciplines !== FALSE){
                             echo "<b>Vagas Disponíveis: </b>".$class['total_vacancies'];
                             echo "<br>";
 
-                            echo "<div align='right'>";
-                                echo "<a data-toggle='collapse' href='#students{$idOfferDiscipline}' class='collapsed' aria-expanded='false'>";
-                                echo "Visualizar alunos matriculados</a>";
-                            echo "</div>";
-                            echo "<div id='students{$idOfferDiscipline}' class='panel-collapse collapse' aria-expanded='false'>";
+                            if($filledVacancies !== 0){
 
-                            echo "<div align='center'>";
+                                echo "<div align='right'>";
+                                    echo "<a data-toggle='collapse' href='#students{$idOfferDiscipline}' class='collapsed' aria-expanded='false'>";
+                                    echo "<i class='fa fa-eye'> Alunos matriculados</i></a>";
+                                echo "</div>";
+                                echo "<div id='students{$idOfferDiscipline}' class='panel-collapse collapse' aria-expanded='false'>";
 
-                            echo "<div class='box-body'>";
+                                    echo "<div align='center'>";
 
-                            if($students[$idOfferDiscipline] !== FALSE){
+                                        echo "<div class='box-body'>";
 
-                                foreach ($students[$idOfferDiscipline] as $student) {
+                                        if($students[$idOfferDiscipline] !== FALSE){
 
-                                    echo $student;
-                                    echo "<br>";
-                                }
+                                            foreach ($students[$idOfferDiscipline] as $student) {
+
+                                                echo $student;
+                                                echo "<br>";
+                                            }
+                                        }
+
+                                        echo "</div>";
+                                    echo "</div>";
+
+                                echo "</div>";
                             }
-
-                            echo "</div>";
-                            echo "</div>";
-
-                        echo "</div>";
                     echo "</div>";
                 }
             }
@@ -60,6 +63,11 @@ if($disciplines !== FALSE){
         echo "</div>";
 
     }
+}
+else{
+    echo "<div class='callout callout-green'>";
+    echo "<h4> Não há disciplinas ofertadas para este semestre</h4>"; 
+    echo "</div>";
 }
 
 ?>
