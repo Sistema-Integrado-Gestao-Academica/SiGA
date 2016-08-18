@@ -3,7 +3,6 @@
 	echo "<ul class='nav nav-tabs nav-justified'>";
 		$first =  0;
 		foreach($programs as $program){
-			
 			$isFirst = $first === 0;
 			
 			if($isFirst){	
@@ -17,7 +16,7 @@
 			if($first < MAX_QUANTITY_OF_TABS){  
 				echo anchor(
 					"#program".$first,
-					bold($program['acronym']),
+					bold($program->getAcronym()),
 					"class='btn btn-tab' data-toggle='tab'"
 				);
 			}
