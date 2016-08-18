@@ -1,6 +1,5 @@
-
-<?php
-
+<?php            				
+	
 	if(!empty($coursesName)){
 		$courses = $coursesName[$programId];
 		if(!empty($courses)){ ?>
@@ -22,9 +21,8 @@
 	    			}
 
 	    		?>
-
+			</div>				
 			</div>
-    			</div>
   		</div>
 <?php
 		}
@@ -39,16 +37,15 @@
             </h4>
           </div>
           <div id=<?="coordinator".$program->getId()?> class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
-            <div class="box-body">
-						<h4><?= $coordinator->getName()?></h4>
+            <div class="box-body"> 
+						<h4><?= $coordinator->getName()?></h4> 
 									<b>Email:</b><br><?= $coordinator->getEmail()?> <br>
-							<?php
-
+							<?php 
+							
 							$isSummaryBlank = empty($coordinator->getSummary()) || is_null($coordinator->getSummary());
 							$isLattesBlank = empty($coordinator->getLattesLink()) ||  is_null($coordinator->getLattesLink());
 
 							$isResearchLineBlank = empty($coordinator->getResearchLine()) ||  is_null($coordinator->getResearchLine());
-
 							if (!$isSummaryBlank || !$isLattesBlank || !$isResearchLineBlank){ ?>
 									<?php if (!$isSummaryBlank){ ?>
 										<b>Resumo:</b><br><?= $coordinator->getSummary()?>
@@ -134,5 +131,4 @@
 	<?php
 		}
 	}?>
-
 

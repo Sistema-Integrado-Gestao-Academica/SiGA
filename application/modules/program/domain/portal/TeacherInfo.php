@@ -4,8 +4,6 @@ require_once("Portal.php");
 
 class TeacherInfo extends Portal{
 
-	private $id;
-	private $name;
 	private $email;
 	private $summary;
 	private $latteslink;
@@ -20,7 +18,6 @@ class TeacherInfo extends Portal{
 		$this->setSummary($summary);
 		$this->setLattesLink($latteslink);
 		$this->setResearchLine($researchLine);
-
 	}
 
 	private function setEmail($email){
@@ -39,6 +36,7 @@ class TeacherInfo extends Portal{
 		$this->summary = $summary;
 	}
 
+	
 	public function getEmail(){
 		return $this->email;
 	}
@@ -54,6 +52,4 @@ class TeacherInfo extends Portal{
 	public function getResearchLine(){
 		return $this->researchLine;
 	}
-
-
 }

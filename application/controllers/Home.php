@@ -7,7 +7,6 @@ class Home extends MX_Controller{
 		$this->load->module("program/program");
 		
 		$data = $this->program->getInformationAboutPrograms();
-
 		$this->load->template('home/home', $data);
 	}
 }

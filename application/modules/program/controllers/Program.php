@@ -28,21 +28,23 @@ class Program extends MX_Controller {
 
 		$programs = $this->program_model->getAllPrograms();
 
-		foreach ($programs as $arrayId => $program) {
+		if($programs !== FALSE){
 
-			$id = $program['id_program'];
-			$name = $program['program_name'];
-			$acronym = $program['acronym'];
-			$coordinator = $program['coordinator'];
-			$contact = $program['contact'];
-			$history = $program['history'];
-			$summary = $program['summary'];
-			$researchLine = $program['research_line'];
+			foreach ($programs as $arrayId => $program) {
+				$id = $program['id_program'];
+				$name = $program['program_name'];
+				$acronym = $program['acronym'];
+				$coordinator = $program['coordinator'];
+				$contact = $program['contact'];
+				$history = $program['history'];
+				$summary = $program['summary'];
+				$researchLine = $program['research_line'];
 
-			$programObj = new ProgramInfo($id, $name, $acronym, $coordinator,
-										$contact, $history, $summary, $researchLine);
+				$programObj = new ProgramInfo($id, $name, $acronym, $coordinator,
+											$contact, $history, $summary, $researchLine);
 
-			$programs[$arrayId] = $programObj;
+				$programs[$arrayId] = $programObj;
+			}
 		}
 
 		return $programs;
@@ -107,11 +109,10 @@ class Program extends MX_Controller {
 	}
 
 	public function getProgramCourses($programId){
-
+		
 		$programCourses = $this->program_model->getProgramCourses($programId);
 
 		if($programCourses !== FALSE){
-
 			foreach ($programCourses as $arrayId => $course) {
 				$id = $course['id_course'];
 				$name = $course['course_name'];
@@ -153,12 +154,11 @@ class Program extends MX_Controller {
 	}
 
 	public function getInformationAboutPrograms(){
-
 		$programs = $this->getAllPrograms();
 		$quantityOfPrograms = count($programs);
 
 		//  Contains the courses, research lines and teachers
-		$programs = $this->getProgramsCoursesInfo($programs);
+		$programs = $this->getProgramsCoursesInfo($programs);		
 		$programs = $this->getProgramsWithInformation($programs);
 
 		$this->load->model("program/coordinator_model");
@@ -449,15 +449,18 @@ class Program extends MX_Controller {
 
 		$programs = $this->program_model->getAllPrograms();
 
-		foreach ($programs as $program) {
+		if($programs !== FALSE){
 
-			$nameExists = $name == $program['program_name'];
+			foreach ($programs as $program) {
 
-			$acronymExists = $acronym == $program['acronym'];
+				$nameExists = $name == $program['program_name'];
 
-			if ($nameExists || $acronymExists){
-				$programNotExists = FALSE;
-				break;
+				$acronymExists = $acronym == $program['acronym'];
+
+				if ($nameExists || $acronymExists){
+					$programNotExists = FALSE;
+					break;
+				}
 			}
 		}
 
@@ -508,7 +511,6 @@ class Program extends MX_Controller {
 		}
 
 		return $programs;
-
 	}
 
 	private function getProgramsCoursesInfo($programs){
@@ -517,6 +519,7 @@ class Program extends MX_Controller {
 
 			foreach ($programs as $arrayId => $program) {
 				$id = $program->getId();
+
 				$coursesPrograms = $this->getProgramCourses($id);
 				$program->setCourses($coursesPrograms);
 
@@ -530,10 +533,6 @@ class Program extends MX_Controller {
 
 	private function getProgramInfo($programs){
 
-		$academicSecretaries = array();
-		$coursesResearchLines = array();
-		$coursesName = array();
-		$coursesTeachers = array();
 
 		$secretaries = array();
 		$researchLines = array();
@@ -545,30 +544,45 @@ class Program extends MX_Controller {
 			foreach ($programs as $program) {
 				$coursesProgram = $program->getCourses();
 				$programId = $program->getId();
-				foreach ($coursesProgram as $course) {
-					$courseId = $course->getId();
+				
+				$academicSecretaries = array();
+				$coursesResearchLines = array();
+				$coursesName = array();
+				$coursesTeachers = array();
+				
+				if($coursesProgram !== FALSE){
 
-					$courseSecretaries = $course->getAcademicSecretaries();
-					array_push($academicSecretaries, $courseSecretaries);
+					foreach ($coursesProgram as $course) {
+						
+						$courseId = $course->getId();
 
-					$researchLine = $course->getResearchLines();
-					array_push($coursesResearchLines, $researchLine);
+						$courseSecretaries = $course->getAcademicSecretaries();
+						array_push($academicSecretaries, $courseSecretaries);
 
-					$courseName = $course->getName();
-					array_push($coursesName, $courseName);
+						$researchLine = $course->getResearchLines();
+						array_push($coursesResearchLines, $researchLine);
 
-					$teacher = $course->getTeachers();
-					array_push($coursesTeachers, $teacher);
+						$courseName = $course->getName();
+						array_push($coursesName, $courseName);
+
+						$teacher = $course->getTeachers();
+						array_push($coursesTeachers, $teacher);
+					}
+
+					$programArray = array();
+					$secretaries[$programId] = $this->pushCoursesArraysToProgramArray($academicSecretaries, $programArray);
+					sort($secretaries[$programId]);
+
+					$teachersOutOfOrder = $this->pushCoursesArraysToProgramArray($coursesTeachers, $programArray);
+					$teachers[$programId] = $this->orderTeacherByName($teachersOutOfOrder);
+
+					$programsCourses[$programId] = $this->pushCoursesArrayToProgramArray($coursesName, $programArray);
+					$researchLines[$programId] = $this->pushCoursesArrayToProgramArray($coursesResearchLines, $programArray);
 				}
-
-				$programArray = array();
-				$secretaries[$programId] = $this->pushCoursesArraysToProgramArray($academicSecretaries, $programArray);
-				$teachers[$programId] = $this->pushCoursesArraysToProgramArray($coursesTeachers, $programArray);
-				$programsCourses[$programId] = $this->pushCoursesArrayToProgramArray($coursesName, $programArray);
-				$researchLines[$programId] = $this->pushCoursesArrayToProgramArray($coursesResearchLines, $programArray);
 			}
 		}
 
+		
 		$info = array(
 			'secretaries' => $secretaries,
 			'researchLines' => $researchLines,
@@ -620,4 +634,21 @@ class Program extends MX_Controller {
 		return $programArray;
 	}
 
+	/**
+	* Order array elements by name
+	* @param - Array with object that has a name
+	*/
+	private function orderTeacherByName($teachers){
+		$programTeachers = array();
+		if($teachers !== FALSE){
+
+			foreach ($teachers as $teacher) {
+				$key = $teacher->getName();
+				$programTeachers[$key] = $teacher;
+			}
+		}
+
+		ksort($programTeachers);
+		return $programTeachers;
+	}
 }

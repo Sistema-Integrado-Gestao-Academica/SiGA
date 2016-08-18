@@ -4,8 +4,6 @@ require_once("Portal.php");
 
 class CourseInfo extends Portal{
 
-	private $id;
-	private $name;
 	private $programId;
 	private $academicSecretaries;
 	private $teachers;

@@ -4,15 +4,13 @@ require_once("Portal.php");
 
 class ProgramInfo extends Portal{
 
-	private $id;
-	private $name;
 	private $acronym;
 	private $coordinatorId;
 	private $contact;
 	private $history;
 	private $summary;
 	private $researchLine;
-	private $courses;
+	private $courses; 
 	private $coordinatorData;
 
 

@@ -5,6 +5,9 @@ class Portal{
     const MIN_ID = 0;
     const ID_CANT_BE_LESS_THAN_ZERO = "O id deve ser maior que zero.";
 
+    protected $id;
+    protected $name;
+
     public function __construct($id = FALSE, $name = ""){
         $this->setId($id);
         $this->setName($name);
