@@ -433,7 +433,7 @@ class Request_model extends CI_Model {
 		if(empty($request)){
 			$this->db->where("id_request", $requestId);
 			$this->db->where("discipline_class", $idOfferDiscipline);
-			if($requestDate !== NULL){
+			if(!empty($requestDate)){
 				// The date comes encoded from the URL
 				$requestDate = urldecode($requestDate);
 				$this->db->where(array("requested_on" => $requestDate));

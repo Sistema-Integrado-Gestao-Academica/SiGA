@@ -2,6 +2,21 @@
 <?php
 require_once(APPPATH."/constants/TeacherConstants.php");
 
+function newInputField($type, $id, $value){
+
+	if(is_array($id)){
+		$field = $id;
+	}else{
+		$field = array(
+			'id' => $id,
+			'name' => $id,
+			'type' => $type,
+			'value' => $value,
+		);
+	}
+	echo form_input($field);
+}
+
 function bold($string){
 	return "<b>".$string."</b>";
 }
@@ -809,7 +824,7 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 	$now = new Datetime();
 	$now = $now->format('d/m/Y');
 
-	// If the start date already passed, the field is not editable  
+	// If the start date already passed, the field is not editable
 	if(!is_null($startDate) && $now >= $startDate){
 		$startInput['readonly'] = TRUE;
 	}
@@ -817,14 +832,14 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 	echo "<div class='form-group'>";
 		echo form_label('Data de Início', 'enrollment_start_date');
 		echo form_input($startInput);
-		echo form_error("enrollment_start_date"); 
+		echo form_error("enrollment_start_date");
 	echo "</div>";
 	echo "<div class='form-group'>";
 		echo form_label('Data de Fim', 'enrollment_end_date');
 		echo form_input($endInput);
-		echo form_error("enrollment_end_date"); 
+		echo form_error("enrollment_end_date");
 	echo "</div>";
-	echo form_input($offerIdHidden); 
-	echo form_input($reloadHidden); 
-	echo form_input($oldStartDateHidden); 
+	echo form_input($offerIdHidden);
+	echo form_input($reloadHidden);
+	echo form_input($oldStartDateHidden);
 }

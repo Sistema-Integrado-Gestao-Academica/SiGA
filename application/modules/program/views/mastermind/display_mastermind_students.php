@@ -111,26 +111,18 @@
 
 						$this->load->module("program/mastermind");
 						$message = $this->mastermind->getMastermindMessage($idMastermind, $requestId);
-						// if($requestIsApprovedByMastermind){
 
-							if($needsMastermindApproval){
-								$isFinalized = TRUE;
-								$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
-								$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
+						if($needsMastermindApproval){
+							$isFinalized = TRUE;
+							$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
+							$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
 
-								$callout->writeCalloutDeclaration();
-								mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
-								$callout->writeCalloutEndDeclaration();
-							}else{
-								callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
-							}
-
-						// }else{
-						// 	$isFinalized = FALSE;
-						// 	$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
-						// 	$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
-						// }
-
+							$callout->writeCalloutDeclaration();
+							mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
+							$callout->writeCalloutEndDeclaration();
+						}else{
+							callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
+						}
 					echo "</td>";
 
 					echo "</tr>";
@@ -138,7 +130,7 @@
 					echo "<tr>";
 						echo "<td colspan=5>";
 							echo "<div class='collapse' id='solicitation_details_".$requestId."'>";
-							requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+								requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 							echo "</div>";
 						echo "</td>";
 					echo "</tr>";

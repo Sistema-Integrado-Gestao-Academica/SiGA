@@ -41,6 +41,27 @@ $(document).ready(function(){
 	});
 });
 
+function updateEnrollDiscipline(event, requestId, offerDiscipline, requestedOn, requestingArea, approval){
+
+	event.preventDefault();
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/secretary/ajax/enrollmentajax/updateEnrollDisciplineStatus";
+
+	$.post(
+		urlToPost,
+		{
+			request_id: requestId,
+			offer_discipline: offerDiscipline,
+			requested_on: requestedOn,
+			approval: approval,
+			requesting_area: requestingArea,
+		},
+		function(data){
+			$("#solicitation_details_"+requestId).html(data);
+		}
+	);
+}
 
 function searchGuestsToEnroll(){
 

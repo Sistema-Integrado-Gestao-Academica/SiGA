@@ -476,6 +476,23 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 						$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
+						$requestedOn = $disciplineClass['requested_on'];
+
+						$approvalBtn = function($btnData){
+
+							$attrs = $btnData['approval'] ? "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'" : "class='btn btn-danger btn-flat'";
+
+							$onClick = "updateEnrollDiscipline(
+								event,
+								'{$btnData['requestId']}',
+								'{$btnData['idOfferDiscipline']}',
+								'{$btnData['requestedOn']}',
+								'{$btnData['requestingArea']}',
+								{$btnData['approval']}
+							);";
+							echo anchor("#", $btnData['name'], "onClick=\"{$onClick}\" {$attrs}");
+						};
+
 						// Depends of the area that are treating the request
 						switch($requestingArea){
 
@@ -487,7 +504,15 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 										// In this case the request was already approved or do not have vacancy
 									}else{
 										if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
-											echo anchor("secretary/request/approveRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
+											$approvalBtn(array(
+												'name' => "Aprovar",
+												'approval' => 1,
+												'requestId' => $requestId,
+												'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
+												'requestedOn' => $requestedOn,
+												'requestingArea' => $requestingArea,
+											));
+
 										}else{
 											echo "<div class=\"callout callout-danger\">";
 											echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
@@ -498,7 +523,14 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
 										// In this case the request was already refused
 									}else{
-										echo anchor("secretary/request/refuseRequestedDisciplineSecretary/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
+										$approvalBtn(array(
+											'name' => "Recusar",
+											'approval' => 0,
+											'requestId' => $requestId,
+											'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
+											'requestedOn' => $requestedOn,
+											'requestingArea' => $requestingArea,
+										));
 									}
 								}else{
 									echo "<div class=\"callout callout-info\">";
@@ -510,24 +542,31 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 							case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
 
-								// if($requestIsApprovedByMastermind){
+								if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
+									// In this case the request was already approved
+								}else{
+									$approvalBtn(array(
+										'name' => "Aprovar",
+										'approval' => 1,
+										'requestId' => $requestId,
+										'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
+										'requestedOn' => $requestedOn,
+										'requestingArea' => $requestingArea,
+									));
+								}
 
-								// 	echo "<div class=\"callout callout-warning\">";
-								// 	echo "<h6>Solicitação finalizada. Sem ações.</h6>";
-								// 	echo "</div>";
-								// }else{
-									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
-										// In this case the request was already approved
-									}else{
-										echo anchor("secretary/request/approveRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
-									}
-
-									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
-										// In this case the request was already refused
-									}else{
-										echo anchor("secretary/request/refuseRequestedDisciplineMastermind/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}/{$disciplineClass['requested_on']}", "Recusar", "class='btn btn-danger btn-flat'");
-									}
-								// }
+								if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
+									// In this case the request was already refused
+								}else{
+									$approvalBtn(array(
+										'name' => "Recusar",
+										'approval' => 0,
+										'requestId' => $requestId,
+										'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
+										'requestedOn' => $requestedOn,
+										'requestingArea' => $requestingArea,
+									));
+								}
 								break;
 
 							default:
@@ -548,111 +587,6 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 				callout("warning", "Não foram encontradas disciplinas para essa solicitação.");
 			echo "</td>";
 		}
-
-	buildTableEndDeclaration();
-}
-
-function requestedDisciplineClassesForMastermind($requestId, $idMastermind, $idStudent){
-
-	$requestController = new Request();
-	$requestDisciplines = $requestController->getRequestDisciplinesClasses($requestId);
-	$courseId = $requestController->getCourseIdByIdRequest($requestId);
-	$discipline = new Discipline();
-
-	echo "<div class='panel panel-info'>";
-
-	echo "<div class='panel-heading'>Disciplinas solicitadas</div>";
-
-	buildTableDeclaration();
-
-	buildTableHeaders(array(
-		'Código Disciplina',
-		'Disciplina requerida',
-		'Turma requerida',
-		'Vagas totais',
-		'Vagas disponíveis',
-		'Status',
-		'Ações'
-	));
-
-	if($requestDisciplines !== FALSE){
-		foreach($requestDisciplines as $disciplineClass){
-
-			$foundDiscipline = $discipline->getDisciplineByCode($disciplineClass['id_discipline']);
-
-			echo "<tr>";
-
-			echo "<td>";
-			echo $disciplineClass['id_discipline'];
-			echo "</td>";
-
-			if($foundDiscipline !== FALSE){
-				echo "<td>";
-				echo $foundDiscipline['discipline_name']." - ".$foundDiscipline['name_abbreviation'];
-				echo "</td>";
-			}else{
-				echo "<td>";
-				echo "<div class='callout callout-info'>";
-				echo "Disciplina não encontrada.";
-				echo "</div>";
-				echo "</td>";
-			}
-
-			echo "<td>";
-			echo $disciplineClass['class'];
-			echo "</td>";
-
-			echo "<td>";
-			echo $disciplineClass['total_vacancies'];
-			echo "</td>";
-
-			echo "<td>";
-			echo $disciplineClass['current_vacancies'];
-			echo "</td>";
-
-			echo "<td>";
-
-			switch($disciplineClass['status']){
-				case EnrollmentConstants::PRE_ENROLLED_STATUS:
-					$status = "<h4><span class='label label-warning'>Pré-matriculado</span></h4>";
-					break;
-
-				case EnrollmentConstants::ENROLLED_STATUS:
-					$status = "<h4><span class='label label-success'>Matriculado</span></h4>";
-					break;
-
-				case EnrollmentConstants::REFUSED_STATUS:
-					$status = "<h4><span class='label label-danger'>Recusado</span></h4>";
-					break;
-
-				default:
-					$status = "-";
-					break;
-			}
-			echo $status;
-			echo "</td>";
-
-			echo "<td>";
-
-			if($disciplineClass['status'] === EnrollmentConstants::ENROLLED_STATUS){
-				// In this case the request was already approved
-			}
-			else{
-				displayAcceptStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
-				// echo anchor("secretary/request/approveRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Aprovar", "class='btn btn-primary btn-flat' style='margin-bottom: 5%;'");
-			}
-
-			if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS){
-				// In this case the request was already refused
-			}else{
-				displayRefuseStudentDisciplineSolicitation($requestId, $disciplineClass['id_offer_discipline'], $courseId, $idMastermind, $idStudent);
-				//echo anchor("request/refuseRequestedDiscipline/{$requestId}/{$disciplineClass['id_offer_discipline']}/{$courseId}", "Recusar", "class='btn btn-danger btn-flat'");
-			}
-
-			echo "</td>";
-			echo "</tr>";
-		}
-	}
 
 	buildTableEndDeclaration();
 }
