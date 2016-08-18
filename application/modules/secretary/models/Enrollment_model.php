@@ -15,7 +15,9 @@ class Enrollment_model extends CI_Model {
         $enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date)
                        VALUES ({$courseId}, {$studentId}, NOW())";
 
-        $this->db->query($enrollment);
+        $success = $this->db->query($enrollment);
+
+        return $success;
     }
 
     public function saveRegistration($registration, $course, $student){

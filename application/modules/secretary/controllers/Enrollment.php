@@ -54,16 +54,19 @@ class Enrollment extends MX_Controller {
 		// Begins a transaction
 		$this->db->trans_start();
 
-		$this->enrollment_model->enrollStudentIntoCourse($course, $user);
+		$success = $this->enrollment_model->enrollStudentIntoCourse($course, $user);
 
-		$this->usuarios_model->deleteUserFromCourseGuest($user);
-
-		$this->addStudentGroupToNewStudent($user);
+		if($success){
+			$this->usuarios_model->deleteUserFromCourseGuest($user);
+			$this->addStudentGroupToNewStudent($user);
+		}
 
 		// Ends a transaction
 		$this->db->trans_complete();
 
 		if($this->db->trans_status() === FALSE){
+			$this->db->trans_rollback();
+
 			$status = "danger";
 			$message = "Não foi possível matricular este aluno. Tente novamente.";
 		}else{
