@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
+require_once(MODULESPATH."program/domain/portal/TeacherInfo.php");
 
 class Teacher extends MX_Controller {
 
@@ -62,28 +63,33 @@ class Teacher extends MX_Controller {
 	public function getCourseTeachersForHomepage($courseId){
 
 		$teachers = $this->course_model->getTeachers($courseId);
-		$teachersInfo = array();
-		$teachersData = array();
 
 		if($teachers !== FALSE || !empty($teachers)){
 			
-			foreach ($teachers as $teacher) {
-				$teacherId = $teacher['id'];
-				$teachersInfo[$teacherId]['extra_data'] = $this->teacher_model->getInfoTeacherForHomepage($teacherId);
-				$teachersInfo[$teacherId]['basic_data'] = $teacher;
-
-				$teacherInfo = $teachersInfo[$teacherId];
-				$teachersData[$teacherId]['id'] = $teacherInfo['basic_data']['id']; 
-				$teachersData[$teacherId]['name'] = $teacherInfo['basic_data']['name']; 
-				$teachersData[$teacherId]['email'] = $teacherInfo['basic_data']['email'];
-				$teachersData[$teacherId]['summary'] = $teacherInfo['extra_data'][0]['summary'];
-				$teachersData[$teacherId]['lattes_link'] = $teacherInfo['extra_data'][0]['lattes_link'];
-				$teachersData[$teacherId]['research_line'] = $teacherInfo['extra_data'][0]['research_line'];		
-		               	
+			foreach ($teachers as $id => $teacher) {
+				$teacherInfo = $this->convertTeacherInObjects($teacher);
+				$teachers[$id] = $teacherInfo;   	
 			}
 		}
 
-		return $teachersData;
+		return $teachers;
+	}
+
+	public function convertTeacherInObjects($teacher){
+		
+		$teacherId = $teacher['id'];
+		$name = $teacher['name'];
+		$email = $teacher['email'];
+	
+		$teacherInfo = $this->teacher_model->getInfoTeacherForHomepage($teacherId);
+		$summary = $teacherInfo[0]['summary'];
+		$latteslink = $teacherInfo[0]['lattes_link'];
+		$researchLine = $teacherInfo[0]['research_line'];
+
+		$teacherInfo = new TeacherInfo($teacherId, $name, $email, $summary, $latteslink, $researchLine);
+
+		return $teacherInfo;
+
 	}
 
 	public function getInfoProfile($teacherId){

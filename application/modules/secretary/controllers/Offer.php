@@ -311,12 +311,11 @@ class Offer extends MX_Controller {
 		if($dataIsOk){
 			$disciplineClass = $this->input->post('disciplineClass');
 			$totalVacancies = $this->input->post('totalVacancies');
+			$filledVacancies = $this->input->post('filledVacancies');
 			$mainTeacher = $this->input->post('mainTeacher');
 			$secondaryTeacher = $this->input->post('secondaryTeacher');
 
-			// As this code is only reached when the offer list is proposed, the current vacancies does not change
-			$currentVacancies = $totalVacancies;
-
+			$currentVacancies = $totalVacancies - $filledVacancies;
 			$classData = array(
 				'id_offer' => $idOffer,
 				'id_discipline' => $idDiscipline,

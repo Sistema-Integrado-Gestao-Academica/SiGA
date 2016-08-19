@@ -1,5 +1,5 @@
 <!--Set the information to the tabs-->
-<?php 
+<?php
 	if($isFirst){
 		echo "<div class='tab-pane fade in active' id='".$tabId."'>";
 	}
@@ -7,45 +7,32 @@
 		echo "<div class='tab-pane fade' id='".$tabId."'>";
 	}
 
-
 	if($tabId != "program".MAX_QUANTITY_OF_TABS){
 
+	$programId = $program->getId();
 ?>
-    <a class="nav-tabs-dropdown btn btn-block btn-gray"><h3>Sobre o <?php echo $program['program_name']
+    <a class="nav-tabs-dropdown btn btn-block btn-gray"><h3>Sobre o <?php echo $program->getName()
 	?></h3></a>
-	<!-- <ul class='nav nav-tabs nav-justified'>
-		<li class='active'>
-			<a href="#secretary" data-toggle="tab" aria-expanded="true">Secretaria e Contato</a>
-		</li>
-		<li>
-			<a href="#secretary" data-toggle="tab" aria-expanded="true">Cursos</a>
-		</li>
-		<li class='active'>
-			<a href="#secretary" data-toggle="tab" aria-expanded="true">Coordenador</a>
-		</li>
-		<li class='active'>
-			<a href="#secretary" data-toggle="tab" aria-expanded="true">Docentes</a>
-		</li> -->
 	<div class="box-body">
-      <div class="box-group" id=<?="accordion".$program['id_program']?>>
+      <div class="box-group" id=<?="accordion".$programId?>>
             <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
             <div class="panel box box-default">
               <div class="box-header with-border">
                 <h4 class="box-title">
-                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#summary".$program['id_program']?> aria-expanded="false">
-					O <?php	echo $program['acronym']?> <i class=" fa fa-caret-down"></i>
+                  <a data-toggle="collapse" data-parent=<?="#accordion".$programId?> href=<?="#summary".$programId?> aria-expanded="false">
+					O <?php	echo $program->getAcronym()?> <i class=" fa fa-caret-down"></i>
                   </a>
                 </h4>
               </div>
-              <div id=<?="summary".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false">
-                <div class="box-body">			
+              <div id=<?="summary".$programId?> class="panel-collapse collapse" aria-expanded="false">
+                <div class="box-body">
 
-				<?php $programSummary = $program['summary'];
+				<?php $programSummary = $program->getSummary();
 
 					if (!empty($programSummary)) {?>
 
 							<p><?php echo $programSummary?></p>
-						
+
 				<?php
 				} ?>
 
@@ -54,21 +41,20 @@
             </div>
 
 
-	
-<?php		$programHistory = $program['history'];
+<?php		$programHistory = $program->getHistory();
 
 			if (!empty($programHistory)) {?>
-	
+
             <div class="panel box box-default">
               <div class="box-header with-border">
                 <h4 class="box-title">
-                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#history".$program['id_program']?> aria-expanded="false">
+                  <a data-toggle="collapse" data-parent=<?="#accordion".$programId?> href=<?="#history".$programId?> aria-expanded="false">
 					Histórico <i class=" fa fa-caret-down"></i>
                   </a>
                 </h4>
               </div>
-              	<div id=<?="history".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false">
-                <div class="box-body">			
+              	<div id=<?="history".$programId?> class="panel-collapse collapse" aria-expanded="false">
+                <div class="box-body">
 					<p><?php echo $programHistory?></p>
 					</div>
 				</div>
@@ -77,80 +63,85 @@
 		<?php
 			}
 
-		$programContact = $program['contact'];
+		$programContact = $program->getContact();
 
-			if (!empty($programContact) || $coursesPrograms !== FALSE) {?>
-	
+			if (!empty($programContact) || !empty($program->getCourses())) {?>
+
 				<div class="panel box box-default">
               		<div class="box-header with-border">
 	                <h4 class="box-title">
-	                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#contact".$program['id_program']?> aria-expanded="false" class="collapsed"> Secretaria e Contato <i class=" fa fa-caret-down"></i>
+	                  <a data-toggle="collapse" data-parent=<?="#accordion".$programId?> href=<?="#contact".$programId?> aria-expanded="false" class="collapsed"> Secretaria e Contato <i class=" fa fa-caret-down"></i>
 	                  </a>
 	                </h4>
-	              </div>
-	              	<div id=<?="contact".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false">
-	                	<div class="box-body">			
+	             	</div>
+	              	
+	              	<div id=<?="contact".$programId?> class="panel-collapse collapse" aria-expanded="false">
+	                <div class="box-body">
 	                <?php if(!empty($programContact)){ ?>
 						<p><b>Contatos</b></p>
-							<p><?php echo $program['contact']?></p>
+							<p><?php echo $program->getContact()?></p>
 					<?php
 	                	}
-			}
-			if ($coursesPrograms !== FALSE) {
-							$coursesProgram = $coursesPrograms[$program['id_program']];
-							
-							$secretaries = $coursesProgram['secretaries']; 
-							
-							if(!empty($secretaries)){ 
-								
-								echo "<p><b>Secretários</b></p>";
+				if (!empty($secretaries)) {
+					$programSecretaries = $secretaries[$programId];
+					if(!empty($programSecretaries) && $programSecretaries !== FALSE){
 
-								foreach ($secretaries as $secretary) {
+						echo "<p><b>Secretários</b></p>";
+	                    foreach ($programSecretaries as $secretary) {
 
-									echo "<p>{$secretary['name']}</p>";							
+	                        if($secretary !== FALSE){
+
+								foreach ($secretary as $courseSecretary) {
+									echo "<p>{$courseSecretary}</p>";
 								}
 							}
-							?> 
-							</div>
+
+						}
+					}
+				}?>
 						</div>
 					</div>
-		<?php
+				</div>
+				<?php
+			}
 
-				$researchLines = $coursesProgram['researchLines']; 
-				
-				if(!empty($researchLines)){ ?>
-
+			if(!empty($researchLines)){
+				$researchLiness = $researchLines[$programId];
+				if(!empty($researchLiness)){
+					?>
 					<div class="panel box box-default">
 		              <div class="box-header with-border">
 		                <h4 class="box-title">
-		                  <a data-toggle="collapse" data-parent=<?="#accordion".$program['id_program']?> href=<?="#research".$program['id_program']?> aria-expanded="false" >
+		                  <a data-toggle="collapse" data-parent=<?="#accordion".$programId?> href=<?="#research".$programId?> aria-expanded="false" >
 							Linhas de Pesquisa <i class=" fa fa-caret-down"></i>
 		                  </a>
 		                </h4>
 		              </div>
-		              <div id=<?="research".$program['id_program']?> class="panel-collapse collapse" aria-expanded="false" >
+		              <div id=<?="research".$programId?> class="panel-collapse collapse" aria-expanded="false" >
 		                <div class="box-body">			
 						<?php
-							foreach ($researchLines as $researchLine) {
+							foreach ($researchLiness as $researchLine) {
+								foreach ($researchLine as $researchLineName) {
 
-								echo "<p>{$researchLine}</p>";							
+									echo "<p>{$researchLineName}</p>";							
+								}
 							}
-						?> 
+						?>
 
 						</div>
 					 </div>
-					</div>	
+					</div>
 
-				<?php 
+				<?php
 				}
+			}
 
-			} ?>
-	   		<?php include ('_courses_information.php'); ?>
+	   		include ('_courses_information.php'); ?>
         </div>
     </div>
 	<?php }
-		else { 
-			include("_other_programs.php"); 
+		else {
+			include("_other_programs.php");
 
 		} ?>
 </div>
