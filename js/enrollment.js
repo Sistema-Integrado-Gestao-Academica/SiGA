@@ -25,7 +25,6 @@ $(document).ready(function(){
 	});
 
 	$("#finalize_request").click(function(event){
-		alert("fdsfad");
 		var confirmed = confirm("Deseja finalizar a solicitação?! \n\n\
 		Após finalizar a solicitação não é possível recusar ou aprovar disciplinas. O aluno também não poderá mais alterar sua solicitação.");
 		if(!confirmed){
