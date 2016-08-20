@@ -4,7 +4,7 @@
 <?php
 
 	if($courses !== FALSE){
-		secretaryCoursesTable($courses, TRUE);
+		secretaryCoursesTable($courses);
  	}else{
 ?>
 	<div class="callout callout-info">

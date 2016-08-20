@@ -179,7 +179,7 @@ function showMastermindsStudents($masterminds){
 
 }
 
-function secretaryCoursesTable($courses, $enrollmentSolicitation = FALSE){
+function secretaryCoursesTable($courses){
 
 	$courseController = new Course();
 
@@ -213,12 +213,7 @@ function secretaryCoursesTable($courses, $enrollmentSolicitation = FALSE){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		if($enrollmentSolicitation){
 	    			echo anchor("secretary/request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
-	    		}
-	    		else{
-	    		 	echo anchor("secretary/offer/offerDisciplines/{$courseId}","<i class='fa fa-plus-square'>Visualizar Disciplinas</i>", "class='btn btn-primary'");
-	    		}
 	    		echo "</td>";
 			echo "</tr>";
 		}

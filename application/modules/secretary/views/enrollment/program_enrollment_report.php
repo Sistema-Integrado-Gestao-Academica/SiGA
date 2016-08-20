@@ -1,9 +1,14 @@
+<h2 class="principal">Relatório Geral de Matrícula do semestre <?=$semester['description']?></h2>
 
-<h2 class="principal">Disciplinas ofertadas no semestre <?=$semester['description']?></h2>
 <?php
 
-if($disciplines !== FALSE){
+if($disciplines !== FALSE && !empty($disciplines)){
 
+    if($students !== FALSE && !empty($disciplines)){
+        echo "<div align='right'>";
+            echo " <button onclick='collapseAllStudents(\"{$offerDisciplinesIds}\")' type='button' class='btn btn-primary'>Ver todos os alunos</button>";
+        echo "</div>";
+    }
     foreach($disciplines as $discipline){
 
         $id = $discipline['discipline_code'];
@@ -19,7 +24,6 @@ if($disciplines !== FALSE){
 
                 foreach ($disciplinesClasses[$id] as $class) {
                     $idOfferDiscipline = $class['id_offer_discipline'];
-
                     echo "<div class='panel-footer'>";
 
                             echo "<b>Turma: </b>".$class['class'];
@@ -66,7 +70,7 @@ if($disciplines !== FALSE){
 }
 else{
     echo "<div class='callout callout-green'>";
-    echo "<h4> Não há disciplinas ofertadas para este semestre</h4>"; 
+    echo "<h4> Não há alunos matriculados neste semestre</h4>"; 
     echo "</div>";
 }
 

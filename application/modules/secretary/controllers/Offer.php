@@ -490,13 +490,11 @@ class Offer extends MX_Controller {
 
 	public function getCourseApprovedOfferListDisciplines($courseId, $semester){
 
-		define("APPROVED_STATUS", "approved");
-
 		$offer = $this->offer_model->getCourseOfferList($courseId, $semester);
 
 		if($offer !== FALSE){
 
-			$offerListIsApproved = $offer['offer_status'] === APPROVED_STATUS;
+			$offerListIsApproved = $offer['offer_status'] === "approved";
 
 			if($offerListIsApproved){
 				$disciplines = $this->getOfferDisciplines($offer['id_offer']);
@@ -611,80 +609,4 @@ class Offer extends MX_Controller {
 
     }
 
-    public function showOfferedDisciplines(){
-
-    	// Get the current user id
-		$session = getSession();
-		$loggedUserData = $session->getUserData();
-		$userId = $loggedUserData->getId();
-		$userName = $loggedUserData->getName();
-
-		// Get the courses of the secretary
-		$this->load->model("program/course_model");
-		$courses = $this->course_model->getCoursesOfSecretary($userId);
-
-    	$data = array(
-    		'userName' => $userName,
-    		'courses' => $courses
-    	);
-    	loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, "secretary/offer/offered_disciplines", $data);
-    }
-
-    public function offerDisciplines($courseId){
-
-    	$this->load->model("program/semester_model");
-    	$semester = $this->semester_model->getCurrentSemester();
-    	$semesterId = $semester['id_semester'];
-    	$disciplines = $this->getCourseApprovedOfferListDisciplines($courseId, $semesterId);
-
-    	$offer = $this->getOfferBySemesterAndCourse($semesterId, $courseId);
-
-    	$disciplinesClasses = $this->getDisciplinesClasses($disciplines, $offer['id_offer']);
-
-    	$students = $this->getStudentsPerClass($disciplinesClasses);
-
-    	$data = array(
-    		'disciplines' => $disciplines,
-    		'disciplinesClasses' => $disciplinesClasses,
-    		'students' => $students,
-    		'semester' => $semester
-    	);
-
-
-    	loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, "secretary/offer/course_offered_disciplines", $data);
-    }
-
-    private function getDisciplinesClasses($disciplines, $offerId){
-
-    	$disciplinesClasses = array();
-    	if($disciplines !== FALSE){
-
-	    	foreach ($disciplines as $discipline) {
-	    		$id = $discipline['discipline_code'];
-	    		$classes = $this->offer_model->getOfferDisciplineClasses($id, $offerId);
-	    		$disciplinesClasses[$id] = $classes;
-	    	}
-    	}
-
-    	return $disciplinesClasses;
-    }
-
-    private function getStudentsPerClass($disciplinesClasses){
-
-    	$classStudents = array();
-    	$this->load->model("secretary/request_model");
-    	if($disciplinesClasses !== FALSE){
-    		foreach ($disciplinesClasses as $classes) {
-
-    			foreach ($classes as $class) {
-	    			$idOfferDiscipline = $class['id_offer_discipline'];
-			    	$students = $this->request_model->getStudentsEnrolledByClass($idOfferDiscipline);
-    				sort($students);
-			    	$classStudents[$idOfferDiscipline] = $students;
-    			}
-    		}
-    	}
-
-    	return $classStudents;
-    }
 }

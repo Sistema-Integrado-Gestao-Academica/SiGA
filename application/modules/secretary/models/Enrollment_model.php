@@ -66,4 +66,19 @@ class Enrollment_model extends CI_Model {
 
         return $registration;
     }
+
+    public function getProgramCoursesOfSecretary($programId, $userId){
+
+        $this->db->distinct();
+        $this->db->select("course.id_course");
+        $this->db->from("course");
+        $this->db->join("secretary_course", 'secretary_course.id_course = course.id_course');
+        $this->db->where("course.id_program", $programId);
+        $this->db->where("secretary_course.id_user", $userId);
+        $courses = $this->db->get()->result_array();
+
+        $courses = checkArray($courses);
+
+        return $courses;
+    }   
 }

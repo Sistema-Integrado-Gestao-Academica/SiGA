@@ -25,7 +25,6 @@ $(document).ready(function(){
 	});
 
 	$("#finalize_request").click(function(event){
-		alert("fdsfad");
 		var confirmed = confirm("Deseja finalizar a solicitação?! \n\n\
 		Após finalizar a solicitação não é possível recusar ou aprovar disciplinas. O aluno também não poderá mais alterar sua solicitação.");
 		if(!confirmed){
@@ -39,6 +38,23 @@ $(document).ready(function(){
 			event.preventDefault();
 		}
 	});
+
+	(function($) {
+
+	  collapseAllStudents = function(students) {
+	  	ids = students.split(","); 
+	    
+	    for (i = 0; i < ids.length; i++){
+
+	    	id = "#students" + ids[i]; 
+	    	$(id).collapse("show");
+	    }
+
+
+	    return false;
+	  };
+	})(jQuery);
+	
 });
 
 
