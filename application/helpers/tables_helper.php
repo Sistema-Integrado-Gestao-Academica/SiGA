@@ -179,7 +179,7 @@ function showMastermindsStudents($masterminds){
 
 }
 
-function secretaryCoursesToRequestReport($courses){
+function secretaryCoursesTable($courses){
 
 	$courseController = new Course();
 
@@ -213,7 +213,7 @@ function secretaryCoursesToRequestReport($courses){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		echo anchor("secretary/request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
+	    			echo anchor("secretary/request/courseRequests/{$courseId}","<i class='fa fa-plus-square'>Visualizar Solicitações</i>", "class='btn btn-primary'");
 	    		echo "</td>";
 			echo "</tr>";
 		}

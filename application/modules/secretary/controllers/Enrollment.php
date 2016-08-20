@@ -176,4 +176,133 @@ class Enrollment extends MX_Controller {
         $this->enrollStudentToCourse($courseId);
     }
 
+    public function showEnrollmentReport(){
+
+    	// Get the current user name
+		$session = getSession();
+		$loggedUserData = $session->getUserData();
+		$userName = $loggedUserData->getName();
+
+		$this->load->module("secretary/secretary");
+		$programs = $this->secretary->getSecretaryPrograms();
+
+    	$data = array(
+    		'userName' => $userName,
+    		'programs' => $programs
+    	);
+    	loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, "secretary/enrollment/enrollment_report", $data);
+    }
+
+    public function programEnrollmentReport($programId){
+
+		$session = getSession();
+    	$user = $session->getUserData();
+    	$userId = $user->getId();
+
+		// Get the program courses 
+		$courses = $this->enrollment_model->getProgramCoursesOfSecretary($programId, $userId);
+
+    	$this->load->model("program/semester_model");
+    	$semester = $this->semester_model->getCurrentSemester();
+    	$semesterId = $semester['id_semester'];
+    	
+		$programDisciplines = array();
+		$programDisciplinesClasses = array();
+		$enrolledStudents = array();
+
+    	if($courses !== FALSE){
+
+			$this->load->module("secretary/offer");	
+    		foreach ($courses as $course) {
+    			$courseId = $course['id_course'];
+
+		    	$offer = $this->offer->getOfferBySemesterAndCourse($semesterId, $courseId);
+
+		    	$disciplines = $this->offer->getCourseApprovedOfferListDisciplines($courseId, $semesterId);
+		    	$disciplinesClasses = $this->getDisciplinesClasses($disciplines, $offer['id_offer']);
+		    	$students = $this->getStudentsPerClass($disciplinesClasses);
+
+		    	if($disciplinesClasses !== FALSE){
+
+		    		$programDisciplinesClasses = ($programDisciplinesClasses + $disciplinesClasses);
+		    	}
+		    	if($disciplines !== FALSE){
+
+		    		$programDisciplines = ($programDisciplines + $disciplines);
+		    	}
+		    	if($students !== FALSE){
+
+		    		$enrolledStudents = ($enrolledStudents + $students);
+		    	}
+    		}
+
+    	}
+    	// Used to show all students
+    	$offerDisciplinesIds = $this->getStringOfOfferDisciplinesIds($programDisciplinesClasses);
+
+    	$data = array(
+    		'disciplines' => $programDisciplines,
+    		'disciplinesClasses' => $programDisciplinesClasses,
+    		'students' => $enrolledStudents,
+    		'semester' => $semester,
+    		'offerDisciplinesIds' => $offerDisciplinesIds
+    	);
+
+
+    	loadTemplateSafelyByGroup(GroupConstants::SECRETARY_GROUP, "secretary/enrollment/program_enrollment_report", $data);
+    }
+
+    private function getDisciplinesClasses($disciplines, $offerId){
+
+    	$disciplinesClasses = array();
+    	if($disciplines !== FALSE){
+
+	    	foreach ($disciplines as $discipline) {
+	    		$id = $discipline['discipline_code'];
+	    		$classes = $this->offer_model->getOfferDisciplineClasses($id, $offerId);
+	    		$disciplinesClasses[$id] = $classes;
+	    	}
+    	}
+
+    	return $disciplinesClasses;
+    }
+
+    private function getStudentsPerClass($disciplinesClasses){
+
+    	$classStudents = array();
+    	$this->load->model("secretary/request_model");
+    	if($disciplinesClasses !== FALSE){
+    		foreach ($disciplinesClasses as $classes) {
+
+    			if($classes !== FALSE){
+
+	    			foreach ($classes as $class) {
+		    			$idOfferDiscipline = $class['id_offer_discipline'];
+				    	$students = $this->request_model->getStudentsEnrolledByClass($idOfferDiscipline);
+	    				sort($students);
+				    	$classStudents[$idOfferDiscipline] = $students;
+	    			}
+    			}
+    		}
+    	}
+
+    	return $classStudents;
+    }
+
+    private function getStringOfOfferDisciplinesIds($programDisciplinesClasses){
+
+    	$offerDisciplinesIds = array();
+    	if($programDisciplinesClasses !== FALSE && !empty($programDisciplinesClasses)){
+    		foreach ($programDisciplinesClasses as $disciplinesClass) {
+    			if($disciplinesClass !== FALSE){
+	    			foreach ($disciplinesClass as $class) {
+		    			array_push($offerDisciplinesIds, $class['id_offer_discipline']);
+	    			}
+    			}
+    		}
+    	}
+
+    	$ids = implode(",", $offerDisciplinesIds);
+    	return $ids;
+    }
 }

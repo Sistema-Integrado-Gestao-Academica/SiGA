@@ -490,13 +490,11 @@ class Offer extends MX_Controller {
 
 	public function getCourseApprovedOfferListDisciplines($courseId, $semester){
 
-		define("APPROVED_STATUS", "approved");
-
 		$offer = $this->offer_model->getCourseOfferList($courseId, $semester);
 
 		if($offer !== FALSE){
 
-			$offerListIsApproved = $offer['offer_status'] === APPROVED_STATUS;
+			$offerListIsApproved = $offer['offer_status'] === "approved";
 
 			if($offerListIsApproved){
 				$disciplines = $this->getOfferDisciplines($offer['id_offer']);
@@ -610,4 +608,5 @@ class Offer extends MX_Controller {
 		$this->addDisciplines($offerId, $courseId);
 
     }
+
 }

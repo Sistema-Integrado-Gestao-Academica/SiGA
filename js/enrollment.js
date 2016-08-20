@@ -38,6 +38,23 @@ $(document).ready(function(){
 			event.preventDefault();
 		}
 	});
+
+	(function($) {
+
+	  collapseAllStudents = function(students) {
+	  	ids = students.split(","); 
+	    
+	    for (i = 0; i < ids.length; i++){
+
+	    	id = "#students" + ids[i]; 
+	    	$(id).collapse("show");
+	    }
+
+
+	    return false;
+	  };
+	})(jQuery);
+	
 });
 
 

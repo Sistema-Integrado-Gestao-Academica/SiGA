@@ -146,6 +146,7 @@ $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
 // Offer routes
 $route['offer_list'] = 'secretary/offer/offerList';
 $route['save_enrollment_period'] = 'secretary/offer/saveEnrollmentPeriod';
+$route['enrollment_report'] = 'secretary/enrollment/showEnrollmentReport';
 
 // Request routes
 $route['update_enroll_request/(:num)'] = 'secretary/request/updateRequest/$1';
