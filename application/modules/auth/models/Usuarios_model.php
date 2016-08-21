@@ -314,7 +314,7 @@ class Usuarios_model extends CI_Model {
 
 	public function getUserByEmail($email){
 
-		$this->db->select('id, email, name');
+		$this->db->select('id, email, name, login');
 		$this->db->from('users');
 		$this->db->where("email", $email);
 
@@ -727,7 +727,8 @@ class Usuarios_model extends CI_Model {
 			$id = $foundUser['id'];
 			$name = $foundUser['name'];
 			$email = $foundUser['email'];
-			$user = new User($id, $name, FALSE, $email, FALSE, FALSE, FALSE);
+			$login = $foundUser['login'];
+			$user = new User($id, $name, FALSE, $email, $login, FALSE, FALSE);
 		}
 		else{
 			$user = NULL;

@@ -373,7 +373,7 @@ class UserController extends MX_Controller {
 
         $id = $user->getId();
 
-        $user = new User($id, $user->getName(), FALSE, $user->getEmail(), FALSE, $newPassword, FALSE);
+        $user = new User($id, $user->getName(), FALSE, $user->getEmail(), $user->getLogin(), $newPassword, FALSE);
 
         return $user;
     }

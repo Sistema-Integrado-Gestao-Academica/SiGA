@@ -20,11 +20,13 @@ class RestorePasswordEmail extends EmailNotification{
         $user = $this->user();
         $newPassword = $user->getPassword();
         $userName = $user->getName();
+        $login = $user->getLogin();
         $message = "";
 
         if(!is_null($newPassword) && !empty($newPassword)){
             $message = "Olá, <b>{$userName}</b>. <br>";
             $message = $message."Esta é uma mensagem automática para a solicitação de nova senha de acesso ao SiGA. <br>";
+            $message = $message."Seu login é: <b>".$login."</b>. <br>";
             $message = $message."Sua nova senha para acesso é: <b>".$newPassword."</b>. <br>";
             $message = $message."Lembramos que para sua segurança ao acessar o sistema com essa senha iremos te redirecionar para a definição de uma nova senha. <br>"; 
         }
