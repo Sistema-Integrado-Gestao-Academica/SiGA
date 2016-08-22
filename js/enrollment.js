@@ -39,6 +39,13 @@ $(document).ready(function(){
 			event.preventDefault();
 		}
 	});
+
+	$("#resend_request_btn").click(function(event){
+		var confirmed = confirm("Confirma o reenvio da solicitação de matrícula?");
+		if(!confirmed){
+			event.preventDefault();
+		}
+	});
 });
 
 function updateEnrollDiscipline(event, requestId, offerDiscipline, requestedOn, requestingArea, approval){

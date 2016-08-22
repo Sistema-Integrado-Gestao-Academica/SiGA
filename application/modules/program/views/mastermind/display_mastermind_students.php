@@ -51,6 +51,8 @@
 
 					$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
+					$isToMastermind = $studentRequest['current_role'] === EnrollmentConstants::REQUEST_TO_MASTERMIND || (!$requestIsApprovedByMastermind && $studentRequest['current_role'] === EnrollmentConstants::REQUEST_TO_STUDENT);
+
 					echo "<tr id='{$requestId}'>";
 
 					echo "<td>";
@@ -74,37 +76,36 @@
 					if($requestIsApprovedByMastermind){
 						$status .= "<h4><span class='label label-primary'>Liberado para secretaria</span></h4>";
 						$status .= !$needsMastermindApproval ? "<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>" : "";
-						echo $status;
-					}else{
-						echo $status;
 					}
+					echo $status;
 
 					echo "</td>";
 
 					echo "<td>";
 
 					echo anchor(
-							"#solicitation_details_".$requestId,
-							"Visualizar solicitação",
-							"class='btn btn-info'
-		    				data-toggle='collapse'
-		    				aria-expanded='false'
-		    				aria-controls='solicitation_details".$requestId."'"
-						);
+						"#solicitation_details_".$requestId,
+						"Visualizar solicitação",
+						"class='btn btn-info'
+	    				data-toggle='collapse'
+	    				aria-expanded='false'
+	    				aria-controls='solicitation_details".$requestId."'"
+					);
 
-					if($requestIsApprovedByMastermind){
+					if($isToMastermind){
+						if($requestIsApprovedByMastermind){
 
-						// Disable buttons
-						echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
-						echo "<br>";
-						echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
-					}else{
-						echo "<br>";
-						echo anchor("secretary/request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-						echo "<br>";
-						echo anchor("secretary/request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+							// Disable buttons
+							echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
+							echo "<br>";
+							echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
+						}else{
+							echo "<br>";
+							echo anchor("secretary/request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+							echo "<br>";
+							echo anchor("secretary/request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+						}
 					}
-
 					echo "</td>";
 
 					echo "<td rowspan=2>";

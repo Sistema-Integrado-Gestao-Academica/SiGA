@@ -1,6 +1,6 @@
 <?php
 
-require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."secretary/exception/DisciplineException.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 

@@ -111,7 +111,7 @@ class EnrollmentAjax extends MX_Controller {
         }else{
 
             echo "<div class='callout callout-info'>";
-            echo "<h4>Fora do período de matrículas do semestre atual.</h4>";
+            echo "<h4>Disciplina não encontrada ou fora do período de matrículas do semestre atual.</h4>";
             echo "</div>";
         }
     }

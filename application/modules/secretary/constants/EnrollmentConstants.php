@@ -17,6 +17,11 @@ class EnrollmentConstants {
 	const REQUEST_ALL_REFUSED_STATUS = "all_refused";
 	const REQUEST_PARTIALLY_APPROVED_STATUS = "partially_approved";
 
+	// Roles
+	const REQUEST_TO_MASTERMIND = "mastermind";
+	const REQUEST_TO_SECRETARY = "secretary";
+	const REQUEST_TO_STUDENT = "student";
+
 	// Status for guests
 	const CANDIDATE_STATUS = "candidate";
 	const UNKNOWN_STATUS = "unknown";

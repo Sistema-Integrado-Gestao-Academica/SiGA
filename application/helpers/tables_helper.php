@@ -325,50 +325,61 @@ function displayCourseRequests($requests, $courseId, $users){
     				aria-controls='solicitation_details".$requestId."'"
     			);
 
+    		$isToSecretary = $request['current_role'] === EnrollmentConstants::REQUEST_TO_SECRETARY;
+
     		$requestIsApprovedByMastermind = $request['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
+
     		$requestIsNotFinalizedBySecretary = $request['secretary_approval'] != EnrollmentConstants::REQUEST_APPROVED_BY_SECRETARY;
 
-    		if($requestIsApprovedByMastermind){
+    		if($isToSecretary){
+	    		if($requestIsApprovedByMastermind){
 
-    			if($requestIsNotFinalizedBySecretary){
+	    			if($requestIsNotFinalizedBySecretary){
 
-		    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS){
-		    			// In this case all request is already approved
-		    		}else{
-		    			echo "<br>";
-		    			echo anchor("secretary/request/approveAllRequest/{$requestId}/{$courseId}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-		    		}
+			    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS){
+			    			// In this case all request is already approved
+			    		}else{
+			    			echo "<br>";
+			    			echo anchor("secretary/request/approveAllRequest/{$requestId}/{$courseId}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+			    		}
 
-		    		echo "<br>";
+			    		echo "<br>";
 
-		    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS){
-		    			// In this case all request is already refused
-		    		}else{
-		    			echo "<br>";
-		    			echo anchor("secretary/request/refuseAllRequest/{$requestId}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger'");
-		    		}
+			    		if($request['request_status'] === EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS){
+			    			// In this case all request is already refused
+			    		}else{
+			    			echo "<br>";
+			    			echo anchor("secretary/request/refuseAllRequest/{$requestId}/{$courseId}", "Recusar toda solicitação", "class='btn btn-danger'");
+			    		}
 
-		    		echo "<br>";
-		    		echo "<div class=\"callout callout-info\">";
-		    			echo anchor(
-		    				"secretary/request/finalizeRequestSecretary/{$requestId}/{$courseId}",
-		    				"Finalizar solicitação",
-		    				"id='finalize_request' class='btn btn-primary btn-flat' style='margin-top: 5%;'");
-						echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
-					echo "</div>";
-    			}else{
-    				echo "<div class=\"callout callout-info\">";
-					echo "<h4>Solicitação já finalizada.</h4>";
-					echo "<p>Essa solicitação já foi aprovada pela secretária.</p>";
-					echo "</div>";
-    			}
+			    		echo "<br>";
+			    		echo "<br>";
+			    		echo anchor(
+		    				"secretary/request/makeAvailableToStudent/{$requestId}/{$courseId}",
+		    				"Disponibilizar para o aluno",
+		    				"class='btn btn-default'");
 
+			    		echo "<br>";
+			    		echo "<div class=\"callout callout-info\">";
+			    			echo anchor(
+			    				"secretary/request/finalizeRequestSecretary/{$requestId}/{$courseId}",
+			    				"Finalizar solicitação",
+			    				"id='finalize_request' class='btn btn-primary btn-flat' style='margin-top: 5%;'");
+							echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
+						echo "</div>";
+	    			}else{
+	    				echo "<div class=\"callout callout-info\">";
+						echo "<h4>Solicitação já finalizada.</h4>";
+						echo "<p>Essa solicitação já foi aprovada pela secretária.</p>";
+						echo "</div>";
+	    			}
+
+	    		}else{
+
+	    			callout("info", "Solicitação não aprovada pelo orientador.", "Apenas as solicitações já aprovadas pelo orientador podem ser editadas");
+	    		}
     		}else{
-
-    			echo "<div class=\"callout callout-info\">";
-				echo "<h4>Solicitação não aprovada pelo orientador.</h4>";
-				echo "<p>Apenas as solicitações já aprovadas pelo orientador podem ser editadas.</p>";
-				echo "</div>";
+    			callout("info", "Solicitação não liberada para a secretaria no momento.");
     		}
 
     		echo "</td>";
@@ -498,26 +509,70 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 
 							case EnrollmentConstants::REQUESTING_AREA_SECRETARY:
 
-								if($requestIsApprovedByMastermind){
+								$isToSecretary = $request['current_role'] === EnrollmentConstants::REQUEST_TO_SECRETARY;
 
-									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
-										// In this case the request was already approved or do not have vacancy
-									}else{
-										if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
+								if($isToSecretary){
+									if($requestIsApprovedByMastermind){
+
+										if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
+											// In this case the request was already approved or do not have vacancy
+										}else{
+											if($disciplineClass['mastermind_approval'] == EnrollmentConstants::DISCIPLINE_APPROVED_BY_MASTERMIND){
+												$approvalBtn(array(
+													'name' => "Aprovar",
+													'approval' => 1,
+													'requestId' => $requestId,
+													'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
+													'requestedOn' => $requestedOn,
+													'requestingArea' => $requestingArea,
+												));
+
+											}else{
+												echo "<div class=\"callout callout-danger\">";
+												echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
+												echo "</div>";
+											}
+										}
+
+										if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
+											// In this case the request was already refused
+										}else{
 											$approvalBtn(array(
-												'name' => "Aprovar",
-												'approval' => 1,
+												'name' => "Recusar",
+												'approval' => 0,
 												'requestId' => $requestId,
 												'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
 												'requestedOn' => $requestedOn,
 												'requestingArea' => $requestingArea,
 											));
-
-										}else{
-											echo "<div class=\"callout callout-danger\">";
-											echo "<h6>Recusado pelo orientador. Sem ações.</h6>";
-											echo "</div>";
 										}
+									}else{
+										echo "<div class=\"callout callout-info\">";
+										echo "<h6>Não liberado para secretaria pelo orientador. Sem ações.</h6>";
+										echo "</div>";
+									}
+								}else{
+									callout("info", "", "Solicitação não liberada para secretaria. Sem ações.");
+								}
+
+								break;
+
+							case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
+
+								$isToMastermind = $request['current_role'] === EnrollmentConstants::REQUEST_TO_MASTERMIND || (!$requestIsApprovedByMastermind && $request['current_role'] === EnrollmentConstants::REQUEST_TO_STUDENT);
+
+								if($isToMastermind){
+									if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
+										// In this case the request was already approved
+									}else{
+										$approvalBtn(array(
+											'name' => "Aprovar",
+											'approval' => 1,
+											'requestId' => $requestId,
+											'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
+											'requestedOn' => $requestedOn,
+											'requestingArea' => $requestingArea,
+										));
 									}
 
 									if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
@@ -533,39 +588,7 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 										));
 									}
 								}else{
-									echo "<div class=\"callout callout-info\">";
-									echo "<h6>Não liberado para secretaria pelo orientador. Sem ações.</h6>";
-									echo "</div>";
-								}
-
-								break;
-
-							case EnrollmentConstants::REQUESTING_AREA_MASTERMIND:
-
-								if($disciplineClass['status'] === EnrollmentConstants::APPROVED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
-									// In this case the request was already approved
-								}else{
-									$approvalBtn(array(
-										'name' => "Aprovar",
-										'approval' => 1,
-										'requestId' => $requestId,
-										'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
-										'requestedOn' => $requestedOn,
-										'requestingArea' => $requestingArea,
-									));
-								}
-
-								if($disciplineClass['status'] === EnrollmentConstants::REFUSED_STATUS || $disciplineClass['status'] === EnrollmentConstants::NO_VACANCY_STATUS){
-									// In this case the request was already refused
-								}else{
-									$approvalBtn(array(
-										'name' => "Recusar",
-										'approval' => 0,
-										'requestId' => $requestId,
-										'idOfferDiscipline' => $disciplineClass['id_offer_discipline'],
-										'requestedOn' => $requestedOn,
-										'requestingArea' => $requestingArea,
-									));
+									callout("info","", "Solicitação liberada para secretaria. Sem ações.");
 								}
 								break;
 

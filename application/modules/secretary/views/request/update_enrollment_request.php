@@ -1,8 +1,8 @@
+
 <h2 class="principal">Atualizar solicitação de matrícula</h2>
 
-
 <?php
-if(!$request['secretary_approval']){
+  if(!$request['secretary_approval'] && ($request['current_role'] === EnrollmentConstants::REQUEST_TO_STUDENT || (!$request['mastermind_approval'] && EnrollmentConstants::REQUEST_TO_MASTERMIND) )){
 ?>
     <div class="alert alert-info alert-dismissible" role="alert">
       <i class="fa fa-info"></i>
@@ -15,11 +15,24 @@ if(!$request['secretary_approval']){
       <p>- Disciplinas já aprovadas <b>NÃO</b> podem ser retiradas pelo aluno.</p>
       <br>
       <p>- Caso alguma disciplina for recusada pelo orientador e/ou secretaria, você pode removê-la e adicionar outra disciplina.</p>
+      <br>
+      <p>- Quando terminar de alterar sua solicitação <b>clique em 'Reenviar Solicitação'</b> para enviar a solicitação para o orientador e/ou secretaria.</p>
       </h4>
     </div>
 
 <?php
+
+    $resendBtn = function($request){
+      echo anchor(
+        "resend_request/{$request['id_request']}",
+        "Reenviar solicitação",
+        "id='resend_request_btn' class='btn btn-primary btn-block btn-lg'"
+      );
+    };
+
     displayDisciplinesToRequest($disciplines, $courseId, $userId, $semester['id_semester'], TRUE);
+
+    $resendBtn($request);
 
     echo form_input(array(
         "id" => "is_update",
@@ -39,10 +52,15 @@ if(!$request['secretary_approval']){
 }else{
 ?>
 
-<div class="alert alert-info" role="alert">
-  <i class="fa fa-info"></i>
-  <h4 class="text-center">Solicitação já finalizada pela secretaria.
-    <p><small>Não é possível atualizar solicitações finalizadas.</small></p></h4>
-</div>
+  <div class="alert alert-info" role="alert">
+    <i class="fa fa-info"></i>
+    <?php if($request['secretary_approval']): ?>
+      <h4 class="text-center">Solicitação já finalizada pela secretaria.
+      <p><small>Não é possível atualizar solicitações finalizadas.</small></p></h4>
+    <?php else: ?>
+      <h4 class="text-center">Sua solicitação está sendo avaliada pela secretaria.
+      <p><small>Não é possível atualizar solicitações em análise pela secretaria.</small></p></h4>
+    <?php endif; ?>
+  </div>
 
 <?php } ?>

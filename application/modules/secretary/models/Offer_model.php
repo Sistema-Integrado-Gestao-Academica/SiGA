@@ -148,6 +148,12 @@ class Offer_model extends CI_Model {
 		return $foundOffer;
 	}
 
+	public function needMastermindApproval($semester, $course){
+		$requestedOffer = $this->getOfferBySemesterAndCourse($semester, $course);
+		$needsMastermindApproval = $requestedOffer['needs_mastermind_approval'] == EnrollmentConstants::NEEDS_MASTERMIND_APPROVAL;
+		return $needsMastermindApproval;
+	}
+
 	public function checkAvailableVacancies($idOfferDiscipline){
 
 		$offerDiscipline = $this->getOfferDisciplineById($idOfferDiscipline);
@@ -557,7 +563,7 @@ class Offer_model extends CI_Model {
 	}
 
 	public function saveEnrollmentPeriod($data, $offerId){
-		
+
 		$this->db->where('id_offer', $offerId);
 		$saved = $this->db->update('offer', $data);
 
@@ -570,7 +576,7 @@ class Offer_model extends CI_Model {
 
 		$startDate = $offer['start_date'];
 		$endDate = $offer['end_date'];
-		
+
 		if(empty($startDate) && empty($endDate)){
 			$enrollmentPeriod = TRUE;
 		}
@@ -587,7 +593,7 @@ class Offer_model extends CI_Model {
 				$enrollmentPeriod = FALSE;
 			}
 		}
-		
+
 
 		return $enrollmentPeriod;
 	}

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
 
 class Request_model extends CI_Model {
 
@@ -8,12 +8,18 @@ class Request_model extends CI_Model {
 
 	public function saveNewRequest($student, $course, $semester, $mastermindApproval = 0){
 
+		$this->load->model("secretary/offer_model");
+		$needMastermindApproval = $this->offer_model->needMastermindApproval($semester, $course);
+
+		$currentRole = $needMastermindApproval ? EnrollmentConstants::REQUEST_TO_MASTERMIND : EnrollmentConstants::REQUEST_TO_SECRETARY;
+
 		$requestData = array(
 			'id_student' => $student,
 			'id_course' => $course,
 			'id_semester' => $semester,
 			'request_status' => EnrollmentConstants::REQUEST_INCOMPLETE_STATUS,
-			'mastermind_approval' => $mastermindApproval
+			'mastermind_approval' => $mastermindApproval,
+			'current_role' => $currentRole
 		);
 
 		$registeredRequest = $this->getRequest($requestData);
@@ -69,11 +75,12 @@ class Request_model extends CI_Model {
 		$request = $this->getRequestDiscipline($where);
 
 		$this->db->trans_start();
-		if(!$request['is_update']){
+		if($request['status'] === EnrollmentConstants::PRE_ENROLLED_STATUS){
 			$this->load->model("secretary/offer_model");
 			$this->offer_model->addOneVacancy($idOfferDiscipline);
 		}
 		$this->db->delete("request_discipline", $where);
+
 		$this->db->trans_complete();
 	}
 
@@ -161,14 +168,20 @@ class Request_model extends CI_Model {
 		return $wasChanged;
 	}
 
+	public function updateMastermindApproval($requestId, $approval){
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('mastermind_approval' => $approval));
+
+		$foundRequest = $this->getRequest(array('id_request' => $requestId, 'mastermind_approval' => $approval));
+
+		$wasUpdated = $foundRequest !== FALSE;
+
+		return $wasUpdated;
+	}
+
 	public function finalizeRequestToMastermind($requestId){
 
-		$this->db->where('id_request', $requestId);
-		$this->db->update('student_request', array('mastermind_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND));
-
-		$foundRequest = $this->getRequest(array('id_request' => $requestId, 'mastermind_approval' => EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND));
-
-		$wasFinalized = $foundRequest !== FALSE;
+		$wasFinalized = $this->updateMastermindApproval($requestId, EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND);
 
 		return $wasFinalized;
 	}
@@ -209,6 +222,21 @@ class Request_model extends CI_Model {
 
 			$this->db->trans_complete();
 		}
+	}
+
+	public function updateCurrentRoleFromStudent($requestId, $newRole){
+
+		$this->db->trans_start();
+
+		$this->updateCurrentRole($requestId, $newRole);
+		$this->checkRequestGeneralStatus($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+
+		$this->db->trans_complete();
+	}
+
+	public function updateCurrentRole($requestId, $newRole){
+		$this->db->where('id_request', $requestId);
+		$this->db->update('student_request', array('current_role' => $newRole));
 	}
 
 	private function secretaryApproval($requestId){
@@ -283,9 +311,32 @@ class Request_model extends CI_Model {
 		$this->db->update('request_discipline', $toUpdate);
 	}
 
+	private function handleVacancies($requestId, $idOfferDiscipline, $approval){
+
+		$discipline = $this->getRequestDiscipline(array(
+			'id_request' => $requestId,
+			'discipline_class' => $idOfferDiscipline
+		));
+
+		if($discipline !== FALSE){
+			$this->load->model("secretary/offer_model");
+			if($approval){
+				// Is to approve the discipline
+				if($discipline['status'] !== EnrollmentConstants::PRE_ENROLLED_STATUS){
+					$this->offer_model->subtractOneVacancy($idOfferDiscipline);
+				}
+			}else{
+				// Is to refuse the discipline
+				$this->offer_model->addOneVacancy($idOfferDiscipline);
+			}
+		}
+	}
+
 	public function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate=NULL){
 
 		$this->db->trans_start();
+
+		$this->handleVacancies($requestId, $idOfferDiscipline, TRUE);
 
 		$wasApproved = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::APPROVED_STATUS, $requestDate);
 
@@ -307,6 +358,8 @@ class Request_model extends CI_Model {
 	public function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate=NULL){
 
 		$this->db->trans_start();
+
+		$this->handleVacancies($requestId, $idOfferDiscipline, FALSE);
 
 		$wasRefused = $this->changeRequestDisciplineStatus($requestId, $idOfferDiscipline, EnrollmentConstants::REFUSED_STATUS, $requestDate);
 
@@ -344,24 +397,36 @@ class Request_model extends CI_Model {
 			if($wasAllApproved){
 				if($requestIsFinalizedBySecretary){
 					$status = EnrollmentConstants::ENROLLED_STATUS;
-				}else{
-
+				}
+				else{
 					$status = EnrollmentConstants::REQUEST_ALL_APPROVED_STATUS;
-
 					if(!empty($requestingArea) && $requestingArea === EnrollmentConstants::REQUESTING_AREA_MASTERMIND){
 						// If mastermind approved all request, finalize it
 						$this->finalizeRequestToMastermind($requestId);
+
+						$currentRole = EnrollmentConstants::REQUEST_TO_SECRETARY;
 					}
 				}
-			}else if($wasAllRefused){
-				$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
-			}else if($hasPreEnrolled){
-				$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
-			}else{
-				$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
 			}
-
-			$this->changeRequestGeneralStatus($requestId, $status);
+			else if($wasAllRefused){
+				$status = EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS;
+				// $currentRole = EnrollmentConstants::REQUEST_TO_STUDENT;
+			}
+			else if($hasPreEnrolled){
+				$status = EnrollmentConstants::REQUEST_INCOMPLETE_STATUS;
+				// $currentRole = EnrollmentConstants::REQUEST_TO_MASTERMIND;
+			}
+			else{
+				$status = EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS;
+				// if(!empty($requestingArea) && $requestingArea === EnrollmentConstants::REQUESTING_AREA_MASTERMIND){
+				// 	// $currentRole = EnrollmentConstants::REQUEST_TO_STUDENT;
+				// }
+				// else{
+				// 	// $currentRole = EnrollmentConstants::REQUEST_TO_MASTERMIND;
+				// }
+			}
+			$currentRole = isset($currentRole) ? $currentRole : NULL;
+			$this->changeRequestGeneralStatusAndCurrentRole($requestId, $status, $currentRole);
 		}else{
 			$status = "";
 		}
@@ -369,10 +434,19 @@ class Request_model extends CI_Model {
 		return $status;
 	}
 
-	private function changeRequestGeneralStatus($requestId, $newStatus){
+	private function changeRequestGeneralStatusAndCurrentRole($requestId, $newStatus, $currentRole=NULL){
 
 		$this->db->where('id_request', $requestId);
-		$this->db->update('student_request', array('request_status' => $newStatus));
+		$data = array(
+			'request_status' => $newStatus,
+			// 'current_role' => $currentRole
+		);
+
+		if(!empty($currentRole)){
+			$data['current_role'] = $currentRole;
+		}
+
+		$this->db->update('student_request', $data);
 	}
 
 	private function checkIfRequestHasPreEnrolled($requestId){
