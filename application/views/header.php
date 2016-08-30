@@ -275,7 +275,7 @@
 	<div class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
             <?php if($session->isLogged()){?>
-	            <aside class="left-side sidebar-offcanvas sidebar-fixed">
+	            <aside class="left-side sidebar-offcanvas">
 	                <!-- sidebar: style can be found in sidebar.less -->
 	                <section class="sidebar">
 	                    <!-- Sidebar user panel -->
@@ -344,21 +344,17 @@
                                     echo "<ul class='treeview-menu'>";
 
                                     $groupPermissions = $group->getPermissions();
-                                    if($group->getId() == GroupConstants::ACADEMIC_SECRETARY_GROUP_ID){
-                                    	$groupPermissions = orderAcademicSecretaryPermissions($groupPermissions);
+                                    $isAcademicSecretary = $group->getId() == GroupConstants::ACADEMIC_SECRETARY_GROUP_ID;
+                                    if($isAcademicSecretary){
+                                    	$groupPermissionsDivided = orderAcademicSecretaryPermissions($groupPermissions);
+                                    	foreach ($groupPermissionsDivided as $groupPermission) {
+	                                    	showGroupPermissions($groupPermission);
+	                                    	echo "<hr>";
+                                    	}
                                     }
-                                    foreach($groupPermissions as $permission){
-                                        echo "<li>";
-                                            if ($permission->getFunctionality() == PermissionConstants::RESEARCH_LINES_PERMISSION){
-                                                continue;
-                                            }
-                                            else{
-                                                echo anchor($permission->getFunctionality(), " ".$permission->getName(), " class='fa fa-caret-right'");
-                                            }
-                                        echo "</li>";
+                                    else{
+	                                    showGroupPermissions($groupPermissions);
                                     }
-
-
                                     echo "</ul>";
 
                                 echo "</li>";
