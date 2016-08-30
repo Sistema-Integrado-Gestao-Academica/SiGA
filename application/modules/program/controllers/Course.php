@@ -210,7 +210,6 @@ class Course extends MX_Controller {
 	public function newCourse(){
 
 		$courseDataIsOk = $this->validatesNewCourseData();
-
 		if($courseDataIsOk){
 
 			$courseName = $this->input->post('courseName');
@@ -234,7 +233,6 @@ class Course extends MX_Controller {
 			);
 
 			
-
 			$wasSaved = $this->course_model->saveCourse($course);
 
 			if($wasSaved){
@@ -245,16 +243,14 @@ class Course extends MX_Controller {
 				$insertMessage = "Curso \"{$courseName}\" já existe.";
 			}
 
-		}else{
-
-			$insertStatus = "danger";
-			$insertMessage = "Dados na forma incorreta.";
+			$session = getSession();
+			$session->showFlashMessage($insertStatus, $insertMessage);
+			redirect(PermissionConstants::COURSES_PERMISSION);
 		}
-
-		$session = getSession();
-		$session->showFlashMessage($insertStatus, $insertMessage);
-
-		redirect(PermissionConstants::COURSES_PERMISSION);
+		else{
+			$this->formToRegisterNewCourse();
+		}
+		
 	}
 
 	public function saveAcademicSecretary(){
@@ -318,13 +314,13 @@ class Course extends MX_Controller {
 	private function validatesNewCourseData(){
 
 		$this->load->library("form_validation");
-		$this->form_validation->set_rules("courseName", "Course Name", "required|trim|valid_name");
-		$this->form_validation->set_rules("courseType", "Course Type", "required");
-		$this->form_validation->set_rules("course_duration", "Course duration", "required");
-		$this->form_validation->set_rules("course_total_credits", "Course total credits", "required");
-		$this->form_validation->set_rules("course_hours", "Course hours", "required");
-		$this->form_validation->set_rules("course_class", "Course class", "required");
-		$this->form_validation->set_rules("course_description", "Course description", "required");
+		$this->form_validation->set_rules("courseName", "Nome do Curso", "required|trim|valid_name");
+		$this->form_validation->set_rules("courseType", "Tipo do Curso", "required");
+		$this->form_validation->set_rules("course_duration", "Duração do curso", "required");
+		$this->form_validation->set_rules("course_total_credits", "Créditos totais", "required");
+		$this->form_validation->set_rules("course_hours", "Carga-horária total", "required");
+		$this->form_validation->set_rules("course_class", "Turma", "required");
+		$this->form_validation->set_rules("course_description", "Descrição", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$courseDataStatus = $this->form_validation->run();
 
