@@ -74,7 +74,7 @@
 					$status = switchRequestGeneralStatus($newStatus);
 
 					if($requestIsApprovedByMastermind){
-						$status .= "<h4><span class='label label-primary'>Liberado para secretaria</span></h4>";
+						$status .= $studentRequest['current_role'] === EnrollmentConstants::REQUEST_TO_SECRETARY ? "<h4><span class='label label-primary'>Liberado para secretaria</span></h4>" : "";
 						$status .= !$needsMastermindApproval ? "<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>" : "";
 					}
 					echo $status;

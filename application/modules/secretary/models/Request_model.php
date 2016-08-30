@@ -677,11 +677,8 @@ class Request_model extends CI_Model {
 		return $message;
 	}
 
-	public function getRequest($requestData){
-
-		$foundRequest = $this->db->get_where('student_request', $requestData)->row_array();
-
-		$foundRequest = checkArray($foundRequest);
+	public function getRequest($requestData, $unique=TRUE){
+		$foundRequest = $this->get($requestData, FALSE, $unique);
 
 		return $foundRequest;
 	}

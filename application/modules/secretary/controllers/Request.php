@@ -84,45 +84,32 @@ class Request extends MX_Controller {
 	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $requestDate){
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY, $requestDate);
-
-		// redirect("secretary/request/courseRequests/{$courseId}#{$requestId}");
 	}
 
 	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $requestDate){
 
 		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY, $requestDate);
-
-		// redirect("secretary/request/courseRequests/{$courseId}#{$requestId}");
 	}
 
 	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $requestDate){
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestDate);
-
-		// redirect("mastermind#{$requestId}");
 	}
 
 	public function refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $requestDate){
 
 		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestDate);
-
-		// redirect("mastermind#{$requestId}");
 	}
 
 	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate=NULL){
 
-		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate);
+		$this->load->model("secretary/offer_model");
 
-		if($wasApproved){
-			$status = "success";
-			$message = "Solicitação de disciplina aprovada com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Solicitação de disciplina não pôde ser aprovada.";
+		$offerDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
+
+		if($offerDiscipline['current_vacancies'] > EnrollmentConstants::NO_VACANCY){
+			$this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate);
 		}
-
-		$session = getSession();
-		$session->showFlashMessage($status, $message);
 	}
 
 	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate=NULL){

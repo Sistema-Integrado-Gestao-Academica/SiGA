@@ -363,9 +363,9 @@ function displayCourseRequests($requests, $courseId, $users){
 			    		echo "<div class=\"callout callout-info\">";
 			    			echo anchor(
 			    				"secretary/request/finalizeRequestSecretary/{$requestId}/{$courseId}",
-			    				"Finalizar solicitação",
+			    				"Efetivar matrícula",
 			    				"id='finalize_request' class='btn btn-primary btn-flat' style='margin-top: 5%;'");
-							echo "<p><i>Finaliza a solicitação com o estado atual das disciplinas.</i></p>";
+							echo "<p><i>Efetiva a matrícula com o estado atual das disciplinas (aprovada ou recusada).</i></p>";
 						echo "</div>";
 	    			}else{
 	    				echo "<div class=\"callout callout-info\">";
@@ -501,7 +501,22 @@ function requestedDisciplineClasses($requestId, $requestingArea){
 								'{$btnData['requestingArea']}',
 								{$btnData['approval']}
 							);";
-							echo anchor("#", $btnData['name'], "onClick=\"{$onClick}\" {$attrs}");
+
+
+							if($btnData['approval']){
+
+								$ci =& get_instance();
+								$ci->load->model("secretary/offer_model");
+								$offerDiscipline = $ci->offer_model->getOfferDisciplineById($btnData['idOfferDiscipline']);
+
+								if($offerDiscipline['current_vacancies'] != EnrollmentConstants::NO_VACANCY){
+									echo anchor("#", $btnData['name'], "onClick=\"{$onClick}\" {$attrs}");
+								}else{
+									callout('info', "", "Disciplina sem vagas, não é possível aprovar.");
+								}
+							}else{
+								echo anchor("#", $btnData['name'], "onClick=\"{$onClick}\" {$attrs}");
+							}
 						};
 
 						// Depends of the area that are treating the request
