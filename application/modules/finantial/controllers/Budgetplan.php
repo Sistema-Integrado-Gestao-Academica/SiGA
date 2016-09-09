@@ -106,7 +106,7 @@ class Budgetplan extends MX_Controller {
 	public function edit($id) {
 
 
-		$budgetplan = $this->budgetplan_model->get('id', $id);
+		$budgetplan = $this->budgetplan_model->getId('id', $id);
 
 		$status_options = $this->db->get("budgetplan_status")->result_array();
 		$status = array();
@@ -222,7 +222,7 @@ class Budgetplan extends MX_Controller {
 		
 		$this->load->model('finantial/expense_model');
 
-		$budgetplan = $this->budgetplan_model->get('id', $budgetplanId);
+		$budgetplan = $this->budgetplan_model->getId('id', $budgetplanId);
 
 		$expenses = $this->budgetplan_model->getExpenses($budgetplan);
 		foreach ($expenses as $key => $expense) {

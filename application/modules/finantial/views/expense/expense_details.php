@@ -108,9 +108,11 @@
 	  				<td><?=$id?></td>
 
 		  			<td>
-		  			<?php if(!empty($expense_expenses->getNote())){
+		  			<?php 
+		  			$note = $expense_expenses->getNote();
+		  			if(!empty($note)){
 
-						echo $expense_expenses->getNote();
+						echo $note;
 		  			}
 		  			else{
 		  				echo "-";

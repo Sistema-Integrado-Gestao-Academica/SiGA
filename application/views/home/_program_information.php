@@ -65,7 +65,8 @@
 
 		$programContact = $program->getContact();
 
-			if (!empty($programContact) || !empty($program->getCourses())) {?>
+			$programCourses = $program->getCourses();
+			if (!empty($programContact) || !empty($programCourses)) {?>
 
 				<div class="panel box box-default">
               		<div class="box-header with-border">

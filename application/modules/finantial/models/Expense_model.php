@@ -14,7 +14,7 @@ class Expense_model extends CI_Model {
 		return $this->db->delete('expense');
 	}
 
-	public function get($attr, $value) {
+	public function getId($attr, $value) {
 		$objectToReturn = $this->db->get_where("expense", array($attr => $value))->row_array();
 		
 		$objectToReturn =checkArray($objectToReturn);

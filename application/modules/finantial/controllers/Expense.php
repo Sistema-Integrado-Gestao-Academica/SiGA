@@ -17,7 +17,7 @@ class Expense extends MX_Controller {
 
 	public function index($budgetplan_id) {
 		
-		$budgetplan = $this->budgetplan_model->get('id', $budgetplan_id);
+		$budgetplan = $this->budgetplan_model->getId('id', $budgetplan_id);
 
 		$months = array('Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
 				'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
@@ -56,7 +56,7 @@ class Expense extends MX_Controller {
 		$id = $expense['budgetplan_id'];
 		$expense['month'] = $months[$this->input->post("month")];
 
-		$budgetplan = $this->budgetplan_model->get('id', $id);
+		$budgetplan = $this->budgetplan_model->getId('id', $id);
 		$budgetplan['spending'] += $expense['value'];
 		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
 
@@ -74,8 +74,8 @@ class Expense extends MX_Controller {
 		$expense_id = $this->input->post('expense_id');
 		$budgetplan_id = $this->input->post('budgetplan_id');
 
-		$expense = $this->expense_model->get('id', $expense_id);
-		$budgetplan = $this->budgetplan_model->get('id', $budgetplan_id);
+		$expense = $this->expense_model->getId('id', $expense_id);
+		$budgetplan = $this->budgetplan_model->getId('id', $budgetplan_id);
 
 		$budgetplan['spending'] -= $expense['value'];
 		$budgetplan['balance'] = $budgetplan['amount'] - $budgetplan['spending'];
@@ -93,7 +93,7 @@ class Expense extends MX_Controller {
 	
 	public function expenseDetails($expenseId){
 
-		$expense = $this->expense_model->get('id', $expenseId);
+		$expense = $this->expense_model->getId('id', $expenseId);
 
 		$type = $this->expense_model->getExpenseType($expense['expense_type_id']);
 		$expense['expense_type_id'] = $type['id'];

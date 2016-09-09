@@ -42,10 +42,14 @@
 									<b>Email:</b><br><?= $coordinator->getEmail()?> <br>
 							<?php 
 							
-							$isSummaryBlank = empty($coordinator->getSummary()) || is_null($coordinator->getSummary());
-							$isLattesBlank = empty($coordinator->getLattesLink()) ||  is_null($coordinator->getLattesLink());
+							$summary = $coordinator->getSummary();
+							$lattesLink = $coordinator->getLattesLink();
+							$researchLine = $coordinator->getResearchLine();
 
-							$isResearchLineBlank = empty($coordinator->getResearchLine()) ||  is_null($coordinator->getResearchLine());
+							$isSummaryBlank = empty($summary) || is_null($summary);
+							$isLattesBlank = empty($lattesLink) ||  is_null($lattesLink);
+
+							$isResearchLineBlank = empty($researchLine) ||  is_null($researchLine);
 							if (!$isSummaryBlank || !$isLattesBlank || !$isResearchLineBlank){ ?>
 									<?php if (!$isSummaryBlank){ ?>
 										<b>Resumo:</b><br><?= $coordinator->getSummary()?>
@@ -94,10 +98,15 @@
 								          </div>
 									<?php
 
-									$isSummaryBlank = empty($teacher->getSummary()) || is_null($teacher->getSummary());
-									$isLattesBlank = empty($teacher->getLattesLink()) ||  is_null($teacher->getLattesLink());
+									$summary = $teacher->getSummary();
+									$lattesLink = $teacher->getLattesLink();
+									$researchLine = $teacher->getResearchLine();
 
-									$isResearchLineBlank = empty($teacher->getResearchLine()) ||  is_null($teacher->getResearchLine());
+
+									$isSummaryBlank = empty($summary) || is_null($summary);
+									$isLattesBlank = empty($lattesLink) ||  is_null($lattesLink);
+
+									$isResearchLineBlank = empty($researchLine) ||  is_null($researchLine);
 
 									if (!$isSummaryBlank || !$isLattesBlank || $isResearchLineBlank){ ?>
 

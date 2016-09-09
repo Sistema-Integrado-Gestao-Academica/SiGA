@@ -10,7 +10,7 @@ class Budgetplan_model extends CI_Model {
 		return $this->db->insert("budgetplan", $object);
 	}
 
-	public function get($attr, $value) {
+	public function getId($attr, $value) {
 		$object = $this->db->get_where("budgetplan", array($attr => $value))->row_array();
 		
 		$object = checkArray($object);
