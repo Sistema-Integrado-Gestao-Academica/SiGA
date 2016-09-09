@@ -492,10 +492,15 @@ class Program extends MX_Controller {
 		$programs = array();
 		if($allPrograms !== FALSE){
 			foreach($allPrograms as $program){
-				$summaryNonExists = empty($program->getSummary());
-				$historyNonExists = empty($program->getHistory());
-				$contactNonExists = empty($program->getContact());
-				$researchLineNonExists = empty($program->getResearchLine());
+				$summary = $program->getSummary();
+				$history = $program->getHistory();
+				$contact = $program->getContact();
+				$researchLine = $program->getResearchLine();
+
+				$summaryNonExists = empty($summary);
+				$historyNonExists = empty($history);
+				$contactNonExists = empty($contact);
+				$researchLineNonExists = empty($researchLine);
 
 				$coursesProgram = $program->getCourses();
 				$coursesNonExists = empty($coursesProgram);
