@@ -448,7 +448,7 @@ class Course_model extends CI_Model {
 		return $idExists;
 	}
 
-	private function getSecretaryById($secretary_id){
+	public function getSecretaryById($secretary_id){
 
 		$this->db->where('id_secretary',$secretary_id);
 		$this->db->from('secretary_course');

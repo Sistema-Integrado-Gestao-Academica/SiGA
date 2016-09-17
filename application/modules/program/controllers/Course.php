@@ -524,10 +524,13 @@ class Course extends MX_Controller {
 	}
 
 	public function deleteSecretary(){
+		
 		$course_id = $this->input->post('id_course');
 		$secretary_id = $this->input->post('id_secretary');
-		$secretaryWasDeleted = $this->deleteSecretaryFromDb($course_id, $secretary_id);
 
+		$this->checkIfHasToRemoveGroup($secretary_id);
+
+		$secretaryWasDeleted = $this->deleteSecretaryFromDb($course_id, $secretary_id);
 		if($secretaryWasDeleted){
 			$deleteStatus = "success";
 			$deleteMessage = "Secretário excluído com sucesso.";
@@ -540,6 +543,22 @@ class Course extends MX_Controller {
 		$session->showFlashMessage($deleteStatus, $deleteMessage);
 
 		redirect('program/course/formToEditCourse/'.$course_id);
+
+	}
+
+	private function checkIfHasToRemoveGroup($secretaryId){
+
+		$secretary = $this->course_model->getSecretaryById($secretaryId);
+		$idUser = $secretary->id_user;
+		$courses = $this->course_model->getCoursesOfSecretary($idUser);
+		$quantity_of_courses = count($courses);
+
+		// If the quantity is equal than one that means the secretary doesn't have other courses
+		if($quantity_of_courses == 1){
+			$idGroup = GroupConstants::ACADEMIC_SECRETARY_GROUP_ID;
+			$this->load->model("auth/usuarios_model");
+			$this->usuarios_model->removeUserGroup($idUser, $idGroup);
+		}
 
 	}
 

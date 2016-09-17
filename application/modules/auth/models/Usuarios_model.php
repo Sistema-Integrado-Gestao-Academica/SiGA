@@ -66,7 +66,7 @@ class Usuarios_model extends CI_Model {
 
 		$userExists = $this->checkIfUserExists($idUser);
 
-		$this->load->model('module_model');
+		$this->load->model('auth/module_model');
 		$groupExists = $this->module_model->checkIfGroupExists($idGroup);
 
 		$dataIsOk = $userExists && $groupExists;
