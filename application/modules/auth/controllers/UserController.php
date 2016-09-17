@@ -214,6 +214,12 @@ class UserController extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível remover o grupo informado. Tente novamente.";
 		}
+		
+		if($idGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP_ID){
+			
+			$this->removeCoursesWhenIsSecretaryGroup($idUser);
+		}
+
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
@@ -226,15 +232,32 @@ class UserController extends MX_Controller {
 
 		if($wasDeleted){
 			$status = "success";
-			$message = "Usuario removido com sucesso.";
-		}else{
+			$message = "Usuário removido com sucesso.";
+		}
+		else{
 			$status = "danger";
 			$message = "Não foi possível remover o usuário informado. Tente novamente.";
+		}
+
+		if($idGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP_ID){
+			
+			$this->removeCoursesWhenIsSecretaryGroup($idUser);
 		}
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("auth/userController/listUsersOfGroup/{$idGroup}");
+	}
+
+	private function removeCoursesWhenIsSecretaryGroup($idUser){
+
+		$this->load->model("program/course_model");
+		$deletedSecretary = FALSE;
+		$courses = $this->course_model->getCoursesOfSecretary($idUser);
+		foreach ($courses as $course) {
+			$idCourse = $course['id_course'];
+			$deletedSecretary = $this->course_model->deleteSecretary($idCourse, FALSE, $idUser);
+		}
 	}
 
 	public function checkIfUserExists($idUser){
