@@ -19,12 +19,19 @@ if($members !== FALSE){
 
             echo "<td>";
                 echo $member['name'];
+                if($member['owner']){
+                    echo " <span class='label label-default'>Criador do projeto</span>";
+                }
                 if($member['coordinator']){
                     echo " <span class='label label-primary'>Coordenador</span>";
                 }
             echo "</td>";
 
             echo "<td>";
+            $isTeacher = $this->module->checkUserGroup(GroupConstants::TEACHER_GROUP, $member['id']);
+            if($isTeacher){
+                makeCoordinatorForm($project['id'], $member['id']);
+            }
             echo "</td>";
 
         echo "</tr>";
@@ -39,3 +46,23 @@ if($members !== FALSE){
 }
 
 buildTableEndDeclaration();
+
+
+function makeCoordinatorForm($project, $member){
+
+    $hidden = array(
+        'project' => $project,
+        'member' => $member
+    );
+
+    $submitBtn = array(
+        "id" => "make_coordinator_btn",
+        "class" => "btn btn-primary btn-flat",
+        "content" => "Definir como coordenador",
+        "type" => "submit"
+    );
+    echo form_open('make_project_coordinator');
+        echo form_hidden($hidden);
+        echo form_button($submitBtn);
+    echo form_close();
+}

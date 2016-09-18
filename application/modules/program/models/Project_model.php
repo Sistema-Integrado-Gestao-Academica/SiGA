@@ -43,7 +43,7 @@ class Project_model extends CI_Model {
     }
 
     public function getProjectMembers($projectId){
-        $this->db->select('project_team.*, users.name');
+        $this->db->select('project_team.*, users.name, users.id');
         $this->db->from('users');
         $this->db->join(self::TEAM_TABLE, "project_team.member = users.id");
         $this->db->where("project_team.id_project", $projectId);
@@ -59,11 +59,7 @@ class Project_model extends CI_Model {
         $isMember = $this->checkIfIsAlreadyMember($project, $member);
 
         if(!$isMember){
-            $this->db->insert(self::TEAM_TABLE, array(
-                "id_project" => $project,
-                "member" => $member,
-                "coordinator" => FALSE
-            ));
+            $this->saveMember($project, $member);
         }else{
             throw new ProjectException(self::ALREADY_MEMBER);
         }
@@ -80,14 +76,14 @@ class Project_model extends CI_Model {
         return $foundMember !== FALSE;
     }
 
-    public function save($project, $coordinatorId){
+    public function save($project, $coordinatorId, $owner=FALSE, $isCoordinator=FALSE){
 
         $projectName = $project[self::NAME_COLUMN];
         $nameExists = $this->checkIfProjectNameExists($projectName);
         if(!$nameExists){
             $this->db->insert($this->TABLE, $project);
 
-            $this->saveCoordinator($project, $coordinatorId);
+            $this->saveMember($project, $coordinatorId, $owner, $isCoordinator);
         }else{
             throw new ProjectException(self::PROJECT_NAME_ALREADY_EXISTS." Projeto informado: '{$projectName}'.");
         }
@@ -106,18 +102,23 @@ class Project_model extends CI_Model {
         return $projects;
     }
 
-    private function saveCoordinator($project, $coordinatorId){
+    private function saveMember($project, $memberId, $owner=FALSE, $isCoordinator=FALSE){
 
-        $foundProject = $this->get($project);
-        $projectId = $foundProject[self::ID_COLUMN];
+        if(is_array($project)){
+            $foundProject = $this->get($project);
+            $projectId = $foundProject[self::ID_COLUMN];
+        }else{
+            $projectId = $project;
+        }
 
-        $teamCoordinator = array(
+        $teamMember = array(
             "id_project" => $projectId,
-            "member" => $coordinatorId,
-            "coordinator" => TRUE
+            "member" => $memberId,
+            "owner" => $owner,
+            "coordinator" => $isCoordinator
         );
 
-        $this->db->insert(self::TEAM_TABLE, $teamCoordinator);
+        $this->db->insert(self::TEAM_TABLE, $teamMember);
     }
 
     private function checkIfProjectNameExists($name){

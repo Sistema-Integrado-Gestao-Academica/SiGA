@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."program/exception/ProjectException.php");
 require_once(APPPATH."data_types/basic/StartEndDate.php");
 
@@ -17,7 +18,7 @@ class Project extends MX_Controller {
         $userId = $session->getUserData()->getId();
         $userGroups = $session->getUserData()->getGroups();
 
-        $projects = $this->project_model->getProjects($userId, TRUE);
+        $projects = $this->project_model->getProjects($userId);
 
         $this->load->model('program/program_model');
         $programs = $this->program_model->getUserProgram($userId, $userGroups);
@@ -34,6 +35,8 @@ class Project extends MX_Controller {
     }
 
     public function projectTeam($projectId){
+
+        $this->load->module("auth/module"); // Used in view
 
         $project = $this->project_model->getProject($projectId);
         $members = $this->project_model->getProjectMembers($projectId);
@@ -66,6 +69,17 @@ class Project extends MX_Controller {
 
         getSession()->showFlashMessage($status, $message);
         redirect("project_team/{$projectId}");
+    }
+
+    public function makeCoordinator(){
+        $projectId = $this->input->post('project');
+        $memberId = $this->input->post('project');
+
+        /*
+            Send an email to $memberId asking for permission to make him coordinator of project $projectId.
+
+            If he accepts, change his 'coordinator' flag on 'project_team' table
+        */
     }
 
     public function newProject(){
@@ -102,8 +116,12 @@ class Project extends MX_Controller {
             $session = getSession();
             $userId = $session->getUserData()->getId();
 
+            // Check if the logged user is a teacher
+            $this->load->module("auth/module");
+            $userIsTeacher = $this->module->checkUserGroup(GroupConstants::TEACHER_GROUP);
+
             try{
-                $this->project_model->save($project, $userId);
+                $this->project_model->save($project, $userId, $owner=TRUE, $userIsTeacher);
                 $status = "success";
                 $message = "Projeto '{$projectName}' salvo com sucesso!";
             }catch(ProjectException $e){

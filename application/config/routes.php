@@ -200,6 +200,7 @@ $route['academic_projects'] = 'program/project/index';
 $route['new_project'] = 'program/project/newProject';
 $route['project_team/(:num)'] = 'program/project/projectTeam/$1';
 $route['add_to_team'] = 'program/project/addMemberToTeam';
+$route['make_project_coordinator'] = 'program/project/makeCoordinator';
 
 /**
  * Intellectual Production routes

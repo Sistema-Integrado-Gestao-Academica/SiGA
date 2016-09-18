@@ -22,7 +22,7 @@ class Module extends MX_Controller {
 
         $this->load->module("auth/userPermission");
 
-        $foundGroups = $this->module_model->getUserGroups($user);    
+        $foundGroups = $this->module_model->getUserGroups($user);
 
         if($foundGroups !== FALSE){
 
@@ -51,14 +51,19 @@ class Module extends MX_Controller {
         return $groups;
     }
 
-	public function checkUserGroup($requiredGroup){
+	public function checkUserGroup($requiredGroup, $user=FALSE){
 
 		$groupExists = $this->checkIfGroupExistsByName($requiredGroup);
 
 		if($groupExists){
 
-			$session = getSession();
-			$userGroups = $session->getUserGroups();
+            if($user !== FALSE){
+                $userGroups = $this->loadUserGroups($user);
+            }else{
+                $session = getSession();
+                $userGroups = $session->getUserGroups();
+            }
+
 			foreach($userGroups as $group){
 				$haveGroup = FALSE;
 				if($group->getName() === $requiredGroup){
@@ -90,7 +95,7 @@ class Module extends MX_Controller {
 	public function addGroupToUser($groupName, $userId){
 
 		// Validar o $groupName
-		
+
 		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		if($group !== FALSE){
@@ -110,7 +115,7 @@ class Module extends MX_Controller {
 	public function deleteGroupOfUser($groupName, $userId){
 
 		// Validar o $groupName
-		
+
 		$group = $this->module_model->getGroupByGroupName($groupName);
 
 		if($group !== FALSE){
@@ -123,7 +128,7 @@ class Module extends MX_Controller {
 			'id_user' => $userId,
 			'id_group' => $groupId
 		);
-		
+
 		$this->module_model->deleteGroupOfUser($groupToUser);
 	}
 
