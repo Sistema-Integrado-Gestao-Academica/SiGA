@@ -183,6 +183,7 @@ class Usuarios_model extends CI_Model {
 		$this->db->select('users.id, users.name, users.cpf, users.email');
 		$this->db->from('users');
 		$this->db->join('user_group', "users.id = user_group.id_user");
+		$this->db->where('active', 1);
 
 		if(is_array($group)){
 			$first = TRUE;
@@ -268,6 +269,7 @@ class Usuarios_model extends CI_Model {
 	public function getAllUsers(){
 		$this->db->select('id, name, cpf, email');
 		$this->db->where('name !=', 'admin');
+		$this->db->where('active', 1);
 		$foundUsers = $this->db->get('users')->result_array();
 
 		$foundUsers = checkArray($foundUsers);

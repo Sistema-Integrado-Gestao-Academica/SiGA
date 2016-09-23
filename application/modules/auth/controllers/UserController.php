@@ -84,7 +84,7 @@ class UserController extends MX_Controller {
 
 	public function usersReport(){
 
-		$allUsers = $this->getAllUsers();
+		$allUsers = $this->usuarios_model->getAllUsers();
 
 		$this->load->model("auth/module_model");
 
@@ -265,13 +265,6 @@ class UserController extends MX_Controller {
 		$userExists = $this->usuarios_model->checkIfUserExists($idUser);
 
 		return $userExists;
-	}
-
-	public function getAllUsers(){
-
-		$allUsers = $this->usuarios_model->getAllUsers();
-
-		return $allUsers;
 	}
 
 	public function getUsersToBeSecretaries(){
