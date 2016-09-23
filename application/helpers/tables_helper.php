@@ -1904,3 +1904,63 @@ function displayGuestForEnrollment($guests, $courseId){
 	buildTableEndDeclaration();
 
 }
+
+function displayStudentsTable($students, $courseId){
+
+	if($students !== FALSE){ 
+
+		buildTableDeclaration();
+
+		$headers = array("Matrícula", "Aluno", "E-mail", "Data de matrícula", "Situação", "Ações");
+
+		buildTableHeaders($headers);
+
+    	foreach($students as $student){
+
+			echo "<tr>";
+	    		echo "<td>";
+	    			$registration = $student['enrollment'];
+	    			
+	    			if($registration !== NULL){
+		    			echo bold("Matrícula atual: ").$registration;
+	    			}else{
+	    				echo "<span class='label label-danger'> Matrícula não informada ainda.</span>";
+	    			}
+
+	    			echo "<hr>";
+
+		    		
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['name'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['email'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['enroll_date'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['status'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    			$id = $student['id'];
+	    			echo anchor('change_student_enrollment/'.$id.'/'.$courseId.'', 'Mudar matrícula', "class='btn btn-success'");
+	    		echo "</td>";
+    		echo "</tr>";
+    	}
+
+    	buildTableEndDeclaration();
+
+ 	} 
+ 	else{
+	
+		callout("info", "Nenhum aluno encontrado");	
+	
+	}	
+}

@@ -69,7 +69,7 @@ class Course extends MX_Controller {
 
 	public function courseStudents($courseId){
 
-		$students = $this->getCourseStudents($courseId);
+		$students = $this->course_model->getCourseStudents($courseId);
 		
 		$students = $this->addStatusCourseStudents($students);
 		
@@ -83,7 +83,7 @@ class Course extends MX_Controller {
 		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'program/course/course_students', $data);
 	}
 
-	private function addStatusCourseStudents($students){
+	public function addStatusCourseStudents($students){
 
 		if($students !== FALSE){
 			foreach ($students as $key => $student) {
@@ -567,13 +567,6 @@ class Course extends MX_Controller {
 		$deletedSecretary = $this->course_model->deleteSecretary($course_id,$secretary_id);
 
 		return $deletedSecretary;
-	}
-
-	public function getCourseStudents($courseId){
-
-		$courseStudents = $this->course_model->getCourseStudents($courseId);
-
-		return $courseStudents;
 	}
 
 	public function getCourseByName($courseName){

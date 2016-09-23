@@ -305,4 +305,18 @@ class Enrollment extends MX_Controller {
     	$ids = implode(",", $offerDisciplinesIds);
     	return $ids;
     }
+
+
+	public function changeEnrollment($studentId, $courseId){
+
+		$this->load->model("student/student_model");
+		$student = $this->student_model->getStudentById($studentId);
+
+		$data = array(
+			'courseId' => $courseId,
+			'student' => $student[0]
+		);
+		
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/enrollment/change_student_enrollment', $data);
+	}
 }

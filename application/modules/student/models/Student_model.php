@@ -17,12 +17,31 @@ class Student_model extends CI_Model {
 		return $student;
 	}
 
-	public function getUserByEnrollment($enrollment){
+	public function getUserByEnrollment($enrollment, $partOfEnrollment = FALSE){
 
 		$this->db->select("users.id");
 		$this->db->from('users');
 		$this->db->join("course_student", "course_student.id_user = users.id");
-		$this->db->where("course_student.enrollment", $enrollment);
+		if($partOfEnrollment){
+			$this->db->like("course_student.enrollment", $enrollment, "after");
+		}
+		else{
+
+			$this->db->where("course_student.enrollment", $enrollment);
+		}
+		$student = $this->db->get()->result_array();
+
+		$student = checkArray($student);
+
+		return $student;
+	}
+
+	public function getStudentByName($name){
+
+		$this->db->select("users.id");
+		$this->db->from('users');
+		$this->db->join("course_student", "course_student.id_user = users.id");
+		$this->db->like("users.name", $name, "after");
 		$student = $this->db->get()->result_array();
 
 		$student = checkArray($student);
@@ -68,5 +87,22 @@ class Student_model extends CI_Model {
         }
 
         return $updated;
+	}
+
+	public function getStudentById($studentId, $courseId = FALSE){
+
+		$this->db->select("users.name, users.id, users.email, course_student.enroll_date, course_student.enrollment");
+		$this->db->from('users');
+		$this->db->join("course_student", "course_student.id_user = users.id");
+		$this->db->where("course_student.id_user", $studentId);
+
+		if($courseId !== FALSE){
+			$this->db->where("course_student.id_course", $courseId);
+		}
+		$student = $this->db->get()->result_array();
+		
+		$student = checkArray($student);
+
+		return $student;
 	}
 }

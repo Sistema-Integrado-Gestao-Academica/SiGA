@@ -836,3 +836,84 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 	echo form_input($reloadHidden); 
 	echo form_input($oldStartDateHidden); 
 }
+
+function searchInStudentListByEnrollment($course){
+
+	$placeholder = "Informe a matrícula do aluno...";
+	$searchFor = "a matrícula";
+	$buttonId = "search_student_enrollment_on_list_btn";
+	$buttonContent = "Pesquisar por matrícula";
+	$studentId = "student_enrollment_field";
+
+	$specificData = array(
+		'placeholder' => $placeholder, 
+		'searchFor' => $searchFor,
+		'buttonId' => $buttonId, 
+		'buttonContent' => $buttonContent, 
+		'course' => $course,
+		'studentId' => $studentId
+	);
+	
+	searchInStudentList($specificData, $course);
+
+}
+
+function searchInStudentListByName($course){
+	
+	$placeholder =  "Informe o nome do aluno...";
+	$searchFor = "o nome";
+	$buttonId = "search_student_name_on_list_btn";
+	$buttonContent = "Pesquisar por nome";
+	$studentId = "student_name_field";
+
+	$specificData = array(
+		'placeholder' => $placeholder, 
+		'searchFor' => $searchFor,
+		'buttonId' => $buttonId, 
+		'buttonContent' => $buttonContent, 
+		'course' => $course,
+		'studentId' => $studentId
+	);
+	
+	searchInStudentList($specificData, $course);
+}
+
+function searchInStudentList($specificData, $course){
+
+
+	$student = array(
+		"name" => $specificData['studentId'],
+		"id" => $specificData['studentId'],
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"placeholder" => $specificData['placeholder'],
+		"maxlength" => "50",
+		'style' => "width:80%;"
+	);
+
+	$searchForStudentBtn = array(
+		"id" => $specificData['buttonId'],
+		"content" => $specificData['buttonContent'],
+		"class" => "btn bg-primary btn-flat",
+		"type" => "submit"
+	);
+	
+	$hidden = array(
+		'id' => "course",
+		'name' => "course",
+		'type' => "hidden",
+		'value' => $course['id_course']
+	);
+
+	echo form_input($hidden);
+
+	$searchFor = $specificData['searchFor'];
+	echo "<h4><i class='fa fa-search'></i> Pesquisar pel".$searchFor." do aluno</h4>";
+
+	echo form_label("Informe ".$searchFor." do aluno para pesquisar:", $specificData['studentId']);
+	echo form_input($student);
+
+	echo form_button($searchForStudentBtn);
+
+}
