@@ -4,7 +4,7 @@ require_once MODULESPATH."notification/constants/EmailConstants.php";
 require_once MODULESPATH."notification/exception/EmailNotificationException.php";
 require_once MODULESPATH."notification/domain/EmailNotification.php";
 
-class ActionRequestEmail extends EmailNotification{
+class GeneralEmail extends EmailNotification{
 
     private $params;
     private $handle;

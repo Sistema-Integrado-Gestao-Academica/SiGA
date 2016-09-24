@@ -88,7 +88,33 @@ class Project extends MX_Controller {
         $this->project_model->saveCoordinatorActivation($projectId, $memberId, $activation);
 
         $this->load->module("notification/emailSender");
-        $this->emailsender->sendProjectCoordinatorInvitationEmail($currentUser, $projectId, $memberId, $activation);
+        $emailWasSent = $this->emailsender->sendProjectCoordinatorInvitationEmail($currentUser, $projectId, $memberId, $activation);
+
+        $status = $emailWasSent ? "success" : "danger";
+
+        $message = $emailWasSent
+            ? "<b>Um email foi enviado para o professor, solicitando a confirmação para participação neste projeto como coordenador.</b>"
+            : "<b>Não foi possível enviar o email para o professor, tente novamente. Caso o erro persista, entre em contato com o professor.</b>";
+
+        getSession()->showFlashMessage($status, $message);
+        redirect("project_team/{$projectId}");
+    }
+
+    public function acceptCoordinatorInvitation(){
+        $activationKey = $this->input->get('k');
+
+        $activated = $this->project_model->activateCoordinator($activationKey);
+
+        if($activated){
+            $status = "success";
+            $message = "Sua confirmação como coordenador do projeto foi recebida com sucesso!";
+        }else{
+            $status = "danger";
+            $message = "Chave de ativação inválida.";
+        }
+
+        getSession()->showFlashMessage($status, $message);
+        redirect('/');
     }
 
     public function newProject(){

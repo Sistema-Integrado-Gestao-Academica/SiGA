@@ -14,6 +14,8 @@ buildTableHeaders(array(
 
 if($members !== FALSE){
 
+    $haveCoordinator = projectHaveCoordinator($members);
+
     foreach($members as $member){
         echo "<tr>";
 
@@ -28,9 +30,13 @@ if($members !== FALSE){
             echo "</td>";
 
             echo "<td>";
-            $isTeacher = $this->module->checkUserGroup(GroupConstants::TEACHER_GROUP, $member['id']);
-            if($isTeacher){
-                makeCoordinatorForm($project['id'], $member['id']);
+            if(!$haveCoordinator){
+                // Display this option only when the project have no coordinator
+
+                $isTeacher = $this->module->checkUserGroup(GroupConstants::TEACHER_GROUP, $member['id']);
+                if($isTeacher && !$member['coordinator']){
+                    suggestAsCoordinatorForm($project['id'], $member['id'], $member['coordinator_activation']);
+                }
             }
             echo "</td>";
 
@@ -48,7 +54,7 @@ if($members !== FALSE){
 buildTableEndDeclaration();
 
 
-function makeCoordinatorForm($project, $member){
+function suggestAsCoordinatorForm($project, $member, $activation=FALSE){
 
     $hidden = array(
         'project' => $project,
@@ -57,12 +63,24 @@ function makeCoordinatorForm($project, $member){
 
     $submitBtn = array(
         "id" => "make_coordinator_btn",
-        "class" => "btn btn-primary btn-flat",
-        "content" => "Sugerir como coordenador",
+        "class" => !$activation ? "btn btn-primary btn-flat": "btn btn-warning btn-flat",
+        "content" => !$activation ? "Sugerir como coordenador" : "Reenviar solicitação de coordenador",
         "type" => "submit"
     );
     echo form_open('make_project_coordinator');
         echo form_hidden($hidden);
         echo form_button($submitBtn);
     echo form_close();
+}
+
+function projectHaveCoordinator($members){
+    $haveCoordinator = FALSE;
+    foreach ($members as $member){
+        if($member['coordinator']){
+            $haveCoordinator = TRUE;
+            break;
+        }
+    }
+
+    return $haveCoordinator;
 }

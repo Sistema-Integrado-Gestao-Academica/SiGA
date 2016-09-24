@@ -127,6 +127,36 @@ class Project_model extends CI_Model {
         return $project !== FALSE;
     }
 
+    public function activateCoordinator($activationKey){
+        $foundMember = $this->get(self::COORDINATOR_ACTIVATION_COLUMN, $activationKey, TRUE, FALSE, self::TEAM_TABLE);
+
+        if($foundMember !== FALSE){
+
+            $this->db->trans_start();
+
+            // First set all coordinators to FALSE, because only one member can be coordinator of a project
+            $where = array('id_project' => $foundMember['id_project']);
+            $this->updateTeamData($where, array(
+                'coordinator' => FALSE
+            ));
+
+            // Then make the activation member as coordinator
+            $this->updateTeamData($foundMember, array(
+                'coordinator' => TRUE,
+                'coordinator_activation' => NULL
+            ));
+
+            $this->db->trans_complete();
+
+            $activated = $this->db->trans_status() !== FALSE;
+
+        }else{
+            $activated = FALSE;
+        }
+
+        return $activated;
+    }
+
     public function saveCoordinatorActivation($projectId, $memberId, $activation){
 
         $where = array(

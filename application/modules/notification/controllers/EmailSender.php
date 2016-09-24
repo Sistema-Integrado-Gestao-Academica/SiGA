@@ -5,7 +5,7 @@ require_once(MODULESPATH."auth/controllers/Useractivation.php");
 require_once(MODULESPATH."notification/domain/emails/ConfirmSignUpEmail.php");
 require_once(MODULESPATH."notification/domain/emails/UserInvitationEmail.php");
 require_once(MODULESPATH."notification/domain/emails/GroupInvitationEmail.php");
-require_once(MODULESPATH."notification/domain/emails/ActionRequestEmail.php");
+require_once(MODULESPATH."notification/domain/emails/GeneralEmail.php");
 
 /**
  * Facade class to receive all email notifications request
@@ -94,10 +94,17 @@ class EmailSender extends MX_Controller{
 		$params = array(
 			'subject' => "Convite para coordenador de projeto",
 			'sender' => $sender,
-			'project' => $project
+			'project' => $project,
+			'activation' => $activation
 		);
 
-		$handler = function($params){
+		// Creating user object
+		$userId = $userToInvite['id'];
+		$userName = $userToInvite['name'];
+		$userEmail = $userToInvite['email'];
+		$user = new User($userId, $userName, FALSE, $userEmail);
+
+		$email = new GeneralEmail($user, $params, function($params){
 			$user = $params['user'];
 			$userName = $user->getName();
         	$userId = $user->getId();
@@ -108,24 +115,17 @@ class EmailSender extends MX_Controller{
 			$project = $params['project'];
 			$projectName = $project['name'];
 
-			$message = "Olá <b>{$userName}</b>! Você foi convidado(a) pelo(a) <b>{$senderName}</b> para ser coordenador(a) do projeto '<b>{$projectName}</b>'. Para aceitar o convite e se tornar coordenador(a) deste projeto accesse o link abaixo: <br>";
+			$message = "Olá <b>{$userName}</b>! Você foi convidado(a) pelo(a) <b>{$senderName}</b> para ser coordenador(a) do projeto '<b>{$projectName}</b>'. Para aceitar o convite e se tornar coordenador(a) deste projeto accesse o link abaixo: <br><br>";
 
-			// Assemble the link
+			$url = site_url("accept_coordinator_invitation");
+			$activation = $params['activation'];
+			$link = $url."?k={$activation}";
+
+			$message .= "<a href={$link}>Aceitar convite para ser coordenador do projeto '{$projectName}'</a>";
 
 			return $message;
-		};
+		});
 
-		// Creating user object
-		$userId = $userToInvite['id'];
-		$userName = $userToInvite['name'];
-		$userEmail = $userToInvite['email'];
-		$user = new User($userId, $userName, FALSE, $userEmail);
-
-		$email = new ActionRequestEmail($user, $params, $handler);
-
-		var_dump($email->getMessage());
-
-		exit;
 		$sent = $email->notify();
 
 		return $sent;
