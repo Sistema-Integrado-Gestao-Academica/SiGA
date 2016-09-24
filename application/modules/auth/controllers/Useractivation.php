@@ -11,12 +11,14 @@ class UserActivation extends MX_Controller {
 	}
 
 	public function generateActivation($user){
-		$alreadyExists = TRUE;
-		while($alreadyExists){
-			// Generates a cryptographically secure random string as activation
-			$activation = bin2hex(openssl_random_pseudo_bytes(20));
-			$alreadyExists = $this->activation_model->activationExists($activation);
-		}
+
+		$object = $this->activation_model;
+        $checkFunction = function($value) use ($object){
+            return !$object->activationExists($value);
+        };
+
+        $this->load->helper('crypto');
+        $activation = generateRandomString(40, $checkFunction);
 
 		$saved = $this->activation_model->saveActivation($user, $activation);
 
