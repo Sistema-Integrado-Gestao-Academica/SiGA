@@ -1960,7 +1960,7 @@ function displayStudentsTable($students, $courseId){
  	} 
  	else{
 	
-		callout("info", "Nenhum aluno encontrado");	
+		callout("info", "Nenhum aluno matriculado");	
 	
 	}	
 }

@@ -6,20 +6,49 @@
 	
 	require_once(MODULESPATH."secretary/domain/StudentRegistration.php");
 
-	echo "<div class='row'>";
-		echo "<div class='col-lg-6'>";
-			searchInStudentListByEnrollment($course);
-		echo "</div>";
-		echo "<div class='col-lg-6'>";
-			searchInStudentListByName($course);
-		echo "</div>";
-	echo "</div>";
-
-	echo "<div id='students_list_table'>";
-
-	echo "<br><br>";
-	
-	displayStudentsTable($students, $course['id_course']);
 
 ?>
+
+		<div class='row'>
+			<div class='col-lg-4'>
+				<br>	
+			    <div class="dropdown">
+				  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					<i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+					Ordenar por
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				    <li><a href="#" onclick='orderByName("<?=$studentsIdsInString?>")'>Nome</button></li>
+				    <li><a href="#" onclick='orderByEnrollment("<?=$studentsIdsInString?>")'>Matrícula</a></li>
+				    <li><a href="#" onclick='orderByDate("<?=$studentsIdsInString?>")'>Data de matrícula</a></li>
+				  </ul>
+				</div>
+			</div>
+			<div class='col-lg-4'>
+				<b> Pesquisar pela matrícula </b>
+				<?= searchInStudentListByEnrollment($course);?>
+			</div>
+			<div class='col-lg-4'>
+				<b> Pesquisar pelo nome </b>
+				<?= searchInStudentListByName($course); ?>
+			</div>
+		</div>
+
+ 
+<?php	
+	echo "<div id='students_list_table'>";
+	displayStudentsTable($students, $course['id_course']); 
+
+	echo "</div>";
+	?>
+
 <?= anchor('secretary/secretary/coursesStudents', 'Voltar', "class='btn btn-danger'")?>
+                                 
+	<ul class="pagination pagination-sm no-margin pull-right">
+      <li><a href="#">«</a></li>
+      <li><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">»</a></li>
+    </ul>

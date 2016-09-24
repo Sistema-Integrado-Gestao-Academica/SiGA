@@ -4,53 +4,84 @@ require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 class SecretaryAjax extends MX_Controller {
 
-    public function searchStudentsByEnrollment(){
+	public function searchStudentsByEnrollment(){
 
-        $enrollment = $this->input->post("enrollment");
-        $course = $this->input->post("course");
+		$enrollment = $this->input->post("enrollment");
+		$course = $this->input->post("course");
 
-        $this->load->model("student/student_model");
-        $studentsIds = $this->student_model->getUserByEnrollment($enrollment, TRUE);
-        
-        $this->searchStudentsByIds($studentsIds, $course, TRUE);
+		$this->load->model("student/student_model");
+		$studentsIds = $this->student_model->getUserByEnrollment($enrollment, TRUE);
+		
+		echo "<h3><i class='fa fa-users'></i> Alunos com a matrícula '{$enrollment}':</h3><br>";
+		$this->searchStudentsByIds($studentsIds, $course, TRUE);
 
-    }
+	}
 
-    public function searchStudentsByName(){
-       
-        $name = $this->input->post("name");
-        $course = $this->input->post("course");
+	public function searchStudentsByName(){
+	   
+		$name = $this->input->post("name");
+		$course = $this->input->post("course");
 
-        $this->load->model("student/student_model");
-        $studentsIds = $this->student_model->getStudentByName($name);
-        
-        $this->searchStudentsByIds($studentsIds, $course);
-    }
+		$this->load->model("student/student_model");
+		$studentsIds = $this->student_model->getStudentByName($name);
+		
+		echo "<h3><i class='fa fa-users'></i> Alunos com o nome '{$name}':</h3><br>";
+		$this->searchStudentsByIds($studentsIds, $course);
+	}
 
-    private function searchStudentsByIds($studentsIds, $course, $idIsEnrollment = FALSE){
-       
-        $students = array();
-        if($studentsIds !== FALSE){
+	private function searchStudentsByIds($studentsIds, $course, $idIsEnrollment = FALSE){
+	   
+		$students = array();
+		if($studentsIds !== FALSE){
 
-            foreach ($studentsIds as $studentId) {
-                $id = $studentId['id'];
-                $student = $this->student_model->getStudentById($id, $course);
-                if($student !== FALSE){
-                    if($idIsEnrollment){
-                        $key = $student[0]['enrollment'];
-                    }
-                    else{
-                        $key = $student[0]['name'];
-                    }
-                    $students[$key] = $student[0];                        
-                }
-            }
-            $this->load->module("program/course");
-            $students = $this->course->addStatusCourseStudents($students);
-        }
+			foreach ($studentsIds as $studentId) {
+				$id = $studentId['id'];
+				$student = $this->student_model->getStudentById($id, $course);
+				if($student !== FALSE){
+					if($idIsEnrollment){
+						$key = $student[0]['enrollment'];
+					}
+					else{
+						$key = $student[0]['name'];
+					}
+					$students[$key] = $student[0];                        
+				}
+			}
+			$this->load->module("program/course");
+			$students = $this->course->addStatusCourseStudents($students);
+		}
 
-        ksort($students);
-        displayStudentsTable($students, $course);
+		if(!empty($students)){
+			ksort($students);
+			displayStudentsTable($students, $course);
+		}
+		else{
+			echo callout("info", "Nenhum aluno encontrado");
+		}
+	}
 
-    }
+	function orderStudentsOnList(){
+
+		$studentsIds = $this->input->post("studentsIds");
+		$courseId = $this->input->post("courseId");
+		$type = $this->input->post("type");
+
+		$students = array();
+		if($studentsIds !== FALSE){
+
+			$this->load->model("student/student_model");
+			foreach ($studentsIds as $id) {
+				$student = $this->student_model->getStudentById($id, $courseId);
+				if($student !== FALSE){
+					$key = $student[0][$type];
+					$students[strtolower($key)] = $student[0];
+				}
+			}
+			$this->load->module("program/course");
+			$students = $this->course->addStatusCourseStudents($students);
+			ksort($students);
+		}
+
+		displayStudentsTable($students, $courseId);
+	}
 }

@@ -75,9 +75,22 @@ class Course extends MX_Controller {
 		
 		$courseData = $this->getCourseById($courseId);
 
+		// Used to order tha table dinamically
+		$studentsIdsInString = "";
+		if($students !== FALSE){
+			$ids = array();
+			foreach ($students as $student) {
+				$id = $student['id'];
+				array_push($ids, $id);
+			}
+    		$studentsIdsInString = implode(",", $ids);
+    		$studentsIdsInString = $courseId.",".$studentsIdsInString;
+		}
+
 		$data = array(
 			'students' => $students,
-			'course' => $courseData
+			'course' => $courseData,
+			'studentsIdsInString' => $studentsIdsInString
 		);
 
 		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'program/course/course_students', $data);

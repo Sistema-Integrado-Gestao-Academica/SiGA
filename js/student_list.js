@@ -1,24 +1,54 @@
 $(document).ready(function(){
 
-	$("#search_student_enrollment_on_list_btn").click(function(){
+	$("#enrollment_btn").click(function(e){
+		e.preventDefault();
 		searchStudentsOnListByEnrollment();
 	});
 
 
-	$("#search_student_name_on_list_btn").click(function(){
+	$("#name_btn").click(function(e){
+		e.preventDefault();
 		searchStudentsOnListByName();
 	});
-
 
 	$("#student_enrollment_field").keypress(function(){
 		searchStudentsOnListByEnrollment();
 	});
 
-
 	$("#student_name_field").keypress(function(){
 		searchStudentsOnListByName();
 	});
 	
+	const ORDER_BY_NAME = 'name';
+	const ORDER_BY_ENROLLMENT = 'enrollment';
+	const ORDER_BY_DATE = 'enroll_date';
+
+	(function($) {
+
+	  orderByName = function(data) {
+	  	ids = data.split(","); 
+	  	courseId = ids.shift();
+	  	orderStudentsOnList(ORDER_BY_NAME, ids, courseId);
+	  };
+	})(jQuery);
+
+	(function($) {
+
+	  orderByEnrollment = function(data) {
+	  	ids = data.split(","); 
+	  	courseId = ids.shift();
+	  	orderStudentsOnList(ORDER_BY_ENROLLMENT, ids, courseId);
+	  };
+	})(jQuery);
+
+	(function($) {
+
+	  orderByDate = function(data) {
+	  	ids = data.split(","); 
+	  	courseId = ids.shift();
+	  	orderStudentsOnList(ORDER_BY_DATE, ids, courseId);
+	  };
+	})(jQuery);
 });
 
 
@@ -38,6 +68,7 @@ function searchStudentsOnListByEnrollment(){
 		},
 		function(data){
 			$("#students_list_table").html(data);
+			e.preventDefault();
 		}
 	);
 }
@@ -58,7 +89,25 @@ function searchStudentsOnListByName(){
 		},
 		function(data){
 			$("#students_list_table").html(data);
+			return false;
 		}
 	);
 }
 
+function orderStudentsOnList(type, studentsIds, courseId){
+
+	var siteUrl = $("#site_url").val();
+
+	var urlToPost = siteUrl + "/secretary/ajax/secretaryajax/orderStudentsOnList";
+	$.post(
+		urlToPost,
+		{
+			type: type,
+			studentsIds: studentsIds,
+			courseId: courseId
+		},
+		function(data){
+			$("#students_list_table").html(data);
+		}
+	);
+}

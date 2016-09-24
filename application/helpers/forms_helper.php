@@ -839,17 +839,13 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 
 function searchInStudentListByEnrollment($course){
 
-	$placeholder = "Informe a matrícula do aluno...";
-	$searchFor = "a matrícula";
-	$buttonId = "search_student_enrollment_on_list_btn";
-	$buttonContent = "Pesquisar por matrícula";
+	$placeholder = "Digite a matrícula do aluno...";
+	$buttonId = "enrollment_btn";
 	$studentId = "student_enrollment_field";
 
 	$specificData = array(
 		'placeholder' => $placeholder, 
-		'searchFor' => $searchFor,
 		'buttonId' => $buttonId, 
-		'buttonContent' => $buttonContent, 
 		'course' => $course,
 		'studentId' => $studentId
 	);
@@ -860,17 +856,13 @@ function searchInStudentListByEnrollment($course){
 
 function searchInStudentListByName($course){
 	
-	$placeholder =  "Informe o nome do aluno...";
-	$searchFor = "o nome";
-	$buttonId = "search_student_name_on_list_btn";
-	$buttonContent = "Pesquisar por nome";
+	$placeholder =  "Digite o nome do aluno...";
+	$buttonId = "name_btn";
 	$studentId = "student_name_field";
 
 	$specificData = array(
 		'placeholder' => $placeholder, 
-		'searchFor' => $searchFor,
 		'buttonId' => $buttonId, 
-		'buttonContent' => $buttonContent, 
 		'course' => $course,
 		'studentId' => $studentId
 	);
@@ -894,7 +886,7 @@ function searchInStudentList($specificData, $course){
 
 	$searchForStudentBtn = array(
 		"id" => $specificData['buttonId'],
-		"content" => $specificData['buttonContent'],
+		"content" => "<i class='fa fa-search'></i>",
 		"class" => "btn bg-primary btn-flat",
 		"type" => "submit"
 	);
@@ -908,12 +900,12 @@ function searchInStudentList($specificData, $course){
 
 	echo form_input($hidden);
 
-	$searchFor = $specificData['searchFor'];
-	echo "<h4><i class='fa fa-search'></i> Pesquisar pel".$searchFor." do aluno</h4>";
 
-	echo form_label("Informe ".$searchFor." do aluno para pesquisar:", $specificData['studentId']);
-	echo form_input($student);
+	echo "<form class='form-inline' role='form'>";
 
-	echo form_button($searchForStudentBtn);
+		echo form_input($student, "", array('class'=>'form-control'));
+
+		echo form_button($searchForStudentBtn);
+	echo "</form>";
 
 }
