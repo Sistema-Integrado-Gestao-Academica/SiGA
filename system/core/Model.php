@@ -107,4 +107,10 @@ class CI_Model {
 
         return $foundData;
     }
+
+    public function exists($field, $value, $otherTable=FALSE){
+        $found = $this->get($field, $value, TRUE, FALSE, $otherTable);
+        $exists = $found !== FALSE;
+        return $exists;
+    }
 }
