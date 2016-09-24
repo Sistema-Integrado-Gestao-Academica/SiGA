@@ -82,4 +82,52 @@ class EmailSender extends MX_Controller{
 
 		return $sent;
 	}
+
+	public function sendProjectCoordinatorInvitationEmail($sender, $project, $member, $activation){
+
+		$this->load->model("auth/usuarios_model");
+		$userToInvite = $this->usuarios_model->getUserById($member);
+
+		$this->load->model("auth/project_model");
+		$project = $this->project_model->getProject($project);
+
+		$params = array(
+			'subject' => "Convite para coordenador de projeto",
+			'sender' => $sender,
+			'project' => $project
+		);
+
+		$handler = function($params){
+			$user = $params['user'];
+			$userName = $user->getName();
+        	$userId = $user->getId();
+
+			$sender = $params['sender'];
+			$senderName = $sender->getName();
+
+			$project = $params['project'];
+			$projectName = $project['name'];
+
+			$message = "Olá <b>{$userName}</b>! Você foi convidado(a) pelo(a) <b>{$senderName}</b> para ser coordenador(a) do projeto '<b>{$projectName}</b>'. Para aceitar o convite e se tornar coordenador(a) deste projeto accesse o link abaixo: <br>";
+
+			// Assemble the link
+
+			return $message;
+		};
+
+		// Creating user object
+		$userId = $userToInvite['id'];
+		$userName = $userToInvite['name'];
+		$userEmail = $userToInvite['email'];
+		$user = new User($userId, $userName, FALSE, $userEmail);
+
+		$email = new ActionRequestEmail($user, $params, $handler);
+
+		var_dump($email->getMessage());
+
+		exit;
+		$sent = $email->notify();
+
+		return $sent;
+	}
 }

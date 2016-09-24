@@ -73,13 +73,22 @@ class Project extends MX_Controller {
 
     public function makeCoordinator(){
         $projectId = $this->input->post('project');
-        $memberId = $this->input->post('project');
+        $memberId = $this->input->post('member');
+        $currentUser = getSession()->getUserData();
 
-        /*
-            Send an email to $memberId asking for permission to make him coordinator of project $projectId.
+        // Closure to check the validity of the generated random string
+        $object = $this->project_model;
+        $checkFunction = function($value) use ($object){
+            return $object->coordinatorActivationNotExists($value);
+        };
 
-            If he accepts, change his 'coordinator' flag on 'project_team' table
-        */
+        // Generates the activation random string and save it
+        $this->load->helper('crypto');
+        $activation = generateRandomString(40, $checkFunction);
+        $this->project_model->saveCoordinatorActivation($projectId, $memberId, $activation);
+
+        $this->load->module("notification/emailSender");
+        $this->emailsender->sendProjectCoordinatorInvitationEmail($currentUser, $projectId, $memberId, $activation);
     }
 
     public function newProject(){

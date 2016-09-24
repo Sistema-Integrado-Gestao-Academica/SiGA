@@ -2,6 +2,8 @@
 
 /**
  * Generates a cryptographically secure random string with the given length using openssl
+ * In PHP 5.3 use it with closure. Ex.: generateRandomString(20, $closure);
+ * In PHP > 5.3 you can use the other way. Ex.: generateRandomString(20, "method", $object);
  * @param $length - The length of the string to be generated
  * @param $checkFunction - Optional. If wanted, a string containing the name of
  *        a method or function to be executed to check the validity of the generated string.

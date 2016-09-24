@@ -531,7 +531,7 @@ class UserController extends MX_Controller {
 		}else{
 
 			$this->load->module("notification/emailSender");
-			$message = $this->emailsender->sendConfirmationEmail($user, $activation);
+			$message = $this->emailsender->sendConfirmationEmail($savedUser, $activation);
 
 			$status = $message['status'];
 			$message = $message['message'];

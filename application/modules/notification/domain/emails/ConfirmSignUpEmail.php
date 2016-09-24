@@ -20,15 +20,16 @@ class ConfirmSignUpEmail extends EmailNotification{
         $this->subject = self::SUBJECT.EmailConstants::SENDER_NAME;
 	}
 
-	protected function setMessage(){ 
-        
+	protected function setMessage(){
+
         $user = $this->user();
         $userName = $user->getName();
         $userId = $user->getId();
         $activation = $this->activation;
-        
-        $initializationVector = bin2hex(openssl_random_pseudo_bytes(4));
-        
+
+        // This cypher requires a initialization vector 16 bytes long
+        $initializationVector = bin2hex(openssl_random_pseudo_bytes(8));
+
         $encryptedUser = openssl_encrypt($userId, "AES128", $activation, $options = 0, $initializationVector);
 
         $message = "Olá, <b>{$userName}</b>. <br>";

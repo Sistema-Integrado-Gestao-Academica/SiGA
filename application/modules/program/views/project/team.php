@@ -58,7 +58,7 @@ function makeCoordinatorForm($project, $member){
     $submitBtn = array(
         "id" => "make_coordinator_btn",
         "class" => "btn btn-primary btn-flat",
-        "content" => "Definir como coordenador",
+        "content" => "Sugerir como coordenador",
         "type" => "submit"
     );
     echo form_open('make_project_coordinator');

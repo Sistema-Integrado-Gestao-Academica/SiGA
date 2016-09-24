@@ -15,6 +15,7 @@ class Project_model extends CI_Model {
     const PROCEDURES_COLUMN = "procedures";
     const EXPECTED_RESULTS_COLUMN = "expected_results";
     const PROGRAM_COLUMN = "program_id";
+    const COORDINATOR_ACTIVATION_COLUMN = "coordinator_activation";
 
     const TEAM_TABLE = "project_team";
 
@@ -124,5 +125,28 @@ class Project_model extends CI_Model {
     private function checkIfProjectNameExists($name){
         $project = $this->get(self::NAME_COLUMN, $name);
         return $project !== FALSE;
+    }
+
+    public function saveCoordinatorActivation($projectId, $memberId, $activation){
+
+        $where = array(
+            'id_project' => $projectId,
+            'member' => $memberId
+        );
+        $coordinatorActivation = array(
+            self::COORDINATOR_ACTIVATION_COLUMN => $activation
+        );
+
+        $this->updateTeamData($where, $coordinatorActivation);
+    }
+
+    private function updateTeamData($where, $newData){
+        $this->db->where($where);
+        $this->db->update(self::TEAM_TABLE, $newData);
+    }
+
+    public function coordinatorActivationNotExists($coordinatorActivation){
+        $notExists = !$this->exists(self::COORDINATOR_ACTIVATION_COLUMN, $coordinatorActivation, self::TEAM_TABLE);
+        return $notExists;
     }
 }
