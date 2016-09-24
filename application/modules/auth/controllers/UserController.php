@@ -8,7 +8,6 @@ require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."auth/domain/User.php");
 
 require_once(MODULESPATH."notification/domain/emails/RestorePasswordEmail.php");
-require_once(MODULESPATH."notification/domain/emails/ConfirmSignUpEmail.php");
 
 require_once(MODULESPATH."auth/exception/UserException.php");
 require_once(MODULESPATH."auth/exception/LoginException.php");
@@ -42,7 +41,7 @@ class UserController extends MX_Controller {
 		$availableCourses = $this->course_model->getAllCourses();
 
 		$this->load->model('program/program_model');
-		
+
 		$coursesName = array();
 		foreach ($availableCourses as $course) {
 			$id = $course['id_course'];
@@ -314,11 +313,11 @@ class UserController extends MX_Controller {
 		$userId = $loggedUser->getId();
 
 		$user = $this->usuarios_model->getObjectUser($userId);
-		
+
 		$data = array(
 			'user' => $user
 		);
-		
+
 		$this->load->template("auth/user/conta", $data);
 	}
 
@@ -350,7 +349,7 @@ class UserController extends MX_Controller {
 
 				}
 				else{
-					$session->showFlashMessage("danger", "Não foi possível enviar o email. Tente novamente.");	
+					$session->showFlashMessage("danger", "Não foi possível enviar o email. Tente novamente.");
 					redirect("auth/userController/restorePassword");
 				}
 			}
@@ -366,9 +365,9 @@ class UserController extends MX_Controller {
 	}
 
     private function generateNewPassword($user){
-        
+
         define('PASSWORD_LENGTH', 4); // The length of the binary to generate new password
-        
+
         $newPassword = bin2hex(openssl_random_pseudo_bytes(PASSWORD_LENGTH));
 
         $id = $user->getId();
@@ -398,9 +397,9 @@ class UserController extends MX_Controller {
 			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
 			if($isValidPassword){
 
-				$session = getSession(); 
+				$session = getSession();
 				$userData = $session->getUserData();
-								
+
 				$userId = $userData->getId();
 				$temporaryPassword = FALSE;
 
@@ -421,12 +420,12 @@ class UserController extends MX_Controller {
 			}
 		}
 		else{
-			
+
 			$this->load->template("auth/user/change_password");
 		}
 	}
 	public function validatePasswordField(){
-		
+
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("password", "Digite sua nova senha", "required");
 		$this->form_validation->set_rules("confirm_password", "Confirme sua nova senha", "required");
@@ -454,7 +453,7 @@ class UserController extends MX_Controller {
 	}
 
 	public function newUser() {
-		
+
 		$name  = $this->input->post("name");
 		$cpf   = $this->input->post("cpf");
 		$email = $this->input->post("email");
@@ -470,13 +469,13 @@ class UserController extends MX_Controller {
 			'password' 	 => $password,
 			'active' => 0
 		);
-		
+
 		$invitation = $this->input->post("userInvitation");
 
 		$success = $this->validateRegisterUserFields();
 		if($success){
 			$this->registerUser($user, $group, $invitation);
-		} 
+		}
 		else{
 
 			if(is_null($invitation)){
@@ -490,7 +489,7 @@ class UserController extends MX_Controller {
 	}
 
 	private function validateRegisterUserFields(){
-		
+
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("name", "Nome", "required|trim|valid_name");
 		$this->form_validation->set_rules("cpf", "CPF", "required|valid_cpf|verify_if_cpf_no_exists");
@@ -517,7 +516,7 @@ class UserController extends MX_Controller {
 		$savedUser = $this->usuarios_model->getUserDataByLogin($user['login']);
 
 		$activation = $this->useractivation->generateActivation($savedUser);
-		
+
 		if(!is_null($invitation)){
 			$this->invitation_model->disable($invitation);
 			$this->notification->newRegisterByInvitationNotification($invitation, $user['name']);
@@ -531,34 +530,16 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível realizar o cadastro solicitado. Tente novamente.";
 		}else{
 
-			$emailSent = $this->sendConfirmationEmail($savedUser, $activation);
+			$this->load->module("notification/emailSender");
+			$message = $this->emailsender->sendConfirmationEmail($user, $activation);
 
-			if($emailSent){
-				$status = "success";
-				$message = "{$savedUser['login']}, um email foi enviado para \"{$savedUser['email']}\" para você confirmar seu cadastro no sistema.";
-			}else{
-				$status = "danger";
-				$message = "{$savedUser['login']}, não foi possível enviar o email para você confirmar seu cadastro no sistema. Cheque o email informado e tente novamente.";
-			}
+			$status = $message['status'];
+			$message = $message['message'];
 		}
-		
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("/");
-	}
-
-	private function sendConfirmationEmail($user, $activation){
-
-		$id = $user['id'];
-		$name = $user['name'];
-		$email = $user['email'];
-		$user = new User($id, $name, FALSE, $email);
-
-		$email = new ConfirmSignUpEmail($user, $activation);
-
-		$sent = $email->notify();
-
-		return $sent;
 	}
 
 	public function updateProfile(){
@@ -573,14 +554,14 @@ class UserController extends MX_Controller {
 			if ($updated) {
 				$session->login($user);
 				$session->showFlashMessage("success", "Os dados foram alterados");
-			} 
+			}
 			else if (!$updated){
 				$session->showFlashMessage("danger", "Os dados não foram alterados");
 			}
 			redirect('profile');
 		}
 		else{
-			
+
 			$this->profile();
 		}
 	}
@@ -589,7 +570,7 @@ class UserController extends MX_Controller {
 		$this->load->library("form_validation");
 
 		$this->form_validation->set_rules("name", "Nome", "trim|valid_name");
-		
+
 		if($oldEmail != $newEmail){
 			$this->form_validation->set_rules("email", "E-mail", "valid_email|verify_if_email_no_exists");
 		}
@@ -607,7 +588,7 @@ class UserController extends MX_Controller {
 			$login = $user->getLogin();
 			$session->showFlashMessage("success", "Usuário \"{$login}\" removido");
 			redirect("login");
-		} 
+		}
 		else {
 			$dados = array('user' => $user);
 			$this->load->template("auth/user/conta", $dados);
@@ -709,7 +690,7 @@ class UserController extends MX_Controller {
 			if ($new_password != $blank_password && $password != $user->getPassword()) {
 				$session->showFlashMessage("danger", "Senha atual incorreta");
 				redirect("profile");
-			} 
+			}
 			else if ($new_password == $blank_password) {
 				$new_password = $user->getPassword();
 			}
@@ -721,15 +702,15 @@ class UserController extends MX_Controller {
 			if (empty($email)) {
 				$email = $user->getEmail();
 			}
-			
+
 			if (empty($homePhone)) {
 				$homePhone = $user->getHomePhone();
 			}
-			
+
 			if (empty($cellPhone)) {
 				$cellPhone = $user->getCellPhone();
 			}
-			
+
 			try{
 				$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
 
@@ -745,7 +726,7 @@ class UserController extends MX_Controller {
 		else{
 			$user = NULL;
 		}
-	
+
 		return $user;
 	}
 

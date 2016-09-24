@@ -7,7 +7,7 @@ class UserActivation extends MX_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model(self::MODEL_NAME, "activation_model");
-		$this->load->model("usuarios_model");	
+		$this->load->model("usuarios_model");
 	}
 
 	public function generateActivation($user){
@@ -32,8 +32,6 @@ class UserActivation extends MX_Controller {
 		$activationKey = $this->input->get("k");
 		$encryptedUserId = $this->input->get("u");
 		$initializationVector = $this->input->get("i");
-
-		$this->load->helper("useractivation");
 
 		$userId = openssl_decrypt($encryptedUserId, "AES128", $activationKey, $options = 0, $initializationVector);
 		$confirmed = $this->activation_model->confirmRegister($userId, $activationKey);
@@ -60,9 +58,9 @@ class UserActivation extends MX_Controller {
 			$this->activation_model->deleteUserActivation($userId);
 			$activation = $this->generateActivation($user);
 
-			$this->load->helper("useractivation");
-			$message = sendConfirmationEmail($user, $activation);
-	
+			$this->load->module("notification/emailSender");
+			$message = $this->emailsender->sendConfirmationEmail($user, $activation);
+
 			$this->session->set_flashdata($message['status'], $message['message']);
 			redirect('/');
 		}
@@ -76,14 +74,14 @@ class UserActivation extends MX_Controller {
 	}
 
 	private function validateData($userId){
-		
+
 		$success = $this->validateResentEmailFields();
 
 		if($success){
 			$email = $this->input->post('email');
 			$password = $this->input->post('password');
 
-			$dataIsOk = $this->usuarios_model->verifyEmailAndPassword($userId, $email, $password);			
+			$dataIsOk = $this->usuarios_model->verifyEmailAndPassword($userId, $email, $password);
 		}
 		else{
 			$dataIsOk = FALSE;
@@ -91,7 +89,7 @@ class UserActivation extends MX_Controller {
 
 		return $dataIsOk;
 	}
-	
+
 	private function validateResentEmailFields(){
 		$this->load->library("form_validation");
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email");
@@ -101,7 +99,7 @@ class UserActivation extends MX_Controller {
 
 		return $success;
 	}
-	
+
 	public function reconfirmRegister($userId){
 
 		$this->load->model("usuarios_model", "user_model");
@@ -128,7 +126,7 @@ class UserActivation extends MX_Controller {
 	}
 
 	public function cancelRegister(){
-		
+
 		$userId = $this->input->post('id');
 		$login = $this->input->post('login');
 
@@ -137,10 +135,10 @@ class UserActivation extends MX_Controller {
 		if($correctPassword){
 			// Starting transaction
 			$this->db->trans_start();
-			
+
 			$activationDeleted = $this->activation_model->deleteUserActivation($userId);
 			$userDeleted = $this->usuarios_model->deleteUserById($userId);
-			
+
 			// Finishing transaction
 			$this->db->trans_complete();
 
