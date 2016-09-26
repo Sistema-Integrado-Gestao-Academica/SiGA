@@ -15,7 +15,7 @@
 		    <?php
 
 		    	if($allDimensions !== FALSE){
-		    		
+
 		    		$quantityOfDimensions = 0;
 		    		$dimensionsWeight = 0;
 			    	foreach($allDimensions as $dimension){
@@ -34,7 +34,7 @@
 				    		echo "</td>";
 
 				    		echo "<td>";
-				    		
+
 				    		echo "</td>";
 			    		echo "</tr>";
 
@@ -88,13 +88,13 @@
 							$maxWeight = MAX_WEIGHT - $dimensionsWeight;
 							$message = "O peso máximo possível é <b>".$maxWeight."%</b>";
 						}
-						
+
 						$weight['max'] = $maxWeight;
 
 
 		    			echo "<div class='collapse' id='create_dimension'>";
 		    				echo "<div class='row'>";
-		    				echo form_open("coordinator/createDimension");
+		    				echo form_open("program/coordinator/createDimension");
 								echo "<br>";
 								echo "<h4>".$message."</h4>";
 								echo "<br>";
@@ -128,7 +128,7 @@
 		    		echo "</tr>";
 		    	}
 	    	?>
-		    
+
 		</tbody>
 	</table>
 </div>

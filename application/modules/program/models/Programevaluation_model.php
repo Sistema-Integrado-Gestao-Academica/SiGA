@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Program_Evaluation_model extends CI_Model {
+class ProgramEvaluation_model extends CI_Model {
 
 	public function saveProgramEvaluation($evaluationData){
 
@@ -122,7 +122,7 @@ class Program_Evaluation_model extends CI_Model {
 			'id_evaluation' => $evaluationId,
 			'id_dimension_type' => $dimensionType
 		);
-		
+
 		$dimensionData = $this->db->get_where('evaluation_dimension', $conditions)->row_array();
 
 		$dimensionData = checkArray($dimensionData);
@@ -173,7 +173,7 @@ class Program_Evaluation_model extends CI_Model {
 	}
 
 	private function getDimensionDataById($dimensionId){
-		
+
 		$dimensionData = $this->db->get_where('evaluation_dimension', array('id_dimension' => $dimensionId))->row_array();
 
 		$dimensionData = checkArray($dimensionData);
@@ -192,7 +192,7 @@ class Program_Evaluation_model extends CI_Model {
 			foreach($evaluationDimensions as $dimension){
 				$dimensionOk = FALSE;
 				foreach ($dimensionsTypes as $type){
-					
+
 					$haveDimension = $dimension['id_dimension_type'] === $type['id_dimension_type'];
 
 					if($haveDimension){
