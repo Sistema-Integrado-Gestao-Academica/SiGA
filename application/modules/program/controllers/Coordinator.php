@@ -7,12 +7,12 @@ class Coordinator extends MX_Controller {
 	private $COORDINATOR_GROUP = "coordenador";
 
 	public function index() {
-		
+
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/coordinator_home");
 	}
-	
+
 	public function course_report(){
-		
+
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/course_reports");
 	}
 
@@ -24,7 +24,7 @@ class Coordinator extends MX_Controller {
 		$totalStudent = $this->getTotalStudents($idCoordinator);
 		$enroledStudents = $this->getEnroledStudents($idCoordinator);
 		$notEnroledStudents = $this->getNotEnroledStudents($idCoordinator);
-		
+
 		$data = array(
 
 				'totalStudent' => $totalStudent,
@@ -34,9 +34,9 @@ class Coordinator extends MX_Controller {
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/students_reports", $data);
 	}
-	
+
 	public function mastermind_report(){
-	
+
 		$session = getSession();
 		$user = $session->getUserData();
 		$idCoordinator = $user->getId();
@@ -49,9 +49,9 @@ class Coordinator extends MX_Controller {
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/mastermind_reports", $data);
 	}
-	
+
 	public function secretary_report(){
-		
+
 		$session = getSession();
 		$user = $session->getUserData();
 		$idCoordinator = $user->getId();
@@ -67,72 +67,72 @@ class Coordinator extends MX_Controller {
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/secretary_reports", $data);
 	}
-	
+
 	public function getCoordinatorCourseData($idCoordinator){
 		$this->load->model("program/coordinator_model");
-		
+
 		$courseId = $this->coordinator_model->getCoordinatorCourse($idCoordinator);
-		
+
 		$this->load->model("program/course_model");
 		$course = $this->course_model->getCourseById($courseId);
-		
+
 		return $course;
 	}
-	
+
 	public function getCourseSecretaries($courseId){
 		$this->load->model("program/course_model");
-		
+
 		$secretaries = $this->course_model->getCourseSecretaries($courseId);
-		
+
 		return $secretaries;
 	}
-	
+
 	public function getTotalStudents($idCoordinator){
 		$this->load->model("program/coordinator_model");
-		
+
 		$students = $this->coordinator_model->getTotalCourseStudents($idCoordinator);
-		
+
 		return $students;
 	}
-	
+
 	public function getTotalMasterminds($idCoordinator){
 		$this->load->model("program/coordinator_model");
-		
+
 		$masterminds = $this->coordinator_model->getTotalCourseMasterminds($idCoordinator);
-		
+
 		return $masterminds;
-		
+
 	}
-	
+
 	public function getMastermindStudents($mastermindId){
 		$this->load->model('program/mastermind_model');
 
 		$students = $this->mastermind_model->getStutentsByIdMastermind($mastermindId);
-		
+
 		return $students;
 	}
-	
+
 	public function getEnroledStudents($idCoordinator){
 		$this->load->model("program/coordinator_model");
-		
+
 		$students = $this->coordinator_model->getTotalEnroledStudents($idCoordinator);
-		
+
 		return $students;
-		
+
 	}
-	
+
 	public function getNotEnroledStudents($idCoordinator){
 		$this->load->model("program/coordinator_model");
-	
+
 		$students = $this->coordinator_model->getTotalNotEnroledStudents($idCoordinator);
-	
+
 		return $students;
-	
+
 	}
-	
+
 	public function manageDimensions(){
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
 
@@ -148,7 +148,7 @@ class Coordinator extends MX_Controller {
 		$dimensionName = $this->input->post('new_dimension_name');
 		$dimensionWeight = $this->input->post('dimension_weight');
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$wasSaved = $this->evaluation->newDimensionType($dimensionName, $dimensionWeight);
 
@@ -159,7 +159,7 @@ class Coordinator extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível criar a dimensão. Não é permitido nomes iguais, cheque o nome informado.";
 		}
-		
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("program/coordinator/manageDimensions");
@@ -167,7 +167,7 @@ class Coordinator extends MX_Controller {
 
 	public function addDimensionToEvaluation($programId, $evaluationId, $dimensionType, $dimensionWeight = 0){
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$wasAdded = $this->evaluation->addDimensionTypeToEvaluation($evaluationId, $dimensionType, $dimensionWeight);
 
@@ -178,7 +178,7 @@ class Coordinator extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível adicionar a dimensão à essa avaliação.";
 		}
-				
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("program/coordinator/program_evaluation_index/{$programId}/{$evaluationId}");
@@ -191,12 +191,11 @@ class Coordinator extends MX_Controller {
 		$coordinatorId = $userData->getId();
 
 		$this->load->model('program/program_model');
-		$programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
-		
+		$coordinatorPrograms = $this->program_model->getCoordinatorPrograms($coordinatorId);
+
 		$data = array(
 			'coordinatorPrograms' => $coordinatorPrograms,
-			'userData' => $userData,
-			'programObject' => $program
+			'userData' => $userData
 		);
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/coordinator_programs", $data);
@@ -204,7 +203,7 @@ class Coordinator extends MX_Controller {
 
 	public function program_evaluation_index($programId, $programEvaluationId){
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getDimensionTypesForEvaluation($programEvaluationId);
 		$allDimensionsTypes = $this->evaluation->getAllDimensionTypes();
@@ -219,13 +218,13 @@ class Coordinator extends MX_Controller {
 			'dimensionsTypes' => $dimensionsTypes,
 			'allDimensionsTypes' => $allDimensionsTypes
 		);
-		
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_index", $data);
+
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/coordinator/program_evaluation_index", $data);
 	}
 
 	public function evaluationDimensionData($evaluationId, $dimensionType, $programId){
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$dimensionData = $this->evaluation->getDimensionData($evaluationId, $dimensionType);
 		$allDimensionsTypes = $this->evaluation->getAllDimensionTypes();
@@ -241,7 +240,7 @@ class Coordinator extends MX_Controller {
 		}else{
 			$dimensionName = FALSE;
 		}
-		
+
 		$evaluationDimensions = $this->evaluation->getEvaluationDimensions($evaluationId);
 
 		if($evaluationDimensions !== FALSE){
@@ -265,12 +264,12 @@ class Coordinator extends MX_Controller {
 			'weightsSum' => $weightsSum
 		);
 
-		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program_evaluation_dimension", $data);	
+		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "program/program/program_evaluation_dimension", $data);
 	}
 
 	public function disableDimension($evaluationId, $dimensionType, $dimensionId, $programId){
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$wasDisabled = $this->evaluation->disableDimension($dimensionId);
 
@@ -281,7 +280,7 @@ class Coordinator extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível desativar a dimensão.";
 		}
-		
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("program/coordinator/evaluationDimensionData/{$evaluationId}/{$dimensionType}/{$programId}");
@@ -298,13 +297,13 @@ class Coordinator extends MX_Controller {
 
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/new_program_evaluation", $data);
 	}
-	
+
 	public function updateProgramArea($programId){
 
 		$this->load->model('program/program_model');
 		$programData = $this->program_model->getProgramById($programId);
-		
-		$programAareas = $this->program_model->getAllProgramAreas();
+
+		$programAreas = $this->program_model->getAllProgramAreas();
 		if($programAreas !== FALSE){
 			foreach ($programAreas as $area){
 
@@ -316,13 +315,13 @@ class Coordinator extends MX_Controller {
 
 		$programArea = $this->program_model->getProgramAreaByProgramId($programId);
 
-		
+
 		$data = array(
 			'areas' => $areas,
 			'currentArea' => $programArea,
 			'programData' => $programData
 		);
-		
+
 		loadTemplateSafelyByGroup($this->COORDINATOR_GROUP, "coordinator/edit_program_area", $data);
 	}
 
@@ -344,7 +343,7 @@ class Coordinator extends MX_Controller {
 			$evaluation['current_year'] = $currentYear;
 		}
 
-		$this->load->model('program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$evaluationId = $this->evaluation->saveProgramEvaluation($evaluation);
 
@@ -364,7 +363,7 @@ class Coordinator extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível salvar a avaliação. Tente novamente.";
 		}
-		
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect('program/coordinator/coordinator_programs');
@@ -372,7 +371,7 @@ class Coordinator extends MX_Controller {
 
 	private function initiateDimensionsToEvaluation($evaluationId){
 
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$dimensionsTypes = $this->evaluation->getAllDimensionTypes();
 
@@ -397,8 +396,8 @@ class Coordinator extends MX_Controller {
 		$dimensionType = $this->input->post('dimensionType');
 		$programId = $this->input->post('programId');
 		$newWeight = $this->input->post('dimension_new_weight');
-		
-		$this->load->model('program/program_evaluation_model', 'evaluation');
+
+		$this->load->model('program/programevaluation_model', 'evaluation');
 
 		$wasChanged = $this->evaluation->updateDimensionWeight($dimensionId, $newWeight);
 
@@ -409,7 +408,7 @@ class Coordinator extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível alterar o peso da dimensão. Tente novamente.";
 		}
-		
+
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect("program/coordinator/evaluationDimensionData/{$programEvaluationId}/{$dimensionType}/{$programId}");
@@ -441,6 +440,6 @@ class Coordinator extends MX_Controller {
 			'course' => $courseData
 		);
 
-		loadTemplateSafelyByGroup("coordenador",'program/coordinator_course_students', $data);	
+		loadTemplateSafelyByGroup("coordenador",'program/coordinator_course_students', $data);
 	}
 }

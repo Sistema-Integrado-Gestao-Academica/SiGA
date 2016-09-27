@@ -12,7 +12,7 @@
 <div class="col-lg-3">
 	<?php
 		echo anchor(
-			"coordinator/disableDimension/{$evaluationData['id_program_evaluation']}/{$dimensionData['id_dimension_type']}/{$dimensionData['id_dimension']}/{$programId}",
+			"program/coordinator/disableDimension/{$evaluationData['id_program_evaluation']}/{$dimensionData['id_dimension_type']}/{$dimensionData['id_dimension']}/{$programId}",
 		 	"Desativar dimensão",
 		 	"class='btn btn-danger'"
 		);
@@ -59,9 +59,9 @@
 			}else{
 				$availableWeight = MAX_WEIGHT - $weightsSum;
 				$currentWeight = $dimensionData['weight'];
-				
+
 				if($availableWeight >= $currentWeight){
-					$maxWeight = $availableWeight;	
+					$maxWeight = $availableWeight;
 				}else{
 					$maxWeight = $currentWeight;
 				}
@@ -76,7 +76,7 @@
 			echo $message;
 			echo "</div>";
 
-			echo form_open("coordinator/changeDimensionWeight");
+			echo form_open("program/coordinator/changeDimensionWeight");
 				echo form_hidden(array(
 					'dimensionId' => $dimensionData['id_dimension'],
 					'programEvaluationId' => $evaluationData['id_program_evaluation'],
@@ -91,7 +91,7 @@
 				echo "<br>";
 				echo form_button($submitBtn);
 			echo form_close();
-			
+
 		?>
 	</div>
 </div>
@@ -99,4 +99,4 @@
 
 
 <br>
-<?php echo anchor("coordinator/program_evaluation_index/{$programId}/{$evaluationData['id_program_evaluation']}", "Voltar", "class='btn btn-danger'"); ?>
+<?php echo anchor("program/coordinator/program_evaluation_index/{$programId}/{$evaluationData['id_program_evaluation']}", "Voltar", "class='btn btn-danger'"); ?>

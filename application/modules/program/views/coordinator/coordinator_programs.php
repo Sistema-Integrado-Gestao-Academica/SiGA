@@ -17,10 +17,11 @@
 		    <?php
 
 		    	if($coordinatorPrograms !== FALSE){
-		    	
+
 			    	foreach($coordinatorPrograms as $program){
 
-			    		$programEvaluations = $programObject->getProgramEvaluations($program['id_program']);
+			    		$this->load->model("program/program_model");
+			    		$programEvaluations = $this->program_model->getProgramEvaluations($program['id_program']);
 
 			    		$evaluationsPeriods = array();
 						if($programEvaluations !== FALSE){
@@ -54,7 +55,7 @@
 			                          <i class='fa fa-certificate'></i> Avaliação do Programa <span class='fa fa-caret-down'></span></button>";
 
 			                           echo "<ul class='dropdown-menu'>";
-			                           	 
+
 			                        	foreach($evaluationsPeriods as $evaluationId => $period){
 			                        		echo "<li>";
 							    				echo anchor(
@@ -63,7 +64,7 @@
 							    				);
 			                        		echo "</li>";
 			                        	}
-			                           	
+
 			                           echo "</ul>";
 		                            echo "</div>";
 				    			}else{
@@ -74,7 +75,7 @@
 				    			}
 				    			echo anchor("program/coordinator/updateProgramArea/{$program['id_program']}", "Atualizar área do programa", "class='btn btn-primary btn-flat'");
 				    		echo "</td>";
-			    		echo "</tr>";	
+			    		echo "</tr>";
 			    	}
 		    	}else{
 		    		echo "<tr>";
@@ -87,7 +88,7 @@
 		    		echo "</tr>";
 		    	}
 	    	?>
-		    
+
 		</tbody>
 	</table>
 </div>

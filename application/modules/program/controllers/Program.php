@@ -109,7 +109,7 @@ class Program extends MX_Controller {
 	}
 
 	public function getProgramCourses($programId){
-		
+
 		$programCourses = $this->program_model->getProgramCourses($programId);
 
 		if($programCourses !== FALSE){
@@ -158,7 +158,7 @@ class Program extends MX_Controller {
 		$quantityOfPrograms = count($programs);
 
 		//  Contains the courses, research lines and teachers
-		$programs = $this->getProgramsCoursesInfo($programs);		
+		$programs = $this->getProgramsCoursesInfo($programs);
 		$programs = $this->getProgramsWithInformation($programs);
 
 		$this->load->model("program/coordinator_model");
@@ -316,7 +316,7 @@ class Program extends MX_Controller {
 		$session = getSession();
 		$session->showFlashMessage($insertStatus, $insertMessage);
 
-		redirect('coordinator/coordinator_programs');
+		redirect('program/coordinator/coordinator_programs');
 
 	}
 
@@ -549,16 +549,16 @@ class Program extends MX_Controller {
 			foreach ($programs as $program) {
 				$coursesProgram = $program->getCourses();
 				$programId = $program->getId();
-				
+
 				$academicSecretaries = array();
 				$coursesResearchLines = array();
 				$coursesName = array();
 				$coursesTeachers = array();
-				
+
 				if($coursesProgram !== FALSE){
 
 					foreach ($coursesProgram as $course) {
-						
+
 						$courseId = $course->getId();
 
 						$courseSecretaries = $course->getAcademicSecretaries();
@@ -587,7 +587,7 @@ class Program extends MX_Controller {
 			}
 		}
 
-		
+
 		$info = array(
 			'secretaries' => $secretaries,
 			'researchLines' => $researchLines,

@@ -34,7 +34,7 @@ $submitBtn = array(
 <div class="form-box">
 
 	<div class="header">Cadastrar nova avaliação</div>
-	<?= form_open("coordinator/newEvaluation") ?>
+	<?= form_open("program/coordinator/newEvaluation") ?>
 		<div class="body bg-gray">
 
 			<?php echo form_hidden('programId', $programData['id_program']); ?>

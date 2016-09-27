@@ -152,15 +152,18 @@ function showMastermindsStudents($masterminds){
 							echo "<div class=\"modal-header bg-news\">";
 								echo "<h4 class=\"model-title\"> Professor : ". ucfirst($mastermindData['name']) ."</h4>";
 							echo "</div>";
-			foreach ($students as $singleStudent){
-				$studentData = $userData->getUserById($singleStudent['id_student']);
+			if($students !== FALSE){
 
-							echo "<div class=\"modal-body\">";
-								echo "<h4>";
-									echo ucfirst($studentData['name']);
-								echo "</h4>";
-							echo "</div>";
+				foreach ($students as $singleStudent){
+					$studentData = $userData->getUserById($singleStudent['id_student']);
 
+								echo "<div class=\"modal-body\">";
+									echo "<h4>";
+										echo ucfirst($studentData['name']);
+									echo "</h4>";
+								echo "</div>";
+
+				}
 			}
 
 		}
