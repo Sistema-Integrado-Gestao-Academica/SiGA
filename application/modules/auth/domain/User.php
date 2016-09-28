@@ -6,7 +6,7 @@ class User{
 
 	const INVALID_ID = "O ID do usuário informado é inválido. O ID deve ser maior que zero.";
 	const INVALID_NAME = "O nome do usuário informado é inválido. Deve conter apenas caracteres alfabéticos e espaços em branco.";
-	
+
 	const MINIMUN_ID = 1;
 
 	private $id;
@@ -19,7 +19,7 @@ class User{
 	private $homePhone;
 	private $cellPhone;
 	private $active;
-	
+
 	public function __construct($id = FALSE, $name = FALSE, $cpf = FALSE, $email = FALSE, $login = FALSE, $password = FALSE, $groups = FALSE, $homePhone = FALSE, $cellPhone = FALSE, $active = FALSE){
 		$this->setId($id);
 		$this->setName($name);
@@ -32,7 +32,7 @@ class User{
 		$this->setCellPhone($cellPhone);
 		$this->setActive($active);
 	}
-	
+
 	public function addGroup($group){
 		if(is_object($group)){
 			if(get_class($group) === "Group"){
@@ -48,7 +48,7 @@ class User{
 	// Setters
 	private function setId($id){
 
-		if($id !== FALSE){	
+		if($id !== FALSE){
 			// Id must be a number or a string number
 			if(is_numeric($id)){
 				// Id must be greater than zero
@@ -74,7 +74,7 @@ class User{
 				$nameIsOk = TRUE;
 				foreach($nameParts as $part){
 					// Check if is only letters
-					if( preg_match('/^[a-zA-ZáéíóúàâêôãõüçÁÉÍÓÚÀÂÊÔÃÕÜÇ]*$/', $part) ){
+					if( preg_match('/^[a-zA-ZáéíóúàâêôãõüäçÁÉÍÓÚÀÂÊÔÃÕÜÄÇ]*$/', $part) ){
 						continue;
 					}else{
 						$nameIsOk = FALSE;
@@ -139,7 +139,7 @@ class User{
 	}
 
 	// Getters
-	
+
 	public function getId(){
 		return $this->id;
 	}
@@ -163,7 +163,7 @@ class User{
 	public function getPassword(){
 		return $this->password;
 	}
-	
+
 	public function getGroups(){
 		return $this->groups;
 	}

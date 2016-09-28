@@ -21,6 +21,9 @@ if($projects !== FALSE){
 
             echo "<td>";
                 echo $project['name'];
+                if($project['owner']){
+                    echo " <span class='label label-default'>Criador do projeto</span>";
+                }
                 if($project['coordinator']){
                     echo " <span class='label label-primary'>Coordenador</span>";
                 }

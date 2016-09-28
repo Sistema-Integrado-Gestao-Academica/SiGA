@@ -35,7 +35,7 @@ class Migration_cria_tabela_e_permissao_projeto extends CI_Migration {
         ));
         $this->dbforge->create_table('project_team', TRUE);
 
-        $this->db->query("ALTER TABLE project_team ADD CONSTRAINT ID_USER_MEMBER_FK FOREIGN KEY (member) REFERENCES users(id)");
+        $this->db->query("ALTER TABLE project_team ADD CONSTRAINT ID_USER_MEMBER_FK FOREIGN KEY (member) REFERENCES users(id) ON DELETE CASCADE");
     }
 
     public function down() {
