@@ -1,14 +1,13 @@
 
 <h2 class="principal">Solicitações de matrícula dos alunos orientados</h2>
 
-
 <div class="alert alert-info alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <i class="fa fa-info"></i>
   <h3 class="text-center"><p><b>INFORMAÇÕES IMPORTANTES</b></p></h3><br>
 
-  <h4> <p>- Ao clicar em <b>Finalizar solicitaçao NÃO </b> será mais possível recusar ou aprovar disciplinas, apenas alterar a mensagem enviada para seu aluno.</p>
-  <p> - Após a solicitação finalizada, a mesma será liberada para edição pela secretaria do curso.</p>
+  <h4>
+  <p>- Quando todas as disciplinas forem aprovadas, a solicitação será liberada para a secretaria do curso fazer alterações e consolidar a matrícula.</p>
   <p> - <b>Somente</b> após a finalização da solicitação pela secretaria, as vagas serão computadas e atualizadas.</p>
   </h4>
 </div>
@@ -23,7 +22,6 @@
 		'Matrícula aluno',
 		'Status da solicitação',
 		'Ações',
-		'Finalizar'
 	));
 
 	if($requests !== FALSE){
@@ -38,6 +36,8 @@
 
 					$requestId = $studentRequest['id_request'];
 
+					$newStatus = $this->request_model->updateStatus($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+
 					$semesterId = $studentRequest['id_semester'];
 					$courseId = $studentRequest['id_course'];
 					$requestedOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
@@ -51,7 +51,9 @@
 
 					$requestIsApprovedByMastermind = $studentRequest['mastermind_approval'] == EnrollmentConstants::REQUEST_APPROVED_BY_MASTERMIND;
 
-					echo "<tr>";
+					$isToMastermind = $studentRequest['current_role'] === EnrollmentConstants::REQUEST_TO_MASTERMIND || (!$requestIsApprovedByMastermind && $studentRequest['current_role'] === EnrollmentConstants::REQUEST_TO_STUDENT);
+
+					echo "<tr id='{$requestId}'>";
 
 					echo "<td>";
 					echo $requestId;
@@ -69,79 +71,58 @@
 
 					echo "<td>";
 
-					$status = switchRequestGeneralStatus($studentRequest['request_status']);
+					$status = switchRequestGeneralStatus($newStatus);
 
 					if($requestIsApprovedByMastermind){
-						if($needsMastermindApproval){
-							$status = $status."<h4><span class='label label-primary'>Finalizada pelo orientador</span></h4>";
-						}else{
-							$status = $status."<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>";
-						}
-						echo $status;
-					}else{
-						echo $status;
+						$status .= $studentRequest['current_role'] === EnrollmentConstants::REQUEST_TO_SECRETARY ? "<h4><span class='label label-primary'>Liberado para secretaria</span></h4>" : "";
+						$status .= !$needsMastermindApproval ? "<h4><span class='label label-warning'>Oferta não permite ação do orientador</span></h4>" : "";
 					}
+					echo $status;
 
 					echo "</td>";
 
 					echo "<td>";
 
 					echo anchor(
-							"#solicitation_details_".$requestId,
-							"Visualizar solicitação",
-							"class='btn btn-info'
-		    				data-toggle='collapse'
-		    				aria-expanded='false'
-		    				aria-controls='solicitation_details".$requestId."'"
-						);
+						"#solicitation_details_".$requestId,
+						"Visualizar solicitação",
+						"class='btn btn-info'
+	    				data-toggle='collapse'
+	    				aria-expanded='false'
+	    				aria-controls='solicitation_details".$requestId."'"
+					);
 
-					if($requestIsApprovedByMastermind){
+					if($isToMastermind){
+						if($requestIsApprovedByMastermind){
 
-						// Disable buttons
-						echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
-						echo "<br>";
-						echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
-					}else{
-						echo "<br>";
-						echo anchor("secretary/request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
-						echo "<br>";
-						echo anchor("secretary/request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+							// Disable buttons
+							echo anchor("", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;' disabled='true'");
+							echo "<br>";
+							echo anchor("", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;' disabled='true'");
+						}else{
+							echo "<br>";
+							echo anchor("secretary/request/approveAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Aprovar toda solicitação", "class='btn btn-success' style='margin-top:5%;'");
+							echo "<br>";
+							echo anchor("secretary/request/refuseAllStudentRequestsByMastermind/{$requestId}/{$studentRequest['id_student']}", "Recusar toda solicitação", "class='btn btn-danger' style='margin-top:5%;'");
+						}
 					}
-
 					echo "</td>";
 
 					echo "<td rowspan=2>";
 
-						if($requestIsApprovedByMastermind){
+						$this->load->module("program/mastermind");
+						$message = $this->mastermind->getMastermindMessage($idMastermind, $requestId);
 
-							if($needsMastermindApproval){
+						if($needsMastermindApproval){
+							$isFinalized = TRUE;
+							$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
+							$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
 
-								$this->load->module("program/mastermind");
-
-								$message = $this->mastermind->getMastermindMessage($idMastermind, $requestId);
-
-								$isFinalized = TRUE;
-
-								$aditionalMessage = "<i>Solicitação finalizada. É possível alterar a mensagem deixada para o aluno.</i>";
-
-								$callout = wrapperCallout("warning", FALSE, FALSE, $aditionalMessage);
-
-								$callout->writeCalloutDeclaration();
-								mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
-								$callout->writeCalloutEndDeclaration();
-
-							}else{
-								callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
-							}
-
-						}else{
-							$isFinalized = FALSE;
-							$aditionalMessage = "<i>Finaliza a solicitação com o status atual das disciplinas.</i>";
-
-							$callout = wrapperCallout("info", FALSE, FALSE, $aditionalMessage);
 							$callout->writeCalloutDeclaration();
-							mastermindMessageForm($requestId, $idMastermind, $isFinalized);
+							mastermindMessageForm($requestId, $idMastermind, $isFinalized, $message);
 							$callout->writeCalloutEndDeclaration();
+						}else{
+							callout("warning","","<i>O tipo da oferta não permite a ação do orientador.</i>");
 						}
 					echo "</td>";
 
@@ -150,7 +131,7 @@
 					echo "<tr>";
 						echo "<td colspan=5>";
 							echo "<div class='collapse' id='solicitation_details_".$requestId."'>";
-							requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
+								requestedDisciplineClasses($requestId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND);
 							echo "</div>";
 						echo "</td>";
 					echo "</tr>";

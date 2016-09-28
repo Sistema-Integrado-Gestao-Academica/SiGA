@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
+require_once(MODULESPATH."secretary/constants/EnrollmentConstants.php");
 
 class EnrollmentAjax extends MX_Controller {
 
@@ -41,7 +42,7 @@ class EnrollmentAjax extends MX_Controller {
         $courseOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
 
         $offerId = $courseOffer['id_offer'];
-        
+
         // Check if the day is in enrollment period
         $enrollmentPeriod = $this->offer_model->checkIfIsInEnrollmentPeriod($offerId);
 
@@ -53,7 +54,6 @@ class EnrollmentAjax extends MX_Controller {
         else{
             $disciplinesClasses = FALSE;
         }
-
         if($disciplinesClasses !== FALSE){
 
             $quantityOfClasses = count($disciplinesClasses);
@@ -96,7 +96,8 @@ class EnrollmentAjax extends MX_Controller {
                             }else{
                                 $path = "student/temporaryrequest/addTempDisciplineToRequest/{$class['id_offer_discipline']}/{$courseId}/{$userId}";
                             }
-                            $attrs = "class='btn btn-primary'";
+                            $attrs = "class='btn btn-primary' ";
+                            $attrs .= $currentVacancies == 0 ? "disabled='true'" : "";
                             echo "<td>";
                             echo anchor($path,"Adicionar à matrícula", $attrs);
                             echo "</td>";
@@ -110,7 +111,7 @@ class EnrollmentAjax extends MX_Controller {
         }else{
 
             echo "<div class='callout callout-info'>";
-            echo "<h4>Fora do período de matrículas do semestre atual.</h4>";
+            echo "<h4>Disciplina não encontrada ou fora do período de matrículas do semestre atual.</h4>";
             echo "</div>";
         }
     }
@@ -151,5 +152,35 @@ class EnrollmentAjax extends MX_Controller {
             echo "<p>Tente novamente</p>";
             echo "</div>";
         }
+    }
+
+    public function updateEnrollDisciplineStatus(){
+
+        $approval = $this->input->post("approval"); // Means approved or refused
+        $requestId = $this->input->post("request_id");
+        $idOfferDiscipline = $this->input->post("offer_discipline");
+        $requestedOn = $this->input->post("requested_on");
+        $requestingArea = $this->input->post("requesting_area");
+
+        $this->load->module("secretary/request");
+
+        if($requestingArea === EnrollmentConstants::REQUESTING_AREA_MASTERMIND){
+            if(boolval($approval)){
+                // Is to approve
+                $this->request->approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $requestedOn);
+            }else{
+
+                $this->request->refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $requestedOn);
+            }
+
+        }else{
+            if(boolval($approval)){
+                $this->request->approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $requestedOn);
+            }else{
+                $this->request->refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $requestedOn);
+            }
+        }
+
+        requestedDisciplineClasses($requestId, $requestingArea);
     }
 }

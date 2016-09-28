@@ -5,7 +5,7 @@
 	require_once(MODULESPATH."secretary/domain/StudentRegistration.php");
 
 	printCurrentSemester();
-			
+
 ?>
 
 <br>
@@ -22,7 +22,7 @@
 
 				if(!empty($course['enrollment'])){
 
-					echo anchor("student/studentCoursePage/{$course['id_course']}/{$userData->getId()}", "<b>".$course['course_name']."</b>");
+					echo anchor("student/studentCoursePage/{$course['id_course']}/{$userData->getId()}", "<h4><i class='fa fa-arrow-right'></i> <b>".$course['course_name']."</h4></b>");
 					echo "<br>";
 					echo "Data matrícula: ".$course['enroll_date'];
 					echo "<br>";

@@ -2,6 +2,21 @@
 <?php
 require_once(APPPATH."/constants/TeacherConstants.php");
 
+function newInputField($type, $id, $value){
+
+	if(is_array($id)){
+		$field = $id;
+	}else{
+		$field = array(
+			'id' => $id,
+			'name' => $id,
+			'type' => $type,
+			'value' => $value,
+		);
+	}
+	echo form_input($field);
+}
+
 function bold($string){
 	return "<b>".$string."</b>";
 }
@@ -201,25 +216,17 @@ function mastermindMessageForm($requestId, $mastermindId, $isFinalized, $masterm
 		'style' => 'height: 70px; margin-top:-10%;'
 	);
 
-	if($isFinalized){
+	$submitBtn = array(
+		"class" => "btn btn-warning btn-flat",
+		"content" => "Enviar mensagem",
+		"type" => "submit"
+	);
 
+	if(!empty($mastermindMessage)){
 		$message['value'] = $mastermindMessage;
-
-		$submitBtn = array(
-			"class" => "btn btn-warning btn-flat",
-			"content" => "Alterar mensagem",
-			"type" => "submit"
-		);
-
-	}else{
-		$submitBtn = array(
-			"class" => "btn btn-primary btn-flat",
-			"content" => "Finalizar solicitação",
-			"type" => "submit"
-		);
+		$submitBtn['content'] = "Atualizar mensagem";
 	}
-
-	echo form_open('program/mastermind/finalizeRequest','',$hidden);
+	echo form_open('program/mastermind/sendMessageToStudent','',$hidden);
 	echo form_label('Mensagem:', 'mastermind_message');
 	echo "<br>";
 	echo "<br>";
@@ -817,7 +824,7 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 	$now = new Datetime();
 	$now = $now->format('d/m/Y');
 
-	// If the start date already passed, the field is not editable  
+	// If the start date already passed, the field is not editable
 	if(!is_null($startDate) && $now >= $startDate){
 		$startInput['readonly'] = TRUE;
 	}
@@ -825,14 +832,14 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 	echo "<div class='form-group'>";
 		echo form_label('Data de Início', 'enrollment_start_date');
 		echo form_input($startInput);
-		echo form_error("enrollment_start_date"); 
+		echo form_error("enrollment_start_date");
 	echo "</div>";
 	echo "<div class='form-group'>";
 		echo form_label('Data de Fim', 'enrollment_end_date');
 		echo form_input($endInput);
-		echo form_error("enrollment_end_date"); 
+		echo form_error("enrollment_end_date");
 	echo "</div>";
-	echo form_input($offerIdHidden); 
-	echo form_input($reloadHidden); 
-	echo form_input($oldStartDateHidden); 
+	echo form_input($offerIdHidden);
+	echo form_input($reloadHidden);
+	echo form_input($oldStartDateHidden);
 }

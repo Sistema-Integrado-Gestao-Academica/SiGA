@@ -126,25 +126,25 @@
 
 			<?php if($request['secretary_approval']){
 				echo "<h4 class='text-center'>Solicitação já finalizada pela secretaria.<p><small>Solicitações finalizadas não podem ser editadas.</small></p></h4>";
-			} ?>
+			}
+			?>
 
+			<div class="alert alert-info alert-dismissible" role="alert">
+		      <i class="fa fa-info"></i>
 			<?php
 				// If there are disciplines refused, the student can request another ones
-				$canUpdateRequest = ($requestStatus == EnrollmentConstants::REQUEST_PARTIALLY_APPROVED_STATUS
-					|| $requestStatus == EnrollmentConstants::REQUEST_ALL_REFUSED_STATUS
-					|| $requestStatus == EnrollmentConstants::REQUEST_INCOMPLETE_STATUS) && !$request['secretary_approval'];
+				$canUpdateRequest = $request['current_role'] === EnrollmentConstants::REQUEST_TO_STUDENT || $request['current_role'] === EnrollmentConstants::REQUEST_TO_MASTERMIND;
 				if($canUpdateRequest){
 			?>
-					<div class="alert alert-info alert-dismissible" role="alert">
-				      <i class="fa fa-info"></i>
-				      <h4 class="text-center">Que pena, você não conseguiu algumas disciplinas. Você pode solicitar outras disciplinas e alterar sua solicitação.<p><small> OBS.: Disciplinas já aprovadas não podem ser removidas.</small></p></h4>
-				      <p align="center">
-				      	<?= anchor("update_enroll_request/{$requestId}", "<i class='fa fa-exchange'></i> Alterar solicitação", "class='btn btn-default btn-flat btn-lg'")?>
-				      </p>
-				    </div>
-			<?php
-				}
-			} ?>
+			      <h4 class="text-center"> Você pode solicitar outras disciplinas e alterar sua solicitação.<p><small> OBS.: Disciplinas já aprovadas não podem ser removidas.</small></p></h4>
+			      <p align="center">
+			      	<?= anchor("update_enroll_request/{$requestId}", "<i class='fa fa-exchange'></i> Alterar solicitação", "class='btn btn-default btn-flat btn-lg'")?>
+			      </p>
+			<?php }else{ ?>
+				<h4 class="text-center"> Sua solicitação está sendo avaliada pela secretaria do seu curso.</h4>
+			<?php } ?>
+			</div>
+			<?php } ?>
 		</div>
 	</div>
 <?php } ?>

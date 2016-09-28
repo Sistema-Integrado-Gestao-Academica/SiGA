@@ -1,6 +1,6 @@
 <?php
 
-require_once(APPPATH."/constants/EnrollmentConstants.php");
+require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
 require_once(MODULESPATH."secretary/exception/DisciplineException.php");
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
@@ -108,6 +108,7 @@ class Discipline_model extends CI_Model {
 
 	public function getCourseSyllabusDisciplines($syllabusId){
 
+		$this->db->distinct();
 		$this->db->select('discipline.*');
 		$this->db->from('discipline');
 		$this->db->join("syllabus_discipline", "discipline.discipline_code = syllabus_discipline.id_discipline");

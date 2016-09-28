@@ -81,51 +81,38 @@ class Request extends MX_Controller {
 		redirect('mastermind');
 	}
 
-	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId, $requestDate){
+	public function approveRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $requestDate){
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY, $requestDate);
-
-		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
-	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $courseId, $requestDate){
+	public function refuseRequestedDisciplineSecretary($requestId, $idOfferDiscipline, $requestDate){
 
-		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_SECRETARY, $requestDate);
-
-		redirect("secretary/request/courseRequests/{$courseId}");
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_SECRETARY, $requestDate);
 	}
 
-	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId, $requestDate){
+	public function approveRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $requestDate){
 
 		$this->approveRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestDate);
-
-		redirect("mastermind");
 	}
 
-	public function refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $courseId, $requestDate){
+	public function refuseRequestedDisciplineMastermind($requestId, $idOfferDiscipline, $requestDate){
 
-		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestDate);
-
-		redirect("mastermind");
+		$this->refuseRequestedDiscipline($requestId, $idOfferDiscipline, EnrollmentConstants::REQUESTING_AREA_MASTERMIND, $requestDate);
 	}
 
 	private function approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate=NULL){
 
-		$wasApproved = $this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate);
+		$this->load->model("secretary/offer_model");
 
-		if($wasApproved){
-			$status = "success";
-			$message = "Solicitação de disciplina aprovada com sucesso.";
-		}else{
-			$status = "danger";
-			$message = "Solicitação de disciplina não pôde ser aprovada.";
+		$offerDiscipline = $this->offer_model->getOfferDisciplineById($idOfferDiscipline);
+
+		if($offerDiscipline['current_vacancies'] > EnrollmentConstants::NO_VACANCY){
+			$this->request_model->approveRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate);
 		}
-
-		$session = getSession();
-		$session->showFlashMessage($status, $message);
 	}
 
-	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $courseId, $requestingArea, $requestDate=NULL){
+	private function refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate=NULL){
 
 		$wasRefused = $this->request_model->refuseRequestedDiscipline($requestId, $idOfferDiscipline, $requestingArea, $requestDate);
 
@@ -162,6 +149,42 @@ class Request extends MX_Controller {
 
 		$session = getSession();
 		$session->showFlashMessage($status, $message);
+		redirect("secretary/request/courseRequests/{$courseId}");
+	}
+
+	public function studentResendRequest($requestId){
+
+		$request = $this->getRequestById($requestId);
+		$course = $request['id_course'];
+		$semester = $request['id_semester'];
+
+		// Get the request offer data
+		$this->load->model("secretary/offer_model");
+		$needMastermindApproval = $this->offer_model->needMastermindApproval($semester, $course);
+
+		if($needMastermindApproval){
+			$role = EnrollmentConstants::REQUEST_TO_MASTERMIND;
+		}else{
+			$role = EnrollmentConstants::REQUEST_TO_SECRETARY;
+		}
+
+		$this->request_model->updateMastermindApproval($requestId, EnrollmentConstants::REQUEST_NOT_APPROVED_BY_MASTERMIND);
+
+		$this->request_model->updateCurrentRoleFromStudent($requestId, $role);
+
+		$status = "success";
+		$message = "Solicitação reenviada com sucesso.";
+
+		$session = getSession();
+		$session->showFlashMessage($status, $message);
+
+		redirect("update_enroll_request/{$requestId}");
+	}
+
+	public function makeAvailableToStudent($requestId, $courseId){
+
+		$this->request_model->updateCurrentRole($requestId, EnrollmentConstants::REQUEST_TO_STUDENT);
+
 		redirect("secretary/request/courseRequests/{$courseId}");
 	}
 
@@ -384,7 +407,6 @@ class Request extends MX_Controller {
 		$inRequest = FALSE;
 		foreach($disciplines as $discipline){
 			if($discipline['discipline_class'] == $idOfferDiscipline
-				&& $discipline['status'] !== EnrollmentConstants::REFUSED_STATUS
 				&& $discipline['status'] !== EnrollmentConstants::NO_VACANCY_STATUS){
 				$inRequest = TRUE;
 				break;
@@ -535,7 +557,7 @@ class Request extends MX_Controller {
 
 			$mastermindApproval = EnrollmentConstants::REQUEST_NOT_APPROVED_BY_MASTERMIND;
 
-			if($request !== FALSE){
+			if($requestId !== FALSE){
 				$request = $this->getRequestById($requestId);
 				$mastermindFinalized = $request['mastermind_approval'];
 
@@ -632,7 +654,7 @@ class Request extends MX_Controller {
 		$wasSaved = $this->request_model->saveDisciplineRequest($requestId, $idOfferDiscipline, $status, $mastermindApproval, $isUpdate);
 
 		$subtracted = TRUE;
-		if($wasSaved && !$isUpdate){
+		if($wasSaved){
 
 			$canSubtract = $status !== EnrollmentConstants::NO_VACANCY_STATUS;
 

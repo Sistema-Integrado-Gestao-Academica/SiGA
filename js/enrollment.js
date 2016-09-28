@@ -39,14 +39,21 @@ $(document).ready(function(){
 		}
 	});
 
+	$("#resend_request_btn").click(function(event){
+		var confirmed = confirm("Confirma o reenvio da solicitação de matrícula?");
+		if(!confirmed){
+			event.preventDefault();
+		}
+	});
+
 	(function($) {
 
 	  collapseAllStudents = function(students) {
-	  	ids = students.split(","); 
-	    
+	  	ids = students.split(",");
+
 	    for (i = 0; i < ids.length; i++){
 
-	    	id = "#students" + ids[i]; 
+	    	id = "#students" + ids[i];
 	    	$(id).collapse("show");
 	    }
 
@@ -54,9 +61,29 @@ $(document).ready(function(){
 	    return false;
 	  };
 	})(jQuery);
-	
 });
 
+function updateEnrollDiscipline(event, requestId, offerDiscipline, requestedOn, requestingArea, approval){
+
+	event.preventDefault();
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/secretary/ajax/enrollmentajax/updateEnrollDisciplineStatus";
+
+	$.post(
+		urlToPost,
+		{
+			request_id: requestId,
+			offer_discipline: offerDiscipline,
+			requested_on: requestedOn,
+			approval: approval,
+			requesting_area: requestingArea,
+		},
+		function(data){
+			$("#solicitation_details_"+requestId).html(data);
+		}
+	);
+}
 
 function searchGuestsToEnroll(){
 

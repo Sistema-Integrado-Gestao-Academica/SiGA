@@ -100,6 +100,5 @@ function validateDateInPeriod($date, $startDate, $endDate){
 	else{
 		$validDate = FALSE;
 	}
-
 	return $validDate;
 }
