@@ -18,43 +18,21 @@ class Production extends MX_Controller {
 		$user = $session->getUserData();
 		$userId = $user->getId();
 
+		$this->load->model("program/project_model");
+
 		$productions = $this->production_model->getUserProductions($userId);
-		$projects = $this->getUserProjects($user);
+		$projects = $this->project_model->getProjects($userId);
+
 		$data = array(
 
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
 			'productions' => $productions,
-			'projects' => $projects,
+			'projects' => makeDropdownArray($projects, 'id', 'name'),
 			'user' => $user
 		);
 
 		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);
-	}
-
-	private function getUserProjects($user){
-
-		$id = $user->getId();
-		$groups = $user->getGroups();
-
-		$this->load->model("program/project_model");	
-		$this->load->model("program/program_model");	
-		$programs = $this->program_model->getUserProgram($id, $groups);
-
-		$projects = array();
-		if($programs !== FALSE){
-			foreach ($programs as $id => $program) {
-				$foundProjects = $this->project_model->getProjectByProgram($id);
-				if($foundProjects != FALSE){
-					foreach ($foundProjects as $foundProject) {
-						$projects[$foundProject['id']] = $foundProject['name'];
-					}
-				}
-
-			}
-		}
-
-		return $projects;
 	}
 
 	public function save(){
@@ -89,9 +67,9 @@ class Production extends MX_Controller {
 	public function editCoauthors($productionId){
 		$this->loadPageCoauthors($productionId, "edit_coauthors");
 	}
-	
+
 	private function loadPageCoauthors($productionId, $file){
-		
+
 		$session = getSession();
 		$user = $session->getUserData();
 
@@ -141,7 +119,7 @@ class Production extends MX_Controller {
 			$exists = FALSE;
 		}
 		$session = getSession();
-	
+
 		if($exists){
 			$session->showFlashMessage("danger", "Coautor existente na ordem informada");
 			redirect("edit_coauthor/{$productionId}/{$order}");
@@ -157,7 +135,7 @@ class Production extends MX_Controller {
 	    	);
 
 			$success = $this->production_model->updateCoauthor($productionId, $order, $data);
-	    	 
+
 			if($success){
 				$session->showFlashMessage("success", "Autor editado com sucesso!");
 				redirect("edit_coauthors/{$productionId}");
@@ -172,18 +150,21 @@ class Production extends MX_Controller {
 	}
 
 	public function edit($productionId){
-		
+
 		$session = getSession();
 		$user = $session->getUserData();
+		$userId = $user->getId();
 		$production = $this->production_model->getProductionById($productionId);
-		$projects = $this->getUserProjects($user);
+
+		$this->load->model("program/project_model");
+		$projects = $this->project_model->getProjects($userId);
 
 		$data = array(
 			'production' => $production,
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
 			'productionId' => $productionId,
-			'projects' => $projects,
+			'projects' => makeDropdownArray($projects, 'id', 'name'),
 			'author' => $user
 		);
 

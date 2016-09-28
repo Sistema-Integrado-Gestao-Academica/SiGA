@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Check if an array has elements in it
@@ -6,7 +6,7 @@
  * @return The array itself if there is elements in it or FALSE if there is no elements in it
  */
 function checkArray($array){
-	
+
 	if(is_array($array)){
 
 		if(sizeof($array) > 0){
@@ -19,6 +19,17 @@ function checkArray($array){
 	}
 
 	return $array;
+}
+
+function makeDropdownArray(Array $array, $key, $value){
+
+    $dropdownArray = array();
+
+    foreach($array as $element){
+        $dropdownArray[$element[$key]] = $element[$value];
+    }
+
+    return $dropdownArray;
 }
 
 /**
@@ -46,7 +57,7 @@ function hasNext($array){
  * @return TRUE if the attribute is empty or null
  */
 function isEmpty($attribute){
-    
+
     if(!empty($attribute) && !is_null($attribute)){
         $isEmpty = FALSE;
     }
@@ -62,6 +73,6 @@ function decorateNullData($str){
     if($str == NULL){
         $str = "-";
     }
-    
+
     return $str;
 }

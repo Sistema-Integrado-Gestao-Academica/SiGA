@@ -277,6 +277,6 @@ class IntellectualProduction{
 		$ci->load->model("program/project_model");
 		$project = $ci->project_model->getProject($projectId);
 
-		return $project[0]['name'];
+		return $project['name'];
 	}
 }
