@@ -143,7 +143,7 @@ $route['enroll_mastermind'] = 'secretary/secretary/enrollMasterMinds';
 $route['enroll_teacher'] = 'secretary/secretary/enrollTeacher';
 $route['documents_report'] = 'secretary/documentrequest/documentRequestSecretary';
 $route['secretary_programs'] = 'secretary/secretary/secretaryPrograms';
-$route['change_student_enrollment/(:num)/(:num)'] = 'secretary/enrollment/changeEnrollment/$1/$2';
+$route['student_list_actions/(:num)/(:num)'] = 'secretary/enrollment/changeEnrollment/$1/$2';
 
 // Offer routes
 $route['offer_list'] = 'secretary/offer/offerList';

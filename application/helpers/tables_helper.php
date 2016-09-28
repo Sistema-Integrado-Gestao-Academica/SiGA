@@ -29,8 +29,8 @@ function buildTableDeclaration($tableId = FALSE){
 	}else{
 		echo "<div class=\"box-body table-responsive no-padding\">";
 	}
-		echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
+	echo "<table class=\"table table-bordered table-hover\">";
+	echo "<tbody>";
 }
 
 /**
@@ -41,7 +41,7 @@ function buildTableHeaders($headersNames){
 
 	echo "<tr>";
 	foreach($headersNames as $headerName){
-		echo "<th class=\"text-center\">".$headerName."</th>";
+		echo "<th class=\"text-center\">".$headerName." </th>";
 	}
 	echo "</tr>";
 }
@@ -1905,13 +1905,17 @@ function displayGuestForEnrollment($guests, $courseId){
 
 }
 
-function displayStudentsTable($students, $courseId){
+function displayStudentsTable($students, $courseId, $studentsIdsInString){
 
 	if($students !== FALSE){ 
 
 		buildTableDeclaration();
 
-		$headers = array("Matrícula", "Aluno", "E-mail", "Data de matrícula", "Situação", "Ações");
+		$orderByName = "<a href='#' onclick='orderByName(\"{$studentsIdsInString}\")'><i class='fa fa-sort' aria-hidden='true'></i></a>";
+		$orderByEnrollment = "<a href='#' onclick='orderByEnrollment(\"{$studentsIdsInString}\")'><i class='fa fa-sort' aria-hidden='true'></i></a>";
+		$orderByDate = "<a href='#' onclick='orderByDate(\"{$studentsIdsInString}\")'><i class='fa fa-sort' aria-hidden='true'></i></a>";
+
+		$headers = array("Matrícula ".$orderByEnrollment, "Aluno ".$orderByName, "Data de matrícula ".$orderByDate, "E-mail",  "Situação", "Ações");
 
 		buildTableHeaders($headers);
 
@@ -1937,11 +1941,11 @@ function displayStudentsTable($students, $courseId){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		echo $student['email'];
+	    		echo $student['enroll_date'];
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		echo $student['enroll_date'];
+	    		echo $student['email'];
 	    		echo "</td>";
 
 	    		echo "<td>";
@@ -1950,7 +1954,7 @@ function displayStudentsTable($students, $courseId){
 
 	    		echo "<td>";
 	    			$id = $student['id'];
-	    			echo anchor('change_student_enrollment/'.$id.'/'.$courseId.'', 'Mudar matrícula', "class='btn btn-success'");
+	    			echo anchor('student_list_actions/'.$id.'/'.$courseId.'', 'Ações', "class='btn btn-success'");
 	    		echo "</td>";
     		echo "</tr>";
     	}

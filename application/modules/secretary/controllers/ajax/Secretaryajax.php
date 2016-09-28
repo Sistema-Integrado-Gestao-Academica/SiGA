@@ -29,14 +29,14 @@ class SecretaryAjax extends MX_Controller {
 		$this->searchStudentsByIds($studentsIds, $course);
 	}
 
-	private function searchStudentsByIds($studentsIds, $course, $idIsEnrollment = FALSE){
+	private function searchStudentsByIds($studentsIds, $courseId, $idIsEnrollment = FALSE){
 	   
 		$students = array();
 		if($studentsIds !== FALSE){
 
 			foreach ($studentsIds as $studentId) {
 				$id = $studentId['id'];
-				$student = $this->student_model->getStudentById($id, $course);
+				$student = $this->student_model->getStudentById($id, $courseId);
 				if($student !== FALSE){
 					if($idIsEnrollment){
 						$key = $student[0]['enrollment'];
@@ -53,7 +53,8 @@ class SecretaryAjax extends MX_Controller {
 
 		if(!empty($students)){
 			ksort($students);
-			displayStudentsTable($students, $course);
+			$studentsIdsInString = $this->getStudentsIdsOnString($students, $courseId);
+			displayStudentsTable($students, $courseId, $studentsIdsInString);
 		}
 		else{
 			echo callout("info", "Nenhum aluno encontrado");
@@ -82,6 +83,23 @@ class SecretaryAjax extends MX_Controller {
 			ksort($students);
 		}
 
-		displayStudentsTable($students, $courseId);
+		$studentsIdsInString = implode(",", $studentsIds);
+    	$studentsIdsInString = $courseId.",".$studentsIdsInString;
+		displayStudentsTable($students, $courseId, $studentsIdsInString);
+	}
+
+	private function getStudentsIdsOnString($students, $courseId){
+		$studentsIdsInString = "";
+		if($students !== FALSE){
+			$ids = array();
+			foreach ($students as $student) {
+				$id = $student['id'];
+				array_push($ids, $id);
+			}
+    		$studentsIdsInString = implode(",", $ids);
+    		$studentsIdsInString = $courseId.",".$studentsIdsInString;
+		}
+
+		return $studentsIdsInString;
 	}
 }
