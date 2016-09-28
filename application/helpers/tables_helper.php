@@ -29,8 +29,8 @@ function buildTableDeclaration($tableId = FALSE){
 	}else{
 		echo "<div class=\"box-body table-responsive no-padding\">";
 	}
-		echo "<table class=\"table table-bordered table-hover\">";
-		echo "<tbody>";
+	echo "<table class=\"table table-bordered table-hover\">";
+	echo "<tbody>";
 }
 
 /**
@@ -41,7 +41,7 @@ function buildTableHeaders($headersNames){
 
 	echo "<tr>";
 	foreach($headersNames as $headerName){
-		echo "<th class=\"text-center\">".$headerName."</th>";
+		echo "<th class=\"text-center\">".$headerName." </th>";
 	}
 	echo "</tr>";
 }
@@ -1915,4 +1915,68 @@ function displayGuestForEnrollment($guests, $courseId){
 
 	buildTableEndDeclaration();
 
+}
+
+function displayStudentsTable($students, $courseId, $studentsIdsInString){
+
+	if($students !== FALSE){ 
+
+		buildTableDeclaration();
+
+		$orderByName = "<a href='#' onclick='orderByName(\"{$studentsIdsInString}\")'><i class='fa fa-sort' aria-hidden='true'></i></a>";
+		$orderByEnrollment = "<a href='#' onclick='orderByEnrollment(\"{$studentsIdsInString}\")'><i class='fa fa-sort' aria-hidden='true'></i></a>";
+		$orderByDate = "<a href='#' onclick='orderByDate(\"{$studentsIdsInString}\")'><i class='fa fa-sort' aria-hidden='true'></i></a>";
+
+		$headers = array("Matrícula ".$orderByEnrollment, "Aluno ".$orderByName, "Data de matrícula ".$orderByDate, "E-mail",  "Situação", "Ações");
+
+		buildTableHeaders($headers);
+
+    	foreach($students as $student){
+
+			echo "<tr>";
+	    		echo "<td>";
+	    			$registration = $student['enrollment'];
+	    			
+	    			if($registration !== NULL){
+		    			echo bold("Matrícula atual: ").$registration;
+	    			}else{
+	    				echo "<span class='label label-danger'> Matrícula não informada ainda.</span>";
+	    			}
+
+	    			echo "<hr>";
+
+		    		
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['name'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['enroll_date'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['email'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $student['status'];
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    			$id = $student['id'];
+	    			echo anchor('student_list_actions/'.$id.'/'.$courseId.'', 'Ações', "class='btn btn-success'");
+	    		echo "</td>";
+    		echo "</tr>";
+    	}
+
+    	buildTableEndDeclaration();
+
+ 	} 
+ 	else{
+	
+		callout("info", "Nenhum aluno matriculado");	
+	
+	}	
 }

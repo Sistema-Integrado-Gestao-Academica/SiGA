@@ -101,6 +101,7 @@ class Course_model extends CI_Model {
 		$this->db->from('users');
 		$this->db->join("course_student", "course_student.id_user = users.id");
 		$this->db->where("course_student.id_course", $courseId);
+		$this->db->order_by("users.name", "asc");
 		$students = $this->db->get()->result_array();
 
 		$students = checkArray($students);

@@ -839,7 +839,79 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 		echo form_input($endInput);
 		echo form_error("enrollment_end_date");
 	echo "</div>";
-	echo form_input($offerIdHidden);
-	echo form_input($reloadHidden);
-	echo form_input($oldStartDateHidden);
+	echo form_input($offerIdHidden); 
+	echo form_input($reloadHidden); 
+	echo form_input($oldStartDateHidden); 
+}
+
+function searchInStudentListByEnrollment($course){
+
+	$placeholder = "Digite a matrícula do aluno...";
+	$buttonId = "enrollment_btn";
+	$studentId = "student_enrollment_field";
+
+	$specificData = array(
+		'placeholder' => $placeholder, 
+		'buttonId' => $buttonId, 
+		'course' => $course,
+		'studentId' => $studentId
+	);
+	
+	searchInStudentList($specificData, $course);
+
+}
+
+function searchInStudentListByName($course){
+	
+	$placeholder =  "Digite o nome do aluno...";
+	$buttonId = "name_btn";
+	$studentId = "student_name_field";
+
+	$specificData = array(
+		'placeholder' => $placeholder, 
+		'buttonId' => $buttonId, 
+		'course' => $course,
+		'studentId' => $studentId
+	);
+	
+	searchInStudentList($specificData, $course);
+}
+
+function searchInStudentList($specificData, $course){
+
+
+	$student = array(
+		"name" => $specificData['studentId'],
+		"id" => $specificData['studentId'],
+		"type" => "text",
+		"class" => "form-campo",
+		"class" => "form-control",
+		"placeholder" => $specificData['placeholder'],
+		"maxlength" => "50",
+		'style' => "width:80%;"
+	);
+
+	$searchForStudentBtn = array(
+		"id" => $specificData['buttonId'],
+		"content" => "<i class='fa fa-search'></i>",
+		"class" => "btn bg-primary btn-flat",
+		"type" => "submit"
+	);
+	
+	$hidden = array(
+		'id' => "course",
+		'name' => "course",
+		'type' => "hidden",
+		'value' => $course['id_course']
+	);
+
+	echo form_input($hidden);
+
+
+	echo "<form class='form-inline' role='form'>";
+
+		echo form_input($student, "", array('class'=>'form-control'));
+
+		echo form_button($searchForStudentBtn);
+	echo "</form>";
 }
