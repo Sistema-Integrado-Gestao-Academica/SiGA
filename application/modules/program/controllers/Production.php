@@ -106,7 +106,7 @@ class Production extends MX_Controller {
 		$user = $this->usuarios_model->getUserByCpf($cpf);
 
         $id = FALSE;
-		if($user !== NULL){
+		if($user !== FALSE){
 			$id = $user['id'];
 		}
         $author = new User($id, $name, $cpf);

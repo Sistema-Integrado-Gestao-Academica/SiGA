@@ -50,7 +50,7 @@ class ProductionAjax extends MX_Controller {
 	}
 
 	public function getAuthorNameByCPF(){
-		
+
 		$cpf = $this->input->post("cpf");
 
 		$this->load->model("auth/usuarios_model");
@@ -67,7 +67,7 @@ class ProductionAjax extends MX_Controller {
 	}
 
 	public function getAuthorCPFByName(){
-		
+
 		$name = $this->input->post("name");
 
 		$this->load->model("auth/usuarios_model");
@@ -82,7 +82,7 @@ class ProductionAjax extends MX_Controller {
 		}
 	    echo json_encode($json);
 	}
-	
+
 
 	public function saveAuthor(){
 
@@ -100,25 +100,25 @@ class ProductionAjax extends MX_Controller {
                 $data['status'] = "success";
 
                 echo json_encode($data);
-            } 
+            }
             catch (UserException $e) {
                 $divalert = "<div class='alert alert-danger'> ";
                 $enddiv = "</div>";
                 $message = $divalert.$e->getMessage().$enddiv;
-                
+
                 $json = array (
                     'status' => "failed",
                     'message' => $message
                 );
-                echo json_encode($json);            	
+                echo json_encode($json);
             }
         }
         else{
             $divalert = "<div class='alert alert-danger'> ";
-            $errors = validation_errors(); 
+            $errors = validation_errors();
             $enddiv = "</div>";
             $message = $divalert.$errors.$enddiv;
-                
+
             $json = array (
                 'status' => "failed",
                 'message' => $message
@@ -134,7 +134,7 @@ class ProductionAjax extends MX_Controller {
         $this->form_validation->set_rules("order", "Ordem de Coautoria", "required|valid_order_coauthor");
         $this->form_validation->set_rules("name", "Nome", "required");
         $this->form_validation->set_rules("cpf", "Cpf", "valid_cpf");
- 
+
         $this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 
         $success = $this->form_validation->run();
@@ -153,7 +153,7 @@ class ProductionAjax extends MX_Controller {
 		$user = $this->usuarios_model->getUserByCpf($cpf);
 
         $id = FALSE;
-		if($user !== NULL){
+		if($user !== FALSE){
 			$id = $user['id'];
 		}
         $author = new User($id, $name, $cpf);
@@ -161,7 +161,7 @@ class ProductionAjax extends MX_Controller {
         $data = array();
 		$this->load->model("program/production_model");
         $exists = $this->production_model->checkIfOrderExists($order, $productionId);
-	
+
 		if($exists){
 			throw new UserException("Coautor existente na ordem informada");
 		}
@@ -175,7 +175,7 @@ class ProductionAjax extends MX_Controller {
 		        'order' => $order,
 		        'production_id' => $productionId,
 	    	);
-	    	 
+
 		}
     	return $data;
     }
