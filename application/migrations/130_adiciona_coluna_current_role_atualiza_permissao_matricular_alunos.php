@@ -2,12 +2,17 @@
 
 require_once(MODULESPATH."/secretary/constants/EnrollmentConstants.php");
 
-class Migration_Adiciona_coluna_current_role extends CI_Migration {
+class Migration_Adiciona_coluna_current_role_atualiza_permissao_matricular_alunos extends CI_Migration {
 
     public function up() {
         $this->dbforge->add_column('student_request', array(
             'current_role' => array('type' => 'varchar(10)')
         ));
+
+        // Updating student permission
+        $this->db->where('id_permission', 15);
+        $this->db->update('permission', array('permission_name' => "Vincular Alunos"));
+
 
         // $this->fix();
     }
