@@ -153,7 +153,7 @@ class ProductionAjax extends MX_Controller {
 		$user = $this->usuarios_model->getUserByCpf($cpf);
 
         $id = FALSE;
-		if($user !== NULL){
+		if($user !== FALSE){
 			$id = $user['id'];
 		}
         $author = new User($id, $name, $cpf);
@@ -173,7 +173,7 @@ class ProductionAjax extends MX_Controller {
 		        'cpf' => $cpf,
 		        'name' => $name,
 		        'order' => $order,
-		        'production_id' => $productionId,
+		        'production_id' => $productionId
 	    	);
 	    	 
 		}
