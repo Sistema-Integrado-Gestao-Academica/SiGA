@@ -1,9 +1,4 @@
-<h2 class="principal"></i> </h2>
-
-<div class="row">
-
-<div class="col-lg-6">
-	<?php
+<?php
 
 	$registration = $student['enrollment'];
 				    			
@@ -47,8 +42,3 @@
 		echo "</div>";
 
 	echo form_close();
-	?>
-</div>
-</div>
-
-<?= anchor('program/course/courseStudents/'.$courseId, 'Voltar', "class='btn btn-danger'")?>

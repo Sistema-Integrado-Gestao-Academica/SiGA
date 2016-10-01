@@ -231,6 +231,9 @@ class Student extends MX_Controller {
 				$this->student_model->setDelayedQualifyStatus($student);
 			}
 		}
+		else{
+			$this->student_model->unsetDelayedQualifyStatus($student);	
+		}
 		
 	}
 
@@ -286,4 +289,28 @@ class Student extends MX_Controller {
 
 		return $studentRequestQualificationDocument;
 	}
+
+	public function updateStudentSemester($studentId){
+
+		$newSemester = $this->input->post("new_semester");
+		$course = $this->input->post("course");
+
+		$this->load->model("student/student_model");
+		$updated = $this->student_model->updateSemester($studentId, $newSemester);
+
+		if($updated){
+			$status = "success";
+			$message = "Semestre atualizado com sucesso.";
+			$student = $this->student_model->getStudentById($studentId);
+			$this->setStudentDelayedQualify($student[0]['id']);
+		}
+		else{
+			$status = "danger";
+			$message = "Não foi possível atualizar o semestre. Tente novamente.";
+		}
+
+		$this->session->set_flashdata($status, $message);
+		redirect("student_list_actions/{$studentId}/{$course}");
+	}
+
 }

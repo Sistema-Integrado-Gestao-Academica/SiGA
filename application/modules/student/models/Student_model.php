@@ -105,7 +105,8 @@ class Student_model extends CI_Model {
 
 	public function getStudentById($studentId, $courseId = FALSE){
 
-		$this->db->select("users.name, users.id, users.email, course_student.enroll_date, course_student.enrollment");
+		$this->db->select("users.name, users.id, users.email, course_student.enroll_date, course_student.enrollment,
+			course_student.enroll_semester");
 		$this->db->from('users');
 		$this->db->join("course_student", "course_student.id_user = users.id");
 		$this->db->where("course_student.id_user", $studentId);
@@ -134,14 +135,34 @@ class Student_model extends CI_Model {
 	}
 
 	public function setDelayedQualifyStatus($studentId){
-
+		
 		$data = array(
 			'user_id' => $studentId,
 			'description' =>  StatusConstants::DELAYED_QUALIFY,
 			'label_type' => StatusConstants::LABEL_DANGER_TYPE
 		);
 
-		$this->db->insert('student_status', $data);
+		$searchResult = $this->db->get_where('student_status', $data);
+		$foundStudent = $searchResult->row_array();
+
+		if(!$foundStudent){
+			$this->db->insert('student_status', $data);
+		}
+	}
+
+	public function unsetDelayedQualifyStatus($studentId){
+
+		$data = array(
+			'user_id' => $studentId,
+			'description' =>  StatusConstants::DELAYED_QUALIFY
+		);
+
+		$searchResult = $this->db->get_where('student_status', $data);
+		$foundStudent = $searchResult->row_array();
+
+		if($foundStudent !== FALSE){
+			$this->db->delete('student_status', $data);
+		}
 	}
 
 	public function getStudentStatus($studentId){
@@ -154,5 +175,13 @@ class Student_model extends CI_Model {
 		$studentStatus = checkArray($studentStatus);
 
 		return $studentStatus;
+	}
+
+	public function updateSemester($studentId, $semester){
+
+		$this->db->where("course_student.id_user", $studentId);
+		$updated = $this->db->update('course_student', array('enroll_semester' => $semester));
+
+		return $updated;
 	}
 }
