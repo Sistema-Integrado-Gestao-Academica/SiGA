@@ -1961,7 +1961,17 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		echo $student['status'];
+	    		$studentsStatus = $student['status']; 
+	    		if($studentsStatus != FALSE){
+	    			foreach ($studentsStatus as $status) {
+	    				$label_type = $status['label_type'];
+	    				$description = lang($status['description']);
+	    				echo "<span class='label label-".$label_type."'>".$description."</span>";
+	    			}
+	    		}
+	    		else{
+	    			echo "-";
+	    		}
 	    		echo "</td>";
 
 	    		echo "<td>";

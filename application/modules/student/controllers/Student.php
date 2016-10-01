@@ -208,4 +208,82 @@ class Student extends MX_Controller {
 
 		return $studentBasicInfo;
 	}
+
+	public function setStudentsStatus(){
+
+		$this->load->model("student/student_model");
+		$students = $this->student_model->getAllStudents();
+		
+		if($students !== FALSE){
+			foreach ($students as $student) {
+				$id = $student['id'];
+				$this->setStudentDelayedQualify($id);	
+			}
+		}
+	}
+
+	public function setStudentDelayedQualify($student){
+
+		$isTimeToQualify = $this->checkIfIsTimeToQualify($student);
+		if($isTimeToQualify){
+			$studentRequestQualificationDocument = $this->checkIfStudentRequestTheDocument($student);
+			if(!$studentRequestQualificationDocument){
+				$this->student_model->setDelayedQualifyStatus($student);
+			}
+		}
+		
+	}
+
+	private function checkIfIsTimeToQualify($studentId){
+
+		$this->load->model("student/student_model");
+		$student = $this->student_model->getStudentSemesterAndCourseDuration($studentId);
+		$duration = $student['duration'];
+		$enrollSemesterId = $student['enroll_semester'];
+
+		$this->load->model("program/semester_model");
+		$enrollSemester = $this->semester_model->getSemesterById($enrollSemesterId);
+
+		$isTimeToQualify = FALSE;
+		if(!is_null($enrollSemester)){
+
+			$currentSemester = $this->semester_model->getCurrentSemester();
+		
+			$enrollSemesterData = explode("/", $enrollSemester['description']); // First Position: Semester; Second Position: Year
+			$currentSemesterData = explode("/", $currentSemester['description']);
+
+			$timeToQualify = $duration / 2;
+			$yearToQualify = $enrollSemesterData[1] + $timeToQualify;
+			
+			if($yearToQualify < $currentSemesterData[1]){
+				$isTimeToQualify = TRUE;
+			}
+			else if($yearToQualify == $currentSemesterData[1]){
+				if($enrollSemesterData[0] < $currentSemesterData[0]){
+					$isTimeToQualify = TRUE;
+				}
+				else{
+					$isTimeToQualify = FALSE;
+				}
+			}	
+		}
+		
+
+		return $isTimeToQualify;
+	}
+
+	private function checkIfStudentRequestTheDocument($student){
+
+		$this->load->model("secretary/documentrequest_model");
+		$requests = $this->documentrequest_model->getStudentDocRequestQualification($student);
+		
+		if($requests !== FALSE){
+			$studentRequestQualificationDocument = TRUE;
+		}
+		else{
+			$studentRequestQualificationDocument = FALSE;	
+		}
+
+		return $studentRequestQualificationDocument;
+	}
 }

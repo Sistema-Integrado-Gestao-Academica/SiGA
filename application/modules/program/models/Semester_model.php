@@ -14,6 +14,13 @@ class Semester_model extends CI_Model {
 		return $currentSemester;
 	}
 
+	public function getSemesterById($semesterId){
+		$searchResult = $this->db->get_where('semester', array('id_semester' => $semesterId));
+		$foundSemester = $searchResult->row_array();
+
+		return $foundSemester;
+	}
+
 	public function updateCurrentSemester($newCurrentSemester){
 
 		$semesterExists = $this->checkIfSemesterExists($newCurrentSemester);

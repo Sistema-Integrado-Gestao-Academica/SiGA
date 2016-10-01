@@ -11,9 +11,13 @@ class Enrollment_model extends CI_Model {
     const ENROLLMENT_ALREADY_IN_USE = "A matrícula informada já está sendo utilizada.";
 
     public function enrollStudentIntoCourse($courseId, $studentId){
+        
+        $this->load->model("program/semester_model");
+        $current_semester = $this->semester_model->getCurrentSemester();
+        $enroll_semester = $current_semester['id_semester']; 
 
-        $enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date)
-                       VALUES ({$courseId}, {$studentId}, NOW())";
+        $enrollment = "INSERT INTO course_student (id_course, id_user, enroll_date, enroll_semester)
+                       VALUES ({$courseId}, {$studentId}, NOW(), {$enroll_semester})";
 
         $success = $this->db->query($enrollment);
 

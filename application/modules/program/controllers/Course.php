@@ -100,10 +100,9 @@ class Course extends MX_Controller {
 
 		if($students !== FALSE){
 			foreach ($students as $key => $student) {
-				$this->load->model("auth/usuarios_model");
-
+				$this->load->model("student/student_model");
 				$id = $student['id'];
-				$status = $this->usuarios_model->getUserStatus($id);
+				$status = $this->student_model->getStudentStatus($id);
 				$students[$key]['status'] = $status;
 			}
 		}
