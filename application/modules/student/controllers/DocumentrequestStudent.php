@@ -71,6 +71,18 @@ class DocumentRequestStudent extends MX_Controller {
 		switch($documentType){
 
 			case DocumentConstants::QUALIFICATION_JURY:
+				$documentType = $this->input->post('documentType');
+
+				$requestData = array(
+					'id_student' =>	$studentId,
+					'id_course' => $courseId,
+					'document_type' => $documentType,
+					'status' => DocumentConstants::REQUEST_OPEN,
+					'provide_online' => $canProvideOnline()
+				);
+
+				$this->saveDocumentRequest($requestData);
+				redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 				break;
 
 			case DocumentConstants::DEFENSE_JURY:
@@ -94,18 +106,7 @@ class DocumentRequestStudent extends MX_Controller {
 					'provide_online' => $canProvideOnline()
 				);
 
-				$wasSaved = $this->saveDocumentRequest($requestData);
-
-				if($wasSaved){
-					$status = "success";
-					$message = "Solicitação de documento enviada com sucesso.";
-				}else{
-					$status = "danger";
-					$message = "Não foi possível enviar a solicitação de documento informada.";
-				}
-
-				$session = getSession();
-				$session->showFlashMessage($status, $message);
+				$this->saveDocumentRequest($requestData);
 				redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 
 				break;
@@ -123,18 +124,7 @@ class DocumentRequestStudent extends MX_Controller {
 					'provide_online' => $canProvideOnline()
 				);
 
-				$wasSaved = $this->saveDocumentRequest($requestData);
-
-				if($wasSaved){
-					$status = "success";
-					$message = "Solicitação de documento enviada com sucesso.";
-				}else{
-					$status = "danger";
-					$message = "Não foi possível enviar a solicitação de documento informada.";
-				}
-
-				$session = getSession();
-				$session->showFlashMessage($status, $message);
+				$this->saveDocumentRequest($requestData);
 				redirect("student/documentrequestStudent/requestDocument/{$courseId}/{$studentId}");
 
 				break;
@@ -158,7 +148,18 @@ class DocumentRequestStudent extends MX_Controller {
 		$this->load->module("notification/notification");
 		$this->notification->documentRequestNotification($student, $course, $requestedDoc);
 
-		return $wasSaved;
+		if($wasSaved){
+			$status = "success";
+			$message = "Solicitação de documento enviada com sucesso.";
+			$this->load->model("student/student_model");
+			$this->student_model->unsetDelayedQualifyStatus($student);
+		}else{
+			$status = "danger";
+			$message = "Não foi possível enviar a solicitação de documento informada.";
+		}
+
+		$session = getSession();
+		$session->showFlashMessage($status, $message);
 	}
 
 	public function cancelRequest($requestId, $courseId, $studentId){
