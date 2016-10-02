@@ -5,7 +5,7 @@ require_once(MODULESPATH."auth/controllers/Useractivation.php");
 require_once(MODULESPATH."notification/domain/emails/ConfirmSignUpEmail.php");
 require_once(MODULESPATH."notification/domain/emails/UserInvitationEmail.php");
 require_once(MODULESPATH."notification/domain/emails/GroupInvitationEmail.php");
-require_once(MODULESPATH."notification/domain/emails/GeneralEmail.php");
+require_once(MODULESPATH."notification/domain/emails/GenericEmail.php");
 
 /**
  * Facade class to receive all email notifications request
@@ -104,7 +104,7 @@ class EmailSender extends MX_Controller{
 		$userEmail = $userToInvite['email'];
 		$user = new User($userId, $userName, FALSE, $userEmail);
 
-		$email = new GeneralEmail($user, $params, function($params){
+		$email = new GenericEmail($user, $params, function($params){
 			$user = $params['user'];
 			$userName = $user->getName();
         	$userId = $user->getId();

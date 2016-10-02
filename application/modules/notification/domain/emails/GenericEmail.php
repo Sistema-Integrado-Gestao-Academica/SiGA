@@ -4,7 +4,7 @@ require_once MODULESPATH."notification/constants/EmailConstants.php";
 require_once MODULESPATH."notification/exception/EmailNotificationException.php";
 require_once MODULESPATH."notification/domain/EmailNotification.php";
 
-class GeneralEmail extends EmailNotification{
+class GenericEmail extends EmailNotification{
 
     private $params;
     private $handle;
@@ -17,7 +17,11 @@ class GeneralEmail extends EmailNotification{
     }
 
     protected function setSubject(){
-        $this->subject = $this->params['subject'];
+        if(array_key_exists('subject', $this->params)){
+            $this->subject = $this->params['subject'];
+        }else{
+            throw new EmailNotificationException("Missing 'subject' on params array to GenericEmail");
+        }
     }
 
     protected function setMessage(){
