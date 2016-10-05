@@ -11,25 +11,13 @@ class Course_model extends CI_Model {
 
 	public function getCourseTeachers($courseId){
 
-		$this->db->select('users.name, teacher_course.*');
+		$this->db->select('users.name, users.id, users.email, teacher_course.*');
 		$this->db->from('users');
 		$this->db->join("teacher_course", "users.id = teacher_course.id_user");
 		$this->db->where("teacher_course.id_course", $courseId);
-		$teachers = $this->db->get()->result_array();
-
-		$teachers = checkArray($teachers);
-
-		return $teachers;
-	}
-
-	public function getTeachers($courseId){
-		
-		$this->db->select('users.id, users.name, users.email');
-		$this->db->from('users');
-		$this->db->join("teacher_course", "teacher_course.id_user = users.id");
-		$this->db->where('teacher_course.id_course', $courseId);
 		$this->db->order_by("users.name", "asc");
 		$teachers = $this->db->get()->result_array();
+
 		$teachers = checkArray($teachers);
 
 		return $teachers;
@@ -398,7 +386,7 @@ class Course_model extends CI_Model {
 	}
 
 	public function deleteSecretary($id_course, $id_secretary, $id_user = FALSE){
-		
+
 		$idCourseExists = $this->checkExistingId($id_course);
 
 		$secretaryWasDeleted = FALSE;

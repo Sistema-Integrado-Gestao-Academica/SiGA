@@ -12,18 +12,18 @@ class Teacher extends MX_Controller {
 	}
 
 	public function updateProfile(){
-		
+
 		$session = getSession();
 		$user = $session->getUserData();
 		$teacher = $user->getId();
 
 		$infoProfile = $this->getInfoProfile($teacher);
-		
+
 		loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, 'program/teacher/update_profile', $infoProfile);
 	}
 
 	public function saveProfile(){
-		
+
 		$teacherId = $this->input->post('teacher');
 
 		$summary = $this->input->post('summaryField');
@@ -62,13 +62,13 @@ class Teacher extends MX_Controller {
 	*/
 	public function getCourseTeachersForHomepage($courseId){
 
-		$teachers = $this->course_model->getTeachers($courseId);
+		$teachers = $this->course_model->getCourseTeachers($courseId);
 
 		if($teachers !== FALSE || !empty($teachers)){
-			
+
 			foreach ($teachers as $id => $teacher) {
 				$teacherInfo = $this->convertTeacherInObjects($teacher);
-				$teachers[$id] = $teacherInfo;   	
+				$teachers[$id] = $teacherInfo;
 			}
 		}
 
@@ -76,11 +76,11 @@ class Teacher extends MX_Controller {
 	}
 
 	public function convertTeacherInObjects($teacher){
-		
+
 		$teacherId = $teacher['id'];
 		$name = $teacher['name'];
 		$email = $teacher['email'];
-	
+
 		$teacherInfo = $this->teacher_model->getInfoTeacherForHomepage($teacherId);
 		$summary = $teacherInfo[0]['summary'];
 		$latteslink = $teacherInfo[0]['lattes_link'];
@@ -96,16 +96,16 @@ class Teacher extends MX_Controller {
 
 		$teacher = array('id_user' => $teacherId);
 		$teacherProfile = $this->teacher_model->getTeacherProfile($teacher);
-		
+
 		if($teacherProfile !== FALSE && !empty($teacherProfile)){
-			
+
 			$summary = $teacherProfile['summary'];
 			$lattes = $teacherProfile['lattes_link'];
 			$researchLine = $teacherProfile['research_line'];
-		}	
+		}
 		else{
-			
-			$summary = "";	
+
+			$summary = "";
 			$lattes = "";
 			$researchLine = "";
 		}
@@ -118,7 +118,7 @@ class Teacher extends MX_Controller {
 			'researchLine' => $researchLine, # Research line of the teacher
 			'availableResearchLines' => $availableResearchLines # Possible research lines for the teacher
 		);
-		
+
 		return $data;
 	}
 
@@ -128,15 +128,15 @@ class Teacher extends MX_Controller {
 
 		$researchLines = $this->getTeacherResearchLinesInfo($courses);
 		$availableResearchLines = array();
-	
+
 		$id = 0;
 		// Put the current research line on top of dropdown
 		if (!empty($currentResearchLine)){
-			$availableResearchLines[$id] = $currentResearchLine;			
+			$availableResearchLines[$id] = $currentResearchLine;
 			$id++;
 		}
 		if($researchLines !== FALSE){
-			
+
 
 			foreach ($researchLines as $researchLine) {
 				$researchLineLength = count($researchLine);
@@ -148,7 +148,7 @@ class Teacher extends MX_Controller {
 					if($description != $currentResearchLine){
 						$availableResearchLines[$id] = $description;
 						$id++;
-					}			
+					}
 				}
 
 			}
@@ -158,14 +158,14 @@ class Teacher extends MX_Controller {
 	}
 
 	private function getTeacherResearchLinesInfo($courses){
-		
+
 		$researchLines = array();
 
 		if($courses !== FALSE){
-			
+
 			foreach ($courses as $course) {
 				$id = $course['id_course'];
-				$researchLinesCourse = $this->course_model->getCourseResearchLines($id);	 
+				$researchLinesCourse = $this->course_model->getCourseResearchLines($id);
 				if ($researchLinesCourse !== FALSE){
 					$researchLines[$id] = $researchLinesCourse;
 				}

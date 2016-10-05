@@ -11,13 +11,79 @@ class UserNotification extends MX_Controller{
         );
     }
 
+    private function getAllowedUsersToNotify($getStudents=TRUE, $getTeachers=TRUE){
+
+        $addKeyToUsersArray = function($users){
+            $keyUsers = array();
+            if(!empty($users)){
+                foreach ($users as $user) {
+                    $keyUsers[$user['id']] = $user;
+                }
+            }
+            return $keyUsers;
+        };
+
+        $this->load->model("program/course_model");
+        $user = getSession()->getUserData();
+        $courses = $this->course_model->getCoursesOfSecretary($user->getId());
+
+        $users = array("students" => array(), "teachers" => array());
+        foreach ($courses as $course){
+            $courseId = $course['id_course'];
+
+            // var_dump($courseId);
+            if($getTeachers){
+                $teachers = $this->course_model->getCourseTeachers($courseId);
+                // var_dump($teachers);
+                $teachers = $addKeyToUsersArray($teachers);
+                // Used the + operator to preserver numerical indexes
+                $users["teachers"] = $users["teachers"] + $teachers;
+            }
+
+            if($getStudents){
+                $students = $this->course_model->getCourseStudents($courseId);
+                $students = $addKeyToUsersArray($students);
+                // Used the + operator to preserver numerical indexes
+                $users["students"] = $users["students"] + $students;
+            }
+        }
+
+        if($getStudents && $getTeachers){
+            $users = $users["teachers"] + $users["students"];
+        }elseif($getStudents && !$getTeachers){
+            $users = $users["students"];
+        }elseif(!$getStudents && $getTeachers){
+            $users = $users["teachers"];
+        }else{
+            $users = array();
+        }
+
+        return $users;
+    }
+
+    private function filterUsersToNotifyByName($name){
+
+        $allowedUsers = $this->getAllowedUsersToNotify();
+
+        $this->load->model("auth/usuarios_model");
+        $foundUsers = $this->usuarios_model->getUserByName($name);
+
+        $users = $foundUsers;
+
+        foreach ( (array) $foundUsers as $key => $foundUser) {
+            if(!array_key_exists($foundUser['id'], $allowedUsers)){
+                unset($users[$key]);
+            }
+        }
+
+        return $users;
+    }
+
     public function getUsersToNotify(){
 
         $userToSearch = $this->input->post("user");
 
-        $this->load->model("auth/usuarios_model");
-
-        $users = $this->usuarios_model->getUserByName($userToSearch);
+        $users = $this->filterUsersToNotifyByName($userToSearch);
 
         if(!empty($users)){
 
