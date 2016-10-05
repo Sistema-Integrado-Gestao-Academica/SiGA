@@ -2,7 +2,48 @@
 <?php
 require_once(APPPATH."/constants/TeacherConstants.php");
 
-function newInputField($type, $id, $value){
+function alert($content, $type="info", $title=FALSE, $icon="info", $dismissible=TRUE){
+	echo "<div class='alert alert-{$type} alert-dismissible' role='alert'>";
+		if($dismissible){
+			echo "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>";
+		}
+		echo "<i class='fa fa-{$icon}'></i>";
+		if($title){
+			echo "<h3 class='text-center'><p><b>{$title}</b></p></h3><br>";
+		}
+		$content();
+	echo "</div>";
+}
+
+function newModal($id, $title, $body, $footer, $formPath=FALSE, $class="modal fade"){
+	echo "<div id='{$id}' class='{$class}'>";
+    echo "<div class='modal-dialog'>";
+        echo "<div class='modal-content'>";
+            echo "<div class='modal-header text-center'>";
+                echo "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times; </button>";
+                echo "<h4 class='modal-title'>{$title}</h4>";
+            echo "</div>";
+
+            if($formPath){
+            	echo form_open($formPath);
+            }
+
+            echo "<div class='modal-body'>";
+            	$body();
+            echo "</div>";
+            echo "<div class='modal-footer'>";
+                $footer();
+            echo "</div>";
+
+            if($formPath){
+            	echo form_close();
+            }
+        echo "</div>";
+    echo "</div>";
+    echo "</div>";
+}
+
+function newInputField($type, $id, $value=""){
 
 	if(is_array($id)){
 		$field = $id;
@@ -839,9 +880,9 @@ function formToEnrollmentPeriod($startDate, $endDate, $idOffer, $reload){
 		echo form_input($endInput);
 		echo form_error("enrollment_end_date");
 	echo "</div>";
-	echo form_input($offerIdHidden); 
-	echo form_input($reloadHidden); 
-	echo form_input($oldStartDateHidden); 
+	echo form_input($offerIdHidden);
+	echo form_input($reloadHidden);
+	echo form_input($oldStartDateHidden);
 }
 
 function searchInStudentListByEnrollment($course){
@@ -851,29 +892,29 @@ function searchInStudentListByEnrollment($course){
 	$studentId = "student_enrollment_field";
 
 	$specificData = array(
-		'placeholder' => $placeholder, 
-		'buttonId' => $buttonId, 
+		'placeholder' => $placeholder,
+		'buttonId' => $buttonId,
 		'course' => $course,
 		'studentId' => $studentId
 	);
-	
+
 	searchInStudentList($specificData, $course);
 
 }
 
 function searchInStudentListByName($course){
-	
+
 	$placeholder =  "Digite o nome do aluno...";
 	$buttonId = "name_btn";
 	$studentId = "student_name_field";
 
 	$specificData = array(
-		'placeholder' => $placeholder, 
-		'buttonId' => $buttonId, 
+		'placeholder' => $placeholder,
+		'buttonId' => $buttonId,
 		'course' => $course,
 		'studentId' => $studentId
 	);
-	
+
 	searchInStudentList($specificData, $course);
 }
 
@@ -897,7 +938,7 @@ function searchInStudentList($specificData, $course){
 		"class" => "btn bg-primary btn-flat",
 		"type" => "submit"
 	);
-	
+
 	$hidden = array(
 		'id' => "course",
 		'name' => "course",

@@ -156,8 +156,6 @@ $route['add_discipline_to_request/(:num)/(:num)'] = 'secretary/request/addDiscip
 $route['remove_from_request/(:num)/(:num)'] = 'secretary/request/removeDisciplineFromRequest/$1/$2';
 $route['resend_request/(:num)'] = 'secretary/request/studentResendRequest/$1';
 
-
-
 // Qualis routes
 $route['import_qualis'] = 'program/importQualis/index';
 $route['upload_qualis'] = 'program/importQualis/upload';
@@ -218,6 +216,13 @@ $route['delete_production'] = 'program/production/delete';
 $route['edit_coauthors/(:num)'] = 'program/production/editCoauthors/$1';
 $route['edit_coauthor/(:num)/(:num)'] = 'program/production/editCoauthor/$1/$2';
 $route['update_coauthor/(:num)/(:num)'] = 'program/production/updateCoauthor/$1/$2';
+
+/**
+ * User comunication routes
+ */
+$route['notify_users'] = 'notification/userNotification/index';
+$route['notify_specific_user'] = 'notification/userNotification/notifySpecificUser';
+
 
 /*
  * Test report routes

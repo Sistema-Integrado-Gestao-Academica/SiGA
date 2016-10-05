@@ -277,7 +277,6 @@ class Usuarios_model extends CI_Model {
 	}
 
 	public function getUserByName($userName){
-
 		$foundUser = $this->getUserByPartialName($userName);
 		$foundUser = checkArray($foundUser);
 		return $foundUser;
@@ -305,7 +304,7 @@ class Usuarios_model extends CI_Model {
 	}
 
 	private function getUserByPartialName($userName){
-		$this->db->select('id, name, cpf');
+		$this->db->select('id, name, cpf, email');
 		$this->db->like('name', $userName);
 		$foundUser = $this->db->get('users')->result_array();
 
