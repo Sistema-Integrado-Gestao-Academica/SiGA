@@ -5,13 +5,23 @@ require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 class UserNotification extends MX_Controller{
 
     public function index(){
+
+        $this->load->model("program/course_model");
+        $user = getSession()->getUserData();
+        $courses = $this->course_model->getCoursesOfSecretary($user->getId());
+
+        $data = array(
+            "courses" => makeDropdownArray($courses, 'id_course', 'course_name')
+        );
+
         loadTemplateSafelyByPermission(
             PermissionConstants::NOTIFY_USERS_PERMISSION,
-            "notification/index"
+            "notification/index",
+            $data
         );
     }
 
-    private function getAllowedUsersToNotify($getStudents=TRUE, $getTeachers=TRUE){
+    private function getAllowedUsersToNotify($getStudents=TRUE, $getTeachers=TRUE, $courses=array()){
 
         $addKeyToUsersArray = function($users){
             $keyUsers = array();
@@ -24,12 +34,15 @@ class UserNotification extends MX_Controller{
         };
 
         $this->load->model("program/course_model");
-        $user = getSession()->getUserData();
-        $courses = $this->course_model->getCoursesOfSecretary($user->getId());
+
+        if(empty($courses)){
+            $user = getSession()->getUserData();
+            $courses = $this->course_model->getCoursesOfSecretary($user->getId());
+        }
 
         $users = array("students" => array(), "teachers" => array());
         foreach ($courses as $course){
-            $courseId = $course['id_course'];
+            $courseId = isset($course['id_course']) ? $course['id_course'] : $course;
 
             // var_dump($courseId);
             if($getTeachers){
@@ -161,7 +174,7 @@ class UserNotification extends MX_Controller{
                 'checked' => TRUE,
             ));
 
-            echo form_label("Notificar por email também.", "only_bar");
+            echo form_label("Notificar por email também.", "email_too");
         };
 
         $footer = function(){
@@ -202,6 +215,45 @@ class UserNotification extends MX_Controller{
         redirect("notify_users");
     }
 
-}
+    public function notifyGroupOfUsers(){
+        $message = $this->input->post("notification_message");
+        $course = $this->input->post("courses_to_notify");
+        $notifyTeachers = $this->input->post("notify_teachers") !== NULL;
+        $notifyStudents = $this->input->post("notify_students") !== NULL;
+        $onlyBar = $this->input->post("email_too") === NULL;
 
-?>
+        $allowedUsers = $this->getAllowedUsersToNotify($notifyStudents, $notifyTeachers, array($course));
+
+        $this->load->module("notification/notification");
+
+        $sender = getSession()->getUserData();
+        $barNotificationSent = array();
+        $emailSent = array();
+        foreach ($allowedUsers as $user) {
+            $result = $this->notification->notifyUser($user, $message, $handler=FALSE, $sender, $onlyBar);
+
+            $barNotificationSent[] = $result[0];
+            $emailSent[] = $result[1];
+        }
+
+        $checkIfAllTrue = function($array){
+            $allTrue = TRUE;
+            foreach ($array as $value) {
+                if(!$value){
+                    $allTrue = FALSE;
+                    break;
+                }
+            }
+            return $allTrue;
+        };
+
+        $status = $checkIfAllTrue($barNotificationSent) ? "success" : "danger";
+        $msg = $checkIfAllTrue($barNotificationSent) ? "Todos usuários foram notificados pelo sistema com sucesso!" : "Não foi possível enviar a notificação para alguns usuários.";
+
+        $msg .= (!$checkIfAllTrue($emailSent) && !$onlyBar) ? "<br><b><font color='red'>Infelizmente não foi possível enviar alguns e-mails.</font></b>" : "";
+
+        getSession()->showFlashMessage($status, $msg);
+        redirect("notify_users");
+    }
+
+}

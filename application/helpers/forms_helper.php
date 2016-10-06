@@ -21,7 +21,7 @@ function newModal($id, $title, $body, $footer, $formPath=FALSE, $class="modal fa
         echo "<div class='modal-content'>";
             echo "<div class='modal-header text-center'>";
                 echo "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times; </button>";
-                echo "<h4 class='modal-title'>{$title}</h4>";
+                echo "<h3 class='modal-title'>{$title}</h3>";
             echo "</div>";
 
             if($formPath){

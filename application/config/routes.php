@@ -222,6 +222,7 @@ $route['update_coauthor/(:num)/(:num)'] = 'program/production/updateCoauthor/$1/
  */
 $route['notify_users'] = 'notification/userNotification/index';
 $route['notify_specific_user'] = 'notification/userNotification/notifySpecificUser';
+$route['notify_group_of_users'] = 'notification/userNotification/notifyGroupOfUsers';
 
 
 /*

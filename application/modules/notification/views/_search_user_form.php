@@ -11,13 +11,8 @@
 
 <div class="row">
   <div class="col-md-4 col-sm-6">
-    <h4><i class='fa fa-search-plus'></i> Pesquise aqui os usuários específicos para notificar</h4>
+    <h4><i class='fa fa-search-plus'></i> Pesquise aqui usuários específicos para notificar</h4>
     <div class='form-group'>
-      <?= form_input(array(
-            "id" => "project_id",
-            "type" => "hidden",
-            // "value" => $project['id']
-          )) ?>
       <?= form_label("Nome:", "user_name") ?>
       <?= form_input($name) ?>
     </div>
@@ -35,5 +30,3 @@
 <br>
 
 <div id="notify_user_modal"></div>
-
-<script src=<?=base_url("js/user_notification.js")?>></script>
