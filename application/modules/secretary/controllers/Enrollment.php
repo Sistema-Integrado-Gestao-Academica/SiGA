@@ -103,7 +103,7 @@ class Enrollment extends MX_Controller {
 		}
 
 		$this->session->set_flashdata($status, $message);
-		redirect("program/course/courseStudents/{$course}");
+		redirect("student_list_actions/{$student}/{$course}");
 	}
 
 	/**
@@ -307,7 +307,7 @@ class Enrollment extends MX_Controller {
     }
 
 
-	public function changeEnrollment($studentId, $courseId){
+	public function studentActions($studentId, $courseId){
 
 		$this->load->model("student/student_model");
 		$student = $this->student_model->getStudentById($studentId);
@@ -317,6 +317,7 @@ class Enrollment extends MX_Controller {
 			'student' => $student[0]
 		);
 		
-		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/enrollment/change_student_enrollment', $data);
+		loadTemplateSafelyByPermission(PermissionConstants::STUDENT_LIST_PERMISSION, 'secretary/enrollment/student_actions', $data);
 	}
+
 }

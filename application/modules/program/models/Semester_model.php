@@ -14,6 +14,13 @@ class Semester_model extends CI_Model {
 		return $currentSemester;
 	}
 
+	public function getSemesterById($semesterId){
+		$searchResult = $this->db->get_where('semester', array('id_semester' => $semesterId));
+		$foundSemester = $searchResult->row_array();
+
+		return $foundSemester;
+	}
+
 	public function updateCurrentSemester($newCurrentSemester){
 
 		$semesterExists = $this->checkIfSemesterExists($newCurrentSemester);
@@ -54,5 +61,27 @@ class Semester_model extends CI_Model {
 
 		return $nextSemester;
 
+	}
+
+	public function getPossibleSemesters(){
+
+		$currentSemester = $this->getCurrentSemester();
+
+		$this->db->select('semester.*');
+		$this->db->from('semester');
+		$this->db->where('semester.id_semester <=', $currentSemester['id_semester']);
+		$semesters = $this->db->get()->result_array();
+
+		$semesters = checkArray($semesters);
+
+		$possibleSemester = array();
+		if($semesters !== FALSE){
+			foreach ($semesters as $semester) {
+				$key = $semester['id_semester'];
+				$possibleSemester[$key] = $semester['description'];
+			}
+		}
+
+		return $possibleSemester;
 	}
 }

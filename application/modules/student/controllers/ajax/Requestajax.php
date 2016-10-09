@@ -37,6 +37,8 @@ class RequestAjax extends MX_Controller {
         switch($documentType){
 
             case DocumentConstants::QUALIFICATION_JURY:
+                $receiveDocumentOption();
+                $submitBtn();
                 break;
 
             case DocumentConstants::DEFENSE_JURY:

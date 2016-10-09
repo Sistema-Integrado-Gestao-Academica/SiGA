@@ -15,6 +15,7 @@ class Semester extends MX_Controller {
 		$session = getSession();
 		$loggedUserData = $session->getUserData();
 		$loggedUserLogin = $loggedUserData->getLogin();
+		
 		$password = $this->input->post('password');
 		
 		$this->load->model('auth/usuarios_model');

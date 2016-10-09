@@ -21,6 +21,9 @@ class Settings extends MX_Controller {
 		
 		$user = $session->getUserData();
 		$id_user = $user->getId();
+		$this->load->module("student/student");
+		$this->student->setStudentsStatus();
+
 		$current_user = $this->db->get_where('users', array('id'=>$id_user))->row_array();
 
 		$password = md5($this->input->post('password'));

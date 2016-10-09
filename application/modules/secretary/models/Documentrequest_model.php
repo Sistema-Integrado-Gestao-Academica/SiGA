@@ -188,4 +188,18 @@ class DocumentRequest_model extends CI_Model {
 
 		return $foundRequest;
 	}
+
+	public function getStudentDocRequestQualification($studentId){
+
+		$requests = $this->getDocumentRequest(
+			array(
+				'id_student' => $studentId,
+				'document_type' => DocumentConstants::QUALIFICATION_JURY
+			),
+			FALSE,
+			FALSE
+		);
+
+		return $requests;
+	}
 }
