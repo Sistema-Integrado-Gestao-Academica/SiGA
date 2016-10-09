@@ -234,6 +234,7 @@ class Production extends MX_Controller {
 															$qualis, $periodic, $identifier, $productionId, FALSE, $project);
 			}
 			catch(IntellectualProductionException $exception){
+				$production = FALSE;
 				$session->showFlashMessage("danger", $exception->getMessage());
 			}
 		}

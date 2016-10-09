@@ -173,7 +173,7 @@ class ProductionAjax extends MX_Controller {
 		        'cpf' => $cpf,
 		        'name' => $name,
 		        'order' => $order,
-		        'production_id' => $productionId,
+		        'production_id' => $productionId
 	    	);
 
 		}

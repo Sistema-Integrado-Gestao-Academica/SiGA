@@ -21,11 +21,11 @@ function checkArray($array){
 	return $array;
 }
 
-function makeDropdownArray(Array $array, $key, $value){
+function makeDropdownArray($array, $key, $value){
 
     $dropdownArray = array();
 
-    foreach($array as $element){
+    foreach((array) $array as $element){
         $dropdownArray[$element[$key]] = $element[$value];
     }
 
