@@ -216,6 +216,7 @@ $route['delete_production'] = 'program/production/delete';
 $route['edit_coauthors/(:num)'] = 'program/production/editCoauthors/$1';
 $route['edit_coauthor/(:num)/(:num)'] = 'program/production/editCoauthor/$1/$2';
 $route['update_coauthor/(:num)/(:num)'] = 'program/production/updateCoauthor/$1/$2';
+$route['production_report'] = 'program/productionManagement/index';
 
 /**
  * User comunication routes

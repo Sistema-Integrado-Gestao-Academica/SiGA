@@ -36,4 +36,6 @@ class PermissionConstants{
 	const SELECTION_PROCESS_PERMISSION = "selection_process";
 
 	const NOTIFY_USERS_PERMISSION = "notify_users";
+
+	const PRODUCTION_REPORT_PERMISSION = "production_report";
 }
