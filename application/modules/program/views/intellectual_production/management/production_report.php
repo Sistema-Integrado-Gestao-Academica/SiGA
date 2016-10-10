@@ -4,7 +4,7 @@
 <script src=<?=base_url("js/c3.min.js")?>></script>
 <!--  -->
 
-<h2 class="principal">Relatório de produções</h2>
+<h2 class="principal"> <i class="fa fa-file-text-o"></i> Relatório de produções</h2>
 
 <?php if (!empty($programs)) :
 
@@ -13,7 +13,7 @@
     });
 ?>
 
-<h4><i class="fa fa-list"></i> Programas os quais você é coordenador(a): </h4>
+<h3><i class="fa fa-list"></i> Programas os quais você é coordenador(a): </h3>
 <ul>
     <?php
         foreach($programs as $program){
@@ -23,24 +23,56 @@
 </ul>
 
 <br>
+<h3><i class="fa fa-bar-chart"></i> Gráfico de produções por ano: <br><small>As produções são agrupadas pela classificação Qualis.</small></h3>
 
-<div id="graphic_data" style="display: none;">
-    <?= $graphicData ?>
+<br><br>
+<?php selectYearForm($currentYear); ?>
+<br><br>
+
+<div id="chart_data" style="display: none;">
+    <?= $chartData ?>
 </div>
 
 <div id="chart"></div>
 
-<script>
-    var graphicData = JSON.parse( $("#graphic_data").text() );
-
-    console.log(graphicData);
-
-    var chart = c3.generate({
-        bindto: '#chart',
-        data: graphicData
-    });
-</script>
+<script src=<?=base_url("js/production_management.js")?>></script>
 
 <?php else : ?>
     <?= callout("info", "Você não é coordenador(a) de nenhum programa. Apenas os coordenadores dos programas podem acessar o Relatório de Produções dos seus respectivos programas.") ?>
 <?php endif ; ?>
+
+<?php
+
+function selectYearForm($currentYear){
+
+    echo "<div class='row text-center'>";
+        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um ano para filtrar os resultados</h4>";
+    echo "</div>";
+
+    echo "<div class='row'>";
+        echo "<div class='col-md-6 col-md-offset-3'>";
+            echo "<div class='input-group'>";
+                echo form_input(array(
+                    "name" => "report_year",
+                    "id" => "report_year",
+                    "type" => "number",
+                    "placeholder" => "Informe o ano para gerar o relatório",
+                    "class" => "form-control",
+                    "step" => 1,
+                    "max" => $currentYear,
+                    "min" => 2000 // Year 2000 at min
+                ));
+
+                echo "<span class='input-group-btn'>";
+                echo form_button(array(
+                    "name" => "load_graphic_btn",
+                    "id" => "load_graphic_btn",
+                    "class" => "btn btn-success",
+                    "content" => "<i class='fa fa-refresh'></i> Atualizar gráfico",
+                    "type" => "button"
+                ));
+                echo "</span>";
+            echo "</div>";
+        echo "</div>";
+    echo "</div>";
+}

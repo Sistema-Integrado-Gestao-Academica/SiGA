@@ -12,28 +12,45 @@ class ProductionManagement extends MX_Controller {
 
     public function index(){
 
-        $this->load->model("program/program_model");
-
         $user = getSession()->getUserData();
         $coordinatorId = $user->getId();
 
+        $this->load->model("program/program_model");
         $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 
         $currentYear = getCurrentYear();
+
         $productions = $this->production_model->getProgramsProduction($programs, $currentYear);
 
-        $graphicData = $this->assembleGraphicData($productions, $currentYear);
+        $chartData = $this->assembleChartData($productions, $currentYear);
 
         $data = array(
             'programs' => $programs,
             'user' => $user,
-            'graphicData' => $graphicData
+            'chartData' => $chartData,
+            'currentYear' => $currentYear
         );
 
         loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "program/intellectual_production/management/production_report", $data);
     }
 
-    private function assembleGraphicData($productions, $year){
+    public function changeReportYear(){
+        $year = $this->input->post("year");
+
+        $user = getSession()->getUserData();
+        $coordinatorId = $user->getId();
+
+        $this->load->model("program/program_model");
+        $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
+
+        $productions = $this->production_model->getProgramsProduction($programs, $year);
+
+        $chartData = $this->assembleChartData($productions, $year);
+
+        echo $chartData;
+    }
+
+    private function assembleChartData($productions, $year){
 
         $productions = $this->filterProductionsByQualis($productions);
 
@@ -47,19 +64,18 @@ class ProductionManagement extends MX_Controller {
         foreach ($productions as $qualis => $qualisProductions) {
             $columns[] = array($qualis, count($qualisProductions)); // Put the quantity of productions as Y data
             $xs[$qualis] = 'x1';  // Associate all the Y data to the axis X
-            $types[$qualis] = 'bar';
+            $types[$qualis] = 'bar'; // All as bar chart
         }
 
-
-        $graphicData = array(
+        $chartData = array(
             'xs' => $xs,
             'columns' => $columns,
             'types' => $types
         );
 
-        $graphicData = json_encode($graphicData);
+        $chartData = json_encode($chartData);
 
-        return $graphicData;
+        return $chartData;
     }
 
     private function filterProductionsByQualis($productions){
@@ -75,17 +91,21 @@ class ProductionManagement extends MX_Controller {
             'C' => array(),
             self::UNQUALIFIED => array(),
         );
-        foreach ( (array) $productions as $production) {
 
-            $productionQualis = $production['qualis'];
+        if(!empty($productions)){
+            foreach ($productions as $production) {
 
-            if($productionQualis !== NULL){
-                $qualis = strtoupper($productionQualis);
-                $filteredProductions[$qualis] = $production;
-            }else{
-                $filteredProductions[self::UNQUALIFIED] = $production;
+                $productionQualis = $production['qualis'];
+
+                if($productionQualis !== NULL){
+                    $qualis = strtoupper($productionQualis);
+                    $filteredProductions[$qualis][] = $production;
+                }else{
+                    $filteredProductions[self::UNQUALIFIED][] = $production;
+                }
             }
         }
+
         return $filteredProductions;
     }
 
