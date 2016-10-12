@@ -50,7 +50,7 @@ class ProductionManagement extends MX_Controller {
         echo $chartData;
     }
 
-    private function assembleChartData($productions, $year){
+    public function assembleChartData($productions, $year){
 
         $productions = $this->filterProductionsByQualis($productions);
 

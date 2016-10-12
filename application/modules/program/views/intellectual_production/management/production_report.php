@@ -26,7 +26,23 @@
 <h3><i class="fa fa-bar-chart"></i> Gráfico de produções por ano: <br><small>As produções são agrupadas pela classificação Qualis.</small></h3>
 
 <br><br>
-<?php selectYearForm($currentYear); ?>
+<?php 
+
+$formInput = array(
+    "name" => "report_year",
+    "id" => "report_year",
+    "type" => "number",
+    "placeholder" => "Informe o ano para gerar o relatório",
+    "class" => "form-control",
+    "step" => 1,
+    "max" => $currentYear,
+    "min" => 2000 // Year 2000 at min
+);
+    echo "<div class='row text-center'>";
+        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um ano para filtrar os resultados</h4>";
+    echo "</div>";
+    
+    selectYearForm($currentYear, array($formInput)); ?>
 <br><br>
 
 <div id="chart_data" style="display: none;">
@@ -40,39 +56,3 @@
 <?php else : ?>
     <?= callout("info", "Você não é coordenador(a) de nenhum programa. Apenas os coordenadores dos programas podem acessar o Relatório de Produções dos seus respectivos programas.") ?>
 <?php endif ; ?>
-
-<?php
-
-function selectYearForm($currentYear){
-
-    echo "<div class='row text-center'>";
-        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um ano para filtrar os resultados</h4>";
-    echo "</div>";
-
-    echo "<div class='row'>";
-        echo "<div class='col-md-6 col-md-offset-3'>";
-            echo "<div class='input-group'>";
-                echo form_input(array(
-                    "name" => "report_year",
-                    "id" => "report_year",
-                    "type" => "number",
-                    "placeholder" => "Informe o ano para gerar o relatório",
-                    "class" => "form-control",
-                    "step" => 1,
-                    "max" => $currentYear,
-                    "min" => 2000 // Year 2000 at min
-                ));
-
-                echo "<span class='input-group-btn'>";
-                echo form_button(array(
-                    "name" => "load_graphic_btn",
-                    "id" => "load_graphic_btn",
-                    "class" => "btn btn-success",
-                    "content" => "<i class='fa fa-refresh'></i> Atualizar gráfico",
-                    "type" => "button"
-                ));
-                echo "</span>";
-            echo "</div>";
-        echo "</div>";
-    echo "</div>";
-}

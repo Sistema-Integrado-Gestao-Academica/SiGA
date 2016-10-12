@@ -518,7 +518,7 @@ class Program extends MX_Controller {
 		return $programs;
 	}
 
-	private function getProgramsCoursesInfo($programs){
+	public function getProgramsCoursesInfo($programs){
 
 		if($programs !== FALSE){
 

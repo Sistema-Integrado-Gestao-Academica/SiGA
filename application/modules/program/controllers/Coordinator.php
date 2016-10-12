@@ -442,4 +442,133 @@ class Coordinator extends MX_Controller {
 
 		loadTemplateSafelyByGroup("coordenador",'program/coordinator_course_students', $data);
 	}
+
+	
+    public function evaluationsReports(){
+
+        $session = getSession();
+        $user = $session->getUserData();
+        $coordinatorId = $user->getId();
+        
+        $this->load->model("program/program_model");
+        $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
+
+        $data = array(
+            'programs' => $programs
+        );
+
+        loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "coordinator/evaluation_reports", $data);
+        
+    }
+
+    public function programEvaluationsReport($programId){
+
+        $this->load->model("program/program_model");
+        
+        // Get evaluations periods
+        $evaluationPeriods = $this->getEvaluationPeriods($programId);
+	    $program = $this->program_model->getProgramById($programId);
+        
+        if(!empty($evaluationPeriods)){
+
+        	$lastPeriod = count($evaluationPeriods);
+        	$lastPeriod = $evaluationPeriods[$lastPeriod];
+	   
+		
+			// Get the first year of evaluations
+			$firstPeriod = array_shift($evaluationPeriods); 
+			$firstYearOfEvaluations = array_shift($firstPeriod); 
+
+			$currentYear = getCurrentYear();
+
+		    // Get current period to show to user
+	        $endYearIndex = count($lastPeriod) - 1;
+	        $currentPeriod = $lastPeriod[0]." a ".$lastPeriod[$endYearIndex];
+
+	        $data = array(
+	            'currentPeriod' => $currentPeriod,
+	            'currentYear' =>$currentYear,
+	            'minimumYear' =>$firstYearOfEvaluations,
+	            'program' => $program
+	        );
+	    	
+	    	$data = $this->getProductionsInformationByPeriod($data, $lastPeriod, $programId);
+        }
+        else{
+        	$data = array(
+	            'currentPeriod' => FALSE,
+	            'program' => $program
+	        );
+        }
+
+     	loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "coordinator/program_evaluation_report", $data);
+    }
+
+    public function getProductionsInformationByPeriod($data, $period, $programId){
+
+		// Get productions
+        $this->load->model("program/production_model");
+        $productions = $this->production_model->getProgramsProduction($programId, $period);
+        
+        // Get collaboration indicator
+        $collaborationIndicator = $this->getCollaborationIndicatorByProgram($programId, $productions);
+
+    	$chartData = FALSE;
+	    
+	    $data['collaborationIndicator'] = $collaborationIndicator;
+	    $data['chartData'] = $chartData;
+
+        return $data;
+    }
+
+
+    public function changeReportPeriod(){
+        
+        $this->load->model("program/program_model");
+    	
+    	$startYear = $this->input->post("startYear");
+    	$endYear = $this->input->post("endYear");
+    	
+    	$period = getYearsOfAPeriod($startYear, $endYear);
+
+    	$programId = $this->input->post("programId");
+
+    	$data['startYear'] = $startYear;
+    	$data['endYear'] = $endYear;
+    	$data = $this->getProductionsInformationByPeriod(array(), $period, $programId);
+
+    	$json = json_encode($data);
+    	echo $json;
+    }
+
+
+    private function getCollaborationIndicatorByProgram($programId, $productions){
+        
+        $numberOfTeachers = $this->program_model->countNumberOfTeachersOnProgram($programId);
+        $quantityOfProductions = count($productions);
+
+        $collaborationIndicator = $quantityOfProductions/$numberOfTeachers;
+
+        return $collaborationIndicator;
+    }
+
+    private function getEvaluationPeriods($programId){
+        
+        $evaluations = $this->program_model->getProgramEvaluations($programId);
+
+        $evaluationsPeriods = array();
+        $periods = array();
+        if($evaluations !== FALSE){
+
+	        foreach ($evaluations as $evaluation) {
+	        	$id = $evaluation['id_program_evaluation'];
+	        	$startYear = $evaluation['start_year'];
+	        	$endYear = $evaluation['end_year'];
+	        	$evaluationsPeriods[$id] = getYearsOfAPeriod($startYear, $endYear);
+	        }
+        }
+
+
+    	return $evaluationsPeriods;
+    }
 }

@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
+
 class CapesAvaliation extends MX_Controller {
 
     public function getCapesAvaliationsNews(){
@@ -28,4 +30,5 @@ class CapesAvaliation extends MX_Controller {
         
         redirect('login');
     }
+
 }

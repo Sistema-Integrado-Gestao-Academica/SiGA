@@ -102,3 +102,13 @@ function validateDateInPeriod($date, $startDate, $endDate){
 	}
 	return $validDate;
 }
+
+function getYearsOfAPeriod($startYear, $endYear){
+	
+	$years = array((int) $startYear);
+	for ($year=($startYear + 1); $year <= $endYear; $year++) { 
+		array_push($years, (int) $year);
+	}
+
+	return $years;
+}

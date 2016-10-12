@@ -333,7 +333,7 @@ class Production_model extends CI_Model {
 			}
 			$query .= ")";
 		}else{
-			$query .= " AND c.id_program = {$program} ";
+			$query .= " AND c.id_program = {$programs} ";
 		}
 
 		if(!empty($year)){

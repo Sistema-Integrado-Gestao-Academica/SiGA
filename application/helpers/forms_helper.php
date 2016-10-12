@@ -956,3 +956,38 @@ function searchInStudentList($specificData, $course){
 		echo form_button($searchForStudentBtn);
 	echo "</form>";
 }
+
+function selectYearForm($currentYear, $arraysInputs, $programId = FALSE){
+
+    echo "<div class='row'>";
+        echo "<div class='col-md-6 col-md-offset-3'>";
+            echo "<div class='input-group'>";
+            	if(!empty($arraysInputs)){
+            		foreach ($arraysInputs as $formInput) {
+                		echo form_input($formInput);
+            		}
+            	}
+
+                if($programId){	
+	            	$hidden = array(
+	            		'id' => "program_id",
+	            		'name' => "program_id",
+	            		'type' => 'hidden',
+	            		'value' => $programId
+	            	);
+                	echo form_input($hidden);
+                }
+                echo "<span class='input-group-btn'>";
+                echo form_button(array(
+                    "name" => "load_graphic_btn",
+                    "id" => "load_graphic_btn",
+                    "class" => "btn btn-success",
+                    "content" => "<i class='fa fa-refresh'></i> Atualizar gráfico",
+                    "type" => "button"
+                ));
+
+                echo "</span>";
+            echo "</div>";
+        echo "</div>";
+    echo "</div>";
+}
