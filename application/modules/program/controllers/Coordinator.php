@@ -481,12 +481,7 @@ class Coordinator extends MX_Controller {
 
 			$currentYear = getCurrentYear();
 
-		    // Get current period to show to user
-	        $endYearIndex = count($lastPeriod) - 1;
-	        $currentPeriod = $lastPeriod[0]." a ".$lastPeriod[$endYearIndex];
-
 	        $data = array(
-	            'currentPeriod' => $currentPeriod,
 	            'currentYear' =>$currentYear,
 	            'minimumYear' =>$firstYearOfEvaluations,
 	            'program' => $program
@@ -496,7 +491,7 @@ class Coordinator extends MX_Controller {
         }
         else{
         	$data = array(
-	            'currentPeriod' => FALSE,
+	            'currentYear' => FALSE,
 	            'program' => $program
 	        );
         }
@@ -511,18 +506,19 @@ class Coordinator extends MX_Controller {
         $productions = $this->production_model->getProgramsProduction($programId, $period);
         
         // Get collaboration indicator
-        $collaborationIndicator = $this->getCollaborationIndicatorByProgram($programId, $productions);
+        $collaborationIndicators = $this->getCollaborationIndicatorByProgram($programId, $period, $productions);
 
-    	$chartData = FALSE;
+        // Get chart information
+    	$chartData = $this->assembleChartData($productions, $period);
 	    
-	    $data['collaborationIndicator'] = $collaborationIndicator;
+	    $data['collaborationIndicators'] = $collaborationIndicators;
 	    $data['chartData'] = $chartData;
 
         return $data;
     }
 
 
-    public function changeReportPeriod(){
+    public function changeChart(){
         
         $this->load->model("program/program_model");
     	
@@ -533,8 +529,6 @@ class Coordinator extends MX_Controller {
 
     	$programId = $this->input->post("programId");
 
-    	$data['startYear'] = $startYear;
-    	$data['endYear'] = $endYear;
     	$data = $this->getProductionsInformationByPeriod(array(), $period, $programId);
 
     	$json = json_encode($data);
@@ -542,14 +536,28 @@ class Coordinator extends MX_Controller {
     }
 
 
-    private function getCollaborationIndicatorByProgram($programId, $productions){
+    public function changeCollaborationTable(){
+
+    	$collaborationIndicators = $this->input->post("collaborationIndicators");
+
+    	echo collaborationIndicatorTable($collaborationIndicators);
+    }
+
+
+    private function getCollaborationIndicatorByProgram($programId, $period, $productions){
         
         $numberOfTeachers = $this->program_model->countNumberOfTeachersOnProgram($programId);
-        $quantityOfProductions = count($productions);
 
-        $collaborationIndicator = $quantityOfProductions/$numberOfTeachers;
+        $filteredProductions = $this->countProductionsByYear($productions, $period);
+        $collaborationIndicators = array();
+        
+        if(!empty($filteredProductions)){
+        	foreach ($filteredProductions as $year => $pontuation) {
+        		$collaborationIndicators[$year] = $pontuation/$numberOfTeachers;
+        	}
+        }
 
-        return $collaborationIndicator;
+        return $collaborationIndicators;
     }
 
     private function getEvaluationPeriods($programId){
@@ -571,4 +579,113 @@ class Coordinator extends MX_Controller {
 
     	return $evaluationsPeriods;
     }
+
+    private function assembleChartData($productions, $period){
+
+
+        $columns = array();
+
+        // Put year of period on X axis
+        $xaxis = array("x");
+        if(!empty($period)){
+        	foreach ($period as $year) {
+        		$xaxis[] = (string) $year;
+        	}
+        }
+
+        $pontuationOfProductionsByYear = $this->countProductionsByYear($productions, $period);
+
+        $points = array("Pontuações");
+        foreach ($pontuationOfProductionsByYear as $year => $pontuation) {
+            $points[] = $pontuation;
+        }
+
+
+        $columns[] = $xaxis;
+        $columns[] = $points;
+
+        $chartData = array(
+        	'x' => 'x',
+            'columns' => $columns
+        );
+
+        $chartData = json_encode($chartData);
+
+        return $chartData;
+    }
+
+    private function countProductionsByYear($productions, $period){
+        
+        $filteredProductions = array();
+
+        // Initializing year productions with zero
+        if(!empty($period)){
+        	foreach ($period as $year) {
+        		$filteredProductions[$year] = 0;
+        	}
+        }
+		if(!empty($productions)){
+		    foreach ($productions as $production) {
+		        $productionYear = $production['year'];
+
+		        if($productionYear !== NULL){
+		        	$inArray = in_array($productionYear, $period);
+		        	$pontuation = $this->getProductionPontuation($production['qualis']);
+		            $filteredProductions[$productionYear] += $pontuation;
+		        }
+		    }
+		}
+
+        return $filteredProductions;
+    }
+
+
+    /* Get the pontuation of a year based on qualis
+		A1 - 100; A2 - 85; B1 - 70; B2 - 55; B3 - 40; B4 - 25; B5 - 10;	C - 0
+	*/
+    private function getProductionPontuation($qualis){
+    	
+    	if($qualis !== NULL){
+
+    		switch ($qualis) {
+    			case 'A1':
+    				$pontuation = 100;
+    				break;
+    			case 'A2':
+    				$pontuation = 85;
+    				break;
+
+				case 'B1':
+    				$pontuation = 70;
+					break;
+
+				case 'B2':
+    				$pontuation = 55;
+    				break;
+
+    			case 'B3':
+    				$pontuation = 40;
+    				break;
+
+    			case 'B4':
+    				$pontuation = 25;
+    				break;
+
+    			case 'B5':
+    				$pontuation = 10;
+    				break;
+
+    			default:
+    				$pontuation = 0;
+    				break;
+    		}
+
+    	}
+    	else{
+    		$pontuation = 0;
+    	}
+
+    	return $pontuation;
+    }
+
 }

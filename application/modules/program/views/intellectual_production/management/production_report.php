@@ -28,22 +28,9 @@
 <br><br>
 <?php 
 
-$formInput = array(
-    "name" => "report_year",
-    "id" => "report_year",
-    "type" => "number",
-    "placeholder" => "Informe o ano para gerar o relatório",
-    "class" => "form-control",
-    "step" => 1,
-    "max" => $currentYear,
-    "min" => 2000 // Year 2000 at min
-);
-    echo "<div class='row text-center'>";
-        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um ano para filtrar os resultados</h4>";
-    echo "</div>";
-    
-    selectYearForm($currentYear, array($formInput)); ?>
+    selectYearForm($currentYear); ?>
 <br><br>
+
 
 <div id="chart_data" style="display: none;">
     <?= $chartData ?>

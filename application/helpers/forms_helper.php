@@ -957,27 +957,28 @@ function searchInStudentList($specificData, $course){
 	echo "</form>";
 }
 
-function selectYearForm($currentYear, $arraysInputs, $programId = FALSE){
+function selectYearForm($currentYear){
+
+	$formInput = array(
+	    "name" => "report_year",
+	    "id" => "report_year",
+	    "type" => "number",
+	    "placeholder" => "Informe o ano para gerar o relatório",
+	    "class" => "form-control",
+	    "step" => 1,
+	    "max" => $currentYear,
+	    "min" => 2000 // Year 2000 at min
+	);
+
+    echo "<div class='row text-center'>";
+        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um ano para filtrar os resultados</h4>";
+    echo "</div>";
 
     echo "<div class='row'>";
         echo "<div class='col-md-6 col-md-offset-3'>";
             echo "<div class='input-group'>";
-            	if(!empty($arraysInputs)){
-            		foreach ($arraysInputs as $formInput) {
-                		echo form_input($formInput);
-            		}
-            	}
-
-                if($programId){	
-	            	$hidden = array(
-	            		'id' => "program_id",
-	            		'name' => "program_id",
-	            		'type' => 'hidden',
-	            		'value' => $programId
-	            	);
-                	echo form_input($hidden);
-                }
-                echo "<span class='input-group-btn'>";
+                echo form_input($formInput);
+               	echo "<span class='input-group-btn'>";
                 echo form_button(array(
                     "name" => "load_graphic_btn",
                     "id" => "load_graphic_btn",
@@ -989,5 +990,66 @@ function selectYearForm($currentYear, $arraysInputs, $programId = FALSE){
                 echo "</span>";
             echo "</div>";
         echo "</div>";
+    echo "</div>";
+}
+
+function selectPeriodForm($currentYear, $programId, $minimumYear){
+
+	$startYearInput = array(
+        "name" => "start_year_period",
+        "id" => "start_year_period",
+        "type" => "number",
+        "placeholder" => "Ano de início",
+        "class" => "form-control",
+        "step" => 1,
+        "max" => $currentYear,
+        "min" => $minimumYear 
+    );
+
+    $endYearInput = array(
+        "name" => "end_year_period",
+        "id" => "end_year_period",
+        "type" => "number",
+        "placeholder" => "Ano de fim",
+        "class" => "form-control",
+        "step" => 1,
+        "max" => $currentYear,
+        "min" => $minimumYear 
+    );
+
+	$hidden = array(
+		'id' => "program_id",
+		'name' => "program_id",
+		'type' => 'hidden',
+		'value' => $programId
+	);
+        	
+	echo "<div class='row'>";
+
+	    echo "<div class='input-group'>";
+	        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um período para filtrar os resultados</h4>";
+			echo "<div class='col-md-4'>";
+	        	echo form_input($startYearInput);
+			echo "</div>";
+			echo "<div class='col-md-4'>";
+	            echo form_input($endYearInput);               	
+			echo "</div>";
+
+			echo form_input($hidden);
+
+			echo "<div class='col-md-4'>";
+		   		echo "<span class='input-group-btn'>";
+				    echo form_button(array(
+				        "name" => "load_graphic_btn",
+				        "id" => "load_graphic_btn",
+				        "class" => "btn btn-success",
+				        "content" => "<i class='fa fa-refresh'></i> Atualizar gráfico",
+				        "type" => "button"
+				    ));
+		    	echo "</span>";
+			echo "</div>";
+
+		echo "</div>";
+
     echo "</div>";
 }

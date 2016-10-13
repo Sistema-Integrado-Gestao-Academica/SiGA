@@ -1990,3 +1990,32 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 	
 	}	
 }
+
+function collaborationIndicatorTable($collaborationIndicators){
+
+	if(!empty($collaborationIndicators)){ 
+
+		buildTableDeclaration();
+
+		$headers = array("Ano", "Indicador de Colaboração");
+
+		buildTableHeaders($headers);
+
+    	foreach($collaborationIndicators as $year => $collaborationIndicator){
+
+			echo "<tr>";
+	    		
+	    		echo "<td>";
+	    		echo $year;
+	    		echo "</td>";
+
+	    		echo "<td>";
+	    		echo $collaborationIndicator;
+	    		echo "</td>";
+
+    		echo "</tr>";
+    	}
+
+    	buildTableEndDeclaration();
+	}
+}
