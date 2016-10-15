@@ -957,42 +957,6 @@ function searchInStudentList($specificData, $course){
 	echo "</form>";
 }
 
-function selectYearForm($currentYear){
-
-	$formInput = array(
-	    "name" => "report_year",
-	    "id" => "report_year",
-	    "type" => "number",
-	    "placeholder" => "Informe o ano para gerar o relatório",
-	    "class" => "form-control",
-	    "step" => 1,
-	    "max" => $currentYear,
-	    "min" => 2000 // Year 2000 at min
-	);
-
-    echo "<div class='row text-center'>";
-        echo "<h4><i class='fa fa-filter'></i><i class='fa fa-calendar'></i> Escolha um ano para filtrar os resultados</h4>";
-    echo "</div>";
-
-    echo "<div class='row'>";
-        echo "<div class='col-md-6 col-md-offset-3'>";
-            echo "<div class='input-group'>";
-                echo form_input($formInput);
-               	echo "<span class='input-group-btn'>";
-                echo form_button(array(
-                    "name" => "load_graphic_btn",
-                    "id" => "load_graphic_btn",
-                    "class" => "btn btn-success",
-                    "content" => "<i class='fa fa-refresh'></i> Atualizar gráfico",
-                    "type" => "button"
-                ));
-
-                echo "</span>";
-            echo "</div>";
-        echo "</div>";
-    echo "</div>";
-}
-
 function selectPeriodForm($currentYear, $programId, $minimumYear){
 
 	$startYearInput = array(
@@ -1003,7 +967,7 @@ function selectPeriodForm($currentYear, $programId, $minimumYear){
         "class" => "form-control",
         "step" => 1,
         "max" => $currentYear,
-        "min" => $minimumYear 
+        "min" => $minimumYear
     );
 
     $endYearInput = array(
@@ -1014,7 +978,7 @@ function selectPeriodForm($currentYear, $programId, $minimumYear){
         "class" => "form-control",
         "step" => 1,
         "max" => $currentYear,
-        "min" => $minimumYear 
+        "min" => $minimumYear
     );
 
 	$hidden = array(
@@ -1023,7 +987,7 @@ function selectPeriodForm($currentYear, $programId, $minimumYear){
 		'type' => 'hidden',
 		'value' => $programId
 	);
-        	
+
 	echo "<div class='row'>";
 
 	    echo "<div class='input-group'>";
@@ -1032,7 +996,7 @@ function selectPeriodForm($currentYear, $programId, $minimumYear){
 	        	echo form_input($startYearInput);
 			echo "</div>";
 			echo "<div class='col-md-4'>";
-	            echo form_input($endYearInput);               	
+	            echo form_input($endYearInput);
 			echo "</div>";
 
 			echo form_input($hidden);

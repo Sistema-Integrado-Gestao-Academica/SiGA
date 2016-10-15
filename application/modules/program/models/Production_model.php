@@ -308,55 +308,64 @@ class Production_model extends CI_Model {
 
 	public function getProgramsProduction($programs, $year=""){
 
-		$query = "
-			SELECT DISTINCT pi.*
-			FROM intellectual_production pi, teacher_course tc, course_student cs, course c, production_coauthor ca
-			WHERE
-			((
-			    (pi.author = tc.id_user OR (ca.production_id = pi.id AND ca.user_id = tc.id_user) )
-			    AND tc.id_course = c.id_course
-			)
-			OR
-			(
-			    (pi.author = cs.id_user OR (ca.production_id = pi.id AND ca.user_id = cs.id_user) )
-			    AND cs.id_course = c.id_course
-			))
-		";
+		if(!empty($programs)){
+			$query = "
+				SELECT DISTINCT pi.*
+				FROM intellectual_production pi, teacher_course tc, course_student cs, course c, production_coauthor ca
+				WHERE
+				((
+				    (pi.author = tc.id_user OR (ca.production_id = pi.id AND ca.user_id = tc.id_user) )
+				    AND tc.id_course = c.id_course
+				)
+				OR
+				(
+				    (pi.author = cs.id_user OR (ca.production_id = pi.id AND ca.user_id = cs.id_user) )
+				    AND cs.id_course = c.id_course
+				))
+			";
 
-		if(is_array($programs)){
-			$first = TRUE;
-			foreach ($programs as $program) {
-				$query .= $first
-						? "AND (c.id_program = {$program['id_program']}"
-						: " OR c.id_program = {$program['id_program']}";
-				$first = FALSE;
-			}
-			$query .= ")";
-		}else{
-			$query .= " AND c.id_program = {$programs} ";
-		}
+			if(is_array($programs)){
 
-		if(!empty($year)){
-
-			if(is_array($year)){
-				$first = TRUE;
-				foreach ($year as $currentYear) {
-					$query .= $first
-							? "AND (pi.year = {$currentYear}"
-							: " OR pi.year = {$currentYear}";
-					$first = FALSE;
+				if(isset($programs['id_program'])){
+					$query .= " AND c.id_program = {$programs['id_program']} ";
+				}else{
+					$first = TRUE;
+					foreach ($programs as $program) {
+						$query .= $first
+								? "AND (c.id_program = {$program['id_program']}"
+								: " OR c.id_program = {$program['id_program']}";
+						$first = FALSE;
+					}
+					$query .= ")";
 				}
-				$query .= ")";
 			}else{
-				$query .= " AND pi.year = {$year} ";
+				$query .= " AND c.id_program = {$programs} ";
 			}
+
+			if(!empty($year)){
+
+				if(is_array($year)){
+					$first = TRUE;
+					foreach ($year as $currentYear) {
+						$query .= $first
+								? "AND (pi.year = {$currentYear}"
+								: " OR pi.year = {$currentYear}";
+						$first = FALSE;
+					}
+					$query .= ")";
+				}else{
+					$query .= " AND pi.year = {$year} ";
+				}
+			}
+
+			$query .= " ORDER BY pi.year ASC";
+
+			$productions = $this->db->query($query)->result_array();
+
+			$productions = checkArray($productions);
+		}else{
+			$productions = array();
 		}
-
-		$query .= " ORDER BY pi.year ASC";
-
-		$productions = $this->db->query($query)->result_array();
-
-		$productions = checkArray($productions);
 
 		return $productions;
 	}

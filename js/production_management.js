@@ -1,33 +1,37 @@
+var charts = [];
+
 $(document).ready(function(){
 
-    var chartData = JSON.parse( $("#chart_data").text() );
+    var chartsData = JSON.parse( $("#chart_data").text() );
 
-    var chart = c3.generate({
-        bindto: '#chart',
-        data: chartData
-    });
-
-    $("#load_graphic_btn").click(function(event){
-
-        var year = $("#report_year").val();
-
-        if(!year){
-            alert("Informe um ano para a pesquisa.");
-            event.preventDefault();
-        }else{
-            var siteUrl = $("#site_url").val();
-            var urlToPost = siteUrl + "/program/productionManagement/changeReportYear";
-
-            $.post(
-                urlToPost,
-                {year: year},
-                function(data){
-                    var chartNewData = JSON.parse(data);
-                    chart.load({
-                        columns: chartNewData.columns
-                    });
-                }
-            );
-        }
-    });
+    for(var program in chartsData){
+        charts[program] = c3.generate({
+            bindto: '#program_' + program + '_chart',
+            data: chartsData[program]
+        });
+    }
 });
+
+function updateProgramProductionsChart(event, program){
+
+    var year = $("#report_year_" + program).val();
+
+    if(!year){
+        alert("Informe um ano para a pesquisa.");
+        event.preventDefault();
+    }else{
+        var siteUrl = $("#site_url").val();
+        var urlToPost = siteUrl + "/program/productionManagement/changeReportYear";
+
+        $.post(
+            urlToPost,
+            {year: year, program: program},
+            function(data){
+                var chartNewData = JSON.parse(data);
+                charts[program].load({
+                    columns: chartNewData.columns
+                });
+            }
+        );
+    }
+}

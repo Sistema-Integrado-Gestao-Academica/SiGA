@@ -20,37 +20,42 @@ class ProductionManagement extends MX_Controller {
 
         $currentYear = getCurrentYear();
 
-        $productions = $this->production_model->getProgramsProduction($programs, $currentYear);
-
-        $chartData = $this->assembleChartData($productions, $currentYear);
+        $programsChartData = array();
+        if(!empty($programs)){
+            // Create the chart data to all coordinator programs
+            foreach ($programs as $program) {
+                $productions = $this->production_model->getProgramsProduction($program, $currentYear);
+                $chartData = $this->assembleChartData($productions, $currentYear, $json=FALSE);
+                $programsChartData[$program['id_program']] = $chartData;
+            }
+        }
 
         $data = array(
             'programs' => $programs,
             'user' => $user,
-            'chartData' => $chartData,
+            'chartData' => json_encode($programsChartData), // Send it to the view as json
             'currentYear' => $currentYear
         );
 
         loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "program/intellectual_production/management/production_report", $data);
     }
 
+    // Receive ajax request
     public function changeReportYear(){
         $year = $this->input->post("year");
-
-        $user = getSession()->getUserData();
-        $coordinatorId = $user->getId();
+        $programId = $this->input->post("program");
 
         $this->load->model("program/program_model");
-        $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
+        $program = $this->program_model->getProgramById($programId);
 
-        $productions = $this->production_model->getProgramsProduction($programs, $year);
+        $productions = $this->production_model->getProgramsProduction($program, $year);
 
         $chartData = $this->assembleChartData($productions, $year);
 
         echo $chartData;
     }
 
-    private function assembleChartData($productions, $year){
+    private function assembleChartData($productions, $year, $json=TRUE){
 
         $productions = $this->filterProductionsByQualis($productions);
 
@@ -73,7 +78,7 @@ class ProductionManagement extends MX_Controller {
             'types' => $types
         );
 
-        $chartData = json_encode($chartData);
+        $chartData = $json ? json_encode($chartData) : $chartData;
 
         return $chartData;
     }
