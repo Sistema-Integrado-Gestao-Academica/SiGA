@@ -318,4 +318,16 @@ class Program_model extends CI_Model {
 	
 		return $foundArea;
 	}
+
+	public function countNumberOfTeachersOnProgram($programId){
+
+		$this->db->select("*");
+		$this->db->from('teacher_course');
+		$this->db->join('course', 'teacher_course.id_course = course.id_course');
+		$this->db->where('course.id_program', $programId);
+
+		$numberOfTeachers = $this->db->count_all_results();
+		
+		return $numberOfTeachers;
+	}
 }

@@ -224,6 +224,12 @@ $route['notify_users'] = 'notification/userNotification/index';
 $route['notify_specific_user'] = 'notification/userNotification/notifySpecificUser';
 $route['notify_group_of_users'] = 'notification/userNotification/notifyGroupOfUsers';
 
+/**
+ * Coordinator routes
+*/
+$route['production_report'] = 'program/productionManagement/index';
+$route['evaluation_report'] = 'program/coordinator/evaluationsReports';
+
 
 /*
  * Test report routes

@@ -5,21 +5,21 @@ require_once(MODULESPATH."program/domain/intellectual_production/Intellectualpro
 class Production_model extends CI_Model {
 
 	public function createProduction($production){
-		
+
 		$production = $this->convertToArray($production);
 
 		$success = $this->db->insert('intellectual_production', $production);
-		
+
 		return $success;
 	}
 
 	public function updateProduction($production){
-		
+
 		$this->db->where('id', $production->getId());
 		$data = $this->convertToArray($production);
-		
+
 		$updated = $this->db->update('intellectual_production', $data);
-		
+
 		return $updated;
 	}
 
@@ -68,15 +68,15 @@ class Production_model extends CI_Model {
 		$foundProduction = $this->db->get()->result_array();
 
 		$foundProduction = checkArray($foundProduction);
-	
+
 		return $foundProduction;
 	}
 
 	public function deleteProduction($id) {
-		
+
 		$this->db->where('id', $id);
 		$deleted = $this->db->delete('intellectual_production');
-		
+
 		return $deleted;
 	}
 
@@ -137,7 +137,7 @@ class Production_model extends CI_Model {
 	}
 
 	public function getLastProduction($production){
-		
+
 		$query = $this->db->query("SELECT MAX(id) FROM intellectual_production");
 		$row = $query->row_array();
 	    $lastId = $row["MAX(id)"];
@@ -158,7 +158,7 @@ class Production_model extends CI_Model {
 		$this->db->where("user_id", $userId);
 		$productionIds = $this->db->get()->result_array();
 		$productionIds = checkArray($productionIds);
-		
+
 		if($productionIds !== FALSE){
 			foreach ($productionIds as $productionId) {
 				$production = $this->getProduction($productionId['production_id']);
@@ -174,7 +174,7 @@ class Production_model extends CI_Model {
 
 		$id = NULL;
 
-		$author_id = $author->getId(); 
+		$author_id = $author->getId();
 		if($author_id !== FALSE){
 			$id = $author_id;
 		}
@@ -188,7 +188,7 @@ class Production_model extends CI_Model {
         );
 
 		$success = $this->db->insert('production_coauthor', $data);
-		
+
 		return $success;
 	}
 
@@ -198,7 +198,7 @@ class Production_model extends CI_Model {
 		$this->db->from("production_coauthor");
 		$this->db->where("production_id", $production);
 		$this->db->where("author_name", $name);
-		
+
 		$author = $this->db->get()->result_array();
 
 		$author = checkArray($author);
@@ -213,7 +213,7 @@ class Production_model extends CI_Model {
 		$this->db->from("production_coauthor");
 		$this->db->where("production_id", $production);
 		$this->db->where("order", $order);
-		
+
 		$author = $this->db->get()->result_array();
 
 		$author = checkArray($author);
@@ -222,12 +222,12 @@ class Production_model extends CI_Model {
 	}
 
 	public function getAuthorsByProductionId($productionId){
-		
+
 		$this->db->select("author_name, cpf, order");
 		$this->db->from("production_coauthor");
 		$this->db->order_by("order", "asc");
 		$this->db->where("production_id", $productionId);
-		
+
 		$foundAuthors = $this->db->get()->result_array();
 		$foundAuthors = checkArray($foundAuthors);
 
@@ -240,7 +240,7 @@ class Production_model extends CI_Model {
 			$foundAuthors = array();
 		}
 
-		$authors = $this->getFirstAuthor($productionId);	
+		$authors = $this->getFirstAuthor($productionId);
 		$authors = array_merge($authors, $foundAuthors);
 
 		return $authors;
@@ -253,15 +253,15 @@ class Production_model extends CI_Model {
 
 		$this->load->model("auth/usuarios_model");
 		$user = $this->usuarios_model->getObjectUser($userId);
-		
+
 		$firstAuthor = array(
 			'author_name' => $user->getName(),
 			'cpf' => $user->getCpf(),
 			'order' => 1,
 			'first_author' => TRUE
-		); 
+		);
 
-		$authors = array(); 
+		$authors = array();
 		array_push($authors, $firstAuthor);
 
 		return $authors;
@@ -271,16 +271,16 @@ class Production_model extends CI_Model {
 
 		$this->db->where('production_id', $productionId);
 		$this->db->where('order', $order);
-		
+
 		$updated = $this->db->update('production_coauthor', $data);
-		
+
 		return $updated;
 	}
 
 	public function deleteCoauthor($productionId, $order){
 
 		$this->db->where("production_id", $productionId);
-		$this->db->where("order", $order);		
+		$this->db->where("order", $order);
 		$deleted = $this->db->delete('production_coauthor');
 
 		return $deleted;
@@ -295,7 +295,7 @@ class Production_model extends CI_Model {
 
 		$foundOrder = $this->db->get()->result_array();
 		$foundOrder = checkArray($foundOrder);
-		
+
 		if($foundOrder !== FALSE){
 			$exists = TRUE;
 		}
@@ -304,5 +304,69 @@ class Production_model extends CI_Model {
 		}
 
 		return $exists;
+	}
+
+	public function getProgramsProduction($programs, $year=""){
+
+		if(!empty($programs)){
+			$query = "
+				SELECT DISTINCT pi.*
+				FROM intellectual_production pi, teacher_course tc, course_student cs, course c, production_coauthor ca
+				WHERE
+				((
+				    (pi.author = tc.id_user OR (ca.production_id = pi.id AND ca.user_id = tc.id_user) )
+				    AND tc.id_course = c.id_course
+				)
+				OR
+				(
+				    (pi.author = cs.id_user OR (ca.production_id = pi.id AND ca.user_id = cs.id_user) )
+				    AND cs.id_course = c.id_course
+				))
+			";
+
+			if(is_array($programs)){
+
+				if(isset($programs['id_program'])){
+					$query .= " AND c.id_program = {$programs['id_program']} ";
+				}else{
+					$first = TRUE;
+					foreach ($programs as $program) {
+						$query .= $first
+								? "AND (c.id_program = {$program['id_program']}"
+								: " OR c.id_program = {$program['id_program']}";
+						$first = FALSE;
+					}
+					$query .= ")";
+				}
+			}else{
+				$query .= " AND c.id_program = {$programs} ";
+			}
+
+			if(!empty($year)){
+
+				if(is_array($year)){
+					$first = TRUE;
+					foreach ($year as $currentYear) {
+						$query .= $first
+								? "AND (pi.year = {$currentYear}"
+								: " OR pi.year = {$currentYear}";
+						$first = FALSE;
+					}
+					$query .= ")";
+				}else{
+					$query .= " AND pi.year = {$year} ";
+				}
+			}
+
+			$query .= " ORDER BY pi.year ASC";
+
+			$productions = $this->db->query($query)->result_array();
+
+			$productions = checkArray($productions);
+		}else{
+			$productions = array();
+		}
+
+		return $productions;
 	}
 }
