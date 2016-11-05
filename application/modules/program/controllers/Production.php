@@ -251,6 +251,7 @@ class Production extends MX_Controller {
 		$this->load->library("form_validation");
 
 		$this->form_validation->set_rules("title", "Título da produção", "required|trim");
+		$this->form_validation->set_rules("projects", "Projeto relacionado", "required");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$valid = $this->form_validation->run();
 

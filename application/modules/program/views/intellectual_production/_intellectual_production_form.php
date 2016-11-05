@@ -29,7 +29,7 @@
 
 		<div class="form-group">
 			<?= form_label("Projeto relacionado", "project") ?>
-			<?= form_dropdown("projects", $projects, $projectValue, ['class' => "form-control", 'id' => "projects"]) ?>
+			<?= form_dropdown("projects", $projects, $projectValue, ['class' => "form-control", 'id' => "projects", "required" => "required"]) ?>
 
 		</div>
 
