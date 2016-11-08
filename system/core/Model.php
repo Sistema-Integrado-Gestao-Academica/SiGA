@@ -77,7 +77,7 @@ class CI_Model {
 		return get_instance()->$key;
 	}
 
-	protected function get($attr, $value = FALSE, $unique = TRUE, $like=FALSE, $otherTable = FALSE){
+	protected function get($attr=FALSE, $value = FALSE, $unique = TRUE, $like=FALSE, $otherTable = FALSE){
 
         if($otherTable !== FALSE){
             $table = $otherTable;
@@ -87,6 +87,8 @@ class CI_Model {
 
         if(is_array($attr)){
             $foundData = $this->db->get_where($table, $attr);
+        }elseif($attr === FALSE){
+            $foundData = $this->db->get($table);
         }else{
             if($like){
                 $unique = FALSE;

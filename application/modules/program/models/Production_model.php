@@ -162,7 +162,9 @@ class Production_model extends CI_Model {
 		if($productionIds !== FALSE){
 			foreach ($productionIds as $productionId) {
 				$production = $this->getProduction($productionId['production_id']);
-				array_push($productions, $production[0]);
+				if ($productions !== FALSE){
+					array_push($productions, $production[0]);
+				}
 			}
 		}
 
@@ -311,16 +313,26 @@ class Production_model extends CI_Model {
 		if(!empty($programs)){
 			$query = "
 				SELECT DISTINCT pi.*
-				FROM intellectual_production pi, teacher_course tc, course_student cs, course c, production_coauthor ca
+				FROM intellectual_production pi, teacher_course tc, course_student cs, course c
 				WHERE
 				((
-				    (pi.author = tc.id_user OR (ca.production_id = pi.id AND ca.user_id = tc.id_user) )
-				    AND tc.id_course = c.id_course
+					(tc.id_course = c.id_course) 
+                 	AND 
+                 	(
+                     (pi.author = tc.id_user) 
+                     	OR 
+                      (pi.id IN (SELECT production_id FROM production_coauthor ca, teacher_course tc WHERE ca.user_id = tc.id_user)) 
+                    )
 				)
 				OR
 				(
-				    (pi.author = cs.id_user OR (ca.production_id = pi.id AND ca.user_id = cs.id_user) )
-				    AND cs.id_course = c.id_course
+					(cs.id_course = c.id_course) 
+                 	AND 
+                 	(
+                     (pi.author = cs.id_user) 
+                     	OR 
+                      (pi.id IN (SELECT production_id FROM production_coauthor ca, course_student cs WHERE ca.user_id = cs.id_user)) 
+                    )
 				))
 			";
 
