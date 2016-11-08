@@ -35,8 +35,8 @@ function convertDateToDateTime($date){
 function validateDate($date){
 
 	$date = date_parse_from_format("d/m/Y", $date);
-	$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE 
-				   && $date["day"] !== FALSE && $date["error_count"] === 0 
+	$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE
+				   && $date["day"] !== FALSE && $date["error_count"] === 0
 				   && $date["warning_count"] === 0;
 
 	if(!$dateIsValid){
@@ -54,7 +54,7 @@ function formatDateToDateTime($date){
 
 	$strDay = (string) $day;
 	$strMonth = (string) $month;
-	
+
 	if(strlen($strDay) === 1){
 		$day = "0".$day;
 	}
@@ -88,7 +88,7 @@ function convertDateTimeToDateBR($date){
 		$date = new DateTime($date);
 		$date = $date->format("d/m/Y");
 	}
-	
+
 	return $date;
 }
 
@@ -104,10 +104,10 @@ function validateDateInPeriod($date, $startDate, $endDate){
 }
 
 function getYearsOfAPeriod($startYear, $endYear){
-	
+
 	$years = array((int) $startYear);
-	for ($year=($startYear + 1); $year <= $endYear; $year++) { 
-		array_push($years, (int) $year);
+	for ($year=($startYear + 1); $year <= $endYear; $year++) {
+		$years[] = (int) $year;
 	}
 
 	return $years;

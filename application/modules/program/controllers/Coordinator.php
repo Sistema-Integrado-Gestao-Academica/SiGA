@@ -443,13 +443,13 @@ class Coordinator extends MX_Controller {
 		loadTemplateSafelyByGroup("coordenador",'program/coordinator_course_students', $data);
 	}
 
-	
+
     public function evaluationsReports(){
 
         $session = getSession();
         $user = $session->getUserData();
         $coordinatorId = $user->getId();
-        
+
         $this->load->model("program/program_model");
         $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 
@@ -458,29 +458,28 @@ class Coordinator extends MX_Controller {
         );
 
         loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "coordinator/evaluation_reports", $data);
-        
+
     }
 
     public function programEvaluationsReport($programId){
 
         $this->load->model("program/program_model");
         $this->load->model("program/baseprogram_model");
-        
+
         $basePrograms = $this->baseprogram_model->getBasePrograms();
 
         // Get evaluations periods
         $evaluationPeriods = $this->getEvaluationPeriods($programId);
 	    $program = $this->program_model->getProgramById($programId);
-        
+
         if(!empty($evaluationPeriods)){
 
-        	$lastPeriod = count($evaluationPeriods);
-        	$lastPeriod = $evaluationPeriods[$lastPeriod];
-	   
-		
+        	// Get the last evaluation
+        	$lastPeriod = end($evaluationPeriods);
+
 			// Get the first year of evaluations
-			$firstPeriod = array_shift($evaluationPeriods); 
-			$firstYearOfEvaluations = array_shift($firstPeriod); 
+			$firstPeriod = array_shift($evaluationPeriods);
+			$firstYearOfEvaluations = array_shift($firstPeriod);
 
 			$currentYear = getCurrentYear();
 
@@ -490,13 +489,14 @@ class Coordinator extends MX_Controller {
 	            'program' => $program,
         		'basePrograms' => $basePrograms
 	        );
-	    	
+
 	    	$data = $this->getProductionsInformationByPeriod($data, $lastPeriod, $programId);
         }
         else{
         	$data = array(
 	            'currentYear' => FALSE,
-	            'program' => $program
+	            'program' => $program,
+	            'basePrograms' => FALSE
 	        );
         }
 
@@ -508,13 +508,13 @@ class Coordinator extends MX_Controller {
 		// Get productions
         $this->load->model("program/production_model");
         $productions = $this->production_model->getProgramsProduction($programId, $period);
-        
+
         // Get collaboration indicator
         $collaborationIndicators = $this->getCollaborationIndicatorByProgram($programId, $period);
 
         // Get chart information
     	$chartData = $this->assembleChartData($productions, $period);
-	    
+
 	    $data['collaborationIndicators'] = $collaborationIndicators;
 	    $data['chartData'] = $chartData;
 
@@ -523,12 +523,12 @@ class Coordinator extends MX_Controller {
 
 
     public function changeChart(){
-        
+
         $this->load->model("program/program_model");
-    	
+
     	$startYear = $this->input->post("startYear");
     	$endYear = $this->input->post("endYear");
-    	
+
     	$period = getYearsOfAPeriod($startYear, $endYear);
 
     	$programId = $this->input->post("programId");
@@ -549,7 +549,7 @@ class Coordinator extends MX_Controller {
 
 
     private function getCollaborationIndicatorByProgram($programId, $period){
-        
+
 		// Get productions
         $this->load->model("program/production_model");
         $productions = $this->production_model->getProgramsProduction($programId, $period);
@@ -558,10 +558,14 @@ class Coordinator extends MX_Controller {
 
         $filteredProductions = $this->countProductionsByYear($productions, $period);
         $collaborationIndicators = array();
-        
+
         if(!empty($filteredProductions)){
         	foreach ($filteredProductions as $year => $pontuation) {
-        		$collaborationIndicators[$year] = $pontuation/$numberOfTeachers;
+        		$collaborationIndicators[$year] = array(
+        			'productions_points' => $pontuation,
+        			'teachers' => $numberOfTeachers,
+        			'indicator' => $pontuation / $numberOfTeachers
+        		);
         	}
         }
 
@@ -569,11 +573,10 @@ class Coordinator extends MX_Controller {
     }
 
     private function getEvaluationPeriods($programId){
-        
+
         $evaluations = $this->program_model->getProgramEvaluations($programId);
 
         $evaluationsPeriods = array();
-        $periods = array();
         if($evaluations !== FALSE){
 
 	        foreach ($evaluations as $evaluation) {
@@ -583,7 +586,6 @@ class Coordinator extends MX_Controller {
 	        	$evaluationsPeriods[$id] = getYearsOfAPeriod($startYear, $endYear);
 	        }
         }
-
 
     	return $evaluationsPeriods;
     }
@@ -623,7 +625,7 @@ class Coordinator extends MX_Controller {
     }
 
     private function countProductionsByYear($productions, $period){
-        
+
         $filteredProductions = array();
 
         // Initializing year productions with zero
@@ -652,7 +654,7 @@ class Coordinator extends MX_Controller {
 		A1 - 100; A2 - 85; B1 - 70; B2 - 55; B3 - 40; B4 - 25; B5 - 10;	C - 0
 	*/
     private function getProductionPontuation($qualis){
-    	
+
     	if($qualis !== NULL){
 
     		switch ($qualis) {
