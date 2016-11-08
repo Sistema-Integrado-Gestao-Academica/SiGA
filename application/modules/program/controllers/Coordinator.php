@@ -464,7 +464,10 @@ class Coordinator extends MX_Controller {
     public function programEvaluationsReport($programId){
 
         $this->load->model("program/program_model");
+        $this->load->model("program/baseprogram_model");
         
+        $basePrograms = $this->baseprogram_model->getBasePrograms();
+
         // Get evaluations periods
         $evaluationPeriods = $this->getEvaluationPeriods($programId);
 	    $program = $this->program_model->getProgramById($programId);
@@ -484,7 +487,8 @@ class Coordinator extends MX_Controller {
 	        $data = array(
 	            'currentYear' =>$currentYear,
 	            'minimumYear' =>$firstYearOfEvaluations,
-	            'program' => $program
+	            'program' => $program,
+        		'basePrograms' => $basePrograms
 	        );
 	    	
 	    	$data = $this->getProductionsInformationByPeriod($data, $lastPeriod, $programId);
@@ -506,7 +510,7 @@ class Coordinator extends MX_Controller {
         $productions = $this->production_model->getProgramsProduction($programId, $period);
         
         // Get collaboration indicator
-        $collaborationIndicators = $this->getCollaborationIndicatorByProgram($programId, $period, $productions);
+        $collaborationIndicators = $this->getCollaborationIndicatorByProgram($programId, $period);
 
         // Get chart information
     	$chartData = $this->assembleChartData($productions, $period);
@@ -544,8 +548,12 @@ class Coordinator extends MX_Controller {
     }
 
 
-    private function getCollaborationIndicatorByProgram($programId, $period, $productions){
+    private function getCollaborationIndicatorByProgram($programId, $period){
         
+		// Get productions
+        $this->load->model("program/production_model");
+        $productions = $this->production_model->getProgramsProduction($programId, $period);
+
         $numberOfTeachers = $this->program_model->countNumberOfTeachersOnProgram($programId);
 
         $filteredProductions = $this->countProductionsByYear($productions, $period);

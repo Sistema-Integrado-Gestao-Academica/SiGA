@@ -6,6 +6,9 @@
 
 <h2 class="principal"><i class="fa fa-bar-chart"></i> Gráfico de Pontuação das Produções do <b><?= $program['acronym'] ?></b></h2>
 
+<h4><i class="fa fa-list"></i> Programas base:</h4>
+<?php showBasePrograms($basePrograms); ?>
+
 <?php if ($currentYear != FALSE){
 
     selectPeriodForm($currentYear, $program['id_program'], $minimumYear); 
@@ -40,3 +43,41 @@
     }
 ?>
 
+<?php
+
+function showBasePrograms($programs){
+
+    buildTableDeclaration();
+
+    buildTableHeaders(array(
+        "Programa",
+        "Nota",
+        "Indicador de colaboração",
+    ));
+
+    if(!empty($programs)){
+
+        foreach($programs as $baseProgram){
+
+            echo "<tr>";
+                
+                echo "<td>";
+                echo $baseProgram['name'];
+                echo "</td>";
+
+                echo "<td>";
+                echo $baseProgram['grade'];
+                echo "</td>";
+
+                echo "<td>";
+                echo ($baseProgram['productions'] / $baseProgram['teachers']);
+                echo "</td>";
+
+            echo "</tr>";
+        }
+
+        buildTableEndDeclaration();
+    }
+}
+
+?>
