@@ -1919,7 +1919,7 @@ function displayGuestForEnrollment($guests, $courseId){
 
 function displayStudentsTable($students, $courseId, $studentsIdsInString){
 
-	if($students !== FALSE){ 
+	if($students !== FALSE){
 
 		buildTableDeclaration();
 
@@ -1936,7 +1936,7 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 			echo "<tr>";
 	    		echo "<td>";
 	    			$registration = $student['enrollment'];
-	    			
+
 	    			if($registration !== NULL){
 		    			echo bold("Matrícula atual: ").$registration;
 	    			}else{
@@ -1945,7 +1945,7 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 
 	    			echo "<hr>";
 
-		    		
+
 	    		echo "</td>";
 
 	    		echo "<td>";
@@ -1961,7 +1961,7 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 	    		echo "</td>";
 
 	    		echo "<td>";
-	    		$studentsStatus = $student['status']; 
+	    		$studentsStatus = $student['status'];
 	    		if($studentsStatus != FALSE){
 	    			foreach ($studentsStatus as $status) {
 	    				$label_type = $status['label_type'];
@@ -1983,39 +1983,10 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 
     	buildTableEndDeclaration();
 
- 	} 
+ 	}
  	else{
-	
-		callout("info", "Nenhum aluno matriculado");	
-	
-	}	
-}
 
-function collaborationIndicatorTable($collaborationIndicators){
+		callout("info", "Nenhum aluno matriculado");
 
-	if(!empty($collaborationIndicators)){ 
-
-		buildTableDeclaration();
-
-		$headers = array("Ano", "Indicador de Colaboração");
-
-		buildTableHeaders($headers);
-
-    	foreach($collaborationIndicators as $year => $collaborationIndicator){
-
-			echo "<tr>";
-	    		
-	    		echo "<td>";
-	    		echo $year;
-	    		echo "</td>";
-
-	    		echo "<td>";
-	    		echo $collaborationIndicator;
-	    		echo "</td>";
-
-    		echo "</tr>";
-    	}
-
-    	buildTableEndDeclaration();
 	}
 }
