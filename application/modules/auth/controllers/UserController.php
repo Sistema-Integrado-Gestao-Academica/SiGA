@@ -352,7 +352,7 @@ class UserController extends MX_Controller {
 				if($success){
 					$id = $user->getId();
 					$newPassword = $userWithNewPassword->getPassword();
-					$encryptedPassword = md5($newPassword);
+					$encryptedPassword = $this->usuarios_model->encryptPassword($newPassword);
         			$updated = $this->usuarios_model->updatePassword($id, $encryptedPassword, TRUE); // Saving new temporary password
 					if($updated){
 						$session->showFlashMessage("success", "Email enviado com sucesso.");
@@ -407,8 +407,8 @@ class UserController extends MX_Controller {
 
 		if ($success) {
 
-			$password = md5($this->input->post("password"));
-			$confirmPassword = md5($this->input->post("confirm_password"));
+			$password = $this->usuarios_model->encryptPassword($this->input->post("password"));
+			$confirmPassword = $this->usuarios_model->encryptPassword($this->input->post("confirm_password"));
 
 			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
 			if($isValidPassword){
@@ -475,7 +475,7 @@ class UserController extends MX_Controller {
 		$email = $this->input->post("email");
 		$group = $this->input->post("userGroup");
 		$login = $this->input->post("login");
-		$password = md5($this->input->post("password"));
+		$password =  $this->usuarios_model->encryptPassword($this->input->post("password"));
 
 		$user = array(
 			'name'       => $name,
@@ -687,9 +687,9 @@ class UserController extends MX_Controller {
 		$email = $this->input->post("email");
 		$homePhone = $this->input->post("home_phone");
 		$cellPhone = $this->input->post("cell_phone");
-		$password = md5($this->input->post("password"));
-		$new_password = md5($this->input->post("new_password"));
-		$blank_password = md5("");
+		$password = $this->usuarios_model->encryptPassword($this->input->post("password"));
+		$new_password = $this->usuarios_model->encryptPassword($this->input->post("new_password"));
+		$blank_password = $this->usuarios_model->encryptPassword("");
 
 		$success = $this->validateEmailField($oldEmail, $email);
 
@@ -749,4 +749,6 @@ class UserController extends MX_Controller {
 	function alpha_dash_space($str) {
 		return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
+
+
 }

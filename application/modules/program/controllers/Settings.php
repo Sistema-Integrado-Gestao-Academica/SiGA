@@ -23,11 +23,13 @@ class Settings extends MX_Controller {
 		$id_user = $user->getId();
 		$this->load->module("student/student");
 		$this->student->setStudentsStatus();
+		$this->load->model("auth/usuarios_model");
 
 		$current_user = $this->db->get_where('users', array('id'=>$id_user))->row_array();
 
 		$password = md5($this->input->post('password'));
-		if ($password != $current_user['password']) {
+		$passwordMatches = password_verify($password, $current_user['password']);
+		if (!$passwordMatches) {
 			$session->showFlashMessage("danger", "Senha incorreta");
 			redirect('configuracoes');
 		}
