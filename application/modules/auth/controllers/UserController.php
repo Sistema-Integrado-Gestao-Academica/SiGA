@@ -352,7 +352,7 @@ class UserController extends MX_Controller {
 				if($success){
 					$id = $user->getId();
 					$newPassword = $userWithNewPassword->getPassword();
-					$encryptedPassword = md5($newPassword);
+					$encryptedPassword = $this->usuarios_model->encryptPassword($newPassword);
         			$updated = $this->usuarios_model->updatePassword($id, $encryptedPassword, TRUE); // Saving new temporary password
 					if($updated){
 						$session->showFlashMessage("success", "Email enviado com sucesso.");
@@ -405,16 +405,18 @@ class UserController extends MX_Controller {
 
 		$success = $this->validatePasswordField();
 
+		$session = getSession();
+		$userData = $session->getUserData();
 		if ($success) {
 
-			$password = md5($this->input->post("password"));
-			$confirmPassword = md5($this->input->post("confirm_password"));
+			$password = $this->input->post("password");
+			$confirmPassword = $this->input->post("confirm_password");
 
 			$isValidPassword = $this->verifyIfPasswordsAreEquals($password, $confirmPassword);
+			$password = $this->usuarios_model->encryptPassword($password);
+			$confirmPassword = $this->usuarios_model->encryptPassword($confirmPassword);
 			if($isValidPassword){
 
-				$session = getSession();
-				$userData = $session->getUserData();
 
 				$userId = $userData->getId();
 				$temporaryPassword = FALSE;
@@ -475,7 +477,7 @@ class UserController extends MX_Controller {
 		$email = $this->input->post("email");
 		$group = $this->input->post("userGroup");
 		$login = $this->input->post("login");
-		$password = md5($this->input->post("password"));
+		$password =  $this->usuarios_model->encryptPassword($this->input->post("password"));
 
 		$user = array(
 			'name'       => $name,
@@ -687,9 +689,8 @@ class UserController extends MX_Controller {
 		$email = $this->input->post("email");
 		$homePhone = $this->input->post("home_phone");
 		$cellPhone = $this->input->post("cell_phone");
-		$password = md5($this->input->post("password"));
-		$new_password = md5($this->input->post("new_password"));
-		$blank_password = md5("");
+		$oldPassword = $this->input->post("password");
+		$newPassword = $this->input->post("new_password");
 
 		$success = $this->validateEmailField($oldEmail, $email);
 
@@ -703,12 +704,18 @@ class UserController extends MX_Controller {
 			$user = $this->usuarios_model->getObjectUser($userId);
 			$login = $user->getLogin();
 
-			if ($new_password != $blank_password && $password != $user->getPassword()) {
+			$currentPassword = $user->getPassword();
+			$newPasswordBlank = empty($newPassword);
+			$oldPassword = md5($oldPassword);
+			if (!$newPasswordBlank && !password_verify($oldPassword, $currentPassword)) {
 				$session->showFlashMessage("danger", "Senha atual incorreta");
 				redirect("profile");
 			}
-			else if ($new_password == $blank_password) {
-				$new_password = $user->getPassword();
+			else if ($newPasswordBlank) {
+				$newPassword = $user->getPassword();
+			}
+			else{
+				$newPassword = $this->usuarios_model->encryptPassword($newPassword);
 			}
 
 			if (empty($name)) {
@@ -728,7 +735,7 @@ class UserController extends MX_Controller {
 			}
 
 			try{
-				$user = new User($id, $name, FALSE, $email, $login, $new_password, FALSE, $homePhone, $cellPhone);
+				$user = new User($id, $name, FALSE, $email, $login, $newPassword, FALSE, $homePhone, $cellPhone);
 
 				return $user;
 
@@ -749,4 +756,6 @@ class UserController extends MX_Controller {
 	function alpha_dash_space($str) {
 		return ( ! preg_match("/^([-a-z_ ])+$/i", $str)) ? FALSE : TRUE;
 	}
+
+
 }
