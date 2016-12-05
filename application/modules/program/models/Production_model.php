@@ -140,9 +140,9 @@ class Production_model extends CI_Model {
 
 		$query = $this->db->query("SELECT MAX(id) FROM intellectual_production");
 		$row = $query->row_array();
-	    $lastId = $row["MAX(id)"];
+		$lastId = $row["MAX(id)"];
 
-	    $intellectual_production = $this->getProductionById($lastId);
+		$intellectual_production = $this->getProductionById($lastId);
 
 		if($intellectual_production[0]->getTitle() != $production->getTitle()){
 			$lastId = FALSE;
@@ -181,13 +181,13 @@ class Production_model extends CI_Model {
 			$id = $author_id;
 		}
 
-        $data = array(
-            'production_id' => $productionId,
-            'author_name' => $author->getName(),
-            'cpf' => $author->getCpf(),
-            'order' => $order,
-            'user_id' => $id
-        );
+		$data = array(
+			'production_id' => $productionId,
+			'author_name' => $author->getName(),
+			'cpf' => $author->getCpf(),
+			'order' => $order,
+			'user_id' => $id
+		);
 
 		$success = $this->db->insert('production_coauthor', $data);
 
@@ -316,23 +316,23 @@ class Production_model extends CI_Model {
 				FROM intellectual_production pi, teacher_course tc, course_student cs, course c
 				WHERE
 				((
-					(tc.id_course = c.id_course) 
-                 	AND 
-                 	(
-                     (pi.author = tc.id_user) 
-                     	OR 
-                      (pi.id IN (SELECT production_id FROM production_coauthor ca, teacher_course tc WHERE ca.user_id = tc.id_user)) 
-                    )
+					(tc.id_course = c.id_course)
+					AND
+					(
+					 (pi.author = tc.id_user)
+						OR
+					  (pi.id IN (SELECT production_id FROM production_coauthor ca, teacher_course tc WHERE ca.user_id = tc.id_user))
+					)
 				)
 				OR
 				(
-					(cs.id_course = c.id_course) 
-                 	AND 
-                 	(
-                     (pi.author = cs.id_user) 
-                     	OR 
-                      (pi.id IN (SELECT production_id FROM production_coauthor ca, course_student cs WHERE ca.user_id = cs.id_user)) 
-                    )
+					(cs.id_course = c.id_course)
+					AND
+					(
+					 (pi.author = cs.id_user)
+						OR
+					  (pi.id IN (SELECT production_id FROM production_coauthor ca, course_student cs WHERE ca.user_id = cs.id_user))
+					)
 				))
 			";
 
@@ -380,5 +380,62 @@ class Production_model extends CI_Model {
 		}
 
 		return $productions;
+	}
+
+	public function getProductionsAuthorByCourse($courses, $year="", $students=TRUE, $teachers=TRUE){
+
+		$query = "
+			SELECT DISTINCT u.id, u.name, u.email, u.cpf, u.home_phone, u.cell_phone, c.course_name
+			FROM users u, intellectual_production pi,
+				 teacher_course tc, course_student cs, course c
+			WHERE
+			(
+		";
+
+		$query .= $students
+			? "(pi.author = cs.id_user AND cs.id_user = u.id AND cs.id_course = c.id_course)"
+			: "";
+
+		$query .= $students && $teachers ? " OR " : "";
+
+		$query .= $teachers
+			? "(pi.author = tc.id_user AND tc.id_user = u.id AND tc.id_course = c.id_course)"
+			: "";
+
+		$query .= ")";
+
+		if(is_array($courses)){
+			$first = TRUE;
+			foreach ($courses as $course) {
+				$query .= $first
+						? "AND (c.id_course = {$course['id_course']}"
+						: " OR c.id_course = {$course['id_course']}";
+				$first = FALSE;
+			}
+			$query .= ")";
+		}else{
+			$query .= " AND c.id_course = {$courses} ";
+		}
+
+		if(!empty($year)){
+			if(is_array($year)){
+				$first = TRUE;
+				foreach ($year as $currentYear) {
+					$query .= $first
+							? "AND (pi.year = {$currentYear}"
+							: " OR pi.year = {$currentYear}";
+					$first = FALSE;
+				}
+				$query .= ")";
+			}else{
+				$query .= " AND pi.year = {$year} ";
+			}
+		}
+
+		$query .= " ORDER BY u.name ASC";
+
+		$authors = checkArray($this->db->query($query)->result_array());
+
+		return $authors;
 	}
 }

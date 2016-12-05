@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
+require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
 class ProductionManagement extends MX_Controller {
 
@@ -114,4 +115,63 @@ class ProductionManagement extends MX_Controller {
         return $filteredProductions;
     }
 
+    public function productionFillReport(){
+
+        $year = $this->input->get('report_year');
+
+        $currentYear = getCurrentYear();
+
+        $year = empty($year) ? $currentYear : $year;
+
+        $referenceYear = is_null($year) ? $currentYear : $year;
+
+        $productionsAuthors = $this->getUsersWhoFilledProductions($referenceYear);
+
+        $data = array(
+            'currentYear' => $currentYear,
+            'referenceYear' => $referenceYear,
+            'students' => $productionsAuthors[0],
+            'teachers' => $productionsAuthors[1]
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::PRODUCTION_FILL_REPORT_PERMISSION, "program/intellectual_production/management/production_fill_report", $data);
+    }
+
+    private function getUsersWhoFilledProductions($year){
+        $courses = $this->getUserCoursesForProductions();
+
+        $students = $this->production_model
+            ->getProductionsAuthorByCourse($courses, $year, TRUE, FALSE);
+        $teachers = $this->production_model
+            ->getProductionsAuthorByCourse($courses, $year, FALSE, TRUE);
+
+        return [$students, $teachers];
+    }
+
+    private function getUserCoursesForProductions(){
+        $loggedUser = getSession()->getUserData();
+        $userId = $loggedUser->getId();
+
+        // Check if the logged user is a coordinator
+        $this->load->module("auth/module");
+        $isCoordinator = $this->module->checkUserGroup(GroupConstants::COORDINATOR_GROUP);
+
+        if($isCoordinator){
+            $this->load->model('program/program_model');
+            $programs = $this->program_model->getCoordinatorPrograms($userId);
+            $courses = [];
+            foreach ($programs as $program) {
+                $programCourses = $this->program_model->getProgramCourses($program['id_program']);
+                foreach ($programCourses as $course) {
+                    $courses[] = $course;
+                }
+            }
+        }else{
+            // Otherwise the logged user is a secretary
+            $this->load->model('program/course_model');
+            $courses = $this->course_model->getCoursesOfSecretary($userId);
+        }
+
+        return $courses;
+    }
 }

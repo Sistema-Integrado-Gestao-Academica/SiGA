@@ -38,4 +38,5 @@ class PermissionConstants{
 	const NOTIFY_USERS_PERMISSION = "notify_users";
 
 	const PRODUCTION_REPORT_PERMISSION = "production_report";
+	const PRODUCTION_FILL_REPORT_PERMISSION = "productions_fill_report";
 }
