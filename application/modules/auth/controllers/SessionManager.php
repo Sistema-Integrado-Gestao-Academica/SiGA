@@ -70,8 +70,12 @@ class SessionManager extends MX_Controller{
     public function getUserGroups(){
 
         $currentUser = $this->getUserData();
-        $groups = $currentUser->getGroups();    
-        return $groups;
+        if(!is_null($currentUser)){
+            $groups = $currentUser->getGroups();
+            return $groups;
+        }else{
+            redirect('/');
+        }
     }
 
     public function getUserPermissions(){
