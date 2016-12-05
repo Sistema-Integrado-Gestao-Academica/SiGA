@@ -106,7 +106,7 @@
                                     <!-- inner menu: contains the actual data -->
                                     <div style="position: relative; overflow: hidden; width: auto; height: 200px;" class="slimScrollDiv">
 
-                                    <ul style="overflow-y: scroll; width: 100%; height: 200px;" class="menu">
+                                    <ul style="overflow-y: auto; width: 100%; height: 200px;" class="menu">
 
                                         <?php
                                         	$i = 1;

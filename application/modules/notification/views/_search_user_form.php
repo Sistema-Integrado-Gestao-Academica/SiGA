@@ -23,7 +23,7 @@
       }); ?>
   </div>
   <div class="col-md-8 col-sm-6">
-    <div id="users_to_notify_list" style="height: 300px; overflow-y: scroll;"></div>
+    <div id="users_to_notify_list" style="height: 300px; overflow-y: auto;"></div>
     <br>
   </div>
 </div>

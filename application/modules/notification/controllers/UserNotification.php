@@ -41,23 +41,27 @@ class UserNotification extends MX_Controller{
         }
 
         $users = array("students" => array(), "teachers" => array());
-        foreach ($courses as $course){
-            $courseId = isset($course['id_course']) ? $course['id_course'] : $course;
 
-            // var_dump($courseId);
-            if($getTeachers){
-                $teachers = $this->course_model->getCourseTeachers($courseId);
-                // var_dump($teachers);
-                $teachers = $addKeyToUsersArray($teachers);
-                // Used the + operator to preserver numerical indexes
-                $users["teachers"] = $users["teachers"] + $teachers;
-            }
+        if(!empty($courses)){
 
-            if($getStudents){
-                $students = $this->course_model->getCourseStudents($courseId);
-                $students = $addKeyToUsersArray($students);
-                // Used the + operator to preserver numerical indexes
-                $users["students"] = $users["students"] + $students;
+            foreach ($courses as $course){
+                $courseId = isset($course['id_course']) ? $course['id_course'] : $course;
+
+                // var_dump($courseId);
+                if($getTeachers){
+                    $teachers = $this->course_model->getCourseTeachers($courseId);
+                    // var_dump($teachers);
+                    $teachers = $addKeyToUsersArray($teachers);
+                    // Used the + operator to preserver numerical indexes
+                    $users["teachers"] = $users["teachers"] + $teachers;
+                }
+
+                if($getStudents){
+                    $students = $this->course_model->getCourseStudents($courseId);
+                    $students = $addKeyToUsersArray($students);
+                    // Used the + operator to preserver numerical indexes
+                    $users["students"] = $users["students"] + $students;
+                }
             }
         }
 
