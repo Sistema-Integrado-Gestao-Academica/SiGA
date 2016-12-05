@@ -1,7 +1,7 @@
 <h2 class="principal">Relatório de Preenchimento de Produções</h2>
 
 <?= alert(function(){
-        $alert = "<h5><p></p>";
+        $alert = "<h4><p>Este relatório apresenta os <b>discentes</b> e <b>docentes</b>, dos cursos os quais você é coordenador(a) ou secretário(a), que já possuem <b>produções cadastradas</b> no ano em questão.</p></h4>";
         echo $alert;
     }, "info");
 ?>
@@ -48,13 +48,13 @@ $submitBtn = array(
 <div class="row">
     <div class="col-md-6">
         <h4 class="text-center"> <i class="fa fa-book"></i>
-            Estudantes (<b><?= !empty($students) ? count($students) : 0 ?></b>) :
+            Discentes (<b><?= !empty($students) ? count($students) : 0 ?></b>) :
         </h4>
         <?php showUsers($students); ?>
     </div>
     <div class="col-md-6">
         <h4 class="text-center"> <i class="fa fa-pencil-square-o"></i>
-            Professores (<b><?= !empty($teachers) ? count($teachers) : 0 ?></b>):
+            Docentes (<b><?= !empty($teachers) ? count($teachers) : 0 ?></b>):
         </h4>
         <?php showUsers($teachers); ?>
     </div>
