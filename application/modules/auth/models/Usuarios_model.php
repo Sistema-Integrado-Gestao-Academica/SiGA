@@ -10,6 +10,13 @@ class Usuarios_model extends CI_Model {
 	const USER_ID_COLUMN = "id";
 	const ACTIVE_COLUMN = "active";
 
+	public function encryptPassword($password){
+		$encrypted = md5($password);
+
+		$encrypted = password_hash($encrypted, PASSWORD_DEFAULT);
+		return $encrypted;
+	} 
+
 	public function save($user) {
 		$this->db->insert("users", $user);
 	}
@@ -363,7 +370,7 @@ class Usuarios_model extends CI_Model {
 		if($foundPassword !== FALSE){
 			$foundPassword = $foundPassword['password'];
 			$encryptedGivenPassword = md5($password);
-			$passwordsMatch = $encryptedGivenPassword === $foundPassword;
+			$passwordsMatch = password_verify($encryptedGivenPassword, $foundPassword);
 		}else{
 			$passwordsMatch = FALSE;
 		}
