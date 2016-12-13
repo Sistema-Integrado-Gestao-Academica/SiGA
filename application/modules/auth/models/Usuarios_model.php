@@ -366,7 +366,6 @@ class Usuarios_model extends CI_Model {
 		$foundPassword = $searchResult->row_array();
 
 		$foundPassword = checkArray($foundPassword);
-
 		if($foundPassword !== FALSE){
 			$foundPassword = $foundPassword['password'];
 			$encryptedGivenPassword = md5($password);
