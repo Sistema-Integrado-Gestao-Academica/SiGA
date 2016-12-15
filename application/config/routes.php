@@ -56,6 +56,12 @@ $route['migrate'] = 'utils/migrate';
 $route['no_route'] = 'home';
 
 /*
+ * Administrative routes
+ */
+$route['define_director'] = 'administrative/directorController/defineDirector';
+$route['save_director'] = 'administrative/directorController/saveDirector';
+
+/*
  * Authentication routes
  */
 $route['conta'] = 'auth/userController/conta';

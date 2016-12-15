@@ -117,4 +117,16 @@ class Teacher_model extends CI_Model {
 
 	}
 
+	public function getAllTeachers(){
+		$this->db->select('id, name');
+		$this->db->from('users');
+		$this->db->join('user_group', "users.id = user_group.id_user");
+		$this->db->where('user_group.id_group', 5);
+		$this->db->order_by('name', 'ASC');
+		$teachers = $this->db->get()->result_array();
+		$teachers = checkArray($teachers);
+
+		return $teachers;
+	}
+
 }
