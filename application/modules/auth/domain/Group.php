@@ -71,7 +71,6 @@ class Group{
     }
 
     private function setProfileRoute($profileRoute){
-
         if(is_string($profileRoute)){
             if(!empty($profileRoute)){
                 $hasBlankSpaces = strpos($profileRoute, " ") !== FALSE;

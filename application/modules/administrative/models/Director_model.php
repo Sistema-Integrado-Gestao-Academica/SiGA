@@ -15,9 +15,25 @@ class Director_model extends CI_Model {
 		return $currentDirector;
 	}
 
-	public function insertUserOnDirectorGroup($director){
-		$user_group = array("id_user" => $director, "id_group" => GroupConstants::DIRECTOR_GROUP_ID);
-		$saved = $this->db->insert('user_group', $user_group);
+	public function insertUserOnDirectorGroup($newDirector, $currentDirector){
+
+		$deleted = TRUE;
+		if(!is_null($currentDirector)){
+			$userToDelete = array(
+							"id_user" => $currentDirector, 
+							"id_group" => GroupConstants::DIRECTOR_GROUP_ID);
+			$deleted = $this->db->delete('user_group', $userToDelete); 
+		}
+
+		if($deleted){
+			$userGroup = array(
+						"id_user" => $newDirector, 
+						"id_group" => GroupConstants::DIRECTOR_GROUP_ID);
+			$saved = $this->db->insert('user_group', $userGroup);
+		}
+		else{
+			$saved = FALSE;
+		}
 
 		return $saved;
 	}

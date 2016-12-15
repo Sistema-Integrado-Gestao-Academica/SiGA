@@ -58,8 +58,9 @@ $route['no_route'] = 'home';
 /*
  * Administrative routes
  */
-$route['define_director'] = 'administrative/directorController/defineDirector';
-$route['save_director'] = 'administrative/directorController/saveDirector';
+$route['director_home'] = 'administrative/director/index';
+$route['define_director'] = 'administrative/director/defineDirector';
+$route['save_director'] = 'administrative/director/saveDirector';
 
 /*
  * Authentication routes

@@ -2,8 +2,10 @@
 
 <?php
 	
+	$currentDirectorId = NULL;
 	if (!is_null($currentDirector)){
 		echo "<h3>Diretor(a) atual: <b>".$currentDirector->name."</b></h3>";
+		$currentDirectorId = $currentDirector->id;
 	}
 	
 ?>
@@ -22,6 +24,7 @@
 			    "type" => "submit"
 			)) ?>
 		</div>
+            <?= form_hidden("current_director", $currentDirectorId) ?>
 		<?= form_close() ?>
 	</div>
 </div>

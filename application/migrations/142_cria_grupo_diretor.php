@@ -5,7 +5,7 @@ class Migration_Cria_grupo_diretor extends CI_Migration {
 	public function up() {
 		
 		// Creating guest group
-		$guest_group = array('id_group' => 13, 'group_name' => "diretor");
+		$guest_group = array('id_group' => 13, 'group_name' => "diretor", 'profile_route' => 'director_home');
 		$this->db->insert('group', $guest_group);
 
 		// Creating permission
