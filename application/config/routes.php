@@ -61,6 +61,9 @@ $route['no_route'] = 'home';
 $route['director_home'] = 'administrative/director/index';
 $route['define_director'] = 'administrative/director/defineDirector';
 $route['save_director'] = 'administrative/director/saveDirector';
+$route['production_report_director'] = 'administrative/director/productionReports';
+$route['evaluation_report_director'] = 'administrative/director/evaluationsReports';
+$route['productions_fill_report_direct'] = 'administrative/director/productionFillReport';
 
 /*
  * Authentication routes

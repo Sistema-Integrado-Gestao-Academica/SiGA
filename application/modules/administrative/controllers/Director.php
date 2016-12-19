@@ -49,4 +49,47 @@ class Director extends MX_Controller {
 		$session->showFlashMessage($status, $message);
 		redirect('define_director');
 	}
+
+	private function getDirectorPrograms(){
+		$this->load->model("program/program_model");
+		$programs = $this->program_model->getAllPrograms();
+
+		return $programs;
+	}
+
+	public function productionReports(){
+
+		$session = getSession();
+		$user = $session->getUserData();
+
+		$programs = $this->getDirectorPrograms();
+		$this->load->module("program/productionManagement");
+        $this->productionmanagement->loadProductionsReportPage($programs, $user, GroupConstants::DIRECTOR_GROUP);
+	}
+
+	public function evaluationsReports(){
+
+		$programs = $this->getDirectorPrograms();
+
+		$this->load->module("program/coordinator");
+		$this->coordinator->loadEvaluationReportsPage($programs, GroupConstants::DIRECTOR_GROUP);
+	}
+
+	public function productionFillReport(){
+		$this->load->module("program/productionManagement");
+		
+        $courses = [];
+		$programs = $this->getDirectorPrograms();
+        foreach ($programs as $program) {
+            $programCourses = $this->program_model->getProgramCourses($program['id_program']);
+            foreach ($programCourses as $course) {
+                $courses[] = $course;
+            }
+        }
+
+		$this->productionmanagement->loadProductionFillReportPage($courses);
+
+	}
+
+
 }

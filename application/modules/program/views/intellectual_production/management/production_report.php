@@ -9,7 +9,7 @@
 <?php if (!empty($programs)) :
 
     alert(function() use ($user){
-        echo "<h4><i>{$user->getName()}</i>, o Relatório de Produções é baseado nas produções realizadas por <b>discentes e docentes</b>, tanto como <b>autores</b> quanto <b>co-autores</b>, dos cursos dos programas os quais você é coordenador(a).</h4>";
+        echo "<h4><i>{$user->getName()}</i>, o Relatório de Produções é baseado nas produções realizadas por <b>discentes e docentes</b>, tanto como <b>autores</b> quanto <b>co-autores</b>, dos cursos dos seus programas.</h4>";
     });
 ?>
 
