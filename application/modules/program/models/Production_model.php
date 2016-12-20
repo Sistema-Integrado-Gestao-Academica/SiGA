@@ -382,59 +382,64 @@ class Production_model extends CI_Model {
 		return $productions;
 	}
 
-	public function getProductionsAuthorByCourse($courses, $year="", $students=TRUE, $teachers=TRUE){
+	public function getProductionsAuthorByCourse($courses, $year="", $students=TRUE, $teachers=TRUE, $filled=TRUE){
 
-		$query = "
-			SELECT DISTINCT u.id, u.name, u.email, u.cpf, u.home_phone, u.cell_phone, c.course_name
-			FROM users u, intellectual_production pi,
-				 teacher_course tc, course_student cs, course c
-			WHERE
-			(
-		";
+		$authors = [];
+		if(!empty($courses)){
+			$query = "
+				SELECT DISTINCT u.id, u.name, u.email, u.cpf, u.home_phone, u.cell_phone, c.course_name
+				FROM users u, intellectual_production pi,
+					 teacher_course tc, course_student cs, course c
+				WHERE
+				(
+			";
 
-		$query .= $students
-			? "(pi.author = cs.id_user AND cs.id_user = u.id AND cs.id_course = c.id_course)"
-			: "";
+			$condition = $filled ? "=" : "!=";
 
-		$query .= $students && $teachers ? " OR " : "";
+			$query .= $students
+				? "(pi.author {$condition} cs.id_user AND cs.id_user = u.id AND cs.id_course = c.id_course)"
+				: "";
 
-		$query .= $teachers
-			? "(pi.author = tc.id_user AND tc.id_user = u.id AND tc.id_course = c.id_course)"
-			: "";
+			$query .= $students && $teachers ? " OR " : "";
 
-		$query .= ")";
+			$query .= $teachers
+				? "(pi.author {$condition} tc.id_user AND tc.id_user = u.id AND tc.id_course = c.id_course)"
+				: "";
 
-		if(is_array($courses)){
-			$first = TRUE;
-			foreach ($courses as $course) {
-				$query .= $first
-						? "AND (c.id_course = {$course['id_course']}"
-						: " OR c.id_course = {$course['id_course']}";
-				$first = FALSE;
-			}
 			$query .= ")";
-		}else{
-			$query .= " AND c.id_course = {$courses} ";
-		}
 
-		if(!empty($year)){
-			if(is_array($year)){
+			if(is_array($courses)){
 				$first = TRUE;
-				foreach ($year as $currentYear) {
+				foreach ($courses as $course) {
 					$query .= $first
-							? "AND (pi.year = {$currentYear}"
-							: " OR pi.year = {$currentYear}";
+							? "AND (c.id_course = {$course['id_course']}"
+							: " OR c.id_course = {$course['id_course']}";
 					$first = FALSE;
 				}
 				$query .= ")";
 			}else{
-				$query .= " AND pi.year = {$year} ";
+				$query .= " AND c.id_course = {$courses} ";
 			}
+
+			if(!empty($year)){
+				if(is_array($year)){
+					$first = TRUE;
+					foreach ($year as $currentYear) {
+						$query .= $first
+								? "AND (pi.year = {$currentYear}"
+								: " OR pi.year = {$currentYear}";
+						$first = FALSE;
+					}
+					$query .= ")";
+				}else{
+					$query .= " AND pi.year = {$year} ";
+				}
+			}
+
+			$query .= " ORDER BY u.name ASC";
+
+			$authors = checkArray($this->db->query($query)->result_array());
 		}
-
-		$query .= " ORDER BY u.name ASC";
-
-		$authors = checkArray($this->db->query($query)->result_array());
 
 		return $authors;
 	}

@@ -29,7 +29,7 @@ $submitBtn = array(
 );
 ?>
 
-<?= form_open('productions_fill_report', ['method' => 'get']) ?>
+<?= form_open('productions_fill_report', ['method' => 'get', 'id' => 'update_report_form']) ?>
     <div class='row'>
         <div class='col-md-6 col-md-offset-3'>
             <div class='input-group'>
@@ -37,6 +37,24 @@ $submitBtn = array(
                 <span class='input-group-btn'>
                 <?= form_button($submitBtn) ?>
                 </span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class='row'>
+        <div class='col-md-6 col-md-offset-3'>
+            <div class='input-group'>
+                <label class="btn btn-default" id="only_registered_productions">
+                    <?= form_checkbox(array(
+                        'name' => 'only_registered_productions',
+                        'id' => 'only_registered_productions',
+                        'value' => TRUE,
+                        'checked' => $filled,
+                        'class' => 'form-control'
+                    )) ?>
+                    Mostrar usuários que possuem produções cadastradas.
+                </label>
             </div>
         </div>
     </div>
@@ -50,15 +68,23 @@ $submitBtn = array(
         <h4 class="text-center"> <i class="fa fa-book"></i>
             Discentes (<b><?= !empty($students) ? count($students) : 0 ?></b>) :
         </h4>
-        <?php showUsers($students); ?>
+        <?php showUsers($students, $filled); ?>
     </div>
     <div class="col-md-6">
         <h4 class="text-center"> <i class="fa fa-pencil-square-o"></i>
             Docentes (<b><?= !empty($teachers) ? count($teachers) : 0 ?></b>):
         </h4>
-        <?php showUsers($teachers); ?>
+        <?php showUsers($teachers, $filled); ?>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $("#only_registered_productions").click(function(){
+            $("#update_report_form").trigger('submit');
+        });
+    });
+</script>
 
 <style type="text/css">
     #users_with_productions{
@@ -68,7 +94,7 @@ $submitBtn = array(
 </style>
 
 <?php
-function showUsers($users){
+function showUsers($users, $filled){
     searchUsersForm();
 
     buildTableDeclaration('users_with_productions');
@@ -100,7 +126,11 @@ function showUsers($users){
     }else{
         echo "<tr>";
             echo "<td colspan='3'>";
-                callout("info", "Nenhum usuário cadastrou produções neste ano.");
+
+                $msg = $filled
+                    ? "Nenhum usuário cadastrou produções neste ano ou você não é coordenador(a) de nenhum programa."
+                    : "Todos os usuários cadastraram produções neste ano ou você não é coordenador(a) de nenhum programa.";
+                callout("info", $msg);
             echo "</td>";
         echo "</tr>";
     }

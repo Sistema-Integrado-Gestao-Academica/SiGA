@@ -118,6 +118,8 @@ class ProductionManagement extends MX_Controller {
     public function productionFillReport(){
 
         $year = $this->input->get('report_year');
+        $filled = $this->input->get('only_registered_productions');
+        $filled = is_null($filled) ? FALSE : TRUE;
 
         $currentYear = getCurrentYear();
 
@@ -125,25 +127,30 @@ class ProductionManagement extends MX_Controller {
 
         $referenceYear = is_null($year) ? $currentYear : $year;
 
-        $productionsAuthors = $this->getUsersWhoFilledProductions($referenceYear);
+        $productionsAuthors = $this->getUsersWhoFilledProductions($referenceYear, $filled);
 
         $data = array(
             'currentYear' => $currentYear,
             'referenceYear' => $referenceYear,
             'students' => $productionsAuthors[0],
-            'teachers' => $productionsAuthors[1]
+            'teachers' => $productionsAuthors[1],
+            'filled' => $filled
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::PRODUCTION_FILL_REPORT_PERMISSION, "program/intellectual_production/management/production_fill_report", $data);
     }
 
-    private function getUsersWhoFilledProductions($year){
+    private function getUsersWhoFilledProductions($year, $filled=TRUE){
         $courses = $this->getUserCoursesForProductions();
 
-        $students = $this->production_model
-            ->getProductionsAuthorByCourse($courses, $year, TRUE, FALSE);
-        $teachers = $this->production_model
-            ->getProductionsAuthorByCourse($courses, $year, FALSE, TRUE);
+        $students = [];
+        $teachers = [];
+        if(!empty($courses)){
+            $students = $this->production_model
+                ->getProductionsAuthorByCourse($courses, $year, TRUE, FALSE, $filled);
+            $teachers = $this->production_model
+                ->getProductionsAuthorByCourse($courses, $year, FALSE, TRUE, $filled);
+        }
 
         return [$students, $teachers];
     }
@@ -160,10 +167,12 @@ class ProductionManagement extends MX_Controller {
             $this->load->model('program/program_model');
             $programs = $this->program_model->getCoordinatorPrograms($userId);
             $courses = [];
-            foreach ($programs as $program) {
-                $programCourses = $this->program_model->getProgramCourses($program['id_program']);
-                foreach ($programCourses as $course) {
-                    $courses[] = $course;
+            if(!empty($programs)){
+                foreach ($programs as $program) {
+                    $programCourses = $this->program_model->getProgramCourses($program['id_program']);
+                    foreach ($programCourses as $course) {
+                        $courses[] = $course;
+                    }
                 }
             }
         }else{
