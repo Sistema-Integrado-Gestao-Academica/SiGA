@@ -20,10 +20,16 @@ class Director extends MX_Controller {
 		$teachers = makeDropdownArray($teachers, 'id', 'name');
 
 		$currentDirector = $this->director_model->getCurrentDirector();
+		$session = getSession();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+		$isDirector = $userId == $currentDirector->id;
+
 
 		$data = array(
 			'teachers' => $teachers,
-			'currentDirector' => $currentDirector
+			'currentDirector' => $currentDirector,
+			'isDirector' => $isDirector
 		);
 
 		$permittedGroups = array(GroupConstants::DIRECTOR_GROUP, GroupConstants::ADMIN_GROUP);
@@ -36,16 +42,24 @@ class Director extends MX_Controller {
 		$currentDirector = $this->input->post("current_director");
 		$saved = $this->director_model->insertUserOnDirectorGroup($director, $currentDirector);
 
+		$session = getSession();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+		$isDirector = $userId == $currentDirector;
 		if($saved){
 			$status = 'success';
 			$message = 'Diretor definido com sucesso.';
+
+			// if($isDirector){
+			// 	$session->removeGroupOfUser($user, GroupConstants::DIRECTOR_GROUP_ID);
+			// }
+
 		}
 		else{
 			$status = 'danger';
 			$message = 'Não foi possível definir o diretor. Tente novamente.';
 		}
 		
-		$session = getSession();
 		$session->showFlashMessage($status, $message);
 		redirect('define_director');
 	}
