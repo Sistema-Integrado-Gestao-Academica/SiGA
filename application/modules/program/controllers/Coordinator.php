@@ -453,12 +453,16 @@ class Coordinator extends MX_Controller {
         $this->load->model("program/program_model");
         $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 
-        $data = array(
+        $group = GroupConstants::COORDINATOR_GROUP;
+        $this->loadEvaluationReportsPage($programs, $group);
+    }
+
+    public function loadEvaluationReportsPage($programs, $group){
+
+    	$data = array(
             'programs' => $programs
         );
-
-        loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "coordinator/evaluation_reports", $data);
-
+        loadTemplateSafelyByGroup($group, "program/coordinator/evaluation_reports", $data);
     }
 
     public function programEvaluationsReport($programId){
@@ -500,7 +504,7 @@ class Coordinator extends MX_Controller {
 	        );
         }
 
-     	loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "coordinator/program_evaluation_report", $data);
+     	loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "program/coordinator/program_evaluation_report", $data);
     }
 
     public function getProductionsInformationByPeriod($data, $period, $programId){

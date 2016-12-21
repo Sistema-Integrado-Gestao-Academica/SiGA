@@ -33,7 +33,6 @@ class Module extends MX_Controller {
                     $groupId = $foundGroup['id_group'];
                     $groupName = $foundGroup['group_name'];
                     $groupProfileRoute = $foundGroup['profile_route'];
-
                     $permissions = $this->userpermission->getGroupPermissions($groupId);
 
                     $group = new Group($groupId, $groupName, $groupProfileRoute, $permissions);

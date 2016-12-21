@@ -78,6 +78,11 @@ class SessionManager extends MX_Controller{
         }
     }
 
+    public function removeGroupOfUser($user, $groupToRemoveId){
+        $user->removeGroup($groupToRemoveId); 
+        $this->saveData(self::CURRENT_USER_LABEL, $user);
+    }
+
     public function getUserPermissions(){
         $groups = $this->getUserGroups();
 

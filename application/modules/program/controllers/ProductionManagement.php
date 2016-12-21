@@ -19,6 +19,11 @@ class ProductionManagement extends MX_Controller {
         $this->load->model("program/program_model");
         $programs = $this->program_model->getCoordinatorPrograms($coordinatorId);
 
+        $group = GroupConstants::COORDINATOR_GROUP;
+        $this->loadProductionsReportPage($programs, $user, $group);
+    }
+
+    public function loadProductionsReportPage($programs, $user, $group){
         $currentYear = getCurrentYear();
 
         $programsChartData = array();
@@ -38,11 +43,12 @@ class ProductionManagement extends MX_Controller {
             'currentYear' => $currentYear
         );
 
-        loadTemplateSafelyByGroup(GroupConstants::COORDINATOR_GROUP, "program/intellectual_production/management/production_report", $data);
+        loadTemplateSafelyByGroup($group, "program/intellectual_production/management/production_report", $data);
     }
 
     // Receive ajax request
     public function changeReportYear(){
+        var_dump("aqui"); exit();
         $year = $this->input->post("year");
         $programId = $this->input->post("program");
 
@@ -117,6 +123,13 @@ class ProductionManagement extends MX_Controller {
 
     public function productionFillReport(){
 
+        $courses = $this->getUserCoursesForProductions();
+
+        $this->loadProductionFillReportPage($courses);
+    }
+
+    public function loadProductionFillReportPage($courses){
+
         $year = $this->input->get('report_year');
         $filled = $this->input->get('only_registered_productions');
         $filled = is_null($filled) ? FALSE : TRUE;
@@ -127,7 +140,7 @@ class ProductionManagement extends MX_Controller {
 
         $referenceYear = is_null($year) ? $currentYear : $year;
 
-        $productionsAuthors = $this->getUsersWhoFilledProductions($referenceYear, $filled);
+        $productionsAuthors = $this->getUsersWhoFilledProductions($referenceYear, $courses,  $filled);
 
         $data = array(
             'currentYear' => $currentYear,
@@ -138,10 +151,10 @@ class ProductionManagement extends MX_Controller {
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::PRODUCTION_FILL_REPORT_PERMISSION, "program/intellectual_production/management/production_fill_report", $data);
+
     }
 
-    private function getUsersWhoFilledProductions($year, $filled=TRUE){
-        $courses = $this->getUserCoursesForProductions();
+    private function getUsersWhoFilledProductions($year, $courses, $filled=TRUE){
 
         $students = [];
         $teachers = [];

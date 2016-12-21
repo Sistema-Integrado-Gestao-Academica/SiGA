@@ -45,6 +45,18 @@ class User{
 		}
 	}
 
+	public function removeGroup($groupToRemoveId){
+		if($this->groups){
+			foreach ($this->groups as $index => $group) {
+				$groupId = $group->getId();
+				if($groupId == $groupToRemoveId){
+					unset($this->groups[$index]);
+				}					
+			}
+		}
+
+	}
+
 	// Setters
 	private function setId($id){
 

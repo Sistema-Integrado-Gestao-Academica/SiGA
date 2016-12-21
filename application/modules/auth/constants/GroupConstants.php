@@ -10,6 +10,7 @@ class GroupConstants{
 	const ACADEMIC_SECRETARY_GROUP = "courseSecretaryAcademic";
 	const FINANCIAL_SECRETARY_GROUP = "courseSecretaryFinancial";
 	const COORDINATOR_GROUP = "coordenador";
+	const DIRECTOR_GROUP = "diretor";
 
 
 	const TEACHER_GROUP_ID = 5;
@@ -18,4 +19,5 @@ class GroupConstants{
 	const FINANCIAL_SECRETARY_GROUP_ID = 10;
 	const ACADEMIC_SECRETARY_GROUP_ID = 11;
 	const STAFF_GROUP_ID = 12;
+	const DIRECTOR_GROUP_ID = 13;
 }
