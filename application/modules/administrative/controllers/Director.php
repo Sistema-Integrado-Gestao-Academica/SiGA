@@ -23,7 +23,13 @@ class Director extends MX_Controller {
 		$session = getSession();
 		$user = $session->getUserData();
 		$userId = $user->getId();
-		$isDirector = $userId == $currentDirector->id;
+		$hasDirector = empty($currentDirector);
+		if(!$hasDirector){
+			$isDirector = $userId == $currentDirector->id;
+		}
+		else{
+			$isDirector = False;
+		}
 
 
 		$data = array(
@@ -59,7 +65,7 @@ class Director extends MX_Controller {
 			$status = 'danger';
 			$message = 'Não foi possível definir o diretor. Tente novamente.';
 		}
-		
+
 		$session->showFlashMessage($status, $message);
 		redirect('define_director');
 	}
@@ -91,7 +97,7 @@ class Director extends MX_Controller {
 
 	public function productionFillReport(){
 		$this->load->module("program/productionManagement");
-		
+
         $courses = [];
 		$programs = $this->getDirectorPrograms();
         foreach ($programs as $program) {
