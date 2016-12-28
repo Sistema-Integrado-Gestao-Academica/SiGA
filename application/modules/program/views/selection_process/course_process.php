@@ -19,8 +19,8 @@ buildTableHeaders(array(
 	'Ações'
 ));
 
-if($selectiveProcesses !== FALSE){
-
+$validSelectiveProcesses = !empty($selectiveProcesses) && !is_null($selectiveProcesses);
+if($validSelectiveProcesses){
 	foreach($selectiveProcesses as $process){
 		$processName = $process->getName();
 		$settings = $process->getSettings();
@@ -49,44 +49,48 @@ if($selectiveProcesses !== FALSE){
 					echo "<b>Data de Fim: </b>".$settings->getFormattedEndDate();
 					echo "<br>";
 					echo "</div>";
-					echo "<h4><b>Fases:</b><br></h4>";
 					$phasesOrder = $settings->getPhasesOrder();
 					$phases = $settings->getPhases();
-					buildTableDeclaration();
+					$validPhases = !empty($phases) && !is_null($phases);
+					if($validPhases){
+						echo "<h4><b>Fases:</b><br></h4>";
+						buildTableDeclaration();
 
-					buildTableHeaders(array(
-						'Ordem',
-						'Fase',
-						'Peso'
-					));
-					foreach ($phases as $phase) {
-						$phaseName = $phase->getPhaseName();
-						$phaseId = $phase->getPhaseId();
-						echo "<tr>";
-							echo "<td>";
-							if($phaseId != 1){
-								$phaseName = lang($phaseName);
-								$order = array_search($phaseName, $phasesOrder);
-								echo $order + 1;
-							}
-							else{
-								echo "-";
-							}
-							echo "</td>";
-							echo "<td>";
-								echo $phase->getPhaseName();
-							echo "</td>";
-							echo "<td>";
+						buildTableHeaders(array(
+							'Ordem',
+							'Fase',
+							'Peso'
+						));
+
+						foreach ($phases as $phase) {
+							$phaseName = $phase->getPhaseName();
+							$phaseId = $phase->getPhaseId();
+							echo "<tr>";
+								echo "<td>";
 								if($phaseId != 1){
-									echo $phase->getWeight();
+									$phaseName = lang($phaseName);
+									$order = array_search($phaseName, $phasesOrder);
+									echo $order + 1;
 								}
 								else{
-									echo "0";
+									echo "-";
 								}
-							echo "</td>";
-						echo "</tr>";
+								echo "</td>";
+								echo "<td>";
+									echo $phase->getPhaseName();
+								echo "</td>";
+								echo "<td>";
+									if($phaseId != 1){
+										echo $phase->getWeight();
+									}
+									else{
+										echo "0";
+									}
+								echo "</td>";
+							echo "</tr>";
+						}
+						buildTableEndDeclaration();
 					}
-					buildTableEndDeclaration();
 
 				};
 
@@ -102,7 +106,7 @@ if($selectiveProcesses !== FALSE){
 				newModal("selectiveprocessmodal".$processId, "Processo Seletivo: <b>{$processName}</b>", $body, $footer);
 				
 				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-success'>Visualizar</a>";
-				echo anchor("program/selectiveprocess/programCourses/{$course['id_program']}", "Editar", "class='btn btn-primary'");
+				echo anchor("program/selectiveprocess/edit/{$processId}/{$course[Course_model::ID_ATTR]}", "Editar", "class='btn btn-primary'");
 
 			echo "</td>";
 
@@ -111,7 +115,7 @@ if($selectiveProcesses !== FALSE){
 
 }else{
 	echo "<tr>";
-		echo "<td colspan=3>";
+		echo "<td colspan=4>";
 			callout("info", "Não existem processos seletivos abertos para este curso.");
 		echo "</td>";
 	echo "</tr>";

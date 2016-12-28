@@ -199,6 +199,7 @@ $route['documents_request'] = "student/documentrequestStudent/index";
  * Selection Process functionalities routes
  */
 $route['selection_process'] = 'program/selectiveprocess/index';
+$route['edit_selection_process/(:num)/(:num)'] = 'program/selectiveprocess/edit/$1/$2';
 
 /*
  * Enrollment routes

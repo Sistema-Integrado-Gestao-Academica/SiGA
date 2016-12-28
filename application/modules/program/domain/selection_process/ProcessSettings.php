@@ -6,7 +6,7 @@ require_once "phases/WeightedPhase.php";
 
 class ProcessSettings{
 
-	const INVALID_PHASE = "As fases do processo seletivo não pode ser nulas."; 
+	const INVALID_PHASE = "As fases do processo seletivo não podem ser nulas."; 
 	const INVALID_START_DATE = "A data inicial informada é inválida. Deve estar no formato dd/mm/yyyy.";
 	const INVALID_END_DATE = "A data final informada é inválida. Deve estar no formato dd/mm/yyyy.";
 	const INVALID_DATE_INTERVAL = "A data final não pode ser antes ou igual à data inicial.";
