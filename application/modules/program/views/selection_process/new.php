@@ -1,4 +1,3 @@
-
 <?php require_once (MODULESPATH."/program/constants/SelectionProcessConstants.php");  ?>
 
 <h2 class="principal">Novo Processo Seletivo para o curso <b><i><?php echo $course['course_name'];?></i></b> </h2>

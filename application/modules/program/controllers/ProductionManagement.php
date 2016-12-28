@@ -48,7 +48,6 @@ class ProductionManagement extends MX_Controller {
 
     // Receive ajax request
     public function changeReportYear(){
-        var_dump("aqui"); exit();
         $year = $this->input->post("year");
         $programId = $this->input->post("program");
 

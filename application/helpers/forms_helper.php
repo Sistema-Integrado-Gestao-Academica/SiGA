@@ -19,8 +19,8 @@ function newModal($id, $title, $body, $footer, $formPath=FALSE, $class="modal fa
 	echo "<div id='{$id}' class='{$class}'>";
     echo "<div class='modal-dialog'>";
         echo "<div class='modal-content'>";
-            echo "<div class='modal-header text-center'>";
-                echo "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times; </button>";
+            	echo "<div class='modal-header text-center'>";
+	                echo "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times; </button>";
                 echo "<h3 class='modal-title'>{$title}</h3>";
             echo "</div>";
 
