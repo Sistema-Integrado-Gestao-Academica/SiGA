@@ -28,9 +28,12 @@ $(document).ready(function(){
 	});
 
 	$("#open_selective_process_btn").click(function(){
-		saveSelectiveProcess();
+		saveSelectiveProcess("newSelectionProcess");
 	});
 
+	$("#edit_selective_process_btn").click(function(){
+		saveSelectiveProcess("updateSelectionProcess");
+	});
 
 	$("#selective_process_start_date").datepicker($.datepicker.regional["pt-BR"], {
 		dateFormat: "dd-mm-yy"
@@ -49,7 +52,7 @@ function makeSortable(){
 	$("#sortable").sortable("option", "containment", "parent");
 }
 
-function saveSelectiveProcess(){
+function saveSelectiveProcess(saveMethod){
 
 	var course = $("#course").val();
 	var studentType = $("#student_type").val();
@@ -71,7 +74,7 @@ function saveSelectiveProcess(){
 	
 	var siteUrl = $("#site_url").val();
 
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/newSelectionProcess";
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/"+ saveMethod;
 
 	$.post(
 		urlToPost,
@@ -104,21 +107,39 @@ function getPhasesToSort(){
 	preProject = $("#phase_2").val();
 	writtenTest = $("#phase_3").val();
 	oralTest = $("#phase_4").val();
-
 	var siteUrl = $("#site_url").val();
+	
+	data = {
+		preProject: preProject,
+		writtenTest: writtenTest,
+		oralTest: oralTest	
+	}
 
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/getPhasesToSort";
+	if(!document.getElementById("processId")){
+		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/getPhasesToSort";
 
-	$.post(
-		urlToPost,
-		{
-			preProject: preProject,
-			writtenTest: writtenTest,
-			oralTest: oralTest	
-		},
-		function(data){
-			$("#phases_list_to_order").html(data);
-			makeSortable();
-		}
-	);
+		$.post(
+			urlToPost,
+			data,
+			function(data){
+				$("#phases_list_to_order").html(data);
+				makeSortable();
+			}
+		);
+	}
+	else{
+		var processId = $("#processId").val();
+	    var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/showPhasesInOrder";
+	    data['processId'] = processId;
+		$.post(
+			urlToPost,
+			data,
+			function(data){
+				$("#phases_list_to_order_in_edition").html(data);
+				makeSortable();
+			}
+		);
+	}
+
+
 }

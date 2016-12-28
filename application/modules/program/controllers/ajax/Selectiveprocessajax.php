@@ -20,26 +20,48 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function getPhasesToSort(){
 
-        $preProject = $this->input->post("preProject");
-        $writtenTest = $this->input->post("writtenTest");
-        $oralTest = $this->input->post("oralTest");
 
-        $phasesToSort = array();
+        $this->sortPhases($phasesToSort);
+    }
+
+    public function showPhasesInOrder(){
         
-        $notPresent = "0";
+        $selectiveprocessId = $this->input->post("processId");
+        $this->load->model("selectiveprocess_model", "process_model");
+        
+        $selectiveprocess = $this->process_model->getById($selectiveprocessId);
+        if(is_object($selectiveprocess)){
 
-        if($preProject !== $notPresent){
-            $phasesToSort["pre_project"] = SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE;
+            $phasesOrder = $selectiveprocess->getSettings()->getPhasesOrder();                
+
+            $phasesToSort = array();
+            foreach ($phasesOrder as $phaseOrder) {
+                $phasesToSort[$phaseOrder] = lang($phaseOrder);
+            }
+       
+            $preProject = $this->input->post("preProject");
+            $writtenTest = $this->input->post("writtenTest");
+            $oralTest = $this->input->post("oralTest");
+
+            $notPresent = "0";
+
+            if($preProject == $notPresent){
+                unset($phasesToSort["pre_project"]);
+            }
+
+            if($writtenTest == $notPresent){
+                unset($phasesToSort["written_test"]);
+            }
+
+            if($oralTest == $notPresent){
+                unset($phasesToSort["oral_test"]);
+            }
+            $this->sortPhases($phasesToSort);
         }
 
-        if($writtenTest !== $notPresent){
-            $phasesToSort["written_test"] = SelectionProcessConstants::WRITTEN_TEST_PHASE;
-        }
+    }
 
-        if($oralTest !== $notPresent){
-            $phasesToSort["oral_test"] = SelectionProcessConstants::ORAL_TEST_PHASE;
-        }
-
+    private function sortPhases($phasesToSort){
         if(!empty($phasesToSort)){
 
             echo "<div id='phases_order_list'>";
@@ -58,6 +80,62 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     public function newSelectionProcess(){
+        
+        $process = $this->getDataToSave();
+
+        // Finally saves the selection process
+        $this->load->model("selectiveprocess_model", "process_model");
+        
+        $processId = $this->process_model->save($process);
+        $courseId = $this->input->post("course");
+        
+        if($process !== FALSE){
+            $noticeName = $process->getName();
+            callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
+        }
+
+        $hidden = array(
+            'selection_process_id' => base64_encode($processId),
+            'course' => $courseId
+        );
+
+        echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
+
+            echo form_hidden($hidden);
+
+            $noticeFile = array(
+                "name" => "notice_file",
+                "id" => "notice_file",
+                "type" => "file"
+            );
+            
+            $submitFileBtn = array(
+                "id" => "open_selective_process_btn",
+                "class" => "btn btn-success btn-flat",
+                "content" => "Salvar arquivo",
+                "type" => "submit",
+                "style" => "margin-top: 5%;"
+            );
+
+            include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
+
+        echo form_close();
+        echo "<br>";
+
+        
+    }
+
+    public function updateSelectionProcess(){
+        
+        $process = $this->getDataToSave();
+
+        // Finally saves the selection process
+        $this->load->model("selectiveprocess_model", "process_model");
+        
+        $processId = $this->process_model->update($process);
+    }
+
+    private function getDataToSave(){
 
         echo "<h4><i class='fa fa-tag'></i> Status</h4>";
 
@@ -65,9 +143,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $studentType = $this->input->post("student_type");
         $noticeName = $this->input->post("selective_process_name");
         $startDate = $this->input->post("selective_process_start_date");
-        var_dump($startDate);
         $endDate = $this->input->post("selective_process_end_date");
-
         try{
 
             switch($studentType){
@@ -83,7 +159,6 @@ class SelectiveProcessAjax extends MX_Controller {
                     $process = FALSE;
                     break;
             }
-
 
             if($process !== FALSE){
 
@@ -127,48 +202,12 @@ class SelectiveProcessAjax extends MX_Controller {
                     $phases[] = new Homologation(SelectionProcessConstants::HOMOLOGATION_PHASE_ID);
 
                     $phasesOrder = $this->input->post("phases_order");
-
                     $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
-
                     $process->addSettings($processSettings);
 
-                    // Finally saves the selection process
-                    $this->load->model("selectiveprocess_model", "process_model");
-                    
-                    $processId = $this->process_model->save($process);
 
-
-                    callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
-
-                    $hidden = array(
-                        'selection_process_id' => base64_encode($processId),
-                        'course' => $courseId
-                    );
-
-                    echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
-
-                        echo form_hidden($hidden);
-
-                        $noticeFile = array(
-                            "name" => "notice_file",
-                            "id" => "notice_file",
-                            "type" => "file"
-                        );
-                        
-                        $submitFileBtn = array(
-                            "id" => "open_selective_process_btn",
-                            "class" => "btn btn-success btn-flat",
-                            "content" => "Salvar arquivo",
-                            "type" => "submit",
-                            "style" => "margin-top: 5%;"
-                        );
-
-                        include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
-
-                    echo form_close();
-                    echo "<br>";
-
-                }else{
+                }
+                else{
                     // The process must have at least one phase
                     callout("danger", "Deve haver pelo menos uma fase além da homologação no processo seletivo.");
                 }
@@ -182,6 +221,7 @@ class SelectiveProcessAjax extends MX_Controller {
             callout("warning", $e->getMessage());
         }
 
+        return $process;
     }
 
 }

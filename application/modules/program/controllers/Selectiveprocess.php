@@ -221,7 +221,7 @@ class SelectiveProcess extends MX_Controller {
                 $phasesOrder = unserialize($process[SelectiveProcess_model::PHASE_ORDER_ATTR]);
                 $startDate = convertDateTimeToDateBR($process[SelectiveProcess_model::START_DATE_ATTR]);
                 $endDate = convertDateTimeToDateBR($process[SelectiveProcess_model::END_DATE_ATTR]);
-                $phases = $this->getProcessPhases($process['id_process']);
+                $phases = $this->process_model->getPhases($process['id_process']);
                 $settings = new ProcessSettings(
                     $startDate,
                     $endDate,
@@ -234,9 +234,9 @@ class SelectiveProcess extends MX_Controller {
                         $selectionProcess = new RegularStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR],
-                            $settings
+                            $process[SelectiveProcess_model::ID_ATTR]
                         );
+                        $selectionProcess->addSettings($settings);
 
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
@@ -247,9 +247,9 @@ class SelectiveProcess extends MX_Controller {
                         $selectionProcess = new SpecialStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR],
-                            $settings
+                            $process[SelectiveProcess_model::ID_ATTR]
                         );
+                        $selectionProcess->addSettings($settings);
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
                     }
@@ -270,33 +270,60 @@ class SelectiveProcess extends MX_Controller {
         return $selectiveProcesses;
     }
 
-    private function getProcessPhases($processId){
 
-        $processPhases = $this->process_model->getProcessPhases($processId);
-        $phases = array();
-        foreach ($processPhases as $processPhase) {
-            $processPhaseId = $processPhase['id_phase'];
-            $weight = $processPhase['weight'];
-            switch ($processPhaseId) {
-                case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
-                    $phase = new Homologation($processPhaseId);
+    public function edit($processId, $courseId){
+
+        $selectiveProcess = $this->process_model->getById($processId);
+        $this->load->module("program/phase");
+        $allPhases = $this->phase->getAllPhases();
+
+        $phases = $this->getProcessPhasesToEdit($selectiveProcess, $allPhases);
+
+        $data = array(
+            'selectiveprocess' => $selectiveProcess,
+            'courseId' => $courseId,
+            'phasesNames' => $phases['phasesNames'],
+            'phasesWeights' => $phases['phasesWeights'],
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/edit", $data);
+    }
+
+    private function getProcessPhasesToEdit($selectiveProcess, $allPhases){
+
+        $phasesNames = array();
+        $phasesWeights = array();
+        $processPhases = $selectiveProcess->getSettings()->getPhases();
+        
+        foreach ($allPhases as $phase) {
+            $hasThePhase = FALSE;
+            $phaseId = $phase->getPhaseId();
+            foreach ($processPhases as $processPhase) {
+                $processPhaseId = $processPhase->getPhaseId();
+                if($phaseId == $processPhaseId){
+                    $phasesNames[$phaseId] = $processPhase->getPhaseName();
+                    if($phaseId != SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
+                        $phasesWeights[$phaseId] = $processPhase->getWeight();
+                    }
+                    else{
+                        $phasesWeights[$phaseId] = "0";
+                    }
+                    $hasThePhase = TRUE;
                     break;
-                case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
-                    $phase = new PreProjectEvaluation($weight, FALSE, $processPhaseId);
-                    break;
-                case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
-                    $phase = new WrittenTest($weight, FALSE, $processPhaseId);
-                    break;
-                case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
-                    $phase = new OralTest($weight, FALSE, $processPhaseId);
-                    break;
-                default:
-                    $phase = NULL;
-                    break;
+                }
             }
-            $phases[] = $phase;
+            if(!$hasThePhase){
+                $phasesNames[$phaseId] = $phase->getPhaseName();
+                $phasesWeights[$phaseId] = "-1"; // Phase Not selected
+            }
         }
+
+        $phases = array(
+            'phasesNames' => $phasesNames,
+            'phasesWeights' => $phasesWeights
+        );
 
         return $phases;
     }
+
 }

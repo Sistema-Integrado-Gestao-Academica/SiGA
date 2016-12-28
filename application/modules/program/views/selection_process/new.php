@@ -1,13 +1,6 @@
-<?php require_once (MODULESPATH."/program/constants/SelectionProcessConstants.php");  ?>
-
 <h2 class="principal">Novo Processo Seletivo para o curso <b><i><?php echo $course['course_name'];?></i></b> </h2>
 
 <?php
-
-	$studentType = array(
-		SelectionProcessConstants::REGULAR_STUDENT => 'Alunos Regulares',
-		SelectionProcessConstants::SPECIAL_STUDENT => 'Alunos Especiais'
-	);
 
 	$startDate = array(
 	    "name" => "selective_process_start_date",
@@ -57,45 +50,12 @@
 		"type" => "hidden",
 		"value" => $course['id_course']
 	);
+
+	$selectedStudentType = "";
+
+	include '_form.php';
+
 ?>
-
-<!-- Basic data of selection process -->
-
-<?= form_input($hidden); ?>
-
-<h3><i class="fa fa-file-o"></i> Dados básicos</h3>
-<br>
-
-<div class="row">
-	<div class="col-md-3">
-		<?= form_label("Processo Seletivo para:", "student_type"); ?>
-		<?= form_dropdown("student_type", $studentType, "","id='student_type'"); ?>
-	</div>
-	<div class="col-md-6">
-		<?= form_label("Nome do edital", "selective_process_name"); ?>
-		<?= form_input($name); ?>
-	</div>
-</div>
-
-<br>
-<br>
-
-<!-- Applying period of selection process -->
-
-<h4><i class="fa fa-calendar"></i> Período de inscrições</h4>
-<br>
-
-<div class="row">
-	<div class="col-md-3">
-		<?= form_label("Data de início do edital", "selective_process_start_date"); ?>
-		<?= form_input($startDate); ?>
-	</div>
-	<div class="col-md-3">
-		<?= form_label("Data final do edital", "selective_process_end_date"); ?>
-		<?= form_input($endDate); ?>
-	</div>
-</div>
-
 <!-- Selection Process Settings -->
 <br>
 <br>
@@ -174,33 +134,35 @@
 		}
 	?>
 
+		</div>
 	</div>
-</div>
 
-<br>
-<br>
+	<br>
+	<br>
 
-<h4><i class="fa fa-sort-amount-asc"></i> Ordem das fases do edital</h4>
+	<h4><i class="fa fa-sort-amount-asc"></i> Ordem das fases do edital</h4>
 
-<br>
-Defina a ordem de execução das fases para este edital arrastando as fases para a posição desejada:
-<br>
+	<br>
+	Defina a ordem de execução das fases para este edital arrastando as fases para a posição desejada:
+	<br>
 
-<div id="phases_list_to_order"></div>
+	<div id="phases_list_to_order"></div>
 
-<br>
-<?= form_button($saveProcessBtn); ?>
+	<br>
+	<?= form_button($saveProcessBtn); ?>
 
 
-<br>
-<div id="selection_process_saving_status"></div>
+	<br>
+	<div id="selection_process_saving_status"></div>
 
-<br>
-<br>
+	<br>
+	<br>
 
-<?= anchor(
+
+	<?= anchor(
 		"program/selectiveprocess/courseSelectiveProcesses/{$course['id_program']}",
 		"Voltar",
 		"class='btn btn-danger'"
-	);
-?>
+	); ?>
+
+
