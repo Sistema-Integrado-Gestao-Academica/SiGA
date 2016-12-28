@@ -147,7 +147,8 @@ class ProductionManagement extends MX_Controller {
             'referenceYear' => $referenceYear,
             'students' => $productionsAuthors[0],
             'teachers' => $productionsAuthors[1],
-            'filled' => $filled
+            'filled' => $filled,
+            'searchYear' => $year
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::PRODUCTION_FILL_REPORT_PERMISSION, "program/intellectual_production/management/production_fill_report", $data);

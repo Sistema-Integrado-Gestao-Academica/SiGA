@@ -17,7 +17,8 @@ $formInput = array(
     "class" => "form-control",
     "step" => 1,
     "max" => $currentYear,
-    "min" => 2000 // Year 2000 at min
+    "min" => 2000, // Year 2000 at min
+    "value" => $searchYear
 );
 
 $submitBtn = array(
