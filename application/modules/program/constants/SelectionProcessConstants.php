@@ -18,4 +18,8 @@ class SelectionProcessConstants {
 	const SPECIAL_STUDENT = "special_student";
 	const REGULAR_STUDENT_PORTUGUESE = "Aluno regular";
 	const SPECIAL_STUDENT_PORTUGUESE = "Aluno especial";
+
+	const NOT_DISCLOSED = "Não divulgado";
+	const OPEN_FOR_SUBSCRIPTIONS = "Inscrições abertas";
+	const INSCRIPTIONS_CLOSED = "Inscrições encerradas";
 }

@@ -65,6 +65,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $studentType = $this->input->post("student_type");
         $noticeName = $this->input->post("selective_process_name");
         $startDate = $this->input->post("selective_process_start_date");
+        var_dump($startDate);
         $endDate = $this->input->post("selective_process_end_date");
 
         try{

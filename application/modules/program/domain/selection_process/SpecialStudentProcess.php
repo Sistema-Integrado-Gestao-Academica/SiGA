@@ -4,8 +4,9 @@ require_once "SelectionProcess.php";
 
 class SpecialStudentProcess extends SelectionProcess{
 	
-	public function __construct($course = FALSE, $name = "", $id = FALSE){
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $settings = FALSE){
 		parent::__construct($course, $name);
+		parent::addSettings($settings);
 	}
 
 	public function getType(){

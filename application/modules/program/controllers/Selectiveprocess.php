@@ -9,6 +9,11 @@ require_once(MODULESPATH."/program/domain/selection_process/RegularStudentProces
 require_once(MODULESPATH."/program/domain/selection_process/SpecialStudentProcess.php");
 require_once(MODULESPATH."/program/domain/selection_process/ProcessSettings.php");
 
+require_once(MODULESPATH."/program/domain/selection_process/phases/Homologation.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/PreProjectEvaluation.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/WrittenTest.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/OralTest.php");
+
 class SelectiveProcess extends MX_Controller {
 
     const MODEL_NAME = "program/selectiveprocess_model";
@@ -207,21 +212,30 @@ class SelectiveProcess extends MX_Controller {
 
         $processes = $this->process_model->getCourseSelectiveProcesses($courseId);
 
-
         if($processes !== FALSE){
 
             $selectiveProcesses = array();
 
             foreach($processes as $process){
 
+                $phasesOrder = unserialize($process[SelectiveProcess_model::PHASE_ORDER_ATTR]);
+                $startDate = convertDateTimeToDateBR($process[SelectiveProcess_model::START_DATE_ATTR]);
+                $endDate = convertDateTimeToDateBR($process[SelectiveProcess_model::END_DATE_ATTR]);
+                $phases = $this->getProcessPhases($process['id_process']);
+                $settings = new ProcessSettings(
+                    $startDate,
+                    $endDate,
+                    $phases,
+                    $phasesOrder
+                );
                 if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
 
                     try{
-
                         $selectionProcess = new RegularStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR]
+                            $process[SelectiveProcess_model::ID_ATTR],
+                            $settings
                         );
 
                     }catch(SelectionProcessException $e){
@@ -233,7 +247,8 @@ class SelectiveProcess extends MX_Controller {
                         $selectionProcess = new SpecialStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR]
+                            $process[SelectiveProcess_model::ID_ATTR],
+                            $settings
                         );
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
@@ -252,7 +267,36 @@ class SelectiveProcess extends MX_Controller {
         }else{
             $selectiveProcesses = FALSE;
         }
-
         return $selectiveProcesses;
+    }
+
+    private function getProcessPhases($processId){
+
+        $processPhases = $this->process_model->getProcessPhases($processId);
+        $phases = array();
+        foreach ($processPhases as $processPhase) {
+            $processPhaseId = $processPhase['id_phase'];
+            $weight = $processPhase['weight'];
+            switch ($processPhaseId) {
+                case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
+                    $phase = new Homologation($processPhaseId);
+                    break;
+                case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
+                    $phase = new PreProjectEvaluation($weight, FALSE, $processPhaseId);
+                    break;
+                case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
+                    $phase = new WrittenTest($weight, FALSE, $processPhaseId);
+                    break;
+                case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
+                    $phase = new OralTest($weight, FALSE, $processPhaseId);
+                    break;
+                default:
+                    $phase = NULL;
+                    break;
+            }
+            $phases[] = $phase;
+        }
+
+        return $phases;
     }
 }

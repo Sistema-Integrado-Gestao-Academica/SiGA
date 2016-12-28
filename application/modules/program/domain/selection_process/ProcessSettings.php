@@ -97,7 +97,6 @@ class ProcessSettings{
 	}
 
 	private function validateDate($strDate){
-
 		$date = date_parse_from_format("d/m/Y", $strDate);
 
 		$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE 

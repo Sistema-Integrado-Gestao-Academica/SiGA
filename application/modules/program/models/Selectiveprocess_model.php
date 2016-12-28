@@ -162,4 +162,16 @@ class SelectiveProcess_model extends CI_Model {
 
 		return $process;
 	}
+
+	public function getProcessPhases($processId){
+		$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR);
+		$this->db->from(self::PROCESS_PHASE_TABLE);
+		$this->db->where(self::ID_ATTR, $processId);
+		$processPhases = $this->db->get()->result_array();
+
+        $processPhases = checkArray($processPhases);
+
+        return $processPhases;
+	}
+
 }
