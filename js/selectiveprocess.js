@@ -76,22 +76,27 @@ function saveSelectiveProcess(saveMethod){
 
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/"+ saveMethod;
 
+	data = {
+		course: course,
+	    student_type: studentType,
+	    selective_process_name: noticeName,
+	    selective_process_start_date: startDate,
+	    selective_process_end_date: endDate,
+		phase_2: preProject,
+		phase_weight_2: preProjectWeight,
+	    phase_3: writtenTest,
+	    phase_weight_3: writtenTestWeight,
+	    phase_4: oralTest,
+	    phase_weight_4: oralTestWeight,
+	    phases_order: phasesOrder
+	}
+	if(document.getElementById("processId")){
+		var processId = $("#processId").val();
+	    data['processId'] = processId;
+	}
 	$.post(
 		urlToPost,
-		{
-			course: course,
-		    student_type: studentType,
-		    selective_process_name: noticeName,
-		    selective_process_start_date: startDate,
-		    selective_process_end_date: endDate,
-			phase_2: preProject,
-			phase_weight_2: preProjectWeight,
-		    phase_3: writtenTest,
-		    phase_weight_3: writtenTestWeight,
-		    phase_4: oralTest,
-		    phase_weight_4: oralTestWeight,
-		    phases_order: phasesOrder
-		},
+		data,
 		function(data){
 			$("#selection_process_saving_status").html(data);
 		}

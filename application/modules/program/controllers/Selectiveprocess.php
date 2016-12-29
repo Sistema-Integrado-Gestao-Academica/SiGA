@@ -229,7 +229,6 @@ class SelectiveProcess extends MX_Controller {
                     $phasesOrder
                 );
                 if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
-
                     try{
                         $selectionProcess = new RegularStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
@@ -237,6 +236,7 @@ class SelectiveProcess extends MX_Controller {
                             $process[SelectiveProcess_model::ID_ATTR]
                         );
                         $selectionProcess->addSettings($settings);
+                        $selectionProcess->setNoticePath($process[SelectiveProcess_model::NOTICE_PATH_ATTR]);
 
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
@@ -250,6 +250,7 @@ class SelectiveProcess extends MX_Controller {
                             $process[SelectiveProcess_model::ID_ATTR]
                         );
                         $selectionProcess->addSettings($settings);
+                        $selectionProcess->setNoticePath($process[SelectiveProcess_model::NOTICE_PATH_ATTR]);
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
                     }
@@ -278,12 +279,16 @@ class SelectiveProcess extends MX_Controller {
         $allPhases = $this->phase->getAllPhases();
 
         $phases = $this->getProcessPhasesToEdit($selectiveProcess, $allPhases);
-
+       
+        $noticePath = $selectiveProcess->getNoticePath();
+        $names = explode("/", $noticePath);
+        $noticeFileName = array_pop($names);
         $data = array(
             'selectiveprocess' => $selectiveProcess,
             'courseId' => $courseId,
             'phasesNames' => $phases['phasesNames'],
             'phasesWeights' => $phases['phasesWeights'],
+            'noticeFileName' => $noticeFileName
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/edit", $data);
@@ -298,18 +303,20 @@ class SelectiveProcess extends MX_Controller {
         foreach ($allPhases as $phase) {
             $hasThePhase = FALSE;
             $phaseId = $phase->getPhaseId();
-            foreach ($processPhases as $processPhase) {
-                $processPhaseId = $processPhase->getPhaseId();
-                if($phaseId == $processPhaseId){
-                    $phasesNames[$phaseId] = $processPhase->getPhaseName();
-                    if($phaseId != SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
-                        $phasesWeights[$phaseId] = $processPhase->getWeight();
+            if(!empty($processPhases)){
+                foreach ($processPhases as $processPhase) {
+                    $processPhaseId = $processPhase->getPhaseId();
+                    if($phaseId == $processPhaseId){
+                        $phasesNames[$phaseId] = $processPhase->getPhaseName();
+                        if($phaseId != SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
+                            $phasesWeights[$phaseId] = $processPhase->getWeight();
+                        }
+                        else{
+                            $phasesWeights[$phaseId] = "0";
+                        }
+                        $hasThePhase = TRUE;
+                        break;
                     }
-                    else{
-                        $phasesWeights[$phaseId] = "0";
-                    }
-                    $hasThePhase = TRUE;
-                    break;
                 }
             }
             if(!$hasThePhase){
@@ -326,4 +333,19 @@ class SelectiveProcess extends MX_Controller {
         return $phases;
     }
 
+    public function downloadNotice($selectiveProcessId, $courseId){
+        
+        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
+        $noticePath = $selectiveProcess->getNoticePath();
+        $this->load->helper('download');
+        if(file_exists($noticePath)){
+            force_download($noticePath, NULL);
+        }
+        else{
+            $status = "danger";
+            $message = "Nenhum arquivo encontrado.";
+            $this->session->set_flashdata($status, $message);
+            redirect("edit_selection_process/{$selectiveProcessId}/{$courseId}");
+        }
+    }
 }
