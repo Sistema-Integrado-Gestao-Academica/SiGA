@@ -63,16 +63,13 @@ class SelectiveProcess_model extends CI_Model {
 		}
 	}
 
-	public function update($process){
+	public function update($process, $processId){
 		$processToSave = $this->getArrayToSave($process);
-		$processId = $process->getId();
-		$this->db->where('id_process', $processId);
+		$this->db->where(self::ID_ATTR, $processId);
 		$updated = $this->db->update($this->TABLE, $processToSave);
-
 		if($updated){
 
 			$this->saveProcessPhases($process, $processId, self::UPDATE_ON_DB);
-
 			return $processId;
 		}
 		else{
@@ -85,9 +82,17 @@ class SelectiveProcess_model extends CI_Model {
 		$courseId = $process->getCourse();
 		$processType = $process->getType();
 		$noticeName = $process->getName();
-		$startDate = $process->getSettings()->getYMDStartDate();
-		$endDate = $process->getSettings()->getYMDEndDate();
-		$phasesOrder = serialize($process->getSettings()->getPhasesOrder());
+		$settings = $process->getSettings();
+		$startDate = NULL;
+		$endDate = NULL;
+		$phasesOrder = NULL;
+		
+		if($settings){
+			$startDate = $settings->getYMDStartDate();
+			$endDate = $settings->getYMDEndDate();
+			$phasesOrder = serialize($settings->getPhasesOrder());
+				
+		}
 
 
 		$processToSave = array(
@@ -105,35 +110,64 @@ class SelectiveProcess_model extends CI_Model {
 
 	private function saveProcessPhases($process, $processId, $method){
 
-		$phases = $process->getSettings()->getPhases();
-
-		foreach($phases as $phase){
-			$phaseId = $phase->getPhaseId();
-
-			if($phase->getPhaseName() === SelectionProcessConstants::HOMOLOGATION_PHASE){
-
-				$phaseWeight = SelectionProcessConstants::HOMOLOGATION_PHASE_WEIGHT;
-			}else{
-				$phaseWeight = $phase->getWeight();
+		$settings = $process->getSettings(); 
+		if($settings){
+			$phases = $settings->getPhases();
+			if($method == self::UPDATE_ON_DB){
+				$this->deletePhasesRemoved($processId, $phases);
 			}
+			foreach($phases as $phase){
+				$phaseId = $phase->getPhaseId();
 
-			$arrayToSave = array(
-				self::ID_ATTR => $processId,
-				self::ID_PHASE_ATTR => $phaseId,
-				self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight
-			);	
+				if($phase->getPhaseName() === SelectionProcessConstants::HOMOLOGATION_PHASE){
 
-			if($method == self::INSERT_ON_DB){
-				$this->db->insert(self::PROCESS_PHASE_TABLE, $arrayToSave);
+					$phaseWeight = SelectionProcessConstants::HOMOLOGATION_PHASE_WEIGHT;
+				}else{
+					$phaseWeight = $phase->getWeight();
+				}
+
+				$arrayToSave = array(
+					self::ID_ATTR => $processId,
+					self::ID_PHASE_ATTR => $phaseId,
+					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight
+				);	
+
+				$this->db->where(self::ID_ATTR, $processId);
+				$this->db->where(self::ID_PHASE_ATTR, $phaseId);
+			   	$result = $this->db->get(self::PROCESS_PHASE_TABLE);
+				$phaseExistent = $result->num_rows() > 0; 
 				
-			}
-			else{
-				$this->db->where('id_process', $processId);
-				$this->db->update(self::PROCESS_PHASE_TABLE, $arrayToSave);
-			}
+				if($phaseExistent){
+					$this->db->where(self::ID_ATTR, $processId);
+					$this->db->where(self::ID_PHASE_ATTR, $phaseId);
+					$this->db->update(self::PROCESS_PHASE_TABLE, $arrayToSave);
 
+				}
+				else{
+					$this->db->insert(self::PROCESS_PHASE_TABLE, $arrayToSave);
+				}
+			}
 		}
+	}
 
+	private function deletePhasesRemoved($processId, $newPhases){
+		
+		$oldPhases = $this->getProcessPhases($processId);	
+		$oldPhases = makeDropdownArray($oldPhases, self::ID_PHASE_ATTR, self::PROCESS_PHASE_WEIGHT_ATTR);
+		$phasesToRemove = array();
+		foreach ($newPhases as $newPhase) {
+			$id = $newPhase->getPhaseId();
+			$phaseExists = array_key_exists($id, $oldPhases);
+			if($phaseExists){
+				unset($oldPhases[$id]);
+			}
+		}
+		
+		foreach ($oldPhases as $oldPhaseId => $oldPhase) {
+			$this->db->where(self::ID_PHASE_ATTR, $oldPhaseId);
+			$this->db->delete(self::PROCESS_PHASE_TABLE);			
+		}
+	
 	}
 
 	public function updateNoticeFile($processId, $noticePath){
@@ -184,6 +218,8 @@ class SelectiveProcess_model extends CI_Model {
 						$foundProcess[self::ID_ATTR]
 					);
 					$selectiveProcess->addSettings($settings);
+                    $selectiveProcess->setNoticePath($foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR]);
+					
 
 				}catch(SelectionProcessException $e){
 					$selectiveProcess = FALSE;
@@ -197,6 +233,7 @@ class SelectiveProcess_model extends CI_Model {
 						$foundProcess[self::ID_ATTR]
 					);
 					$selectiveProcess->addSettings($settings);
+                    $selectiveProcess->setNoticePath($foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR]);
 
 				}catch(SelectionProcessException $e){
 					$selectiveProcess = FALSE;

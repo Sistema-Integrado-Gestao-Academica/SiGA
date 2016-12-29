@@ -20,6 +20,22 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function getPhasesToSort(){
 
+        $preProject = $this->input->post("preProject");
+        $writtenTest = $this->input->post("writtenTest");
+        $oralTest = $this->input->post("oralTest");
+        $phasesToSort = array();
+        
+        $notPresent = "0";
+        if($preProject !== $notPresent){
+            $phasesToSort["pre_project"] = SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE;
+        }
+        if($writtenTest !== $notPresent){
+            $phasesToSort["written_test"] = SelectionProcessConstants::WRITTEN_TEST_PHASE;
+        }
+        if($oralTest !== $notPresent){
+            $phasesToSort["oral_test"] = SelectionProcessConstants::ORAL_TEST_PHASE;
+        }
+
 
         $this->sortPhases($phasesToSort);
     }
@@ -33,7 +49,6 @@ class SelectiveProcessAjax extends MX_Controller {
         if(is_object($selectiveprocess)){
 
             $phasesOrder = $selectiveprocess->getSettings()->getPhasesOrder();                
-
             $phasesToSort = array();
             foreach ($phasesOrder as $phaseOrder) {
                 $phasesToSort[$phaseOrder] = lang($phaseOrder);
@@ -48,14 +63,33 @@ class SelectiveProcessAjax extends MX_Controller {
             if($preProject == $notPresent){
                 unset($phasesToSort["pre_project"]);
             }
+            else if($preProject != $notPresent){
+                $isInArray = array_key_exists('pre_project', $phasesToSort);
+                if(!$isInArray){
+                    $phasesToSort['pre_project'] = lang('pre_project');
+                }
+            }
 
             if($writtenTest == $notPresent){
                 unset($phasesToSort["written_test"]);
+            }
+            else if($writtenTest != $notPresent){
+                $isInArray = array_key_exists('written_test', $phasesToSort);
+                if(!$isInArray){
+                    $phasesToSort['written_test'] = lang('written_test');
+                }
             }
 
             if($oralTest == $notPresent){
                 unset($phasesToSort["oral_test"]);
             }
+            else if($oralTest != $notPresent){
+                $isInArray = array_key_exists('oral_test', $phasesToSort);
+                if(!$isInArray){
+                    $phasesToSort['oral_test'] = lang('oral_test');
+                }
+            }
+
             $this->sortPhases($phasesToSort);
         }
 
@@ -128,11 +162,17 @@ class SelectiveProcessAjax extends MX_Controller {
     public function updateSelectionProcess(){
         
         $process = $this->getDataToSave();
+        $hasSettings = $process->getSettings();
+        $processId = $this->input->post("processId");
 
-        // Finally saves the selection process
         $this->load->model("selectiveprocess_model", "process_model");
-        
-        $processId = $this->process_model->update($process);
+        $processId = $this->process_model->update($process, $processId);
+
+        $noticeName = $process->getName();
+        if($processId){
+            callout("info", "O processo seletivo ".$noticeName." foi editado com sucesso!");
+        }
+
     }
 
     private function getDataToSave(){
@@ -174,7 +214,6 @@ class SelectiveProcessAjax extends MX_Controller {
                 $writtenTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
 
                 $oralTest = $this->input->post("phase_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
-
                 $oralTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
 
                 $phases = array();

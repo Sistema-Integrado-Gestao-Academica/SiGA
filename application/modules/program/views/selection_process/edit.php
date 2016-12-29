@@ -110,7 +110,7 @@ include '_form.php';
 						}
 						else{
 							$selectedItem = FALSE;
-							$phaseWeight["value"] = "-";
+							$phaseWeight["value"] = "0";
 						}
 
 						$processPhases = array(
@@ -171,12 +171,22 @@ include '_form.php';
 	
 
 	<div id="phases_list_to_order_in_edition"></div>
+	<br>
+	<?php $noticePath = $selectiveprocess->getNoticePath();?> 
+	<h4><i class="fa fa-cloud-upload" aria-hidden="true"></i> Edital enviado
+	<br>
+	<?= anchor(
+		"download_notice/{$selectiveprocessId}/{$courseId}",
+		"<i class='fa fa-cloud-download'></i> {$noticeFileName}",
+		"class='btn btn-info'"
+	);?>
 
+	<br>
 	<br>
 	<?= form_button($saveProcessBtn); ?>
 
 
-	<br>
+
 	<div id="selection_process_saving_status"></div>
 
 	<br>
