@@ -218,7 +218,10 @@ class SelectiveProcess_model extends CI_Model {
 						$foundProcess[self::ID_ATTR]
 					);
 					$selectiveProcess->addSettings($settings);
-                    $selectiveProcess->setNoticePath($foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR]);
+					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
+					if(!is_null($noticePath)){
+                    	$selectiveProcess->setNoticePath($noticePath);
+					}
 					
 
 				}catch(SelectionProcessException $e){
@@ -233,7 +236,10 @@ class SelectiveProcess_model extends CI_Model {
 						$foundProcess[self::ID_ATTR]
 					);
 					$selectiveProcess->addSettings($settings);
-                    $selectiveProcess->setNoticePath($foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR]);
+					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
+					if(!is_null($noticePath)){
+                    	$selectiveProcess->setNoticePath($noticePath);
+					}
 
 				}catch(SelectionProcessException $e){
 					$selectiveProcess = FALSE;

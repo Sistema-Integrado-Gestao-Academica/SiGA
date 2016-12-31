@@ -50,10 +50,13 @@ class SelectiveProcessAjax extends MX_Controller {
 
             $phasesOrder = $selectiveprocess->getSettings()->getPhasesOrder();                
             $phasesToSort = array();
-            foreach ($phasesOrder as $phaseOrder) {
-                $phasesToSort[$phaseOrder] = lang($phaseOrder);
+            if($phasesOrder){
+
+                foreach ($phasesOrder as $phaseOrder) {
+                    $phasesToSort[$phaseOrder] = lang($phaseOrder);
+                }
+           
             }
-       
             $preProject = $this->input->post("preProject");
             $writtenTest = $this->input->post("writtenTest");
             $oralTest = $this->input->post("oralTest");
@@ -172,10 +175,9 @@ class SelectiveProcessAjax extends MX_Controller {
         if($processId){
             callout("info", "O processo seletivo ".$noticeName." foi editado com sucesso!");
         }
-
     }
 
-    private function getDataToSave(){
+    public function getDataToSave(){
 
         echo "<h4><i class='fa fa-tag'></i> Status</h4>";
 
@@ -261,6 +263,68 @@ class SelectiveProcessAjax extends MX_Controller {
         }
 
         return $process;
+    }
+
+
+    public function editNoticeFile(){
+
+        $this->load->module('program/selectiveprocess');
+        $processId = $this->input->post("processId");
+        $courseId = $this->input->post("course");
+        $message = $this->selectiveprocess->uploadNoticeFile($courseId, $processId);
+        switch ($message) {
+            case selectiveprocess::NOTICE_FILE_SUCCESS:
+                $status = "success";
+                $pathToRedirect = "program/selectiveprocess/courseSelectiveProcesses/{$courseId}";
+                break;
+
+            case selectiveprocess::NOTICE_FILE_ERROR_ON_UPDATE:
+                $status = "danger";
+                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
+                break;
+            
+            default:
+                $status = "danger";
+                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
+                break;
+        }
+
+        callout($status, $message);
+    }
+
+    public function uploadNoticeFile($courseId, $processId){
+
+        $this->load->library('upload');
+        $process = $this->process_model->getById($processId);
+
+        $this->load->model("program/course_model");
+        $course = $this->course_model->getCourseById($courseId);
+
+        $config = $this->setUploadOptions($process->getName(), $course["id_program"], $course["id_course"], $processId);
+
+        $this->upload->initialize($config);
+        $status = "";
+        if($this->upload->do_upload("notice_file")){
+
+            $noticeFile = $this->upload->data();
+            $noticePath = $noticeFile['full_path'];
+
+            $wasUpdated = $this->updateNoticeFile($processId, $noticePath);
+
+            if($wasUpdated){
+                $status = self::NOTICE_FILE_SUCCESS;
+            }
+            else{
+                $status = self::NOTICE_FILE_ERROR_ON_UPDATE;
+            }
+        }
+        else{
+            // Errors on file upload
+            $errors = $this->upload->display_errors();
+            $status = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
+        }
+
+        return $status;
     }
 
 }

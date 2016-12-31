@@ -43,6 +43,11 @@ $(document).ready(function(){
 		dateFormat: "dd-mm-yy"
 	});
 
+	$('#edit_notice_path_form').submit(function(e) {
+    	e.preventDefault();
+		editNoticePath($(this)[0]);
+	});
+
 });
 
 function makeSortable(){
@@ -99,6 +104,11 @@ function saveSelectiveProcess(saveMethod){
 		data,
 		function(data){
 			$("#selection_process_saving_status").html(data);
+			if(saveMethod == "updateSelectionProcess"){
+				window.setTimeout(function () {
+			        location.href = siteUrl + "/program/selectiveprocess/courseSelectiveProcesses/" + course;
+			    }, 1000);
+			}
 		}
 	);
 }
@@ -146,5 +156,24 @@ function getPhasesToSort(){
 		);
 	}
 
+}
 
+function editNoticePath(formData){
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/editNoticeFile";
+
+	var data = new FormData(formData);
+
+	$.ajax({
+		url: urlToPost,
+		type: 'post',
+		data: data,
+		async: false,
+		cache: false,
+		contentType: false,
+		processData: false,
+		success: function (data) {
+			$("#status_notice_file").html(data);
+		}
+	});
 }

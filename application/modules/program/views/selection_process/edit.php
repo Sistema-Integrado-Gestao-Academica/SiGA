@@ -173,18 +173,51 @@ include '_form.php';
 	<div id="phases_list_to_order_in_edition"></div>
 	<br>
 	<?php $noticePath = $selectiveprocess->getNoticePath();?> 
-	<h4><i class="fa fa-cloud-upload" aria-hidden="true"></i> Edital enviado
+	<h4><i class="fa fa-cloud-upload" aria-hidden="true"></i> Edital enviado: <b><?= $noticeFileName ?></b></h4>
 	<br>
-	<?= anchor(
-		"download_notice/{$selectiveprocessId}/{$courseId}",
-		"<i class='fa fa-cloud-download'></i> {$noticeFileName}",
-		"class='btn btn-info'"
-	);?>
+	<div class="row">
+		<div class="col-lg-3">
+			<?php $url = site_url('download_notice/'.$selectiveprocessId.'/'.$courseId);?>
+			<h4><a href=<?=$url?> class='btn btn-info'><i class='fa fa-cloud-download'></i>Baixar</a></h4>
+		</div>
+		<div class="col-lg-3">
+			<h4><a href="#edit_notice_path" data-toggle="collapse" class='btn btn-info'><i class="fa fa-edit">Enviar outro edital</i></a></h4>
+		</div>
+	</div>
 
+	<div id="edit_notice_path" class="collapse">
+
+	<?php
+
+	echo form_open_multipart("program/selectiveprocess/editNoticeFile", array( 'id' => 'edit_notice_path_form' ));
+
+    echo form_input($hidden);
+    echo form_input($selectiveprocessIdHidden);
+
+    $noticeFile = array(
+        "name" => "notice_file",
+        "id" => "notice_file",
+        "type" => "file"
+    );
+
+	$submitFileBtn = array(
+        "id" => "edit_notice_path_btn",
+        "class" => "btn btn-success btn-flat",
+        "content" => "Salvar arquivo",
+        "type" => "submit",
+        "style" => "margin-top: 5%;"
+    );
+    
+    include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
+
+	echo form_close();
+	?>
+	<div id="status_notice_file"></div>
+
+	</div>
 	<br>
 	<br>
 	<?= form_button($saveProcessBtn); ?>
-
 
 
 	<div id="selection_process_saving_status"></div>

@@ -200,6 +200,7 @@ $route['documents_request'] = "student/documentrequestStudent/index";
  */
 $route['selection_process'] = 'program/selectiveprocess/index';
 $route['edit_selection_process/(:num)/(:num)'] = 'program/selectiveprocess/edit/$1/$2';
+$route['update_selection_process'] = 'program/selectiveprocess/updateSelectionProcess';
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
 
 /*

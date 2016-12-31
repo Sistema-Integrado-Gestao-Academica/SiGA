@@ -19,6 +19,11 @@ class SelectiveProcess extends MX_Controller {
     const MODEL_NAME = "program/selectiveprocess_model";
     const MODEL_OBJECT = "process_model";
 
+    // Exceptions messages
+    const NOTICE_FILE_ERROR_ON_UPLOAD = "Tente novamente.";
+    const NOTICE_FILE_ERROR_ON_UPDATE = "Não foi possível salvar o arquivo do Edital. Tente novamente.";
+    const NOTICE_FILE_SUCCESS = 'Processo Seletivo e edital salvo com sucesso!';
+
     public function __construct(){
         parent::__construct();
 
@@ -145,12 +150,35 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function saveNoticeFile(){
-
-        $this->load->library('upload');
-
+        
         $courseId = $this->input->post("course");
         $processId = base64_decode($this->input->post("selection_process_id"));
+        
+        $message = $this->uploadNoticeFile($courseId, $processId);
+        switch ($message) {
+            case self::NOTICE_FILE_SUCCESS:
+                $status = "success";
+                $pathToRedirect = "program/selectiveprocess/courseSelectiveProcesses/{$courseId}";
+                break;
 
+            case self::NOTICE_FILE_ERROR_ON_UPDATE:
+                $status = "danger";
+                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
+                break;
+            
+            default:
+                $status = "danger";
+                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
+                break;
+        }
+
+        $this->session->set_flashdata($status, $message);
+        redirect($pathToRedirect);
+    }
+
+    public function uploadNoticeFile($courseId, $processId){
+
+        $this->load->library('upload');
         $process = $this->process_model->getById($processId);
 
         $this->load->model("program/course_model");
@@ -159,7 +187,7 @@ class SelectiveProcess extends MX_Controller {
         $config = $this->setUploadOptions($process->getName(), $course["id_program"], $course["id_course"], $processId);
 
         $this->upload->initialize($config);
-
+        $status = "";
         if($this->upload->do_upload("notice_file")){
 
             $noticeFile = $this->upload->data();
@@ -168,26 +196,19 @@ class SelectiveProcess extends MX_Controller {
             $wasUpdated = $this->updateNoticeFile($processId, $noticePath);
 
             if($wasUpdated){
-                $status = "success";
-                $message = "Processo Seletivo e edital salvo com sucesso!";
-                $pathToRedirect = "program/selectiveprocess/courseSelectiveProcesses/{$courseId}";
-            }else{
-                $status = "danger";
-                $message = "Não foi possível salvar o arquivo do Edital. Tente novamente.";
-                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
+                $status = self::NOTICE_FILE_SUCCESS;
             }
-
-        }else{
+            else{
+                $status = self::NOTICE_FILE_ERROR_ON_UPDATE;
+            }
+        }
+        else{
             // Errors on file upload
             $errors = $this->upload->display_errors();
-
-            $status = "danger";
-            $message = $errors."<br>Tente novamente.";
-            $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
+            $status = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
         }
 
-        $this->session->set_flashdata($status, $message);
-        redirect($pathToRedirect);
+        return $status;
     }
 
     private function updateNoticeFile($processId, $noticePath){
@@ -236,7 +257,10 @@ class SelectiveProcess extends MX_Controller {
                             $process[SelectiveProcess_model::ID_ATTR]
                         );
                         $selectionProcess->addSettings($settings);
-                        $selectionProcess->setNoticePath($process[SelectiveProcess_model::NOTICE_PATH_ATTR]);
+                        $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
+                        if(!is_null($noticePath)){
+                            $selectionProcess->setNoticePath($noticePath);
+                        }
 
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
@@ -250,7 +274,10 @@ class SelectiveProcess extends MX_Controller {
                             $process[SelectiveProcess_model::ID_ATTR]
                         );
                         $selectionProcess->addSettings($settings);
-                        $selectionProcess->setNoticePath($process[SelectiveProcess_model::NOTICE_PATH_ATTR]);
+                        $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
+                        if(!is_null($noticePath)){
+                            $selectionProcess->setNoticePath($noticePath);
+                        }
                     }catch(SelectionProcessException $e){
                         $selectionProcess = FALSE;
                     }
@@ -348,4 +375,5 @@ class SelectiveProcess extends MX_Controller {
             redirect("edit_selection_process/{$selectiveProcessId}/{$courseId}");
         }
     }
+
 }
