@@ -23,17 +23,21 @@ class Production_model extends CI_Model {
 		return $updated;
 	}
 
-	public function getUserProductions($userId){
+	public function getUserProductions($userId, $year=FALSE){
 
 		$this->db->select("intellectual_production.*");
 		$this->db->from("intellectual_production");
 		$this->db->where("author", $userId);
 
+		if($year){
+			$this->db->where("year", $year);
+		}
+
 		$productions = $this->db->get()->result_array();
 
 		$productions = checkArray($productions);
 
-		$productions = $this->getCoauthorProductions($userId, $productions);
+		$productions = $this->getCoauthorProductions($userId, $productions, $year);
 
 		if($productions !== FALSE){
 			foreach ($productions as $id => $production) {
@@ -151,11 +155,16 @@ class Production_model extends CI_Model {
 		return $lastId;
 	}
 
-	public function getCoauthorProductions($userId, $productions){
+	public function getCoauthorProductions($userId, $productions, $year=FALSE){
 
 		$this->db->select("production_id");
 		$this->db->from("production_coauthor");
-		$this->db->where("user_id", $userId);
+		if($year){
+			$this->db->join("intellectual_production", "intellectual_production.id = production_coauthor.production_id");
+			$this->db->where("intellectual_production.year", $year);
+		}
+		$this->db->where("production_coauthor.user_id", $userId);
+
 		$productionIds = $this->db->get()->result_array();
 		$productionIds = checkArray($productionIds);
 
