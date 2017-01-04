@@ -69,13 +69,13 @@ $submitBtn = array(
         <h4 class="text-center"> <i class="fa fa-book"></i>
             Discentes (<b><?= !empty($students) ? count($students) : 0 ?></b>) :
         </h4>
-        <?php showUsers($students, $filled); ?>
+        <?php showUsers($students, $filled, $searchYear); ?>
     </div>
     <div class="col-md-6">
         <h4 class="text-center"> <i class="fa fa-pencil-square-o"></i>
             Docentes (<b><?= !empty($teachers) ? count($teachers) : 0 ?></b>):
         </h4>
-        <?php showUsers($teachers, $filled); ?>
+        <?php showUsers($teachers, $filled, $searchYear); ?>
     </div>
 </div>
 
@@ -95,7 +95,7 @@ $submitBtn = array(
 </style>
 
 <?php
-function showUsers($users, $filled){
+function showUsers($users, $filled, $year){
     searchUsersForm();
 
     buildTableDeclaration('users_with_productions');
@@ -111,7 +111,8 @@ function showUsers($users, $filled){
         foreach ($users as $user) {
             echo "<tr>";
                 echo "<td>";
-                echo $user['name'];
+                echo "<a data-toggle='modal' href='#user_productions_{$user['id']}'>
+                    <i class='fa fa-book'></i> " . $user['name'] . "</a>";
                 echo "</td>";
 
                 echo "<td>";
@@ -123,6 +124,15 @@ function showUsers($users, $filled){
                 echo "</td>";
 
             echo "</tr>";
+
+            newModal(
+                "user_productions_{$user['id']}",
+                "Produções de {$user['name']}",
+                function() use ($user, $year) {
+                    showUserProductions($user, $year);
+                },
+                function(){}
+            );
         }
     }else{
         echo "<tr>";
@@ -141,5 +151,44 @@ function showUsers($users, $filled){
 
 function searchUsersForm(){
 
+}
+
+function showUserProductions($user, $year){
+    $ci =& get_instance();
+    $ci->load->model("program/production_model");
+    $productions = $ci->production_model->getUserProductions($user['id'], $year);
+
+    echo "<h4> <i class='fa fa-book'></i> Produções de <b><i>{$user['name']}</b></i> em <b><i>{$year}</b></i>:</h4><br>";
+    if(!empty($productions)){
+        echo "<div class='panel-group' id='accordion'>";
+            foreach ($productions as $production) {
+                echo "<div class='panel panel-default'>";
+                    echo "<div class='panel-heading'>";
+                        echo "<h4 class='panel-title'>";
+                        echo "<a data-toggle='collapse' data-parent='#accordion' href='#production_{$production->getId()}'>";
+                            echo "<i class='fa fa-chevron-down'></i> " . $production->getTitle();
+                        echo "</a>";
+                        echo "</h4>";
+                    echo "</div>";
+
+                    echo "<div id='production_{$production->getId()}' class='panel-collapse collapse'>";
+                        echo "<div class='panel-body'>";
+                            echo bold("Título: ") . $production->getTitle();
+                            echo "<br>";
+                            echo bold("Periódico: ") . $production->getPeriodic();
+                            echo "<br>";
+                            echo bold("Ano: ") . $production->getYear();
+                            echo "<br>";
+                            echo bold("Identificador: ") . $production->getIdentifier();
+                            echo "<br>";
+                            echo bold("Qualis: ") . $production->getQualis();
+                        echo "</div>";
+                    echo "</div>";
+                echo "</div>";
+            }
+        echo "</div>";
+    }else{
+        callout("info", "Este usuário não possui produções cadastradas.");
+    }
 }
 ?>
