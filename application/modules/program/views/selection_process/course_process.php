@@ -9,7 +9,16 @@ echo anchor(
 	"<i class='fa fa-plus-square'></i> Abrir edital para <b>".$course[Course_model::COURSE_NAME_ATTR]."</b>",
 	"class = 'btn btn-lg'"
 );
+?>
 
+
+<div align='right'>
+<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
+<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
+<i class='fa fa-calendar'> Definir datas </i>
+</div>
+
+<?php
 buildTableDeclaration();
 
 buildTableHeaders(array(
@@ -105,8 +114,11 @@ if($validSelectiveProcesses){
 
 				newModal("selectiveprocessmodal".$processId, "Processo Seletivo: <b>{$processName}</b>", $body, $footer);
 				
-				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-success'>Visualizar</a>";
-				echo anchor("program/selectiveprocess/edit/{$processId}/{$course[Course_model::ID_ATTR]}", "Editar", "class='btn btn-primary'");
+				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-success'><i class='fa fa-eye'></i></a>";
+				echo "&nbsp";
+				echo anchor("edit_selection_process/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
+				echo "&nbsp";
+				echo anchor("define_dates_page/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
 
 			echo "</td>";
 
@@ -145,3 +157,4 @@ function labelToStatus($settings){
 		}
 	}
 }
+?>
