@@ -956,3 +956,54 @@ function searchInStudentList($specificData, $course){
 		echo form_button($searchForStudentBtn);
 	echo "</form>";
 }
+
+function defineDateForm($courseId, $submitBtnId, $startDateFieldId, $endDateFieldId = FALSE){
+	
+	$hidden = array(
+		'id' => "course",
+		'name' => "course",
+		'type' => "hidden",
+		'value' => $courseId
+	);
+
+
+	$submitBtn = array(
+		"id" => $submitBtnId,
+		"content" => "Definir",
+		"class" => "btn bg-primary btn-flat",
+		"type" => "submit"
+	);
+
+	$startDate = array(
+	    "name" => $startDateFieldId,
+	    "id" => $startDateFieldId,
+	    "type" => "text",
+		"placeholder" => "Informe a data inicial",
+	    "class" => "form-campo",
+	    "class" => "form-control"
+	);
+
+	echo form_input($hidden);
+
+	echo "<form class='form-inline' role='form'>";
+
+		echo form_input($startDate);
+
+		if($endDateFieldId){
+
+			$endDate = array(
+			    "name" => $endDateFieldId,
+			    "id" => $endDateFieldId,
+			    "type" => "text",
+				"placeholder" => "Informe a data final",
+			    "class" => "form-campo",
+			    "class" => "form-control"
+			);
+			echo " a ";
+			echo form_input($endDate);
+		}
+
+		echo form_button($submitBtn);
+	echo "</form>";
+
+}

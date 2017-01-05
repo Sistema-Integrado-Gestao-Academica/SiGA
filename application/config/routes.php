@@ -202,6 +202,8 @@ $route['selection_process'] = 'program/selectiveprocess/index';
 $route['edit_selection_process/(:num)/(:num)'] = 'program/selectiveprocess/edit/$1/$2';
 $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionProcess';
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
+$route['define_dates_page/(:num)/(:num)'] = 'program/selectiveprocess/loadDefineDatesPage/$1/$2';
+$route['define_dates/(:num)/(:num)'] = 'program/selectiveprocess/defineDates/$1/$2';
 
 /*
  * Enrollment routes

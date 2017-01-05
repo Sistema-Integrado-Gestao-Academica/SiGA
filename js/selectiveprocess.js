@@ -48,6 +48,31 @@ $(document).ready(function(){
 		editNoticePath($(this)[0]);
 	});
 
+	$("#divulgation_start_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
+	$("#define_divulgation_date").click(function(){
+		defineDivulgationDate();
+	});
+	
+
+	$("#define_date_phase_1").click(function(){
+		definePhaseDate(1);		
+	});
+
+	$("#define_date_phase_2").click(function(){
+		definePhaseDate(2);		
+	});
+
+	$("#define_date_phase_3").click(function(){
+		definePhaseDate(3);		
+	});
+
+	$("#define_date_phase_4").click(function(){
+		definePhaseDate(4);		
+	});
+
 });
 
 function makeSortable(){

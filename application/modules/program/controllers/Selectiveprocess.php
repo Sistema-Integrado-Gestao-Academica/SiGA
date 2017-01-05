@@ -376,4 +376,17 @@ class SelectiveProcess extends MX_Controller {
         }
     }
 
+    public function loadDefineDatesPage($selectiveProcessId, $courseId){
+            
+        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
+
+        $data = array(
+            'selectiveprocess' => $selectiveProcess,
+            'courseId' => $courseId
+            // 'divulgations' => $divulgations
+        );
+        
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
+    }
+
 }
