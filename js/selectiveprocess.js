@@ -52,7 +52,8 @@ $(document).ready(function(){
 		dateFormat: "dd-mm-yy"
 	});
 
-	$("#define_divulgation_date").click(function(){
+	$("#define_divulgation_date").click(function(e){
+    	e.preventDefault();
 		defineDivulgationDate();
 	});
 	
@@ -201,4 +202,23 @@ function editNoticePath(formData){
 			$("#status_notice_file").html(data);
 		}
 	});
+}
+
+function defineDivulgationDate(){
+	var siteUrl = $("#site_url").val();
+	var divulgation_start_date = $("#divulgation_start_date").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate";
+	var process_id = $("#process_id").val();
+
+	var data = {
+		divulgation_start_date: divulgation_start_date,
+		process_id: process_id
+	}
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#divulgation_date_defined").html(data);
+		}
+	);
 }
