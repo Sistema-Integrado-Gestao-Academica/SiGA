@@ -957,13 +957,13 @@ function searchInStudentList($specificData, $course){
 	echo "</form>";
 }
 
-function defineDateForm($courseId, $submitBtnId, $startDateFieldId, $endDateFieldId = FALSE){
+function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFieldId = FALSE){
 	
 	$hidden = array(
-		'id' => "course",
-		'name' => "course",
+		'id' => "process_id",
+		'name' => "process_id",
 		'type' => "hidden",
-		'value' => $courseId
+		'value' => $processId
 	);
 
 

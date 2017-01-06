@@ -327,4 +327,28 @@ class SelectiveProcessAjax extends MX_Controller {
         return $status;
     }
 
+    public function defineDivulgationDate(){
+        $processId = $this->input->post("process_id");
+        $date = $this->input->post("divulgation_start_date");
+
+        $this->load->model("selectiveprocess_model", "process_model");
+        $process = $this->process_model->getById($processId);
+        $settings = $process->getSettings();
+
+        echo "<ul class='timeline'>";
+        if(!is_null($date) && !empty($date)){
+            $processDivulgation = array('date' => $date);// Retirar depois essa linha
+            $processId = $process->getId();
+            $settings = $process->getSettings();
+        
+            showDivulgationDateSection($settings, $processId, $processDivulgation);
+        }
+        else{
+            showDivulgationDateSectionWithError($processId, "Você deve escolher uma data.");
+        }
+        showSubscriptionSection($settings);
+        showPhasesSection($settings, $processId);
+        echo "</ul>";
+    }
+
 }
