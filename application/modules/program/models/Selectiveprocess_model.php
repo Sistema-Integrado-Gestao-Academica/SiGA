@@ -304,4 +304,35 @@ class SelectiveProcess_model extends CI_Model {
         return $phases;
     }
 
+    public function saveNoticeDivulgation($processId, $date, $description){
+
+    	$date = convertDateToDateTime($date);
+    	$data = array(
+    		'id_process' => $processId,
+    		'description' => $description,
+    		'date' => $date,
+    		'initial_divulgation' => True
+    	);
+
+    	$saved = $this->db->insert("selection_process_divulgation", $data);
+
+    	return $saved;
+    }
+
+    public function getNoticeDivulgation($processId){
+
+    	$data = array(
+    		'id_process' => $processId,
+    		'initial_divulgation' => True
+    	);
+
+    	$noticeDivulgation = $this->db->get_where('selection_process_divulgation', $data);
+
+		$noticeDivulgation = $noticeDivulgation->row_array();
+
+		$noticeDivulgation = checkArray($noticeDivulgation);
+
+		return $noticeDivulgation;
+    }
+
 }

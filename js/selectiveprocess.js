@@ -207,11 +207,13 @@ function editNoticePath(formData){
 function defineDivulgationDate(){
 	var siteUrl = $("#site_url").val();
 	var divulgation_start_date = $("#divulgation_start_date").val();
+	var divulgation_description = $("#divulgation_description").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate";
 	var process_id = $("#process_id").val();
 
 	var data = {
 		divulgation_start_date: divulgation_start_date,
+		divulgation_description: divulgation_description,
 		process_id: process_id
 	}
 	$.post(
@@ -222,3 +224,4 @@ function defineDivulgationDate(){
 		}
 	);
 }
+
