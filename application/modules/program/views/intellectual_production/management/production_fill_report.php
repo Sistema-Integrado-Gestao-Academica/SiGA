@@ -62,7 +62,33 @@ $submitBtn = array(
 <?= form_close() ?>
 
 <br>
-<h3 class="text-center">Ano de referência: <b><?= $referenceYear ?></b></h3>
+<h3 class="text-center">Ano de referência: <b><?= $referenceYear ?></b>
+<br>
+<br>
+    <small><?php printPageButton($students, $teachers, $filled, $searchYear); ?></small>
+</h3>
+
+<?php
+    function printPageButton($students, $teachers, $filled, $year){
+        $data = [
+            'users' => json_encode([
+                'students' => $students,
+                'teachers' => $teachers
+            ]),
+            'filled' => $filled,
+            'year' => $year
+        ];
+
+        echo form_open('print_fill_report', [], $data);
+            echo form_button([
+                "id" => "print_report_btn",
+                "class" => "btn btn-primary btn-flat",
+                "content" => "<i class='fa fa-print'></i> Imprimir relatório",
+                "type" => "submit"
+            ]);
+        echo form_close();
+    }
+?>
 
 <div class="row">
     <div class="col-md-6">
@@ -96,8 +122,6 @@ $submitBtn = array(
 
 <?php
 function showUsers($users, $filled, $year){
-    searchUsersForm();
-
     buildTableDeclaration('users_with_productions');
 
     buildTableHeaders([
@@ -111,8 +135,7 @@ function showUsers($users, $filled, $year){
         foreach ($users as $user) {
             echo "<tr>";
                 echo "<td>";
-                echo "<a data-toggle='modal' href='#user_productions_{$user['id']}'>
-                    <i class='fa fa-book'></i> " . $user['name'] . "</a>";
+                echo "<a data-toggle='modal' href='#user_productions_{$user['id']}'>{$user['name']}</a>";
                 echo "</td>";
 
                 echo "<td>";
@@ -149,10 +172,6 @@ function showUsers($users, $filled, $year){
     buildTableEndDeclaration();
 }
 
-function searchUsersForm(){
-
-}
-
 function showUserProductions($user, $year){
     $ci =& get_instance();
     $ci->load->model("program/production_model");
@@ -175,9 +194,9 @@ function showUserProductions($user, $year){
                         echo "<div class='panel-body'>";
                             echo bold("Título: ") . $production->getTitle();
                             echo "<br>";
-                            echo bold("Periódico: ") . $production->getPeriodic();
-                            echo "<br>";
                             echo bold("Ano: ") . $production->getYear();
+                            echo "<br>";
+                            echo bold("Periódico: ") . $production->getPeriodic();
                             echo "<br>";
                             echo bold("Identificador: ") . $production->getIdentifier();
                             echo "<br>";

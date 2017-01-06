@@ -240,6 +240,7 @@ $route['notify_group_of_users'] = 'notification/userNotification/notifyGroupOfUs
 $route['production_report'] = 'program/productionManagement/index';
 $route['evaluation_report'] = 'program/coordinator/evaluationsReports';
 $route['productions_fill_report'] = 'program/productionManagement/productionFillReport';
+$route['print_fill_report'] = 'program/productionManagement/printFillReport';
 
 
 /*

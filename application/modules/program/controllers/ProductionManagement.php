@@ -121,6 +121,16 @@ class ProductionManagement extends MX_Controller {
         return $filteredProductions;
     }
 
+    public function printFillReport(){
+        $data = [
+            'users' => json_decode($this->input->post('users')),
+            'filled' => $this->input->post('filled'),
+            'year' => $this->input->post('year')
+        ];
+
+        loadTemplateSafelyByPermission(PermissionConstants::PRODUCTION_FILL_REPORT_PERMISSION, "program/intellectual_production/management/production_fill_report_print", $data);
+    }
+
     public function productionFillReport(){
 
         $courses = $this->getUserCoursesForProductions();
