@@ -379,10 +379,12 @@ class SelectiveProcess extends MX_Controller {
     public function loadDefineDatesPage($selectiveProcessId, $courseId){
             
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
+        $processDivulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
 
         $data = array(
             'selectiveprocess' => $selectiveProcess,
-            'courseId' => $courseId
+            'courseId' => $courseId,
+            'processDivulgation' => $processDivulgation
             // 'divulgations' => $divulgations
         );
         

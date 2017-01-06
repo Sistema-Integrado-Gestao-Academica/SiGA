@@ -330,21 +330,32 @@ class SelectiveProcessAjax extends MX_Controller {
     public function defineDivulgationDate(){
         $processId = $this->input->post("process_id");
         $date = $this->input->post("divulgation_start_date");
+        $divulgationDescription = $this->input->post("divulgation_description");
 
         $this->load->model("selectiveprocess_model", "process_model");
         $process = $this->process_model->getById($processId);
         $settings = $process->getSettings();
 
         echo "<ul class='timeline'>";
-        if(!is_null($date) && !empty($date)){
-            $processDivulgation = array('date' => $date);// Retirar depois essa linha
-            $processId = $process->getId();
-            $settings = $process->getSettings();
-        
-            showDivulgationDateSection($settings, $processId, $processDivulgation);
+        if(is_null($date) || empty($date)){
+            showDivulgationDateSectionWithError($process, "Você deve escolher uma data.");
+        }
+        else if(is_null($divulgationDescription) || empty($divulgationDescription)){
+            showDivulgationDateSectionWithError($processId, "Você deve adicionar uma descrição para a divulgação do edital.");
         }
         else{
-            showDivulgationDateSectionWithError($processId, "Você deve escolher uma data.");
+            $saved = $this->process_model->saveNoticeDivulgation($processId, $date, $divulgationDescription);
+            $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
+            if($saved){
+
+                $processId = $process->getId();
+                $settings = $process->getSettings();
+                showDivulgationDateSection($process, $processDivulgation, True);
+            }
+            else{
+                showDivulgationDateSectionWithError($process, "Não foi possível salvar a data e descrição da divulgação do edital.");
+            }
+        
         }
         showSubscriptionSection($settings);
         showPhasesSection($settings, $processId);
