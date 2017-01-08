@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
 
 	$("#phase_2").ready(function(){
@@ -48,31 +49,76 @@ $(document).ready(function(){
 		editNoticePath($(this)[0]);
 	});
 
-	$("#divulgation_start_date").datepicker($.datepicker.regional["pt-BR"], {
-		dateFormat: "dd-mm-yy"
+	$(document).on('focus',"#divulgation_start_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
 	});
 
-	$("#define_divulgation_date").click(function(e){
+	$(document).on('click', '#define_divulgation_date', function(e){
     	e.preventDefault();
 		defineDivulgationDate();
 	});
 	
+	$(document).on('click', '#define_date_phase_1', function(e){
+	    e.preventDefault();
+		definePhaseDate(1);
+	});	
 
-	$("#define_date_phase_1").click(function(){
-		definePhaseDate(1);		
-	});
-
-	$("#define_date_phase_2").click(function(){
+	$(document).on('click', '#define_date_phase_2', function(e){
+    	e.preventDefault();
 		definePhaseDate(2);		
 	});
 
-	$("#define_date_phase_3").click(function(){
+	$(document).on('click', '#define_date_phase_3', function(e){
+    	e.preventDefault();
 		definePhaseDate(3);		
 	});
 
-	$("#define_date_phase_4").click(function(){
+	$(document).on('click', '#define_date_phase_4', function(e){
+    	e.preventDefault();
 		definePhaseDate(4);		
 	});
+
+	$(document).on('focus',"#phase_1_start_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_1_end_date", function(){
+		$(this).datepicker($.datepicker.regional["pt-BR"], {
+			dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_2_start_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_2_end_date", function(){
+		$(this).datepicker($.datepicker.regional["pt-BR"], {
+			dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_3_start_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_3_end_date", function(){
+		$(this).datepicker($.datepicker.regional["pt-BR"], {
+			dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_4_start_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
+	});
+
+	$(document).on('focus',"#phase_4_end_date", function(){
+		$(this).datepicker($.datepicker.regional["pt-BR"], {
+			dateFormat: "dd-mm-yy"});
+	});
+
 
 });
 
@@ -210,18 +256,44 @@ function defineDivulgationDate(){
 	var divulgation_description = $("#divulgation_description").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate";
 	var process_id = $("#process_id").val();
+	var course_id = $("#course_id").val();
 
 	var data = {
 		divulgation_start_date: divulgation_start_date,
 		divulgation_description: divulgation_description,
+		course_id: course_id,
 		process_id: process_id
 	}
 	$.post(
 		urlToPost,
 		data,
 		function(data){
-			$("#divulgation_date_defined").html(data);
+			$("#divulgation").html(data);
 		}
 	);
 }
 
+
+function definePhaseDate(phaseId){
+	var siteUrl = $("#site_url").val();
+	var idFieldStartDate = "#phase_" + phaseId + "_start_date"
+	var startDate = $(idFieldStartDate).val();
+	var idFieldEndDate = "#phase_" + phaseId + "_end_date"
+	var endDate = $(idFieldEndDate).val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/definePhaseDate/"+ phaseId;
+	var process_id = $("#process_id").val();
+
+	var data = {
+		startDate: startDate,
+		endDate: endDate,
+		process_id: process_id
+	}
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			id = "#phase_" + phaseId;
+			$(id).html(data);
+		}
+	);
+}

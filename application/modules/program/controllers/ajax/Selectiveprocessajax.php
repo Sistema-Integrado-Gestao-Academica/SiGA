@@ -329,37 +329,129 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function defineDivulgationDate(){
         $processId = $this->input->post("process_id");
+        $courseId = $this->input->post("course_id");
         $date = $this->input->post("divulgation_start_date");
         $divulgationDescription = $this->input->post("divulgation_description");
-
         $this->load->model("selectiveprocess_model", "process_model");
         $process = $this->process_model->getById($processId);
         $settings = $process->getSettings();
-
-        echo "<ul class='timeline'>";
-        if(is_null($date) || empty($date)){
-            showDivulgationDateSectionWithError($process, "Você deve escolher uma data.");
-        }
-        else if(is_null($divulgationDescription) || empty($divulgationDescription)){
-            showDivulgationDateSectionWithError($processId, "Você deve adicionar uma descrição para a divulgação do edital.");
+        $processName = $process->getName();
+        $error = "";
+        if(is_null($date) || empty($date) || is_null($divulgationDescription) || empty($divulgationDescription)){
+            $error .= "<br>Preencha a data e a descrição da divulgação.";
         }
         else{
             $saved = $this->process_model->saveNoticeDivulgation($processId, $date, $divulgationDescription);
             $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
-            if($saved){
-
-                $processId = $process->getId();
-                $settings = $process->getSettings();
-                showDivulgationDateSection($process, $processDivulgation, True);
+            if(!$saved){
+                $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
             }
-            else{
-                showDivulgationDateSectionWithError($process, "Não foi possível salvar a data e descrição da divulgação do edital.");
-            }
-        
         }
-        showSubscriptionSection($settings);
-        showPhasesSection($settings, $processId);
+
+        if($error){
+            $text = "Data não definida";
+            $bodyText = function() use ($error){ 
+                echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
+                echo $error;
+                echo "</div>";
+                echo "Você pode definir uma data ou divulgar o processo seletivo agora.";
+                
+            };
+            $processDivulgation = FALSE;
+            $footer = function() use ($processId, $courseId, $processName){
+                echo anchor("#", "Divulgar agora", "class='btn btn-success'");
+                echo "&nbsp";
+                echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Definir data</button>";
+                echo "<br>";
+                echo "<br>";
+                echo "<div id='define_date_form' class='collapse'>";
+                echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
+                echo "<br>";
+                formOfDateDivulgation($processId, $processName, $courseId);
+            };
+            $link = "#";
+            $date = FALSE;
+        }
+        else{
+            $text = $divulgationDescription;
+            $link = site_url('download_notice/'.$processId.'/'.$courseId);
+            $bodyText = function(){
+                echo "Clique para baixar.";
+            };
+            $footer = "";
+            $date = convertDateTimeToDateBR($processDivulgation['date']);
+            $today = new Datetime();
+            $today = $today->format("d/m/Y");
+            if($date > $today){
+                $footer = function() use ($processId, $courseId, $processName, $date, $text){
+                    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
+                    echo "<br>";
+                    echo "<br>";
+                    echo "<div id='define_date_form' class='collapse'>";
+                    echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
+                    echo "<br>";
+                    formOfDateDivulgation($processId, $processName, $courseId, $date, $text);
+                };
+            }
+        }
+
+        writeTimelineItem($text, $date, $link, $bodyText, $footer);
         echo "</ul>";
     }
 
+    function definePhaseDate($phaseId){
+        $processId = $this->input->post("process_id");
+        $startDate = $this->input->post("startDate");
+        $endDate = $this->input->post("endDate");
+
+
+        $error = "";
+        if(is_null($startDate) || empty($startDate) || is_null($endDate) || empty($endDate)){
+            $error .= "<br>Você deve escolher a data de início e de fim.";
+        }
+        else{
+            $startDate = validateDate($startDate);
+            $startDate = formatDateToDateTime($startDate);
+
+            $endDate = validateDate($endDate);
+            $endDate = formatDateToDateTime($endDate);
+            
+            $dataToSave = array(
+                'start_date' => $startDate,
+                'end_date' => $endDate
+            );
+
+            $this->load->model("selectiveprocess_model", "process_model");
+            $saved = $this->process_model->savePhaseDate($processId, $phaseId, $dataToSave);
+            if(!$saved){
+                $error .= "<br>Não foi possível definir a data";
+            }
+        
+        }
+
+        if($error){
+            $text = "Período para a fase não definido";
+            $bodyText = function() use ($processId, $phaseId, $error){
+                echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
+                echo $error;
+                echo "</div>";
+                defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date");
+            };
+        }
+        else{
+            $text = "Período definido";
+            $bodyText = function() use ($processId, $phaseId){
+                echo "<b>Data de início:</b><br>";
+                $phase = $this->process_model->getPhaseById($processId, $phaseId);
+                $startDate = convertDateTimeToDateBR($phase[0]['start_date']);
+                echo $startDate;
+                $endDate = convertDateTimeToDateBR($phase[0]['end_date']);
+                echo "<b><br>Data de fim:</b><br>";
+                echo $endDate;
+            };
+        }
+
+        writeTimelineItem($text, FALSE, "#", $bodyText);
+        echo "</ul>";
+    }
 }

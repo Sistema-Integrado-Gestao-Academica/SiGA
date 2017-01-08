@@ -6,8 +6,8 @@ require_once(APPPATH."/exception/SelectionProcessException.php");
 
 class WrittenTest extends WeightedPhase{
 	
-	public function __construct($weight, $grade = FALSE, $id = FALSE){
-		parent::__construct(SelectionProcessConstants::WRITTEN_TEST_PHASE, $weight, $grade, $id);
+	public function __construct($weight, $grade = FALSE, $id = FALSE, $startDate = FALSE, $endDate = FALSE){
+		parent::__construct(SelectionProcessConstants::WRITTEN_TEST_PHASE, $weight, $grade, $id, $startDate, $endDate);
 	}
 	
 }

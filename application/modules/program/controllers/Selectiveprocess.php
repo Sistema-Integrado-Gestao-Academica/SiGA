@@ -243,6 +243,7 @@ class SelectiveProcess extends MX_Controller {
                 $startDate = convertDateTimeToDateBR($process[SelectiveProcess_model::START_DATE_ATTR]);
                 $endDate = convertDateTimeToDateBR($process[SelectiveProcess_model::END_DATE_ATTR]);
                 $phases = $this->process_model->getPhases($process['id_process']);
+                $phases = $this->process_model->sortPhasesBasedInOrder($phases, $phasesOrder);
                 $settings = new ProcessSettings(
                     $startDate,
                     $endDate,

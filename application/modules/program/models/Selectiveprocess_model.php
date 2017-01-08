@@ -25,6 +25,8 @@ class SelectiveProcess_model extends CI_Model {
 	const PROCESS_PHASE_TABLE = "process_phase";
 	const ID_PHASE_ATTR = "id_phase";
 	const PROCESS_PHASE_WEIGHT_ATTR = "weight";
+	const PROCESS_PHASE_START_DATE_ATTR = "start_date";
+	const PROCESS_PHASE_END_DATE_ATTR = "end_date";
 
 	// Methods 
 	const INSERT_ON_DB = 1;
@@ -196,8 +198,9 @@ class SelectiveProcess_model extends CI_Model {
 	        $startDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::START_DATE_ATTR]);
 	        $endDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::END_DATE_ATTR]);
 	        $phases = $this->getPhases($foundProcess['id_process']);
+	        $phases = $this->sortPhasesBasedInOrder($phases, $phasesOrder);
 	        try{
-		        	$settings = new ProcessSettings(
+	        	$settings = new ProcessSettings(
 		            $startDate,
 		            $endDate,
 		            $phases,
@@ -261,7 +264,7 @@ class SelectiveProcess_model extends CI_Model {
 	}
 
 	private function getProcessPhases($processId){
-		$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR);
+		$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR.",".self::PROCESS_PHASE_START_DATE_ATTR.",".self::PROCESS_PHASE_END_DATE_ATTR);
 		$this->db->from(self::PROCESS_PHASE_TABLE);
 		$this->db->where(self::ID_ATTR, $processId);
 		$processPhases = $this->db->get()->result_array();
@@ -280,18 +283,20 @@ class SelectiveProcess_model extends CI_Model {
 	        foreach ($processPhases as $processPhase) {
 	            $processPhaseId = $processPhase['id_phase'];
 	            $weight = $processPhase['weight'];
+	            $startDate = convertDateTimeToDateBR($processPhase['start_date']);
+	            $endDate = convertDateTimeToDateBR($processPhase['end_date']);
 	            switch ($processPhaseId) {
 	                case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
-	                    $phase = new Homologation($processPhaseId);
+	                    $phase = new Homologation($processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
-	                    $phase = new PreProjectEvaluation($weight, FALSE, $processPhaseId);
+	                    $phase = new PreProjectEvaluation($weight, FALSE, $processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
-	                    $phase = new WrittenTest($weight, FALSE, $processPhaseId);
+	                    $phase = new WrittenTest($weight, FALSE, $processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
-	                    $phase = new OralTest($weight, FALSE, $processPhaseId);
+	                    $phase = new OralTest($weight, FALSE, $processPhaseId, $startDate, $endDate);
 	                    break;
 	                default:
 	                    $phase = NULL;
@@ -314,7 +319,19 @@ class SelectiveProcess_model extends CI_Model {
     		'initial_divulgation' => True
     	);
 
-    	$saved = $this->db->insert("selection_process_divulgation", $data);
+		$this->db->where(self::ID_ATTR, $processId);
+		$this->db->where('initial_divulgation', True);
+	   	$result = $this->db->get('selection_process_divulgation');
+		$divulgationExistent = $result->num_rows() > 0; 
+		
+		if($divulgationExistent){
+			$this->db->where(self::ID_ATTR, $processId);
+			$saved = $this->db->update("selection_process_divulgation", $data);
+
+		}
+		else{
+    		$saved = $this->db->insert("selection_process_divulgation", $data);
+		}
 
     	return $saved;
     }
@@ -335,4 +352,55 @@ class SelectiveProcess_model extends CI_Model {
 		return $noticeDivulgation;
     }
 
+    public function sortPhasesBasedInOrder($phases, $phasesOrder){
+
+    	$phasesInOrder = array();
+    	foreach ($phases as $phase){
+    		$phaseName = $phase->getPhaseName();
+    		
+    		switch ($phaseName) {
+    			case SelectionProcessConstants::HOMOLOGATION_PHASE:
+    				$phasesInOrder[0] = $phase;
+    				break;
+    			
+    			case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE:
+    				$indexOrder = array_search('pre_project', $phasesOrder);
+    				$phasesInOrder[$indexOrder + 1] = $phase;
+    				break;
+    			
+    			case SelectionProcessConstants::WRITTEN_TEST_PHASE:
+    				$indexOrder = array_search('written_test', $phasesOrder);
+    				$phasesInOrder[$indexOrder + 1] = $phase;
+    				break;
+    			
+    			case SelectionProcessConstants::ORAL_TEST_PHASE:
+    				$indexOrder = array_search('oral_test', $phasesOrder);
+    				$phasesInOrder[$indexOrder + 1] = $phase;
+    				break;
+    		}
+    		
+    	}
+
+    	ksort($phasesInOrder);
+    	return $phasesInOrder;
+    }
+
+    public function savePhaseDate($processId, $phaseId, $dataToSave){
+    	$this->db->where(self::ID_ATTR, $processId);
+    	$this->db->where(self::ID_PHASE_ATTR, $phaseId);
+    	$saved = $this->db->update(self::PROCESS_PHASE_TABLE, $dataToSave);
+    	return $saved;
+    }
+
+    public function getPhaseById($processId, $phaseId){
+    	$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR.",".self::PROCESS_PHASE_START_DATE_ATTR.",".self::PROCESS_PHASE_END_DATE_ATTR);
+		$this->db->from(self::PROCESS_PHASE_TABLE);
+		$this->db->where(self::ID_ATTR, $processId);
+		$this->db->where(self::ID_PHASE_ATTR, $phaseId);
+		$processPhases = $this->db->get()->result_array();
+
+        $processPhases = checkArray($processPhases);
+
+        return $processPhases;
+    }
 }
