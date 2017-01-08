@@ -448,6 +448,9 @@ class SelectiveProcessAjax extends MX_Controller {
                 $endDate = convertDateTimeToDateBR($phase[0]['end_date']);
                 echo "<b><br>Data de fim:</b><br>";
                 echo $endDate;
+                echo "<hr>";
+                echo "<b>Editar data definida</b>";
+                defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date", $startDate, $endDate);
             };
         }
 

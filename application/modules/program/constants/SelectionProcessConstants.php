@@ -20,6 +20,7 @@ class SelectionProcessConstants {
 	const SPECIAL_STUDENT_PORTUGUESE = "Aluno especial";
 
 	const NOT_DISCLOSED = "Não divulgado";
+	const DISCLOSED = "Divulgado";
 	const OPEN_FOR_SUBSCRIPTIONS = "Inscrições abertas";
 	const INSCRIPTIONS_CLOSED = "Inscrições encerradas";
 }

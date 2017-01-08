@@ -79,10 +79,13 @@ class SelectiveProcess extends MX_Controller {
         $course = $this->course_model->getCourseById($courseId);
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
-
+        
+        $divulgations = $this->getProcessDivulgations($selectiveProcesses);
+      
         $data = array(
             'course' => $course,
-            'selectiveProcesses' => $selectiveProcesses
+            'selectiveProcesses' => $selectiveProcesses,
+            'divulgations' => $divulgations
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
@@ -311,12 +314,16 @@ class SelectiveProcess extends MX_Controller {
         $noticePath = $selectiveProcess->getNoticePath();
         $names = explode("/", $noticePath);
         $noticeFileName = array_pop($names);
+
+        $divulgation = $this->process_model->getNoticeDivulgation($processId);
+
         $data = array(
             'selectiveprocess' => $selectiveProcess,
             'courseId' => $courseId,
             'phasesNames' => $phases['phasesNames'],
             'phasesWeights' => $phases['phasesWeights'],
-            'noticeFileName' => $noticeFileName
+            'noticeFileName' => $noticeFileName,
+            'divulgation' => $divulgation
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/edit", $data);
@@ -386,10 +393,24 @@ class SelectiveProcess extends MX_Controller {
             'selectiveprocess' => $selectiveProcess,
             'courseId' => $courseId,
             'processDivulgation' => $processDivulgation
-            // 'divulgations' => $divulgations
         );
         
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
+    }
+
+    private function getProcessDivulgations($selectiveProcesses){
+        $divulgations = array();
+
+        if($selectiveProcesses !== FALSE){
+            foreach ($selectiveProcesses as $selectiveProcess) {
+                $selectiveProcessId = $selectiveProcess->getId();
+                $divulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
+                $divulgations[$selectiveProcessId] = $divulgation;
+            }
+        }
+
+        return $divulgations;
+
     }
 
 }

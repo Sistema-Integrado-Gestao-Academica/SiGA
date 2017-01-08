@@ -68,6 +68,10 @@
 	            $endDate = $settings->getFormattedEndDate();
 	            echo "<b><br>Data de fim:</b><br>";
 	            echo $endDate;
+	            echo "<br><br>";
+	            alert(function(){
+	                echo "<h5>Para editar o período de inscrição você deve editar o processo seletivo.</h5>";
+	            }, "info", FALSE, "info", $dismissible=TRUE);
 	        };
 	        echo "<li>";
 	            echo "<i class='fa fa-calendar-o bg-blue'></i>";
@@ -88,13 +92,16 @@
 	            $startDate = $phase->getStartDate(); 
 	            if(!is_null($startDate)){
 	                $text = "Período definido";
-	                $bodyText = function() use ($phase){
+	                $bodyText = function() use ($phase, $processId, $phaseId){
 	                    echo "<b>Data de início:</b><br>";
 	                    $startDate = $phase->getFormattedStartDate();
 	                    echo $startDate;
 	                    $endDate = $phase->getFormattedEndDate();
 	                    echo "<b><br>Data de fim:</b><br>";
 	                    echo $endDate;
+	                    echo "<hr>";
+	                    echo "<b>Editar data definida</b>";
+	                    defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date", $startDate, $endDate);
 	                };
 	            }
 	            else{
