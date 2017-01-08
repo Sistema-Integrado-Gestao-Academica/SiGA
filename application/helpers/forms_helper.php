@@ -1003,3 +1003,58 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 	echo "</form>";
 
 }
+
+function formOfDateDivulgation($processId, $processName, $courseId, $startDateValue = "", $descriptionValue = ""){
+    
+    $hidden = array(
+        'id' => "process_id",
+        'name' => "process_id",
+        'type' => "hidden",
+        'value' => $processId
+    );
+
+    $courseHidden = array(
+        'id' => "course_id",
+        'name' => "course_id",
+        'type' => "hidden",
+        'value' => $courseId
+    );
+
+    $description = array(
+        "name" => "divulgation_description",
+        "id" => "divulgation_description",
+        "type" => "text",
+        "class" => "form-campo",
+        "class" => "form-control",
+        "placeholder" => "Sugestão: Edital {$processName}",
+        "value" => $descriptionValue
+    );
+
+
+    $startDate = array(
+        "name" => "divulgation_start_date",
+        "id" => "divulgation_start_date",
+        "type" => "text",
+        "class" => "form-campo",
+        "class" => "form-control",
+        "value" => $startDateValue
+    );
+
+
+    $submitBtn = array(
+        "id" => "define_divulgation_date",
+        "content" => "Definir",
+        "class" => "btn bg-primary btn-flat",
+        "type" => "submit"
+    );
+
+  
+    echo form_input($hidden);
+    echo form_input($courseHidden);
+    echo form_label("Data", "date");
+    echo form_input($startDate);
+    echo form_label("Descrição", "description");
+    echo form_input($description);
+    echo "<br>";
+    echo form_button($submitBtn);
+}

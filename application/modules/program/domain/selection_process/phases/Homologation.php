@@ -6,7 +6,7 @@ require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
 
 class Homologation extends ProcessPhase{
 	
-	public function __construct($id = FALSE){
-		parent::__construct(SelectionProcessConstants::HOMOLOGATION_PHASE, $id);
+	public function __construct($id = FALSE, $startDate = FALSE, $endDate = FALSE){
+		parent::__construct(SelectionProcessConstants::HOMOLOGATION_PHASE, $id, $startDate, $endDate);
 	}
 }
