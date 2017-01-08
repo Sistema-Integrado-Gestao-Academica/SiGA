@@ -957,7 +957,7 @@ function searchInStudentList($specificData, $course){
 	echo "</form>";
 }
 
-function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFieldId){
+function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFieldId, $startDateValue = "", $endDateValue = ""){
 	
 	$hidden = array(
 		'id' => "process_id",
@@ -980,7 +980,8 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 	    "type" => "text",
 		"placeholder" => "Informe a data inicial",
 	    "class" => "form-campo",
-	    "class" => "form-control"
+	    "class" => "form-control",
+	    "value" => $startDateValue
 	);
 
 	$endDate = array(
@@ -989,7 +990,8 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 	    "type" => "text",
 		"placeholder" => "Informe a data final",
 	    "class" => "form-campo",
-	    "class" => "form-control"
+	    "class" => "form-control",
+	    "value" => $endDateValue
 	);
 	echo form_input($hidden);
 

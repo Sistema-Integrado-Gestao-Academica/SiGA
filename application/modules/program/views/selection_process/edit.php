@@ -180,8 +180,26 @@ include '_form.php';
 			<?php $url = site_url('download_notice/'.$selectiveprocessId.'/'.$courseId);?>
 			<h4><a href=<?=$url?> class='btn btn-info'><i class='fa fa-cloud-download'></i>Baixar</a></h4>
 		</div>
-		<div class="col-lg-3">
-			<h4><a href="#edit_notice_path" data-toggle="collapse" class='btn btn-info'><i class="fa fa-edit">Enviar outro edital</i></a></h4>
+
+		<div class="col-lg-6">
+		<?php 
+			if($divulgation !== FALSE){ 
+
+				$divulgationDate = $divulgation['date'];
+				$divulgationDate = convertDateTimeToDateBR($divulgationDate);
+			    $today = new Datetime();
+			    $today = $today->format("d/m/Y");
+
+			    if($divulgationDate >= $today){ 
+					echo "<h4><a href='#edit_notice_path' data-toggle='collapse' class='btn btn-info'><i class='fa fa-edit'>Enviar outro edital</i></a></h4>";
+				}
+				else{
+					alert(function(){
+		                echo "<h5>Não é possível editar o edital enviado, pois ele já foi divulgado. Para enviar outro arquivo faça uma divulgação.</h5>";
+		            }, "info", FALSE, "info", $dismissible=TRUE);
+				}
+			}
+			?>
 		</div>
 	</div>
 

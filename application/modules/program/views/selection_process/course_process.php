@@ -43,12 +43,12 @@ if($validSelectiveProcesses){
 				echo $process->getFormmatedType();
 			echo "</td>";
 
+			$processId = $process->getId();
 			echo "<td>";
-				labelToStatus($settings);
+				labelToStatus($divulgations, $processId);
 			echo "</td>";
 
 			echo "<td>";
-				$processId = $process->getId();
 				$body = function() use ($process, $settings){
 					echo "<div align='left'>";
 					echo "<b>Tipo:</b> ".$process->getFormmatedType();
@@ -139,22 +139,17 @@ echo "<br>";
 
 echo anchor("program/selectiveprocess/programCourses/{$course['id_program']}", "Voltar", "class='btn btn-danger'");
 
-function labelToStatus($settings){
-	$today = new Datetime();
-	$startDate = $settings->getStartDate(); 
-	$endDate = $settings->getEndDate(); 
-	$isInPeriod = validateDateInPeriod($today, $startDate, $endDate, TRUE);
-	if($isInPeriod){
-		echo "<span class='label label-success'>".SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS."</span>";
+function labelToStatus($divulgations, $processId){
+
+	$divulgationDate = $divulgations[$processId]['date'];
+	$divulgationDate = convertDateTimeToDateBR($divulgationDate);
+    $today = new Datetime();
+    $today = $today->format("d/m/Y");
+    if($divulgationDate <= $today){
+		echo "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
 	}
 	else{
-		$before = $today < $startDate;
-		if($before){
-			echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-		}
-		else{
-			echo "<span class='label label-danger'>".SelectionProcessConstants::INSCRIPTIONS_CLOSED."</span>";
-		}
+		echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
 	}
 }
 ?>
