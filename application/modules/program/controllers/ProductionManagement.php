@@ -170,9 +170,9 @@ class ProductionManagement extends MX_Controller {
         $teachers = [];
         if(!empty($courses)){
             $students = $this->production_model
-                ->getProductionsAuthorByCourse($courses, $year, TRUE, FALSE, $filled);
+                ->getProductionsAuthorByCourse($courses, $year, $getStudents=TRUE, $filled);
             $teachers = $this->production_model
-                ->getProductionsAuthorByCourse($courses, $year, FALSE, TRUE, $filled);
+                ->getProductionsAuthorByCourse($courses, $year, $getStudents=FALSE, $filled);
         }
 
         return [$students, $teachers];

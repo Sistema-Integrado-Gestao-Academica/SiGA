@@ -391,31 +391,23 @@ class Production_model extends CI_Model {
 		return $productions;
 	}
 
-	public function getProductionsAuthorByCourse($courses, $year="", $students=TRUE, $teachers=TRUE, $filled=TRUE){
+	public function getProductionsAuthorByCourse($courses, $year="", $onlyStudents=TRUE, $filled=TRUE){
 
 		$authors = [];
 		if(!empty($courses)){
 			$query = "
 				SELECT DISTINCT u.id, u.name, u.email, u.cpf, u.home_phone, u.cell_phone, c.course_name
-				FROM users u, intellectual_production pi,
-					 teacher_course tc, course_student cs, course c
-				WHERE
-				(
+				FROM (
+					users u
 			";
 
-			$condition = $filled ? "=" : "!=";
+			$query .= $onlyStudents
+						? " INNER JOIN course_student cs ON u.id = cs.id_user"
+						: " INNER JOIN teacher_course tc ON u.id = tc.id_user";
 
-			$query .= $students
-				? "(pi.author {$condition} cs.id_user AND cs.id_user = u.id AND cs.id_course = c.id_course)"
-				: "";
+			$query .= " INNER JOIN course c ON ( ";
 
-			$query .= $students && $teachers ? " OR " : "";
-
-			$query .= $teachers
-				? "(pi.author {$condition} tc.id_user AND tc.id_user = u.id AND tc.id_course = c.id_course)"
-				: "";
-
-			$query .= ")";
+			$query .= $onlyStudents ? "cs.id_course = c.id_course " : "tc.id_course = c.id_course ";
 
 			if(is_array($courses)){
 				$first = TRUE;
@@ -429,6 +421,12 @@ class Production_model extends CI_Model {
 			}else{
 				$query .= " AND c.id_course = {$courses} ";
 			}
+
+			$query .= "))";
+
+			$joinType = $filled ? "INNER" : "LEFT";
+
+			$query .= " {$joinType} JOIN intellectual_production pi ON pi.author = u.id";
 
 			if(!empty($year)){
 				if(is_array($year)){
@@ -444,6 +442,8 @@ class Production_model extends CI_Model {
 					$query .= " AND pi.year = {$year} ";
 				}
 			}
+
+			$query .= !$filled ? " WHERE pi.id is null" : "";
 
 			$query .= " ORDER BY u.name ASC";
 
