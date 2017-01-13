@@ -1233,6 +1233,15 @@ function displayRegisteredPrograms($programs, $canRemove){
 			'Ações'
 		));
 
+
+		echo "<div align='right'>";
+		echo "<i class='fa fa-edit'> Editar </i> &nbsp&nbsp";
+		if($canRemove){
+			echo "<i class='fa fa-remove'> Excluir </i> &nbsp" ;
+		}
+		echo "<i class='fa fa-list-alt'> Informações no portal </i>";
+		echo "</div>";
+
 		if($programs !== FALSE){
 
 			foreach($programs as $program){
@@ -1257,12 +1266,16 @@ function displayRegisteredPrograms($programs, $canRemove){
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
+					getModalToPortalInfo($program);
+					echo "<a href='#define_new_field' data-toggle='modal' class='btn btn-success'><i class='fa fa-list-alt'></i></a> &nbsp&nbsp";
+
 					if ($canRemove) {
 
 						echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
 					}
+
 
 					echo "</td>";
 
@@ -1285,6 +1298,148 @@ function displayRegisteredPrograms($programs, $canRemove){
 		echo "</td>";
 	}
 }
+
+function getModalToPortalInfo($program){
+	$footer = function(){
+
+		echo form_button(array(
+		    "class" => "btn btn-danger btn-block",
+		    "content" => "Fechar",
+		    "type" => "button",
+		    "data-dismiss"=>'modal'
+		));
+		
+	};
+
+	$programId = $program['id_program'];
+	$body = function() use ($programId){
+		echo "<div class='nav-tabs-custom'>";
+	        echo "<ul class='nav nav-tabs'>";
+	            echo "<li class='active'><a href='#add_tab' data-toggle='tab'>Adicionar informação</a></li>";
+	            echo "<li><a href='#info_tab' data-toggle='tab'>Informações adicionadas</a></li>";
+	        echo "</ul>";
+	        echo "<div class='tab-content'>";
+	            echo "<div class='tab-pane active' id='add_tab'>";
+					displayFormToAddField($programId);
+	            echo "</div>";
+	            echo "<div class='tab-pane active' id='info_tab'>";
+					echo "<h4> <i class = 'fa fa-list-alt'></i> Informações adicionadas </h4>";
+
+					buildTableDeclaration();
+
+					buildTableHeaders(array(
+						'Título',
+						'Ações'
+					));
+
+					echo "<tr>";
+						echo "<td>";
+							echo "Título";
+						echo "</td>";
+						echo "<td>";
+							echo "Título";
+						echo "</td>";
+					echo "</tr>";
+
+					buildTableEndDeclaration();
+
+		            echo "</div>";
+	            echo "</div>";
+		    echo "</div>";	
+	};
+	
+	$programName = $program['acronym'];
+	newModal("define_new_field", "Informação no portal para o {$programName}", $body, $footer);
+}
+
+function displayFormToAddField($programId){
+
+	echo "<h4> <i class = 'fa fa-plus-circle'></i> Adicionar informação </h4>";
+
+	$title = array(
+			"name" => "title",
+			"id" => "title",	
+			"type" => "text",
+			"required" => TRUE,
+			"placeholder" => "Título da informação",
+			"class" => "form-control"
+	);	
+
+	$details = array(
+		"name" => "details",
+		"id" => "details",	
+		"type" => "text",
+		"placeholder" => "Texto que irá aparecer como detalhe da informação",
+		"class" => "form-control"
+	);	
+
+	$hidden = array(
+		"id" => "program_id",
+		"name" => "program_id",
+		"type" => "hidden",
+		"value" => $programId
+	);
+	echo form_label("Título", "title_label");
+	echo form_input($title);
+
+	echo "<br>";
+
+	echo form_label("Detalhes/Descrição", "details");
+	echo form_textarea($details);
+
+	echo form_input($hidden);
+
+	echo form_open_multipart("program/program/addInformationFile", array( 'id' => 'add_field_file_form' ));
+		echo form_input($hidden);
+		
+		$fieldFile = array(
+		    "name" => "field_file",
+		    "id" => "field_file",
+		    "type" => "file",
+		    "required" => TRUE,
+		    "class" => "filestyle",
+		    "data-buttonBefore" => "true",
+		    "data-buttonText" => "Procurar o arquivo",
+		    "data-placeholder" => "Nenhum arquivo selecionado.",
+		    "data-iconName" => "fa fa-file",
+		    "data-buttonName" => "btn-primary"
+		);
+
+		$submitFileBtn = array(
+		    "id" => "add_field_file_btn",
+		    "class" => "btn btn-primary btn-flat",
+		    "content" => "Incluir arquivo",
+		    "type" => "submit"
+		);
+		echo "<br>";
+		echo "<div class='row'>";
+			echo "<div id='status_field_file'>";
+			echo "</div>";
+			echo form_label("Você pode incluir um arquivo para essa informação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "field_file");
+			echo "<div class='col-lg-8'>";
+				echo form_input($fieldFile); 
+			echo "</div>";
+
+			echo "<div class='col-lg-4'>";
+				echo form_button($submitFileBtn);
+			echo "</div>";
+		echo "</div>";
+	echo form_close();
+
+	echo "<br>";
+
+	echo "<div class='col-lg-3'>";
+	echo "</div>";
+	echo "<div class='col-lg-6'>";
+	 	echo form_button(array(
+		    "class" => "btn bg-olive btn-block",
+		    "content" => "Adicionar informação",
+		    "type" => "submit"
+		));
+	echo "</div>";
+
+}
+
 
 function displayCoordinatorPrograms($programs){
 
