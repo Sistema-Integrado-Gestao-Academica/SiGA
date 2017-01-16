@@ -656,4 +656,19 @@ class Program extends MX_Controller {
 		ksort($programTeachers);
 		return $programTeachers;
 	}
+
+	public function defineNewField($programId){
+		$program = $this->program_model->getProgramById($programId);
+
+		$extraInfo = $this->program_model->getInformationFieldByProgram($programId);
+
+		$data = array(
+			'program' => $program,
+			'extraInfo' => $extraInfo
+		);
+
+		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
+
+		loadTemplateSafelyByGroup($groups, "program/program/define_new_field", $data);
+	} 
 }

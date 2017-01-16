@@ -299,9 +299,13 @@ class SelectiveProcessAjax extends MX_Controller {
 
         $this->load->model("program/course_model");
         $course = $this->course_model->getCourseById($courseId);
-
-        $config = $this->setUploadOptions($process->getName(), $course["id_program"], $course["id_course"], $processId);
-
+        
+        $ids = array(
+            "p" => $programId,
+            "c" => $courseId,
+            "s" => $processId
+        );
+        $config = setUploadOptions($process->getName(), $ids, 'notices', 'pdf');
         $this->upload->initialize($config);
         $status = "";
         if($this->upload->do_upload("notice_file")){

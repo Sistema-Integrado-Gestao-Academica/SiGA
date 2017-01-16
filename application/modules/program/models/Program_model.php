@@ -330,4 +330,42 @@ class Program_model extends CI_Model {
 		
 		return $numberOfTeachers;
 	}
+
+
+	public function setFieldFilePath($programId, $infoId, $path){
+
+		$data = array(
+			'id_program' => $programId,
+			'file_path' => $path
+		);	
+
+		$this->db->where('id', $infoId);
+		$saved = $this->db->update("program_portal_field", $data);
+
+		return $saved;
+	}
+
+	public function getInformationFieldByProgram($programId){
+		$this->db->select("*");
+		$this->db->from("program_portal_field");
+		$this->db->where('id_program', $programId);
+
+		$fields = $this->db->get()->result_array();
+		$fields = checkArray($fields);
+
+		return $fields;
+	}
+
+
+	public function setInformationField($programId, $data){
+
+		$saved = $this->db->insert("program_portal_field", $data);
+		if ($saved){
+			$id = $this->db->insert_id();
+		}
+		else{
+			$id = FALSE;
+		}
+		return $id;
+	}
 }
