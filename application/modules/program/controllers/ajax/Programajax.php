@@ -130,4 +130,36 @@ class ProgramAjax extends MX_Controller {
         }
 
     }
+
+    public function changeExtraInfoStatus(){
+        $infoId = $this->input->post('infoId');
+
+        $this->load->model("program/program_model");
+        $info = $this->program_model->getExtraInfoById($infoId);
+
+        if($info['visible']){
+            $newStatus = FALSE;
+        }
+        else{
+            $newStatus = TRUE;
+        }
+        $saved = $this->program_model->changeInfoStatus($infoId, $newStatus);
+
+        if($newStatus){
+            $data = array(
+                'label' => "<span class='label label-success'>Visível no portal</span>",
+                'button' => "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-danger'>Ocultar no portal</a>"
+            );
+        }
+        else{
+
+            $data = array(
+                'label' => "<span class='label label-danger'>Oculto no portal</span>",
+                'button' => "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-success'>Mostrar no portal</a>"
+            );
+        }
+
+        $json = json_encode($data);
+        echo $json;
+    }
 }

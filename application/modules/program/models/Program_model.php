@@ -332,6 +332,24 @@ class Program_model extends CI_Model {
 	}
 
 
+	/*
+		Sets a extra information to show on portal
+	*/
+	public function setInformationField($programId, $data){
+
+		$saved = $this->db->insert("program_portal_field", $data);
+		if ($saved){
+			$id = $this->db->insert_id();
+		}
+		else{
+			$id = FALSE;
+		}
+		return $id;
+	}
+
+	/*
+		Sets path related to the extra info to show on Portal
+	*/
 	public function setFieldFilePath($programId, $infoId, $path){
 
 		$data = array(
@@ -356,16 +374,19 @@ class Program_model extends CI_Model {
 		return $fields;
 	}
 
+	public function getExtraInfoById($infoId){
+		
+		$info = $this->db->get_where('program_portal_field', array('id' =>$infoId))->row_array();
+		$info = checkArray($info);
 
-	public function setInformationField($programId, $data){
+		return $info;
+	}
 
-		$saved = $this->db->insert("program_portal_field", $data);
-		if ($saved){
-			$id = $this->db->insert_id();
-		}
-		else{
-			$id = FALSE;
-		}
-		return $id;
+	public function changeInfoStatus($infoId, $newStatus){
+	
+		$this->db->where('id', $infoId);
+		$saved = $this->db->update("program_portal_field", array('visible' => $newStatus));
+
+		return $saved;
 	}
 }

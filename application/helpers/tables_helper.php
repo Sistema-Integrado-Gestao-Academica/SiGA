@@ -2024,20 +2024,21 @@ function showExtraInfo($extraInfo){
 					echo "<td>";
 						echo $info['title'];
 					echo "</td>";
+					$infoId = $info['id'];
 					if($info['visible']){
-						echo "<td>";
+						echo "<td id='label_{$infoId}'>";
 							echo "<span class='label label-success'>Visível no portal</span>";
 						echo "</td>";
-						echo "<td>";
-							echo "<button id='hide_btn' class='btn btn-danger'>Ocultar do portal</button>";
+						echo "<td id='button_{$infoId}'>";
+							echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-danger'>Ocultar no portal</a>";
 						echo "</td>";
 					}
 					else{
-						echo "<td>";
+						echo "<td id='label_{$infoId}'>";
 							echo "<span class='label label-danger'>Oculto no portal</span>";
 						echo "</td>";
-						echo "<td>";
-							echo "<button id='show_btn' class='btn btn-success'>Mostrar no portal</button>";
+						echo "<td id='button_{$infoId}'>";
+							echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-success'>Mostrar no portal</a>";
 						echo "</td>";
 					}
 

@@ -11,15 +11,12 @@ $(document).ready(function(){
 		addInfo();
 	});
 
-	$(document).on('click', '#hide_btn', function(e){
-    	e.preventDefault();
-		changeExtraInfoStatus('hide');
-	});
+	(function($) {
 
-	$(document).on('click', '#show_btn', function(e){
-    	e.preventDefault();
-		changeExtraInfoStatus('show');
-	});
+	  hide_show = function(data) {
+	  	changeExtraInfoStatus(data);
+	  };
+	})(jQuery);
 });
 
 
@@ -65,6 +62,20 @@ function addInfo(){
 	);
 }
 
-function changeExtraInfoStatus(){
-	
+function changeExtraInfoStatus(infoId){
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/programajax/changeExtraInfoStatus";
+
+	var data = {
+		infoId: infoId
+	}
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			var values = JSON.parse(data);
+			$("#label_" + infoId).html(values.label);
+			$("#button_" + infoId).html(values.button);
+		}
+	);
 }
