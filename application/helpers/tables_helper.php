@@ -1266,7 +1266,7 @@ function displayRegisteredPrograms($programs, $canRemove){
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
-					echo anchor("program/defineNewField/{$program['id_program']}", "<span class='fa fa-list-alt'></span>", "class='btn btn-success'");
+					echo anchor("program/defineNewFieldToShowInPortal/{$program['id_program']}", "<span class='fa fa-list-alt'></span>", "class='btn btn-success'");
 
 					if ($canRemove) {
 

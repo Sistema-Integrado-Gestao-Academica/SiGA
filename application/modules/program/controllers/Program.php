@@ -172,6 +172,7 @@ class Program extends MX_Controller {
 			'researchLines' => $info['researchLines'],
 			'coursesName' => $info['coursesName'],
 			'teachers' => $info['teachers'],
+			'extraInfos' => $info['extraInfos'],
 			'quantityOfPrograms' => $quantityOfPrograms,
 		);
 
@@ -543,12 +544,16 @@ class Program extends MX_Controller {
 		$researchLines = array();
 		$teachers = array();
 		$programsCourses = array();
+		$extraInfos = array();
 
 		if($programs !== FALSE){
 
 			foreach ($programs as $program) {
 				$coursesProgram = $program->getCourses();
 				$programId = $program->getId();
+
+				$extraInfo = $this->program_model->getInformationFieldByProgram($programId, TRUE);
+				$extraInfos[$programId] = $extraInfo;
 
 				$academicSecretaries = array();
 				$coursesResearchLines = array();
@@ -592,7 +597,8 @@ class Program extends MX_Controller {
 			'secretaries' => $secretaries,
 			'researchLines' => $researchLines,
 			'coursesName' => $programsCourses,
-			'teachers' => $teachers
+			'teachers' => $teachers,
+			'extraInfos' => $extraInfos
 		);
 
 		return $info;
@@ -657,7 +663,7 @@ class Program extends MX_Controller {
 		return $programTeachers;
 	}
 
-	public function defineNewField($programId){
+	public function defineNewFieldToShowInPortal($programId){
 		$program = $this->program_model->getProgramById($programId);
 
 		$extraInfo = $this->program_model->getInformationFieldByProgram($programId);
@@ -671,4 +677,18 @@ class Program extends MX_Controller {
 
 		loadTemplateSafelyByGroup($groups, "program/program/define_new_field", $data);
 	} 
+
+	public function downloadInfoFile($infoId){
+
+		$extraInfo = $this->program_model->getExtraInfoById($infoId);
+        $filePath = $extraInfo['file_path'];
+        $downloaded = downloadFile($filePath);
+
+        if(!$downloaded){
+            $status = "danger";
+            $message = "Nenhum arquivo encontrado.";
+            $this->session->set_flashdata($status, $message);
+            redirect("/");
+        }
+	}
 }

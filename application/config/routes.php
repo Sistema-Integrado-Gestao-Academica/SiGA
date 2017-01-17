@@ -248,6 +248,8 @@ $route['productions_fill_report'] = 'program/productionManagement/productionFill
 $route['print_fill_report'] = 'program/productionManagement/printFillReport';
 
 
+$route['download_file/(:num)'] = 'program/program/downloadInfoFile/$1';
+
 /*
  * Test report routes
  * To display the tests results of a class type in the url: ../class_test

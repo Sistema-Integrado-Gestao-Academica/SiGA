@@ -60,3 +60,18 @@ function createFolders($desiredPath, $ids){
 
     return $desiredPath;
 }
+
+function downloadFile($path){
+    
+    $ci =& get_instance();
+    $ci->load->helper('download');
+    if(file_exists($path)){
+        force_download($path, NULL);
+        $downloaded = TRUE;
+    }
+    else{
+        $downloaded = FALSE;
+    }
+
+    return $downloaded;
+}

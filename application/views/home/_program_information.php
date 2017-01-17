@@ -137,7 +137,41 @@
 				}
 			}
 
-	   		include ('_courses_information.php'); ?>
+	   		include ('_courses_information.php');
+	   		if($extraInfos[$programId]){ 
+	   			
+				foreach ($extraInfos[$programId] as $extraInfo) { 
+				$infoId = $extraInfo['id']; ?>
+
+		   		<div class="panel box box-default">
+	              <div class="box-header with-border">
+	                <h4 class="box-title">
+	                  <a data-toggle="collapse" data-parent=<?="#accordion".$programId?> href=<?="#extraInfo".$infoId?> aria-expanded="false" >
+						<?= $extraInfo['title'] ?><i class=" fa fa-caret-down"></i>
+	                  </a>
+	                </h4>
+	              </div>
+	              <div id=<?="extraInfo".$infoId?> class="panel-collapse collapse" aria-expanded="false">
+	                <div class="box-body">			
+					<?= $extraInfo['details']?>
+					<?php 
+					$filePath = $extraInfo['file_path'];
+					if(!is_null($filePath)){
+						$names = explode("/", $filePath);
+        				$fileName = array_pop($names);
+        				echo "<br>";
+						echo anchor(
+							"download_file/{$infoId}",
+							"<i class='fa fa-cloud-download'></i> Baixar {$fileName}",
+							"class='btn bg-olive'"
+						);
+					}?>
+					</div>
+				 </div>
+				</div>
+	        </div>
+	   		<?php } 
+   			}	?>   			
         </div>
     </div>
 	<?php }

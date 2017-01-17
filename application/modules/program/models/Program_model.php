@@ -363,10 +363,13 @@ class Program_model extends CI_Model {
 		return $saved;
 	}
 
-	public function getInformationFieldByProgram($programId){
+	public function getInformationFieldByProgram($programId, $getOnlyVisible = FALSE){
 		$this->db->select("*");
 		$this->db->from("program_portal_field");
 		$this->db->where('id_program', $programId);
+		if($getOnlyVisible){
+			$this->db->where('visible', TRUE);
+		}
 
 		$fields = $this->db->get()->result_array();
 		$fields = checkArray($fields);
