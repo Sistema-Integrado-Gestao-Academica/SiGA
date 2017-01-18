@@ -2005,10 +2005,16 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 	}
 }
 
-function showExtraInfo($extraInfo){
+function showExtraInfo($extraInfo, $programId){
 	if($extraInfo !== FALSE){
 
 		echo "<h4> <i class = 'fa fa-list-alt'></i> Informações adicionadas </h4>";
+
+		echo "<div align='right'>";
+		echo "<i class='fa fa-eye'> Tornar Visível </i> &nbsp&nbsp";
+		echo "<i class='fa fa-eye-slash'> Ocultar </i> &nbsp&nbsp";
+		echo "<i class='fa fa-edit'> Editar </i> &nbsp&nbsp";
+		echo "</div>";
 
 		buildTableDeclaration();
 
@@ -2019,31 +2025,35 @@ function showExtraInfo($extraInfo){
 		));
 
 
-			foreach ($extraInfo as $info) {
-				echo "<tr>";
-					echo "<td>";
-						echo $info['title'];
+		foreach ($extraInfo as $info) {
+			echo "<tr>";
+				echo "<td>";
+					echo $info['title'];
+				echo "</td>";
+				$infoId = $info['id'];
+				if($info['visible']){
+					echo "<td id='label_{$infoId}'>";
+						echo "<span class='label label-success'>Visível no portal</span>";
 					echo "</td>";
-					$infoId = $info['id'];
-					if($info['visible']){
-						echo "<td id='label_{$infoId}'>";
-							echo "<span class='label label-success'>Visível no portal</span>";
-						echo "</td>";
-						echo "<td id='button_{$infoId}'>";
-							echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-danger'>Ocultar no portal</a>";
-						echo "</td>";
-					}
-					else{
-						echo "<td id='label_{$infoId}'>";
-							echo "<span class='label label-danger'>Oculto no portal</span>";
-						echo "</td>";
-						echo "<td id='button_{$infoId}'>";
-							echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-success'>Mostrar no portal</a>";
-						echo "</td>";
-					}
+					echo "<td id='button_{$infoId}'>";
+						echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-danger'><i class='fa fa-eye-slash'></i></a>";
+						echo "&nbsp";
+						echo anchor("program/editFieldToShowInPortal/{$infoId}", "<span class='fa fa-edit'></span>", "class='btn btn-primary'");
+					echo "</td>";
+				}
+				else{
+					echo "<td id='label_{$infoId}'>";
+						echo "<span class='label label-danger'>Oculto no portal</span>";
+					echo "</td>";
+					echo "<td id='button_{$infoId}'>";
+						echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-success'><i class='fa fa-eye'></i></a>";
+						echo "&nbsp";
+						echo anchor("program/editFieldToShowInPortal/{$infoId}", "<span class='fa fa-edit'></span>", "class='btn btn-primary'");
+					echo "</td>";
+				}
 
-				echo "</tr>";
-			}
+			echo "</tr>";
+		}
 
 		buildTableEndDeclaration();
 	}
@@ -2051,5 +2061,11 @@ function showExtraInfo($extraInfo){
 		callout("info", "Este programa não possui nenhuma informação extra no portal");
 	}
 
-
+	echo "<div align='left'>";
+	echo anchor(
+		"secretary_programs",
+		"Voltar",
+		"class='btn btn-danger'"
+	);
+	echo "</div>";
 }

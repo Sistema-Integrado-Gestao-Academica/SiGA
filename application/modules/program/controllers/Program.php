@@ -678,6 +678,19 @@ class Program extends MX_Controller {
 		loadTemplateSafelyByGroup($groups, "program/program/define_new_field", $data);
 	} 
 
+	public function editFieldToShowInPortal($infoId){
+
+		$extraInfo = $this->program_model->getExtraInfoById($infoId);
+
+		$data = array(
+			'info' => $extraInfo
+		);
+
+		$groups = array(GroupConstants::ACADEMIC_SECRETARY_GROUP,GroupConstants::ADMIN_GROUP);
+
+		loadTemplateSafelyByGroup($groups, "program/program/edit_extra_info_field", $data);
+	} 
+
 	public function downloadInfoFile($infoId){
 
 		$extraInfo = $this->program_model->getExtraInfoById($infoId);

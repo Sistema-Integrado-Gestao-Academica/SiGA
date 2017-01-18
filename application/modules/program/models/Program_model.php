@@ -392,4 +392,21 @@ class Program_model extends CI_Model {
 
 		return $saved;
 	}
+
+	/*
+		Check if exists an extra info on portal with the given title
+	*/
+	public function checkIfTitleExists($title, $programId){
+		$info = $this->db->get_where('program_portal_field', array('title' =>$title, 'id_program'=> $programId))->row_array();
+		$info = checkArray($info);
+
+		if($info){
+			$exists = TRUE;
+		}
+		else{
+			$exists = FALSE;
+		}
+
+		return $exists;
+	}
 }

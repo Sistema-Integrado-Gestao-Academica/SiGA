@@ -46,7 +46,7 @@ function addInfo(){
 	var title = $("#title").val();
 	var details = $("#details").val();
 	var urlToPost = siteUrl + "/program/ajax/programajax/addInformationOnPortal";
-	var program_id = $("#program_id").val();
+	var program_id = $("#program_info_id").val();
 
 	var data = {
 		details: details,
@@ -75,7 +75,8 @@ function changeExtraInfoStatus(infoId){
 		function(data){
 			var values = JSON.parse(data);
 			$("#label_" + infoId).html(values.label);
-			$("#button_" + infoId).html(values.button);
+			var actions = values.button + "<a href='" + siteUrl + "/" + values.link_to_edit + "' class='btn btn-primary'><i class='fa fa-edit'></i></a>";
+			$("#button_" + infoId).html(actions);
 		}
 	);
 }
