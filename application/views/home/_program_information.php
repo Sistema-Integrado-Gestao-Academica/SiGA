@@ -147,7 +147,7 @@
 	              <div class="box-header with-border">
 	                <h4 class="box-title">
 	                  <a data-toggle="collapse" data-parent=<?="#accordion".$programId?> href=<?="#extraInfo".$infoId?> aria-expanded="false" >
-						<?= $extraInfo['title'] ?><i class=" fa fa-caret-down"></i>
+						<?= $extraInfo['title'] ?>&nbsp<i class=" fa fa-caret-down"></i>
 	                  </a>
 	                </h4>
 	              </div>
@@ -169,7 +169,6 @@
 					</div>
 				 </div>
 				</div>
-	        </div>
 	   		<?php } 
    			}	?>   			
         </div>

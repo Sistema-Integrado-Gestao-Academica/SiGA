@@ -11,6 +11,11 @@ $(document).ready(function(){
 		addInfo();
 	});
 
+	$('#edit_info_btn').click(function(e) {
+    	e.preventDefault();
+		editInfo();
+	});
+
 	(function($) {
 
 	  hide_show = function(data) {
@@ -35,7 +40,10 @@ function addFieldFile(formData){
 		contentType: false,
 		processData: false,
 		success: function (data) {
-			$("#add_result").html(data);
+			$("#file_result").html(data);
+			window.setTimeout(function () {
+				location.reload();
+		    }, 1000);
 		}
 	});
 }
@@ -46,7 +54,7 @@ function addInfo(){
 	var title = $("#title").val();
 	var details = $("#details").val();
 	var urlToPost = siteUrl + "/program/ajax/programajax/addInformationOnPortal";
-	var program_id = $("#program_info_id").val();
+	var program_id = $("#program_id").val();
 
 	var data = {
 		details: details,
@@ -57,6 +65,7 @@ function addInfo(){
 		urlToPost,
 		data,
 		function(data){
+			$('#add_field_form').collapse('hide');
 			$("#add_result").html(data);
 		}
 	);
@@ -79,4 +88,27 @@ function changeExtraInfoStatus(infoId){
 			$("#button_" + infoId).html(actions);
 		}
 	);
+}
+
+function editInfo(){
+	var siteUrl = $("#site_url").val();
+	var title = $("#title").val();
+	var details = $("#details").val();
+	var urlToPost = siteUrl + "/program/ajax/programajax/editInformationOnPortal";
+	var info_id = $("#info_id").val();
+	var program_id = $("#program_id").val();
+
+	var data = {
+		details: details,
+		title: title,
+		info_id: info_id,
+		program_id:program_id
+	}
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#add_result").html(data);
+		}
+	);	
 }

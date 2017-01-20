@@ -1061,7 +1061,7 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
     echo form_button($submitBtn);
 }
 
-function displayFormToAddField($hiddenId, $btnName, $btnId,  $titleValue = "", $detailsValue = "", $fileExists = FALSE){
+function displayFormToAddField($programId, $btnName, $btnId,  $infoId = FALSE, $titleValue = "", $detailsValue = "", $fileExists = FALSE){
 	$title = array(
 		"name" => "title",
 		"id" => "title",	
@@ -1079,18 +1079,29 @@ function displayFormToAddField($hiddenId, $btnName, $btnId,  $titleValue = "", $
 		"class" => "form-control",
 		"value" => $detailsValue
 	);	
-	$hidden = array(
-		"id" => "program_info_id",
-		"name" => "program_info_id",
+	
+	if($infoId){
+		$infoHidden = array(
+			"id" => "info_id",
+			"name" => "info_id",
+			"type" => "hidden",
+			"value" => $infoId
+		);
+		echo form_input($infoHidden);
+	}
+	$programHidden = array(
+		"id" => "program_id",
+		"name" => "program_id",
 		"type" => "hidden",
-		"value" => $hiddenId
+		"value" => $programId
 	);
+
 	echo form_label("Título", "title_label");
 	echo form_input($title);
 	echo "<br>";
 	echo form_label("Detalhes/Descrição", "details");
 	echo form_textarea($details);
-	echo form_input($hidden);
+	echo form_input($programHidden);
 	echo "<br>";
 	echo "<div class='row'>";
 		echo "<div class='col-lg-3'>";
@@ -1115,10 +1126,10 @@ function displayFormToAddField($hiddenId, $btnName, $btnId,  $titleValue = "", $
 	echo "<br>";
 	if($fileExists){
 		$submitFileBtn['content'] = 'Editar arquivo';
-		$url = site_url("download_file/".$hiddenId);
+		$url = site_url("download_file/".$infoId);
 		echo "<div class='row'>";
 			echo "<div class='col-lg-3'>";
-				echo "<h4> <a href='".$url."' data-toggle='collapse' class='btn btn-info'><i class='fa fa-cloud-download'></i> Baixar arquivo enviado</a></h4>";
+				echo "<h4> <a href='".$url."' class='btn btn-info'><i class='fa fa-cloud-download'></i> Baixar arquivo enviado</a></h4>";
 			echo "</div>";
 			echo "<div class='col-lg-3'>";
 			echo "<h4> <a href='#edit_file_form' data-toggle='collapse' class='btn btn-info'><i class = 'fa fa-edit'></i> Editar arquivo enviado </a></h4>";
@@ -1128,11 +1139,11 @@ function displayFormToAddField($hiddenId, $btnName, $btnId,  $titleValue = "", $
 	if(!empty($titleValue)){
 
 		if(!$fileExists){
-			formToAddFile($hidden, $submitFileBtn);
+			formToAddFile($programId, $infoId, $submitFileBtn);
 		}
 
 		echo "<div id='edit_file_form' class='collapse'>";
-			formToAddFile($hidden, $submitFileBtn);
+			formToAddFile($programId, $infoId, $submitFileBtn);
 		echo "</div>";
 		echo "<br>";
 		echo "<br>";
@@ -1140,9 +1151,27 @@ function displayFormToAddField($hiddenId, $btnName, $btnId,  $titleValue = "", $
 	}
 }
 
-function formToAddFile($hidden, $submitFileBtn){
+function formToAddFile($programId, $infoId, $submitFileBtn){
+	
+    $hidden = array(
+        "id" => "program_id",
+        "name" => "program_id",
+        "type" => "hidden",
+        "value" => $programId
+    );
+
+    $infoHidden = array(
+        "id" => "info_id",
+        "name" => "info_id",
+        "type" => "hidden",
+        "value" => $infoId
+    );
+
+    echo "<div id='file_result'>";
+	echo "</div>";
 	echo form_open_multipart("program/program/addInformationFile", array( 'id' => 'add_field_file_form' ));
 	echo form_input($hidden);
+	echo form_input($infoHidden);
 	
 	$fieldFile = array(
 	    "name" => "field_file",
@@ -1168,5 +1197,5 @@ function formToAddFile($hidden, $submitFileBtn){
 			echo form_button($submitFileBtn);
 		echo "</div>";
 	echo "</div>";
-echo form_close();
+	echo form_close();
 }

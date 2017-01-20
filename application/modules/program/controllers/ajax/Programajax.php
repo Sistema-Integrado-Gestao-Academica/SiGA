@@ -5,101 +5,96 @@ class ProgramAjax extends MX_Controller {
 
     public function addInformationOnPortal(){
         $programId = $this->input->post("program_id");
+        $data = $this->getDataFromForm($programId);            
+
+        if($data){
+            $data['visible'] = TRUE;
+            $savedId = $this->program_model->setInformationField($programId, $data);
+            if($savedId){
+                alert(function(){
+                    echo "Informação adicionada com sucesso.";
+                }, "success", FALSE);
+
+                $submitFileBtn = array(
+                    "id" => "add_field_file_btn",
+                    "class" => "btn btn-primary btn-flat",
+                    "content" => "Incluir arquivo",
+                    "type" => "submit"
+                );
+                formToAddFile($programId, $savedId, $submitFileBtn);
+                $extraInfo = $this->program_model->getInformationFieldByProgram($programId);
+                showExtraInfo($extraInfo, $programId);
+
+            }
+            else{
+                alert(function(){
+                    echo "Informação não foi salva. Tente novamente.";
+                }, "danger", FALSE);
+            }
+        }
+
+    }
+
+    public function editInformationOnPortal(){
+        $title = $this->input->post("title");
+        $programId = $this->input->post("program_id");
+        $infoId = $this->input->post("info_id");
+        $this->load->model('program/program_model');
+        $info = $this->program_model->getExtraInfoById($infoId);
+
+        $titleHasChanged = FALSE;
+        if($title != $info['title']){
+            $titleHasChanged = TRUE;
+        }
+        $data = $this->getDataFromForm($programId, $titleHasChanged);            
+
+        if($data){
+            $data['id'] = $infoId;
+            $saved = $this->program_model->updateInformationField($infoId, $data);
+            if($saved){
+                alert(function(){
+                    echo "Informação alterada com sucesso.";
+                }, "success", FALSE);
+            }
+            else{
+                alert(function(){
+                    echo "Informação não foi alterada. Tente novamente.";
+                }, "danger", FALSE);
+            }
+        }
+
+    }
+
+    private function getDataFromForm($programId, $checkIfTitleExists = TRUE){
         $title = $this->input->post("title");
         $details = $this->input->post("details");
        
         $validTitle = !is_null($title) && !empty($title);
         if($validTitle){
-
             $this->load->model("program/program_model");
-            $titleExists = $this->program_model->checkIfTitleExists($title, $programId);
-
-            if(!$titleExists){
-                $data = array(
-                    'id_program' => $programId,
-                    'title' => $title,
-                    'details' => $details,
-                    'visible' => TRUE
-                );  
-
-                $savedId = $this->program_model->setInformationField($programId, $data);
-                
-                if($savedId){
+            $data = array(
+                'id_program' => $programId,
+                'title' => $title,
+                'details' => $details,
+            );  
+            if($checkIfTitleExists){
+                $titleExists = $this->program_model->checkIfTitleExists($title, $programId);
+                if($titleExists){
                     alert(function(){
-                        echo "Informação adicionada com sucesso.";
-                    }, "success", FALSE);
-                    $hidden = array(
-                        "id" => "program_id",
-                        "name" => "program_id",
-                        "type" => "hidden",
-                        "value" => $programId
-                    );
-
-                    $infoHidden = array(
-                        "id" => "info_id",
-                        "name" => "info_id",
-                        "type" => "hidden",
-                        "value" => $savedId
-                    );
-
-                    echo form_open_multipart("program/program/addInformationFile", array( 'id' => 'add_field_file_form' ));
-                    echo form_input($hidden);
-                    echo form_input($infoHidden);
-                    
-                    $fieldFile = array(
-                        "name" => "field_file",
-                        "id" => "field_file",
-                        "type" => "file",
-                        "required" => TRUE,
-                        "class" => "filestyle",
-                        "data-buttonBefore" => "true",
-                        "data-buttonText" => "Procurar o arquivo",
-                        "data-placeholder" => "Nenhum arquivo selecionado.",
-                        "data-iconName" => "fa fa-file",
-                        "data-buttonName" => "btn-primary"
-                    );
-
-                    $submitFileBtn = array(
-                        "id" => "add_field_file_btn",
-                        "class" => "btn btn-primary btn-flat",
-                        "content" => "Incluir arquivo",
-                        "type" => "submit"
-                    );
-                    echo "<br>";
-                    echo "<div class='row'>";
-                        echo form_label("Você pode incluir um arquivo para essa informação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "field_file");
-                        echo "<div class='col-lg-8'>";
-                            echo form_input($fieldFile); 
-                        echo "</div>";
-
-                        echo "<div class='col-lg-4'>";
-                            echo form_button($submitFileBtn);
-                        echo "</div>";
-                    echo "</div>";
-                    echo form_close();
-
-                    $extraInfo = $this->program_model->getInformationFieldByProgram($programId);
-                    showExtraInfo($extraInfo, $programId);
-
-                }
-                else{
-                    alert(function(){
-                        echo "Arquivo não foi incluído. Tente novamente.";
+                        echo "Já existe uma informação extra com esse título.";
                     }, "danger", FALSE);
+                    $data = FALSE;
                 }
-            }
-            else{
-                alert(function(){
-                    echo "Já existe uma informação extra com esse título.";
-                }, "danger", FALSE);
             }
         }
         else{
             alert(function(){
                     echo "Você deve preencher o título.";
                 }, "danger", FALSE);
+            $data = FALSE;
         }
 
+        return $data;
     }
 
     public function addFieldFile(){
@@ -117,14 +112,12 @@ class ProgramAjax extends MX_Controller {
         $path = uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes);
         if($path){
             $this->load->model("program/program_model");
-            $saved = $this->program_model->setFieldFilePath($programId, $infoId, $path);
+            $saved = $this->program_model->updateInformationField($infoId, array('file_path' => $path));
 
             if($saved){
                 alert(function(){
                     echo "Arquivo incluído com sucesso.";
                 }, "success", FALSE);
-                $extraInfo = $this->program_model->getInformationFieldByProgram($programId);
-                showExtraInfo($extraInfo, $programId);
             }
             else{
                 alert(function(){

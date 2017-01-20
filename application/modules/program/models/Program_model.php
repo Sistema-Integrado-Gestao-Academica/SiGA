@@ -348,14 +348,9 @@ class Program_model extends CI_Model {
 	}
 
 	/*
-		Sets path related to the extra info to show on Portal
+		Update any info related to the extra info to show on Portal using infoId
 	*/
-	public function setFieldFilePath($programId, $infoId, $path){
-
-		$data = array(
-			'id_program' => $programId,
-			'file_path' => $path
-		);	
+	public function updateInformationField($infoId, $data){
 
 		$this->db->where('id', $infoId);
 		$saved = $this->db->update("program_portal_field", $data);
