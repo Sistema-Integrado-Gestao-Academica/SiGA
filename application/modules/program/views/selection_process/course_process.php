@@ -141,15 +141,24 @@ echo anchor("program/selectiveprocess/programCourses/{$course['id_program']}", "
 
 function labelToStatus($divulgations, $processId){
 
-	$divulgationDate = $divulgations[$processId]['date'];
-	$divulgationDate = convertDateTimeToDateBR($divulgationDate);
-    $today = new Datetime();
-    $today = $today->format("d/m/Y");
-    if($divulgationDate <= $today){
-		echo "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
+	if($divulgations !== FALSE){
+
+		if($divulgations[$processId] !== FALSE){
+			$divulgationDate = $divulgations[$processId]['date'];
+			$divulgationDate = convertDateTimeToDateBR($divulgationDate);
+		    $today = new Datetime();
+		    $today = $today->format("d/m/Y");
+		    if($divulgationDate <= $today){
+				echo "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
+			}
+			else{
+				echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
+			}
+		}
+		else{
+			echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
+		}
 	}
-	else{
-		echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-	}
+
 }
 ?>
