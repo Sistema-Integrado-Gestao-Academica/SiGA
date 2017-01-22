@@ -43,6 +43,22 @@ class SelectiveProcess extends MX_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/index", $data);
     }
 
+    public function defineTeachers($processId, $programId){
+
+        $session = getSession();
+        $user = $session->getUserData();
+        $secretaryId = $user->getId();
+
+        $this->load->model('program/program_model');
+        $programsTeachers = $this->program_model->getProgramTeachers($programId);
+
+        $data = array(
+            'teachers' => $programsTeachers
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_teachers", $data);
+    }
+
     public function programCourses($programId){
 
         $session = getSession();
@@ -79,9 +95,9 @@ class SelectiveProcess extends MX_Controller {
         $course = $this->course_model->getCourseById($courseId);
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
-        
+
         $divulgations = $this->getProcessDivulgations($selectiveProcesses);
-      
+
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses,
@@ -153,10 +169,10 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function saveNoticeFile(){
-        
+
         $courseId = $this->input->post("course");
         $processId = base64_decode($this->input->post("selection_process_id"));
-        
+
         $message = $this->uploadNoticeFile($courseId, $processId);
         switch ($message) {
             case self::NOTICE_FILE_SUCCESS:
@@ -168,7 +184,7 @@ class SelectiveProcess extends MX_Controller {
                 $status = "danger";
                 $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
                 break;
-            
+
             default:
                 $status = "danger";
                 $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
@@ -310,7 +326,7 @@ class SelectiveProcess extends MX_Controller {
         $allPhases = $this->phase->getAllPhases();
 
         $phases = $this->getProcessPhasesToEdit($selectiveProcess, $allPhases);
-       
+
         $noticePath = $selectiveProcess->getNoticePath();
         $names = explode("/", $noticePath);
         $noticeFileName = array_pop($names);
@@ -334,7 +350,7 @@ class SelectiveProcess extends MX_Controller {
         $phasesNames = array();
         $phasesWeights = array();
         $processPhases = $selectiveProcess->getSettings()->getPhases();
-        
+
         foreach ($allPhases as $phase) {
             $hasThePhase = FALSE;
             $phaseId = $phase->getPhaseId();
@@ -369,7 +385,7 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function downloadNotice($selectiveProcessId, $courseId){
-        
+
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
         $noticePath = $selectiveProcess->getNoticePath();
         $this->load->helper('download');
@@ -385,7 +401,7 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function loadDefineDatesPage($selectiveProcessId, $courseId){
-            
+
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
         $processDivulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
 
@@ -394,7 +410,7 @@ class SelectiveProcess extends MX_Controller {
             'courseId' => $courseId,
             'processDivulgation' => $processDivulgation
         );
-        
+
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
     }
 

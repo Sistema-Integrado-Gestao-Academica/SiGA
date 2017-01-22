@@ -19,8 +19,8 @@ class Secretary extends MX_Controller {
 
 		$session = getSession();
 		$user = $session->getUserData();
-		$userName = $user->getName();	
-		
+		$userName = $user->getName();
+
 		$courses = $this->loadCourses();
 
 		$courseData = array(
@@ -58,7 +58,7 @@ class Secretary extends MX_Controller {
 	}
 
 	public function enrollMasterMinds(){
-		
+
 		$courses = $this->loadCourses();
 
 		$courseData = array(
@@ -74,7 +74,7 @@ class Secretary extends MX_Controller {
 
 		$this->load->module("program/course");
 		$courses = $this->course->getCoursesType($courses);
-		
+
 		$courseData = array(
 			'courses' => $courses
 		);
@@ -239,7 +239,7 @@ class Secretary extends MX_Controller {
 
 	public function secretaryPrograms(){
 
-		$programsAndCourses = $this->getSecretaryPrograms();		
+		$programsAndCourses = $this->getSecretaryPrograms();
 		$programs = $programsAndCourses['programs'];
 		$courses = $programsAndCourses['courses'];
 
@@ -264,9 +264,8 @@ class Secretary extends MX_Controller {
 		$programs = array();
 		if($courses !== FALSE){
 
+			$this->load->model("program/program_model");
 			foreach ($courses as $course) {
-
-				$this->load->model("program/program_model");
 				$courseId = $course['id_course'];
 				$programId = $course['id_program'];
 
@@ -279,13 +278,13 @@ class Secretary extends MX_Controller {
 					$alreadyAddedPrograms[$programId] = $programId;
 				}
 			}
-			
+
 		}else{
 			$courses = array();
 		}
 
 		$result = array('programs' => $programs , 'courses' => $courses);
-		
+
 		return $result;
 	}
 
