@@ -205,7 +205,7 @@ $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNoti
 $route['define_dates_page/(:num)/(:num)'] = 'program/selectiveprocess/loadDefineDatesPage/$1/$2';
 $route['define_dates/(:num)/(:num)'] = 'program/selectiveprocess/defineDates/$1/$2';
 $route['selection_process/define_teachers/(:num)/(:num)'] = 'program/selectiveprocess/defineTeachers/$1/$2';
-$route['selection_process/define_teacher/(:num)/(:num)'] = 'program/selectiveprocess/defineTeacher/$1/$2';
+$route['selection_process/define_teacher/(:num)/(:num)/(:num)'] = 'program/selectiveprocess/defineTeacher/$1/$2/$3';
 
 /*
  * Enrollment routes

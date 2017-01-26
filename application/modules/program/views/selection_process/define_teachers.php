@@ -18,7 +18,11 @@ buildTableHeaders([
         <td><?= $teacher['email'] ?></td>
         <td><?= $teacher['program_name'] ?></td>
         <td>
-            <?= anchor('selection_process/define_teacher/', "<i class='fa fa-plus'></i> Vincular docente", "class='btn btn-primary'") ?>
+            <?= anchor(
+                "selection_process/define_teacher/{$processId}/{$teacher['id']}/{$programId}",
+                "<i class='fa fa-plus'></i> Vincular docente",
+                "class='btn btn-primary'"
+            ) ?>
         </td>
     </tr>
 

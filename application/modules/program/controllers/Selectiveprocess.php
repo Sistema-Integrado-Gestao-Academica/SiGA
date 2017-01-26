@@ -53,10 +53,23 @@ class SelectiveProcess extends MX_Controller {
         $programsTeachers = $this->program_model->getProgramTeachers($programId);
 
         $data = array(
-            'teachers' => $programsTeachers
+            'teachers' => $programsTeachers,
+            'processId' => $processId,
+            'programId' => $programId
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_teachers", $data);
+    }
+
+    public function defineTeacher($processId, $teacherId, $programId){
+        $self = $this;
+        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $processId, $teacherId, $programId){
+                $self->process_model->addTeacherToProcess($processId, $teacherId);
+                getSession()->showFlashMessage("success", "Docente vinculado com sucesso!");
+                redirect("selection_process/define_teachers/{$processId}/{$programId}");
+            }
+        );
     }
 
     public function programCourses($programId){
