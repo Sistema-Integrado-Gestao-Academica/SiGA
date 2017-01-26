@@ -408,27 +408,33 @@ class SelectiveProcessAjax extends MX_Controller {
         $startDate = $this->input->post("startDate");
         $endDate = $this->input->post("endDate");
 
-
         $error = "";
         if(is_null($startDate) || empty($startDate) || is_null($endDate) || empty($endDate)){
             $error .= "<br>Você deve escolher a data de início e de fim.";
         }
         else{
-            $startDate = validateDate($startDate);
-            $startDate = formatDateToDateTime($startDate);
+            $validDates = validateDatesDiff($startDate, $endDate);
 
-            $endDate = validateDate($endDate);
-            $endDate = formatDateToDateTime($endDate);
-            
-            $dataToSave = array(
-                'start_date' => $startDate,
-                'end_date' => $endDate
-            );
+            if($validDates){
+                $startDate = validateDate($startDate);
+                $startDate = formatDateToDateTime($startDate);
 
-            $this->load->model("selectiveprocess_model", "process_model");
-            $saved = $this->process_model->savePhaseDate($processId, $phaseId, $dataToSave);
-            if(!$saved){
-                $error .= "<br>Não foi possível definir a data";
+                $endDate = validateDate($endDate);
+                $endDate = formatDateToDateTime($endDate);
+                
+                $dataToSave = array(
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                );
+
+                $this->load->model("selectiveprocess_model", "process_model");
+                $saved = $this->process_model->savePhaseDate($processId, $phaseId, $dataToSave);
+                if(!$saved){
+                    $error .= "<br>Não foi possível definir a data";
+                }
+            }
+            else{
+                $error .= "<br>A data final deve ser maior que a data inicial";
             }
         
         }
