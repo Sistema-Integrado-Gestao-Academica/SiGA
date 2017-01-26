@@ -370,4 +370,78 @@ class Program_model extends CI_Model {
 
 		return $numberOfTeachers;
 	}
+
+
+	/*
+		Sets a extra information to show on portal
+	*/
+	public function setInformationField($programId, $data){
+
+		$saved = $this->db->insert("program_portal_field", $data);
+		if ($saved){
+			$id = $this->db->insert_id();
+		}
+		else{
+			$id = FALSE;
+		}
+		return $id;
+	}
+
+	/*
+		Update any info related to the extra info to show on Portal using infoId
+	*/
+	public function updateInformationField($infoId, $data){
+
+		$this->db->where('id', $infoId);
+		$saved = $this->db->update("program_portal_field", $data);
+
+		return $saved;
+	}
+
+	public function getInformationFieldByProgram($programId, $getOnlyVisible = FALSE){
+		$this->db->select("*");
+		$this->db->from("program_portal_field");
+		$this->db->where('id_program', $programId);
+		if($getOnlyVisible){
+			$this->db->where('visible', TRUE);
+		}
+
+		$fields = $this->db->get()->result_array();
+		$fields = checkArray($fields);
+
+		return $fields;
+	}
+
+	public function getExtraInfoById($infoId){
+		
+		$info = $this->db->get_where('program_portal_field', array('id' =>$infoId))->row_array();
+		$info = checkArray($info);
+
+		return $info;
+	}
+
+	public function changeInfoStatus($infoId, $newStatus){
+	
+		$this->db->where('id', $infoId);
+		$saved = $this->db->update("program_portal_field", array('visible' => $newStatus));
+
+		return $saved;
+	}
+
+	/*
+		Check if exists an extra info on portal with the given title
+	*/
+	public function checkIfTitleExists($title, $programId){
+		$info = $this->db->get_where('program_portal_field', array('title' =>$title, 'id_program'=> $programId))->row_array();
+		$info = checkArray($info);
+
+		if($info){
+			$exists = TRUE;
+		}
+		else{
+			$exists = FALSE;
+		}
+
+		return $exists;
+	}
 }

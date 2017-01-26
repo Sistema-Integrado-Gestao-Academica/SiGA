@@ -1060,3 +1060,142 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
     echo "<br>";
     echo form_button($submitBtn);
 }
+
+function displayFormToAddField($programId, $btnName, $btnId,  $infoId = FALSE, $titleValue = "", $detailsValue = "", $fileExists = FALSE){
+	$title = array(
+		"name" => "title",
+		"id" => "title",	
+		"type" => "text",
+		"required" => TRUE,
+		"placeholder" => "Título da informação",
+		"class" => "form-control",
+		"value" => $titleValue
+	);	
+	$details = array(
+		"name" => "details",
+		"id" => "details",	
+		"type" => "text",
+		"placeholder" => "Texto que irá aparecer como detalhe da informação",
+		"class" => "form-control",
+		"value" => $detailsValue
+	);	
+	
+	if($infoId){
+		$infoHidden = array(
+			"id" => "info_id",
+			"name" => "info_id",
+			"type" => "hidden",
+			"value" => $infoId
+		);
+		echo form_input($infoHidden);
+	}
+	$programHidden = array(
+		"id" => "program_id",
+		"name" => "program_id",
+		"type" => "hidden",
+		"value" => $programId
+	);
+
+	echo form_label("Título", "title_label");
+	echo form_input($title);
+	echo "<br>";
+	echo form_label("Detalhes/Descrição", "details");
+	echo form_textarea($details);
+	echo form_input($programHidden);
+	echo "<br>";
+	echo "<div class='row'>";
+		echo "<div class='col-lg-3'>";
+		echo "</div>";
+		echo "<div class='col-lg-6'>";
+		 	echo form_button(array(
+			    "id" => $btnId,
+			    "class" => "btn bg-olive btn-block",
+			    "content" => $btnName,
+			    "type" => "submit"
+			));
+		echo "</div>";
+	echo "</div>";
+
+	$submitFileBtn = array(
+	    "id" => "add_field_file_btn",
+	    "class" => "btn btn-primary btn-flat",
+	    "content" => "Incluir arquivo",
+	    "type" => "submit"
+	);
+
+	echo "<br>";
+	if($fileExists){
+		$submitFileBtn['content'] = 'Editar arquivo';
+		$url = site_url("download_file/".$infoId);
+		echo "<div class='row'>";
+			echo "<div class='col-lg-3'>";
+				echo "<h4> <a href='".$url."' class='btn btn-info'><i class='fa fa-cloud-download'></i> Baixar arquivo enviado</a></h4>";
+			echo "</div>";
+			echo "<div class='col-lg-3'>";
+			echo "<h4> <a href='#edit_file_form' data-toggle='collapse' class='btn btn-info'><i class = 'fa fa-edit'></i> Editar arquivo enviado </a></h4>";
+			echo "</div>";
+		echo "</div>";
+	}
+	if(!empty($titleValue)){
+
+		if(!$fileExists){
+			formToAddFile($programId, $infoId, $submitFileBtn);
+		}
+
+		echo "<div id='edit_file_form' class='collapse'>";
+			formToAddFile($programId, $infoId, $submitFileBtn);
+		echo "</div>";
+		echo "<br>";
+		echo "<br>";
+
+	}
+}
+
+function formToAddFile($programId, $infoId, $submitFileBtn){
+	
+    $hidden = array(
+        "id" => "program_id",
+        "name" => "program_id",
+        "type" => "hidden",
+        "value" => $programId
+    );
+
+    $infoHidden = array(
+        "id" => "info_id",
+        "name" => "info_id",
+        "type" => "hidden",
+        "value" => $infoId
+    );
+
+    echo "<div id='file_result'>";
+	echo "</div>";
+	echo form_open_multipart("program/program/addInformationFile", array( 'id' => 'add_field_file_form' ));
+	echo form_input($hidden);
+	echo form_input($infoHidden);
+	
+	$fieldFile = array(
+	    "name" => "field_file",
+	    "id" => "field_file",
+	    "type" => "file",
+	    "required" => TRUE,
+	    "class" => "filestyle",
+	    "data-buttonBefore" => "true",
+	    "data-buttonText" => "Procurar o arquivo",
+	    "data-placeholder" => "Nenhum arquivo selecionado.",
+	    "data-iconName" => "fa fa-file",
+	    "data-buttonName" => "btn-primary",
+	);
+	echo "<br>";
+	echo "<div class='row'>";
+		echo "<div id='status_field_file'>";
+		echo "</div>";
+		echo form_label("Você pode incluir um arquivo para essa informação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "field_file");
+		echo "<div class='col-lg-8'>";
+			echo form_input($fieldFile); 
+		echo "</div>";
+		echo "<div class='col-lg-4'>";
+			echo form_button($submitFileBtn);
+		echo "</div>";
+	echo "</div>";
+	echo form_close();
+}

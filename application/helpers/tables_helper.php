@@ -1233,6 +1233,15 @@ function displayRegisteredPrograms($programs, $canRemove){
 			'Ações'
 		));
 
+
+		echo "<div align='right'>";
+		echo "<i class='fa fa-edit'> Editar </i> &nbsp&nbsp";
+		if($canRemove){
+			echo "<i class='fa fa-remove'> Excluir </i> &nbsp" ;
+		}
+		echo "<i class='fa fa-list-alt'> Informações no portal </i>";
+		echo "</div>";
+
 		if($programs !== FALSE){
 
 			foreach($programs as $program){
@@ -1257,12 +1266,15 @@ function displayRegisteredPrograms($programs, $canRemove){
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"Aqui é possível editar os dados do programa e adicionar cursos a ele.\"");
 
+					echo anchor("program/defineNewFieldToShowInPortal/{$program['id_program']}", "<span class='fa fa-list-alt'></span>", "class='btn btn-success'");
+
 					if ($canRemove) {
 
 						echo anchor("program/removeProgram/{$program['id_program']}", "<span class='glyphicon glyphicon-remove'></span>", "class='btn btn-danger' id='remove_program_btn' data-container=\"body\"
 		     				data-toggle=\"popover\" data-placement=\"top\" data-trigger=\"hover\"
 		     				data-content=\"OBS.: Ao deletar um programa, todos os cursos associados a ele serão desassociados.\"");
 					}
+
 
 					echo "</td>";
 
@@ -1285,6 +1297,8 @@ function displayRegisteredPrograms($programs, $canRemove){
 		echo "</td>";
 	}
 }
+
+
 
 function displayCoordinatorPrograms($programs){
 
@@ -1989,4 +2003,69 @@ function displayStudentsTable($students, $courseId, $studentsIdsInString){
 		callout("info", "Nenhum aluno matriculado");
 
 	}
+}
+
+function showExtraInfo($extraInfo, $programId){
+	if($extraInfo !== FALSE){
+
+		echo "<h4> <i class = 'fa fa-list-alt'></i> Informações adicionadas </h4>";
+
+		echo "<div align='right'>";
+		echo "<i class='fa fa-eye'> Tornar Visível </i> &nbsp&nbsp";
+		echo "<i class='fa fa-eye-slash'> Ocultar </i> &nbsp&nbsp";
+		echo "<i class='fa fa-edit'> Editar </i> &nbsp&nbsp";
+		echo "</div>";
+
+		buildTableDeclaration();
+
+		buildTableHeaders(array(
+			'Título',	
+			'Status',	
+			'Ações'
+		));
+
+
+		foreach ($extraInfo as $info) {
+			echo "<tr>";
+				echo "<td>";
+					echo $info['title'];
+				echo "</td>";
+				$infoId = $info['id'];
+				if($info['visible']){
+					echo "<td id='label_{$infoId}'>";
+						echo "<span class='label label-success'>Visível no portal</span>";
+					echo "</td>";
+					echo "<td id='button_{$infoId}'>";
+						echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-danger'><i class='fa fa-eye-slash'></i></a>";
+						echo "&nbsp";
+						echo anchor("program/editFieldToShowInPortal/{$infoId}", "<span class='fa fa-edit'></span>", "class='btn btn-primary'");
+					echo "</td>";
+				}
+				else{
+					echo "<td id='label_{$infoId}'>";
+						echo "<span class='label label-danger'>Oculto no portal</span>";
+					echo "</td>";
+					echo "<td id='button_{$infoId}'>";
+						echo "<a href='#' onclick='hide_show(\"{$infoId}\")' class='btn btn-success'><i class='fa fa-eye'></i></a>";
+						echo "&nbsp";
+						echo anchor("program/editFieldToShowInPortal/{$infoId}", "<span class='fa fa-edit'></span>", "class='btn btn-primary'");
+					echo "</td>";
+				}
+
+			echo "</tr>";
+		}
+
+		buildTableEndDeclaration();
+	}
+	else{
+		callout("info", "Este programa não possui nenhuma informação extra no portal");
+	}
+
+	echo "<div align='left'>";
+	echo anchor(
+		"secretary_programs",
+		"Voltar",
+		"class='btn btn-danger'"
+	);
+	echo "</div>";
 }

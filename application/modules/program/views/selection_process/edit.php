@@ -182,7 +182,7 @@ include '_form.php';
 		</div>
 
 		<div class="col-lg-6">
-		<?php 
+		<?php
 			if($divulgation !== FALSE){ 
 
 				$divulgationDate = $divulgation['date'];
@@ -199,6 +199,10 @@ include '_form.php';
 		            }, "info", FALSE, "info", $dismissible=TRUE);
 				}
 			}
+			else{
+				echo "<h4><a href='#edit_notice_path' data-toggle='collapse' class='btn btn-info'><i class='fa fa-edit'>Enviar outro edital</i></a></h4>";
+			}
+
 			?>
 		</div>
 	</div>
