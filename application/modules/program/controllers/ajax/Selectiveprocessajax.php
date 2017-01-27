@@ -467,4 +467,78 @@ class SelectiveProcessAjax extends MX_Controller {
         writeTimelineItem($text, FALSE, "#", $bodyText);
         echo "</ul>";
     }
+
+    function addFormToAddDivulgation($processId){
+        $this->load->model("selectiveprocess_model", "process_model");
+        $process = $this->process_model->getById($processId);
+        $settings = $process->getSettings();
+        $phases = $settings->getPhases();
+
+        $dropdownPhases = array('0' => "Nenhuma");
+        if($phases !== FALSE){
+            foreach ($phases as $phase) {
+                $id = $phase->getPhaseId();
+                $name = $phase->getPhaseName();
+                $dropdownPhases[$id] = $name;
+            }
+        }
+
+        $description = array(
+            "name" => "description",
+            "id" => "description",  
+            "type" => "text",
+            "required" => TRUE,
+            "placeholder" => "Descrição da divulgação",
+            "class" => "form-control",
+            "required" => "true"
+        );  
+        $message = array(
+            "name" => "message",
+            "id" => "message",  
+            "type" => "text",
+            "placeholder" => "Mensagem relacionada",
+            "class" => "form-control"
+        );
+
+        $processHidden = array(
+            "id" => "process_id",
+            "name" => "process_id",
+            "type" => "hidden",
+            "value" => $processId
+        );
+
+        $text = function() use ($description){
+            echo form_input($description);
+        };
+
+        $bodyText = function() use ($message, $dropdownPhases, $processHidden){
+            echo form_textarea($message);
+            echo form_label("Fase relacionada", "phase_label");
+            echo form_dropdown("phase", $dropdownPhases, '', "class='form-control'");
+            echo form_input($processHidden);
+
+            $divulgationFile = array(
+                "name" => "divulgation_file",
+                "id" => "divulgation_file",
+                "type" => "file",
+            );
+            echo "<br>";
+            echo form_label("Você pode incluir um arquivo para essa divulgação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "divulgation_file");
+            echo "<div class='row'>";
+                echo "<div class='col-lg-8'>";
+                    echo form_input($divulgationFile); 
+                echo "</div>";
+            echo "</div>";
+        };
+        $footer = function(){
+            echo form_button(array(
+                "id" => 'divulgate',
+                "class" => "btn bg-olive btn-block",
+                "content" => 'Divulgar',
+                "type" => "submit"
+            ));
+        };
+
+        writeTimelineItemToAddItem($text, $bodyText, $footer);  
+    }
 }

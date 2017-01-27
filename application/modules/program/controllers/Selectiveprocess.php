@@ -472,7 +472,62 @@ class SelectiveProcess extends MX_Controller {
     }
 
 
+    public function addDivulgation(){
+        $processId = $this->input->post("process_id");
+        $description = $this->input->post("description");
+        $message = $this->input->post("message");
+        $related_phase = $this->input->post("phase");
+        $fileName = $this->input->post("divulgation_file");
 
+        if(!is_null($fileName)){
 
+            $ids = array(
+                "p" => $processId
+            );
+
+            $fieldId = "divulgation_file";
+            $folderName = "divulgations";
+            $allowedTypes = "jpg|png|pdf|jpeg";
+
+            $filePath = uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes);
+        }
+        else{
+            $filePath = NULL;
+        }
+
+        $today = new Datetime();
+        $today = $today->format("Y/m/d");
+        if($filePath || is_null($filePath)){
+            $data = array(
+                'id_process' => $processId, 
+                'description' => $description,
+                'message' => $message,
+                'initial_divulgation' => FALSE, // TO DO
+                'date' => $today,
+                'file_path' => $filePath 
+            );
+            if($related_phase !== "0"){
+                $data['related_id_phase'] = $related_phase;
+            }
+            $saved = $processDivulgations = $this->process_model->saveProcessDivulgation($data);
+
+            if($saved){
+                $status = "success";
+                $message = "Nova divulgação realizada com sucesso.";
+            }
+            else{
+                $status = "danger";
+                $message = "Não foi possível fazer a nova divulgação. Tente novamente.";
+            }
+        }
+        else{
+            $status = "danger";
+            $errors = $this->upload->display_errors();
+            $message = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
+        }
+        
+        $this->session->set_flashdata($status, $message);
+        redirect("selection_process/divulgations/{$processId}");             
+    }
 
 }

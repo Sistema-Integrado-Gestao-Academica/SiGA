@@ -119,6 +119,12 @@ $(document).ready(function(){
 			dateFormat: "dd-mm-yy"});
 	});
 
+	(function($) {
+
+	  addTimelineItem = function(processId) {
+		addFormToAddDivulgation(processId);
+	  };
+	})(jQuery);
 
 });
 
@@ -294,6 +300,18 @@ function definePhaseDate(phaseId){
 		function(data){
 			id = "#phase_" + phaseId;
 			$(id).html(data);
+		}
+	);
+}
+
+function addFormToAddDivulgation($processId){
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addFormToAddDivulgation/" + $processId;
+
+	$.get(
+		urlToPost,
+		function(data){
+			$("#new_divulgation").html(data);
 		}
 	);
 }

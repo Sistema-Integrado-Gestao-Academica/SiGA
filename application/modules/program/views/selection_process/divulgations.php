@@ -1,16 +1,21 @@
 <h2 class="principal">Divulgações do processo seletivo: <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
 <?php 
-
-createDivulgationsModal($selectiveprocess, $processDivulgations);
-
-$processId = $selectiveprocess->getId();
-$courseId = $selectiveprocess->getCourse();
-
-echo "<h4><a href='#divulgationsmodal{$processId}' data-toggle='modal'><i class='fa fa-plus-circle'></i>Fazer nova divulgação</a></h4>";
-
 echo "<hr>";
-showDivulgations($selectiveprocess, $processDivulgations);
+
+$settings = $selectiveprocess->getSettings();
+$phases = $settings->getPhases();
+
+$phasesName = array();
+if($phases !== FALSE){
+    foreach ($phases as $phase) {
+        $id = $phase->getPhaseId();
+        $name = $phase->getPhaseName();
+        $phasesName[$id] = $name;
+    }
+}
+showDivulgations($selectiveprocess, $processDivulgations, $phasesName);
 
 echo "<br>";
 
+$courseId = $selectiveprocess->getCourse();
 echo anchor("program/selectiveprocess/courseSelectiveProcesses/{$courseId}", "Voltar", "class='btn btn-danger'");

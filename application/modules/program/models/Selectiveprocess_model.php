@@ -336,6 +336,12 @@ class SelectiveProcess_model extends CI_Model {
     	return $saved;
     }
 
+    public function saveProcessDivulgation($data){
+		$saved = $this->db->insert("selection_process_divulgation", $data);
+
+    	return $saved;
+    }
+
     public function getProcessDivulgations($processId, $noticeDivulgation = FALSE){
 
     	$this->db->select("*");
@@ -346,6 +352,7 @@ class SelectiveProcess_model extends CI_Model {
     	}
     	else{
 			$this->db->where('date <= NOW()', NULL, FALSE);
+    		$this->db->order_by('related_id_phase', 'ASC');
     	}
 		$noticeDivulgations = $this->db->get()->result_array();
 
