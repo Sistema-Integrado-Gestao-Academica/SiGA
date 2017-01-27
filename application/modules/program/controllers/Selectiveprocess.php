@@ -109,15 +109,43 @@ class SelectiveProcess extends MX_Controller {
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
 
-        $divulgations = $this->getProcessDivulgations($selectiveProcesses);
-
+        $status = $this->getProcessStatus($selectiveProcesses);
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses,
-            'divulgations' => $divulgations
+            'status' => $status
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
+    }
+
+    private function getProcessStatus($selectiveProcesses){
+
+        $status = array();
+        if($selectiveProcesses !== FALSE){
+            foreach ($selectiveProcesses as $selectiveProcess) {
+                $selectiveProcessId = $selectiveProcess->getId();
+                $divulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
+                if(!is_null($divulgation)){
+                    $divulgationDate = $divulgation['date'];
+                    $divulgationDate = convertDateTimeToDateBR($divulgationDate);
+                    $today = new Datetime();
+                    $today = $today->format("d/m/Y");
+                    if($divulgationDate <= $today){
+                        $status[$selectiveProcessId] = "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
+                    }
+                    else{
+                        $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
+                    }
+                }
+                else{
+                    $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
+                }
+
+            }
+        }
+
+        return $status;
     }
 
     public function openSelectiveProcess($courseId){
@@ -344,7 +372,7 @@ class SelectiveProcess extends MX_Controller {
         $names = explode("/", $noticePath);
         $noticeFileName = array_pop($names);
 
-        $divulgation = $this->process_model->getNoticeDivulgation($processId);
+        $divulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
 
         $data = array(
             'selectiveprocess' => $selectiveProcess,
@@ -416,7 +444,7 @@ class SelectiveProcess extends MX_Controller {
     public function loadDefineDatesPage($selectiveProcessId, $courseId){
 
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
-        $processDivulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
+        $processDivulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
 
         $data = array(
             'selectiveprocess' => $selectiveProcess,
@@ -427,19 +455,24 @@ class SelectiveProcess extends MX_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
     }
 
-    private function getProcessDivulgations($selectiveProcesses){
-        $divulgations = array();
+    public function divulgations($selectiveProcessId){
+        
+        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
+        $processDivulgations = $this->process_model->getProcessDivulgations($selectiveProcessId);
 
-        if($selectiveProcesses !== FALSE){
-            foreach ($selectiveProcesses as $selectiveProcess) {
-                $selectiveProcessId = $selectiveProcess->getId();
-                $divulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
-                $divulgations[$selectiveProcessId] = $divulgation;
-            }
-        }
+        $data = array(
+            'selectiveprocess' => $selectiveProcess,
+            'processDivulgations' => $processDivulgations
+        );
 
-        return $divulgations;
+        $this->load->helper('selectionprocess');
 
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/divulgations", $data);
     }
+
+
+
+
 
 }

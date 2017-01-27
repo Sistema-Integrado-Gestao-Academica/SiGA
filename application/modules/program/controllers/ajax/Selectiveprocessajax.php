@@ -346,7 +346,7 @@ class SelectiveProcessAjax extends MX_Controller {
         }
         else{
             $saved = $this->process_model->saveNoticeDivulgation($processId, $date, $divulgationDescription);
-            $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
+            $processDivulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
             if(!$saved){
                 $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
             }

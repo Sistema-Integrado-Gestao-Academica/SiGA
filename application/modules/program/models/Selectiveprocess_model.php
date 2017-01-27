@@ -336,20 +336,26 @@ class SelectiveProcess_model extends CI_Model {
     	return $saved;
     }
 
-    public function getNoticeDivulgation($processId){
+    public function getProcessDivulgations($processId, $noticeDivulgation = FALSE){
 
-    	$data = array(
-    		'id_process' => $processId,
-    		'initial_divulgation' => True
-    	);
+    	$this->db->select("*");
+		$this->db->from('selection_process_divulgation');
+		$this->db->where(self::ID_ATTR, $processId);
+    	if($noticeDivulgation){
+			$this->db->where('initial_divulgation', True);
+    	}
+    	else{
+			$this->db->where('date <= NOW()', NULL, FALSE);
+    	}
+		$noticeDivulgations = $this->db->get()->result_array();
 
-    	$noticeDivulgation = $this->db->get_where('selection_process_divulgation', $data);
+		$noticeDivulgations = checkArray($noticeDivulgations);
 
-		$noticeDivulgation = $noticeDivulgation->row_array();
+		if($noticeDivulgation){
+			$noticeDivulgations = $noticeDivulgations[0];
+		}
 
-		$noticeDivulgation = checkArray($noticeDivulgation);
-
-		return $noticeDivulgation;
+		return $noticeDivulgations;
     }
 
     public function sortPhasesBasedInOrder($phases, $phasesOrder){
