@@ -452,6 +452,7 @@ class SelectiveProcess extends MX_Controller {
             'processDivulgation' => $processDivulgation
         );
 
+        $this->load->helper('selectionprocess');
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
     }
 

@@ -126,6 +126,11 @@ $(document).ready(function(){
 	  };
 	})(jQuery);
 
+	$(document).on('click', '#divulgate', function(e){
+    	e.preventDefault();
+		divulgateNotice(); // TO DO
+	});
+
 });
 
 function makeSortable(){

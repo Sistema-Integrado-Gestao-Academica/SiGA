@@ -532,7 +532,6 @@ class SelectiveProcessAjax extends MX_Controller {
         };
         $footer = function(){
             echo form_button(array(
-                "id" => 'divulgate',
                 "class" => "btn bg-olive btn-block",
                 "content" => 'Divulgar',
                 "type" => "submit"

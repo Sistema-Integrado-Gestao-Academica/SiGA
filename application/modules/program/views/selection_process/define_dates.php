@@ -37,8 +37,9 @@
 	        };
 	        $date = "";
 	        $link = "#";
+	        createDivulgationsModal($selectiveprocess);
 	        $footer = function() use ($processId, $courseId, $processName){
-	        	echo anchor("#", "Divulgar agora", "class='btn btn-success'");
+	        	echo anchor("#divulgationsmodal".$processId, "Divulgar agora", "class='btn btn-success'");
 			    echo "&nbsp";
 			    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Definir data</button>";
 			    echo "<br>";

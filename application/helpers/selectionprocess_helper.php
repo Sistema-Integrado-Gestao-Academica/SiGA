@@ -76,47 +76,74 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
 }
 
 
-// function createDivulgationsModal($process, $divulgations){
+function createDivulgationsModal($process){
+	$processId = $process->getId();
+	$settings = $process->getSettings();
+	$phases = $settings->getPhases();
 
-// 	$processId = $process->getId();
-// 	$settings = $process->getSettings();
-// 	$phases = $settings->getPhases();
+	$dropdownPhases = array('0' => "Nenhuma");
+	if($phases !== FALSE){
+		foreach ($phases as $phase) {
+			$id = $phase->getPhaseId();
+			$name = $phase->getPhaseName();
+			$dropdownPhases[$id] = $name;
+		}
+	}
 
-// 	$dropdownPhases = array('0' => "Nenhuma");
-// 	if($phases !== FALSE){
-// 		foreach ($phases as $phase) {
-// 			$id = $phase->getPhaseId();
-// 			$name = $phase->getPhaseName();
-// 			$dropdownPhases[$id] = $name;
-// 		}
-// 	}
+    $description = array(
+        "name" => "description",
+        "id" => "description",  
+        "type" => "text",
+        "required" => TRUE,
+        "placeholder" => "Descrição da divulgação",
+        "class" => "form-control",
+        "required" => "true"
+    );  
+    $message = array(
+        "name" => "message",
+        "id" => "message",  
+        "type" => "text",
+        "placeholder" => "Mensagem relacionada",
+        "class" => "form-control"
+    );
 
-// 	$body = function() use ($processId, $dropdownPhases){
-// 		formToAddDivulgation($processId, $dropdownPhases);
-// 	};
+    $processHidden = array(
+        "id" => "process_id",
+        "name" => "process_id",
+        "type" => "hidden",
+        "value" => $processId
+    );
 
-// 	$footer = function(){
-// 		echo "<div class='row'>";
-// 			echo "<div class='col-lg-6'>";
-// 				echo form_button(array(
-// 				    "class" => "btn btn-danger btn-block",
-// 				    "content" => "Fechar",
-// 				    "type" => "button",
-// 				    "data-dismiss"=>'modal'
-// 				));
-// 			echo "</div>";
-// 			echo "<div class='col-lg-6'>";
-// 			 	echo form_button(array(
-// 				    "id" => 'divulgate',
-// 				    "class" => "btn bg-olive btn-block",
-// 				    "content" => 'Divulgar',
-// 				    "type" => "submit"
-// 				));
-// 			echo "</div>";
-// 		echo "</div>";
+    $body = function() use ($message, $description, $dropdownPhases, $processHidden){
+    	echo form_input($description);
+        echo form_textarea($message);
+        echo form_label("Fase relacionada", "phase_label");
+        echo form_dropdown("phase", $dropdownPhases, '', "class='form-control'");
+        echo form_input($processHidden);
+    };
+  
+	$footer = function(){
+		echo "<div class='row'>";
+			echo "<div class='col-lg-6'>";
+				echo form_button(array(
+				    "class" => "btn btn-danger btn-block",
+				    "content" => "Fechar",
+				    "type" => "button",
+				    "data-dismiss"=>'modal'
+				));
+			echo "</div>";
+			echo "<div class='col-lg-6'>";
+			 	echo form_button(array(
+				    "id" => 'divulgate',
+				    "class" => "btn bg-olive btn-block",
+				    "content" => 'Divulgar',
+				    "type" => "submit"
+				));
+			echo "</div>";
+		echo "</div>";
 
-// 	};
+	};
 
-// 	newModal("divulgationsmodal".$processId, "Divulgações do Processo Seletivo", $body, $footer);	
-// }
+	newModal("divulgationsmodal".$processId, "Primeira divulgação do Processo Seletivo", $body, $footer);	
+}
 
