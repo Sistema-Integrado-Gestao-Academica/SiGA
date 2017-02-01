@@ -345,10 +345,20 @@ class SelectiveProcessAjax extends MX_Controller {
             $error .= "<br>Preencha a data e a descrição da divulgação.";
         }
         else{
-            $saved = $this->process_model->saveNoticeDivulgation($processId, $date, $divulgationDescription);
-            $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
-            if(!$saved){
-                $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
+            $subscriptionStartDate = $settings->getStartDate(); 
+            $today = new Datetime();
+            $date = convertDateToDateTime($date); 
+            $dateInDatetime = new DateTime($date);
+            $validDate = validateDateInPeriod($dateInDatetime, $today, $subscriptionStartDate);
+            if($validDate){
+                $saved = $this->process_model->saveNoticeDivulgation($processId, $date, $divulgationDescription);
+                $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
+                if(!$saved){
+                    $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
+                }
+            }
+            else{
+                $error .= "<br>A data de divulgação deve ser anterior a data de inscrição e posterior ou igual a data de hoje.";
             }
         }
 
@@ -413,24 +423,32 @@ class SelectiveProcessAjax extends MX_Controller {
             $error .= "<br>Você deve escolher a data de início e de fim.";
         }
         else{
-            $validDates = validateDatesDiff($startDate, $endDate);
+            $startDate = convertDateToDateTime($startDate);
+            $endDate = convertDateToDateTime($endDate);
+            $startDateToValidation = new Datetime($startDate);
+            $endDateToValidation = new Datetime($endDate);
+
+            $this->load->model("selectiveprocess_model", "process_model");
+            $validDates = validateDatesDiff($startDateToValidation, $endDateToValidation);
 
             if($validDates){
-                $startDate = validateDate($startDate);
-                $startDate = formatDateToDateTime($startDate);
 
-                $endDate = validateDate($endDate);
-                $endDate = formatDateToDateTime($endDate);
-                
-                $dataToSave = array(
-                    'start_date' => $startDate,
-                    'end_date' => $endDate
-                );
+                $validDateBasedOnPhases = $this->validateDateBasedOnPhases($processId, $phaseId, $startDateToValidation, $endDateToValidation);
 
-                $this->load->model("selectiveprocess_model", "process_model");
-                $saved = $this->process_model->savePhaseDate($processId, $phaseId, $dataToSave);
-                if(!$saved){
-                    $error .= "<br>Não foi possível definir a data";
+                if($validDateBasedOnPhases){
+
+                    $dataToSave = array(
+                        'start_date' => $startDate,
+                        'end_date' => $endDate
+                    );
+
+                    $saved = $this->process_model->savePhaseDate($processId, $phaseId, $dataToSave);
+                    if(!$saved){
+                        $error .= "<br>Não foi possível definir a data";
+                    }
+                }
+                else{
+                    $error .= "<br>Período inválido.<br> Verifique se o período é anterior ao período da fase seguinte e posterior ao período da fase anterior";
                 }
             }
             else{
@@ -467,4 +485,100 @@ class SelectiveProcessAjax extends MX_Controller {
         writeTimelineItem($text, FALSE, "#", $bodyText);
         echo "</ul>";
     }
+
+    private function validateDateBasedOnPhases($processId, $phaseId, $phaseStartDate, $phaseEndDate){
+        
+        $process = $this->process_model->getById($processId);
+        $settings = $process->getSettings();
+        $phases = $settings->getPhases();
+
+        $relatedPhases = $this->getPreviousAndNextPhase($phaseId, $phases);
+        $previousPhase = $relatedPhases['previous'];
+        if(is_null($previousPhase)){
+            $previousPhaseEndDate = $settings->getYMDEndDate();
+        }
+        else{
+            $previousPhaseEndDate = $previousPhase->getYMDEndDate();
+        }
+        // The current phase start date must be later than the end date of previous phase
+        $previousPhaseEndDate = new Datetime($previousPhaseEndDate);
+        $validDatePreviousPhase = validateDatesDiff($previousPhaseEndDate, $phaseStartDate);
+        
+        $nextPhase = $relatedPhases['next'];
+        if(is_null($nextPhase)){
+            $validDateNextPhase = TRUE;
+        }
+        else{
+            $nextPhaseStartDate = $nextPhase->getYMDStartDate();
+            $nextPhaseStartDate = new Datetime($nextPhaseStartDate);
+            $validDateNextPhase = validateDatesDiff($phaseEndDate, $nextPhaseStartDate);
+        }
+
+        $validDates = $validDatePreviousPhase && $validDateNextPhase;
+
+        return $validDates;
+    }
+
+    private function getPreviousAndNextPhase($phaseId, $phases){
+
+        $phasesPerId = array();
+        if($phases !== FALSE){
+            foreach ($phases as $phase) {
+                $id = $phase->getPhaseId();
+                $phasesPerId[] = $id;
+            }
+        }
+
+        $nextPhase = null;
+        $previousPhase = null;
+        if(!empty($phasesPerId)){
+            $numberOfPhases = count($phases);
+            $phase = array_search($phaseId, $phasesPerId);
+            $firstPhasePreviousIndex = $phase - 1;
+            $firstPhaseNextIndex = $phase + 1;
+            if($phase > 0 && $phase < ($numberOfPhases - 1)){
+                $previousPhase = $this->getRelatedPhasesRecursively($firstPhasePreviousIndex, $phases, TRUE);
+                $nextPhase = $this->getRelatedPhasesRecursively($firstPhaseNextIndex, $phases);
+            }
+            elseif ($phase == ($numberOfPhases - 1)) {
+                $previousPhase = $this->getRelatedPhasesRecursively($firstPhasePreviousIndex, $phases, TRUE);
+            }
+            else{
+                $nextPhase = $this->getRelatedPhasesRecursively($firstPhaseNextIndex, $phases);
+            }
+        }
+
+        $relatedPhases = array(
+            'previous' => $previousPhase,
+            'next' => $nextPhase
+        );
+
+        return $relatedPhases;
+    }
+
+    // Phase index is the key of phases array
+    private function getRelatedPhasesRecursively($phaseIndex, $phases, $previousPhase = FALSE){
+        
+        $result = null;
+        $phaseIndexExists = array_key_exists($phaseIndex, $phases);
+        if($phaseIndexExists){
+            $phase = $phases[$phaseIndex];
+            $startDate = $phase->getStartDate();     
+
+            if(!is_null($startDate)){
+                $result = $phase;
+            }
+            else{
+                if($previousPhase){
+                    $result = $this->getRelatedPhasesRecursively(($phaseIndex - 1), $phases, TRUE);
+                }
+                else{
+                    $result = $this->getRelatedPhasesRecursively(($phaseIndex + 1), $phases);
+                }
+            }
+        }
+
+        return $result;
+    }
+
 }

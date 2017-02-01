@@ -311,7 +311,6 @@ class SelectiveProcess_model extends CI_Model {
 
     public function saveNoticeDivulgation($processId, $date, $description){
 
-    	$date = convertDateToDateTime($date);
     	$data = array(
     		'id_process' => $processId,
     		'description' => $description,

@@ -584,8 +584,6 @@ class Offer_model extends CI_Model {
 			$startDate = new Datetime($startDate);
 			$endDate = new Datetime($endDate);
 			$today = new Datetime();
-			$today = $today->format("d/m/Y");
-
 			$checkDate = validateDateInPeriod($today, $startDate, $endDate);
 			if($checkDate){
 				$enrollmentPeriod = TRUE;
