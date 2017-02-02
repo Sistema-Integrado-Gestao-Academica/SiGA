@@ -1,10 +1,10 @@
 <h2 class="principal">Definição de datas do Processo Seletivo <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
 
-<?php 
+<?php
 	$processId = $selectiveprocess->getId();
 	$settings = $selectiveprocess->getSettings();
     $processName = $selectiveprocess->getName();
-	
+
 	echo "<ul class='timeline'>";
 		// Notice Divulgation
 		writeTimelineLabel("white", "Divulgação do Edital");
@@ -32,7 +32,7 @@
 	    }
 	    else{
 	        $text = "Data não definida";
-	        $bodyText = function(){ 
+	        $bodyText = function(){
 	            echo "Você pode definir uma data ou divulgar o processo seletivo agora.";
 	        };
 	        $date = "";
@@ -90,7 +90,7 @@
 	            $phaseId = $phase->getPhaseId();
 	            $phaseName = $phase->getPhaseName();
 	            writeTimelineLabel("white", $phaseName);
-	            $startDate = $phase->getStartDate(); 
+	            $startDate = $phase->getStartDate();
 	            if(!is_null($startDate)){
 	                $text = "Período definido";
 	                $bodyText = function() use ($phase, $processId, $phaseId){
@@ -115,7 +115,7 @@
 	            echo "<li>";
 	                echo "<i class='fa fa-calendar-o bg-blue'></i>";
 	                echo "<div id='phase_{$phaseId}' class='timeline-item'>";
-	                    writeTimelineItem($text, FALSE, "#", $bodyText, "");
+	                    writeTimelineItem($text, FALSE, "#phase_{$phaseId}", $bodyText, "");
 	                echo "</div>";
 	            echo "</li>";
 
