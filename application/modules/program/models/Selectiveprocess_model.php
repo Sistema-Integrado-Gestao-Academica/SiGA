@@ -365,6 +365,16 @@ class SelectiveProcess_model extends CI_Model {
 		return $noticeDivulgations;
     }
 
+    public function getProcessDivulgationById($divulgationId){
+
+    	$this->db->select("*");
+    	$searchResult = $this->db->get_where('selection_process_divulgation', array('id' => $divulgationId));
+  		$divulgation = $searchResult->row_array();
+		$divulgation = checkArray($divulgation);
+		
+		return $divulgation;
+    }
+
     public function sortPhasesBasedInOrder($phases, $phasesOrder){
 
     	$phasesInOrder = array();

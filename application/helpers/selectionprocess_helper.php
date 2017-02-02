@@ -39,9 +39,13 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
 			$message = "";
 			$message .= $divulgation['message'];
 
-			$hasFile = !is_null($divulgation['file_path']) || $divulgation['initial_divulgation'];
-			if($hasFile){
+			$hasFile = !is_null($divulgation['file_path']);
+			if($divulgation['initial_divulgation']){
 	        	$link = site_url('download_notice/'.$processId.'/'.$courseId);
+	        	$message .= "<br>Clique para baixar.";
+			}
+			elseif ($hasFile) {
+	        	$link = site_url('selection_process/download_divulgation_file/'.$divulgation['id']);
 	        	$message .= "<br>Clique para baixar.";
 			}
 			else{

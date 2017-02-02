@@ -478,24 +478,22 @@ class SelectiveProcess extends MX_Controller {
         $description = $this->input->post("description");
         $message = $this->input->post("message");
         $related_phase = $this->input->post("phase");
-        $fileName = $this->input->post("divulgation_file");
 
-        if(!is_null($fileName)){
+        $ids = array(
+            "p" => $processId
+        );
 
-            $ids = array(
-                "p" => $processId
-            );
+        $fieldId = "divulgation_file";
+        $folderName = "divulgations";
+        $allowedTypes = "jpg|png|pdf|jpeg";
 
-            $fieldId = "divulgation_file";
-            $folderName = "divulgations";
-            $allowedTypes = "jpg|png|pdf|jpeg";
-
-            $filePath = uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes);
+        if (isset($_FILES['divulgation_file']) && is_uploaded_file($_FILES['divulgation_file']['tmp_name'])) {
+           $filePath = uploadFile(FALSE, $ids, $fieldId, $folderName, $allowedTypes);
         }
         else{
-            $filePath = NULL;
+           $filePath = NULL;
         }
-
+        
         $today = new Datetime();
         $today = $today->format("Y/m/d");
         if($filePath || is_null($filePath)){
@@ -530,5 +528,25 @@ class SelectiveProcess extends MX_Controller {
         $this->session->set_flashdata($status, $message);
         redirect("selection_process/divulgations/{$processId}");             
     }
+
+    public function downloadDivulgationFile($divulgationId){
+
+        $divulgation = $this->process_model->getProcessDivulgationById($divulgationId);
+        $filePath = $divulgation['file_path'];
+        
+        $this->load->helper('download');
+        if(file_exists($filePath)){
+            force_download($filePath, NULL);
+        }
+        else{
+            $status = "danger";
+            $message = "Nenhum arquivo encontrado.";
+            $this->session->set_flashdata($status, $message);
+            $processId = $divulgation['id_process'];
+            redirect("selection_process/divulgations/{$processId}");             
+        }
+    }
+
+    
 
 }

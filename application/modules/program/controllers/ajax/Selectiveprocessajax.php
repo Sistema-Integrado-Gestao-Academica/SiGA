@@ -299,7 +299,7 @@ class SelectiveProcessAjax extends MX_Controller {
 
         $this->load->model("program/course_model");
         $course = $this->course_model->getCourseById($courseId);
-        
+
         $ids = array(
             "p" => $programId,
             "c" => $courseId,
@@ -520,8 +520,9 @@ class SelectiveProcessAjax extends MX_Controller {
             $divulgationFile = array(
                 "name" => "divulgation_file",
                 "id" => "divulgation_file",
-                "type" => "file",
+                "type" => "file"
             );
+
             echo "<br>";
             echo form_label("Você pode incluir um arquivo para essa divulgação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "divulgation_file");
             echo "<div class='row'>";
@@ -538,6 +539,8 @@ class SelectiveProcessAjax extends MX_Controller {
             ));
         };
 
+    echo form_open_multipart("program/selectiveprocess/addDivulgation");
         writeTimelineItemToAddItem($text, $bodyText, $footer);  
+    echo form_close();        
     }
 }

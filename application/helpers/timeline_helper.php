@@ -32,7 +32,6 @@ function writeTimelineItemToAddItem($textToInput, $bodyText = "", $footer = ""){
     $date = $today->format("d/m/Y");
     echo "<span class='time'><i class='fa fa-calendar'></i>". $date."</span>";
     
-    echo form_open_multipart("program/selectiveprocess/addDivulgation", array( 'id' => 'add_divulgation_form' ));
     echo "<h3 class='timeline-header'><a href='#new_divulgation'>";
         $textToInput();
     echo "</h3></a>";
@@ -47,7 +46,7 @@ function writeTimelineItemToAddItem($textToInput, $bodyText = "", $footer = ""){
             $footer();
         }
     echo "</div>";  
-    echo form_close();
+    
 }
 
 
