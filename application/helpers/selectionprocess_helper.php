@@ -1,9 +1,16 @@
 <?php
 
-function createTimelineItemToAddDivulgation($processId){
+function createTimelineItemToAddDivulgation($processId, $firstDivulgation = FALSE){
 	
+	if($firstDivulgation){
+		$method = 'addFirstDivulgation('.$processId.')';
+	}
+	else{
+		$method = 'addTimelineItem('.$processId.')';
+	}
+
 	echo "<li>";
-        echo "<a href='#new_divulgation' onclick='addTimelineItem(\"{$processId}\")' class='fa fa-plus-square bg-blue' data-container='body'
+        echo "<a href='#new_divulgation' onclick={$method} class='fa fa-plus-square bg-blue' data-container='body'
 		             data-toggle='popover' data-placement='top' data-trigger='hover' disabled='true'
 		             data-content='Clique para fazer uma nova divulgação'></a>";
         echo "<div id='new_divulgation' class='timeline-item'>";
@@ -27,11 +34,19 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
 
 		$label = "Processo Seletivo";
 		foreach ($processDivulgations as $divulgation) {
+			
 			$phaseId = $divulgation['related_id_phase'];
 			if(!is_null($phaseId)){
 				$labelHasChanged = $label != $phasesName[$phaseId]; 
 				if($labelHasChanged){
 					$label = $phasesName[$phaseId];
+					writeTimelineLabel("white", $label);
+				}
+			}
+			else{
+				$labelHasChanged = $label != "Divulgação"; 
+				if($labelHasChanged){
+					$label = "Divulgação";
 					writeTimelineLabel("white", $label);
 				}
 			}
@@ -64,16 +79,17 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
 	        echo "</li>";
 		}
 
+		$firstDivulgation = FALSE;
 	}
 	else{
 		callout("info", "Processo seletivo sem divulgações");
 		echo "<br>";
 		echo "<ul class='timeline'>";
-
+		$firstDivulgation = TRUE;
 		writeTimelineLabel("blue", "Processo seletivo:".$processName);
 	}
 
-	createTimelineItemToAddDivulgation($processId);
+	createTimelineItemToAddDivulgation($processId, $firstDivulgation);
 	echo "</ul>";
 
 
@@ -81,52 +97,28 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
 
 
 function createDivulgationsModal($process){
+	
 	$processId = $process->getId();
-	$settings = $process->getSettings();
-	$phases = $settings->getPhases();
-
-	$dropdownPhases = array('0' => "Nenhuma");
-	if($phases !== FALSE){
-		foreach ($phases as $phase) {
-			$id = $phase->getPhaseId();
-			$name = $phase->getPhaseName();
-			$dropdownPhases[$id] = $name;
-		}
-	}
-
-    $description = array(
-        "name" => "description",
-        "id" => "description",  
-        "type" => "text",
-        "required" => TRUE,
-        "placeholder" => "Descrição da divulgação",
-        "class" => "form-control",
-        "required" => "true"
-    );  
-    $message = array(
-        "name" => "message",
-        "id" => "message",  
-        "type" => "text",
-        "placeholder" => "Mensagem relacionada",
-        "class" => "form-control"
-    );
-
-    $processHidden = array(
-        "id" => "process_id",
-        "name" => "process_id",
-        "type" => "hidden",
-        "value" => $processId
-    );
-
-    $body = function() use ($message, $description, $dropdownPhases, $processHidden){
-    	echo form_input($description);
-        echo form_textarea($message);
-        echo form_label("Fase relacionada", "phase_label");
-        echo form_dropdown("phase", $dropdownPhases, '', "class='form-control'");
-        echo form_input($processHidden);
+    $fields = getFieldsOfDivulgationForm($process, TRUE);
+    
+    $fields['description']['value'] = "Edital ".$process->getName();
+    $course = $process->getCourse();
+    $body = function() use ($fields, $course){
+    	echo form_input($fields['description']);
+        echo form_textarea($fields['message']);
+        echo form_input($fields['processHidden']);
+        $courseHidden = array(
+	        "id" => "course_id",
+	        "name" => "course_id",
+	        "type" => "hidden",
+	        "value" => $course
+	    );
+        echo form_input($courseHidden);
     };
   
 	$footer = function(){
+		echo "<div id='divulgation_result'>";
+		echo "</div>";
 		echo "<div class='row'>";
 			echo "<div class='col-lg-6'>";
 				echo form_button(array(
@@ -151,3 +143,65 @@ function createDivulgationsModal($process){
 	newModal("divulgationsmodal".$processId, "Primeira divulgação do Processo Seletivo", $body, $footer);	
 }
 
+function getFieldsOfDivulgationForm($process, $initialDivulgation){
+  	$settings = $process->getSettings();
+    $phases = $settings->getPhases();
+
+    $dropdownPhases = array('0' => "Nenhuma");
+    if($phases !== FALSE){
+        foreach ($phases as $phase) {
+            $id = $phase->getPhaseId();
+            $name = $phase->getPhaseName();
+            $dropdownPhases[$id] = $name;
+        }
+    }
+
+    $description = array(
+        "name" => "description",
+        "id" => "description",  
+        "type" => "text",
+        "required" => TRUE,
+        "placeholder" => "Descrição da divulgação",
+        "class" => "form-control",
+        "required" => "true"
+    );  
+    $message = array(
+        "name" => "message",
+        "id" => "message",  
+        "type" => "text",
+        "placeholder" => "Mensagem relacionada",
+        "class" => "form-control"
+    );
+
+    $processId = $process->getId();
+    $processHidden = array(
+        "id" => "process_id",
+        "name" => "process_id",
+        "type" => "hidden",
+        "value" => $processId
+    );
+
+    $initialDivulgationHidden = array(
+        "id" => "initial_divulgation",
+        "name" => "initial_divulgation",
+        "type" => "hidden",
+        "value" => $initialDivulgation
+    );
+
+	$divulgationFile = array(
+	    "name" => "divulgation_file",
+	    "id" => "divulgation_file",
+	    "type" => "file"
+	);
+
+	$fields = array(
+		'description' => $description,
+		'dropdownPhases' => $dropdownPhases,
+		'message' => $message,
+		'processHidden' => $processHidden,
+		'initialDivulgationHidden' => $initialDivulgationHidden,
+		'divulgationFile' => $divulgationFile
+	);
+
+	return $fields;
+}

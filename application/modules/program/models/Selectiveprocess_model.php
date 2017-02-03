@@ -309,35 +309,25 @@ class SelectiveProcess_model extends CI_Model {
         return $phases;
     }
 
-    public function saveNoticeDivulgation($processId, $date, $description){
+    public function saveProcessDivulgation($data, $noticeDivulgation = FALSE){
 
-    	$date = convertDateToDateTime($date);
-    	$data = array(
-    		'id_process' => $processId,
-    		'description' => $description,
-    		'date' => $date,
-    		'initial_divulgation' => True
-    	);
-
-		$this->db->where(self::ID_ATTR, $processId);
-		$this->db->where('initial_divulgation', True);
-	   	$result = $this->db->get('selection_process_divulgation');
-		$divulgationExistent = $result->num_rows() > 0;
-
-		if($divulgationExistent){
-			$this->db->where(self::ID_ATTR, $processId);
-			$saved = $this->db->update("selection_process_divulgation", $data);
-
+    	if($noticeDivulgation){
+    		$processId = $data['id_process'];
+    		$this->db->where(self::ID_ATTR, $processId);
+			$this->db->where('initial_divulgation', True);
+		   	$result = $this->db->get('selection_process_divulgation');
+			$divulgationExistent = $result->num_rows() > 0;
+			if($divulgationExistent){
+				$this->db->where(self::ID_ATTR, $processId);
+				$saved = $this->db->update("selection_process_divulgation", $data);
+			}
+			else{
+	    		$saved = $this->db->insert("selection_process_divulgation", $data);
+			}
 		}
 		else{
     		$saved = $this->db->insert("selection_process_divulgation", $data);
 		}
-
-    	return $saved;
-    }
-
-    public function saveProcessDivulgation($data){
-		$saved = $this->db->insert("selection_process_divulgation", $data);
 
     	return $saved;
     }
@@ -352,7 +342,7 @@ class SelectiveProcess_model extends CI_Model {
     	}
     	else{
 			$this->db->where('date <= NOW()', NULL, FALSE);
-    		$this->db->order_by('related_id_phase', 'ASC');
+    		$this->db->order_by('date', 'DESC');
     	}
 		$noticeDivulgations = $this->db->get()->result_array();
 

@@ -478,6 +478,7 @@ class SelectiveProcess extends MX_Controller {
         $description = $this->input->post("description");
         $message = $this->input->post("message");
         $related_phase = $this->input->post("phase");
+        $initial_divulgation = $this->input->post("initial_divulgation");
 
         $ids = array(
             "p" => $processId
@@ -501,14 +502,14 @@ class SelectiveProcess extends MX_Controller {
                 'id_process' => $processId, 
                 'description' => $description,
                 'message' => $message,
-                'initial_divulgation' => FALSE, // TO DO
+                'initial_divulgation' => $initial_divulgation,
                 'date' => $today,
                 'file_path' => $filePath 
             );
             if($related_phase !== "0"){
                 $data['related_id_phase'] = $related_phase;
             }
-            $saved = $processDivulgations = $this->process_model->saveProcessDivulgation($data);
+            $saved = $this->process_model->saveProcessDivulgation($data);
 
             if($saved){
                 $status = "success";
