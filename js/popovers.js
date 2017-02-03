@@ -29,4 +29,11 @@ $(document).ready(function(){
 	},function(){
 		$("#link_restore_password").popover('hide');
 	});
+
+	$("#add_divulgation_timeline_btn").hover(function(){
+		$("#add_divulgation_timeline_btn").popover('show');
+	},function(){
+		$("#add_divulgation_timeline_btn").popover('hide');
+	});
+
 });

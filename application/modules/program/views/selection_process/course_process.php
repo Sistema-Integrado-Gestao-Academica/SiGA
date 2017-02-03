@@ -15,7 +15,9 @@ echo anchor(
 <div align='right'>
 <i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
 <i class='fa fa-edit'> Editar </i> &nbsp&nbsp
-<i class='fa fa-calendar'> Definir datas </i>
+<i class='fa fa-calendar'> Definir datas </i> &nbsp&nbsp
+<i class='fa fa-group'> Definir docentes </i> &nbsp&nbsp
+<i class='fa fa-bullhorn'> Divulgações </i>
 </div>
 
 <?php
@@ -45,80 +47,21 @@ if($validSelectiveProcesses){
 
 			$processId = $process->getId();
 			echo "<td>";
-				labelToStatus($divulgations, $processId);
+				echo $status[$processId];
 			echo "</td>";
 
 			echo "<td>";
-				$body = function() use ($process, $settings){
-					echo "<div align='left'>";
-					echo "<b>Tipo:</b> ".$process->getFormmatedType();
-					echo "<br>";
-					echo "<b>Data de Início: </b>".$settings->getFormattedStartDate();
-					echo "<br>";
-					echo "<b>Data de Fim: </b>".$settings->getFormattedEndDate();
-					echo "<br>";
-					echo "</div>";
-					$phasesOrder = $settings->getPhasesOrder();
-					$phases = $settings->getPhases();
-					$validPhases = !empty($phases) && !is_null($phases);
-					if($validPhases){
-						echo "<h4><b>Fases:</b><br></h4>";
-						buildTableDeclaration();
-
-						buildTableHeaders(array(
-							'Ordem',
-							'Fase',
-							'Peso'
-						));
-
-						foreach ($phases as $phase) {
-							$phaseName = $phase->getPhaseName();
-							$phaseId = $phase->getPhaseId();
-							echo "<tr>";
-								echo "<td>";
-								if($phaseId != 1){
-									$phaseName = lang($phaseName);
-									$order = array_search($phaseName, $phasesOrder);
-									echo $order + 1;
-								}
-								else{
-									echo "-";
-								}
-								echo "</td>";
-								echo "<td>";
-									echo $phase->getPhaseName();
-								echo "</td>";
-								echo "<td>";
-									if($phaseId != 1){
-										echo $phase->getWeight();
-									}
-									else{
-										echo "0";
-									}
-								echo "</td>";
-							echo "</tr>";
-						}
-						buildTableEndDeclaration();
-					}
-
-				};
-
-				$footer = function(){
-					echo form_button(array(
-					    "class" => "btn btn-danger btn-block",
-					    "content" => "Fechar",
-					    "type" => "button",
-					    "data-dismiss"=>'modal'
-					));
-				};
-
-				newModal("selectiveprocessmodal".$processId, "Processo Seletivo: <b>{$processName}</b>", $body, $footer);
-				
+				createProcessModal($process, $settings);
 				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-success'><i class='fa fa-eye'></i></a>";
 				echo "&nbsp";
 				echo anchor("edit_selection_process/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
 				echo "&nbsp";
 				echo anchor("define_dates_page/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
+				echo "&nbsp";
+				echo anchor("selection_process/define_teachers/{$processId}/{$course['id_program']}", "<i class='fa fa-group'></i>", "class='btn btn-info'");
+
+				echo "&nbsp";
+				echo anchor("selection_process/divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", "class='btn bg-olive'");
 
 			echo "</td>";
 
@@ -139,26 +82,75 @@ echo "<br>";
 
 echo anchor("program/selectiveprocess/programCourses/{$course['id_program']}", "Voltar", "class='btn btn-danger'");
 
-function labelToStatus($divulgations, $processId){
 
-	if($divulgations !== FALSE){
+function createProcessModal($process, $settings){
 
-		if($divulgations[$processId] !== FALSE){
-			$divulgationDate = $divulgations[$processId]['date'];
-			$divulgationDate = convertDateTimeToDateBR($divulgationDate);
-		    $today = new Datetime();
-		    $today = $today->format("d/m/Y");
-		    if($divulgationDate <= $today){
-				echo "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
+	$processId = $process->getId();
+	$body = function() use ($process, $settings){
+		echo "<div align='left'>";
+		echo "<b>Tipo:</b> ".$process->getFormmatedType();
+		echo "<br>";
+		echo "<b>Data de Início: </b>".$settings->getFormattedStartDate();
+		echo "<br>";
+		echo "<b>Data de Fim: </b>".$settings->getFormattedEndDate();
+		echo "<br>";
+		echo "</div>";
+		$phasesOrder = $settings->getPhasesOrder();
+		$phases = $settings->getPhases();
+		$validPhases = !empty($phases) && !is_null($phases);
+		if($validPhases){
+			echo "<h4><b>Fases:</b><br></h4>";
+			buildTableDeclaration();
+
+			buildTableHeaders(array(
+				'Ordem',
+				'Fase',
+				'Peso'
+			));
+
+			foreach ($phases as $phase) {
+				$phaseName = $phase->getPhaseName();
+				$phaseId = $phase->getPhaseId();
+				echo "<tr>";
+					echo "<td>";
+					if($phaseId != 1){
+						$phaseName = lang($phaseName);
+						$order = array_search($phaseName, $phasesOrder);
+						echo $order + 1;
+					}
+					else{
+						echo "-";
+					}
+					echo "</td>";
+					echo "<td>";
+						echo $phase->getPhaseName();
+					echo "</td>";
+					echo "<td>";
+						if($phaseId != 1){
+							echo $phase->getWeight();
+						}
+						else{
+							echo "0";
+						}
+					echo "</td>";
+				echo "</tr>";
 			}
-			else{
-				echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-			}
+			buildTableEndDeclaration();
 		}
-		else{
-			echo "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-		}
-	}
 
+	};
+
+	$footer = function(){
+		echo form_button(array(
+		    "class" => "btn btn-danger btn-block",
+		    "content" => "Fechar",
+		    "type" => "button",
+		    "data-dismiss"=>'modal'
+		));
+	};
+	$processName = $process->getName();
+	newModal("selectiveprocessmodal".$processId, "Processo Seletivo: <b>{$processName}</b>", $body, $footer);
 }
+
+
 ?>

@@ -299,7 +299,7 @@ class SelectiveProcessAjax extends MX_Controller {
 
         $this->load->model("program/course_model");
         $course = $this->course_model->getCourseById($courseId);
-        
+
         $ids = array(
             "p" => $programId,
             "c" => $courseId,
@@ -332,10 +332,13 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     public function defineDivulgationDate(){
+        
         $processId = $this->input->post("process_id");
         $courseId = $this->input->post("course_id");
         $date = $this->input->post("divulgation_start_date");
         $divulgationDescription = $this->input->post("divulgation_description");
+        $message = $this->input->post("message");
+        
         $this->load->model("selectiveprocess_model", "process_model");
         $process = $this->process_model->getById($processId);
         $settings = $process->getSettings();
@@ -351,7 +354,14 @@ class SelectiveProcessAjax extends MX_Controller {
             $dateInDatetime = new DateTime($date);
             $validDate = validateDateInPeriod($dateInDatetime, $today, $subscriptionStartDate);
             if($validDate){
-                $saved = $this->process_model->saveNoticeDivulgation($processId, $date, $divulgationDescription);
+                $data = array(
+                    'id_process' => $processId, 
+                    'description' => $divulgationDescription,
+                    'message' => $message,
+                    'initial_divulgation' => TRUE,
+                    'date' => $date
+                );
+                $saved = $this->process_model->saveProcessDivulgation($data, TRUE);
                 $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
                 if(!$saved){
                     $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
@@ -389,22 +399,23 @@ class SelectiveProcessAjax extends MX_Controller {
         else{
             $text = $divulgationDescription;
             $link = site_url('download_notice/'.$processId.'/'.$courseId);
-            $bodyText = function(){
-                echo "Clique para baixar.";
+            $bodyText = function() use ($message){
+                echo $message;
+                echo "<br>Clique para baixar.";
             };
             $footer = "";
             $date = convertDateTimeToDateBR($processDivulgation['date']);
             $today = new Datetime();
             $today = $today->format("d/m/Y");
             if($date > $today){
-                $footer = function() use ($processId, $courseId, $processName, $date, $text){
+                $footer = function() use ($processId, $courseId, $processName, $date, $text, $message){
                     echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
                     echo "<br>";
                     echo "<br>";
                     echo "<div id='define_date_form' class='collapse'>";
                     echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
                     echo "<br>";
-                    formOfDateDivulgation($processId, $processName, $courseId, $date, $text);
+                    formOfDateDivulgation($processId, $processName, $courseId, $date, $text, $message);
                 };
             }
         }
@@ -579,6 +590,121 @@ class SelectiveProcessAjax extends MX_Controller {
         }
 
         return $result;
+    }
+
+    public function addFormToAddDivulgation($processId){
+        
+        $this->load->model("selectiveprocess_model", "process_model");
+        $process = $this->process_model->getById($processId);
+  
+        $this->load->helper("selectionprocess");
+        $initialDivulgation = (bool) $this->input->post('initial_divulgation');
+        $fieldsForm = getFieldsOfDivulgationForm($process, $initialDivulgation);
+
+        $showForm = TRUE;
+
+        $description = $fieldsForm['description'];
+        if($initialDivulgation){
+            $description['value'] = "Edital ".$process->getName();
+            $showForm = $this->hasFormToAddInitialDivulgation($processId);
+        }
+
+        if($showForm){
+
+            $text = function() use ($description){
+                echo form_input($description);
+            };
+
+            $bodyText = function() use ($fieldsForm, $initialDivulgation){
+
+                echo form_textarea($fieldsForm['message']);
+                echo form_input($fieldsForm['processHidden']);
+                echo form_input($fieldsForm['initialDivulgationHidden']);
+                
+                if(!$initialDivulgation){
+                    echo form_label("Fase relacionada", "phase_label");
+                    echo form_dropdown("phase", $fieldsForm['dropdownPhases'], '', "class='form-control'");
+               
+                    echo "<br>";
+                    echo form_label("Você pode incluir um arquivo para essa divulgação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "divulgation_file");
+                    echo "<div class='row'>";
+                        echo "<div class='col-lg-8'>";
+                            echo form_input($fieldsForm['divulgationFile']); 
+                        echo "</div>";
+                    echo "</div>";
+                }
+            };
+            $footer = function(){
+                echo form_button(array(
+                    "class" => "btn bg-olive btn-block",
+                    "content" => 'Divulgar',
+                    "type" => "submit"
+                ));
+            };
+
+            echo form_open_multipart("program/selectiveprocess/addDivulgation");
+                writeTimelineItemToAddItem($text, $bodyText, $footer);  
+            echo form_close();        
+        }
+        else{
+            $text = function(){
+                echo "A primeira divulgação não pode ser realizada por aqui.";
+            };
+
+            $bodyText = function() use ($process){
+                callout("info", "Já existe uma data definida para a primeira divulgação nesse processo. Para realizar essa divulgação hoje, a data definida deve ser alterada.");
+
+                $processId = $process->getId();
+                $courseId = $process->getCourse();
+
+                echo anchor("define_dates_page/{$processId}/{$courseId}", "<i class='fa fa-calendar'>Editar a data definida</i>", "class='btn btn-primary'");
+                
+            };
+            writeTimelineItemToAddItem($text, $bodyText, "");  
+        }
+    }
+
+    private function hasFormToAddInitialDivulgation($processId){
+
+        $firstDivulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
+        if(is_null($firstDivulgation)){
+            $showForm = TRUE;   
+        }
+        else{
+            $showForm = FALSE;
+        }
+
+        return $showForm;
+    }
+
+    public function divulgateNotice($processId){
+        $description = $this->input->post("description");
+        $message = $this->input->post("message");
+
+        if(!empty($description)){
+
+            $today = new Datetime();
+            $today = $today->format("Y/m/d");
+            $data = array(
+                'id_process' => $processId, 
+                'description' => $description,
+                'message' => $message,
+                'initial_divulgation' => TRUE,
+                'date' => $today
+            );
+            $this->load->model("selectiveprocess_model", "process_model");
+            $saved = $this->process_model->saveProcessDivulgation($data);
+
+            if($saved){
+                echo "<div class='alert alert-success'>Divulgação realizada com sucesso</div>";
+            }
+            else{
+                echo "<div class='alert alert-danger'>Não foi possível fazer a nova divulgação. Tente novamente.</div>";
+            }
+        }
+        else{
+            echo "<div class='alert alert-danger'>A descrição deve ser preenchida.</div>";
+        }
     }
 
 }

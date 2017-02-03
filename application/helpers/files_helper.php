@@ -1,6 +1,6 @@
 <?php
 
-function uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes){
+function uploadFile($fileName = FALSE, $ids, $fieldId, $folderName, $allowedTypes){
 
     $ci =& get_instance();
     $ci->load->library('upload');
@@ -22,7 +22,7 @@ function uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes){
     return $path;
 }
 
-function setUploadOptions($fileName, $ids, $folderName, $allowedTypes){
+function setUploadOptions($fileName = FALSE, $ids, $folderName, $allowedTypes){
 
     // Remember to give the proper permission to the /upload_files folder
     define("UPLOAD_FOLDER_PATH", "upload_files/{$folderName}");
@@ -32,10 +32,12 @@ function setUploadOptions($fileName, $ids, $folderName, $allowedTypes){
     $path = createFolders($desiredPath, $ids);
 
     $config['upload_path'] = $path;
-    $config['file_name'] = $fileName;
     $config['allowed_types'] = $allowedTypes;
     $config['max_size'] = '5500';
     $config['remove_spaces'] = TRUE;
+    if($fileName !== FALSE){
+        $config['file_name'] = $fileName;
+    }
 
     return $config;
 }

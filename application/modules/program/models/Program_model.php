@@ -15,15 +15,15 @@ class Program_model extends CI_Model {
 	}
 
 	public function getAllProgramAreas(){
-		
+
 		$allProgramAreas = $this->db->get('program_area')->result_array();
-		
+
 		$allProgramAreas = checkArray($allProgramAreas);
-		
+
 		return $allProgramAreas;
-		
+
 	}
-	
+
 	public function getProgramEvaluations($programId){
 
 		$this->db->order_by("start_year", "asc");
@@ -52,6 +52,46 @@ class Program_model extends CI_Model {
 		return $coordinatorPrograms;
 	}
 
+	public function getSecretaryPrograms($secretaryId){
+		$this->db->select('program.*');
+		$this->db->from('program');
+		$this->db->join('course', 'program.id_program = course.id_program');
+		$this->db->join('secretary_course', 'course.id_course = secretary_course.id_course');
+		$this->db->where('secretary_course.id_user', $secretaryId);
+
+		$programs = checkArray($this->db->get()->result_array());
+
+		return $programs;
+	}
+
+	public function getProgramTeachers($program){
+		$this->db->select('users.id, users.name, users.name, users.email, program.program_name');
+		$this->db->from('users');
+		$this->db->join('teacher_course', 'users.id = teacher_course.id_user');
+		$this->db->join('course', 'teacher_course.id_course = course.id_course');
+		$this->db->join('program', 'course.id_program = program.id_program');
+		$this->db->order_by('program.id_program', 'asc');
+
+		if(is_array($program)){
+			$first = TRUE;
+			foreach ($program as $program) {
+				if($first){
+					$this->db->where('program.id_program', $program['id_program']);
+				}else{
+					$this->db->or_where('program.id_program', $program['id_program']);
+				}
+				$first = FALSE;
+			}
+
+		}else{
+			$this->db->where('program.id_program', $program);
+		}
+
+		$programs = checkArray($this->db->get()->result_array());
+
+		return $programs;
+	}
+
 	public function getProgramCourses($programId){
 
 		$this->db->select('*');
@@ -65,11 +105,11 @@ class Program_model extends CI_Model {
 	}
 
 	public function parseProgramAreas($areaName){
-	
+
 		return $this->db->insert("program_area",array("area_name"=>$areaName));
-	
+
 	}
-	
+
 	public function addCourseToProgram($courseId, $programId){
 
 		$course = new Course;
@@ -131,12 +171,12 @@ class Program_model extends CI_Model {
 	}
 
 	private function getProgramCourse($programId, $courseId){
-		
+
 		$searchResult = $this->db->get_where('program_course', array('id_program' => $programId, 'id_course' => $courseId));
 		$foundProgramCourse = $searchResult->row_array();
 
 		$foundProgramCourse = checkArray($foundProgramCourse);
-		
+
 		return$foundProgramCourse;
 	}
 
@@ -215,15 +255,15 @@ class Program_model extends CI_Model {
 
 		return $program;
 	}
-	
+
 	public function getProgramAreaByProgramId($programId){
 
 		$program = $this->getProgram(array('id_program' => $programId));
-		
+
 		$areaId = $program['id_area'];
-		
+
 		$programArea = $this->getArea(array('id_program_area' => $areaId));
-		
+
 		return $programArea;
 	}
 
@@ -258,7 +298,7 @@ class Program_model extends CI_Model {
 	}
 
 	private function getTeacherPrograms($teacherId){
-		
+
 		$this->db->select('id_program');
 		$this->db->from("course");
         $this->db->join('teacher_course', 'course.id_course = teacher_course.id_course');
@@ -268,11 +308,11 @@ class Program_model extends CI_Model {
 		$programsIds = checkArray($programsIds);
 
 		return $programsIds;
- 		
+
 	}
 
 	private function getStudentProgram($studentId){
-		
+
 		$this->db->select('id_program');
 		$this->db->from("course");
         $this->db->join('course_student', 'course.id_course = course_student.id_course');
@@ -282,12 +322,12 @@ class Program_model extends CI_Model {
 		$programsIds = checkArray($programsIds);
 
 		return $programsIds;
- 		
+
 	}
 
 
 	private function insertProgram($program){
-		
+
 		$this->db->insert('program', $program);
 
 		$insertedProgram = $this->getProgram($program);
@@ -309,13 +349,13 @@ class Program_model extends CI_Model {
 
 		return $foundProgram;
 	}
-	
+
 	private function getArea($areaToSearch){
 		$this->db->select('area_name');
 		$foundArea = $this->db->get_where('program_area', $areaToSearch)->row_array();
-	
+
 		$foundArea = checkArray($foundArea);
-	
+
 		return $foundArea;
 	}
 
@@ -327,7 +367,7 @@ class Program_model extends CI_Model {
 		$this->db->where('course.id_program', $programId);
 
 		$numberOfTeachers = $this->db->count_all_results();
-		
+
 		return $numberOfTeachers;
 	}
 

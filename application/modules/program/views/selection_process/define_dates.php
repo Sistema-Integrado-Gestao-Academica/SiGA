@@ -1,44 +1,47 @@
 <h2 class="principal">Definição de datas do Processo Seletivo <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
 
-<?php 
+<?php
 	$processId = $selectiveprocess->getId();
 	$settings = $selectiveprocess->getSettings();
     $processName = $selectiveprocess->getName();
-	
+
 	echo "<ul class='timeline'>";
 		// Notice Divulgation
 		writeTimelineLabel("white", "Divulgação do Edital");
 	    if($processDivulgation){
 	        $text = $processDivulgation['description'];
 	        $link = site_url('download_notice/'.$processId.'/'.$courseId);
-	        $bodyText = function(){
-	            echo "Clique para baixar.";
+	        $bodyText = function() use ($processDivulgation){
+	        	echo $processDivulgation['message'];
+	            echo "<br>Clique para baixar.";
 	        };
 	        $footer = "";
 	        $date = convertDateTimeToDateBR($processDivulgation['date']);
 	        $today = new Datetime();
 			$today = $today->format("d/m/Y");
+			$message = $processDivulgation['message'];
 	        if($date > $today){
-	            $footer = function() use ($processId, $courseId, $processName, $date, $text){
+	            $footer = function() use ($processId, $courseId, $processName, $date, $text, $message){
 				    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
 				    echo "<br>";
 				    echo "<br>";
 				    echo "<div id='define_date_form' class='collapse'>";
 				    echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
 				    echo "<br>";
-		        	formOfDateDivulgation($processId, $processName, $courseId, $date, $text);
+		        	formOfDateDivulgation($processId, $processName, $courseId, $date, $text, $message);
 	        	};
 		    }
 	    }
 	    else{
 	        $text = "Data não definida";
-	        $bodyText = function(){ 
+	        $bodyText = function(){
 	            echo "Você pode definir uma data ou divulgar o processo seletivo agora.";
 	        };
 	        $date = "";
 	        $link = "#";
+	        createDivulgationsModal($selectiveprocess);
 	        $footer = function() use ($processId, $courseId, $processName){
-	        	echo anchor("#", "Divulgar agora", "class='btn btn-success'");
+	        	echo anchor("#divulgationsmodal".$processId, "Divulgar agora", "class='btn btn-success' data-toggle='modal'");
 			    echo "&nbsp";
 			    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Definir data</button>";
 			    echo "<br>";
@@ -89,7 +92,7 @@
 	            $phaseId = $phase->getPhaseId();
 	            $phaseName = $phase->getPhaseName();
 	            writeTimelineLabel("white", $phaseName);
-	            $startDate = $phase->getStartDate(); 
+	            $startDate = $phase->getStartDate();
 	            if(!is_null($startDate)){
 	                $text = "Período definido";
 	                $bodyText = function() use ($phase, $processId, $phaseId){
@@ -114,7 +117,7 @@
 	            echo "<li>";
 	                echo "<i class='fa fa-calendar-o bg-blue'></i>";
 	                echo "<div id='phase_{$phaseId}' class='timeline-item'>";
-	                    writeTimelineItem($text, FALSE, "#", $bodyText, "");
+	                    writeTimelineItem($text, FALSE, "#phase_{$phaseId}", $bodyText, "");
 	                echo "</div>";
 	            echo "</li>";
 

@@ -119,6 +119,26 @@ $(document).ready(function(){
 			dateFormat: "dd-mm-yy"});
 	});
 
+	(function($) {
+
+	  addTimelineItem = function(processId) {
+	  	// Zero represents FALSE
+		addFormToAddDivulgation(processId, 0);
+	  };
+	})(jQuery);
+
+	(function($) {
+
+	  addFirstDivulgation = function(processId) {
+	  	// One represents TRUE
+		addFormToAddDivulgation(processId, 1);
+	  };
+	})(jQuery);
+
+	$(document).on('click', '#divulgate', function(e){
+    	e.preventDefault();
+		divulgateNotice(); 
+	});
 
 });
 
@@ -254,6 +274,7 @@ function defineDivulgationDate(){
 	var siteUrl = $("#site_url").val();
 	var divulgation_start_date = $("#divulgation_start_date").val();
 	var divulgation_description = $("#divulgation_description").val();
+	var message = $("#message").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate";
 	var process_id = $("#process_id").val();
 	var course_id = $("#course_id").val();
@@ -261,6 +282,7 @@ function defineDivulgationDate(){
 	var data = {
 		divulgation_start_date: divulgation_start_date,
 		divulgation_description: divulgation_description,
+		message: message,
 		course_id: course_id,
 		process_id: process_id
 	}
@@ -294,6 +316,51 @@ function definePhaseDate(phaseId){
 		function(data){
 			id = "#phase_" + phaseId;
 			$(id).html(data);
+		}
+	);
+}
+
+function addFormToAddDivulgation(processId, firstDivulgation){
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addFormToAddDivulgation/" + processId;
+	
+	var data = {
+		initial_divulgation: firstDivulgation
+	}
+	
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#new_divulgation").html(data);
+		}
+	);
+}
+
+function divulgateNotice(){
+	var description = $("#description").val();
+	var message = $("#message").val();
+	var process_id = $("#process_id").val();
+	var course_id = $("#course_id").val();
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/divulgateNotice/" + process_id;
+	
+	var data = {
+		description: description,
+		message: message,
+	}
+	
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#divulgation_result").html(data);
+			if(data.includes("success")){
+				window.setTimeout(function () {
+			        location.href = siteUrl + "/define_dates_page/" + process_id + "/"+ course_id;
+				}, 1000);
+			}
 		}
 	);
 }

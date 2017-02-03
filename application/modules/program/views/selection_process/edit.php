@@ -183,7 +183,7 @@ include '_form.php';
 
 		<div class="col-lg-6">
 		<?php
-			if($divulgation !== FALSE){ 
+			if(!is_null($divulgation)){ 
 
 				$divulgationDate = $divulgation['date'];
 				$divulgationDate = convertDateTimeToDateBR($divulgationDate);

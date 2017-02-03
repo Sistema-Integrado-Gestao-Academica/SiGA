@@ -1006,7 +1006,7 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 
 }
 
-function formOfDateDivulgation($processId, $processName, $courseId, $startDateValue = "", $descriptionValue = ""){
+function formOfDateDivulgation($processId, $processName, $courseId, $startDateValue = "", $descriptionValue = "", $messageValue = ""){
     
     $hidden = array(
         'id' => "process_id",
@@ -1042,6 +1042,15 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
         "value" => $startDateValue
     );
 
+    $message = array(
+        "name" => "message",
+        "id" => "message",  
+        "type" => "text",
+        "placeholder" => "Mensagem relacionada",
+        "class" => "form-control",
+        "value" => $messageValue
+    );
+
 
     $submitBtn = array(
         "id" => "define_divulgation_date",
@@ -1057,6 +1066,8 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
     echo form_input($startDate);
     echo form_label("Descrição", "description");
     echo form_input($description);
+    echo form_label("Mensagem", "message");
+    echo form_textarea($message);
     echo "<br>";
     echo form_button($submitBtn);
 }

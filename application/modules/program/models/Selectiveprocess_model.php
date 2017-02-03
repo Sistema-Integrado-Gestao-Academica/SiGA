@@ -28,7 +28,7 @@ class SelectiveProcess_model extends CI_Model {
 	const PROCESS_PHASE_START_DATE_ATTR = "start_date";
 	const PROCESS_PHASE_END_DATE_ATTR = "end_date";
 
-	// Methods 
+	// Methods
 	const INSERT_ON_DB = 1;
 	const UPDATE_ON_DB = 2;
 
@@ -88,12 +88,12 @@ class SelectiveProcess_model extends CI_Model {
 		$startDate = NULL;
 		$endDate = NULL;
 		$phasesOrder = NULL;
-		
+
 		if($settings){
 			$startDate = $settings->getYMDStartDate();
 			$endDate = $settings->getYMDEndDate();
 			$phasesOrder = serialize($settings->getPhasesOrder());
-				
+
 		}
 
 
@@ -112,7 +112,7 @@ class SelectiveProcess_model extends CI_Model {
 
 	private function saveProcessPhases($process, $processId, $method){
 
-		$settings = $process->getSettings(); 
+		$settings = $process->getSettings();
 		if($settings){
 			$phases = $settings->getPhases();
 			if($method == self::UPDATE_ON_DB){
@@ -132,13 +132,13 @@ class SelectiveProcess_model extends CI_Model {
 					self::ID_ATTR => $processId,
 					self::ID_PHASE_ATTR => $phaseId,
 					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight
-				);	
+				);
 
 				$this->db->where(self::ID_ATTR, $processId);
 				$this->db->where(self::ID_PHASE_ATTR, $phaseId);
 			   	$result = $this->db->get(self::PROCESS_PHASE_TABLE);
-				$phaseExistent = $result->num_rows() > 0; 
-				
+				$phaseExistent = $result->num_rows() > 0;
+
 				if($phaseExistent){
 					$this->db->where(self::ID_ATTR, $processId);
 					$this->db->where(self::ID_PHASE_ATTR, $phaseId);
@@ -153,8 +153,8 @@ class SelectiveProcess_model extends CI_Model {
 	}
 
 	private function deletePhasesRemoved($processId, $newPhases){
-		
-		$oldPhases = $this->getProcessPhases($processId);	
+
+		$oldPhases = $this->getProcessPhases($processId);
 		$oldPhases = makeDropdownArray($oldPhases, self::ID_PHASE_ATTR, self::PROCESS_PHASE_WEIGHT_ATTR);
 		$phasesToRemove = array();
 		foreach ($newPhases as $newPhase) {
@@ -164,12 +164,12 @@ class SelectiveProcess_model extends CI_Model {
 				unset($oldPhases[$id]);
 			}
 		}
-		
+
 		foreach ($oldPhases as $oldPhaseId => $oldPhase) {
 			$this->db->where(self::ID_PHASE_ATTR, $oldPhaseId);
-			$this->db->delete(self::PROCESS_PHASE_TABLE);			
+			$this->db->delete(self::PROCESS_PHASE_TABLE);
 		}
-	
+
 	}
 
 	public function updateNoticeFile($processId, $noticePath){
@@ -193,7 +193,7 @@ class SelectiveProcess_model extends CI_Model {
 
 		$foundProcess = $this->get(self::ID_ATTR, $processId);
 		if($foundProcess !== FALSE){
-			
+
 			$phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);
 	        $startDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::START_DATE_ATTR]);
 	        $endDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::END_DATE_ATTR]);
@@ -225,7 +225,7 @@ class SelectiveProcess_model extends CI_Model {
 					if(!is_null($noticePath)){
                     	$selectiveProcess->setNoticePath($noticePath);
 					}
-					
+
 
 				}catch(SelectionProcessException $e){
 					$selectiveProcess = FALSE;
@@ -309,24 +309,21 @@ class SelectiveProcess_model extends CI_Model {
         return $phases;
     }
 
-    public function saveNoticeDivulgation($processId, $date, $description){
 
-    	$data = array(
-    		'id_process' => $processId,
-    		'description' => $description,
-    		'date' => $date,
-    		'initial_divulgation' => True
-    	);
-
-		$this->db->where(self::ID_ATTR, $processId);
-		$this->db->where('initial_divulgation', True);
-	   	$result = $this->db->get('selection_process_divulgation');
-		$divulgationExistent = $result->num_rows() > 0; 
-		
-		if($divulgationExistent){
-			$this->db->where(self::ID_ATTR, $processId);
-			$saved = $this->db->update("selection_process_divulgation", $data);
-
+    public function saveProcessDivulgation($data, $noticeDivulgation = FALSE){
+    	if($noticeDivulgation){
+    		$processId = $data['id_process'];
+    		$this->db->where(self::ID_ATTR, $processId);
+			$this->db->where('initial_divulgation', True);
+		   	$result = $this->db->get('selection_process_divulgation');
+			$divulgationExistent = $result->num_rows() > 0;
+			if($divulgationExistent){
+				$this->db->where(self::ID_ATTR, $processId);
+				$saved = $this->db->update("selection_process_divulgation", $data);
+			}
+			else{
+	    		$saved = $this->db->insert("selection_process_divulgation", $data);
+			}
 		}
 		else{
     		$saved = $this->db->insert("selection_process_divulgation", $data);
@@ -335,20 +332,37 @@ class SelectiveProcess_model extends CI_Model {
     	return $saved;
     }
 
-    public function getNoticeDivulgation($processId){
+    public function getProcessDivulgations($processId, $noticeDivulgation = FALSE){
 
-    	$data = array(
-    		'id_process' => $processId,
-    		'initial_divulgation' => True
-    	);
+    	$this->db->select("*");
+		$this->db->from('selection_process_divulgation');
+		$this->db->where(self::ID_ATTR, $processId);
+    	if($noticeDivulgation){
+			$this->db->where('initial_divulgation', True);
+    	}
+    	else{
+			$this->db->where('date <= NOW()', NULL, FALSE);
+    		$this->db->order_by('date', 'DESC');
+    	}
+		$noticeDivulgations = $this->db->get()->result_array();
 
-    	$noticeDivulgation = $this->db->get_where('selection_process_divulgation', $data);
+		$noticeDivulgations = checkArray($noticeDivulgations);
 
-		$noticeDivulgation = $noticeDivulgation->row_array();
+		if($noticeDivulgation){
+			$noticeDivulgations = $noticeDivulgations[0];
+		}
 
-		$noticeDivulgation = checkArray($noticeDivulgation);
+		return $noticeDivulgations;
+    }
 
-		return $noticeDivulgation;
+    public function getProcessDivulgationById($divulgationId){
+
+    	$this->db->select("*");
+    	$searchResult = $this->db->get_where('selection_process_divulgation', array('id' => $divulgationId));
+  		$divulgation = $searchResult->row_array();
+		$divulgation = checkArray($divulgation);
+		
+		return $divulgation;
     }
 
     public function sortPhasesBasedInOrder($phases, $phasesOrder){
@@ -356,28 +370,28 @@ class SelectiveProcess_model extends CI_Model {
     	$phasesInOrder = array();
     	foreach ($phases as $phase){
     		$phaseName = $phase->getPhaseName();
-    		
+
     		switch ($phaseName) {
     			case SelectionProcessConstants::HOMOLOGATION_PHASE:
     				$phasesInOrder[0] = $phase;
     				break;
-    			
+
     			case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE:
     				$indexOrder = array_search('pre_project', $phasesOrder);
     				$phasesInOrder[$indexOrder + 1] = $phase;
     				break;
-    			
+
     			case SelectionProcessConstants::WRITTEN_TEST_PHASE:
     				$indexOrder = array_search('written_test', $phasesOrder);
     				$phasesInOrder[$indexOrder + 1] = $phase;
     				break;
-    			
+
     			case SelectionProcessConstants::ORAL_TEST_PHASE:
     				$indexOrder = array_search('oral_test', $phasesOrder);
     				$phasesInOrder[$indexOrder + 1] = $phase;
     				break;
     		}
-    		
+
     	}
 
     	ksort($phasesInOrder);
@@ -401,5 +415,12 @@ class SelectiveProcess_model extends CI_Model {
         $processPhases = checkArray($processPhases);
 
         return $processPhases;
+    }
+
+    public function addTeacherToProcess($processId, $teacherId){
+        $this->db->insert("teacher_selection_process", [
+            'id_process' => $processId,
+            'id_teacher' => $teacherId
+        ]);
     }
 }

@@ -43,6 +43,35 @@ class SelectiveProcess extends MX_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/index", $data);
     }
 
+    public function defineTeachers($processId, $programId){
+
+        $session = getSession();
+        $user = $session->getUserData();
+        $secretaryId = $user->getId();
+
+        $this->load->model('program/program_model');
+        $programsTeachers = $this->program_model->getProgramTeachers($programId);
+
+        $data = array(
+            'teachers' => $programsTeachers,
+            'processId' => $processId,
+            'programId' => $programId
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_teachers", $data);
+    }
+
+    public function defineTeacher($processId, $teacherId, $programId){
+        $self = $this;
+        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $processId, $teacherId, $programId){
+                $self->process_model->addTeacherToProcess($processId, $teacherId);
+                getSession()->showFlashMessage("success", "Docente vinculado com sucesso!");
+                redirect("selection_process/define_teachers/{$processId}/{$programId}");
+            }
+        );
+    }
+
     public function programCourses($programId){
 
         $session = getSession();
@@ -79,16 +108,44 @@ class SelectiveProcess extends MX_Controller {
         $course = $this->course_model->getCourseById($courseId);
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
-        
-        $divulgations = $this->getProcessDivulgations($selectiveProcesses);
-      
+
+        $status = $this->getProcessStatus($selectiveProcesses);
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses,
-            'divulgations' => $divulgations
+            'status' => $status
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
+    }
+
+    private function getProcessStatus($selectiveProcesses){
+
+        $status = array();
+        if($selectiveProcesses !== FALSE){
+            foreach ($selectiveProcesses as $selectiveProcess) {
+                $selectiveProcessId = $selectiveProcess->getId();
+                $divulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
+                if(!is_null($divulgation)){
+                    $divulgationDate = $divulgation['date'];
+                    $divulgationDate = convertDateTimeToDateBR($divulgationDate);
+                    $today = new Datetime();
+                    $today = $today->format("d/m/Y");
+                    if($divulgationDate <= $today){
+                        $status[$selectiveProcessId] = "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
+                    }
+                    else{
+                        $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
+                    }
+                }
+                else{
+                    $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
+                }
+
+            }
+        }
+
+        return $status;
     }
 
     public function openSelectiveProcess($courseId){
@@ -153,10 +210,10 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function saveNoticeFile(){
-        
+
         $courseId = $this->input->post("course");
         $processId = base64_decode($this->input->post("selection_process_id"));
-        
+
         $message = $this->uploadNoticeFile($courseId, $processId);
         switch ($message) {
             case self::NOTICE_FILE_SUCCESS:
@@ -168,7 +225,7 @@ class SelectiveProcess extends MX_Controller {
                 $status = "danger";
                 $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
                 break;
-            
+
             default:
                 $status = "danger";
                 $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
@@ -310,12 +367,12 @@ class SelectiveProcess extends MX_Controller {
         $allPhases = $this->phase->getAllPhases();
 
         $phases = $this->getProcessPhasesToEdit($selectiveProcess, $allPhases);
-       
+
         $noticePath = $selectiveProcess->getNoticePath();
         $names = explode("/", $noticePath);
         $noticeFileName = array_pop($names);
 
-        $divulgation = $this->process_model->getNoticeDivulgation($processId);
+        $divulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
 
         $data = array(
             'selectiveprocess' => $selectiveProcess,
@@ -334,7 +391,7 @@ class SelectiveProcess extends MX_Controller {
         $phasesNames = array();
         $phasesWeights = array();
         $processPhases = $selectiveProcess->getSettings()->getPhases();
-        
+
         foreach ($allPhases as $phase) {
             $hasThePhase = FALSE;
             $phaseId = $phase->getPhaseId();
@@ -369,7 +426,7 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function downloadNotice($selectiveProcessId, $courseId){
-        
+
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
         $noticePath = $selectiveProcess->getNoticePath();
         $this->load->helper('download');
@@ -385,32 +442,112 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function loadDefineDatesPage($selectiveProcessId, $courseId){
-            
+
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
-        $processDivulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
+        $processDivulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
 
         $data = array(
             'selectiveprocess' => $selectiveProcess,
             'courseId' => $courseId,
             'processDivulgation' => $processDivulgation
         );
-        
+
+        $this->load->helper('selectionprocess');
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
     }
 
-    private function getProcessDivulgations($selectiveProcesses){
-        $divulgations = array();
+    public function divulgations($selectiveProcessId){
+        
+        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
+        $processDivulgations = $this->process_model->getProcessDivulgations($selectiveProcessId);
 
-        if($selectiveProcesses !== FALSE){
-            foreach ($selectiveProcesses as $selectiveProcess) {
-                $selectiveProcessId = $selectiveProcess->getId();
-                $divulgation = $this->process_model->getNoticeDivulgation($selectiveProcessId);
-                $divulgations[$selectiveProcessId] = $divulgation;
+        $data = array(
+            'selectiveprocess' => $selectiveProcess,
+            'processDivulgations' => $processDivulgations
+        );
+
+        $this->load->helper('selectionprocess');
+
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/divulgations", $data);
+    }
+
+
+    public function addDivulgation(){
+        $processId = $this->input->post("process_id");
+        $description = $this->input->post("description");
+        $message = $this->input->post("message");
+        $related_phase = $this->input->post("phase");
+        $initial_divulgation = $this->input->post("initial_divulgation");
+
+        $ids = array(
+            "p" => $processId
+        );
+
+        $fieldId = "divulgation_file";
+        $folderName = "divulgations";
+        $allowedTypes = "jpg|png|pdf|jpeg";
+
+        if (isset($_FILES['divulgation_file']) && is_uploaded_file($_FILES['divulgation_file']['tmp_name'])) {
+           $filePath = uploadFile(FALSE, $ids, $fieldId, $folderName, $allowedTypes);
+        }
+        else{
+           $filePath = NULL;
+        }
+        
+        $today = new Datetime();
+        $today = $today->format("Y/m/d");
+        if($filePath || is_null($filePath)){
+            $data = array(
+                'id_process' => $processId, 
+                'description' => $description,
+                'message' => $message,
+                'initial_divulgation' => $initial_divulgation,
+                'date' => $today,
+                'file_path' => $filePath 
+            );
+            if($related_phase !== "0"){
+                $data['related_id_phase'] = $related_phase;
+            }
+            $saved = $this->process_model->saveProcessDivulgation($data);
+
+            if($saved){
+                $status = "success";
+                $message = "Nova divulgação realizada com sucesso.";
+            }
+            else{
+                $status = "danger";
+                $message = "Não foi possível fazer a nova divulgação. Tente novamente.";
             }
         }
-
-        return $divulgations;
-
+        else{
+            $status = "danger";
+            $errors = $this->upload->display_errors();
+            $message = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
+        }
+        
+        $this->session->set_flashdata($status, $message);
+        redirect("selection_process/divulgations/{$processId}");             
     }
+
+    public function downloadDivulgationFile($divulgationId){
+
+        $divulgation = $this->process_model->getProcessDivulgationById($divulgationId);
+        $filePath = $divulgation['file_path'];
+        
+        $this->load->helper('download');
+        if(file_exists($filePath)){
+            force_download($filePath, NULL);
+        }
+        else{
+            $status = "danger";
+            $message = "Nenhum arquivo encontrado.";
+            $this->session->set_flashdata($status, $message);
+            $processId = $divulgation['id_process'];
+            redirect("selection_process/divulgations/{$processId}");             
+        }
+    }
+
+    
 
 }

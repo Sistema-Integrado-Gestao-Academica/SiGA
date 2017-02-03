@@ -13,6 +13,19 @@ function getSession() {
 	return $session;
 }
 
+function withPermission($requiredPermission, callable $onSuccess, callable $onError=null){
+	$permission = new UserPermission();
+	$hasPermission = $permission->checkUserPermission($requiredPermission);
+	if($hasPermission){
+		$onSuccess();
+	}else{
+		if(!is_null($haveNoPermission)){
+			$onError();
+		}
+		logoutUser();
+	}
+}
+
 /**
  * Load a given view if the logged user have the required permission
  * @param $requiredPermission - String with the permission route required to access the asked view
@@ -57,7 +70,7 @@ function loadTemplateSafelyByGroup($requiredGroup, $template, $data = array()){
 				break;
 			}
 		}
-		
+
 	}
 
 	if($userHasGroup){
