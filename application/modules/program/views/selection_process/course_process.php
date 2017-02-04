@@ -13,11 +13,10 @@ echo anchor(
 
 
 <div align='right'>
-<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
-<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
-<i class='fa fa-calendar'> Definir datas </i> &nbsp&nbsp
-<i class='fa fa-group'> Definir docentes </i> &nbsp&nbsp
-<i class='fa fa-bullhorn'> Divulgações </i>
+	<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
+	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
+	<i class='fa fa-calendar'> Definir datas </i> &nbsp&nbsp
+	<i class='fa fa-bullhorn'> Divulgações </i>
 </div>
 
 <?php
@@ -57,8 +56,6 @@ if($validSelectiveProcesses){
 				echo anchor("edit_selection_process/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
 				echo "&nbsp";
 				echo anchor("define_dates_page/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
-				echo "&nbsp";
-				echo anchor("selection_process/define_teachers/{$processId}/{$course['id_program']}", "<i class='fa fa-group'></i>", "class='btn btn-info'");
 
 				echo "&nbsp";
 				echo anchor("selection_process/divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", "class='btn bg-olive'");

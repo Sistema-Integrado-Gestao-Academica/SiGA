@@ -43,35 +43,6 @@ class SelectiveProcess extends MX_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/index", $data);
     }
 
-    public function defineTeachers($processId, $programId){
-
-        $session = getSession();
-        $user = $session->getUserData();
-        $secretaryId = $user->getId();
-
-        $this->load->model('program/program_model');
-        $programsTeachers = $this->program_model->getProgramTeachers($programId);
-
-        $data = array(
-            'teachers' => $programsTeachers,
-            'processId' => $processId,
-            'programId' => $programId
-        );
-
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_teachers", $data);
-    }
-
-    public function defineTeacher($processId, $teacherId, $programId){
-        $self = $this;
-        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $processId, $teacherId, $programId){
-                $self->process_model->addTeacherToProcess($processId, $teacherId);
-                getSession()->showFlashMessage("success", "Docente vinculado com sucesso!");
-                redirect("selection_process/define_teachers/{$processId}/{$programId}");
-            }
-        );
-    }
-
     public function programCourses($programId){
 
         $session = getSession();
@@ -359,9 +330,59 @@ class SelectiveProcess extends MX_Controller {
         return $selectiveProcesses;
     }
 
+    public function addTeacherToProcess(){
+        $processId = $this->input->post('processId');
+        $teacherId = $this->input->post('teacherId');
+        $programId = $this->input->post('programId');
+        $self = $this;
+        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $processId, $teacherId, $programId){
+                $self->process_model->addTeacherToProcess($processId, $teacherId);
+                $self->updateDefineTeacherTables($processId, $programId);
+            }
+        );
+    }
 
-    public function edit($processId, $courseId){
+    public function removeTeacherFromProcess(){
+        $processId = $this->input->post('processId');
+        $teacherId = $this->input->post('teacherId');
+        $programId = $this->input->post('programId');
+        $self = $this;
+        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $processId, $teacherId, $programId){
+                $self->process_model->removeTeacherFromProcess($processId, $teacherId);
+                $self->updateDefineTeacherTables($processId, $programId);
+            }
+        );
+    }
 
+    private function updateDefineTeacherTables($processId, $programId){
+        $data = $this->getDefineTeachersViewData($processId, $programId);
+        $teachers = $data['teachers'];
+        $processTeachers = $data['processTeachers'];
+        include(MODULESPATH.'program/views/selection_process/define_teachers_tables.php');
+    }
+
+    private function getDefineTeachersViewData($processId, $programId){
+
+        $session = getSession();
+        $user = $session->getUserData();
+        $secretaryId = $user->getId();
+
+        $this->load->model('program/program_model');
+        $programsTeachers = $this->program_model->getProgramTeachers($programId);
+
+        $processTeachers = $this->process_model->getProcessTeachers($processId);
+
+        $data = array(
+            'teachers' => $programsTeachers,
+            'processTeachers' => $processTeachers
+        );
+
+        return $data;
+    }
+
+    private function getEditProcessViewData($processId, $courseId){
         $selectiveProcess = $this->process_model->getById($processId);
         $this->load->module("program/phase");
         $allPhases = $this->phase->getAllPhases();
@@ -374,14 +395,30 @@ class SelectiveProcess extends MX_Controller {
 
         $divulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
 
-        $data = array(
+        $editProcessData = array(
             'selectiveprocess' => $selectiveProcess,
+            'processId' => $processId,
             'courseId' => $courseId,
             'phasesNames' => $phases['phasesNames'],
             'phasesWeights' => $phases['phasesWeights'],
             'noticeFileName' => $noticeFileName,
             'divulgation' => $divulgation
         );
+
+        return $editProcessData;
+    }
+
+    public function edit($processId, $courseId){
+
+        $editProcessData = $this->getEditProcessViewData($processId, $courseId);
+
+        $this->load->model("program/course_model");
+        $course = $this->course_model->getCourseById($courseId);
+        $defineTeacherData = $this->getDefineTeachersViewData($processId, $course['id_program']);
+
+        $data = $editProcessData + $defineTeacherData;
+
+        $data['programId'] = $course['id_program'];
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/edit", $data);
     }

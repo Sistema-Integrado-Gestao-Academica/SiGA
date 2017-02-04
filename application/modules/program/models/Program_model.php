@@ -65,7 +65,7 @@ class Program_model extends CI_Model {
 	}
 
 	public function getProgramTeachers($program){
-		$this->db->select('users.id, users.name, users.name, users.email, program.program_name');
+		$this->db->select('users.id, users.name, users.name, users.email');
 		$this->db->from('users');
 		$this->db->join('teacher_course', 'users.id = teacher_course.id_user');
 		$this->db->join('course', 'teacher_course.id_course = course.id_course');

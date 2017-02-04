@@ -423,4 +423,21 @@ class SelectiveProcess_model extends CI_Model {
             'id_teacher' => $teacherId
         ]);
     }
+
+    public function removeTeacherFromProcess($processId, $teacherId){
+        $this->db->delete("teacher_selection_process", [
+            'id_process' => $processId,
+            'id_teacher' => $teacherId
+        ]);
+    }
+
+    public function getProcessTeachers($processId){
+        $this->db->select('users.id, users.name, users.email');
+        $this->db->from('users');
+        $this->db->join('teacher_selection_process', 'users.id = teacher_selection_process.id_teacher');
+        $this->db->where('teacher_selection_process.id_process', $processId);
+        $teachers = checkArray($this->db->get()->result_array());
+
+        return $teachers;
+    }
 }

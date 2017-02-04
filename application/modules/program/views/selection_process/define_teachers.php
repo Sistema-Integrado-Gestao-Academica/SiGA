@@ -1,35 +1,50 @@
 <h2 class="principal">Vincular docentes ao processo seletivo </h2>
 
-<?php buildTableDeclaration(); ?>
-<?php
-buildTableHeaders([
-    'Nome',
-    'E-mail',
-    'Programa',
-    'Ações'
-]);
-?>
+<div id="define_teachers_tables" class="row">
+    <?php include('define_teachers_tables.php'); ?>;
+</div>
 
-<?php if(!empty($teachers)): ?>
-    <?php foreach ($teachers as $teacher): ?>
+<style type="text/css">
+    #add_teachers_to_process_table, #teachers_added_to_process_table {
+        height: 400px;
+        overflow-y: auto;
+    }
+</style>
 
-    <tr>
-        <td><?= $teacher['name'] ?></td>
-        <td><?= $teacher['email'] ?></td>
-        <td><?= $teacher['program_name'] ?></td>
-        <td>
-            <?= anchor(
-                "selection_process/define_teacher/{$processId}/{$teacher['id']}/{$programId}",
-                "<i class='fa fa-plus'></i> Vincular docente",
-                "class='btn btn-primary'"
-            ) ?>
-        </td>
-    </tr>
+<script>
+    function addTeacherToProcess(event, processId, teacherId, programId){
+        event.preventDefault();
 
-    <?php endforeach ?>
-<?php else: ?>
-    <?= callout('info', 'Nenhum docente cadastrado nos cursos deste programa.') ?>
-<?php endif ?>
+        var siteUrl = $("#site_url").val();
+        var urlToPost = siteUrl + "/selection_process/define_teacher"
+        $.post(
+            urlToPost,
+            {
+                processId: processId,
+                teacherId: teacherId,
+                programId: programId
+            },
+            function(data){
+                $("#define_teachers_tables").html(data);
+            }
+        );
+    }
 
-<?php buildTableEndDeclaration(); ?>
+    function removeTeacherFromProcess(event, processId, teacherId, programId){
+        event.preventDefault();
 
+        var siteUrl = $("#site_url").val();
+        var urlToPost = siteUrl + "/selection_process/remove_teacher"
+        $.post(
+            urlToPost,
+            {
+                processId: processId,
+                teacherId: teacherId,
+                programId: programId
+            },
+            function(data){
+                $("#define_teachers_tables").html(data);
+            }
+        );
+    }
+</script>
