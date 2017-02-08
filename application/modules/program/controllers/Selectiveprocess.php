@@ -2,6 +2,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
 require_once(MODULESPATH."/program/domain/selection_process/SelectionProcess.php");
@@ -128,9 +129,8 @@ class SelectiveProcess extends MX_Controller {
                 $divulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
                 if(!is_null($divulgation)){
                     $divulgationDate = $divulgation['date'];
-                    $divulgationDate = convertDateTimeToDateBR($divulgationDate);
+                    $divulgationDate = new Datetime($divulgationDate);
                     $today = new Datetime();
-                    $today = $today->format("d/m/Y");
                     if($divulgationDate <= $today){
                         $status[$selectiveProcessId] = "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
                     }
@@ -548,6 +548,22 @@ class SelectiveProcess extends MX_Controller {
         }
     }
 
+    public function showTimeline($processId){
+        $selectiveProcess = $this->process_model->getById($processId);
+        $processDivulgations = $this->process_model->getProcessDivulgations($processId);
+
+        $data = array(
+            'selectiveprocess' => $selectiveProcess,
+            'processDivulgations' => $processDivulgations
+        );
+
+        $this->load->helper('selectionprocess');
+
+        loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP, "/home/divulgations", $data);
+    }
     
+    private function getCoursesName($selectiveProcess){
+        
+    }
 
 }

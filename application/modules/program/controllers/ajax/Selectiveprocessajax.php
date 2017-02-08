@@ -331,9 +331,8 @@ class SelectiveProcessAjax extends MX_Controller {
         return $status;
     }
 
-    public function defineDivulgationDate(){
+    public function defineDivulgationDate($processId){
         
-        $processId = $this->input->post("process_id");
         $courseId = $this->input->post("course_id");
         $date = $this->input->post("divulgation_start_date");
         $divulgationDescription = $this->input->post("divulgation_description");
@@ -362,7 +361,7 @@ class SelectiveProcessAjax extends MX_Controller {
                     'date' => $date
                 );
                 $saved = $this->process_model->saveProcessDivulgation($data, TRUE);
-                $processDivulgation = $this->process_model->getNoticeDivulgation($processId);
+                $processDivulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
                 if(!$saved){
                     $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
                 }
@@ -405,9 +404,9 @@ class SelectiveProcessAjax extends MX_Controller {
             };
             $footer = "";
             $date = convertDateTimeToDateBR($processDivulgation['date']);
+            $dateToTest = new Datetime($processDivulgation['date']);
             $today = new Datetime();
-            $today = $today->format("d/m/Y");
-            if($date > $today){
+            if($dateToTest > $today){
                 $footer = function() use ($processId, $courseId, $processName, $date, $text, $message){
                     echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
                     echo "<br>";

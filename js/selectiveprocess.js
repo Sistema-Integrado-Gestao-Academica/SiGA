@@ -275,16 +275,16 @@ function defineDivulgationDate(){
 	var divulgation_start_date = $("#divulgation_start_date").val();
 	var divulgation_description = $("#divulgation_description").val();
 	var message = $("#message").val();
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate";
 	var process_id = $("#process_id").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate/" + process_id;
 	var course_id = $("#course_id").val();
+
 
 	var data = {
 		divulgation_start_date: divulgation_start_date,
 		divulgation_description: divulgation_description,
 		message: message,
-		course_id: course_id,
-		process_id: process_id
+		course_id: course_id
 	}
 	$.post(
 		urlToPost,

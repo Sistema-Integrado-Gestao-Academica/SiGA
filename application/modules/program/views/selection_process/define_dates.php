@@ -17,10 +17,10 @@
 	        };
 	        $footer = "";
 	        $date = convertDateTimeToDateBR($processDivulgation['date']);
+	        $dateToTest = new Datetime($processDivulgation['date']);
 	        $today = new Datetime();
-			$today = $today->format("d/m/Y");
 			$message = $processDivulgation['message'];
-	        if($date > $today){
+	        if($dateToTest > $today){
 	            $footer = function() use ($processId, $courseId, $processName, $date, $text, $message){
 				    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
 				    echo "<br>";

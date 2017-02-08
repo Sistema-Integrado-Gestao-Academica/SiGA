@@ -208,6 +208,7 @@ $route['selection_process/define_teachers/(:num)/(:num)'] = 'program/selectivepr
 $route['selection_process/define_teacher/(:num)/(:num)/(:num)'] = 'program/selectiveprocess/defineTeacher/$1/$2/$3';
 $route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';
 $route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
+$route['selection_process/guest/(:num)'] = 'program/selectiveprocess/showTimeline/$1';
 
 /*
  * Enrollment routes

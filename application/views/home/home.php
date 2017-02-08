@@ -1,4 +1,5 @@
 <?php
+require_once(MODULESPATH."auth/constants/GroupConstants.php");
 
 $session = getSession();
 
@@ -11,15 +12,18 @@ if ($session->isLogged()) {
 	<h1 class="bemvindo">Bem vindo!</h1>
 
 	<?php
+	if ($userData->getLogin() == 'admin'){
 
-	 if ($userData->getLogin() == 'admin'){
+		$this->load->module("program/capesAvaliation");
+		$atualizations = $this->capesavaliation->getCapesAvaliationsNews();
 
-	 	$this->load->module("program/capesAvaliation");
-	 	$atualizations = $this->capesavaliation->getCapesAvaliationsNews();
+		showCapesAvaliationsNews($atualizations);
+	}
+	elseif ($isGuest) {
+		include(APPPATH.'views/home/_open_selective_process.php');
+	}	
 
-	 	showCapesAvaliationsNews($atualizations);
-	 }
-		?>
+	?>
 
 <?php } else { ?>
 
@@ -53,5 +57,8 @@ Sistema Integrado de Gestão Acadêmica
 	}
 	?>
 	</div>
-<?php }?>
+<?php }
+
+?>
 	
+

@@ -8,6 +8,10 @@ require_once(MODULESPATH."program/domain/selection_process/RegularStudentProcess
 require_once(MODULESPATH."program/domain/selection_process/SpecialStudentProcess.php");
 require_once(MODULESPATH."program/domain/selection_process/ProcessSettings.php");
 
+require_once(MODULESPATH."/program/domain/selection_process/phases/Homologation.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/PreProjectEvaluation.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/WrittenTest.php");
+require_once(MODULESPATH."/program/domain/selection_process/phases/OralTest.php");
 class SelectiveProcess_model extends CI_Model {
 
 	public $TABLE = "selection_process";
@@ -192,6 +196,12 @@ class SelectiveProcess_model extends CI_Model {
 	public function getById($processId){
 
 		$foundProcess = $this->get(self::ID_ATTR, $processId);
+		$selectiveProcess = $this->convertArrayToObject($foundProcess);
+		
+		return $selectiveProcess;
+	}
+
+	private function convertArrayToObject($foundProcess){
 		if($foundProcess !== FALSE){
 
 			$phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);
@@ -422,5 +432,21 @@ class SelectiveProcess_model extends CI_Model {
             'id_process' => $processId,
             'id_teacher' => $teacherId
         ]);
+    }
+
+    public function getOpenSelectiveProcesses(){
+		
+		$this->db->order_by('id_course');
+		$foundProcesses = $this->db->get('view_open_selection_process')->result_array();
+        $foundProcesses = checkArray($foundProcesses);
+		$selectiveProcesses = array();
+        if($foundProcesses !== FALSE){
+
+        	foreach ($foundProcesses as $foundProcess) {
+        		$selectiveProcess = $this->convertArrayToObject($foundProcess);
+        		$selectiveProcesses[] = $selectiveProcess;
+        	}
+        }
+		return $selectiveProcesses;
     }
 }
