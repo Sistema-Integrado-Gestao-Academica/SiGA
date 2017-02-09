@@ -26,7 +26,8 @@ class Login extends MX_Controller {
 				if($userIsActive){
 
 					$session->login($user);
-
+					
+					
 					$isATemporaryPassword = $this->usuarios_model->verifyIfIsTemporaryPassword($user->getId());				
 
 					if(!$isATemporaryPassword){

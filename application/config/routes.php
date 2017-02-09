@@ -208,6 +208,7 @@ $route['selection_process/define_teacher'] = 'program/selectiveprocess/addTeache
 $route['selection_process/remove_teacher'] = 'program/selectiveprocess/removeTeacherFromProcess';
 $route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';
 $route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
+$route['selection_process/guest/(:num)'] = 'program/selectiveprocess/showTimeline/$1';
 
 
 /*

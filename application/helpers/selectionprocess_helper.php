@@ -18,7 +18,7 @@ function createTimelineItemToAddDivulgation($processId, $firstDivulgation = FALS
     echo "</li>";
 }
 
-function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
+function showDivulgations($selectiveprocess, $processDivulgations, $phasesName, $guestUser = FALSE){
 
 	$processName = $selectiveprocess->getName();
 	$processId = $selectiveprocess->getId();
@@ -89,7 +89,9 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName){
 		writeTimelineLabel("blue", "Processo seletivo:".$processName);
 	}
 
-	createTimelineItemToAddDivulgation($processId, $firstDivulgation);
+	if(!$guestUser){
+		createTimelineItemToAddDivulgation($processId, $firstDivulgation);
+	}
 	echo "</ul>";
 
 
