@@ -5,7 +5,7 @@
   }
 
   $startDate = $eventProduction['start_date'];
-  if($startDate == '0000-00-00'){
+  if($startDate == '0000-00-00' || is_null($startDate)){
     $period = "Não informado";
   }
   else{

@@ -5,26 +5,26 @@
     $year = $production->getYear();
     
     if(empty($year)){
-        $year = "-";
+        $year = "Não informado";
     }
 
 
     $identifier = $production->getIdentifier();
     
     if(empty($identifier)){
-        $identifier = "-";
+        $identifier = "Não informado";
     }
     
     $qualis = $production->getQualis();
 
     if(empty($qualis)){
-        $qualis = "-";
+        $qualis = "Não informado";
     }
     
     $periodic = $production->getPeriodic();
 
     if(empty($periodic)){
-        $periodic = "-";
+        $periodic = "Não informado";
     }
     
 ?>

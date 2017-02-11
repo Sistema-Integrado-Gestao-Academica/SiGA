@@ -78,7 +78,7 @@
 
 			<?= createIntellectualProductionModal($production) ?>
 
-			<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'></i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+			<?= anchor("edit_production/{$id}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'") ?>
 
 			<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger">
 				<span class="fa fa-remove"></span>
@@ -156,7 +156,7 @@
 
 			<?= createEventPresentationModal($presentation) ?>
 
-			<?= anchor("edit_event_presentation/{$id}", "<i class='glyphicon glyphicon-edit'></i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+			<?= anchor("edit_event_presentation/{$id}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'") ?>
 
 			<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger">
 				<span class="fa fa-remove"></span>
@@ -223,22 +223,22 @@
 
 			<?= createEventParticipationModal($participation) ?>
 
-			<?= anchor("edit_event_participation/{$id}", "<i class='glyphicon glyphicon-edit'></i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+			<?= anchor("edit_event_participation/{$id}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'") ?>
 
-			<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger">
-				<span class="fa fa-remove"></span>
-			</button>
+			<a class="btn btn-danger" data-toggle="collapse" href=<?="#confirmation".$id?>>
+				<i class="fa fa-remove"></i>
+			</a>
 
 			<div id=<?="confirmation".$id?> class="collapse">
 				<?= form_open("delete_event_participation") ?>
 				<?= form_hidden("id", $id) ?>
 				<br>
-				Deseja realmente remover essa apresentação?
+				Deseja realmente remover essa Participação?
 				<br>
 				<?= form_button(array(
 						"id" => "delete_event_participation_btn",
 						"class" => "btn bg-danger",
-						"content" => "Remover apresentação",
+						"content" => "Remover participação",
 						"type" => "submit"
 					))?>
 				<?= form_close() ?>

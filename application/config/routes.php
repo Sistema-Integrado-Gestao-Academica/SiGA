@@ -239,6 +239,10 @@ $route['edit_coauthor/(:num)/(:num)'] = 'program/production/editCoauthor/$1/$2';
 $route['update_coauthor/(:num)/(:num)'] = 'program/production/updateCoauthor/$1/$2';
 $route['save_event_participation'] = 'program/production/saveEventParticipation';
 $route['save_event_presentation'] = 'program/production/saveEventPresentation';
+$route['edit_event_participation/(:num)'] = 'program/production/editEventParticipation/$1';
+$route['edit_event_presentation/(:num)'] = 'program/production/editEventPresentation/$1';
+$route['update_event_participation'] = 'program/production/updateEventParticipation';
+$route['update_event_presentation'] = 'program/production/updateEventPresentation';
 
 /**
  * User comunication routes

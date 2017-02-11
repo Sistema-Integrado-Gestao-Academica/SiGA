@@ -485,4 +485,20 @@ class Production_model extends CI_Model {
 
 		return $productions;
 	}
+
+	public function getEventProductionById($id){
+		
+		$eventProduction = $this->db->get_where('student_event_production', array('id' => $id));
+		$eventProduction = $eventProduction->row_array();
+
+		$eventProduction = checkArray($eventProduction);
+		return $eventProduction;
+	}
+
+	public function updateEventProduction($data, $eventProductionId){
+		
+		$saved = $this->db->update('student_event_production', $data, "id = {$eventProductionId}");
+
+		return $saved;
+	}
 }

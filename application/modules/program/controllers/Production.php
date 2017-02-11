@@ -363,8 +363,8 @@ class Production extends MX_Controller {
 				'event_name' => $eventName,
 				'event_nature' => $eventNatureId,
 				'place' => $place,
-				'start_date' => $startDate,
-				'end_date' => $endDate,
+				'start_date' => convertDateToDateTime($startDate),
+				'end_date' => convertDateToDateTime($endDate),
 				'promoting_institution' => $promotingInstitution
 			);
 		}
@@ -375,4 +375,88 @@ class Production extends MX_Controller {
 		return $eventData;
 	}
 
+	public function editEventPresentation($eventPresentationId){
+		
+		$data = $this->getEventProductionData($eventPresentationId);
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_event_presentation", $data);
+	}
+
+	public function editEventParticipation($eventParticipationId){
+
+		$data = $this->getEventProductionData($eventParticipationId);
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/edit_event_participation", $data);
+	}
+
+	private function getEventProductionData($eventProductionId){
+		$session = getSession();
+		$user = $session->getUserData();
+		$userId = $user->getId();
+		$production = $this->production_model->getEventProductionById($eventProductionId);
+
+		$data = array(
+			'eventProduction' => $production,
+			'eventNatures' => EventPresentation::getEventNatures(),
+			'presentationNatures' => EventPresentation::getPresentationNatures()
+		);
+	
+		return $data;		
+	}
+
+	public function updateEventPresentation(){
+
+		$eventProductionId = $this->input->post('id');
+		$data = $this->getEventData();
+
+		$session = getSession();
+		if($data !== FALSE){
+			$eventNatureId = $data['event_nature'];
+			$eventNatures = EventPresentation::getEventNatures();
+			$data['event_nature'] = $eventNatures[$eventNatureId];
+
+			$data['study_title'] = $this->input->post("title");
+			$presentationNatureId = $this->input->post("presentation_nature");
+			$presentationNatures = EventPresentation::getPresentationNatures();
+			$data['presentation_nature'] = $presentationNatures[$presentationNatureId];
+			
+			$success = $this->production_model->updateEventProduction($data, $eventProductionId);
+
+			if($success){
+				$session->showFlashMessage("success", "Apresentação de trabalho editada com sucesso!");
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível editar a apresentação de trabalho");
+			}
+		}
+		else{
+			$session->showFlashMessage("danger", "Preencha o período corretamente");
+		}
+		$this->index();
+	}
+
+	public function updateEventParticipation(){
+
+		$eventProductionId = $this->input->post('id');
+		$data = $this->getEventData();
+
+		$session = getSession();
+		if($data !== FALSE){
+			$eventNatureId = $data['event_nature'];
+			$eventNatures = EventPresentation::getEventNatures();
+			$data['event_nature'] = $eventNatures[$eventNatureId];
+
+
+			$success = $this->production_model->updateEventProduction($data, $eventProductionId);
+
+			if($success){
+				$session->showFlashMessage("success", "Participação em evento editada com sucesso!");
+			}
+			else{
+				$session->showFlashMessage("danger", "Não foi possível editar a participação em evento");
+			}
+		}
+		else{
+			$session->showFlashMessage("danger", "Preencha o período corretamente");
+		}
+		$this->index();
+	}
 }
