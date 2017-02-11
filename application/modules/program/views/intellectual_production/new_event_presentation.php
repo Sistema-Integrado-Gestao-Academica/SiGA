@@ -15,7 +15,8 @@
 ?>
 
 <div id="addEventPresentationForm" class="collapse">
-
+	<h4> Nova Apresentação de Trabalho</h4>
+	<hr>
 	<div class="row">
 
 		<div class="col-lg-10">

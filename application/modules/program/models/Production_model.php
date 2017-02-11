@@ -459,4 +459,30 @@ class Production_model extends CI_Model {
 
 		return $success;
 	}
+
+	public function getEventPresentations($student){
+
+		$this->db->select('*');
+		$this->db->from('student_event_production');
+		$this->db->where("student", $student);
+		$this->db->where("study_title !=", NULL);
+		
+		$productions = $this->db->get()->result_array();
+		$productions = checkArray($productions);
+
+		return $productions;
+	}
+
+	public function getEventParticipations($student){
+
+		$this->db->select('*');
+		$this->db->from('student_event_production');
+		$this->db->where("student", $student);
+		$this->db->where("study_title", NULL);
+		
+		$productions = $this->db->get()->result_array();
+		$productions = checkArray($productions);
+
+		return $productions;
+	}
 }

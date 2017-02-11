@@ -22,6 +22,8 @@ class Production extends MX_Controller {
 		$this->load->model("program/project_model");
 
 		$intellectualProductions = $this->production_model->getUserProductions($userId);
+		$eventPresentations = $this->production_model->getEventPresentations($userId);
+		$eventParticipations = $this->production_model->getEventParticipations($userId);
 		$projects = $this->project_model->getProjects($userId);
 
 		$data = array(
@@ -31,6 +33,8 @@ class Production extends MX_Controller {
 			'eventNatures' => EventPresentation::getEventNatures(),
 			'presentationNatures' => EventPresentation::getPresentationNatures(),
 			'intellectualProductions' => $intellectualProductions,
+			'eventParticipations' => $eventParticipations,
+			'eventPresentations' => $eventPresentations,
 			'projects' => makeDropdownArray($projects, 'id', 'name'),
 			'user' => $user
 		);

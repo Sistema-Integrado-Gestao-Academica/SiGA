@@ -45,6 +45,8 @@
 
 <div id="addIntellectualProductionForm" class="collapse">
 
+	<h4> Nova Produção Intelectual</h4>
+	<hr>
 	<div class="row">
 
 		<div class="col-lg-10">

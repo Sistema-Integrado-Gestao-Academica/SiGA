@@ -42,7 +42,8 @@
 ?>
 
 <div id="addEventParticipationForm" class="collapse">
-
+	<h4> Nova Participação em Evento</h4>
+	<hr>
 	<div class="row">
 
 		<div class="col-lg-10">

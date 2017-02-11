@@ -42,16 +42,11 @@
         <?= $production->getTitle() ?>
       </p>
 
-      <hr>
-
       <strong>Ano</strong>
 
       <p class="text">
         <?= $year ?>
       </p>
-
-
-      <hr>
 
       <strong>Tipo</strong>
 
@@ -59,15 +54,11 @@
         <?= $type?>
       </p>
      
-     <hr>
-
       <strong>Subtipo</strong>
 
       <p class="text">
         <?= $subtype ?>
       </p>     
-
-      <hr>
 
       <strong>Autores</strong>
 
@@ -112,8 +103,6 @@
       <p class="text">
         <?= $periodic ?> / <?= $identifier ?>  
       </p>
-
-      <hr>
 
       <strong>Qualis</strong>
 
