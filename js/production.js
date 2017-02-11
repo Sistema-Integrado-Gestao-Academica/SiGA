@@ -38,6 +38,16 @@ $(document).ready(function(){
 	    return false;
 	  };
 	})(jQuery);
+
+	$("#start_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
+	$("#end_date").datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"
+	});
+
+
 });
 
 function getISSNAndQualis(){

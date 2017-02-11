@@ -452,4 +452,11 @@ class Production_model extends CI_Model {
 
 		return $authors;
 	}
+
+	public function saveStudentEvent($data){
+
+		$success = $this->db->insert('student_event_production', $data);
+
+		return $success;
+	}
 }

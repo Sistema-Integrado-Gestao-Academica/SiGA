@@ -1,12 +1,31 @@
 <script src=<?=base_url("js/production.js")?>></script>
 
-<h2 class="principal"><!-- <i class="fa fa-files-o"></i>  -->Suas produções intelectuais</h2>
+<h2 class="principal"><!-- <i class="fa fa-files-o"></i>  -->Suas produções</h2>
 
-	<h4><a href="#form" data-toggle="collapse">  <i class="fa fa-plus-circle">Adicionar produção intelectual</i></a>	</h4>
+<br>
+
+	<div class="dropdown">
+	  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+		<i class="fa fa-plus-square" aria-hidden="true"></i>
+		Adicionar
+	    <span class="caret"></span>
+	  </button>
+	  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+		<li><a href="#addIntellectualProductionForm" data-toggle="collapse">Produção intelectual</a></li>
+		<li><a href="#addEventPresentationForm" data-toggle="collapse">Apresentação de trabalho</a></li>
+		<li><a href="#addEventParticipationForm" data-toggle="collapse">Participação em evento</a></li>
+	  </ul>
+	</div>
+	<br>
 
 	<?php include 'new_intellectual_production.php'; ?>
+	<?php include 'new_event_participation.php'; ?>
+	<?php include 'new_event_presentation.php'; ?>
 
-    <?php if($productions !== FALSE){ ?>
+	<hr>
+
+    <?php if($intellectualProductions !== FALSE){ ?>
+	<h3>Produções intelectuais</h3>
 
     <div class="box-body table-responsive no-padding">
 		<table id="expenses" class="table table-bordered table-hover tablesorter" >
@@ -22,7 +41,7 @@
 
 			<tbody>
 
-    		<?php foreach ($productions as $production) { 
+    		<?php foreach ($intellectualProductions as $production) { 
     			$id = $production->getId();
     		?>
 
@@ -67,9 +86,9 @@
 				</div>
 				</div>
 				</div>
-				<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'> </i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
+				<?= anchor("edit_production/{$id}", "<i class='glyphicon glyphicon-edit'></i>", "class='btn btn-primary' style='margin-right:5%;'") ?>
 
-				<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger" >
+				<button data-toggle="collapse" data-target=<?="#confirmation".$id?> class="btn btn-danger">
 					<span class="fa fa-remove"></span>
 				</button>
 
@@ -98,4 +117,4 @@
 		</table>
 	</div>
 
-	<?php } ?>
+	<?php } 

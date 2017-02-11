@@ -53,7 +53,6 @@
 		<div class="row">
 			<div class="col-lg-5" id="center_btn_form">
 				<?= form_button(array(
-					"id" => "new_expense_detail",
 					"class" => "btn bg-olive btn-block",
 					"type" => "submit",
 					"content" => "Salvar"

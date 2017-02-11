@@ -43,7 +43,7 @@
 		
 ?>
 
-<div id="form" class="collapse">
+<div id="addIntellectualProductionForm" class="collapse">
 
 	<div class="row">
 

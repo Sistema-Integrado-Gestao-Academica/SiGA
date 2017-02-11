@@ -2,6 +2,7 @@
 
 require_once(MODULESPATH."auth/constants/GroupConstants.php");
 require_once(MODULESPATH."program/domain/intellectual_production/ProductionType.php");
+require_once(MODULESPATH."program/domain/intellectual_production/EventPresentation.php");
 require_once(MODULESPATH."program/domain/intellectual_production/Intellectualproduction.php");
 require_once(MODULESPATH."program/exception/IntellectualProductionException.php");
 
@@ -20,19 +21,21 @@ class Production extends MX_Controller {
 
 		$this->load->model("program/project_model");
 
-		$productions = $this->production_model->getUserProductions($userId);
+		$intellectualProductions = $this->production_model->getUserProductions($userId);
 		$projects = $this->project_model->getProjects($userId);
 
 		$data = array(
 
 			'types' => ProductionType::getTypes(),
 			'subtypes' => ProductionType::getSubtypes(),
-			'productions' => $productions,
+			'eventNatures' => EventPresentation::getEventNatures(),
+			'presentationNatures' => EventPresentation::getPresentationNatures(),
+			'intellectualProductions' => $intellectualProductions,
 			'projects' => makeDropdownArray($projects, 'id', 'name'),
 			'user' => $user
 		);
 
-		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/intellectual_production", $data);
+		loadTemplateSafelyByGroup($this->groups, "program/intellectual_production/productions", $data);
 	}
 
 	public function save(){
@@ -258,5 +261,114 @@ class Production extends MX_Controller {
 		return $valid;
 	}
 
+	public function saveEventParticipation(){
+		$eventData = $this->getEventData();
+		$eventNatures = EventPresentation::getEventNatures();
+		$session = getSession();
+		if($eventData !== FALSE){
+			
+			$eventNatureId = $eventData['event_nature'];
+			$eventData['event_nature'] = $eventNatures[$eventNatureId];
+			$user = $session->getUserData()->getId();
+			$eventData['student'] = $user;
+			
+			$saved = $this->production_model->saveStudentEvent($eventData);
+			if($saved){
+				$event = $eventData['event_name'];
+				$status = "success";
+				$message = "Participação no evento <b>{$event}</b> adicionada com sucesso.";
+				$session->showFlashMessage($status, $message);
+			}
+			else{
+				$status = "danger";
+				$message = "Não foi possível adicionar a participação no evento <b>{$event}</b>. Tente novamente.";
+				$session->showFlashMessage($status, $message);	
+			}
+		}
+		else{
+			$status = "danger";
+			$message = "Preencha o período corretamente.";
+			$session->showFlashMessage($status, $message);
+		}
+		$this->index();
+	}
+
+	public function saveEventPresentation(){
+		$eventData = $this->getEventData();
+		$session = getSession();
+		if($eventData !== FALSE){
+			$eventNatures = EventPresentation::getEventNatures();
+			$eventNatureId = $eventData['event_nature'];
+			$eventData['event_nature'] = $eventNatures[$eventNatureId];
+			$user = $session->getUserData()->getId();
+			$eventData['student'] = $user;
+			
+			$eventData['study_title'] = $this->input->post("title");
+			$presentationNatureId = $this->input->post("presentation_nature");
+			$presentationNatures = EventPresentation::getPresentationNatures();
+			$eventData['presentation_nature'] = $presentationNatures[$presentationNatureId];
+			
+			$saved = $this->production_model->saveStudentEvent($eventData);
+			if($saved){
+				$event = $eventData['event_name'];
+				$status = "success";
+				$message = "Apresentação no evento <b>{$event}</b> adicionada com sucesso.";
+				$session->showFlashMessage($status, $message);
+			}
+			else{
+				$status = "danger";
+				$message = "Não foi possível adicionar a apresentação no evento <b>{$event}</b>. Tente novamente.";
+				$session->showFlashMessage($status, $message);	
+			}
+		}
+		else{
+			$status = "danger";
+			$message = "Preencha o período corretamente.";
+			$session->showFlashMessage($status, $message);
+		}
+		$this->index();
+	}
+
+	private function getEventData(){
+		$eventName = $this->input->post("event_name");
+		$eventNatureId = $this->input->post("event_nature");
+		$place = $this->input->post("place");
+		$startDate = $this->input->post("start_date");
+		$endDate = $this->input->post("end_date");
+		$promotingInstitution = $this->input->post("promoting_institution");
+
+		if(!empty($startDate) && !empty($endDate)){
+			$this->load->library("form_validation");
+
+			$this->form_validation->set_rules("start_date", "Período de realização", "valid_period_date");
+			$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
+			$validDates = $this->form_validation->run();
+		}
+		elseif (!empty($startDate) && empty($endDate)) {
+			$validDates = FALSE;
+		}
+		elseif (empty($startDate) && !empty($endDate)) {
+			$validDates = FALSE;
+		}
+		else{
+			$validDates = TRUE;
+		}
+
+		if($validDates){
+			$eventData = array(
+				'event_name' => $eventName,
+				'event_nature' => $eventNatureId,
+				'place' => $place,
+				'start_date' => $startDate,
+				'end_date' => $endDate,
+				'promoting_institution' => $promotingInstitution
+			);
+		}
+		else{
+			$eventData = FALSE;
+		}
+
+		return $eventData;
+	}
 
 }

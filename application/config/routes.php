@@ -227,7 +227,7 @@ $route['make_project_coordinator'] = 'program/project/makeCoordinator';
 $route['accept_coordinator_invitation'] = 'program/project/acceptCoordinatorInvitation';
 
 /**
- * Intellectual Production routes
+ * Production routes
  */
 $route['intellectual_production'] = 'program/production/index';
 $route['save_production'] = 'program/production/save';
@@ -237,6 +237,8 @@ $route['delete_production'] = 'program/production/delete';
 $route['edit_coauthors/(:num)'] = 'program/production/editCoauthors/$1';
 $route['edit_coauthor/(:num)/(:num)'] = 'program/production/editCoauthor/$1/$2';
 $route['update_coauthor/(:num)/(:num)'] = 'program/production/updateCoauthor/$1/$2';
+$route['save_event_participation'] = 'program/production/saveEventParticipation';
+$route['save_event_presentation'] = 'program/production/saveEventPresentation';
 
 /**
  * User comunication routes

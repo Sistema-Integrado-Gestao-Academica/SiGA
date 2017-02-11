@@ -238,4 +238,22 @@ class MY_Form_validation extends CI_Form_validation {
 
         return $codeNoExists;
     }
+
+    function valid_period_date(){
+
+        $CI =& get_instance();
+
+        $startDate = $CI->input->post('start_date');
+        $endDate = $CI->input->post('end_date');
+
+        try{
+            $dates = new StartEndDate($startDate, $endDate);
+            $validDate = TRUE;
+        }catch(DateException $e){
+            $CI->form_validation->set_message('valid_period_date', $e->getMessage());
+            $validDate = FALSE;
+        }
+
+        return $validDate;
+    }
 }
