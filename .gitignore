@@ -16,3 +16,5 @@ application/third_party/
 /application/config/database.php
 /application/config/migration.php
 
+/application/tests/_ci_phpunit_test
+/application/tests/build

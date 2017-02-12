@@ -1,11 +1,21 @@
 language: php
-php:
- - 5.2
- - 5.3
- - 5.4
- - 5.5
-env:
- - DB=mysql
-before_script:
- - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS siga_test;" -uroot; fi
 
+php:
+ - 5.3
+ - 5.5
+
+services:
+ - mysql
+
+env:
+ - CI_ENV=testing
+
+install:
+ - composer install
+
+before_script:
+ - chmod +x ./test.sh
+ - php vendor-dependencies/kenjis/ci-phpunit-test/install.php
+
+script:
+ - ./test.sh
