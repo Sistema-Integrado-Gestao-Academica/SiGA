@@ -21,5 +21,9 @@
         "phpmailer/phpmailer": "^5.2",
         "league/oauth2-client": "1.4.1",
         "league/oauth2-google": "1.0.1"
+	},
+	"require-dev": {
+		"kenjis/ci-phpunit-test": "^0.14.0",
+		"phpunit/phpunit": "4.8.*"
 	}
 }
