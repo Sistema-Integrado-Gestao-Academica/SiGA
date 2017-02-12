@@ -10,7 +10,6 @@ siga.sublime-workspace
 /application/upload_files
 /vendor-dependencies
 /application/constants/EmailSenderData.php
-application/third_party/
 
 /application/config/config.php
 /application/config/database.php
