@@ -84,7 +84,6 @@ class Production_model extends CI_Model {
 		return $deleted;
 	}
 
-
 	private function convertToArray($production){
 
 
@@ -501,4 +500,12 @@ class Production_model extends CI_Model {
 
 		return $saved;
 	}
+
+	public function deleteEventProduction($id){
+		$this->db->where('id', $id);
+		$deleted = $this->db->delete('student_event_production');
+
+		return $deleted;	
+	}
+
 }

@@ -243,6 +243,8 @@ $route['edit_event_participation/(:num)'] = 'program/production/editEventPartici
 $route['edit_event_presentation/(:num)'] = 'program/production/editEventPresentation/$1';
 $route['update_event_participation'] = 'program/production/updateEventParticipation';
 $route['update_event_presentation'] = 'program/production/updateEventPresentation';
+$route['delete_event_participation'] = 'program/production/deleteEventParticipation';
+$route['delete_event_presentation'] = 'program/production/deleteEventPresentation';
 
 /**
  * User comunication routes

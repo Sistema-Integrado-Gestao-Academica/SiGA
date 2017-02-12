@@ -459,4 +459,40 @@ class Production extends MX_Controller {
 		}
 		$this->index();
 	}
+
+	public function deleteEventPresentation(){
+
+		$success = $this->deleteEventProduction();
+		$session = getSession();
+
+		if($success){
+			$session->showFlashMessage("success", "Apresentação de trabalho removida com sucesso!");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível remover a apresentação de trabalho ");
+		}
+		$this->index();
+	}
+
+	public function deleteEventParticipation(){
+
+		$success = $this->deleteEventProduction();
+		$session = getSession();
+
+		if($success){
+			$session->showFlashMessage("success", "Participação em evento removida com sucesso!");
+		}
+		else{
+			$session->showFlashMessage("danger", "Não foi possível remover a participação em evento");
+		}
+		$this->index();
+	}
+
+	private function deleteEventProduction(){
+
+		$eventProductionId = $this->input->post('id');
+		$deleted = $this->production_model->deleteEventProduction($eventProductionId);
+
+		return $deleted;
+	}
 }
