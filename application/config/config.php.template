@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/siga';
+$config['base_url'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ $config['url_suffix'] = '';
 | than english.
 |
 */
-$config['language']	= 'english';
+$config['language']	= 'portuguese-br';
 
 /*
 |--------------------------------------------------------------------------
@@ -368,8 +368,8 @@ $config['encryption_key'] = 'Sistema#Integrado#de#Gestão#Acadêmica%Encryption_
 |
 */
 $config['sess_driver'] = 'database';
-$config['sess_save_path'] = 'session';
-$config['sess_cookie_name'] = 'ci_session';
+$config['sess_save_path'] = 'files';
+$config['sess_cookie_name'] = NULL;
 $config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
@@ -513,7 +513,7 @@ $config['rewrite_short_tags'] = FALSE;
 $config['proxy_ips'] = '';
 
 /*
- | 
+ |
  | Modules path.
  | Needed for modules extension
  */

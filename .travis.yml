@@ -1,7 +1,6 @@
 language: php
 
 php:
- - 5.3
  - 5.5
 
 services:
@@ -15,7 +14,15 @@ install:
 
 before_script:
  - chmod +x ./test.sh
- - php vendor-dependencies/kenjis/ci-phpunit-test/install.php
+ - chmod +x ./vendor-dependencies/kenjis/ci-phpunit-test/install.php
+ - php ./vendor-dependencies/kenjis/ci-phpunit-test/install.php
+ - rm ./application/tests/Bootstrap.php
+ - cp ./application/tests/Bootstrap.php.template ./application/tests/Bootstrap.php
+ - rm ./application/tests/controllers/Welcome_test.php
+ - cp ./application/config/config.php.template ./application/config/config.php
+ - cp ./application/config/database.php.template ./application/config/database.php
+ - cp ./application/config/migration.php.template ./application/config/migration.php
+ - cp ./application/constants/EmailSenderData.php.template ./application/constants/EmailSenderData.php
 
 script:
  - ./test.sh
