@@ -351,7 +351,7 @@ class SelectiveProcess_model extends CI_Model {
 			$this->db->where('initial_divulgation', True);
     	}
     	else{
-			$this->db->where('date <= NOW()', NULL, FALSE);
+			$this->db->where('date <= CURDATE()', NULL, FALSE);
     		$this->db->order_by('date', 'DESC');
     	}
 		$noticeDivulgations = $this->db->get()->result_array();
@@ -453,8 +453,12 @@ class SelectiveProcess_model extends CI_Model {
     
     public function getOpenSelectiveProcesses(){
 		
-		$this->db->order_by('id_course');
-		$foundProcesses = $this->db->get('view_open_selection_process')->result_array();
+		$query = "SELECT DISTINCT selection_process.* FROM selection_process 
+                JOIN  selection_process_divulgation 
+                    ON ((selection_process_divulgation.date <= CURDATE()) 
+                    AND (selection_process_divulgation.id_process = selection_process.id_process) AND (selection_process_divulgation.initial_divulgation = TRUE))
+                WHERE (selection_process.end_date >= CURDATE()) ORDER BY 'selection_process.id_course'";
+        $foundProcesses = $this->db->query($query)->result_array();
         $foundProcesses = checkArray($foundProcesses);
 		$selectiveProcesses = array();
         if($foundProcesses !== FALSE){

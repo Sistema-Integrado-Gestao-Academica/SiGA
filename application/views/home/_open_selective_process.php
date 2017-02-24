@@ -1,7 +1,6 @@
 <hr>
 
 <?php 
-
 if(!empty($openSelectiveProcesses)){
 	echo "<h2>Processos seletivos abertos</h2>";
 

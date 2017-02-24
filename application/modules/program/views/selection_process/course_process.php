@@ -53,9 +53,10 @@ if($validSelectiveProcesses){
 				createProcessModal($process, $settings);
 				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-success'><i class='fa fa-eye'></i></a>";
 				echo "&nbsp";
-				echo anchor("edit_selection_process/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
+				$courseId = $course[Course_model::ID_ATTR];
+				echo anchor("edit_selection_process/{$processId}/{$courseId}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
 				echo "&nbsp";
-				echo anchor("define_dates_page/{$processId}/{$course[Course_model::ID_ATTR]}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
+				echo anchor("define_dates_page/{$processId}/{$courseId}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
 
 				echo "&nbsp";
 				echo anchor("selection_process/divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", "class='btn bg-olive'");
