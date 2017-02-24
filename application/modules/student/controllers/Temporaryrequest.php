@@ -170,38 +170,20 @@ class TemporaryRequest extends MX_Controller {
 		return $requestWasSaved;
 	}
 
-	public function removeDisciplineFromTempRequest($userId, $courseId, $semesterId, $disciplineId, $disciplineClass){
+	public function removeDisciplineFromTempRequest($userId, $courseId, $semesterId, $idOfferDiscipline){
 
-		$this->load->model("secretary/offer_model");
-		$foundOffer = $this->offer_model->getOfferBySemesterAndCourse($semesterId, $courseId);
+		$requestToRemove = array(
+			'id_student' => $userId,
+			'id_course' => $courseId,
+			'id_semester' => $semesterId,
+			'discipline_class' => $idOfferDiscipline
+		);
 
-		if($foundOffer !== FALSE){
-			$offerDiscipline = $this->offer_model->getCourseOfferDisciplineByClass($disciplineId, $foundOffer['id_offer'], $disciplineClass);
-		}else{
-			$offerDiscipline = FALSE;
-		}
+		$requestWasRemoved = $this->removeTempRequest($requestToRemove);
 
-		if($offerDiscipline !== FALSE){
-
-			$idOfferDiscipline = $offerDiscipline['id_offer_discipline'];
-
-			$requestToRemove = array(
-				'id_student' => $userId,
-				'id_course' => $courseId,
-				'id_semester' => $semesterId,
-				'discipline_class' => $idOfferDiscipline
-			);
-
-			$requestWasRemoved = $this->removeTempRequest($requestToRemove);
-
-			if($requestWasRemoved){
-				$status = "success";
-				$message = "Disciplina removida com sucesso da solicitação.";
-			}else{
-				$status = "danger";
-				$message = "Não foi possível remover a disciplina. Cheque os dados informados e tente novamente.";
-			}
-
+		if($requestWasRemoved){
+			$status = "success";
+			$message = "Disciplina removida com sucesso da solicitação.";
 		}else{
 			$status = "danger";
 			$message = "Não foi possível remover a disciplina. Cheque os dados informados e tente novamente.";
