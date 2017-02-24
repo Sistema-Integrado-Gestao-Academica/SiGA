@@ -453,8 +453,12 @@ class SelectiveProcess_model extends CI_Model {
     
     public function getOpenSelectiveProcesses(){
 		
-		$this->db->order_by('id_course');
-		$foundProcesses = $this->db->get('view_open_selection_process')->result_array();
+		$query = "SELECT DISTINCT selection_process.* FROM selection_process 
+                JOIN  selection_process_divulgation 
+                    ON ((selection_process_divulgation.date <= NOW()) 
+                    AND (selection_process_divulgation.id_process = selection_process.id_process) AND (selection_process_divulgation.initial_divulgation = TRUE))
+                WHERE (selection_process.end_date >= NOW()) ORDER BY 'selection_process.id_course'";
+        $foundProcesses = $this->db->query($query)->result_array();
         $foundProcesses = checkArray($foundProcesses);
 		$selectiveProcesses = array();
         if($foundProcesses !== FALSE){
