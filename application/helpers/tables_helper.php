@@ -790,7 +790,7 @@ function displayDisciplinesToRequest($request, $courseId, $userId, $semesterId, 
 		    		echo "<td>";
 		    		if(!$isUpdate){
 			    		echo anchor(
-		    				"student/temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$foundDiscipline['discipline_code']}/{$foundClass['class']}",
+		    				"student/temporaryrequest/removeDisciplineFromTempRequest/{$userId}/{$courseId}/{$semesterId}/{$request['discipline_class']}",
 	    					"Remover Disciplina",
 	    					"class='btn btn-danger btn-flat'"
 		    			);
@@ -2019,8 +2019,8 @@ function showExtraInfo($extraInfo, $programId){
 		buildTableDeclaration();
 
 		buildTableHeaders(array(
-			'Título',	
-			'Status',	
+			'Título',
+			'Status',
 			'Ações'
 		));
 
