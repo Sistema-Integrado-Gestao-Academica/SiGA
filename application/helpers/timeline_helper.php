@@ -1,7 +1,7 @@
 <?php
 
 function writeTimelineLabel($color, $text){
-    
+
     echo "<li class='time-label'>";
         echo "<span class='bg-".$color."'>";
             echo $text;
@@ -23,18 +23,18 @@ function writeTimelineItem($text, $date, $link, $bodyText = "", $footer = ""){
         if(!empty($footer)){
             $footer();
         }
-    echo "</div>";  
+    echo "</div>";
 }
 
 function writeTimelineItemToAddItem($textToInput, $bodyText = "", $footer = ""){
-    
+
     $today = new Datetime();
     $date = $today->format("d/m/Y");
     echo "<span class='time'><i class='fa fa-calendar'></i>". $date."</span>";
-    
-    echo "<h3 class='timeline-header'><a href='#new_divulgation'>";
+
+    echo "<h3 class='timeline-header'>";
         $textToInput();
-    echo "</h3></a>";
+    echo "</h3>";
     echo "<div class='timeline-body'>";
 
         if(!empty($bodyText)){
@@ -45,8 +45,8 @@ function writeTimelineItemToAddItem($textToInput, $bodyText = "", $footer = ""){
         if(!empty($footer)){
             $footer();
         }
-    echo "</div>";  
-    
+    echo "</div>";
+
 }
 
 

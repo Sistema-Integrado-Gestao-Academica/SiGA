@@ -1,5 +1,5 @@
 <h2 class="principal">Divulgações do processo seletivo: <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
-<?php 
+<?php
 echo "<hr>";
 
 $settings = $selectiveprocess->getSettings();

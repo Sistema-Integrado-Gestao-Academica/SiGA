@@ -13,16 +13,16 @@ $(document).ready(function(){
 	$("#phase_3").ready(function(){
 
 		getPhasesToSort();
-		
+
 		$(this).change(function(){
 			getPhasesToSort();
 		});
 	});
-	
+
 	$("#phase_4").ready(function(){
 
 		getPhasesToSort();
-		
+
 		$(this).change(function(){
 			getPhasesToSort();
 		});
@@ -58,25 +58,25 @@ $(document).ready(function(){
     	e.preventDefault();
 		defineDivulgationDate();
 	});
-	
+
 	$(document).on('click', '#define_date_phase_1', function(e){
 	    e.preventDefault();
 		definePhaseDate(1);
-	});	
+	});
 
 	$(document).on('click', '#define_date_phase_2', function(e){
     	e.preventDefault();
-		definePhaseDate(2);		
+		definePhaseDate(2);
 	});
 
 	$(document).on('click', '#define_date_phase_3', function(e){
     	e.preventDefault();
-		definePhaseDate(3);		
+		definePhaseDate(3);
 	});
 
 	$(document).on('click', '#define_date_phase_4', function(e){
     	e.preventDefault();
-		definePhaseDate(4);		
+		definePhaseDate(4);
 	});
 
 	$(document).on('focus',"#phase_1_start_date", function(){
@@ -137,7 +137,7 @@ $(document).ready(function(){
 
 	$(document).on('click', '#divulgate', function(e){
     	e.preventDefault();
-		divulgateNotice(); 
+		divulgateNotice();
 	});
 
 });
@@ -160,20 +160,20 @@ function saveSelectiveProcess(saveMethod){
 
 	var preProject = $("#phase_2").val();
 	var preProjectWeight = $("#phase_weight_2").val();
-	
+
 	var writtenTest = $("#phase_3").val();
 	var writtenTestWeight = $("#phase_weight_2").val();
-	
+
 	var oralTest = $("#phase_4").val();
 	var oralTestWeight = $("#phase_weight_4").val();
-	
+
 	var phasesOrder = $("#sortable").sortable("toArray");
-	
+
 	var siteUrl = $("#site_url").val();
 
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/"+ saveMethod;
 
-	data = {
+	var data = {
 		course: course,
 	    student_type: studentType,
 	    selective_process_name: noticeName,
@@ -196,11 +196,6 @@ function saveSelectiveProcess(saveMethod){
 		data,
 		function(data){
 			$("#selection_process_saving_status").html(data);
-			if(saveMethod == "updateSelectionProcess"){
-				window.setTimeout(function () {
-			        location.href = siteUrl + "/program/selectiveprocess/courseSelectiveProcesses/" + course;
-			    }, 1000);
-			}
 		}
 	);
 }
@@ -210,16 +205,16 @@ function getPhasesToSort(){
 	var preProject;
 	var writtenTest;
 	var oralTest;
-	
+
 	preProject = $("#phase_2").val();
 	writtenTest = $("#phase_3").val();
 	oralTest = $("#phase_4").val();
 	var siteUrl = $("#site_url").val();
-	
+
 	data = {
 		preProject: preProject,
 		writtenTest: writtenTest,
-		oralTest: oralTest	
+		oralTest: oralTest
 	}
 
 	if(!document.getElementById("processId")){
@@ -323,11 +318,11 @@ function definePhaseDate(phaseId){
 function addFormToAddDivulgation(processId, firstDivulgation){
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addFormToAddDivulgation/" + processId;
-	
+
 	var data = {
 		initial_divulgation: firstDivulgation
 	}
-	
+
 	$.post(
 		urlToPost,
 		data,
@@ -345,12 +340,12 @@ function divulgateNotice(){
 
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/divulgateNotice/" + process_id;
-	
+
 	var data = {
 		description: description,
 		message: message,
 	}
-	
+
 	$.post(
 		urlToPost,
 		data,

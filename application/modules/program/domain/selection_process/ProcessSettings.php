@@ -6,7 +6,7 @@ require_once "phases/WeightedPhase.php";
 
 class ProcessSettings{
 
-	const INVALID_PHASE = "As fases do processo seletivo não podem ser nulas."; 
+	const INVALID_PHASE = "As fases do processo seletivo não podem ser nulas.";
 	const INVALID_START_DATE = "A data inicial informada é inválida. Deve estar no formato dd/mm/yyyy.";
 	const INVALID_END_DATE = "A data final informada é inválida. Deve estar no formato dd/mm/yyyy.";
 	const INVALID_DATE_INTERVAL = "A data final não pode ser antes ou igual à data inicial.";
@@ -29,11 +29,11 @@ class ProcessSettings{
 
 		$parentClass = get_parent_class($phase);
 		if($parentClass == "ProcessPhase" || $parentClass == "WeightedPhase"){
-			
+
 			if(!is_null($phase)){
 				$this->phases[] = $phase;
 			}else{
-				throw new SelectionProcessException(self::INVALID_PHASE);			
+				throw new SelectionProcessException(self::INVALID_PHASE);
 			}
 		}else{
 			throw new SelectionProcessException(self::INVALID_PHASE);
@@ -63,44 +63,44 @@ class ProcessSettings{
 
 			try{
 				$validDate = new DateTime($validStartDate);
-				
+
 				$this->startDate = $validDate;
 			}catch(Exception $e){
-				
+
 				throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_START_DATE." - ".$e->getMessage());
 			}
 	   }else{
 			throw new SelectionProcessException("Data informada: '".$startDate."' - ".self::INVALID_START_DATE);
 	   }
-	   
+
 	}
 
 	private function setEndDate($endDate){
-		
+
 		$date = $this->validateDate($endDate);
 
-	   if($date !== FALSE){
+	   	if($date !== FALSE){
 
 	   		$validStartDate = $this->formatDateToDateTime($date);
 
 			try{
 				$validDate = new DateTime($validStartDate);
-				
+
 				$this->endDate = $validDate;
 			}catch(Exception $e){
-				
+
 				throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_END_DATE." - ".$e->getMessage());
 			}
-	   }else{
+	   	}else{
 			throw new SelectionProcessException("Data informada: '".$endDate."' - ".self::INVALID_END_DATE);
-	   }
+	   	}
 	}
 
 	private function validateDate($strDate){
 		$date = date_parse_from_format("d/m/Y", $strDate);
 
-		$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE 
-					   && $date["day"] !== FALSE && $date["error_count"] === 0 
+		$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE
+					   && $date["day"] !== FALSE && $date["error_count"] === 0
 					   && $date["warning_count"] === 0;
 
 		if(!$dateIsValid){
@@ -118,7 +118,7 @@ class ProcessSettings{
 
 		$strDay = (string) $day;
 		$strMonth = (string) $month;
-		
+
 		if(strlen($strDay) === 1){
 			$day = "0".$day;
 		}
@@ -140,7 +140,7 @@ class ProcessSettings{
 			if(is_array($phases)){
 
 				foreach($phases as $phase){
-					
+
 					$this->addPhase($phase);
 				}
 
@@ -168,7 +168,7 @@ class ProcessSettings{
 	}
 
 	public function getYMDStartDate(){
-		
+
 		$date = $this->getStartDate();
 
 		$formattedDate = $date->format("Y/m/d");
@@ -177,7 +177,7 @@ class ProcessSettings{
 	}
 
 	public function getYMDEndDate(){
-		
+
 		$date = $this->getEndDate();
 
 		$formattedDate = $date->format("Y/m/d");
@@ -186,7 +186,7 @@ class ProcessSettings{
 	}
 
 	public function getFormattedStartDate(){
-		
+
 		$date = $this->getStartDate();
 
 		$formattedDate = $date->format("d/m/Y");
@@ -195,7 +195,7 @@ class ProcessSettings{
 	}
 
 	public function getFormattedEndDate(){
-		
+
 		$date = $this->getEndDate();
 
 		$formattedDate = $date->format("d/m/Y");

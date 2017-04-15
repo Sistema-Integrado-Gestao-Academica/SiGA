@@ -1,7 +1,7 @@
 <?php
 
 function createTimelineItemToAddDivulgation($processId, $firstDivulgation = FALSE){
-	
+
 	if($firstDivulgation){
 		$method = 'addFirstDivulgation('.$processId.')';
 	}
@@ -24,27 +24,27 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName, 
 	$processId = $selectiveprocess->getId();
 	$courseId = $selectiveprocess->getCourse();
 
-	
+
 	if($processDivulgations){
-	
+
 		echo "<h4>Divulgações realizadas</h4>";
 		echo "<ul class='timeline'>";
-		
+
 		writeTimelineLabel("blue", "Processo seletivo:".$processName);
 
 		$label = "Processo Seletivo";
 		foreach ($processDivulgations as $divulgation) {
-			
+
 			$phaseId = $divulgation['related_id_phase'];
 			if(!is_null($phaseId)){
-				$labelHasChanged = $label != $phasesName[$phaseId]; 
+				$labelHasChanged = $label != $phasesName[$phaseId];
 				if($labelHasChanged){
 					$label = $phasesName[$phaseId];
 					writeTimelineLabel("white", $label);
 				}
 			}
 			else{
-				$labelHasChanged = $label != "Divulgação"; 
+				$labelHasChanged = $label != "Divulgação";
 				if($labelHasChanged){
 					$label = "Divulgação";
 					writeTimelineLabel("white", $label);
@@ -93,16 +93,14 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName, 
 		createTimelineItemToAddDivulgation($processId, $firstDivulgation);
 	}
 	echo "</ul>";
-
-
 }
 
 
 function createDivulgationsModal($process){
-	
+
 	$processId = $process->getId();
     $fields = getFieldsOfDivulgationForm($process, TRUE);
-    
+
     $fields['description']['value'] = "Edital ".$process->getName();
     $course = $process->getCourse();
     $body = function() use ($fields, $course){
@@ -117,7 +115,7 @@ function createDivulgationsModal($process){
 	    );
         echo form_input($courseHidden);
     };
-  
+
 	$footer = function(){
 		echo "<div id='divulgation_result'>";
 		echo "</div>";
@@ -142,7 +140,7 @@ function createDivulgationsModal($process){
 
 	};
 
-	newModal("divulgationsmodal".$processId, "Primeira divulgação do Processo Seletivo", $body, $footer);	
+	newModal("divulgationsmodal".$processId, "Primeira divulgação do Processo Seletivo", $body, $footer);
 }
 
 function getFieldsOfDivulgationForm($process, $initialDivulgation){
@@ -160,16 +158,16 @@ function getFieldsOfDivulgationForm($process, $initialDivulgation){
 
     $description = array(
         "name" => "description",
-        "id" => "description",  
+        "id" => "description",
         "type" => "text",
         "required" => TRUE,
         "placeholder" => "Descrição da divulgação",
         "class" => "form-control",
         "required" => "true"
-    );  
+    );
     $message = array(
         "name" => "message",
-        "id" => "message",  
+        "id" => "message",
         "type" => "text",
         "placeholder" => "Mensagem relacionada",
         "class" => "form-control"
@@ -193,7 +191,13 @@ function getFieldsOfDivulgationForm($process, $initialDivulgation){
 	$divulgationFile = array(
 	    "name" => "divulgation_file",
 	    "id" => "divulgation_file",
-	    "type" => "file"
+	    "type" => "file",
+        "class" => "filestyle",
+        "data-buttonBefore" => "true",
+        "data-buttonText" => "Selecione o arquivo",
+        "data-placeholder" => "Nenhum arquivo selecionado.",
+        "data-iconName" => "fa fa-file",
+        "data-buttonName" => "btn-primary"
 	);
 
 	$fields = array(

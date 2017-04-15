@@ -24,7 +24,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $writtenTest = $this->input->post("writtenTest");
         $oralTest = $this->input->post("oralTest");
         $phasesToSort = array();
-        
+
         $notPresent = "0";
         if($preProject !== $notPresent){
             $phasesToSort["pre_project"] = SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE;
@@ -41,21 +41,21 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     public function showPhasesInOrder(){
-        
+
         $selectiveprocessId = $this->input->post("processId");
         $this->load->model("selectiveprocess_model", "process_model");
-        
+
         $selectiveprocess = $this->process_model->getById($selectiveprocessId);
         if(is_object($selectiveprocess)){
 
-            $phasesOrder = $selectiveprocess->getSettings()->getPhasesOrder();                
+            $phasesOrder = $selectiveprocess->getSettings()->getPhasesOrder();
             $phasesToSort = array();
             if($phasesOrder){
 
                 foreach ($phasesOrder as $phaseOrder) {
                     $phasesToSort[$phaseOrder] = lang($phaseOrder);
                 }
-           
+
             }
             $preProject = $this->input->post("preProject");
             $writtenTest = $this->input->post("writtenTest");
@@ -104,7 +104,7 @@ class SelectiveProcessAjax extends MX_Controller {
             echo "<div id='phases_order_list'>";
                 echo "<ol id = 'sortable' style='cursor: move;'>";
             foreach ($phasesToSort as $key => $phase){
-                
+
                 echo "<li id={$key}>";
                 echo "<h4><span class='label label-primary'>".$phase."</span></h4>";
                 echo "</li>";
@@ -112,68 +112,70 @@ class SelectiveProcessAjax extends MX_Controller {
             echo "</ol>";
             echo "</div>";
         }else{
-            callout("danger", "Deve haver pelo menos uma fase além da ".SelectionProcessConstants::HOMOLOGATION_PHASE." no processo seletivo.");   
+            callout("danger", "Deve haver pelo menos uma fase além da ".SelectionProcessConstants::HOMOLOGATION_PHASE." no processo seletivo.");
         }
     }
 
     public function newSelectionProcess(){
-        
+
         $process = $this->getDataToSave();
 
-        // Finally saves the selection process
-        $this->load->model("selectiveprocess_model", "process_model");
-        
-        $processId = $this->process_model->save($process);
-        $courseId = $this->input->post("course");
-        
         if($process !== FALSE){
-            $noticeName = $process->getName();
-            callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
+            // Finally saves the selection process
+            $this->load->model("selectiveprocess_model", "process_model");
+
+            $processId = $this->process_model->save($process);
+            $courseId = $this->input->post("course");
+
+            if($process !== FALSE){
+                $noticeName = $process->getName();
+                callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
+            }
+
+            $hidden = array(
+                'selection_process_id' => base64_encode($processId),
+                'course' => $courseId
+            );
+
+            echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
+
+                echo form_hidden($hidden);
+
+                $noticeFile = array(
+                    "name" => "notice_file",
+                    "id" => "notice_file",
+                    "type" => "file"
+                );
+
+                $submitFileBtn = array(
+                    "id" => "open_selective_process_btn",
+                    "class" => "btn btn-success btn-flat",
+                    "content" => "Salvar arquivo",
+                    "type" => "submit",
+                    "style" => "margin-top: 5%;"
+                );
+
+                include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
+
+            echo form_close();
+            echo "<br>";
         }
-
-        $hidden = array(
-            'selection_process_id' => base64_encode($processId),
-            'course' => $courseId
-        );
-
-        echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
-
-            echo form_hidden($hidden);
-
-            $noticeFile = array(
-                "name" => "notice_file",
-                "id" => "notice_file",
-                "type" => "file"
-            );
-            
-            $submitFileBtn = array(
-                "id" => "open_selective_process_btn",
-                "class" => "btn btn-success btn-flat",
-                "content" => "Salvar arquivo",
-                "type" => "submit",
-                "style" => "margin-top: 5%;"
-            );
-
-            include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
-
-        echo form_close();
-        echo "<br>";
-
-        
     }
 
     public function updateSelectionProcess(){
-        
+
         $process = $this->getDataToSave();
-        $hasSettings = $process->getSettings();
-        $processId = $this->input->post("processId");
 
-        $this->load->model("selectiveprocess_model", "process_model");
-        $processId = $this->process_model->update($process, $processId);
+        if($process !== FALSE){
+            $processId = $this->input->post("processId");
 
-        $noticeName = $process->getName();
-        if($processId){
-            callout("info", "O processo seletivo ".$noticeName." foi editado com sucesso!");
+            $this->load->model("selectiveprocess_model", "process_model");
+            $processId = $this->process_model->update($process, $processId);
+
+            $noticeName = $process->getName();
+            if($processId){
+                callout("info", "O processo seletivo ".$noticeName." foi editado com sucesso!");
+            }
         }
     }
 
@@ -186,13 +188,15 @@ class SelectiveProcessAjax extends MX_Controller {
         $noticeName = $this->input->post("selective_process_name");
         $startDate = $this->input->post("selective_process_start_date");
         $endDate = $this->input->post("selective_process_end_date");
+
+        $process = FALSE;
         try{
 
             switch($studentType){
                 case SelectionProcessConstants::REGULAR_STUDENT:
                     $process = new RegularStudentProcess($courseId, $noticeName);
                     break;
-                
+
                 case SelectionProcessConstants::SPECIAL_STUDENT:
                     $process = new SpecialStudentProcess($courseId, $noticeName);
                     break;
@@ -203,15 +207,13 @@ class SelectiveProcessAjax extends MX_Controller {
             }
 
             if($process !== FALSE){
-
-
                 $preProject = $this->input->post("phase_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
-                
+
 
                 $preProjectWeight = $this->input->post("phase_weight_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
 
                 $writtenTest = $this->input->post("phase_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
-                
+
 
                 $writtenTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
 
@@ -219,7 +221,7 @@ class SelectiveProcessAjax extends MX_Controller {
                 $oralTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
 
                 $phases = array();
-                
+
                 $notSelected = "0";
 
                 if($preProject !== $notSelected){
@@ -238,27 +240,25 @@ class SelectiveProcessAjax extends MX_Controller {
                 }
 
                 if(!empty($phases)){
-                    
+
                     // All processes have homologation
                     $phases[] = new Homologation(SelectionProcessConstants::HOMOLOGATION_PHASE_ID);
 
                     $phasesOrder = $this->input->post("phases_order");
                     $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
+
                     $process->addSettings($processSettings);
-
-
                 }
                 else{
                     // The process must have at least one phase
                     callout("danger", "Deve haver pelo menos uma fase além da homologação no processo seletivo.");
                 }
-
             }else{
-                // Invalid Student Type
-                // Cannot happen
+                // Invalid Student Type, cannot happen
                 callout("danger", "Tipo de estudante para o processo seletivo inválido.");
             }
         }catch(SelectionProcessException $e){
+            $process = FALSE;
             callout("warning", $e->getMessage());
         }
 
@@ -282,7 +282,7 @@ class SelectiveProcessAjax extends MX_Controller {
                 $status = "danger";
                 $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
                 break;
-            
+
             default:
                 $status = "danger";
                 $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
@@ -332,12 +332,12 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     public function defineDivulgationDate($processId){
-        
+
         $courseId = $this->input->post("course_id");
         $date = $this->input->post("divulgation_start_date");
         $divulgationDescription = $this->input->post("divulgation_description");
         $message = $this->input->post("message");
-        
+
         $this->load->model("selectiveprocess_model", "process_model");
         $process = $this->process_model->getById($processId);
         $settings = $process->getSettings();
@@ -347,14 +347,14 @@ class SelectiveProcessAjax extends MX_Controller {
             $error .= "<br>Preencha a data e a descrição da divulgação.";
         }
         else{
-            $subscriptionStartDate = $settings->getStartDate(); 
+            $subscriptionStartDate = $settings->getStartDate();
             $today = new Datetime();
-            $date = convertDateToDateTime($date); 
+            $date = convertDateToDateTime($date);
             $dateInDatetime = new DateTime($date);
             $validDate = validateDateInPeriod($dateInDatetime, $today, $subscriptionStartDate);
             if($validDate){
                 $data = array(
-                    'id_process' => $processId, 
+                    'id_process' => $processId,
                     'description' => $divulgationDescription,
                     'message' => $message,
                     'initial_divulgation' => TRUE,
@@ -373,12 +373,12 @@ class SelectiveProcessAjax extends MX_Controller {
 
         if($error){
             $text = "Data não definida";
-            $bodyText = function() use ($error){ 
+            $bodyText = function() use ($error){
                 echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
                 echo $error;
                 echo "</div>";
                 echo "Você pode definir uma data ou divulgar o processo seletivo agora.";
-                
+
             };
             $processDivulgation = FALSE;
             $footer = function() use ($processId, $courseId, $processName){
@@ -464,7 +464,7 @@ class SelectiveProcessAjax extends MX_Controller {
             else{
                 $error .= "<br>A data final deve ser maior que a data inicial";
             }
-        
+
         }
 
         if($error){
@@ -497,7 +497,7 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     private function validateDateBasedOnPhases($processId, $phaseId, $phaseStartDate, $phaseEndDate){
-        
+
         $process = $this->process_model->getById($processId);
         $settings = $process->getSettings();
         $phases = $settings->getPhases();
@@ -513,7 +513,7 @@ class SelectiveProcessAjax extends MX_Controller {
         // The current phase start date must be later than the end date of previous phase
         $previousPhaseEndDate = new Datetime($previousPhaseEndDate);
         $validDatePreviousPhase = validateDatesDiff($previousPhaseEndDate, $phaseStartDate);
-        
+
         $nextPhase = $relatedPhases['next'];
         if(is_null($nextPhase)){
             $validDateNextPhase = TRUE;
@@ -568,12 +568,12 @@ class SelectiveProcessAjax extends MX_Controller {
 
     // Phase index is the key of phases array
     private function getRelatedPhasesRecursively($phaseIndex, $phases, $previousPhase = FALSE){
-        
+
         $result = null;
         $phaseIndexExists = array_key_exists($phaseIndex, $phases);
         if($phaseIndexExists){
             $phase = $phases[$phaseIndex];
-            $startDate = $phase->getStartDate();     
+            $startDate = $phase->getStartDate();
 
             if(!is_null($startDate)){
                 $result = $phase;
@@ -592,10 +592,10 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     public function addFormToAddDivulgation($processId){
-        
+
         $this->load->model("selectiveprocess_model", "process_model");
         $process = $this->process_model->getById($processId);
-  
+
         $this->load->helper("selectionprocess");
         $initialDivulgation = (bool) $this->input->post('initial_divulgation');
         $fieldsForm = getFieldsOfDivulgationForm($process, $initialDivulgation);
@@ -619,21 +619,22 @@ class SelectiveProcessAjax extends MX_Controller {
                 echo form_textarea($fieldsForm['message']);
                 echo form_input($fieldsForm['processHidden']);
                 echo form_input($fieldsForm['initialDivulgationHidden']);
-                
+
                 if(!$initialDivulgation){
                     echo form_label("Fase relacionada", "phase_label");
                     echo form_dropdown("phase", $fieldsForm['dropdownPhases'], '', "class='form-control'");
-               
+
                     echo "<br>";
                     echo form_label("Você pode incluir um arquivo para essa divulgação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "divulgation_file");
                     echo "<div class='row'>";
                         echo "<div class='col-lg-8'>";
-                            echo form_input($fieldsForm['divulgationFile']); 
+                            echo form_input($fieldsForm['divulgationFile']);
                         echo "</div>";
                     echo "</div>";
                 }
             };
             $footer = function(){
+                echo "<br>";
                 echo form_button(array(
                     "class" => "btn bg-olive btn-block",
                     "content" => 'Divulgar',
@@ -642,8 +643,8 @@ class SelectiveProcessAjax extends MX_Controller {
             };
 
             echo form_open_multipart("program/selectiveprocess/addDivulgation");
-                writeTimelineItemToAddItem($text, $bodyText, $footer);  
-            echo form_close();        
+                writeTimelineItemToAddItem($text, $bodyText, $footer);
+            echo form_close();
         }
         else{
             $text = function(){
@@ -657,9 +658,9 @@ class SelectiveProcessAjax extends MX_Controller {
                 $courseId = $process->getCourse();
 
                 echo anchor("define_dates_page/{$processId}/{$courseId}", "<i class='fa fa-calendar'>Editar a data definida</i>", "class='btn btn-primary'");
-                
+
             };
-            writeTimelineItemToAddItem($text, $bodyText, "");  
+            writeTimelineItemToAddItem($text, $bodyText, "");
         }
     }
 
@@ -667,7 +668,7 @@ class SelectiveProcessAjax extends MX_Controller {
 
         $firstDivulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
         if(is_null($firstDivulgation)){
-            $showForm = TRUE;   
+            $showForm = TRUE;
         }
         else{
             $showForm = FALSE;
@@ -685,7 +686,7 @@ class SelectiveProcessAjax extends MX_Controller {
             $today = new Datetime();
             $today = $today->format("Y/m/d");
             $data = array(
-                'id_process' => $processId, 
+                'id_process' => $processId,
                 'description' => $description,
                 'message' => $message,
                 'initial_divulgation' => TRUE,
