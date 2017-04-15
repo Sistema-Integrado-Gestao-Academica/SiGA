@@ -45,25 +45,33 @@ class SelectiveProcess_model extends CI_Model {
 		$noticeName = $process->getName();
 		$previousProcess = $this->getByName($noticeName);
 
-
 		// Does not exists this selection process yet
 		if($previousProcess === FALSE){
 
-			// Saves the selection process basic data
-			$this->db->insert($this->TABLE, $processToSave);
+            $this->db->trans_start();
 
-			$savedProcess = $this->getByName($noticeName);
+            // Saves the selection process basic data
+            $this->db->insert($this->TABLE, $processToSave);
 
-			if($savedProcess !== FALSE){
-				$processId = $savedProcess[self::ID_ATTR];
+            $savedProcess = $this->getByName($noticeName);
+            $processId = $savedProcess[self::ID_ATTR];
 
-				$this->saveProcessPhases($process, $processId, self::INSERT_ON_DB);
+            $this->load->model(
+                'program/selectiveprocessconfig_model',
+                'process_config_model'
+            );
 
-				return $processId;
-			}else{
+            $this->saveProcessPhases($process, $processId, self::INSERT_ON_DB);
+            // By default, the process goes with all docs
+            $this->process_config_model->addAllDocumentsToProcess($processId);
+            $this->db->trans_complete();
+
+			if($this->db->trans_status() === FALSE){
 				// For some reason did not saved the selection process
 				throw new SelectionProcessException(self::COULDNT_SAVE_SELECTION_PROCESS);
 			}
+
+            return $processId;
 		}else{
 			throw new SelectionProcessException(self::REPEATED_NOTICE_NAME.$noticeName);
 		}
@@ -97,9 +105,7 @@ class SelectiveProcess_model extends CI_Model {
 			$startDate = $settings->getYMDStartDate();
 			$endDate = $settings->getYMDEndDate();
 			$phasesOrder = serialize($settings->getPhasesOrder());
-
 		}
-
 
 		$processToSave = array(
 			self::COURSE_ATTR => $courseId,
@@ -111,7 +117,6 @@ class SelectiveProcess_model extends CI_Model {
 		);
 
 		return $processToSave;
-
 	}
 
 	private function saveProcessPhases($process, $processId, $method){
@@ -197,7 +202,7 @@ class SelectiveProcess_model extends CI_Model {
 
 		$foundProcess = $this->get(self::ID_ATTR, $processId);
 		$selectiveProcess = $this->convertArrayToObject($foundProcess);
-		
+
 		return $selectiveProcess;
 	}
 
@@ -371,7 +376,7 @@ class SelectiveProcess_model extends CI_Model {
     	$searchResult = $this->db->get_where('selection_process_divulgation', array('id' => $divulgationId));
   		$divulgation = $searchResult->row_array();
 		$divulgation = checkArray($divulgation);
-		
+
 		return $divulgation;
     }
 
@@ -450,12 +455,12 @@ class SelectiveProcess_model extends CI_Model {
 
         return $teachers;
     }
-    
+
     public function getOpenSelectiveProcesses(){
-		
-		$query = "SELECT DISTINCT selection_process.* FROM selection_process 
-                JOIN  selection_process_divulgation 
-                    ON ((selection_process_divulgation.date <= CURDATE()) 
+
+		$query = "SELECT DISTINCT selection_process.* FROM selection_process
+                JOIN  selection_process_divulgation
+                    ON ((selection_process_divulgation.date <= CURDATE())
                     AND (selection_process_divulgation.id_process = selection_process.id_process) AND (selection_process_divulgation.initial_divulgation = TRUE))
                 WHERE (selection_process.end_date >= CURDATE()) ORDER BY 'selection_process.id_course'";
         $foundProcesses = $this->db->query($query)->result_array();

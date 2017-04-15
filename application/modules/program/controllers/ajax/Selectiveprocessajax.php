@@ -121,45 +121,51 @@ class SelectiveProcessAjax extends MX_Controller {
         $process = $this->getDataToSave();
 
         if($process !== FALSE){
-            // Finally saves the selection process
             $this->load->model("selectiveprocess_model", "process_model");
+            try{
+                // Try to save the selection process
+                $processId = $this->process_model->save($process);
 
-            $processId = $this->process_model->save($process);
-            $courseId = $this->input->post("course");
-
-            if($process !== FALSE){
                 $noticeName = $process->getName();
                 callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
-            }
 
-            $hidden = array(
-                'selection_process_id' => base64_encode($processId),
-                'course' => $courseId
+                $courseId = $this->input->post("course");
+                $this->uploadNoticeFileForm($processId, $courseId);
+            }catch(SelectionProcessException $e){
+                callout("warning", $e->getMessage());
+            }
+        }
+    }
+
+    private function uploadNoticeFileForm($processId, $courseId){
+        $hidden = array(
+            'selection_process_id' => base64_encode($processId),
+            'course' => $courseId
+        );
+
+        echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
+
+            echo form_hidden($hidden);
+
+            $noticeFile = array(
+                "name" => "notice_file",
+                "id" => "notice_file",
+                "type" => "file",
+                "class" => "filestyle"
             );
 
-            echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
+            $submitFileBtn = array(
+                "id" => "open_selective_process_btn",
+                "class" => "btn btn-success btn-flat",
+                "content" => "Salvar arquivo",
+                "type" => "submit",
+                "style" => "margin-top: 5%;"
+            );
 
-                echo form_hidden($hidden);
+            include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
 
-                $noticeFile = array(
-                    "name" => "notice_file",
-                    "id" => "notice_file",
-                    "type" => "file"
-                );
-
-                $submitFileBtn = array(
-                    "id" => "open_selective_process_btn",
-                    "class" => "btn btn-success btn-flat",
-                    "content" => "Salvar arquivo",
-                    "type" => "submit",
-                    "style" => "margin-top: 5%;"
-                );
-
-                include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
-
-            echo form_close();
-            echo "<br>";
-        }
+        echo form_close();
+        echo "<br>";
     }
 
     public function updateSelectionProcess(){
