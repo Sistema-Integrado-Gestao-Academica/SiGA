@@ -15,6 +15,7 @@ echo anchor(
 <div align='right'>
 	<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
 	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
+	<i class='fa fa-cogs'> Configurações </i> &nbsp&nbsp
 	<i class='fa fa-calendar'> Definir datas </i> &nbsp&nbsp
 	<i class='fa fa-bullhorn'> Divulgações </i>
 </div>
@@ -55,6 +56,8 @@ if($validSelectiveProcesses){
 				echo "&nbsp";
 				$courseId = $course[Course_model::ID_ATTR];
 				echo anchor("edit_selection_process/{$processId}/{$courseId}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
+				echo "&nbsp";
+				echo anchor("selection_process/config/{$processId}", "<i class='fa fa-cogs'></i>", "class='btn btn-default'");
 				echo "&nbsp";
 				echo anchor("define_dates_page/{$processId}/{$courseId}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
 
