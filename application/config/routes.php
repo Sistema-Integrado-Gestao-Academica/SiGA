@@ -205,6 +205,8 @@ $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionPr
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
 $route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';
 $route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
+
+$route['selection_process/public'] = 'program/selectiveProcessPublic/index';
 $route['selection_process/guest/(:num)'] = 'program/selectiveprocess/showTimeline/$1';
 
 // Selection process config routes

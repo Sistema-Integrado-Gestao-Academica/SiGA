@@ -19,9 +19,6 @@ if ($session->isLogged()) {
 
 		showCapesAvaliationsNews($atualizations);
 	}
-	elseif ($isGuest) {
-		include(APPPATH.'views/home/_open_selective_process.php');
-	}	
 
 	?>
 
@@ -60,5 +57,5 @@ Sistema Integrado de Gestão Acadêmica
 <?php }
 
 ?>
-	
+
 
