@@ -118,8 +118,9 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function newSelectionProcess(){
 
-        $process = $this->getDataToSave();
+        $data = $this->getDataToSave();
 
+        $process = $data['process'];
         if($process !== FALSE){
             $this->load->model("selectiveprocess_model", "process_model");
             try{
@@ -127,14 +128,35 @@ class SelectiveProcessAjax extends MX_Controller {
                 $processId = $this->process_model->save($process);
 
                 $noticeName = $process->getName();
-                callout("info", "O processo seletivo ".$noticeName." foi salvo com sucesso!", "Para finalizar o processo, faça o upload do edital em PDF logo abaixo.");
 
-                $courseId = $this->input->post("course");
-                $this->uploadNoticeFileForm($processId, $courseId);
-            }catch(SelectionProcessException $e){
-                callout("warning", $e->getMessage());
+                $message = "O processo seletivo ".$noticeName." foi salvo com sucesso!";
+                $response = array(
+                    'message' => $message,
+                    'status' => TRUE,
+                    'processId' => $processId    
+                );
+
             }
+            catch(SelectionProcessException $e){
+                $message = $e->getMessage();
+                $response = array(
+                    'message' => $message,
+                    'status' => FALSE
+                );
+            }
+
         }
+        else{
+            $message = $data['message'];
+
+            $response = array(
+                'message' => $message,
+                'status' => FALSE
+            );
+        }
+        
+        $json = json_encode($response);
+        echo $json;
     }
 
     private function uploadNoticeFileForm($processId, $courseId){
@@ -187,15 +209,12 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function getDataToSave(){
 
-        echo "<h4><i class='fa fa-tag'></i> Status</h4>";
-
         $courseId = $this->input->post("course");
         $studentType = $this->input->post("student_type");
         $noticeName = $this->input->post("selective_process_name");
-        $startDate = $this->input->post("selective_process_start_date");
-        $endDate = $this->input->post("selective_process_end_date");
 
         $process = FALSE;
+        $message = "";
         try{
 
             switch($studentType){
@@ -214,34 +233,33 @@ class SelectiveProcessAjax extends MX_Controller {
 
             if($process !== FALSE){
                 $preProject = $this->input->post("phase_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
-
-
                 $preProjectWeight = $this->input->post("phase_weight_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
+                $preProjectGrade = $this->input->post("phase_grade_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
 
                 $writtenTest = $this->input->post("phase_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
-
-
                 $writtenTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
+                $writtenTestGrade = $this->input->post("phase_grade_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
 
                 $oralTest = $this->input->post("phase_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
                 $oralTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+                $oralTestGrade = $this->input->post("phase_grade_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
 
                 $phases = array();
 
                 $notSelected = "0";
 
                 if($preProject !== $notSelected){
-                    $preProject = new PreProjectEvaluation($preProjectWeight, FALSE, SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
+                    $preProject = new PreProjectEvaluation($preProjectWeight, $preProjectGrade, SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
                     $phases[] = $preProject;
                 }
 
                 if($writtenTest !== $notSelected){
-                    $writtenTest = new WrittenTest($writtenTestWeight, FALSE, SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
+                    $writtenTest = new WrittenTest($writtenTestWeight, $writtenTestGrade, SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
                     $phases[] = $writtenTest;
                 }
 
                 if($oralTest !== $notSelected){
-                    $oralTest = new OralTest($oralTestWeight, FALSE, SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+                    $oralTest = new OralTest($oralTestWeight, $oralTestGrade, SelectionProcessConstants::ORAL_TEST_PHASE_ID);
                     $phases[] = $oralTest;
                 }
 
@@ -251,24 +269,27 @@ class SelectiveProcessAjax extends MX_Controller {
                     $phases[] = new Homologation(SelectionProcessConstants::HOMOLOGATION_PHASE_ID);
 
                     $phasesOrder = $this->input->post("phases_order");
-                    $processSettings = new ProcessSettings($startDate, $endDate, $phases, $phasesOrder);
+                    $processSettings = new ProcessSettings(NULL, NULL, $phases, $phasesOrder);
 
                     $process->addSettings($processSettings);
                 }
                 else{
                     // The process must have at least one phase
-                    callout("danger", "Deve haver pelo menos uma fase além da homologação no processo seletivo.");
+                    $message = "Deve haver pelo menos uma fase além da homologação no processo seletivo.";
                 }
             }else{
                 // Invalid Student Type, cannot happen
-                callout("danger", "Tipo de estudante para o processo seletivo inválido.");
+                $message = "Tipo de estudante para o processo seletivo inválido.";
             }
-        }catch(SelectionProcessException $e){
+        }
+        catch(SelectionProcessException $e){
             $process = FALSE;
-            callout("warning", $e->getMessage());
+            $message = $e->getMessage();
         }
 
-        return $process;
+        $data = array('process' => $process, 'message' => $message);
+
+        return $data;
     }
 
 
@@ -337,6 +358,7 @@ class SelectiveProcessAjax extends MX_Controller {
         return $status;
     }
 
+    // REMOVER
     public function defineDivulgationDate($processId){
 
         $courseId = $this->input->post("course_id");
@@ -426,6 +448,64 @@ class SelectiveProcessAjax extends MX_Controller {
         }
 
         writeTimelineItem($text, $date, $link, $bodyText, $footer);
+        echo "</ul>";
+    }
+
+    public function defineSubscriptionDate($processId){
+
+        $courseId = $this->input->post("course_id");
+        $startDate = $this->input->post("start_date");
+        $endDate = $this->input->post("end_date");
+        $error = "";
+        if(is_null($startDate) || empty($startDate) || is_null($endDate) || empty($endDate)){
+            $error .= "<br>Você deve escolher a data de início e de fim.";
+        }
+        else{
+            $startDate = convertDateToDateTime($startDate);
+            $endDate = convertDateToDateTime($endDate);
+            $startDateToValidation = new Datetime($startDate);
+            $endDateToValidation = new Datetime($endDate);
+
+            $this->load->model("selectiveprocess_model", "process_model");
+            $validDates = validateDatesDiff($startDateToValidation, $endDateToValidation);
+
+            if($validDates){
+                $saved = $this->process_model->saveSubscriptionDate($processId, $startDate, $endDate);
+                if(!$saved){
+                    $error .= "<br>Não foi possível definir a data";
+                }
+            }
+            else{
+                $error .= "<br>A data final deve ser maior que a data inicial";
+            }
+
+        }
+
+        if($error){
+            $text = "Período de inscrição não definido";
+            $bodyText = function() use ($processId, $error){
+                echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
+                echo $error;
+                echo "</div>";
+                defineDateForm($processId, 'define_subscription_date', "start_date", "end_date");
+            };
+        }
+        else{
+            $text = "Período definido";
+            $formattedStartDate = convertDateTimeToDateBR($startDate);
+            $formattedEndDate = convertDateTimeToDateBR($endDate);
+            $bodyText = function() use ($formattedStartDate, $formattedEndDate, $processId){
+                echo "<b>Data de início:</b><br>";
+                echo $formattedStartDate;
+                echo "<b><br>Data de fim:</b><br>";
+                echo $formattedEndDate;
+                echo "<br><br>";
+                echo "<b>Editar data definida</b>";
+                defineDateForm($processId, 'define_subscription_date', "start_date", "end_date", $formattedStartDate, $formattedEndDate);
+            };
+        }
+
+        writeTimelineItem($text, FALSE, "#", $bodyText);
         echo "</ul>";
     }
 

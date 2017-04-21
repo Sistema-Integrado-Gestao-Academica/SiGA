@@ -1,24 +1,8 @@
 <h2 class="principal">Novo Processo Seletivo para o curso <b><i><?php echo $course['course_name'];?></i></b> </h2>
 
+<div id="selection_process_error_status"></div>
+
 <?php
-
-	$startDate = array(
-	    "name" => "selective_process_start_date",
-	    "id" => "selective_process_start_date",
-	    "type" => "text",
-		"placeholder" => "Informe a data inicial",
-	    "class" => "form-campo",
-	    "class" => "form-control"
-	);
-
-	$endDate = array(
-	    "name" => "selective_process_end_date",
-	    "id" => "selective_process_end_date",
-	    "type" => "text",
-		"placeholder" => "Informe a data final",
-	    "class" => "form-campo",
-	    "class" => "form-control"
-	);
 
 	$name = array(
 		"name" => "selective_process_name",
@@ -38,10 +22,20 @@
 		"placeholder" => "Informe o peso dessa fase"
 	);
 
+	$phaseGrade = array(
+		"type" => "number",
+		"min" => 0,
+		"max" => 100,
+		"steps" => 1,
+		"class" => "form-control",
+		"placeholder" => "Informe a nota de corte",
+		"required" => "true"
+	);
+
 	$saveProcessBtn = array(
 		"id" => "open_selective_process_btn",
-		"class" => "btn bg-primary btn-flat",
-		"content" => "Abrir Processo Seletivo"
+		"class" => "btn bg-primary btn-flat pull-right",
+		"content" => "Salvar e Continuar"
 	);
 
 	$hidden = array(
@@ -57,12 +51,7 @@
 
 ?>
 <!-- Selection Process Settings -->
-<br>
-<br>
-<h3><i class="fa fa-cogs"></i> Configurações do edital</h3>
-
-<br>
-<h4><i class="fa fa-files-o"></i> Fases do edital</h4>
+<h3><i class="fa fa-cogs"></i> Fases do edital</h3>
 
 <div class="row">
 	<div class="col-md-8">
@@ -70,7 +59,7 @@
 
 		<h4><small><b>
 		Marque as fases desejadas como "Sim".<br>
-		Ao lado do nome da fase, informe o peso da mesma.<br>
+		Ao lado do nome da fase, informe o peso da mesma e a nota de corte.<br>
 		Os pesos definidos são os pesos padrão.<br>
 		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
 		</b></small></h4>
@@ -95,6 +84,9 @@
 				$phaseWeight["id"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["name"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["value"] = $phase->getWeight();
+
+				$phaseGrade["id"] = "phase_grade_".$phase->getPhaseId();
+				$phaseGrade["name"] = "phase_grade_".$phase->getPhaseId();
 	?>
 				<div class="row">
 
@@ -107,6 +99,7 @@
 						</span>
 
 						<?= form_input($phaseWeight); ?>
+						<?= form_input($phaseGrade); ?>
 						</div>
 					</div>
 				</div>
@@ -149,20 +142,18 @@
 	<div id="phases_list_to_order"></div>
 
 	<br>
-	<?= form_button($saveProcessBtn); ?>
 
+	<div class="col-sm-2 pull-left">
+		<?= anchor(
+			"program/selectiveprocess/courseSelectiveProcesses/{$course['id_program']}",
+			"Voltar",
+			"class='btn btn-danger'"
+		); ?>
+	</div>
+	<div class="col-sm-2 pull-right">
+		<?= form_button($saveProcessBtn); ?>
+	</div>
 
-	<br>
-	<div id="selection_process_saving_status"></div>
-
-	<br>
-	<br>
-
-
-	<?= anchor(
-		"program/selectiveprocess/courseSelectiveProcesses/{$course['id_program']}",
-		"Voltar",
-		"class='btn btn-danger'"
-	); ?>
-
+	<br><br><br>
+	
 

@@ -1,3 +1,4 @@
+
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -204,6 +205,7 @@ $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionPr
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
 $route['define_dates_page/(:num)/(:num)'] = 'program/selectiveprocess/loadDefineDatesPage/$1/$2';
 $route['define_dates/(:num)/(:num)'] = 'program/selectiveprocess/defineDates/$1/$2';
+$route['selection_process/define_teachers_evaluation/(:num)/(:num)'] = 'program/selectiveprocess/defineTeachers/$1/$2';
 $route['selection_process/define_teacher'] = 'program/selectiveprocess/addTeacherToProcess';
 $route['selection_process/remove_teacher'] = 'program/selectiveprocess/removeTeacherFromProcess';
 $route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';

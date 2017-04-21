@@ -4,6 +4,24 @@
     <?php include('define_teachers_tables.php'); ?>;
 </div>
 
+<div class="col-sm-2 pull-left">
+    <?= anchor(
+        "selection_process/define_teachers_evaluation/{$processId}/{$courseId}",
+        "Voltar",
+        "class='btn btn-danger'"
+    ); ?>
+</div>
+<div class="col-sm-2 pull-right">
+    <?= anchor(
+        "selection_process/config/{$processId}",
+        "Continuar",
+        "class='btn btn-primary'"
+    ); ?>
+</div>
+
+<br>
+<br>
+
 <style type="text/css">
     #add_teachers_to_process_table, #teachers_added_to_process_table {
         height: 400px;

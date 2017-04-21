@@ -31,18 +31,3 @@
 <br>
 <br>
 
-<!-- Applying period of selection process -->
-
-<h4><i class="fa fa-calendar"></i> Período de inscrições</h4>
-<br>
-
-<div class="row">
-	<div class="col-md-3">
-		<?= form_label("Data de início do edital", "selective_process_start_date"); ?>
-		<?= form_input($startDate); ?>
-	</div>
-	<div class="col-md-3">
-		<?= form_label("Data final do edital", "selective_process_end_date"); ?>
-		<?= form_input($endDate); ?>
-	</div>
-</div>

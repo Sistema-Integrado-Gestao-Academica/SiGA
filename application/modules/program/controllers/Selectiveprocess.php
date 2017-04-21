@@ -382,6 +382,18 @@ class SelectiveProcess extends MX_Controller {
         return $data;
     }
 
+    public function defineTeachers($processId, $courseId){
+
+        $this->load->model("program/course_model");
+        $course = $this->course_model->getCourseById($courseId);
+        $data = $this->getDefineTeachersViewData($processId, $course['id_program']);
+        $data['programId'] = $course['id_program'];
+        $data['processId'] = $processId;
+        $data['courseId'] = $courseId;
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_teachers", $data);
+    }
+
     private function getEditProcessViewData($processId, $courseId){
         $selectiveProcess = $this->process_model->getById($processId);
         $this->load->module("program/phase");

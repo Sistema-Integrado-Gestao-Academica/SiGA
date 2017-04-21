@@ -16,11 +16,13 @@ class ProcessSettings{
 	private $phases;
 	private $phasesOrder;
 
-	public function __construct($startDate, $endDate, $phases = FALSE, $phasesOrder = FALSE){
+	public function __construct($startDate = FALSE, $endDate = FALSE, $phases = FALSE, $phasesOrder = FALSE){
 
-		$this->setStartDate($startDate);
-		$this->setEndDate($endDate);
-		$this->validateDatesDiff();
+		if($startDate != NULL){
+			$this->setStartDate($startDate);
+			$this->setEndDate($endDate);
+			$this->validateDatesDiff();
+		}
 		$this->setPhases($phases);
 		$this->setPhasesOrder($phasesOrder);
 	}
@@ -189,7 +191,12 @@ class ProcessSettings{
 
 		$date = $this->getStartDate();
 
-		$formattedDate = $date->format("d/m/Y");
+		if($date != NULL){
+			$formattedDate = $date->format("d/m/Y");
+		}
+		else{
+			$formattedDate = "Não informada";
+		}
 
 		return $formattedDate;
 	}
@@ -198,7 +205,12 @@ class ProcessSettings{
 
 		$date = $this->getEndDate();
 
-		$formattedDate = $date->format("d/m/Y");
+		if($date != NULL){
+			$formattedDate = $date->format("d/m/Y");
+		}
+		else{
+			$formattedDate = "Não informada";
+		}
 
 		return $formattedDate;
 	}

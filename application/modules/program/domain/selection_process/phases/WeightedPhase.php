@@ -14,7 +14,7 @@ abstract class WeightedPhase extends ProcessPhase{
 
     const INVALID_WEIGHT = "O peso da fase está fora do intervalo permitido.";
     const INVALID_GRADE = "A nota obtida na fase está fora do intervalo permitido.";
-
+    
 	protected $weight;
 	protected $grade;
 
@@ -57,20 +57,15 @@ abstract class WeightedPhase extends ProcessPhase{
     public function setGrade($grade){
 
         if($grade !== FALSE){
-
-            if(is_double($grade) || ($grade !== NULL && !is_string($grade) && !is_nan((double) $grade) )){
-
-                if(( (($grade >= self::MIN_GRADE) && ($grade <= self::MAX_GRADE)) ) ){
-                    
-                    $this->grade = $grade;
-                }
-                else{
-                    throw new SelectionProcessException(self::INVALID_GRADE);
-                }
-            }else{
+            if($grade >= self::MIN_GRADE && $grade <= self::MAX_GRADE){
+                
+                $this->grade = $grade;
+            }
+            else{
                 throw new SelectionProcessException(self::INVALID_GRADE);
             }
-        }else{
+        }
+        else{
             $this->grade = $grade;
         }
 	}

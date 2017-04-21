@@ -29,6 +29,7 @@ class SelectiveProcess_model extends CI_Model {
 	const PROCESS_PHASE_TABLE = "process_phase";
 	const ID_PHASE_ATTR = "id_phase";
 	const PROCESS_PHASE_WEIGHT_ATTR = "weight";
+	const PROCESS_PHASE_GRADE_ATTR= "grade";
 	const PROCESS_PHASE_START_DATE_ATTR = "start_date";
 	const PROCESS_PHASE_END_DATE_ATTR = "end_date";
 
@@ -102,8 +103,6 @@ class SelectiveProcess_model extends CI_Model {
 		$phasesOrder = NULL;
 
 		if($settings){
-			$startDate = $settings->getYMDStartDate();
-			$endDate = $settings->getYMDEndDate();
 			$phasesOrder = serialize($settings->getPhasesOrder());
 		}
 
@@ -111,8 +110,6 @@ class SelectiveProcess_model extends CI_Model {
 			self::COURSE_ATTR => $courseId,
 			self::PROCESS_TYPE_ATTR => $processType,
 			self::NOTICE_NAME_ATTR => $noticeName,
-			self::START_DATE_ATTR => $startDate,
-			self::END_DATE_ATTR => $endDate,
 			self::PHASE_ORDER_ATTR => $phasesOrder
 		);
 
@@ -133,14 +130,18 @@ class SelectiveProcess_model extends CI_Model {
 				if($phase->getPhaseName() === SelectionProcessConstants::HOMOLOGATION_PHASE){
 
 					$phaseWeight = SelectionProcessConstants::HOMOLOGATION_PHASE_WEIGHT;
+
+					$phaseGrade = SelectionProcessConstants::HOMOLOGATION_PHASE_GRADE;
 				}else{
 					$phaseWeight = $phase->getWeight();
+					$phaseGrade = $phase->getGrade();
 				}
 
 				$arrayToSave = array(
 					self::ID_ATTR => $processId,
 					self::ID_PHASE_ATTR => $phaseId,
-					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight
+					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight,
+					self::PROCESS_PHASE_GRADE_ATTR => $phaseGrade
 				);
 
 				$this->db->where(self::ID_ATTR, $processId);
@@ -417,6 +418,17 @@ class SelectiveProcess_model extends CI_Model {
     	$this->db->where(self::ID_ATTR, $processId);
     	$this->db->where(self::ID_PHASE_ATTR, $phaseId);
     	$saved = $this->db->update(self::PROCESS_PHASE_TABLE, $dataToSave);
+    	return $saved;
+    }
+
+    public function saveSubscriptionDate($processId, $startDate, $endDate){
+
+    	$this->db->where(self::ID_ATTR, $processId);
+    	$dataToSave = array(
+    		self::START_DATE_ATTR => $startDate,
+    		self::END_DATE_ATTR => $endDate
+    	);
+    	$saved = $this->db->update($this->TABLE, $dataToSave);
     	return $saved;
     }
 

@@ -13,7 +13,8 @@ class SelectionProcessConstants {
 	const ORAL_TEST_PHASE_ID = 4;
 
 	const HOMOLOGATION_PHASE_WEIGHT = 0;
-
+	const HOMOLOGATION_PHASE_GRADE = 0;
+	
 	const REGULAR_STUDENT = "regular_student";
 	const SPECIAL_STUDENT = "special_student";
 	const REGULAR_STUDENT_PORTUGUESE = "Aluno regular";

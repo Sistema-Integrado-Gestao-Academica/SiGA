@@ -83,7 +83,6 @@ function validateDatesDiff($startDate, $endDate){
 }
 
 function convertDateTimeToDateBR($date){
-
 	if($date != NULL){
 		$date = new DateTime($date);
 		$date = $date->format("d/m/Y");

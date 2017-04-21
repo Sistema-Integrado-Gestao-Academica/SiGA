@@ -36,12 +36,14 @@ $(document).ready(function(){
 		saveSelectiveProcess("updateSelectionProcess");
 	});
 
-	$("#selective_process_start_date").datepicker($.datepicker.regional["pt-BR"], {
-		dateFormat: "dd-mm-yy"
+	$(document).on('focus',"#start_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
 	});
 
-	$("#selective_process_end_date").datepicker($.datepicker.regional["pt-BR"], {
-		dateFormat: "dd-mm-yy"
+	$(document).on('focus',"#end_date", function(){
+	    $(this).datepicker($.datepicker.regional["pt-BR"], {
+		dateFormat: "dd-mm-yy"});
 	});
 
 	$('#edit_notice_path_form').submit(function(e) {
@@ -77,6 +79,11 @@ $(document).ready(function(){
 	$(document).on('click', '#define_date_phase_4', function(e){
     	e.preventDefault();
 		definePhaseDate(4);
+	});
+
+	$(document).on('click', '#define_subscription_date', function(e){
+    	e.preventDefault();
+		defineSubscriptionDate();
 	});
 
 	$(document).on('focus',"#phase_1_start_date", function(){
@@ -154,18 +161,18 @@ function saveSelectiveProcess(saveMethod){
 	var course = $("#course").val();
 	var studentType = $("#student_type").val();
 	var noticeName = $("#selective_process_name").val();
-	var startDate = $("#selective_process_start_date").val();
-	var endDate = $("#selective_process_end_date").val();
-
-
+	
 	var preProject = $("#phase_2").val();
 	var preProjectWeight = $("#phase_weight_2").val();
+	var preProjectGrade = $("#phase_grade_2").val();
 
 	var writtenTest = $("#phase_3").val();
-	var writtenTestWeight = $("#phase_weight_2").val();
+	var writtenTestWeight = $("#phase_weight_3").val();
+	var writtenTestGrade = $("#phase_grade_3").val();
 
 	var oralTest = $("#phase_4").val();
 	var oralTestWeight = $("#phase_weight_4").val();
+	var oralTestGrade = $("#phase_grade_4").val();
 
 	var phasesOrder = $("#sortable").sortable("toArray");
 
@@ -177,14 +184,15 @@ function saveSelectiveProcess(saveMethod){
 		course: course,
 	    student_type: studentType,
 	    selective_process_name: noticeName,
-	    selective_process_start_date: startDate,
-	    selective_process_end_date: endDate,
 		phase_2: preProject,
 		phase_weight_2: preProjectWeight,
+		phase_grade_2: preProjectGrade,
 	    phase_3: writtenTest,
 	    phase_weight_3: writtenTestWeight,
+		phase_grade_3: writtenTestGrade,
 	    phase_4: oralTest,
 	    phase_weight_4: oralTestWeight,
+		phase_grade_4: oralTestGrade,
 	    phases_order: phasesOrder
 	}
 	if(document.getElementById("processId")){
@@ -195,8 +203,18 @@ function saveSelectiveProcess(saveMethod){
 		urlToPost,
 		data,
 		function(data){
-			$("#selection_process_saving_status").html(data);
-		}
+			var response = JSON.parse(data);
+			alert(response);
+			if(response.status){
+				window.setTimeout(function () {
+			        location.href = siteUrl + "/define_dates_page/" + response.processId + "/"+ course;
+				}, 1000);
+			}
+			else{
+				$("#selection_process_error_status").html("<p class='alert alert-danger'>" + response.message + "</p>");
+				scrollTo(0,0);
+			}
+		}	
 	);
 }
 
@@ -315,6 +333,32 @@ function definePhaseDate(phaseId){
 	);
 }
 
+function defineSubscriptionDate(){
+	var siteUrl = $("#site_url").val();
+	var start_date = $("#start_date").val();
+	var end_date = $("#end_date").val();
+	var process_id = $("#process_id").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineSubscriptionDate/" + process_id;
+	var course_id = $("#course_id").val();
+
+	var data = {
+		start_date: start_date,
+		end_date: end_date,
+		course_id: course_id
+	}
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#subscription").html(data);
+		}
+	);
+}
+
+	
+
+
+
 function addFormToAddDivulgation(processId, firstDivulgation){
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addFormToAddDivulgation/" + processId;
@@ -358,4 +402,5 @@ function divulgateNotice(){
 			}
 		}
 	);
+
 }

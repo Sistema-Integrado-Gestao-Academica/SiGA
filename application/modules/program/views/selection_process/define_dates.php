@@ -6,76 +6,32 @@
     $processName = $selectiveprocess->getName();
 
 	echo "<ul class='timeline'>";
-		// Notice Divulgation
-		writeTimelineLabel("white", "Divulgação do Edital");
-	    if($processDivulgation){
-	        $text = $processDivulgation['description'];
-	        $link = site_url('download_notice/'.$processId.'/'.$courseId);
-	        $bodyText = function() use ($processDivulgation){
-	        	echo $processDivulgation['message'];
-	            echo "<br>Clique para baixar.";
-	        };
-	        $footer = "";
-	        $date = convertDateTimeToDateBR($processDivulgation['date']);
-	        $dateToTest = new Datetime($processDivulgation['date']);
-	        $today = new Datetime();
-			$message = $processDivulgation['message'];
-	        if($dateToTest > $today){
-	            $footer = function() use ($processId, $courseId, $processName, $date, $text, $message){
-				    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
-				    echo "<br>";
-				    echo "<br>";
-				    echo "<div id='define_date_form' class='collapse'>";
-				    echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
-				    echo "<br>";
-		        	formOfDateDivulgation($processId, $processName, $courseId, $date, $text, $message);
-	        	};
-		    }
-	    }
-	    else{
-	        $text = "Data não definida";
-	        $bodyText = function(){
-	            echo "Você pode definir uma data ou divulgar o processo seletivo agora.";
-	        };
-	        $date = "";
-	        $link = "#";
-	        createDivulgationsModal($selectiveprocess);
-	        $footer = function() use ($processId, $courseId, $processName){
-	        	echo anchor("#divulgationsmodal".$processId, "Divulgar agora", "class='btn btn-success' data-toggle='modal'");
-			    echo "&nbsp";
-			    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Definir data</button>";
-			    echo "<br>";
-			    echo "<br>";
-			    echo "<div id='define_date_form' class='collapse'>";
-			    echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
-			    echo "<br>";
-	        	formOfDateDivulgation($processId, $processName, $courseId);
-	        };
-	    }
-        echo "<li>";
-            echo "<i class='fa fa-calendar-o bg-blue'></i>";
-            echo "<div id='divulgation' class='timeline-item'>";
-                writeTimelineItem($text, $date, $link, $bodyText, $footer);
-            echo "</div>";
-        echo "</li>";
-
-
 	    // Subscription
 	    writeTimelineLabel("blue", "Inscrição");
 	    if($settings){
 	        $text = "Período de inscrições";
-	        $bodyText = function() use ($settings){
-	            echo "<b>Data de início:</b><br>";
-	            $startDate = $settings->getFormattedStartDate();
-	            echo $startDate;
-	            $endDate = $settings->getFormattedEndDate();
-	            echo "<b><br>Data de fim:</b><br>";
-	            echo $endDate;
-	            echo "<br><br>";
-	            alert(function(){
-	                echo "<h5>Para editar o período de inscrição você deve editar o processo seletivo.</h5>";
-	            }, "info", FALSE, "info", $dismissible=TRUE);
-	        };
+	        $startDate = $settings->getStartDate();
+	        $endDate = $settings->getEndDate();
+	        if($startDate != NULL && $endDate !== NULL){
+	        	$formattedStartDate = $settings->getFormattedStartDate();
+	        	$formattedEndDate = $settings->getFormattedEndDate();
+                $text = "Período definido";
+    	        $bodyText = function() use ($formattedStartDate, $formattedEndDate, $processId){
+		            echo "<b>Data de início:</b><br>";
+		            echo $formattedStartDate;
+		            echo "<b><br>Data de fim:</b><br>";
+		            echo $formattedEndDate;
+		            echo "<br><br>";
+	                echo "<b>Editar data definida</b>";
+	                defineDateForm($processId, 'define_subscription_date', "start_date", "end_date", $formattedStartDate, $formattedEndDate);
+		        };
+            }
+            else{
+                $text = "Período de inscrições não definido";
+                $bodyText = function() use ($processId){
+                    defineDateForm($processId, 'define_subscription_date', "start_date", "end_date");
+                };
+            }
 	        echo "<li>";
 	            echo "<i class='fa fa-calendar-o bg-blue'></i>";
 	            echo "<div id='subscription' class='timeline-item'>";
@@ -127,9 +83,21 @@
     echo "</ul>";
 ?>
 
-<?= anchor(
-	"program/selectiveprocess/courseSelectiveProcesses/{$courseId}",
-	"Voltar",
-	"class='btn btn-danger'"
-); ?>
+	<div class="col-sm-2 pull-left">
+		<?= anchor(
+			"edit_selection_process/{$processId}/{$courseId}",
+			"Voltar",
+			"class='btn btn-danger'"
+		); ?>
+	</div>
+	<div class="col-sm-2 pull-right">
+		<?= anchor(
+			"selection_process/define_teachers_evaluation/{$processId}/{$courseId}",
+			"Continuar",
+			"class='btn btn-primary'"
+		); ?>
+	</div>
+
+	<br>
+	<br>
 
