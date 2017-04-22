@@ -1,21 +1,19 @@
 <h2 class="principal">Inscrição no processo <b><i><?= $process->getName() ?></i></b></h2>
 
 <?php
-  $hidden = array(
 
-  );
-
-  $docFileInput = function($docId, $docName){
+  $docFileInput = function($doc){
     return [
-      'name' => $docId,
-      'id' => $docId,
+      'name' => 'doc_'.$doc['id'],
+      'id' => 'doc_'.$doc['id'],
       'type' => 'file',
       'class' => 'filestyle',
       'data-buttonBefore' => 'true',
       'data-buttonText' => '',
-      'data-placeholder' => $docName,
+      'data-placeholder' => $doc['doc_name'],
       'data-iconName' => 'fa fa-file',
       'data-buttonName' => 'btn-default',
+      'required' => $doc['totally_required']
     ];
   };
 
@@ -362,7 +360,7 @@
           <div class="col-md-4 form-group">
             <?= form_label($doc['doc_name'], $doc['id']) ?>
             <br><small><?= $doc['doc_desc'] ?></small>
-            <?= form_input($docFileInput($doc['id'], $doc['doc_name'])) ?>
+            <?= form_input($docFileInput($doc)) ?>
           </div>
         <?php endforeach ?>
       </div>
