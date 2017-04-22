@@ -210,7 +210,9 @@ $route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divu
 $route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
 
 $route['selection_process/public'] = 'program/selectiveProcessPublic/index';
-$route['selection_process/guest/(:num)'] = 'program/selectiveprocess/showTimeline/$1';
+$route['selection_process/subscribe/(:num)'] = 'program/selectiveProcessPublic/subscribe/$1';
+$route['selection_process/subscribe_to/(:num)'] = 'program/selectiveProcessPublic/subscribeTo/$1';
+$route['selection_process/divulgations/(:num)'] = 'program/selectiveProcessPublic/divulgations/$1';
 
 // Selection process config routes
 $route['selection_process/config/(:num)'] = 'program/selectiveprocessconfig/index/$1';

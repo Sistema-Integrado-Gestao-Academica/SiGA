@@ -33,6 +33,56 @@ class SelectiveProcessPublic extends MX_Controller {
         );
     }
 
+    public function divulgations($processId){
+        $selectiveProcess = $this->process_model->getById($processId);
+        $processDivulgations = $this->process_model->getProcessDivulgations($processId);
+
+        $data = array(
+            'selectiveprocess' => $selectiveProcess,
+            'processDivulgations' => $processDivulgations
+        );
+
+        $this->load->helper('selectionprocess');
+
+        loadTemplateSafelyByPermission(
+            PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            "program/selection_process_public/divulgations",
+            $data
+        );
+    }
+
+    public function subscribe($processId){
+        $process = $this->process_model->getById($processId);
+        $requiredDocs = $this->process_config_model->getProcessDocs($processId);
+
+        $data = [
+            'process' => $process,
+            'requiredDocs' => $requiredDocs
+        ];
+
+        loadTemplateSafelyByPermission(
+            PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            "program/selection_process_public/subscribe",
+            $data
+        );
+    }
+
+    public function subscribeTo($processId){
+        $self = $this;
+        withPermission(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            function() use($self, $processId){
+                $dataOk = validateWithRule('selection_process_subscription');
+
+                if($dataOk){
+                    echo 'Data ok!';
+                }else{
+                    $self->subscribe($processId);
+                }
+
+            }
+        );
+    }
+
     private function getCoursesName($openSelectiveProcesses){
         $courses = array();
         if(!empty($openSelectiveProcesses)){

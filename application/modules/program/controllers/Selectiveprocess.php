@@ -494,7 +494,7 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function divulgations($selectiveProcessId){
-        
+
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
         $processDivulgations = $this->process_model->getProcessDivulgations($selectiveProcessId);
 
@@ -531,17 +531,17 @@ class SelectiveProcess extends MX_Controller {
         else{
            $filePath = NULL;
         }
-        
+
         $today = new Datetime();
         $today = $today->format("Y/m/d");
         if($filePath || is_null($filePath)){
             $data = array(
-                'id_process' => $processId, 
+                'id_process' => $processId,
                 'description' => $description,
                 'message' => $message,
                 'initial_divulgation' => $initial_divulgation,
                 'date' => $today,
-                'file_path' => $filePath 
+                'file_path' => $filePath
             );
             if($related_phase !== "0"){
                 $data['related_id_phase'] = $related_phase;
@@ -562,16 +562,16 @@ class SelectiveProcess extends MX_Controller {
             $errors = $this->upload->display_errors();
             $message = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
         }
-        
+
         $this->session->set_flashdata($status, $message);
-        redirect("selection_process/divulgations/{$processId}");             
+        redirect("selection_process/divulgations/{$processId}");
     }
 
     public function downloadDivulgationFile($divulgationId){
 
         $divulgation = $this->process_model->getProcessDivulgationById($divulgationId);
         $filePath = $divulgation['file_path'];
-        
+
         $this->load->helper('download');
         if(file_exists($filePath)){
             force_download($filePath, NULL);
@@ -581,26 +581,7 @@ class SelectiveProcess extends MX_Controller {
             $message = "Nenhum arquivo encontrado.";
             $this->session->set_flashdata($status, $message);
             $processId = $divulgation['id_process'];
-            redirect("selection_process/divulgations/{$processId}");             
+            redirect("selection_process/divulgations/{$processId}");
         }
     }
-
-    public function showTimeline($processId){
-        $selectiveProcess = $this->process_model->getById($processId);
-        $processDivulgations = $this->process_model->getProcessDivulgations($processId);
-
-        $data = array(
-            'selectiveprocess' => $selectiveProcess,
-            'processDivulgations' => $processDivulgations
-        );
-
-        $this->load->helper('selectionprocess');
-
-        loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP, "/home/divulgations", $data);
-    }
-    
-    private function getCoursesName($selectiveProcess){
-        
-    }
-
 }
