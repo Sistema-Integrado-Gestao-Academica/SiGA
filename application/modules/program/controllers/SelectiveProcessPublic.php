@@ -10,6 +10,7 @@ require_once(MODULESPATH."/program/domain/selection_process/SelectionProcess.php
 class SelectiveProcessPublic extends MX_Controller {
 
     public function __construct(){
+        parent::__construct();
         $this->load->model('program/selectiveprocess_model', 'process_model');
         $this->load->model('program/selectiveprocessconfig_model', 'process_config_model');
     }
@@ -74,14 +75,19 @@ class SelectiveProcessPublic extends MX_Controller {
         withPermission(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
             function() use($self, $processId){
                 $dataOk = validateWithRule('selection_process_subscription');
-
                 if($dataOk){
-                    $data = getSubmittedDataFor('selection_process_subscription');
-                    var_dump($data);
+
+                    $this->load->service(
+                        'program/SelectionProcessSubscription',
+                        'subscription_service'
+                    );
+
+                    $candidateData = getSubmittedDataFor('selection_process_subscription');
+                    $this->subscription_service->newSubscription($processId, $candidateData);
+
                 }else{
                     $self->subscribe($processId);
                 }
-
             }
         );
     }
