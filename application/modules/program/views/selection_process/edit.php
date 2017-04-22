@@ -49,6 +49,7 @@
             <h5><center class="tab_description"> Configurações de inscrição do candidato </center></h5>
         </li>
     </div>
+    </ul>
 </div>
 
 <form role="form">
@@ -86,6 +87,5 @@
         </div>
     </div>  
 </form>
-
 <br>
 <br>

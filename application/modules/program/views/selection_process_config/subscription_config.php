@@ -92,11 +92,7 @@
 
 
 <div class="col-sm-2 pull-left">
-<<<<<<< HEAD
     <button class='btn btn-danger pull-left' type="button" id="back_to_define_teachers">Voltar</button>
-=======
-    <button class='btn btn-danger pull-left' id="back_to_define_teachers">Voltar</button>
->>>>>>> Issue #299 - Finishing process opening and editing refactoring
 </div>
 
 <?php 

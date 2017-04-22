@@ -178,7 +178,11 @@ $(document).ready(function(){
 
 	$("#back_to_edit_process").click(function(e){
     	e.preventDefault();
+<<<<<<< HEAD
 		openTab('#define_teachers_link');
+=======
+		openTab('#edit_process_link');
+>>>>>>> Issue #299 - Refactoring visualization of process
 	});
 	
 

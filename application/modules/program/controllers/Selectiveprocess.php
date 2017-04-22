@@ -86,8 +86,6 @@ class SelectiveProcess extends MX_Controller {
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses
-            'status' => $status['status'],
-            'noticeWithAllConfig' => $status['noticeWithAllConfig']
         );
 
         $data = $data + $configData + $status;
@@ -575,4 +573,5 @@ class SelectiveProcess extends MX_Controller {
             redirect("selection_process/divulgations/{$processId}");
         }
     }
+
 }

@@ -551,6 +551,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $relatedPhases = $this->getPreviousAndNextPhase($phaseId, $phases);
         $previousPhase = $relatedPhases['previous'];
 
+
         if(is_null($previousPhase)){
             $previousPhaseEndDate = $settings->getStartDate();
             if($previousPhaseEndDate != NULL){
