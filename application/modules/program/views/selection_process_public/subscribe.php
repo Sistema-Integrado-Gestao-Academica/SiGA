@@ -27,7 +27,7 @@
     'placeholder' => 'Informe o seu nome completo',
     'maxlength' => '70',
     'required' => true,
-    'value' => set_value('candidate_full_name', '', false)
+    'value' => set_value('candidate_full_name', $userData->getName(), false)
   );
 
   $maleSex = array(
@@ -65,7 +65,7 @@
     'placeholder' => '* Evite informar emails institucionais.',
     'maxlength' => '60',
     'required' => true,
-    'value' => set_value('candidate_email', '', false)
+    'value' => set_value('candidate_email', $userData->getEmail(), false)
   );
 
   $nationality = array(

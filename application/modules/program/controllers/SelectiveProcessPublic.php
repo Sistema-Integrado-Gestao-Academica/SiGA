@@ -54,10 +54,12 @@ class SelectiveProcessPublic extends MX_Controller {
     public function subscribe($processId){
         $process = $this->process_model->getById($processId);
         $requiredDocs = $this->process_config_model->getProcessDocs($processId);
+        $userData = getSession()->getUserData();
 
         $data = [
             'process' => $process,
-            'requiredDocs' => $requiredDocs
+            'requiredDocs' => $requiredDocs,
+            'userData' => $userData
         ];
 
         loadTemplateSafelyByPermission(
@@ -74,7 +76,8 @@ class SelectiveProcessPublic extends MX_Controller {
                 $dataOk = validateWithRule('selection_process_subscription');
 
                 if($dataOk){
-                    echo 'Data ok!';
+                    $data = getSubmittedDataFor('selection_process_subscription');
+                    var_dump($data);
                 }else{
                     $self->subscribe($processId);
                 }
