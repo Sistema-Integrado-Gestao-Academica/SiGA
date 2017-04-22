@@ -178,7 +178,7 @@ $(document).ready(function(){
 
 	$("#back_to_edit_process").click(function(e){
     	e.preventDefault();
-		openTab('#edit_process_link');
+		openTab('#define_teachers_link');
 	});
 	
 

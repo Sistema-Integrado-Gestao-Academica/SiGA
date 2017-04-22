@@ -208,7 +208,6 @@ class SelectiveProcessAjax extends MX_Controller {
             }
             catch(SelectionProcessException $e){
                 $message = $e->getMessage();
-
                 $response = array(
                     'message' => $message,
                     'status' => FALSE
@@ -226,6 +225,19 @@ class SelectiveProcessAjax extends MX_Controller {
 
         $json = json_encode($response);
         echo $json;
+    }
+
+    private function getPhases($process){
+        $settings = $process->getSettings();
+        $phases = $settings->getPhases();
+        $phasesArray = array();
+        if($phases){
+            foreach ($phases as $phase) {
+                $phaseId = $phase->getPhaseId();
+                $phaseName = $phase->getPhaseName();
+                $phasesArray[$phaseId] = $phaseName;
+            }
+        }
     }
 
     private function getPhases($process){
@@ -538,7 +550,6 @@ class SelectiveProcessAjax extends MX_Controller {
         
         $relatedPhases = $this->getPreviousAndNextPhase($phaseId, $phases);
         $previousPhase = $relatedPhases['previous'];
-
 
         if(is_null($previousPhase)){
             $previousPhaseEndDate = $settings->getStartDate();

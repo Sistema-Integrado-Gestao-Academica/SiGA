@@ -2,7 +2,7 @@
 <?php
 echo "<hr>";
 
-$settings = $selectiveprocess->getSettings();
+$settings = $process->getSettings();
 $phases = $settings->getPhases();
 
 $phasesName = array();
@@ -14,7 +14,7 @@ if($phases !== FALSE){
     }
 }
 // True because is a guest user
-showDivulgations($selectiveprocess, $processDivulgations, $phasesName, TRUE);
+showDivulgations($process, $processDivulgations, $phasesName, TRUE);
 
 echo "<br>";
 

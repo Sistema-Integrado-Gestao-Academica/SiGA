@@ -86,6 +86,8 @@ class SelectiveProcess extends MX_Controller {
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses
+            'status' => $status['status'],
+            'noticeWithAllConfig' => $status['noticeWithAllConfig']
         );
 
         $data = $data + $configData + $status;
