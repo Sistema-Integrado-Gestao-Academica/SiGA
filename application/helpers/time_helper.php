@@ -18,9 +18,20 @@ function getCurrentYear(){
 	return $currentYear;
 }
 
-function convertDateToDateTime($date){
+function convertDateToDB($date, $format='d/m/Y'){
+	$dateTimeReady = convertDateToDateTime($date, $format);
+	try{
+		$dateTimeObj = new DateTime($dateTimeReady);
+		$dateDbReady = $dateTimeObj->format("Y/m/d");
+	    return $dateDbReady;
+	}catch(Exception $e){
+		throw new RuntimeException("The '{$date}' is invalid.");
+	}
+}
 
-	$validDate = validateDate($date);
+function convertDateToDateTime($date, $format='d/m/Y'){
+
+	$validDate = validateDate($date, $format);
 
 	if($validDate){
 		$date = formatDateToDateTime($validDate);
@@ -32,9 +43,9 @@ function convertDateToDateTime($date){
 	return $date;
 }
 
-function validateDate($date){
+function validateDate($date, $format="d/m/Y"){
 
-	$date = date_parse_from_format("d/m/Y", $date);
+	$date = date_parse_from_format($format, $date);
 	$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE
 				   && $date["day"] !== FALSE && $date["error_count"] === 0
 				   && $date["warning_count"] === 0;
