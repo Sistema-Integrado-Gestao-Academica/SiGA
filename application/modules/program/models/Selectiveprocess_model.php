@@ -12,6 +12,7 @@ require_once(MODULESPATH."/program/domain/selection_process/phases/Homologation.
 require_once(MODULESPATH."/program/domain/selection_process/phases/PreProjectEvaluation.php");
 require_once(MODULESPATH."/program/domain/selection_process/phases/WrittenTest.php");
 require_once(MODULESPATH."/program/domain/selection_process/phases/OralTest.php");
+
 class SelectiveProcess_model extends CI_Model {
 
 	public $TABLE = "selection_process";
@@ -182,16 +183,6 @@ class SelectiveProcess_model extends CI_Model {
 
 	}
 
-	public function updateNoticeFile($processId, $noticePath){
-
-		$this->db->where(self::ID_ATTR, $processId);
-		$updated = $this->db->update($this->TABLE, array(
-			self::NOTICE_PATH_ATTR => $noticePath
-		));
-
-		return $updated;
-	}
-
 	public function getCourseSelectiveProcesses($courseId){
 
 		$foundProcesses = $this->get(self::COURSE_ATTR, $courseId, FALSE);
@@ -331,61 +322,6 @@ class SelectiveProcess_model extends CI_Model {
     }
 
 
-    public function saveProcessDivulgation($data, $noticeDivulgation = FALSE){
-    	if($noticeDivulgation){
-    		$processId = $data['id_process'];
-    		$this->db->where(self::ID_ATTR, $processId);
-			$this->db->where('initial_divulgation', True);
-		   	$result = $this->db->get('selection_process_divulgation');
-			$divulgationExistent = $result->num_rows() > 0;
-			if($divulgationExistent){
-				$this->db->where(self::ID_ATTR, $processId);
-				$saved = $this->db->update("selection_process_divulgation", $data);
-			}
-			else{
-	    		$saved = $this->db->insert("selection_process_divulgation", $data);
-			}
-		}
-		else{
-    		$saved = $this->db->insert("selection_process_divulgation", $data);
-		}
-
-    	return $saved;
-    }
-
-    public function getProcessDivulgations($processId, $noticeDivulgation = FALSE){
-
-    	$this->db->select("*");
-		$this->db->from('selection_process_divulgation');
-		$this->db->where(self::ID_ATTR, $processId);
-    	if($noticeDivulgation){
-			$this->db->where('initial_divulgation', True);
-    	}
-    	else{
-			$this->db->where('date <= CURDATE()', NULL, FALSE);
-    		$this->db->order_by('date', 'DESC');
-    	}
-		$noticeDivulgations = $this->db->get()->result_array();
-
-		$noticeDivulgations = checkArray($noticeDivulgations);
-
-		if($noticeDivulgation){
-			$noticeDivulgations = $noticeDivulgations[0];
-		}
-
-		return $noticeDivulgations;
-    }
-
-    public function getProcessDivulgationById($divulgationId){
-
-    	$this->db->select("*");
-    	$searchResult = $this->db->get_where('selection_process_divulgation', array('id' => $divulgationId));
-  		$divulgation = $searchResult->row_array();
-		$divulgation = checkArray($divulgation);
-
-		return $divulgation;
-    }
-
     public function sortPhasesBasedInOrder($phases, $phasesOrder){
 
     	$phasesInOrder = array();
@@ -473,6 +409,12 @@ class SelectiveProcess_model extends CI_Model {
         return $teachers;
     }
 
+    public function updateProcessFlags($processId, $flagArray){
+    	$this->db->where(self::ID_ATTR, $processId);
+    	$this->db->update($this->TABLE, $flagArray);
+    }
+
+    
     public function getOpenSelectiveProcesses(){
 
 		$query = "SELECT DISTINCT selection_process.* FROM selection_process
@@ -491,10 +433,5 @@ class SelectiveProcess_model extends CI_Model {
         	}
         }
 		return $selectiveProcesses;
-    }
-
-    public function updateProcessFlags($processId, $flagArray){
-    	$this->db->where(self::ID_ATTR, $processId);
-    	$this->db->update($this->TABLE, $flagArray);
     }
 }

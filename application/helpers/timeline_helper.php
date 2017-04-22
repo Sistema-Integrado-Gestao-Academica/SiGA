@@ -36,7 +36,7 @@ function writeTimelineItemToAddItem($textToInput, $bodyText = "", $footer = ""){
 
     $today = new Datetime();
     $date = $today->format("d/m/Y");
-    echo "<span class='time'><i class='fa fa-calendar'></i>". $date."</span>";
+    echo "<span class='time pull-right'><i class='fa fa-calendar'></i> ". $date."</span><br>";
 
     echo "<h3 class='timeline-header'>";
         $textToInput();

@@ -55,14 +55,13 @@ if($validSelectiveProcesses){
 
 			echo "<td>";
 				$classDivulgationsButton = $noticeWithAllConfig[$processId] ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
-				echo "<br><br>";
 				createProcessModal($process, $settings, $processesTeachers, $processesDocs, $processesResearchLines);
 				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-primary'><i class='fa fa-eye'></i></a>";
 				echo "&nbsp";
 				$courseId = $course[Course_model::ID_ATTR];
 				echo anchor("edit_selection_process/{$processId}", "<i class='fa fa-edit'></i>", "class='btn btn-success'");
 				echo "&nbsp";
-				echo anchor("selection_process/divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", $classDivulgationsButton);
+				echo anchor("selection_process/secretary_divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", $classDivulgationsButton);
 
 			echo "</td>";
 

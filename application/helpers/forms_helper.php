@@ -963,54 +963,6 @@ function searchInStudentList($specificData, $course){
 	echo "</form>";
 }
 
-function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFieldId, $startDateValue = "", $endDateValue = ""){
-
-	$hidden = array(
-		'id' => "process_id",
-		'name' => "process_id",
-		'type' => "hidden",
-		'value' => $processId
-	);
-
-
-	$submitBtn = array(
-		"id" => $submitBtnId,
-		"content" => "Definir",
-		"class" => "btn bg-primary btn-flat",
-		"type" => "submit"
-	);
-
-	$startDate = array(
-	    "name" => $startDateFieldId,
-	    "id" => $startDateFieldId,
-	    "type" => "text",
-		"placeholder" => "Informe a data inicial",
-	    "class" => "form-campo",
-	    "class" => "form-control",
-	    "value" => $startDateValue
-	);
-
-	$endDate = array(
-	    "name" => $endDateFieldId,
-	    "id" => $endDateFieldId,
-	    "type" => "text",
-		"placeholder" => "Informe a data final",
-	    "class" => "form-campo",
-	    "class" => "form-control",
-	    "value" => $endDateValue
-	);
-	echo form_input($hidden);
-
-	echo "<form class='form-inline' role='form'>";
-
-		echo form_input($startDate);
-		echo " a ";
-		echo form_input($endDate);
-
-		echo form_button($submitBtn);
-	echo "</form>";
-
-}
 
 function formOfDateDivulgation($processId, $processName, $courseId, $startDateValue = "", $descriptionValue = "", $messageValue = ""){
 

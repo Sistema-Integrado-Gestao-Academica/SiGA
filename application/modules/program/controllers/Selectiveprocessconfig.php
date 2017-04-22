@@ -13,6 +13,8 @@ class SelectiveProcessConfig extends MX_Controller {
     public function __construct(){
         $this->load->model('program/selectiveprocess_model', 'process_model');
         $this->load->model('program/selectiveprocessconfig_model', 'process_config_model');
+
+        $this->load->helper('selectionprocess');
     }
 
     public function index($processId){

@@ -12,6 +12,7 @@ class SelectiveProcessPublic extends MX_Controller {
     public function __construct(){
         $this->load->model('program/selectiveprocess_model', 'process_model');
         $this->load->model('program/selectiveprocessconfig_model', 'process_config_model');
+        $this->load->model("program/selectiveprocessdivulgation_model", "divulgation_model");
     }
 
     // List all open selective processes
@@ -35,7 +36,7 @@ class SelectiveProcessPublic extends MX_Controller {
 
     public function divulgations($processId){
         $selectiveProcess = $this->process_model->getById($processId);
-        $processDivulgations = $this->process_model->getProcessDivulgations($processId);
+        $processDivulgations = $this->divulgation_model->getProcessDivulgations($processId);
 
         $data = array(
             'selectiveprocess' => $selectiveProcess,

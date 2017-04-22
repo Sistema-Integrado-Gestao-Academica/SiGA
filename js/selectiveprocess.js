@@ -1,6 +1,6 @@
 
 $(document).ready(function(){
-
+	
 	$("#phase_2").ready(function(){
 
 		getPhasesToSort();
@@ -126,15 +126,7 @@ $(document).ready(function(){
 
 	  addTimelineItem = function(processId) {
 	  	// Zero represents FALSE
-		addFormToAddDivulgation(processId, 0);
-	  };
-	})(jQuery);
-
-	(function($) {
-
-	  addFirstDivulgation = function(processId) {
-	  	// One represents TRUE
-		addFormToAddDivulgation(processId, 1);
+		addFormToAddDivulgation(processId);
 	  };
 	})(jQuery);
 
@@ -161,11 +153,6 @@ $(document).ready(function(){
 	  };
 	})(jQuery);
 
-	$(document).on('click', '#divulgate', function(e){
-    	e.preventDefault();
-		divulgateNotice();
-	});
-
 	$("#back_to_define_dates").click(function(e){
     	e.preventDefault();
 		openTab('#dates_link');
@@ -178,11 +165,7 @@ $(document).ready(function(){
 
 	$("#back_to_edit_process").click(function(e){
     	e.preventDefault();
-<<<<<<< HEAD
-		openTab('#define_teachers_link');
-=======
 		openTab('#edit_process_link');
->>>>>>> Issue #299 - Refactoring visualization of process
 	});
 	
 
@@ -282,6 +265,7 @@ function getPhasesToSort(){
 	}
 
 	if(!document.getElementById("processId")){
+
 		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/getPhasesToSort";
 
 		$.post(
@@ -355,50 +339,23 @@ function defineSubscriptionDate(){
 	);
 }
 
-function addFormToAddDivulgation(processId, firstDivulgation){
+function addFormToAddDivulgation(processId){
 	var siteUrl = $("#site_url").val();
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addFormToAddDivulgation/" + processId;
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessdivulgationajax/addFormToAddDivulgation/" + processId;
 
-	var data = {
-		initial_divulgation: firstDivulgation
-	}
-
-	$.post(
+	$.get(
 		urlToPost,
-		data,
 		function(data){
 			$("#new_divulgation").html(data);
+			var style = {
+				buttonText: "Procurar arquivo", 
+				buttonName: "btn btn-primary", 
+				iconName: "fa fa-file", 
+				placeholder: "Nenhum arquivo selecionado"};
+			
+			$(':file').filestyle(style);
 		}
 	);
-}
-
-function divulgateNotice(){
-	var description = $("#description").val();
-	var message = $("#message").val();
-	var process_id = $("#process_id").val();
-	var course_id = $("#course_id").val();
-
-	var siteUrl = $("#site_url").val();
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/divulgateNotice/" + process_id;
-
-	var data = {
-		description: description,
-		message: message,
-	}
-
-	$.post(
-		urlToPost,
-		data,
-		function(data){
-			$("#divulgation_result").html(data);
-			if(data.includes("success")){
-				window.setTimeout(function () {
-			        location.href = siteUrl + "/define_dates_page/" + process_id + "/"+ course_id;
-				}, 1000);
-			}
-		}
-	);
-
 }
 
 function saveResearchLine(){
@@ -419,6 +376,7 @@ function saveResearchLine(){
 		function(data){
 			$("#result").html(data);
 			if(data.includes("success")){
+				$("#callout_research_line").remove();
 				$("#research_lines").append("<li>"+ research_line + "</li>");
 			}
 		}
@@ -480,20 +438,18 @@ function openTab(tabId){
 
 function checkIfDatesWereDefined(phasesIds){
 	
-	var textToFind = "Período definido";
-
-	var subscription = $("#subscription").find('h3 a:first').text();
+	var subscriptionStartDate = $("#start_date").val();
+	var subscriptionEndDate = $("#end_date").val();
 	var datesWereDefined = true;
 
-
-	if(subscription === textToFind){
+	if(subscriptionStartDate != "" || subscriptionEndDate != ""){
 		var ids = phasesIds.split(';');	
-
-		var phase = null;
 		for(var i=0; i < ids.length; i++){
-			var elementLink = "#phase_" + ids[i];
-			phase = $("a[href='" + elementLink + "']").text();
-			if(phase !== textToFind){
+			var startDateId = "#phase_" + ids[i] + "_start_date";
+			var endDateId = "#phase_" + ids[i] + "_end_date";
+			var phaseStartDate = $(startDateId).val();
+			var phaseEndDate = $(endDateId).val();
+			if(phaseStartDate === "" || phaseEndDate === ""){
 				datesWereDefined = false;
 				break;
 			}

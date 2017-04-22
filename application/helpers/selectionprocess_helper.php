@@ -1,18 +1,11 @@
 <?php
 
-function createTimelineItemToAddDivulgation($processId, $firstDivulgation = FALSE){
+function createTimelineItemToAddDivulgation($processId){
 
-	if($firstDivulgation){
-		$method = 'addFirstDivulgation('.$processId.')';
-	}
-	else{
-		$method = 'addTimelineItem('.$processId.')';
-	}
+	$method = 'addTimelineItem('.$processId.')';
 
 	echo "<li>";
-        echo "<a href='#new_divulgation' onclick={$method} class='fa fa-plus-square bg-blue' data-container='body'
-		             data-toggle='popover' data-placement='top' data-trigger='hover' disabled='true'
-		             data-content='Clique para fazer uma nova divulgação'></a>";
+        echo "<a href='#' onclick={$method} class='fa fa-plus-square bg-blue'></a>";
         echo "<div id='new_divulgation' class='timeline-item'>";
         echo "</div>";
     echo "</li>";
@@ -79,135 +72,69 @@ function showDivulgations($selectiveprocess, $processDivulgations, $phasesName, 
 	        echo "</li>";
 		}
 
-		$firstDivulgation = FALSE;
 	}
 	else{
-		callout("info", "Processo seletivo sem divulgações");
+		$content = function(){
+			echo "Processo seletivo sem divulgações.<br>";
+        	echo "<p>Para adicionar uma divulgação (como editais, retificações, comunicados, entre outros) basta clicar no ícone <i class='fa fa-plus-square'></i>.</p>";
+		};
+		alert($content);
 		echo "<br>";
 		echo "<ul class='timeline'>";
-		$firstDivulgation = TRUE;
 		writeTimelineLabel("blue", "Processo seletivo:".$processName);
 	}
 
 	if(!$guestUser){
-		createTimelineItemToAddDivulgation($processId, $firstDivulgation);
+		createTimelineItemToAddDivulgation($processId);
 	}
 	echo "</ul>";
 }
 
+function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFieldId, $startDateValue = "", $endDateValue = ""){
 
-function createDivulgationsModal($process){
-
-	$processId = $process->getId();
-    $fields = getFieldsOfDivulgationForm($process, TRUE);
-
-    $fields['description']['value'] = "Edital ".$process->getName();
-    $course = $process->getCourse();
-    $body = function() use ($fields, $course){
-    	echo form_input($fields['description']);
-        echo form_textarea($fields['message']);
-        echo form_input($fields['processHidden']);
-        $courseHidden = array(
-	        "id" => "course_id",
-	        "name" => "course_id",
-	        "type" => "hidden",
-	        "value" => $course
-	    );
-        echo form_input($courseHidden);
-    };
-
-	$footer = function(){
-		echo "<div id='divulgation_result'>";
-		echo "</div>";
-		echo "<div class='row'>";
-			echo "<div class='col-lg-6'>";
-				echo form_button(array(
-				    "class" => "btn btn-danger btn-block",
-				    "content" => "Fechar",
-				    "type" => "button",
-				    "data-dismiss"=>'modal'
-				));
-			echo "</div>";
-			echo "<div class='col-lg-6'>";
-			 	echo form_button(array(
-				    "id" => 'divulgate',
-				    "class" => "btn bg-olive btn-block",
-				    "content" => 'Divulgar',
-				    "type" => "submit"
-				));
-			echo "</div>";
-		echo "</div>";
-
-	};
-
-	newModal("divulgationsmodal".$processId, "Primeira divulgação do Processo Seletivo", $body, $footer);
-}
-
-function getFieldsOfDivulgationForm($process, $initialDivulgation){
-  	$settings = $process->getSettings();
-    $phases = $settings->getPhases();
-
-    $dropdownPhases = array('0' => "Nenhuma");
-    if($phases !== FALSE){
-        foreach ($phases as $phase) {
-            $id = $phase->getPhaseId();
-            $name = $phase->getPhaseName();
-            $dropdownPhases[$id] = $name;
-        }
-    }
-
-    $description = array(
-        "name" => "description",
-        "id" => "description",
-        "type" => "text",
-        "required" => TRUE,
-        "placeholder" => "Descrição da divulgação",
-        "class" => "form-control",
-        "required" => "true"
-    );
-    $message = array(
-        "name" => "message",
-        "id" => "message",
-        "type" => "text",
-        "placeholder" => "Mensagem relacionada",
-        "class" => "form-control"
-    );
-
-    $processId = $process->getId();
-    $processHidden = array(
-        "id" => "process_id",
-        "name" => "process_id",
-        "type" => "hidden",
-        "value" => $processId
-    );
-
-    $initialDivulgationHidden = array(
-        "id" => "initial_divulgation",
-        "name" => "initial_divulgation",
-        "type" => "hidden",
-        "value" => $initialDivulgation
-    );
-
-	$divulgationFile = array(
-	    "name" => "divulgation_file",
-	    "id" => "divulgation_file",
-	    "type" => "file",
-        "class" => "filestyle",
-        "data-buttonBefore" => "true",
-        "data-buttonText" => "Selecione o arquivo",
-        "data-placeholder" => "Nenhum arquivo selecionado.",
-        "data-iconName" => "fa fa-file",
-        "data-buttonName" => "btn-primary"
+	$hidden = array(
+		'id' => "process_id",
+		'name' => "process_id",
+		'type' => "hidden",
+		'value' => $processId
 	);
 
-	$fields = array(
-		'description' => $description,
-		'dropdownPhases' => $dropdownPhases,
-		'message' => $message,
-		'processHidden' => $processHidden,
-		'initialDivulgationHidden' => $initialDivulgationHidden,
-		'divulgationFile' => $divulgationFile
+
+	$submitBtn = array(
+		"id" => $submitBtnId,
+		"content" => "Definir",
+		"class" => "btn bg-primary btn-flat",
+		"type" => "submit"
 	);
 
-	return $fields;
+	$startDate = array(
+	    "name" => $startDateFieldId,
+	    "id" => $startDateFieldId,
+	    "type" => "text",
+		"placeholder" => "Informe a data inicial",
+	    "class" => "form-campo",
+	    "class" => "form-control",
+	    "value" => $startDateValue
+	);
+
+	$endDate = array(
+	    "name" => $endDateFieldId,
+	    "id" => $endDateFieldId,
+	    "type" => "text",
+		"placeholder" => "Informe a data final",
+	    "class" => "form-campo",
+	    "class" => "form-control",
+	    "value" => $endDateValue
+	);
+	echo form_input($hidden);
+
+	echo "<form class='form-inline' role='form'>";
+
+		echo form_input($startDate);
+		echo " a ";
+		echo form_input($endDate);
+
+		echo form_button($submitBtn);
+	echo "</form>";
+
 }

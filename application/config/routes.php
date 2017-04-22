@@ -1,4 +1,5 @@
 
+
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -203,8 +204,6 @@ $route['selection_process'] = 'program/selectiveprocess/index';
 $route['edit_selection_process/(:num)'] = 'program/selectiveprocess/edit/$1';
 $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionProcess';
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
-$route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';
-$route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
 
 $route['selection_process/public'] = 'program/selectiveProcessPublic/index';
 $route['selection_process/subscribe/(:num)'] = 'program/selectiveProcessPublic/subscribe/$1';
@@ -218,6 +217,10 @@ $route['selection_process/config/save_subscription_config/(:num)'] = 'program/se
 $route['selection_process/define_teachers_evaluation/(:num)/(:num)'] = 'program/selectiveprocessconfig/defineTeachers/$1/$2';
 $route['selection_process/define_teacher'] = 'program/selectiveprocessconfig/addTeacherToProcess';
 $route['selection_process/remove_teacher'] = 'program/selectiveprocessconfig/removeTeacherFromProcess';
+
+// Selection process divulgation routes
+$route['selection_process/secretary_divulgations/(:num)'] = 'program/selectiveprocessdivulgation/index/$1';
+$route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocessdivulgation/downloadDivulgationFile/$1';
 
 
 /*

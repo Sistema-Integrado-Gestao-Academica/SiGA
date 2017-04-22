@@ -1,16 +1,16 @@
 <h2 class="principal">Processos seletivos abertos</h2>
 
-<div class="col-md-10 col-md-offset-1">
-  <?php
-    alert(function(){
-      echo '<p>Aqui você pode ver os processos seletivos abertos dos programas e se inscrever no processo que desejar.</p>';
-      echo "<p>Para visualizar as divulgações de um processo seletivo (como editais, retificações, comunicados, entre outros) basta clicar no ícone <i class='fa fa-bullhorn'></i>.</p>";
-    });
-  ?>
-</div>
 <br>
 
 <?php if(!empty($openSelectiveProcesses)): ?>
+  <div class="col-md-10 col-md-offset-1">
+    <?php
+      alert(function(){
+        echo '<p>Aqui você pode ver os processos seletivos abertos dos programas e se inscrever no processo que desejar.</p>';
+        echo "<p>Para visualizar as divulgações de um processo seletivo (como editais, retificações, comunicados, entre outros) basta clicar no ícone <i class='fa fa-bullhorn'></i>.</p>";
+      });
+    ?>
+  </div>
   <div class="row">
     <?php foreach($openSelectiveProcesses as $process): ?>
       <div class="col-md-6">

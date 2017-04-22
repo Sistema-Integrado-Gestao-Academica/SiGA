@@ -81,7 +81,11 @@
 </ul>
 <br>
 <?php else: ?>
-  <?php callout('info', 'Nenhuma linha de pesquisa cadastrada para o curso.'); ?>
+  <?php callout('info', 'Nenhuma linha de pesquisa cadastrada para o curso.', FALSE, "callout_research_line"); ?>
+  <ul>
+    <div class="col-md-6" id="research_lines">
+    </div>
+  </ul>
 <?php endif ?>
 <br>
 <br>

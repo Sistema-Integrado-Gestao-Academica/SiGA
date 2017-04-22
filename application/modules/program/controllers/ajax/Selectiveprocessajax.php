@@ -18,6 +18,12 @@ require_once(MODULESPATH."/program/domain/selection_process/phases/OralTest.php"
 
 class SelectiveProcessAjax extends MX_Controller {
 
+    public function __construct(){
+        parent::__construct();
+
+        $this->load->helper('selectionprocess');
+    }
+    
     public function getPhasesToSort(){
 
         $preProject = $this->input->post("preProject");
@@ -156,37 +162,6 @@ class SelectiveProcessAjax extends MX_Controller {
         echo $json;
     }
 
-    private function uploadNoticeFileForm($processId, $courseId){
-        $hidden = array(
-            'selection_process_id' => base64_encode($processId),
-            'course' => $courseId
-        );
-
-        echo form_open_multipart("program/selectiveprocess/saveNoticeFile");
-
-            echo form_hidden($hidden);
-
-            $noticeFile = array(
-                "name" => "notice_file",
-                "id" => "notice_file",
-                "type" => "file",
-                "class" => "filestyle"
-            );
-
-            $submitFileBtn = array(
-                "id" => "open_selective_process_btn",
-                "class" => "btn btn-success btn-flat",
-                "content" => "Salvar arquivo",
-                "type" => "submit",
-                "style" => "margin-top: 5%;"
-            );
-
-            include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
-
-        echo form_close();
-        echo "<br>";
-    }
-
     public function updateSelectionProcess(){
 
         $data = $this->getDataToSave();
@@ -238,22 +213,8 @@ class SelectiveProcessAjax extends MX_Controller {
                 $phasesArray[$phaseId] = $phaseName;
             }
         }
-    }
-
-    private function getPhases($process){
-        $settings = $process->getSettings();
-        $phases = $settings->getPhases();
-        $phasesArray = array();
-        if($phases){
-            foreach ($phases as $phase) {
-                $phaseId = $phase->getPhaseId();
-                $phaseName = $phase->getPhaseName();
-                $phasesArray[$phaseId] = $phaseName;
-            }
-        }
 
         $phasesArray = json_encode($phasesArray);
-
         return $phasesArray;
     }
 
@@ -342,72 +303,6 @@ class SelectiveProcessAjax extends MX_Controller {
         $data = array('process' => $process, 'message' => $message);
 
         return $data;
-    }
-
-
-    public function editNoticeFile(){
-
-        $this->load->module('program/selectiveprocess');
-        $processId = $this->input->post("processId");
-        $courseId = $this->input->post("course");
-        $message = $this->selectiveprocess->uploadNoticeFile($courseId, $processId);
-        switch ($message) {
-            case selectiveprocess::NOTICE_FILE_SUCCESS:
-                $status = "success";
-                $pathToRedirect = "program/selectiveprocess/courseSelectiveProcesses/{$courseId}";
-                break;
-
-            case selectiveprocess::NOTICE_FILE_ERROR_ON_UPDATE:
-                $status = "danger";
-                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
-                break;
-
-            default:
-                $status = "danger";
-                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
-                break;
-        }
-
-        callout($status, $message);
-    }
-
-    public function uploadNoticeFile($courseId, $processId){
-
-        $this->load->library('upload');
-        $process = $this->process_model->getById($processId);
-
-        $this->load->model("program/course_model");
-        $course = $this->course_model->getCourseById($courseId);
-
-        $ids = array(
-            "p" => $programId,
-            "c" => $courseId,
-            "s" => $processId
-        );
-        $config = setUploadOptions($process->getName(), $ids, 'notices', 'pdf');
-        $this->upload->initialize($config);
-        $status = "";
-        if($this->upload->do_upload("notice_file")){
-
-            $noticeFile = $this->upload->data();
-            $noticePath = $noticeFile['full_path'];
-
-            $wasUpdated = $this->updateNoticeFile($processId, $noticePath);
-
-            if($wasUpdated){
-                $status = self::NOTICE_FILE_SUCCESS;
-            }
-            else{
-                $status = self::NOTICE_FILE_ERROR_ON_UPDATE;
-            }
-        }
-        else{
-            // Errors on file upload
-            $errors = $this->upload->display_errors();
-            $status = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
-        }
-
-        return $status;
     }
 
     public function defineSubscriptionDate($processId){
@@ -651,122 +546,6 @@ class SelectiveProcessAjax extends MX_Controller {
         return $result;
     }
 
-    public function addFormToAddDivulgation($processId){
-
-        $this->load->model("selectiveprocess_model", "process_model");
-        $process = $this->process_model->getById($processId);
-
-        $this->load->helper("selectionprocess");
-        $initialDivulgation = (bool) $this->input->post('initial_divulgation');
-        $fieldsForm = getFieldsOfDivulgationForm($process, $initialDivulgation);
-
-        $showForm = TRUE;
-
-        $description = $fieldsForm['description'];
-        if($initialDivulgation){
-            $description['value'] = "Edital ".$process->getName();
-            $showForm = $this->hasFormToAddInitialDivulgation($processId);
-        }
-
-        if($showForm){
-
-            $text = function() use ($description){
-                echo form_input($description);
-            };
-
-            $bodyText = function() use ($fieldsForm, $initialDivulgation){
-
-                echo form_textarea($fieldsForm['message']);
-                echo form_input($fieldsForm['processHidden']);
-                echo form_input($fieldsForm['initialDivulgationHidden']);
-
-                if(!$initialDivulgation){
-                    echo form_label("Fase relacionada", "phase_label");
-                    echo form_dropdown("phase", $fieldsForm['dropdownPhases'], '', "class='form-control'");
-
-                    echo "<br>";
-                    echo form_label("Você pode incluir um arquivo para essa divulgação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "divulgation_file");
-                    echo "<div class='row'>";
-                        echo "<div class='col-lg-8'>";
-                            echo form_input($fieldsForm['divulgationFile']);
-                        echo "</div>";
-                    echo "</div>";
-                }
-            };
-            $footer = function(){
-                echo "<br>";
-                echo form_button(array(
-                    "class" => "btn bg-olive btn-block",
-                    "content" => 'Divulgar',
-                    "type" => "submit"
-                ));
-            };
-
-            echo form_open_multipart("program/selectiveprocess/addDivulgation");
-                writeTimelineItemToAddItem($text, $bodyText, $footer);
-            echo form_close();
-        }
-        else{
-            $text = function(){
-                echo "A primeira divulgação não pode ser realizada por aqui.";
-            };
-
-            $bodyText = function() use ($process){
-                callout("info", "Já existe uma data definida para a primeira divulgação nesse processo. Para realizar essa divulgação hoje, a data definida deve ser alterada.");
-
-                $processId = $process->getId();
-                $courseId = $process->getCourse();
-
-                echo anchor("define_dates_page/{$processId}/{$courseId}", "<i class='fa fa-calendar'>Editar a data definida</i>", "class='btn btn-primary'");
-
-            };
-            writeTimelineItemToAddItem($text, $bodyText, "");
-        }
-    }
-
-    private function hasFormToAddInitialDivulgation($processId){
-
-        $firstDivulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
-        if(is_null($firstDivulgation)){
-            $showForm = TRUE;
-        }
-        else{
-            $showForm = FALSE;
-        }
-
-        return $showForm;
-    }
-
-    public function divulgateNotice($processId){
-        $description = $this->input->post("description");
-        $message = $this->input->post("message");
-
-        if(!empty($description)){
-
-            $today = new Datetime();
-            $today = $today->format("Y/m/d");
-            $data = array(
-                'id_process' => $processId,
-                'description' => $description,
-                'message' => $message,
-                'initial_divulgation' => TRUE,
-                'date' => $today
-            );
-            $this->load->model("selectiveprocess_model", "process_model");
-            $saved = $this->process_model->saveProcessDivulgation($data);
-
-            if($saved){
-                echo "<div class='alert alert-success'>Divulgação realizada com sucesso</div>";
-            }
-            else{
-                echo "<div class='alert alert-danger'>Não foi possível fazer a nova divulgação. Tente novamente.</div>";
-            }
-        }
-        else{
-            echo "<div class='alert alert-danger'>A descrição deve ser preenchida.</div>";
-        }
-    }
-
     public function setDatesDefined($processId){
 
         $this->load->model("selectiveprocess_model", "process_model");
@@ -802,5 +581,4 @@ class SelectiveProcessAjax extends MX_Controller {
             echo "</li>";
         };
     }
-
 }
