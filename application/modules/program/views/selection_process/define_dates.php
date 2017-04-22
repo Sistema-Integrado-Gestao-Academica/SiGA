@@ -1,11 +1,12 @@
-<h2 class="principal">Definição de datas do Processo Seletivo <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
-
+<br>
+<br>
 <?php
-	$processId = $selectiveprocess->getId();
-	$settings = $selectiveprocess->getSettings();
-    $processName = $selectiveprocess->getName();
+	$processId = $process->getId();
+	$settings = $process->getSettings();
+    $processName = $process->getName();
+    $phases = $settings->getPhases();
 
-	echo "<ul class='timeline'>";
+	echo "<ul class='timeline' id='define_dates_timeline'>";
 	    // Subscription
 	    writeTimelineLabel("blue", "Inscrição");
 	    if($settings){
@@ -34,20 +35,19 @@
             }
 	        echo "<li>";
 	            echo "<i class='fa fa-calendar-o bg-blue'></i>";
-	            echo "<div id='subscription' class='timeline-item'>";
+	            echo "<div class='timeline-item' id='subscription'>";
 	                writeTimelineItem($text, FALSE, "#", $bodyText);
 	            echo "</div>";
 	        echo "</li>";
 	    }
 
-
 	    // Phases
-	    $phases = $settings->getPhases();
 	    if($phases){
 	        foreach ($phases as $phase) {
 	            $phaseId = $phase->getPhaseId();
 	            $phaseName = $phase->getPhaseName();
-	            writeTimelineLabel("white", $phaseName);
+	            $labelId = "phase_label_".$phaseId;
+	            writeTimelineLabel("white", $phaseName, $labelId);
 	            $startDate = $phase->getStartDate();
 	            if(!is_null($startDate)){
 	                $text = "Período definido";
@@ -71,7 +71,7 @@
 
 	            }
 	            echo "<li>";
-	                echo "<i class='fa fa-calendar-o bg-blue'></i>";
+	                echo "<i class='fa fa-calendar-o bg-blue' id='phase_icon_{$phaseId}'></i>";
 	                echo "<div id='phase_{$phaseId}' class='timeline-item'>";
 	                    writeTimelineItem($text, FALSE, "#phase_{$phaseId}", $bodyText, "");
 	                echo "</div>";
@@ -81,21 +81,17 @@
 	    }
 
     echo "</ul>";
+
+    $idPhases = "\"{$phasesIds}\""; 
+    $saveBtn = 'saveDefinedDates('.$processId.','.$idPhases.')';
+
 ?>
 
 	<div class="col-sm-2 pull-left">
-		<?= anchor(
-			"edit_selection_process/{$processId}/{$courseId}",
-			"Voltar",
-			"class='btn btn-danger'"
-		); ?>
+		<?= $backButton ?>
 	</div>
-	<div class="col-sm-2 pull-right">
-		<?= anchor(
-			"selection_process/define_teachers_evaluation/{$processId}/{$courseId}",
-			"Continuar",
-			"class='btn btn-primary'"
-		); ?>
+	<div class="col-sm-2 pull-right" id="save_date">
+    	<button class='btn btn-primary' onclick=<?=$saveBtn?> id="save_dates_btn">Salvar e Continuar</button>
 	</div>
 
 	<br>

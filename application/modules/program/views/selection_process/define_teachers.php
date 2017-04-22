@@ -1,22 +1,16 @@
-<h2 class="principal">Vincular docentes ao processo seletivo </h2>
-
+<br>
+<br>
 <div id="define_teachers_tables" class="row">
     <?php include('define_teachers_tables.php'); ?>;
 </div>
-
+<br>
+<br>
 <div class="col-sm-2 pull-left">
-    <?= anchor(
-        "selection_process/define_teachers_evaluation/{$processId}/{$courseId}",
-        "Voltar",
-        "class='btn btn-danger'"
-    ); ?>
+    <button class='btn btn-danger' id="back_to_define_dates">Voltar</button>
 </div>
 <div class="col-sm-2 pull-right">
-    <?= anchor(
-        "selection_process/config/{$processId}",
-        "Continuar",
-        "class='btn btn-primary'"
-    ); ?>
+    <?php $saveBtn = 'saveSelectedTeachers('.$processId.')'; ?>
+    <button class='btn btn-primary' onclick=<?=$saveBtn?>>Salvar e Continuar</button>
 </div>
 
 <br>

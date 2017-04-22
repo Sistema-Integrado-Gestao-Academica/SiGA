@@ -15,12 +15,11 @@ echo anchor(
 <div align='right'>
 	<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
 	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
-	<i class='fa fa-cogs'> Configurações </i> &nbsp&nbsp
-	<i class='fa fa-calendar'> Definir datas </i> &nbsp&nbsp
 	<i class='fa fa-bullhorn'> Divulgações </i>
 </div>
 
 <?php
+
 buildTableDeclaration();
 
 buildTableHeaders(array(
@@ -48,21 +47,22 @@ if($validSelectiveProcesses){
 			$processId = $process->getId();
 			echo "<td>";
 				echo $status[$processId];
+				if(!$noticeWithAllConfig[$processId]){
+					echo "<h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
+				}
+
 			echo "</td>";
 
 			echo "<td>";
+				$classDivulgationsButton = $noticeWithAllConfig[$processId] ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
+				echo "<br><br>";
 				createProcessModal($process, $settings);
-				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-success'><i class='fa fa-eye'></i></a>";
+				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-primary'><i class='fa fa-eye'></i></a>";
 				echo "&nbsp";
 				$courseId = $course[Course_model::ID_ATTR];
-				echo anchor("edit_selection_process/{$processId}/{$courseId}", "<i class='fa fa-edit'></i>", "class='btn btn-primary'");
+				echo anchor("edit_selection_process/{$processId}", "<i class='fa fa-edit'></i>", "class='btn btn-success'");
 				echo "&nbsp";
-				echo anchor("selection_process/config/{$processId}", "<i class='fa fa-cogs'></i>", "class='btn btn-default'");
-				echo "&nbsp";
-				echo anchor("define_dates_page/{$processId}/{$courseId}", "<i class='fa fa-calendar'></i>", "class='btn btn-warning'");
-
-				echo "&nbsp";
-				echo anchor("selection_process/divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", "class='btn bg-olive'");
+				echo anchor("selection_process/divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", $classDivulgationsButton);
 
 			echo "</td>";
 

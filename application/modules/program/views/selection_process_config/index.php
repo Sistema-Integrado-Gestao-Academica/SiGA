@@ -1,65 +1,62 @@
 <h2 class="principal">Configurações do edital <b><i><?= $process->getName(); ?></i></b></h2>
 
-<?= anchor(
-    "program/selectiveprocess/courseSelectiveProcesses/{$process->getCourse()}",
-    "Voltar",
-    "class='pull-right btn btn-danger btn-lg'"
-  ); ?>
-
-<h3>
-  <i class="fa fa-files-o"></i> Documentos necessários<br>
-  <small>
-    <p>Configure os documentos necessários para este edital abaixo.</p>
-    <p>Os documentos selecionados serão os documentos obrigatórios para o(a) candidato(a) enviar no ato da inscrição.</p>
-  </small>
-</h3>
-<br>
-
-<?php
-
-  $submitBtn = [
-    'class' => 'btn bg-olive btn-block',
-    'type' => 'submit',
-    'content' => "<i class='fa fa-save'></i> Salvar documentos"
-  ];
-
-  function docCheckbox($doc, $processDocs){
-    $checkboxId = 'doc_'.$doc['id'];
-    $checkbox = [
-      'id' => $checkboxId,
-      'name' => $checkboxId,
-      'value' => $doc['id'],
-      'class' => 'form-control',
-      'checked' => in_array($doc, $processDocs)
-    ];
-    echo form_checkbox($checkbox);
-    echo form_label($doc['doc_name'], $checkboxId);
-    echo '<p>'.$doc['doc_desc'].'</p>';
-  }
+<?php $courseId = $process->getCourse(); 
+    $processId = $process->getId();
 ?>
 
-<?php if ($allDocs !== FALSE): ?>
+<div class="alert alert-warning" id="warning_message" style="display: none"></div>
+<div class="row">
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active">
+            <?=anchor(
+                "#dates_tab",
+                "<b><i class='fa fa-calendar-o'></i> Datas</b>",
+                "class='btn btn-tab' data-toggle='tab' id='dates_link'")
+            ?>
+        </li>
+        <li class="">
+            <?=anchor(
+                "#define_teachers_tab",
+                "<b><i class='fa fa-group'></i> Comissão de Seleção</b>",
+                "class='btn btn-tab disabled' data-toggle='tab' id='define_teachers_link'")
+            ?>
+        </li>
+        <li class="">
+            <?=anchor(
+                "#config_subscription_tab",
+                "<b><i class='fa fa-cogs'></i> Configurações de inscrição do candidato </b>",
+                "class='btn btn-tab disabled' data-toggle='tab' id='config_subscription_link'")
+            ?>
+        </li>
+    </ul>
 
-  <?= form_open("selection_process/config/save_docs/{$process->getId()}") ?>
-    <div class="row">
-      <?php foreach ($allDocs as $doc): ?>
-        <div class="col-md-6">
-          <?php docCheckbox($doc, $processDocs); ?>
+    <div class="tab-content" id="config_tabs">
+        <div class='tab-pane fade in active' id="dates_tab">
+            <?php
+                $backButton = anchor(
+                    "program/selectiveprocess/courseSelectiveProcesses/{$courseId}",
+                    "Voltar",
+                    "class='btn btn-danger'"
+                ); 
+                call_user_func(function() use($process, $phasesIds, $backButton){
+                    include(MODULESPATH.'program/views/selection_process/define_dates.php');
+                });
+            ?>
         </div>
-      <?php endforeach ?>
+        <div class='tab-pane fade' id="define_teachers_tab">
+            <?php
+                call_user_func(function() use($teachers, $processTeachers, $processId, $programId, $courseId){
+                    include(MODULESPATH.'program/views/selection_process/define_teachers.php');
+                });
+            ?>
+        </div>
+         <div class='tab-pane fade' id="config_subscription_tab">
+            <?php
+                $btn = "abertura";
+                call_user_func(function() use($process, $allDocs, $processDocs, $course, $courseResearchLines, $btn){
+                    include('subscription_config.php');
+                });
+            ?>
+        </div>
     </div>
-
-    <br>
-    <?= form_button($submitBtn) ?>
-  <?= form_close() ?>
-
-<?php else: ?>
-  <?php callout('info', 'Nenhum documento cadastrado.'); ?>
-<?php endif ?>
-
-<br>
-<?= anchor(
-    "program/selectiveprocess/courseSelectiveProcesses/{$process->getCourse()}",
-    "Voltar",
-    "class='pull-left btn btn-danger btn-lg'"
-  ); ?>
+</div>

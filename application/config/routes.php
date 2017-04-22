@@ -200,21 +200,20 @@ $route['documents_request'] = "student/documentrequestStudent/index";
  * Selection Process functionalities routes
  */
 $route['selection_process'] = 'program/selectiveprocess/index';
-$route['edit_selection_process/(:num)/(:num)'] = 'program/selectiveprocess/edit/$1/$2';
+$route['edit_selection_process/(:num)'] = 'program/selectiveprocess/edit/$1';
 $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionProcess';
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
-$route['define_dates_page/(:num)/(:num)'] = 'program/selectiveprocess/loadDefineDatesPage/$1/$2';
-$route['define_dates/(:num)/(:num)'] = 'program/selectiveprocess/defineDates/$1/$2';
-$route['selection_process/define_teachers_evaluation/(:num)/(:num)'] = 'program/selectiveprocess/defineTeachers/$1/$2';
-$route['selection_process/define_teacher'] = 'program/selectiveprocess/addTeacherToProcess';
-$route['selection_process/remove_teacher'] = 'program/selectiveprocess/removeTeacherFromProcess';
 $route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';
 $route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
 $route['selection_process/guest/(:num)'] = 'program/selectiveprocess/showTimeline/$1';
 
 // Selection process config routes
 $route['selection_process/config/(:num)'] = 'program/selectiveprocessconfig/index/$1';
-$route['selection_process/config/save_docs/(:num)'] = 'program/selectiveprocessconfig/saveDocs/$1';
+$route['selection_process/subscription_config/(:num)'] = 'program/selectiveprocessconfig/subscriptionConfig/$1';
+$route['selection_process/config/save_subscription_config/(:num)'] = 'program/selectiveprocessconfig/saveSubscriptionConfig/$1';
+$route['selection_process/define_teachers_evaluation/(:num)/(:num)'] = 'program/selectiveprocessconfig/defineTeachers/$1/$2';
+$route['selection_process/define_teacher'] = 'program/selectiveprocessconfig/addTeacherToProcess';
+$route['selection_process/remove_teacher'] = 'program/selectiveprocessconfig/removeTeacherFromProcess';
 
 
 /*

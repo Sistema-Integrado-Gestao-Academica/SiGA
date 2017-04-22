@@ -220,7 +220,10 @@ class SelectiveProcess_model extends CI_Model {
 		            $startDate,
 		            $endDate,
 		            $phases,
-		            $phasesOrder
+		            $phasesOrder,
+		            $foundProcess['dates_defined'],
+                    $foundProcess['needed_docs_selected'],
+                    $foundProcess['teachers_selected']
 	        	);
 	        }
 	        catch(SelectionProcessException $e){
@@ -280,7 +283,7 @@ class SelectiveProcess_model extends CI_Model {
 	}
 
 	private function getProcessPhases($processId){
-		$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR.",".self::PROCESS_PHASE_START_DATE_ATTR.",".self::PROCESS_PHASE_END_DATE_ATTR);
+		$this->db->select("*");
 		$this->db->from(self::PROCESS_PHASE_TABLE);
 		$this->db->where(self::ID_ATTR, $processId);
 		$processPhases = $this->db->get()->result_array();
@@ -299,6 +302,8 @@ class SelectiveProcess_model extends CI_Model {
 	        foreach ($processPhases as $processPhase) {
 	            $processPhaseId = $processPhase['id_phase'];
 	            $weight = $processPhase['weight'];
+	            $grade = $processPhase['grade'];
+	            $grade = $grade == NULL ? FALSE : $grade;
 	            $startDate = convertDateTimeToDateBR($processPhase['start_date']);
 	            $endDate = convertDateTimeToDateBR($processPhase['end_date']);
 	            switch ($processPhaseId) {
@@ -306,13 +311,13 @@ class SelectiveProcess_model extends CI_Model {
 	                    $phase = new Homologation($processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
-	                    $phase = new PreProjectEvaluation($weight, FALSE, $processPhaseId, $startDate, $endDate);
+	                    $phase = new PreProjectEvaluation($weight, $grade, $processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
-	                    $phase = new WrittenTest($weight, FALSE, $processPhaseId, $startDate, $endDate);
+	                    $phase = new WrittenTest($weight, $grade, $processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
-	                    $phase = new OralTest($weight, FALSE, $processPhaseId, $startDate, $endDate);
+	                    $phase = new OralTest($weight, $grade, $processPhaseId, $startDate, $endDate);
 	                    break;
 	                default:
 	                    $phase = NULL;
@@ -486,5 +491,10 @@ class SelectiveProcess_model extends CI_Model {
         	}
         }
 		return $selectiveProcesses;
+    }
+
+    public function updateProcessFlags($processId, $flagArray){
+    	$this->db->where(self::ID_ATTR, $processId);
+    	$this->db->update($this->TABLE, $flagArray);
     }
 }

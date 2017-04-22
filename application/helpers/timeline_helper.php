@@ -1,8 +1,14 @@
 <?php
 
-function writeTimelineLabel($color, $text){
+function writeTimelineLabel($color, $text, $id = FALSE){
 
-    echo "<li class='time-label'>";
+    if($id){
+        echo "<li class='time-label' id='{$id}'>";
+    }
+    else{
+        echo "<li class='time-label'>";
+    }
+
         echo "<span class='bg-".$color."'>";
             echo $text;
         echo "</span>";

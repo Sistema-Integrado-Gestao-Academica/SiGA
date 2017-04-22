@@ -82,10 +82,12 @@ class SelectiveProcess extends MX_Controller {
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
 
         $status = $this->getProcessStatus($selectiveProcesses);
+
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses,
-            'status' => $status
+            'status' => $status['status'],
+            'noticeWithAllConfig' => $status['noticeWithAllConfig']
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
@@ -94,6 +96,7 @@ class SelectiveProcess extends MX_Controller {
     private function getProcessStatus($selectiveProcesses){
 
         $status = array();
+        $configStatusNotices = array();
         if($selectiveProcesses !== FALSE){
             foreach ($selectiveProcesses as $selectiveProcess) {
                 $selectiveProcessId = $selectiveProcess->getId();
@@ -102,6 +105,7 @@ class SelectiveProcess extends MX_Controller {
                     $divulgationDate = $divulgation['date'];
                     $divulgationDate = new Datetime($divulgationDate);
                     $today = new Datetime();
+                    
                     if($divulgationDate <= $today){
                         $status[$selectiveProcessId] = "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
                     }
@@ -112,11 +116,21 @@ class SelectiveProcess extends MX_Controller {
                 else{
                     $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
                 }
-
+                $settings = $selectiveProcess->getSettings();
+                $noticeWithAllConfig = $settings->getDatesDefined() && $settings->getNeededDocsSelected() && $settings->getTeachersSelected();
+                $configStatusNotices[$selectiveProcessId] = $noticeWithAllConfig;
+                if(!$noticeWithAllConfig){
+                    $status[$selectiveProcessId] .= "<br><span class='label label-danger'>".SelectionProcessConstants::INCOMPLETE_CONFIG."</span>";
+                }
             }
         }
 
-        return $status;
+        $data = array(
+            'status' => $status,
+            'noticeWithAllConfig' => $configStatusNotices
+        );
+
+        return $data;
     }
 
     public function openSelectiveProcess($courseId){
@@ -279,7 +293,10 @@ class SelectiveProcess extends MX_Controller {
                     $startDate,
                     $endDate,
                     $phases,
-                    $phasesOrder
+                    $phasesOrder,
+                    $process['dates_defined'],
+                    $process['needed_docs_selected'],
+                    $process['teachers_selected']
                 );
                 if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
                     try{
@@ -330,71 +347,7 @@ class SelectiveProcess extends MX_Controller {
         return $selectiveProcesses;
     }
 
-    public function addTeacherToProcess(){
-        $processId = $this->input->post('processId');
-        $teacherId = $this->input->post('teacherId');
-        $programId = $this->input->post('programId');
-        $self = $this;
-        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $processId, $teacherId, $programId){
-                $self->process_model->addTeacherToProcess($processId, $teacherId);
-                $self->updateDefineTeacherTables($processId, $programId);
-            }
-        );
-    }
-
-    public function removeTeacherFromProcess(){
-        $processId = $this->input->post('processId');
-        $teacherId = $this->input->post('teacherId');
-        $programId = $this->input->post('programId');
-        $self = $this;
-        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $processId, $teacherId, $programId){
-                $self->process_model->removeTeacherFromProcess($processId, $teacherId);
-                $self->updateDefineTeacherTables($processId, $programId);
-            }
-        );
-    }
-
-    private function updateDefineTeacherTables($processId, $programId){
-        $data = $this->getDefineTeachersViewData($processId, $programId);
-        $teachers = $data['teachers'];
-        $processTeachers = $data['processTeachers'];
-        include(MODULESPATH.'program/views/selection_process/define_teachers_tables.php');
-    }
-
-    private function getDefineTeachersViewData($processId, $programId){
-
-        $session = getSession();
-        $user = $session->getUserData();
-        $secretaryId = $user->getId();
-
-        $this->load->model('program/program_model');
-        $programsTeachers = $this->program_model->getProgramTeachers($programId);
-
-        $processTeachers = $this->process_model->getProcessTeachers($processId);
-
-        $data = array(
-            'teachers' => $programsTeachers,
-            'processTeachers' => $processTeachers
-        );
-
-        return $data;
-    }
-
-    public function defineTeachers($processId, $courseId){
-
-        $this->load->model("program/course_model");
-        $course = $this->course_model->getCourseById($courseId);
-        $data = $this->getDefineTeachersViewData($processId, $course['id_program']);
-        $data['programId'] = $course['id_program'];
-        $data['processId'] = $processId;
-        $data['courseId'] = $courseId;
-
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_teachers", $data);
-    }
-
-    private function getEditProcessViewData($processId, $courseId){
+    private function getEditProcessViewData($processId){
         $selectiveProcess = $this->process_model->getById($processId);
         $this->load->module("program/phase");
         $allPhases = $this->phase->getAllPhases();
@@ -408,29 +361,33 @@ class SelectiveProcess extends MX_Controller {
         $divulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
 
         $editProcessData = array(
-            'selectiveprocess' => $selectiveProcess,
+            'process' => $selectiveProcess,
             'processId' => $processId,
-            'courseId' => $courseId,
             'phasesNames' => $phases['phasesNames'],
             'phasesWeights' => $phases['phasesWeights'],
+            'phasesGrades' => $phases['phasesGrades'],
             'noticeFileName' => $noticeFileName,
-            'divulgation' => $divulgation
+            'divulgation' => $divulgation,
+            'allPhases' => $allPhases
         );
 
         return $editProcessData;
     }
 
-    public function edit($processId, $courseId){
+    public function edit($processId){
 
-        $editProcessData = $this->getEditProcessViewData($processId, $courseId);
+        $editProcessData = $this->getEditProcessViewData($processId);
 
         $this->load->model("program/course_model");
-        $course = $this->course_model->getCourseById($courseId);
-        $defineTeacherData = $this->getDefineTeachersViewData($processId, $course['id_program']);
-
-        $data = $editProcessData + $defineTeacherData;
-
+        $process = $editProcessData['process'];
+        $course = $this->course_model->getCourseById($process->getCourse());
+        $this->load->module("program/selectiveprocessconfig");
+        $defineTeacherData = $this->selectiveprocessconfig->getDefineTeachersViewData($processId, $course['id_program']);
+        $configData = $this->selectiveprocessconfig->getDataSubscriptionConfig($processId);
+        $data = $editProcessData + $defineTeacherData + $configData;
         $data['programId'] = $course['id_program'];
+        $data['phasesIds'] = $this->selectiveprocessconfig->getPhasesIds($data['process']);
+
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/edit", $data);
     }
@@ -439,6 +396,7 @@ class SelectiveProcess extends MX_Controller {
 
         $phasesNames = array();
         $phasesWeights = array();
+        $phasesGrades = array();
         $processPhases = $selectiveProcess->getSettings()->getPhases();
 
         foreach ($allPhases as $phase) {
@@ -451,9 +409,11 @@ class SelectiveProcess extends MX_Controller {
                         $phasesNames[$phaseId] = $processPhase->getPhaseName();
                         if($phaseId != SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
                             $phasesWeights[$phaseId] = $processPhase->getWeight();
+                            $phasesGrades[$phaseId] = $processPhase->getGrade();
                         }
                         else{
                             $phasesWeights[$phaseId] = "0";
+                            $phasesGrades[$phaseId] = "0";
                         }
                         $hasThePhase = TRUE;
                         break;
@@ -463,12 +423,14 @@ class SelectiveProcess extends MX_Controller {
             if(!$hasThePhase){
                 $phasesNames[$phaseId] = $phase->getPhaseName();
                 $phasesWeights[$phaseId] = "-1"; // Phase Not selected
+                $phasesGrades[$phaseId] = "-1"; // Phase Not selected
             }
         }
 
         $phases = array(
             'phasesNames' => $phasesNames,
-            'phasesWeights' => $phasesWeights
+            'phasesWeights' => $phasesWeights,
+            'phasesGrades' => $phasesGrades
         );
 
         return $phases;
@@ -490,28 +452,13 @@ class SelectiveProcess extends MX_Controller {
         }
     }
 
-    public function loadDefineDatesPage($selectiveProcessId, $courseId){
-
-        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
-        $processDivulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
-
-        $data = array(
-            'selectiveprocess' => $selectiveProcess,
-            'courseId' => $courseId,
-            'processDivulgation' => $processDivulgation
-        );
-
-        $this->load->helper('selectionprocess');
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
-    }
-
     public function divulgations($selectiveProcessId){
         
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
         $processDivulgations = $this->process_model->getProcessDivulgations($selectiveProcessId);
 
         $data = array(
-            'selectiveprocess' => $selectiveProcess,
+            'process' => $selectiveProcess,
             'processDivulgations' => $processDivulgations
         );
 
@@ -602,7 +549,7 @@ class SelectiveProcess extends MX_Controller {
         $processDivulgations = $this->process_model->getProcessDivulgations($processId);
 
         $data = array(
-            'selectiveprocess' => $selectiveProcess,
+            'process' => $selectiveProcess,
             'processDivulgations' => $processDivulgations
         );
 

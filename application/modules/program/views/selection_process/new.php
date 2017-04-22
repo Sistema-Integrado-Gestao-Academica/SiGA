@@ -34,7 +34,7 @@
 
 	$saveProcessBtn = array(
 		"id" => "open_selective_process_btn",
-		"class" => "btn bg-primary btn-flat pull-right",
+		"class" => "btn bg-primary pull-right",
 		"content" => "Salvar e Continuar"
 	);
 
@@ -72,7 +72,7 @@
 				// Homologation phase is obrigatory and do not have weight
 				if($phase->getPhaseName() !== SelectionProcessConstants::HOMOLOGATION_PHASE){
 
-				$selectName = "phase_".$phase->getPhaseId();
+				$selectName = "phase_select_".$phase->getPhaseId();
 				$selectId = $selectName;
 				$selectedItem = TRUE;
 

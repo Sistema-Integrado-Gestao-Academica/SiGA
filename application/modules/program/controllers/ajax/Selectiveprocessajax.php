@@ -119,7 +119,6 @@ class SelectiveProcessAjax extends MX_Controller {
     public function newSelectionProcess(){
 
         $data = $this->getDataToSave();
-
         $process = $data['process'];
         if($process !== FALSE){
             $this->load->model("selectiveprocess_model", "process_model");
@@ -129,9 +128,7 @@ class SelectiveProcessAjax extends MX_Controller {
 
                 $noticeName = $process->getName();
 
-                $message = "O processo seletivo ".$noticeName." foi salvo com sucesso!";
                 $response = array(
-                    'message' => $message,
                     'status' => TRUE,
                     'processId' => $processId    
                 );
@@ -192,19 +189,60 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function updateSelectionProcess(){
 
-        $process = $this->getDataToSave();
+        $data = $this->getDataToSave();
 
+        $process = $data['process'];
         if($process !== FALSE){
             $processId = $this->input->post("processId");
 
             $this->load->model("selectiveprocess_model", "process_model");
-            $processId = $this->process_model->update($process, $processId);
+            try{
+                $processId = $this->process_model->update($process, $processId);
+                $phases = $this->getPhases($process);
+                if($processId){
+                    $response = array(
+                        'status' => TRUE,
+                        'phases' => $phases    
+                    );
+                }
+            }
+            catch(SelectionProcessException $e){
+                $message = $e->getMessage();
 
-            $noticeName = $process->getName();
-            if($processId){
-                callout("info", "O processo seletivo ".$noticeName." foi editado com sucesso!");
+                $response = array(
+                    'message' => $message,
+                    'status' => FALSE
+                );
             }
         }
+        else{
+            $message = $data['message'];
+
+            $response = array(
+                'message' => $message,
+                'status' => FALSE
+            );
+        }
+
+        $json = json_encode($response);
+        echo $json;
+    }
+
+    private function getPhases($process){
+        $settings = $process->getSettings();
+        $phases = $settings->getPhases();
+        $phasesArray = array();
+        if($phases){
+            foreach ($phases as $phase) {
+                $phaseId = $phase->getPhaseId();
+                $phaseName = $phase->getPhaseName();
+                $phasesArray[$phaseId] = $phaseName;
+            }
+        }
+
+        $phasesArray = json_encode($phasesArray);
+
+        return $phasesArray;
     }
 
     public function getDataToSave(){
@@ -248,6 +286,7 @@ class SelectiveProcessAjax extends MX_Controller {
 
                 $notSelected = "0";
 
+
                 if($preProject !== $notSelected){
                     $preProject = new PreProjectEvaluation($preProjectWeight, $preProjectGrade, SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
                     $phases[] = $preProject;
@@ -269,7 +308,7 @@ class SelectiveProcessAjax extends MX_Controller {
                     $phases[] = new Homologation(SelectionProcessConstants::HOMOLOGATION_PHASE_ID);
 
                     $phasesOrder = $this->input->post("phases_order");
-                    $processSettings = new ProcessSettings(NULL, NULL, $phases, $phasesOrder);
+                    $processSettings = new ProcessSettings(NULL, NULL, $phases, $phasesOrder, FALSE, TRUE);
 
                     $process->addSettings($processSettings);
                 }
@@ -286,6 +325,7 @@ class SelectiveProcessAjax extends MX_Controller {
             $process = FALSE;
             $message = $e->getMessage();
         }
+
 
         $data = array('process' => $process, 'message' => $message);
 
@@ -356,99 +396,6 @@ class SelectiveProcessAjax extends MX_Controller {
         }
 
         return $status;
-    }
-
-    // REMOVER
-    public function defineDivulgationDate($processId){
-
-        $courseId = $this->input->post("course_id");
-        $date = $this->input->post("divulgation_start_date");
-        $divulgationDescription = $this->input->post("divulgation_description");
-        $message = $this->input->post("message");
-
-        $this->load->model("selectiveprocess_model", "process_model");
-        $process = $this->process_model->getById($processId);
-        $settings = $process->getSettings();
-        $processName = $process->getName();
-        $error = "";
-        if(is_null($date) || empty($date) || is_null($divulgationDescription) || empty($divulgationDescription)){
-            $error .= "<br>Preencha a data e a descrição da divulgação.";
-        }
-        else{
-            $subscriptionStartDate = $settings->getStartDate();
-            $today = new Datetime();
-            $date = convertDateToDateTime($date);
-            $dateInDatetime = new DateTime($date);
-            $validDate = validateDateInPeriod($dateInDatetime, $today, $subscriptionStartDate);
-            if($validDate){
-                $data = array(
-                    'id_process' => $processId,
-                    'description' => $divulgationDescription,
-                    'message' => $message,
-                    'initial_divulgation' => TRUE,
-                    'date' => $date
-                );
-                $saved = $this->process_model->saveProcessDivulgation($data, TRUE);
-                $processDivulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
-                if(!$saved){
-                    $error .= "<br>Não foi possível salvar a data de divulgação. Tente novamente.";
-                }
-            }
-            else{
-                $error .= "<br>A data de divulgação deve ser anterior a data de inscrição e posterior ou igual a data de hoje.";
-            }
-        }
-
-        if($error){
-            $text = "Data não definida";
-            $bodyText = function() use ($error){
-                echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
-                echo $error;
-                echo "</div>";
-                echo "Você pode definir uma data ou divulgar o processo seletivo agora.";
-
-            };
-            $processDivulgation = FALSE;
-            $footer = function() use ($processId, $courseId, $processName){
-                echo anchor("#", "Divulgar agora", "class='btn btn-success'");
-                echo "&nbsp";
-                echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Definir data</button>";
-                echo "<br>";
-                echo "<br>";
-                echo "<div id='define_date_form' class='collapse'>";
-                echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
-                echo "<br>";
-                formOfDateDivulgation($processId, $processName, $courseId);
-            };
-            $link = "#";
-            $date = FALSE;
-        }
-        else{
-            $text = $divulgationDescription;
-            $link = site_url('download_notice/'.$processId.'/'.$courseId);
-            $bodyText = function() use ($message){
-                echo $message;
-                echo "<br>Clique para baixar.";
-            };
-            $footer = "";
-            $date = convertDateTimeToDateBR($processDivulgation['date']);
-            $dateToTest = new Datetime($processDivulgation['date']);
-            $today = new Datetime();
-            if($dateToTest > $today){
-                $footer = function() use ($processId, $courseId, $processName, $date, $text, $message){
-                    echo "<button data-toggle='collapse' data-target=#define_date_form class='btn btn-primary'>Editar data</button>";
-                    echo "<br>";
-                    echo "<br>";
-                    echo "<div id='define_date_form' class='collapse'>";
-                    echo "<div class='alert alert-info'> Definindo uma data de divulgação do edital você também deve definir uma descrição para a divulgação.</div>";
-                    echo "<br>";
-                    formOfDateDivulgation($processId, $processName, $courseId, $date, $text, $message);
-                };
-            }
-        }
-
-        writeTimelineItem($text, $date, $link, $bodyText, $footer);
-        echo "</ul>";
     }
 
     public function defineSubscriptionDate($processId){
@@ -526,11 +473,11 @@ class SelectiveProcessAjax extends MX_Controller {
 
             $this->load->model("selectiveprocess_model", "process_model");
             $validDates = validateDatesDiff($startDateToValidation, $endDateToValidation);
-
+            
             if($validDates){
 
                 $validDateBasedOnPhases = $this->validateDateBasedOnPhases($processId, $phaseId, $startDateToValidation, $endDateToValidation);
-
+                
                 if($validDateBasedOnPhases){
 
                     $dataToSave = array(
@@ -583,13 +530,15 @@ class SelectiveProcessAjax extends MX_Controller {
     }
 
     private function validateDateBasedOnPhases($processId, $phaseId, $phaseStartDate, $phaseEndDate){
+        
+        $process = $this->process_model->getById($processId);       
 
-        $process = $this->process_model->getById($processId);
         $settings = $process->getSettings();
         $phases = $settings->getPhases();
-
+        
         $relatedPhases = $this->getPreviousAndNextPhase($phaseId, $phases);
         $previousPhase = $relatedPhases['previous'];
+
         if(is_null($previousPhase)){
             $previousPhaseEndDate = $settings->getYMDEndDate();
         }
@@ -791,6 +740,42 @@ class SelectiveProcessAjax extends MX_Controller {
         else{
             echo "<div class='alert alert-danger'>A descrição deve ser preenchida.</div>";
         }
+    }
+
+    public function setDatesDefined($processId){
+
+        $this->load->model("selectiveprocess_model", "process_model");
+
+        $this->process_model->updateProcessFlags($processId, array('dates_defined' => TRUE));
+    }
+
+    public function setTeachersSelected($processId){
+
+        $this->load->model("selectiveprocess_model", "process_model");
+
+        $this->process_model->updateProcessFlags($processId, array('teachers_selected' => TRUE));
+
+    }
+
+    public function addNewDefineDateItem($processId){
+
+        $phases = $this->input->post('phases');
+        
+        foreach ($phases as $phaseId => $phaseName) {
+            $text = "Periodo para a fase <b>{$phaseName}</b> não definido";
+            $bodyText = function() use ($processId, $phaseId){
+                defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date");
+            };
+
+            $labelId = "phase_label_".$phaseId;
+            writeTimelineLabel("white", $phaseName, $labelId);
+            echo "<li>";
+                echo "<i class='fa fa-calendar-o bg-blue' id='phase_icon_{$phaseId}'></i>";
+                echo "<div id='phase_{$phaseId}' class='timeline-item'>";
+                    writeTimelineItem($text, FALSE, "#phase_{$phaseId}", $bodyText, "");
+                echo "</div>";
+            echo "</li>";
+        };
     }
 
 }

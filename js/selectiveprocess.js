@@ -28,6 +28,7 @@ $(document).ready(function(){
 		});
 	});
 
+
 	$("#open_selective_process_btn").click(function(){
 		saveSelectiveProcess("newSelectionProcess");
 	});
@@ -46,19 +47,9 @@ $(document).ready(function(){
 		dateFormat: "dd-mm-yy"});
 	});
 
-	$('#edit_notice_path_form').submit(function(e) {
-    	e.preventDefault();
-		editNoticePath($(this)[0]);
-	});
-
 	$(document).on('focus',"#divulgation_start_date", function(){
 	    $(this).datepicker($.datepicker.regional["pt-BR"], {
 		dateFormat: "dd-mm-yy"});
-	});
-
-	$(document).on('click', '#define_divulgation_date', function(e){
-    	e.preventDefault();
-		defineDivulgationDate();
 	});
 
 	$(document).on('click', '#define_date_phase_1', function(e){
@@ -126,6 +117,10 @@ $(document).ready(function(){
 			dateFormat: "dd-mm-yy"});
 	});
 
+	$("#save_research_line").click(function(){
+		saveResearchLine();
+	});
+	
 	(function($) {
 
 	  addTimelineItem = function(processId) {
@@ -142,10 +137,43 @@ $(document).ready(function(){
 	  };
 	})(jQuery);
 
+	(function($) {
+
+	  saveDefinedDates = function(processId, phasesIds) {
+
+		if(!document.getElementById('dates_defined')){
+			setDatesDefined(processId, phasesIds);
+		}
+		else{
+			openTab("#define_teachers_link");
+		}
+	  };
+	})(jQuery);
+
+	(function($) {
+
+	  saveSelectedTeachers = function(processId) {
+		setTeachersSelected(processId);
+	  };
+	})(jQuery);
+
 	$(document).on('click', '#divulgate', function(e){
     	e.preventDefault();
 		divulgateNotice();
 	});
+
+	$("#back_to_define_dates").click(function(){
+		openTab('#dates_link');
+	});
+
+	$("#back_to_define_teachers").click(function(){
+		openTab('#define_teachers_link');
+	});
+
+	$("#back_to_edit_process").click(function(){
+		openTab('#edit_process_link');
+	});
+	
 
 });
 
@@ -161,16 +189,16 @@ function saveSelectiveProcess(saveMethod){
 	var course = $("#course").val();
 	var studentType = $("#student_type").val();
 	var noticeName = $("#selective_process_name").val();
-	
-	var preProject = $("#phase_2").val();
+
+	var preProject = $("#phase_select_2").val();
 	var preProjectWeight = $("#phase_weight_2").val();
 	var preProjectGrade = $("#phase_grade_2").val();
 
-	var writtenTest = $("#phase_3").val();
+	var writtenTest = $("#phase_select_3").val();
 	var writtenTestWeight = $("#phase_weight_3").val();
 	var writtenTestGrade = $("#phase_grade_3").val();
 
-	var oralTest = $("#phase_4").val();
+	var oralTest = $("#phase_select_4").val();
 	var oralTestWeight = $("#phase_weight_4").val();
 	var oralTestGrade = $("#phase_grade_4").val();
 
@@ -199,16 +227,23 @@ function saveSelectiveProcess(saveMethod){
 		var processId = $("#processId").val();
 	    data['processId'] = processId;
 	}
+
 	$.post(
 		urlToPost,
 		data,
 		function(data){
 			var response = JSON.parse(data);
-			alert(response);
 			if(response.status){
-				window.setTimeout(function () {
-			        location.href = siteUrl + "/define_dates_page/" + response.processId + "/"+ course;
-				}, 1000);
+				if(saveMethod === "newSelectionProcess"){
+					window.setTimeout(function () {
+			        	location.href = siteUrl + "/selection_process/config/" + response.processId;
+					}, 1000);
+				}
+				else{
+					var phases = JSON.parse(response.phases);
+					organizePhases(phases, siteUrl, processId);
+					openTab("#dates_link");					
+				}
 			}
 			else{
 				$("#selection_process_error_status").html("<p class='alert alert-danger'>" + response.message + "</p>");
@@ -224,9 +259,9 @@ function getPhasesToSort(){
 	var writtenTest;
 	var oralTest;
 
-	preProject = $("#phase_2").val();
-	writtenTest = $("#phase_3").val();
-	oralTest = $("#phase_4").val();
+	preProject = $("#phase_select_2").val();
+	writtenTest = $("#phase_select_3").val();
+	oralTest = $("#phase_select_4").val();
 	var siteUrl = $("#site_url").val();
 
 	data = {
@@ -262,52 +297,6 @@ function getPhasesToSort(){
 	}
 
 }
-
-function editNoticePath(formData){
-	var siteUrl = $("#site_url").val();
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/editNoticeFile";
-
-	var data = new FormData(formData);
-
-	$.ajax({
-		url: urlToPost,
-		type: 'post',
-		data: data,
-		async: false,
-		cache: false,
-		contentType: false,
-		processData: false,
-		success: function (data) {
-			$("#status_notice_file").html(data);
-		}
-	});
-}
-
-function defineDivulgationDate(){
-	var siteUrl = $("#site_url").val();
-	var divulgation_start_date = $("#divulgation_start_date").val();
-	var divulgation_description = $("#divulgation_description").val();
-	var message = $("#message").val();
-	var process_id = $("#process_id").val();
-	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/defineDivulgationDate/" + process_id;
-	var course_id = $("#course_id").val();
-
-
-	var data = {
-		divulgation_start_date: divulgation_start_date,
-		divulgation_description: divulgation_description,
-		message: message,
-		course_id: course_id
-	}
-	$.post(
-		urlToPost,
-		data,
-		function(data){
-			$("#divulgation").html(data);
-		}
-	);
-}
-
 
 function definePhaseDate(phaseId){
 	var siteUrl = $("#site_url").val();
@@ -355,10 +344,6 @@ function defineSubscriptionDate(){
 	);
 }
 
-	
-
-
-
 function addFormToAddDivulgation(processId, firstDivulgation){
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addFormToAddDivulgation/" + processId;
@@ -404,3 +389,165 @@ function divulgateNotice(){
 	);
 
 }
+
+function saveResearchLine(){
+	var research_line = $("#research_line").val();
+	var course_id = $("#research_course").val();	
+
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/courseajax/saveResearchLine";
+
+	var data = {
+		research_line: research_line,
+		course_id: course_id
+	}
+
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#result").html(data);
+			if(data.includes("success")){
+				$("#research_lines").append("<li>"+ research_line + "</li>");
+			}
+		}
+	);
+}
+
+function setDatesDefined(processId, phasesIds){
+	var datesWereDefined = checkIfDatesWereDefined(phasesIds);
+
+	if(datesWereDefined){
+		var siteUrl = $("#site_url").val();
+		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/setDatesDefined/" + processId;
+
+		$.get(
+			urlToPost,
+			function(response){
+				openTab('#define_teachers_link');
+				$("#warning_message").hide();
+				$("#save_dates_btn").attr('id', 'dates_defined');
+			}
+		);
+	}
+	else{
+		openTab('#define_teachers_link');	
+		$("#warning_message").show();
+		$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu a data de todas as fases.");
+	}
+}
+
+
+function setTeachersSelected(processId){
+
+	var hasTeachers = $("#teachers_added_to_process_table").find('table > tbody:last > tr').length != 0;
+
+	if(hasTeachers){
+
+		var siteUrl = $("#site_url").val();
+		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/setTeachersSelected/" + processId;
+
+		$.get(
+			urlToPost,
+			function(data){
+				openTab('#config_subscription_link');
+				$("#warning_message").hide();
+			}
+		);
+	}
+	else{
+		openTab('#config_subscription_link');	
+		$("#warning_message").show();
+		$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu nenhum professor para fazer parte da comissão de seleção.");
+	}
+}
+
+function openTab(tabId){
+	$(tabId).removeClass("disabled");
+	$(tabId).tab("show");
+	scrollTo(0,0);
+}
+
+function checkIfDatesWereDefined(phasesIds){
+	
+	var textToFind = "Período definido";
+
+	var subscription = $("#subscription").find('h3 a:first').text();
+	var datesWereDefined = true;
+
+
+	if(subscription === textToFind){
+		var ids = phasesIds.split(';');	
+
+		var phase = null;
+		for(var i=0; i < ids.length; i++){
+			var elementLink = "#phase_" + ids[i];
+			phase = $("a[href='" + elementLink + "']").text();
+			if(phase !== textToFind){
+				datesWereDefined = false;
+				break;
+			}
+		}
+	}
+	else{
+		datesWereDefined = false;
+	}
+
+	return datesWereDefined;
+}
+
+function organizePhases(currentPhases, siteUrl, processId){
+
+	var elementsOnTimeline = $("#define_dates_timeline").find('li div');
+	var previousPhases = {};
+	
+	var length = elementsOnTimeline.length;
+	var previousPhasesLength = 0;
+	for(var i=3; i < length; i+=3){
+		element = elementsOnTimeline[i];
+		id = element.id.replace("phase_", "");
+		previousPhases[id] = id;
+		previousPhasesLength ++;
+	}
+
+	// Adding new phases
+	var newPhases = {};
+	var currentPhasesIds = Object.keys(currentPhases);
+	var length = currentPhasesIds.length;
+	for(var i=0; i < length; i++){
+		var currentPhaseId = currentPhasesIds[i];
+		if(!previousPhases[currentPhaseId]){
+			newPhases[currentPhaseId] = currentPhases[currentPhaseId];
+		}	
+	}
+
+	if(!jQuery.isEmptyObject(newPhases)){
+		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addNewDefineDateItem/" + processId;
+		var data = {
+			phases: newPhases,
+		}
+
+		$.post(
+			urlToPost,
+			data,
+			function(data){
+				$("#define_dates_timeline").append(data);
+			}
+		);
+
+	}
+	// Removing deleted phases
+	for(var i=0; i < previousPhasesLength; i++){
+		var previousPhase = previousPhases[i];
+		if(!currentPhases[previousPhase]){
+			$("#phase_label_" + previousPhase).remove();
+			$("#phase_icon_" + previousPhase).remove();
+			$("#phase_" + previousPhase).remove();
+		}	
+	}
+
+}
+
+
+
+	

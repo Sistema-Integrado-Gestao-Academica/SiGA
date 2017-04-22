@@ -15,8 +15,14 @@ class ProcessSettings{
 	private $endDate;
 	private $phases;
 	private $phasesOrder;
+	private $datesDefined;
+	private $neededDocsSelected;
+	private $teachersSelected;
 
-	public function __construct($startDate = FALSE, $endDate = FALSE, $phases = FALSE, $phasesOrder = FALSE){
+	public function __construct($startDate = FALSE, $endDate = FALSE, 
+								$phases = FALSE, $phasesOrder = FALSE, 
+								$datesDefined = FALSE, $neededDocsSelected = FALSE, 
+								$teachersSelected = FALSE){
 
 		if($startDate != NULL){
 			$this->setStartDate($startDate);
@@ -25,6 +31,9 @@ class ProcessSettings{
 		}
 		$this->setPhases($phases);
 		$this->setPhasesOrder($phasesOrder);
+		$this->setDatesDefined($datesDefined);
+		$this->setNeededDocsSelected($neededDocsSelected);
+		$this->setTeachersSelected($teachersSelected);
 	}
 
 	public function addPhase($phase){
@@ -225,5 +234,29 @@ class ProcessSettings{
 
 	public function getPhasesOrder(){
 		return $this->phasesOrder;
+	}
+
+	public function setDatesDefined($datesDefined){
+		$this->datesDefined = $datesDefined;
+	}
+
+	public function setNeededDocsSelected($neededDocsSelected){
+		$this->neededDocsSelected = $neededDocsSelected;
+	}
+
+	public function setTeachersSelected($teachersSelected){
+		$this->teachersSelected = $teachersSelected;
+	}
+
+	public function getDatesDefined(){
+		return $this->datesDefined;
+	}
+
+	public function getNeededDocsSelected(){
+		return $this->neededDocsSelected;
+	}
+
+	public function getTeachersSelected(){
+		return $this->teachersSelected;
 	}
 }

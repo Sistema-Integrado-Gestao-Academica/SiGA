@@ -23,5 +23,10 @@ class SelectionProcessConstants {
 	const NOT_DISCLOSED = "Não divulgado";
 	const DISCLOSED = "Divulgado";
 	const OPEN_FOR_SUBSCRIPTIONS = "Inscrições abertas";
-	const INSCRIPTIONS_CLOSED = "Inscrições encerradas";
+	const IN_HOMOLOGATION_PHASE = "Em fase de homologação";
+	const IN_PRE_PROJECT_PHASE = "Em fase de Avaliação de Pré-Projeto";
+	const IN_WRITTEN_TEST_PHASE = "Em fase de Prova escrita";
+	const IN_ORAL_TEST_PHASE = "Em fase de Prova Oral";
+	const FINISHED = "Encerrado";
+	const INCOMPLETE_CONFIG = "Configuração incompleta";
 }

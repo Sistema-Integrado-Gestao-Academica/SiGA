@@ -1,8 +1,8 @@
-<h2 class="principal">Divulgações do processo seletivo: <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
+<h2 class="principal">Divulgações do processo seletivo: <b><i><?=$process->getName()?></i></b> </h2>
 <?php 
 echo "<hr>";
 
-$settings = $selectiveprocess->getSettings();
+$settings = $process->getSettings();
 $phases = $settings->getPhases();
 
 $phasesName = array();
@@ -14,9 +14,9 @@ if($phases !== FALSE){
     }
 }
 // True because is a guest user
-showDivulgations($selectiveprocess, $processDivulgations, $phasesName, TRUE);
+showDivulgations($process, $processDivulgations, $phasesName, TRUE);
 
 echo "<br>";
 
-$courseId = $selectiveprocess->getCourse();
+$courseId = $process->getCourse();
 echo anchor("/", "Voltar", "class='btn btn-danger'");
