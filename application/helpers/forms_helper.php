@@ -2,6 +2,12 @@
 <?php
 require_once(APPPATH."/constants/TeacherConstants.php");
 
+function getAllCountries(){
+	$countriesJson = file_get_contents(APPPATH.'/assets/countries.json');
+	$countries = json_decode($countriesJson, true);
+	return $countries;
+}
+
 function alert($content, $type="info", $title=FALSE, $icon="info", $dismissible=TRUE){
 	echo "<div class='alert alert-{$type} alert-dismissible' role='alert'>";
 		if($dismissible){
@@ -43,10 +49,10 @@ function newModal($id, $title, $body, $footer, $formPath=FALSE, $class="modal fa
     echo "</div>";
 }
 
-function newInputField($type, $id, $value=""){
+function newInputField($type, $id="", $value=""){
 
-	if(is_array($id)){
-		$field = $id;
+	if(is_array($type)){
+		$field = $type;
 	}else{
 		$field = array(
 			'id' => $id,
@@ -958,7 +964,7 @@ function searchInStudentList($specificData, $course){
 }
 
 function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFieldId, $startDateValue = "", $endDateValue = ""){
-	
+
 	$hidden = array(
 		'id' => "process_id",
 		'name' => "process_id",
@@ -1007,7 +1013,7 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 }
 
 function formOfDateDivulgation($processId, $processName, $courseId, $startDateValue = "", $descriptionValue = "", $messageValue = ""){
-    
+
     $hidden = array(
         'id' => "process_id",
         'name' => "process_id",
@@ -1044,7 +1050,7 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
 
     $message = array(
         "name" => "message",
-        "id" => "message",  
+        "id" => "message",
         "type" => "text",
         "placeholder" => "Mensagem relacionada",
         "class" => "form-control",
@@ -1059,7 +1065,7 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
         "type" => "submit"
     );
 
-  
+
     echo form_input($hidden);
     echo form_input($courseHidden);
     echo form_label("Data", "date");
@@ -1075,22 +1081,22 @@ function formOfDateDivulgation($processId, $processName, $courseId, $startDateVa
 function displayFormToAddField($programId, $btnName, $btnId,  $infoId = FALSE, $titleValue = "", $detailsValue = "", $fileExists = FALSE){
 	$title = array(
 		"name" => "title",
-		"id" => "title",	
+		"id" => "title",
 		"type" => "text",
 		"required" => TRUE,
 		"placeholder" => "Título da informação",
 		"class" => "form-control",
 		"value" => $titleValue
-	);	
+	);
 	$details = array(
 		"name" => "details",
-		"id" => "details",	
+		"id" => "details",
 		"type" => "text",
 		"placeholder" => "Texto que irá aparecer como detalhe da informação",
 		"class" => "form-control",
 		"value" => $detailsValue
-	);	
-	
+	);
+
 	if($infoId){
 		$infoHidden = array(
 			"id" => "info_id",
@@ -1163,7 +1169,7 @@ function displayFormToAddField($programId, $btnName, $btnId,  $infoId = FALSE, $
 }
 
 function formToAddFile($programId, $infoId, $submitFileBtn){
-	
+
     $hidden = array(
         "id" => "program_id",
         "name" => "program_id",
@@ -1183,7 +1189,7 @@ function formToAddFile($programId, $infoId, $submitFileBtn){
 	echo form_open_multipart("program/program/addInformationFile", array( 'id' => 'add_field_file_form' ));
 	echo form_input($hidden);
 	echo form_input($infoHidden);
-	
+
 	$fieldFile = array(
 	    "name" => "field_file",
 	    "id" => "field_file",
@@ -1202,7 +1208,7 @@ function formToAddFile($programId, $infoId, $submitFileBtn){
 		echo "</div>";
 		echo form_label("Você pode incluir um arquivo para essa informação. <br><small><i>(Arquivos aceitos '.jpg, .png e .pdf')</i></small>:", "field_file");
 		echo "<div class='col-lg-8'>";
-			echo form_input($fieldFile); 
+			echo form_input($fieldFile);
 		echo "</div>";
 		echo "<div class='col-lg-4'>";
 			echo form_button($submitFileBtn);
