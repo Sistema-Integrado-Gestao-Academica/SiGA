@@ -72,14 +72,14 @@
     <p>As linhas de pesquisa para escolha do candidato são:</p>
   </small>
   </h3>
-<ul id="research_lines">
-<?php foreach ($courseResearchLines as $researchLine): 
-  $id = $researchLine['id_course'].$researchLine['id_research_line'];
-  $novoId = $id + 1;
-?>
-  <li id=<?=$id?>> <?= $researchLine['description'] ?> </li>
+<ul>
+<?php foreach ($courseResearchLines as $researchLine):  ?>
+  <div class="col-md-6" id="research_lines">
+    <li> <?= $researchLine['description'] ?> </li>
+  </div>
 <?php endforeach ?>
 </ul>
+<br>
 <?php else: ?>
   <?php callout('info', 'Nenhuma linha de pesquisa cadastrada para o curso.'); ?>
 <?php endif ?>
@@ -92,7 +92,7 @@
 
 
 <div class="col-sm-2 pull-left">
-    <button class='btn btn-danger pull-left' id="back_to_define_teachers">Voltar</button>
+    <button class='btn btn-danger pull-left' type="button" id="back_to_define_teachers">Voltar</button>
 </div>
 
 <?php 

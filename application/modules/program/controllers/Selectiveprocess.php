@@ -80,18 +80,48 @@ class SelectiveProcess extends MX_Controller {
         $course = $this->course_model->getCourseById($courseId);
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
-
+        $configData = $this->getConfigDataOfProcesses($selectiveProcesses);
         $status = $this->getProcessStatus($selectiveProcesses);
 
         $data = array(
             'course' => $course,
-            'selectiveProcesses' => $selectiveProcesses,
-            'status' => $status['status'],
-            'noticeWithAllConfig' => $status['noticeWithAllConfig']
+            'selectiveProcesses' => $selectiveProcesses
         );
 
+        $data = $data + $configData + $status;
+        
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
     }
+
+    private function getConfigDataOfProcesses($selectiveProcesses){
+        
+        $processesTeachers = array();
+        $processesDocs = array();
+        $processesResearchLines = array();
+
+        $this->load->model('program/selectiveprocessconfig_model', 'process_config_model');
+
+        if($selectiveProcesses !== FALSE){
+            foreach ($selectiveProcesses as $selectiveProcess) {
+                $processId = $selectiveProcess->getId();
+                $processTeachers = $this->process_model->getProcessTeachers($processId);
+                $processDocs = $this->process_config_model->getProcessDocs($processId);
+                $courseResearchLines = $this->course_model->getCourseResearchLines($selectiveProcess->getCourse());
+
+                $processesTeachers[$processId] = ($processTeachers);
+                $processesDocs[$processId] = ($processDocs);
+                $processesResearchLines[$processId] = ($courseResearchLines);
+            }
+        }
+
+        $data = array(
+            'processesTeachers' => $processesTeachers,
+            'processesDocs' => $processesDocs,
+            'processesResearchLines' => $processesResearchLines
+        );
+
+        return $data;
+    } 
 
     private function getProcessStatus($selectiveProcesses){
 
@@ -556,10 +586,6 @@ class SelectiveProcess extends MX_Controller {
         $this->load->helper('selectionprocess');
 
         loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP, "/home/divulgations", $data);
-    }
-    
-    private function getCoursesName($selectiveProcess){
-        
     }
 
 }

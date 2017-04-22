@@ -33,7 +33,8 @@ $(document).ready(function(){
 		saveSelectiveProcess("newSelectionProcess");
 	});
 
-	$("#edit_selective_process_btn").click(function(){
+	$("#edit_selective_process_btn").click(function(e){
+	    e.preventDefault();
 		saveSelectiveProcess("updateSelectionProcess");
 	});
 
@@ -140,13 +141,14 @@ $(document).ready(function(){
 	(function($) {
 
 	  saveDefinedDates = function(processId, phasesIds) {
-
 		if(!document.getElementById('dates_defined')){
 			setDatesDefined(processId, phasesIds);
 		}
 		else{
 			openTab("#define_teachers_link");
 		}
+
+		return false;
 	  };
 	})(jQuery);
 
@@ -154,6 +156,8 @@ $(document).ready(function(){
 
 	  saveSelectedTeachers = function(processId) {
 		setTeachersSelected(processId);
+
+		return false;
 	  };
 	})(jQuery);
 
@@ -162,15 +166,18 @@ $(document).ready(function(){
 		divulgateNotice();
 	});
 
-	$("#back_to_define_dates").click(function(){
+	$("#back_to_define_dates").click(function(e){
+    	e.preventDefault();
 		openTab('#dates_link');
 	});
 
-	$("#back_to_define_teachers").click(function(){
+	$("#back_to_define_teachers").click(function(e){
+    	e.preventDefault();
 		openTab('#define_teachers_link');
 	});
 
-	$("#back_to_edit_process").click(function(){
+	$("#back_to_edit_process").click(function(e){
+    	e.preventDefault();
 		openTab('#edit_process_link');
 	});
 	
@@ -463,8 +470,7 @@ function setTeachersSelected(processId){
 }
 
 function openTab(tabId){
-	$(tabId).removeClass("disabled");
-	$(tabId).tab("show");
+	$(tabId).click();
 	scrollTo(0,0);
 }
 

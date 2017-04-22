@@ -1,50 +1,60 @@
-<h2 class="principal">Atualização de informações do processo <i><?= bold($process->getName()) ?></i></h2>
+<h3 class="principal">Atualização de informações do processo <i><?= bold($process->getName()) ?></i></h3>
 
 <div class="row">
     <?php $courseId = $process->getCourse(); ?>
     <?= anchor(
         "program/selectiveprocess/courseSelectiveProcesses/{$courseId}",
         "Voltar",
-        "class='btn btn-danger btn-lg pull-right'"
+        "class='btn btn-danger pull-right'"
     ); ?>
 </div>
-<br>
 
 <div class="alert alert-warning" id="warning_message" style="display:none;"></div>
-<div class="row">
-    <ul class="nav nav-tabs nav-justified">
+
+<link rel="stylesheet" href=<?=base_url("css/form_wizard.css")?>>
+<div class="wizard">
+<div class="wizard-inner">
+    <div class="connecting-line"></div>
+    <ul class="nav nav-tabs" role="tablist">
         <li class="active">
-            <?=anchor(
-                "#edit_process_tab",
-                "<b><i class='fa fa-edit'></i> Editar dados do processo</b>",
-                "class='btn btn-tab' data-toggle='tab' id='edit_process_link'")
-            ?>
+            <a href='#edit_process_tab' class='btn btn-tab' data-toggle='tab' id='edit_process_link'>
+                <span class='round-tab'>
+                    <i class='fa fa-edit'></i>
+                </span>
+            </a>
+            <h5> <center class="tab_description"> Dados básicos</center></h5>
         </li>
         <li class="">
-            <?=anchor(
-                "#dates_tab",
-                "<b><i class='fa fa-calendar-o'></i> Datas</b>",
-                "class='btn btn-tab' data-toggle='tab' id='dates_link'")
-            ?>
+            <a href='#dates_tab' class='btn btn-tab' data-toggle='tab' id='dates_link'>
+                <span class='round-tab'>
+                    <i class='fa fa-calendar-o'></i>
+                </span>
+            </a>
+            <h5><center class="tab_description"> Datas </center></h5>
         </li>
         <li class="">
-            <?=anchor(
-                "#define_teachers_tab",
-                "<b><i class='fa fa-group'></i> Comissão de Seleção</b>",
-                "class='btn btn-tab' data-toggle='tab' id='define_teachers_link'")
-            ?>
+            <a href='#define_teachers_tab' class='btn btn-tab' data-toggle='tab' id='define_teachers_link'>
+                <span class='round-tab'>
+                    <i class='fa fa-group'></i>
+                </span>
+            </a>
+            <h5><center class="tab_description"> Comissão de Seleção </center></h5>
         </li>
         <li class="">
-            <?=anchor(
-                "#config_subscription_tab",
-                "<b><i class='fa fa-cogs'></i> Configurações de inscrição do candidato </b>",
-                "class='btn btn-tab' data-toggle='tab' id='config_subscription_link'")
-            ?>
+            <a href='#config_subscription_tab' class='btn btn-tab' data-toggle='tab' id='config_subscription_link'>
+                <span class='round-tab'>
+                    <i class='fa fa-cogs'></i>
+                </span>
+            </a>
+            <h5><center class="tab_description"> Configurações de inscrição do candidato </center></h5>
         </li>
     </ul>
+</div>
+</div>
 
+<form role="form">
     <div class="tab-content">
-        <div class='tab-pane fade in active' id="edit_process_tab">
+      <div class='tab-pane fade in active' id="edit_process_tab">
             <?php
                 call_user_func(function () use ($process, $phasesNames, $phasesWeights, 
                                                 $noticeFileName, $divulgation, $phasesGrades){
@@ -54,7 +64,7 @@
         </div>
         <div class='tab-pane fade' id="dates_tab">
             <?php
-                $backButton = "<button class='btn btn-danger' id='back_to_edit_process'>Voltar</button>";
+                $backButton = "<button class='btn btn-danger' type='button' id='back_to_edit_process'>Voltar</button>";
                 call_user_func(function() use($process, $phasesIds, $backButton){
                     include('define_dates.php');
                 });
@@ -75,8 +85,5 @@
                 });
             ?>
         </div>
-    </div>
-</div>
-
-<br>
-<br>
+    </div>  
+</form>

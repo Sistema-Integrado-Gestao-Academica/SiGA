@@ -91,7 +91,7 @@
 		<?= $backButton ?>
 	</div>
 	<div class="col-sm-2 pull-right" id="save_date">
-    	<button class='btn btn-primary' onclick=<?=$saveBtn?> id="save_dates_btn">Salvar e Continuar</button>
+    	<button class='btn btn-primary' type="button" onclick=<?=$saveBtn?> id="save_dates_btn">Salvar e Continuar</button>
 	</div>
 
 	<br>

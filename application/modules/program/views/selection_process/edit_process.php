@@ -61,8 +61,6 @@ include '_form.php';
 ?>
 <?= form_input($processHidden); ?>
 <!-- Selection Process Settings -->
-<br>
-<br>
 <h3><i class="fa fa-cogs"></i> Configurações do edital</h3>
 
 <br>

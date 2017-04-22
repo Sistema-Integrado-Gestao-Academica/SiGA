@@ -6,11 +6,11 @@
 <br>
 <br>
 <div class="col-sm-2 pull-left">
-    <button class='btn btn-danger' id="back_to_define_dates">Voltar</button>
+    <button class='btn btn-danger' type="button" id="back_to_define_dates">Voltar</button>
 </div>
 <div class="col-sm-2 pull-right">
     <?php $saveBtn = 'saveSelectedTeachers('.$processId.')'; ?>
-    <button class='btn btn-primary' onclick=<?=$saveBtn?>>Salvar e Continuar</button>
+    <button class='btn btn-primary' type="button" onclick=<?=$saveBtn?>>Salvar e Continuar</button>
 </div>
 
 <br>

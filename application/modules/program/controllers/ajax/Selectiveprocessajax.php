@@ -539,27 +539,38 @@ class SelectiveProcessAjax extends MX_Controller {
         $relatedPhases = $this->getPreviousAndNextPhase($phaseId, $phases);
         $previousPhase = $relatedPhases['previous'];
 
+
         if(is_null($previousPhase)){
-            $previousPhaseEndDate = $settings->getYMDEndDate();
+            $previousPhaseEndDate = $settings->getStartDate();
+            if($previousPhaseEndDate != NULL){
+                $previousPhaseEndDate = $settings->getYMDStartDate();
+            }
         }
         else{
             $previousPhaseEndDate = $previousPhase->getYMDEndDate();
         }
-        // The current phase start date must be later than the end date of previous phase
-        $previousPhaseEndDate = new Datetime($previousPhaseEndDate);
-        $validDatePreviousPhase = validateDatesDiff($previousPhaseEndDate, $phaseStartDate);
 
-        $nextPhase = $relatedPhases['next'];
-        if(is_null($nextPhase)){
-            $validDateNextPhase = TRUE;
+        if($previousPhaseEndDate !== NULL){          
+            // The current phase start date must be later than the end date of previous phase
+            $previousPhaseEndDate = new Datetime($previousPhaseEndDate);
+            $validDatePreviousPhase = validateDatesDiff($previousPhaseEndDate, $phaseStartDate);
+
+            $nextPhase = $relatedPhases['next'];
+            if(is_null($nextPhase)){
+                $validDateNextPhase = TRUE;
+            }
+            else{
+                $nextPhaseStartDate = $nextPhase->getYMDStartDate();
+                $nextPhaseStartDate = new Datetime($nextPhaseStartDate);
+                $validDateNextPhase = validateDatesDiff($phaseEndDate, $nextPhaseStartDate);
+            }
+
+            $validDates = $validDatePreviousPhase && $validDateNextPhase;
         }
         else{
-            $nextPhaseStartDate = $nextPhase->getYMDStartDate();
-            $nextPhaseStartDate = new Datetime($nextPhaseStartDate);
-            $validDateNextPhase = validateDatesDiff($phaseEndDate, $nextPhaseStartDate);
+            $validDates = TRUE;
         }
 
-        $validDates = $validDatePreviousPhase && $validDateNextPhase;
 
         return $validDates;
     }
@@ -598,6 +609,7 @@ class SelectiveProcessAjax extends MX_Controller {
             'next' => $nextPhase
         );
 
+
         return $relatedPhases;
     }
 
@@ -622,6 +634,7 @@ class SelectiveProcessAjax extends MX_Controller {
                 }
             }
         }
+
 
         return $result;
     }
