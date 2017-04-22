@@ -36,13 +36,30 @@ class MY_Form_validation extends CI_Form_validation {
         return $validDate;
     }
 
+    function valid_date_DMY($date){
+
+        $CI =& get_instance();
+        $CI->form_validation->set_message('valid_date_DMY', "{$date} não é uma data válida.");
+
+        return validateDate($date) !== FALSE;
+    }
+
     function valid_name($str){
 
         $CI =& get_instance();
 
-        $CI->form_validation->set_message('valid_name', 'A {field} deve conter apenas caracteres alfabéticos.');
+        $CI->form_validation->set_message('valid_name', '{field} deve conter apenas caracteres alfabéticos.');
 
         return ( ! preg_match("/^[a-zA-ZáéíóúàâêôãõüçÁÉÍÓÚÀÂÊÔÃÕÜÇ ]*$/i", $str)) ? FALSE : TRUE;
+    }
+
+    function valid_address($str){
+
+        $CI =& get_instance();
+
+        $CI->form_validation->set_message('valid_address', "{field} utilize apenas caracteres alfanuméricos e os caracteres '/', '-', '.', '(', ')', 'º'.");
+
+        return ( ! preg_match("/^[a-zA-Z0-9áéíóúàâêôãõüçÁÉÍÓÚÀÂÊÔÃÕÜÇ\/\.\-\(\)º ]*$/i", $str)) ? FALSE : TRUE;
     }
 
 	/**
