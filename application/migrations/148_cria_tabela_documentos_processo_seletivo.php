@@ -79,7 +79,7 @@ class Migration_cria_tabela_documentos_processo_seletivo extends CI_Migration {
             ],
             [
                 'doc_name' => 'Currículo Lattes',
-                'doc_desc' => 'Apenas o link para o currículo.'
+                'doc_desc' => 'PDF do currículo.'
             ],
             [
                 'doc_name' => 'Comprovante de Proficiência em língua(s) estrangeira(s)',
@@ -87,7 +87,7 @@ class Migration_cria_tabela_documentos_processo_seletivo extends CI_Migration {
             ],
             [
                 'doc_name' => 'Comprovante de pagamento da GRU',
-                'doc_desc' => 'Cópia digitalizada do comprovante de pagamento da Guia de Recolhimento da União (GRU) no valor de R$ 250,00.'
+                'doc_desc' => 'Cópia digitalizada do comprovante de pagamento da Guia de Recolhimento da União (GRU).'
             ],
         ]);
     }
