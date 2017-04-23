@@ -2,21 +2,45 @@
 
 <?php
 
+  $docFileError = function ($doc) use($filesErrors, $subscriptionDocs){
+    $docId = $doc['id'];
+    if(!empty($filesErrors) && isset($filesErrors[$docId])){
+      $error = $filesErrors[$docId];
+      echo "<p class='alert-danger'>{$error}</p>";
+    }
+
+    if(!$doc['totally_required']){
+      echo "<p class='alert-warning'>Este arquivo não é obrigatório em alguns casos. Leia atentamente a descrição.</p>";
+    }
+
+    if(isset($subscriptionDocs[$docId])){
+      echo "<p class='alert-success'>Este arquivo já foi enviado com sucesso.</p>";
+      echo anchor(
+        "selection_process/download/doc/{$docId}/{$subscriptionDocs[$docId]['id_subscription']}",
+        "<i class='fa fa-cloud-download'></i> Baixar arquivo enviado",
+        "class='btn btn-sm btn-info btn-block'"
+      );
+    }
+  };
+
   $docFileInput = function($doc){
+    $docFieldId = 'doc_'.$doc['id'];
     return [
-      'name' => 'doc_'.$doc['id'],
-      'id' => 'doc_'.$doc['id'],
+      'name' => $docFieldId,
+      'id' => $docFieldId,
       'type' => 'file',
       'class' => 'filestyle',
       'data-buttonBefore' => 'true',
       'data-buttonText' => '',
       'data-placeholder' => $doc['doc_name'],
       'data-iconName' => 'fa fa-file',
-      'data-buttonName' => 'btn-default',
-      'required' => $doc['totally_required']
+      'data-buttonName' => 'btn-default'
     ];
   };
 
+  $userFullName = $userSubscription !== FALSE
+    ? $userSubscription['full_name']
+    : $userData->getName();
   $fullName = array(
     'name' => 'candidate_full_name',
     'id' => 'candidate_full_name',
@@ -25,9 +49,12 @@
     'placeholder' => 'Informe o seu nome completo',
     'maxlength' => '70',
     'required' => true,
-    'value' => set_value('candidate_full_name', $userData->getName(), false)
+    'value' => set_value('candidate_full_name', $userFullName, false)
   );
 
+  $selectedMaleSex = $userSubscription !== FALSE
+    ? $userSubscription['sex'] == 'male' ? " checked='checked'" : ''
+    : set_radio('candidate_sex', 'male');
   $maleSex = array(
     'id' => 'candidate_male_sex',
     'name' => 'candidate_sex',
@@ -36,6 +63,9 @@
     'value' => 'male'
   );
 
+  $selectedFemaleSex = $userSubscription !== FALSE
+    ? $userSubscription['sex'] == 'female' ? " checked='checked'" : ''
+    : set_radio('candidate_sex', 'female');
   $femaleSex = array(
     'id' => 'candidate_female_sex',
     'name' => 'candidate_sex',
@@ -44,6 +74,9 @@
     'value' => 'female'
   );
 
+  $userBirthDate = $userSubscription !== FALSE
+    ? convertDateTimeToDateBR($userSubscription['birth_date'])
+    : '';
   $birthDate = array(
     'id' => 'candidate_birth_date',
     'name' => 'candidate_birth_date',
@@ -52,9 +85,12 @@
     'class' => 'form-campo',
     'class' => 'form-control',
     'required' => true,
-    'value' => set_value('candidate_birth_date', '', false)
+    'value' => set_value('candidate_birth_date', $userBirthDate, false)
   );
 
+  $userEmail = $userSubscription !== FALSE
+    ? $userSubscription['email']
+    : $userData->getEmail();
   $email = array(
     'id' => 'candidate_email',
     'name' => 'candidate_email',
@@ -63,9 +99,12 @@
     'placeholder' => '* Evite informar emails institucionais.',
     'maxlength' => '60',
     'required' => true,
-    'value' => set_value('candidate_email', $userData->getEmail(), false)
+    'value' => set_value('candidate_email', $userEmail, false)
   );
 
+  $userNationality = $userSubscription !== FALSE
+    ? $userSubscription['nationality']
+    : '';
   $nationality = array(
     'id' => 'candidate_nationality',
     'name' => 'candidate_nationality',
@@ -74,13 +113,27 @@
     'placeholder' => 'Informe sua nacionalidade',
     'maxlength' => '30',
     'required' => true,
-    'value' => set_value('candidate_nationality', '', false)
+    'value' => set_value('candidate_nationality', $userNationality, false)
   );
 
   // Check if there is a selected country from previous request
-  $selectedCountry = $this->input->post('candidate_address_country');
+  $selectedCountry = $userSubscription !== FALSE
+    ? $userSubscription['address_country']
+    : $this->input->post('candidate_address_country');
   $selectedCountry = $selectedCountry ? $selectedCountry : 'BR';
 
+  $userAddressPlace = $userSubscription !== FALSE
+    ? $userSubscription['address_place']
+    : '';
+  $userAddressCity = $userSubscription !== FALSE
+    ? $userSubscription['address_city']
+    : '';
+  $userAddressState = $userSubscription !== FALSE
+    ? $userSubscription['address_state']
+    : '';
+  $userAddressCep = $userSubscription !== FALSE
+    ? $userSubscription['address_cep']
+    : '';
   $address = array(
     'place' => array(
       'id' => 'candidate_address_place',
@@ -90,7 +143,7 @@
       'placeholder' => 'Informe seu endereço e complemento, se houver.',
       'maxlength' => '80',
       'required' => true,
-      'value' => set_value('candidate_address_place', '', false)
+      'value' => set_value('candidate_address_place', $userAddressPlace, false)
     ),
     'city' => array(
       'id' => 'candidate_address_city',
@@ -100,7 +153,7 @@
       'placeholder' => 'Informe sua cidade',
       'maxlength' => '40',
       'required' => true,
-      'value' => set_value('candidate_address_city', '', false)
+      'value' => set_value('candidate_address_city', $userAddressCity, false)
     ),
     'state' => array(
       'id' => 'candidate_address_state',
@@ -110,7 +163,7 @@
       'placeholder' => 'Informe seu estado',
       'maxlength' => '40',
       'required' => true,
-      'value' => set_value('candidate_address_state', '', false)
+      'value' => set_value('candidate_address_state', $userAddressState, false)
     ),
     'cep' => array(
       'id' => 'candidate_address_cep',
@@ -121,11 +174,23 @@
       'maxlength' => '10',
       'min' => 0,
       'required' => true,
-      'value' => set_value('candidate_address_cep', '', false)
+      'value' => set_value('candidate_address_cep', $userAddressCep, false)
     ),
     'countries' => getAllCountries()
   );
 
+  $userContactHomeDDD = $userSubscription !== FALSE
+    ? $userSubscription['contact_ddd_home']
+    : '';
+  $userContactHomeNumber = $userSubscription !== FALSE
+    ? $userSubscription['contact_number_home']
+    : '';
+  $userContactMobileDDD = $userSubscription !== FALSE
+    ? $userSubscription['contact_ddd_mobile']
+    : '';
+  $userContactMobileNumber = $userSubscription !== FALSE
+    ? $userSubscription['contact_number_mobile']
+    : '';
   $contact = array(
     'home' => array(
       'ddd' => array(
@@ -137,7 +202,7 @@
         'placeholder' => 'Código de área (DDD)',
         'maxlength' => '4',
         'required' => true,
-        'value' => set_value('candidate_contact_ddd_home', '', false)
+        'value' => set_value('candidate_contact_ddd_home', $userContactHomeDDD, false)
       ),
       'number' => array(
         'id' => 'candidate_contact_number_home',
@@ -148,7 +213,7 @@
         'placeholder' => 'Número do telefone',
         'maxlength' => '15',
         'required' => true,
-        'value' => set_value('candidate_contact_number_home', '', false)
+        'value' => set_value('candidate_contact_number_home', $userContactHomeNumber, false)
       )
     ),
     'mobile' => array(
@@ -161,7 +226,7 @@
         'placeholder' => 'Código de área (DDD)',
         'maxlength' => '4',
         'required' => true,
-        'value' => set_value('candidate_contact_ddd_mobile', '', false)
+        'value' => set_value('candidate_contact_ddd_mobile', $userContactMobileDDD, false)
       ),
       'number' => array(
         'id' => 'candidate_contact_number_mobile',
@@ -172,24 +237,27 @@
         'placeholder' => 'Número do telefone',
         'maxlength' => '15',
         'required' => true,
-        'value' => set_value('candidate_contact_number_mobile', '', false)
+        'value' => set_value('candidate_contact_number_mobile', $userContactMobileNumber, false)
       )
     )
   );
 
+  $userSpecialNeeds = $userSubscription !== FALSE
+    ? $userSubscription['special_needs']
+    : '';
   $specialNeeds = array(
     'id' => 'candidate_special_needs',
     'name' => 'candidate_special_needs',
     'placeholder' => 'Descreva aqui as suas necessidades especiais, se houver.',
     'rows' => '4',
     'class' => 'form-control',
-    'value' => set_value('candidate_special_needs', '', false)
+    'value' => set_value('candidate_special_needs', $userSpecialNeeds, false)
   );
 
   $subscribeBtn = array(
     'id' => 'subscribe_process_btn',
     'class' => 'btn btn-success btn-lg btn-block',
-    'content' => 'Inscrever-se!',
+    'content' => $userSubscription !== FALSE ? "<i class='fa fa-edit'></i> Atualizar inscrição" : 'Inscrever-se!',
     'type' => 'submit'
   );
 ?>
@@ -202,13 +270,13 @@
   ); ?>
 </div>
 
-<h3>
-  <i class="fa fa-user"></i> Dados pessoais <br>
-  <small>Informe seus dados pessoais.</small>
-</h3>
-<br>
-
 <?= form_open_multipart("selection_process/subscribe_to/{$process->getId()}") ?>
+  <h3>
+    <i class="fa fa-user"></i> Dados pessoais <br>
+    <small>Informe seus dados pessoais.</small>
+  </h3>
+  <br>
+
   <div class="row">
     <div class="col-md-6 form-group">
       <?= form_label('Nome completo', $fullName['id']) ?>
@@ -226,13 +294,13 @@
 
       <div class="radio">
         <label>
-          <?= form_radio($femaleSex, '', '', set_radio('candidate_sex', 'female')) ?>
+          <?= form_radio($femaleSex, '', '', $selectedFemaleSex) ?>
           Feminino
         </label>
       </div>
       <div class="radio">
         <label>
-          <?= form_radio($maleSex, '', '', set_radio('candidate_sex', 'male')) ?>
+          <?= form_radio($maleSex, '', '', $selectedMaleSex) ?>
           Masculino
         </label>
       </div>
@@ -341,7 +409,7 @@
     <?= form_error($specialNeeds['id']) ?>
   </div>
 
-  <div class="row">
+  <div id="required_docs" class="row">
     <h3>
       <i class="fa fa-files-o"></i> Documentos necessários <br>
       <small>
@@ -354,16 +422,30 @@
     </h3>
     <br>
 
-    <?php if(!empty($requiredDocs)): ?>
-      <div class="row">
-        <?php foreach($requiredDocs as $doc): ?>
+    <?php if(!empty($requiredDocs)):
+      $index = 0;
+      $row = "<div class='row'>";
+      $endrow = "</div>";
+      echo $row;
+    ?>
+        <?php
+          foreach($requiredDocs as $doc):
+            $text = $index % 3 == 0 ? $row : "";
+            echo $text;
+        ?>
           <div class="col-md-4 form-group">
             <?= form_label($doc['doc_name'], $doc['id']) ?>
             <br><small><?= $doc['doc_desc'] ?></small>
             <?= form_input($docFileInput($doc)) ?>
+            <?php $docFileError($doc); ?>
           </div>
-        <?php endforeach ?>
-      </div>
+        <?php
+          $index++;
+          $text = $index % 3 == 0 ? $endrow : "";
+          echo $text;
+          endforeach
+        ?>
+
     <?php else: ?>
       <?= callout('info', 'Não são necessários documentos para inscrição.') ?>
     <?php endif ?>
