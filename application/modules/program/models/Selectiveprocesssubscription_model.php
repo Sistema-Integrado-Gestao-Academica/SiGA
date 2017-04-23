@@ -7,11 +7,12 @@ class SelectiveProcessSubscription_model extends CI_Model {
     protected $TABLE = 'selection_process_user_subscription';
     const SUBSCRIPTION_DOCS_TABLE = 'selection_process_subscription_docs';
 
-    public function getOrSave($processId, $subscription){
-        $foundSubscription = $this->get([
+    public function saveOrUpdate($processId, $subscription){
+        $identifier = [
             'id_process' => $processId,
             'id_user' => $subscription['id_user']
-        ]);
+        ];
+        $foundSubscription = $this->get($identifier);
 
         $userNotSubscribedInProcess = $foundSubscription === FALSE;
         if($userNotSubscribedInProcess){
@@ -21,6 +22,8 @@ class SelectiveProcessSubscription_model extends CI_Model {
             $this->persist($subscription);
         }else{
             $candidateId = $foundSubscription['candidate_id'];
+            $this->db->where($identifier);
+            $this->db->update($this->TABLE, $subscription);
         }
 
         return $candidateId;

@@ -34,7 +34,7 @@ class SelectionProcessSubscription extends CI_Model {
         $data = $this->prepareArrayToSave($data);
         $data['id_user'] = $user->getId();
         $data['birth_date'] = convertDateToDB($data['birth_date']);
-        return $this->process_subscription_model->getOrSave($processId, $data);
+        return $this->process_subscription_model->saveOrUpdate($processId, $data);
     }
 
     private function getSubmittedDocs($processId, $user, $candidateId){

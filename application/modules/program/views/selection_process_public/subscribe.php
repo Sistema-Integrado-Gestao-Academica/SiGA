@@ -254,6 +254,11 @@
     'value' => set_value('candidate_special_needs', $userSpecialNeeds, false)
   );
 
+  $selectedResearchLine = $userSubscription !== FALSE
+    ? $userSubscription['research_line']
+    : $this->input->post('candidate_research_line');
+  $selectedResearchLine = $selectedResearchLine ? $selectedResearchLine : '';
+
   $subscribeBtn = array(
     'id' => 'subscribe_process_btn',
     'class' => 'btn btn-success btn-lg btn-block',
@@ -408,6 +413,26 @@
     <?= form_textarea($specialNeeds) ?>
     <?= form_error($specialNeeds['id']) ?>
   </div>
+
+  <hr>
+  <div class="row">
+    <h3>
+      <i class="fa fa-book"></i> Linha de pesquisa <br>
+      <small>
+        <p>Escolha entre uma das linhas de pesquisa do seu curso.</p>
+      </small>
+    </h3>
+    <?= form_label('Linha de pesquisa', 'candidate_research_line') ?>
+    <?=
+      form_dropdown(
+        'candidate_research_line',
+        $researchLines,
+        $selectedResearchLine,
+        "class='form-control' required='true'"
+      )
+    ?>
+  </div>
+  <hr>
 
   <div id="required_docs" class="row">
     <h3>

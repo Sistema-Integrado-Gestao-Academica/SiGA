@@ -62,12 +62,12 @@ class SelectiveProcessPublic extends MX_Controller {
         $process = $this->process_model->getById($processId);
         $requiredDocs = $this->process_config_model->getProcessDocs($processId);
         $userData = getSession()->getUserData();
-
         $userSubscription = $this->process_subscription_model->getByUserAndProcess(
             $processId, $userData->getId()
         );
-
         $subscriptionDocs = $this->getSubscriptionDocs($userSubscription);
+        $this->load->model('course_model');
+        $researchLines = $this->course_model->getCourseResearchLines($process->getCourse());
 
         $data = [
             'process' => $process,
@@ -75,6 +75,11 @@ class SelectiveProcessPublic extends MX_Controller {
             'subscriptionDocs' => $subscriptionDocs,
             'userData' => $userData,
             'userSubscription' => $userSubscription,
+            'researchLines' => makeDropdownArray(
+                $researchLines,
+                'id_research_line',
+                'description'
+            ),
             'filesErrors' => ''
         ];
 

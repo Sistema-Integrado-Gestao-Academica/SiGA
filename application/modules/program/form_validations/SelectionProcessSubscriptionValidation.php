@@ -79,6 +79,11 @@
         'field' => 'candidate_special_needs',
         'label' => 'Necessidades especiais',
         'rules' => ['trim']
+      ],
+      [
+        'field' => 'candidate_research_line',
+        'label' => 'Linha de pesquisa',
+        'rules' => ['required']
       ]
     ];
 ?>
