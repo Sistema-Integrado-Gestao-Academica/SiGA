@@ -50,7 +50,7 @@ class SelectiveProcessSubscription_model extends CI_Model {
         if($this->exists('id', $subscriptionId)){
             $this->db->where('id', $subscriptionId);
             $this->db->update($this->TABLE, [
-               'confirmed' => TRUE
+               'finalized' => TRUE
             ]);
         }
     }

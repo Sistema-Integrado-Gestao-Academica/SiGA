@@ -75,6 +75,7 @@ class SelectiveProcessPublic extends MX_Controller {
             'subscriptionDocs' => $subscriptionDocs,
             'userData' => $userData,
             'userSubscription' => $userSubscription,
+            'countries' => getAllCountries(),
             'researchLines' => makeDropdownArray(
                 $researchLines,
                 'id_research_line',
@@ -83,9 +84,15 @@ class SelectiveProcessPublic extends MX_Controller {
             'filesErrors' => ''
         ];
 
+        $template = !$userSubscription['finalized']
+            // View to edit info and docs and then finalize subscription
+            ? "program/selection_process_public/subscribe"
+            // View to visualized finalized subscription data
+            : "program/selection_process_public/subscription";
+
         loadTemplateSafelyByPermission(
             PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
-            "program/selection_process_public/subscribe",
+            $template,
             array_merge($data, $extraData)
         );
     }
