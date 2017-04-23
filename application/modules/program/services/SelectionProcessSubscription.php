@@ -18,6 +18,21 @@ class SelectionProcessSubscription extends CI_Model {
         );
     }
 
+    public function finalizeSubscription($subscriptionId){
+        $subscription = $this->process_subscription_model->getBySubscriptionId($subscriptionId);
+        $loggedUser = getSession()->getUserData();
+
+        if($subscription['id_user'] == $loggedUser->getId()){
+            // User can only finalize their own subscription
+            $this->db->trans_start();
+            $this->process_subscription_model->finalizeSubscription($subscriptionId);
+            $this->db->trans_complete();
+            return $this->db->trans_status();
+        }else{
+            return FALSE;
+        }
+    }
+
     public function newSubscription($processId, $data){
         $user = getSession()->getUserData();
 

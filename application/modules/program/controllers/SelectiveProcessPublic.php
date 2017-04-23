@@ -143,6 +143,29 @@ class SelectiveProcessPublic extends MX_Controller {
         );
     }
 
+    public function finalizeSubscription($subscriptionId){
+        $self = $this;
+        withPermission(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            function() use($self, $subscriptionId){
+                $self->load->service(
+                    'program/SelectionProcessSubscription',
+                    'subscription_service'
+                );
+
+                $finalized = $self->subscription_service->finalizeSubscription(
+                    $subscriptionId
+                );
+
+                $status = $finalized ? 'success' : 'danger';
+                $msg = $finalized
+                    ? 'Sua inscrição foi finalizada com sucesso!'
+                    : 'Não foi possível finalizar a inscrição informada.';
+                getSession()->showFlashMessage($status, $msg);
+                redirect('selection_process/public');
+            }
+        );
+    }
+
     public function dowloadSubscriptionDoc($docId, $subscriptionId){
         $self = $this;
         withPermission(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,

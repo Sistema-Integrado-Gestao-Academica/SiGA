@@ -213,6 +213,7 @@ $route['selection_process/public'] = 'program/selectiveProcessPublic/index';
 $route['selection_process/subscribe/(:num)'] = 'program/selectiveProcessPublic/subscribe/$1';
 $route['selection_process/subscribe_to/(:num)'] = 'program/selectiveProcessPublic/subscribeTo/$1';
 $route['selection_process/divulgations/(:num)'] = 'program/selectiveProcessPublic/divulgations/$1';
+$route['selection_process/subscription/finalize/(:num)'] = 'program/selectiveProcessPublic/finalizeSubscription/$1';
 $route['selection_process/download/doc/(:num)/(:num)'] = 'program/selectiveProcessPublic/dowloadSubscriptionDoc/$1/$2';
 
 // Selection process config routes

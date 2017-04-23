@@ -46,6 +46,15 @@ class SelectiveProcessSubscription_model extends CI_Model {
         }
     }
 
+    public function finalizeSubscription($subscriptionId){
+        if($this->exists('id', $subscriptionId)){
+            $this->db->where('id', $subscriptionId);
+            $this->db->update($this->TABLE, [
+               'confirmed' => TRUE
+            ]);
+        }
+    }
+
     private function generateCandidateId(){
         $this->load->helper('string');
         $candidateId = random_string('numeric', self::CANDIDATE_ID_LENGTH);
@@ -77,14 +86,24 @@ class SelectiveProcessSubscription_model extends CI_Model {
         );
     }
 
+    public function getBySubscriptionId($subscriptionId){
+        return $this->get('id', $subscriptionId);
+    }
+
     public function getSubscriptionDocs($subscriptionId){
-        return $this->get(
-            'id_subscription',
-            $subscriptionId,
-            $unique=FALSE,
-            $like=FALSE,
-            self::SUBSCRIPTION_DOCS_TABLE
+        $this->db->select('id_doc, doc_name, doc_path, id_subscription');
+        $this->db->from('selection_process_subscription_docs');
+        $this->db->join(
+            'selection_process_available_docs',
+            'selection_process_subscription_docs.id_doc = selection_process_available_docs.id'
         );
+        $this->db->where(
+            'selection_process_subscription_docs.id_subscription',
+            $subscriptionId
+        );
+        $docs = checkArray($this->db->get()->result_array());
+
+        return $docs;
     }
 
     public function getSubscriptionDoc($subscriptionId, $docId){

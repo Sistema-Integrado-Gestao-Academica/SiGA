@@ -11,3 +11,6 @@ $lang['Homologação']  = "homologation";
 $lang['Avaliação de Pré-Projeto'] = "pre_project";
 $lang['Prova escrita'] = "written_test";
 $lang['Prova oral']  = "oral_test";
+
+$lang['male']  = "Masculino";
+$lang['female']  = "Feminino";
