@@ -124,26 +124,15 @@ class SelectiveProcessPublic extends MX_Controller {
                     $candidateData = getSubmittedDataFor('selection_process_subscription');
 
                     try{
-                        $subscribed = $this->subscription_service->newSubscription(
+                        $this->subscription_service->newSubscription(
                             $processId,
                             $candidateData
                         );
-
-                        $status = subscribed ? 'success' : 'danger';
-                        $msg = subscribed
-                            ? 'Sua inscrição foi realizada com sucesso!'
-                            : 'Não foi possível realizar sua inscrição, cheque os dados informados.';
-                        getSession()->showFlashMessage($status, $msg);
-
-                        if($subscribed){
-                            redirect('selection_process/public');
-                        }else{
-                            $self->subscribe($processId);
-                        }
+                        $self->subscribe($processId);
                     }catch(UploadException $e){
                         getSession()->showFlashMessage(
                             'danger',
-                            "Erro nos <a href='#required_docs'>documentos submetidos</a>."
+                            "Não foi possível salvar os documentos. Erro nos <a href='#required_docs'>documentos submetidos</a>."
                         );
                         $self->subscribe($processId, ['filesErrors' => $e->getErrorData()]);
                     }

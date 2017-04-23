@@ -1,5 +1,3 @@
-<h2 class="principal">Inscrição no processo <b><i><?= $process->getName() ?></i></b></h2>
-
 <?php
 
   $docFileError = function ($doc) use($filesErrors, $subscriptionDocs){
@@ -267,18 +265,39 @@
   );
 ?>
 
+<h2 class="principal">Inscrição no processo <b><i><?= $process->getName() ?></i></b></h2>
+<?php if($userSubscription !== FALSE): ?>
+
+  <?php
+    alert(function(){
+      echo "<p>Seus dados básicos <b>já foram salvos</b>, mas você <b>ainda pode alterar suas informações e documentos</b>.</p>";
+      echo "<p>Quando estiver tudo certo, <b>confirme sua inscrição</b> para efetivá-la.</p>";
+    }, 'success', FALSE, 'fa fa-check');
+  ?>
+<?php endif ?>
+
 <div class="row">
   <?= anchor(
     "selection_process/public",
     "Voltar",
-    "class='pull-right btn btn-danger btn-lg'"
+    "class='pull-right btn btn-danger'"
   ); ?>
 </div>
 
-<?= form_open_multipart("selection_process/subscribe_to/{$process->getId()}") ?>
+<?= form_open_multipart(
+  "selection_process/subscribe_to/{$process->getId()}",
+  ['id' => 'candidate_subscription_form']
+)?>
   <h3>
     <i class="fa fa-user"></i> Dados pessoais <br>
-    <small>Informe seus dados pessoais.</small>
+    <small>
+      <p>Informe aqui seus dados pessoais.</p>
+      <p>
+        <i class="fa fa-exclamation-triangle"></i>
+        Nós recuperamos alguns dados do seu cadastro inicial no sistema.
+        Por favor, confira os dados e preencha o restante das informações.
+      </p>
+    </small>
   </h3>
   <br>
 
@@ -298,13 +317,13 @@
       <?= form_error($maleSex['name']) ?>
 
       <div class="radio">
-        <label>
+        <label id="candidate_female_sex_div">
           <?= form_radio($femaleSex, '', '', $selectedFemaleSex) ?>
           Feminino
         </label>
       </div>
       <div class="radio">
-        <label>
+        <label id="candidate_male_sex_div">
           <?= form_radio($maleSex, '', '', $selectedMaleSex) ?>
           Masculino
         </label>
@@ -447,6 +466,11 @@
     </h3>
     <br>
 
+    <p class="text-warning">
+      <i class="fa fa-warning"></i> Candidatos estrangeiros, confira se há documentos específicos para sua situação, como Carteira de Identidade de Estrangeiros.</p>
+    <div id="documents_info_message"></div>
+    <br>
+
     <?php if(!empty($requiredDocs)):
       $index = 0;
       $row = "<div class='row'>";
@@ -493,6 +517,9 @@
 
 <script>
   $(document).ready(function(){
+
+    checkCandidateGender();
+
     $("#candidate_birth_date"). datepicker({
       dateFormat: "dd/mm/yy",
       changeMonth: true,
@@ -501,4 +528,18 @@
     });
     $("#candidate_birth_date").datepicker($.datepicker.regional["pt-BR"]);
   });
+
+  function checkCandidateGender(){
+    var candidateGender = $('input[name=candidate_sex]:checked', '#candidate_subscription_form').val();
+
+    var documentWarning = "<p class='text-warning'><i class='fa fa-warning'></i> Candidato do sexo masculino, confira se há documentos obrigatórios como o Certificado de Reservista.</p>";
+
+    if(candidateGender == 'male'){
+      $("#documents_info_message").html(documentWarning);
+    }
+
+    $('#candidate_male_sex_div').click(function(){
+      $("#documents_info_message").html(documentWarning);
+    });
+  }
 </script>

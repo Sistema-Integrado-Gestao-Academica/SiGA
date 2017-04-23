@@ -25,9 +25,14 @@ class SelectionProcessSubscription extends CI_Model {
         $candidateId = $this->saveUserSubscription($processId, $user, $data);
         $this->db->trans_complete();
 
-        $this->getSubmittedDocs($processId, $user, $candidateId);
+        $saved = $this->db->trans_status();
+        $status = $saved ? 'success' : 'danger';
+        $msg = $saved
+            ? 'Seus dados básicos foram salvos com sucesso!'
+            : 'Não foi possível salvar os seus dados básicos, cheque os dados informados.';
+        getSession()->showFlashMessage($status, $msg);
 
-        return $this->db->trans_status();
+        $this->getSubmittedDocs($processId, $user, $candidateId);
     }
 
     private function saveUserSubscription($processId, $user, $data){
