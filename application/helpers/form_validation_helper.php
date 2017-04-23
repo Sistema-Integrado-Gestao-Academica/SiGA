@@ -12,6 +12,16 @@ function validateWithRule($ruleGroup){
     return $validationResult;
 }
 
+function getSubmittedDataFor($form){
+    $CI =& get_instance();
+    $data = [];
+    $formData = getValidationFor($form);
+    foreach ($formData as $fieldData) {
+        $data[$fieldData['field']] = $CI->input->post($fieldData['field']);
+    }
+    return $data;
+}
+
 function getValidationFor($ruleGroup){
     $validations = include(APPPATH.'/config/form_validation.php');
 

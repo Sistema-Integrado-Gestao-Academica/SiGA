@@ -23,37 +23,37 @@
       [
         'field' => 'candidate_email',
         'label' => 'e-mail',
-        'rules' => ['required', 'trim', 'valid_email']
+        'rules' => ['required', 'trim', 'valid_email', 'max_length[60]']
       ],
       [
         'field' => 'candidate_nationality',
         'label' => 'Nacionalidade',
-        'rules' => ['required', 'trim', 'valid_name']
+        'rules' => ['required', 'trim', 'valid_name', 'max_length[30]']
       ],
       [
         'field' => 'candidate_address_place',
         'label' => 'Logradouro',
-        'rules' => ['required', 'trim', 'valid_address']
+        'rules' => ['required', 'trim', 'valid_address', 'max_length[80]']
       ],
       [
         'field' => 'candidate_address_city',
         'label' => 'Cidade',
-        'rules' => ['required', 'trim', 'valid_name']
+        'rules' => ['required', 'trim', 'valid_name', 'max_length[40]']
       ],
       [
         'field' => 'candidate_address_state',
         'label' => 'Estado',
-        'rules' => ['required', 'trim', 'valid_name']
+        'rules' => ['required', 'trim', 'valid_name', 'max_length[40]']
       ],
       [
         'field' => 'candidate_address_cep',
         'label' => 'Código postal',
-        'rules' => ['required', 'trim', 'numeric', 'is_natural']
+        'rules' => ['required', 'trim', 'numeric', 'is_natural', 'max_length[10]']
       ],
       [
         'field' => 'candidate_address_country',
         'label' => 'País do endereço',
-        'rules' => ['required']
+        'rules' => ['required', 'max_length[2]']
       ],
       [
         'field' => 'candidate_contact_ddd_home',
@@ -79,6 +79,11 @@
         'field' => 'candidate_special_needs',
         'label' => 'Necessidades especiais',
         'rules' => ['trim']
+      ],
+      [
+        'field' => 'candidate_research_line',
+        'label' => 'Linha de pesquisa',
+        'rules' => ['required']
       ]
     ];
 ?>

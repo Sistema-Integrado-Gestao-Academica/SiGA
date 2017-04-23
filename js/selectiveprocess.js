@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
-	
-	$("#phase_2").ready(function(){
+
+	$("#phase_select_2").ready(function(){
 
 		getPhasesToSort();
 
@@ -10,7 +10,7 @@ $(document).ready(function(){
 		});
 	});
 
-	$("#phase_3").ready(function(){
+	$("#phase_select_3").ready(function(){
 
 		getPhasesToSort();
 
@@ -19,7 +19,7 @@ $(document).ready(function(){
 		});
 	});
 
-	$("#phase_4").ready(function(){
+	$("#phase_select_4").ready(function(){
 
 		getPhasesToSort();
 
@@ -121,7 +121,7 @@ $(document).ready(function(){
 	$("#save_research_line").click(function(){
 		saveResearchLine();
 	});
-	
+
 	(function($) {
 
 	  addTimelineItem = function(processId) {
@@ -167,7 +167,7 @@ $(document).ready(function(){
     	e.preventDefault();
 		openTab('#edit_process_link');
 	});
-	
+
 
 });
 
@@ -236,14 +236,14 @@ function saveSelectiveProcess(saveMethod){
 				else{
 					var phases = JSON.parse(response.phases);
 					organizePhases(phases, siteUrl, processId);
-					openTab("#dates_link");					
+					openTab("#dates_link");
 				}
 			}
 			else{
 				$("#selection_process_error_status").html("<p class='alert alert-danger'>" + response.message + "</p>");
 				scrollTo(0,0);
 			}
-		}	
+		}
 	);
 }
 
@@ -348,11 +348,11 @@ function addFormToAddDivulgation(processId){
 		function(data){
 			$("#new_divulgation").html(data);
 			var style = {
-				buttonText: "Procurar arquivo", 
-				buttonName: "btn btn-primary", 
-				iconName: "fa fa-file", 
+				buttonText: "Procurar arquivo",
+				buttonName: "btn btn-primary",
+				iconName: "fa fa-file",
 				placeholder: "Nenhum arquivo selecionado"};
-			
+
 			$(':file').filestyle(style);
 		}
 	);
@@ -360,7 +360,7 @@ function addFormToAddDivulgation(processId){
 
 function saveResearchLine(){
 	var research_line = $("#research_line").val();
-	var course_id = $("#research_course").val();	
+	var course_id = $("#research_course").val();
 
 	var siteUrl = $("#site_url").val();
 	var urlToPost = siteUrl + "/program/ajax/courseajax/saveResearchLine";
@@ -400,7 +400,7 @@ function setDatesDefined(processId, phasesIds){
 		);
 	}
 	else{
-		openTab('#define_teachers_link');	
+		openTab('#define_teachers_link');
 		$("#warning_message").show();
 		$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu a data de todas as fases.");
 	}
@@ -425,7 +425,7 @@ function setTeachersSelected(processId){
 		);
 	}
 	else{
-		openTab('#config_subscription_link');	
+		openTab('#config_subscription_link');
 		$("#warning_message").show();
 		$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu nenhum professor para fazer parte da comissão de seleção.");
 	}
@@ -437,13 +437,13 @@ function openTab(tabId){
 }
 
 function checkIfDatesWereDefined(phasesIds){
-	
+
 	var subscriptionStartDate = $("#start_date").val();
 	var subscriptionEndDate = $("#end_date").val();
 	var datesWereDefined = true;
 
 	if(subscriptionStartDate != "" || subscriptionEndDate != ""){
-		var ids = phasesIds.split(';');	
+		var ids = phasesIds.split(';');
 		for(var i=0; i < ids.length; i++){
 			var startDateId = "#phase_" + ids[i] + "_start_date";
 			var endDateId = "#phase_" + ids[i] + "_end_date";
@@ -466,7 +466,7 @@ function organizePhases(currentPhases, siteUrl, processId){
 
 	var elementsOnTimeline = $("#define_dates_timeline").find('li div');
 	var previousPhases = {};
-	
+
 	var length = elementsOnTimeline.length;
 	var previousPhasesLength = 0;
 	for(var i=3; i < length; i+=3){
@@ -484,7 +484,7 @@ function organizePhases(currentPhases, siteUrl, processId){
 		var currentPhaseId = currentPhasesIds[i];
 		if(!previousPhases[currentPhaseId]){
 			newPhases[currentPhaseId] = currentPhases[currentPhaseId];
-		}	
+		}
 	}
 
 	if(!jQuery.isEmptyObject(newPhases)){
@@ -509,11 +509,10 @@ function organizePhases(currentPhases, siteUrl, processId){
 			$("#phase_label_" + previousPhase).remove();
 			$("#phase_icon_" + previousPhase).remove();
 			$("#phase_" + previousPhase).remove();
-		}	
+		}
 	}
 
 }
 
 
 
-	

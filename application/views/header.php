@@ -44,16 +44,6 @@
 	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.theme.min.css")?>>
 
 	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
-	<script src=<?=base_url("js/bootstrap.min.js")?>></script>
-	<script src=<?=base_url("js/AdminLTE/app.js")?>></script>
-	<script src=<?=base_url("js/popovers.js")?>></script>
-	<script src=<?=base_url("js/enrollment.js")?>></script>
-	<script src=<?=base_url("js/payment.js")?>></script>
-	<script src=<?=base_url("js/notification.js")?>></script>
-	<script src=<?=base_url("js/request.js")?>></script>
-	<script src=<?=base_url("js/user.js")?>></script>
-	<script src=<?=base_url("js/course.js")?>></script>
-	<script src=<?=base_url("js/selectiveprocess.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.numeric.extensions.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.date.extensions.js")?>></script>
@@ -61,6 +51,16 @@
 	<script src=<?=base_url("js/jquery.tablesorter.min.js")?>></script>
 	<script src=<?=base_url("js/jquery-ui.min.js")?>></script>
     <script src=<?=base_url("js/datepicker-pt-BR.js")?>></script>
+    <script src=<?=base_url("js/bootstrap.min.js")?>></script>
+    <script src=<?=base_url("js/AdminLTE/app.js")?>></script>
+    <script src=<?=base_url("js/popovers.js")?>></script>
+    <script src=<?=base_url("js/enrollment.js")?>></script>
+    <script src=<?=base_url("js/payment.js")?>></script>
+    <script src=<?=base_url("js/notification.js")?>></script>
+    <script src=<?=base_url("js/request.js")?>></script>
+    <script src=<?=base_url("js/user.js")?>></script>
+    <script src=<?=base_url("js/course.js")?>></script>
+    <script src=<?=base_url("js/selectiveprocess.js")?>></script>
 	<script src=<?=base_url("js/bootstrap-filestyle.min.js")?>></script>
 	<link rel="icon" href="<?=base_url()?>/favicon.ico" type="image/ico">
 </head>

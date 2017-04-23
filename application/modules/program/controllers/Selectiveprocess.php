@@ -85,12 +85,12 @@ class SelectiveProcess extends MX_Controller {
         );
 
         $data = $data + $configData + $status;
-        
+
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
     }
 
     private function getConfigDataOfProcesses($selectiveProcesses){
-        
+
         $processesTeachers = array();
         $processesDocs = array();
         $processesResearchLines = array();
@@ -117,7 +117,7 @@ class SelectiveProcess extends MX_Controller {
         );
 
         return $data;
-    } 
+    }
 
     private function getProcessStatus($selectiveProcesses){
 
@@ -166,7 +166,7 @@ class SelectiveProcess extends MX_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/new", $data);
     }
 
-    
+
     private function getCourseSelectiveProcesses($courseId){
 
         $processes = $this->process_model->getCourseSelectiveProcesses($courseId);
@@ -341,5 +341,4 @@ class SelectiveProcess extends MX_Controller {
             $this->downloadNotice($selectiveProcessId, $courseId);
         }
     }
-
 }

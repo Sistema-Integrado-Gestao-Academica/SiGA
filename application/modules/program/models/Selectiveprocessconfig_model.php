@@ -29,7 +29,7 @@ class Selectiveprocessconfig_model extends CI_Model {
     }
 
     public function getProcessDocs($processId){
-        $this->db->select('id, doc_name, doc_desc');
+        $this->db->select('id, doc_name, doc_desc, totally_required');
         $this->db->from(self::AVAILABLE_DOCS_TABLE);
         $this->db->join(
             self::NEEDED_DOCS_TABLE,

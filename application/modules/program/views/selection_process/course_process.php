@@ -111,7 +111,7 @@ function createProcessModal($process, $settings, $processesTeachers, $processesD
 			echo "<div class='tab-pane fade' id='subs_config_tab_{$processId}'>";
 				showSubsConfigTab($processesDocs[$processId], $processesResearchLines[$processId]);
 			echo "</div>";
-			
+
 		echo "</div>";
 
 	};
@@ -149,7 +149,7 @@ function showBasicDataTab($process, $phases, $settings){
 			echo "<h4><i class='fa fa-calendar-o'></i> Inscrições: ".$date."</h4>";
 		echo "</div>";
 	echo "</div>";
-	
+
 	$phasesOrder = $settings->getPhasesOrder();
 	$validPhases = !empty($phases) && !is_null($phases);
 	if($validPhases){
@@ -160,8 +160,8 @@ function showBasicDataTab($process, $phases, $settings){
 			$startDate = $phase->getStartDate();
 			$endDate = $phase->getEndDate();
 			if($startDate != NULL && $endDate !== NULL){
-		    	$formattedStartDate = $settings->getFormattedStartDate();
-		    	$formattedEndDate = $settings->getFormattedEndDate();
+		    	$formattedStartDate = $phase->getFormattedStartDate();
+		    	$formattedEndDate = $phase->getFormattedEndDate();
 		        $date = $formattedStartDate." a ".$formattedEndDate;
 		    }
 		    else{
@@ -207,6 +207,7 @@ function showTeachersTab($processTeachers){
 		        		$teacherEmail = $teacher['email'];
 		            	echo "<dt>{$teacherName}</dt>";
 		            	echo "<dd>{$teacherEmail}</dd>";
+						echo "<hr>";
 		        	}
 		        echo "</dl>";
 		    echo "</div>";
@@ -219,7 +220,7 @@ function showTeachersTab($processTeachers){
 }
 
 function showSubsConfigTab($processDocs, $researchLines){
-	
+
 	echo "<br>";
 	if($processDocs){
 		echo "<div class='box box-solid'>";

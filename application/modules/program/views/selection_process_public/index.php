@@ -1,7 +1,5 @@
 <h2 class="principal">Processos seletivos abertos</h2>
 
-<br>
-
 <?php if(!empty($openSelectiveProcesses)): ?>
   <div class="col-md-10 col-md-offset-1">
     <?php
@@ -11,6 +9,8 @@
       });
     ?>
   </div>
+  <br>
+
   <div class="row">
     <?php foreach($openSelectiveProcesses as $process): ?>
       <div class="col-md-6">

@@ -18,5 +18,4 @@ showDivulgations($selectiveprocess, $processDivulgations, $phasesName, TRUE);
 
 echo "<br>";
 
-$courseId = $selectiveprocess->getCourse();
 echo anchor("/selection_process/public", "Voltar", "class='btn btn-danger'");

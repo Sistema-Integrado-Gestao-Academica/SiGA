@@ -8,10 +8,10 @@ class Migration_adiciona_coluna_grade_tabela_process_phase extends CI_Migration 
             'grade' => array('type' => "INT")
         ));
 
-        $this->dbforge->modify_column('process_phase', array(
+        $this->dbforge->modify_column('selection_process', array(
 			'start_date' => array('type'=> "DATE", 'null' => TRUE),
 			'end_date' => array('type'=> "DATE", 'null' => TRUE)
-		));        
+		));
     }
 
     public function down() {

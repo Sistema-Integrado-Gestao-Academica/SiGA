@@ -1,35 +1,37 @@
 <?php
 
-function uploadFile($fileName = FALSE, $ids, $fieldId, $folderName, $allowedTypes){
+require_once(APPPATH.'exception/UploadException.php');
+
+function uploadFile($fileName=FALSE, $subfolders, $fieldId, $folderName, $allowedTypes, $extraConfig=[]){
 
     $ci =& get_instance();
     $ci->load->library('upload');
 
-    $config = setUploadOptions($fileName, $ids, $folderName, $allowedTypes);
+    $config = setUploadOptions(
+        $fileName, $subfolders, $folderName, $allowedTypes, $extraConfig
+    );
 
     $ci->upload->initialize($config);
-    $status = "";
     if($ci->upload->do_upload($fieldId)){
         $file = $ci->upload->data();
         $path = $file['full_path'];
+        return $path;
     }
     else{
         // Errors on file upload
         $errors = $ci->upload->display_errors();
-        $path = FALSE;
+        throw new UploadException('Error on file upload.', $errors);
     }
-
-    return $path;
 }
 
-function setUploadOptions($fileName = FALSE, $ids, $folderName, $allowedTypes){
+function setUploadOptions($fileName=FALSE, $subfolders=[], $folderName, $allowedTypes, $extraConfig=[]){
 
     // Remember to give the proper permission to the /upload_files folder
-    define("UPLOAD_FOLDER_PATH", "upload_files/{$folderName}");
+    $UPLOAD_FOLDER_PATH = "upload_files/{$folderName}";
 
-    $desiredPath = APPPATH.UPLOAD_FOLDER_PATH;
+    $desiredPath = APPPATH.$UPLOAD_FOLDER_PATH;
 
-    $path = createFolders($desiredPath, $ids);
+    $path = createFolders($desiredPath, $subfolders);
 
     $config['upload_path'] = $path;
     $config['allowed_types'] = $allowedTypes;
@@ -39,16 +41,16 @@ function setUploadOptions($fileName = FALSE, $ids, $folderName, $allowedTypes){
         $config['file_name'] = $fileName;
     }
 
-    return $config;
+    return array_merge($config, $extraConfig);
 }
 
-function createFolders($desiredPath, $ids){
+function createFolders($desiredPath, $subfolders){
 
-    foreach ($ids as $folderType => $id) {
+    foreach ($subfolders as $prefix => $suffix) {
 
         $auxPath = $desiredPath;
 
-        $pathToAdd = "/".$folderType."_".$id;
+        $pathToAdd = "/".$prefix."_".$suffix;
 
         if(is_dir($auxPath.$pathToAdd)){
             $desiredPath .= $pathToAdd;
@@ -64,7 +66,7 @@ function createFolders($desiredPath, $ids){
 }
 
 function downloadFile($path){
-    
+
     $ci =& get_instance();
     $ci->load->helper('download');
     if(file_exists($path)){
