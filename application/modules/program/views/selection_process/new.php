@@ -59,9 +59,9 @@
 
 		<h4><small><b>
 		Marque as fases desejadas como "Sim".<br>
-		Ao lado do nome da fase, informe o peso da mesma e a nota de corte.<br>
 		Os pesos definidos são os pesos padrão.<br>
-		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
+		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.<br>
+		E a nota de corte máxima permitida é 100.
 		</b></small></h4>
 
 	<?php
@@ -89,17 +89,24 @@
 				$phaseGrade["name"] = "phase_grade_".$phase->getPhaseId();
 	?>
 				<div class="row">
-
 					<div class="col-md-10">
 						<div class="input-group">
-						<span class="input-group-addon">
-
-							<?= form_label($phase->getPhaseName(), $selectName); ?>
-							<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}'"); ?>
-						</span>
-
-						<?= form_input($phaseWeight); ?>
-						<?= form_input($phaseGrade); ?>
+							<span class="input-group-addon">
+								<?= form_label($phase, $selectName); ?>
+							</span>
+							<div class="input-group-btn">
+								<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}', class=form-control {$class}"); ?>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+									<?= form_label("Peso", $phaseWeight['name']); ?>
+								<?= form_input($phaseWeight); ?>
+							</div>
+							<div class="col-md-6">
+									<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
+								<?= form_input($phaseGrade); ?>
+							</div>
 						</div>
 					</div>
 				</div>

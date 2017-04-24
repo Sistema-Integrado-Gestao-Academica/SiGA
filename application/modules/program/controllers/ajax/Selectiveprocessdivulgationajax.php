@@ -100,8 +100,16 @@ class SelectiveProcessDivulgationAjax extends MX_Controller {
                 echo "</div>";
             echo "</div>";
         };
-        $footer = function(){
+        $initialDivulgation = $fieldsForm['initialDivulgationHidden']['value'];
+        $footer = function() use ($initialDivulgation){
             echo "<br>";
+            if($initialDivulgation){
+                alert(
+                    function(){
+                        echo "Após divulgar o processo você <b>somente</b> poderá editar as <b>datas e os professores vinculados</b>";
+                    }, 
+                    "warning", FALSE, "fa fa-warning");
+            }
             echo form_button(array(
                 "class" => "btn bg-olive btn-block",
                 "content" => 'Divulgar',

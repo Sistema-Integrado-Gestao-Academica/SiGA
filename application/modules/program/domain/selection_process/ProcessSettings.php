@@ -248,15 +248,15 @@ class ProcessSettings{
 		$this->teachersSelected = $teachersSelected;
 	}
 
-	public function getDatesDefined(){
+	public function isDatesDefined(){
 		return $this->datesDefined;
 	}
 
-	public function getNeededDocsSelected(){
+	public function isNeededDocsSelected(){
 		return $this->neededDocsSelected;
 	}
 
-	public function getTeachersSelected(){
+	public function isTeachersSelected(){
 		return $this->teachersSelected;
 	}
 }

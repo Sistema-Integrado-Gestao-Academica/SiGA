@@ -57,7 +57,7 @@
       <div class='tab-pane fade in active' id="edit_process_tab">
             <?php
                 call_user_func(function () use ($process, $phasesNames, $phasesWeights, 
-                                                $noticeFileName, $phasesGrades){
+                                                $canNotEdit, $phasesGrades){
                     include('edit_process.php');
                 });
              ?>
@@ -80,7 +80,7 @@
          <div class='tab-pane fade' id="config_subscription_tab">
             <?php
                 $btn = "edição";
-                call_user_func(function() use($process, $allDocs, $processDocs, $course, $courseResearchLines, $btn){
+                call_user_func(function() use($process, $allDocs, $processDocs, $course, $courseResearchLines, $btn, $canNotEdit){
                     include(MODULESPATH.'program/views/selection_process_config/subscription_config.php');
                 });
             ?>

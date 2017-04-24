@@ -13,7 +13,7 @@ $name = array(
 	"class" => "form-campo form-control",
 	"placeholder" => "Informe o nome do edital",
 	"maxlength" => "60",
-	"value" => $process->getName()
+	"value" => $process->getName(),
 );
 
 $phaseWeight = array(
@@ -54,6 +54,12 @@ $processHidden = array(
 	"value" => $processId
 );
 
+
+if($canNotEdit){
+	$name["readonly"] = TRUE;
+}
+
+
 $selectedStudentType = $process->getType();
 
 include '_form.php';
@@ -72,9 +78,9 @@ include '_form.php';
 
 		<h4><small><b>
 		Marque as fases desejadas como "Sim".<br>
-		Ao lado do nome da fase, informe o peso da mesma.<br>
 		Os pesos definidos são os pesos padrão.<br>
-		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
+		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.<br>
+		E a nota de corte máxima permitida é 100.
 		</b></small></h4>
 
 	<?php
@@ -112,23 +118,31 @@ include '_form.php';
 							FALSE => "Não",
 						);
 
+						$class = $canNotEdit ? "disabled" : "";
 			?>
 						<div class="row">
-
 							<div class="col-md-10">
 								<div class="input-group">
-								<span class="input-group-addon">
-
-									<?= form_label($phase, $selectName); ?>
-									<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}'"); ?>
-								</span>
-
-								<?= form_input($phaseWeight); ?>
-								<?= form_input($phaseGrade); ?>
-
+									<span class="input-group-addon">
+										<?= form_label($phase, $selectName."_label"); ?>
+									</span>
+									<div class="input-group-btn">
+										<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}', class=form-control {$class}"); ?>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+											<?= form_label("Peso", $phaseWeight['name']); ?>
+										<?= form_input($phaseWeight); ?>
+									</div>
+									<div class="col-md-6">
+											<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
+										<?= form_input($phaseGrade); ?>
+									</div>
 								</div>
 							</div>
 						</div>
+						<hr>
 
 		<?php   }else{ ?>
 
@@ -144,6 +158,8 @@ include '_form.php';
 						</div>
 					</div>
 				</div>
+
+				<hr>
 
 <?php  			}
 		    }

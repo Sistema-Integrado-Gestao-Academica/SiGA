@@ -19,17 +19,26 @@ class SelectiveProcessDivulgation extends MX_Controller {
     public function index($selectiveProcessId){
         
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
-        $processDivulgations = $this->divulgation_model->getProcessDivulgations($selectiveProcessId);
 
-        $data = array(
-            'process' => $selectiveProcess,
-            'processDivulgations' => $processDivulgations
-        );
+        $settings = $selectiveProcess->getSettings();
+        $allConfigs = $settings->isDatesDefined() && $settings->isNeededDocsSelected() 
+                        && $settings->isTeachersSelected();
+        if(!$allConfigs){
+            show_error("Você deve terminar de configurar o processo para divulgá-lo!");
+        }
+        else{
+            $processDivulgations = $this->divulgation_model->getProcessDivulgations($selectiveProcessId);
 
-        $this->load->helper('selectionprocess');
+            $data = array(
+                'process' => $selectiveProcess,
+                'processDivulgations' => $processDivulgations
+            );
+
+            $this->load->helper('selectionprocess');
 
 
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/divulgations", $data);
+            loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/divulgations", $data);
+        }
     }
 
     public function addDivulgation(){

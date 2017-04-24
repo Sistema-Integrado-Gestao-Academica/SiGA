@@ -1,6 +1,4 @@
-
 <h2 class="principal">Processos Seletivos do curso <b><i><?=$course[Course_model::COURSE_NAME_ATTR]?></i></b> </h2>
-<link rel="stylesheet" href=<?=base_url("css/horizontal_timeline.css")?>>
 <?php
 require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 
@@ -49,6 +47,7 @@ if($validSelectiveProcesses){
 				echo $status[$processId];
 				if(!$noticeWithAllConfig[$processId]){
 					echo "<h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
+					echo "<h6 class='text-warning'>Você só poderá divulgá-lo quando terminar a configuração.</h6>";
 				}
 
 			echo "</td>";
