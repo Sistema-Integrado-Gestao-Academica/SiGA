@@ -134,7 +134,7 @@ class SelectiveProcess extends MX_Controller {
                     $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
                 }
                 $settings = $selectiveProcess->getSettings();
-                $noticeWithAllConfig = $settings->getDatesDefined() && $settings->getNeededDocsSelected() && $settings->getTeachersSelected();
+                $noticeWithAllConfig = $settings->isDatesDefined() && $settings->isNeededDocsSelected() && $settings->isTeachersSelected();
                 $configStatusNotices[$selectiveProcessId] = $noticeWithAllConfig;
                 if(!$noticeWithAllConfig){
                     $status[$selectiveProcessId] .= "<br><span class='label label-danger'>".SelectionProcessConstants::INCOMPLETE_CONFIG."</span>";
@@ -242,14 +242,15 @@ class SelectiveProcess extends MX_Controller {
 
     private function getEditProcessViewData($processId){
         $selectiveProcess = $this->process_model->getById($processId);
+        
+        // If process has a notice path it was already divulgated
+        $noticePath = $selectiveProcess->getNoticePath();
+        $canNotEdit = is_null($noticePath) ? FALSE : TRUE;
+
         $this->load->module("program/phase");
         $allPhases = $this->phase->getAllPhases();
 
         $phases = $this->getProcessPhasesToEdit($selectiveProcess, $allPhases);
-
-        $noticePath = $selectiveProcess->getNoticePath();
-        $names = explode("/", $noticePath);
-        $noticeFileName = array_pop($names);
 
         $editProcessData = array(
             'process' => $selectiveProcess,
@@ -257,8 +258,8 @@ class SelectiveProcess extends MX_Controller {
             'phasesNames' => $phases['phasesNames'],
             'phasesWeights' => $phases['phasesWeights'],
             'phasesGrades' => $phases['phasesGrades'],
-            'noticeFileName' => $noticeFileName,
-            'allPhases' => $allPhases
+            'allPhases' => $allPhases,
+            'canNotEdit' => $canNotEdit
         );
 
         return $editProcessData;

@@ -26,15 +26,20 @@
     'style' => 'height: 70px; margin-top:-10%;'
   ];
 
-  function docCheckbox($doc, $processDocs){
+  function docCheckbox($doc, $processDocs, $canNotEdit){
     $checkboxId = 'doc_'.$doc['id'];
     $checkbox = [
       'id' => $checkboxId,
       'name' => $checkboxId,
       'value' => $doc['id'],
       'class' => 'form-control',
-      'checked' => in_array($doc, $processDocs)
+      'checked' => in_array($doc, $processDocs),
     ];
+    
+    if($canNotEdit){
+      $checkbox['disabled'] = TRUE;
+    } 
+
     echo form_checkbox($checkbox);
     echo form_label($doc['doc_name'], $checkboxId);
     echo '<p>'.$doc['doc_desc'].'</p>';
@@ -47,7 +52,7 @@
     <div class="row">
       <?php foreach ($allDocs as $doc): ?>
         <div class="col-md-6">
-          <?php docCheckbox($doc, $processDocs); ?>
+          <?php docCheckbox($doc, $processDocs, $canNotEdit); ?>
         </div>
       <?php endforeach ?>
     </div>
@@ -63,7 +68,9 @@
 </h3>
   <?php $courseId = $process->getCourse();
   createReseachLineModal($course);
-  echo "<a href='#createReseachLineModal{$courseId}' data-toggle='modal' class='btn bg-olive pull-right'><i class='fa fa-plus'></i>Adicionar Linha de Pesquisa</a>"
+  if(!$canNotEdit){
+    echo "<a href='#createReseachLineModal{$courseId}' data-toggle='modal' class='btn bg-olive pull-right'><i class='fa fa-plus'></i>Adicionar Linha de Pesquisa</a>";
+  }
 ?>
 
 <?php if ($courseResearchLines !== FALSE): ?>

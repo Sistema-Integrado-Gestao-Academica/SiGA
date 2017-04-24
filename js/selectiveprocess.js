@@ -1,30 +1,42 @@
 
 $(document).ready(function(){
 	
-	$("#phase_2").ready(function(){
+	var sortable = true;
+	
+	$("#phase_select_2").ready(function(){
 
-		getPhasesToSort();
+		if($('#phase_select_2').attr('disabled')){
+			sortable = false;
+		}
+
+		getPhasesToSort(sortable);
 
 		$(this).change(function(){
-			getPhasesToSort();
+			getPhasesToSort(sortable);
 		});
 	});
 
-	$("#phase_3").ready(function(){
+	$("#phase_select_3").ready(function(){
 
-		getPhasesToSort();
+		if($('#phase_select_3').attr('disabled')){
+			sortable = false;
+		}
+		getPhasesToSort(sortable);
 
 		$(this).change(function(){
-			getPhasesToSort();
+			getPhasesToSort(sortable);
 		});
 	});
 
-	$("#phase_4").ready(function(){
+	$("#phase_select_4").ready(function(){
 
-		getPhasesToSort();
+		if($('#phase_select_4').attr('disabled')){
+			sortable = false;
+		}
+		getPhasesToSort(sortable);
 
 		$(this).change(function(){
-			getPhasesToSort();
+			getPhasesToSort(sortable);
 		});
 	});
 
@@ -247,7 +259,7 @@ function saveSelectiveProcess(saveMethod){
 	);
 }
 
-function getPhasesToSort(){
+function getPhasesToSort(sortable){
 
 	var preProject;
 	var writtenTest;
@@ -273,6 +285,12 @@ function getPhasesToSort(){
 			data,
 			function(data){
 				$("#phases_list_to_order").html(data);
+				if(data.includes("danger")){
+					$("#open_selective_process_btn").addClass('disabled');
+				}
+				else{
+					$("#open_selective_process_btn").removeClass('disabled');
+				}
 				makeSortable();
 			}
 		);
@@ -286,7 +304,15 @@ function getPhasesToSort(){
 			data,
 			function(data){
 				$("#phases_list_to_order_in_edition").html(data);
-				makeSortable();
+				if(data.includes("danger")){
+					$("#edit_selective_process_btn").addClass('disabled');
+				}
+				else{
+					$("#edit_selective_process_btn").removeClass('disabled');
+				}
+				if(sortable){
+					makeSortable();
+				}
 			}
 		);
 	}
