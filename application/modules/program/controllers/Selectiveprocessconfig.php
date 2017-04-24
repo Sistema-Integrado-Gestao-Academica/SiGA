@@ -25,6 +25,8 @@ class SelectiveProcessConfig extends MX_Controller {
 
         $data = $subscriptionConfigData + $defineTeachersData;
         $data['phasesIds'] = $this->getPhasesIds($data['process']);
+        $data['canNotEdit'] = FALSE;
+
         
         loadTemplateSafelyByPermission(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,

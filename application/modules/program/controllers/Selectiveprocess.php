@@ -160,7 +160,7 @@ class SelectiveProcess extends MX_Controller {
 
         $data = array(
             'course' => $course,
-            'phases' => $phases
+            'phases' => $phases,
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/new", $data);

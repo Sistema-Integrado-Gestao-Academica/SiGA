@@ -58,7 +58,7 @@
          <div class='tab-pane fade' id="config_subscription_tab">
             <?php
                 $btn = "abertura";
-                call_user_func(function() use($process, $allDocs, $processDocs, $course, $courseResearchLines, $btn){
+                call_user_func(function() use($process, $allDocs, $processDocs, $course, $courseResearchLines, $btn, $canNotEdit){
                     include('subscription_config.php');
                 });
             ?>
