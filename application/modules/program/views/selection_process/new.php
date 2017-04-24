@@ -87,15 +87,18 @@
 
 				$phaseGrade["id"] = "phase_grade_".$phase->getPhaseId();
 				$phaseGrade["name"] = "phase_grade_".$phase->getPhaseId();
-	?>
+
+				$phaseName = $phase->getPhaseName();
+	?>	
+				<hr>
 				<div class="row">
 					<div class="col-md-10">
 						<div class="input-group">
 							<span class="input-group-addon">
-								<?= form_label($phase, $selectName); ?>
+								<?= form_label($phaseName, $selectName); ?>
 							</span>
 							<div class="input-group-btn">
-								<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}', class=form-control {$class}"); ?>
+								<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}', class='form-control'"); ?>
 							</div>
 						</div>
 						<div class="row">
