@@ -217,6 +217,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $courseId = $this->input->post("course");
         $studentType = $this->input->post("student_type");
         $noticeName = $this->input->post("selective_process_name");
+        $totalVacancies = $this->input->post("total_vacancies");
 
         $process = FALSE;
         $message = "";
@@ -224,11 +225,11 @@ class SelectiveProcessAjax extends MX_Controller {
 
             switch($studentType){
                 case SelectionProcessConstants::REGULAR_STUDENT:
-                    $process = new RegularStudentProcess($courseId, $noticeName);
+                    $process = new RegularStudentProcess($courseId, $noticeName, FALSE, $totalVacancies);
                     break;
 
                 case SelectionProcessConstants::SPECIAL_STUDENT:
-                    $process = new SpecialStudentProcess($courseId, $noticeName);
+                    $process = new SpecialStudentProcess($courseId, $noticeName, FALSE, $totalVacancies);
                     break;
 
                 default:
@@ -577,12 +578,18 @@ class SelectiveProcessAjax extends MX_Controller {
 
     public function setDatesDefined($processId){
 
-        $this->process_model->updateProcessFlags($processId, array('dates_defined' => TRUE));
+        $datesDefined = $this->input->post('dates_defined');
+        $datesDefined = $datesDefined === 'false' ? FALSE : TRUE;
+
+        $this->process_model->updateProcessFlags($processId, array('dates_defined' => $datesDefined));
     }
 
     public function setTeachersSelected($processId){
 
-        $this->process_model->updateProcessFlags($processId, array('teachers_selected' => TRUE));
+        $teachersSelected = $this->input->post('teachers_selected');
+        $teachersSelected = $teachersSelected === 'false' ? FALSE : TRUE;
+
+        $this->process_model->updateProcessFlags($processId, array('teachers_selected' => $teachersSelected));
 
     }
 
@@ -613,7 +620,7 @@ class SelectiveProcessAjax extends MX_Controller {
                         $phase = new WrittenTest(1, FALSE, $processPhaseId, $startDate, $endDate);
                         break;
                     case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
-                        $phase = new OralTest(1, FALSE, $processPhaseId, $startDate, $endDate);
+                        $phase = new OralTest(1, FALSE, $processPhaseId, $startDate, $endDate); 
                         break;
                     default:
                         $phase = NULL;

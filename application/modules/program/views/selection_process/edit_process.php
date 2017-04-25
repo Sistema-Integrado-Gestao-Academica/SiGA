@@ -16,6 +16,17 @@ $name = array(
 	"value" => $process->getName(),
 );
 
+$vacancies = array(
+	"id" => "total_vacancies",
+	"name" => "total_vacancies",
+	"type" => "number",
+	"min" => 0,
+	"steps" => 1,
+	"class" => "form-control",
+	"placeholder" => "Informe o número de vagas",
+	"value" => $process->getVacancies()
+);
+
 $phaseWeight = array(
 	"type" => "number",
 	"min" => 0,

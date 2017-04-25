@@ -196,7 +196,8 @@ class SelectiveProcess extends MX_Controller {
                         $selectionProcess = new RegularStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR]
+                            $process[SelectiveProcess_model::ID_ATTR],
+                            $process['total_vacancies']
                         );
                         $selectionProcess->addSettings($settings);
                         $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -213,7 +214,8 @@ class SelectiveProcess extends MX_Controller {
                         $selectionProcess = new SpecialStudentProcess(
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR]
+                            $process[SelectiveProcess_model::ID_ATTR],
+                            $process['total_vacancies']
                         );
                         $selectionProcess->addSettings($settings);
                         $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];

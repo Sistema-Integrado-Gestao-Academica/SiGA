@@ -98,6 +98,7 @@ class SelectiveProcess_model extends CI_Model {
 		$courseId = $process->getCourse();
 		$processType = $process->getType();
 		$noticeName = $process->getName();
+		$vacancies = $process->getVacancies();
 		$settings = $process->getSettings();
 		$startDate = NULL;
 		$endDate = NULL;
@@ -111,7 +112,8 @@ class SelectiveProcess_model extends CI_Model {
 			self::COURSE_ATTR => $courseId,
 			self::PROCESS_TYPE_ATTR => $processType,
 			self::NOTICE_NAME_ATTR => $noticeName,
-			self::PHASE_ORDER_ATTR => $phasesOrder
+			self::PHASE_ORDER_ATTR => $phasesOrder,
+			'total_vacancies' => $vacancies
 		);
 
 		return $processToSave;
@@ -228,7 +230,8 @@ class SelectiveProcess_model extends CI_Model {
 					$selectiveProcess = new RegularStudentProcess(
 						$foundProcess[self::COURSE_ATTR],
 						$foundProcess[self::NOTICE_NAME_ATTR],
-						$foundProcess[self::ID_ATTR]
+						$foundProcess[self::ID_ATTR],
+						$foundProcess['total_vacancies']
 					);
 					$selectiveProcess->addSettings($settings);
 					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -246,7 +249,8 @@ class SelectiveProcess_model extends CI_Model {
 					$selectiveProcess = new SpecialStudentProcess(
 						$foundProcess[self::COURSE_ATTR],
 						$foundProcess[self::NOTICE_NAME_ATTR],
-						$foundProcess[self::ID_ATTR]
+						$foundProcess[self::ID_ATTR],
+						$foundProcess['total_vacancies']
 					);
 					$selectiveProcess->addSettings($settings);
 					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];

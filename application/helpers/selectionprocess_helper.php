@@ -210,3 +210,4 @@ function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEnd
     }
 
 }
+

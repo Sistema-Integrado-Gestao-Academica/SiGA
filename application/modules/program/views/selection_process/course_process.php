@@ -129,8 +129,11 @@ function createProcessModal($process, $settings, $processesTeachers, $processesD
 
 function showBasicDataTab($process, $phases, $settings){
 	echo "<div class='row' align='left'>";
-	    echo "<div class='col-lg-5'>";
-			echo "<h4><i class='fa fa-user'></i> Edital de ".$process->getFormmatedType()."</h4><br>";
+	    echo "<div class='col-lg-4'>";
+			echo "<h4><i class='fa fa-user'></i> ".$process->getFormmatedType()."</h4>";
+		echo "</div>";
+		echo "<div class='col-lg-3'>";
+			echo "<h4><i class='fa fa-group'></i> Vagas: ".$process->getVacancies()."</h4>";
 		echo "</div>";
 
 		$startDate = $settings->getStartDate();
@@ -144,11 +147,13 @@ function showBasicDataTab($process, $phases, $settings){
 	       	$date = "Período de inscrições não definido";
 	    }
 
-	    echo "<div class='col-lg-7'>";
-			echo "<h4><i class='fa fa-calendar-o'></i> Inscrições: ".$date."</h4>";
+	    echo "<div class='col-lg-5'>";
+			echo "<center><h4><i class='fa fa-calendar-o'></i> Inscrições: <br>";
+			echo $date."</center></h4>";
 		echo "</div>";
 	echo "</div>";
 
+	echo "<hr>";
 	$phasesOrder = $settings->getPhasesOrder();
 	$validPhases = !empty($phases) && !is_null($phases);
 	if($validPhases){

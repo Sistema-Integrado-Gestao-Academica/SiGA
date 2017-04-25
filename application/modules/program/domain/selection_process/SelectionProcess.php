@@ -11,10 +11,16 @@ abstract class SelectionProcess{
 	const INVALID_SETTINGS = "Configurações inválidas para o processo seletivo.";
 	const INVALID_NOTICE_PATH = "O caminho para o edital informado é inválido ou não existe.";
 
+	const INVALID_VACANCIES = "O número de vagas deve ser maior que zero.";
+	const VACANCIES_REQUIRED = "O número de vagas é de preenchimento obrigatório.";
+
+	const MIN_VACANCIES = 1;
+
 	const MIN_ID = 1;
 
 	private $id;
 	private $name;
+	private $vacancies;
 
 	// Foreign Key from Course. Course id
 	private $course;
@@ -22,10 +28,11 @@ abstract class SelectionProcess{
 	private $noticePath;
 	protected $settings;
 
-	public function __construct($course = FALSE, $name = "", $id = FALSE){
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies){
 		$this->setCourse($course);
 		$this->setName($name);
 		$this->setId($id);
+		$this->setVacancies($vacancies);
 	}
 
 	public function addSettings($settings){
@@ -87,6 +94,20 @@ abstract class SelectionProcess{
 		}
 	}
 
+	private function setVacancies($vacancies){
+		if($vacancies != ''){
+            if($vacancies >= self::MIN_VACANCIES){
+                $this->vacancies = $vacancies;
+            }
+            else{
+                throw new SelectionProcessException(self::INVALID_VACANCIES);
+            }
+        }
+        else{
+            throw new SelectionProcessException(self::VACANCIES_REQUIRED);
+        }
+	}
+
 	public function getName(){
 		return $this->name;
 	}
@@ -105,6 +126,10 @@ abstract class SelectionProcess{
 
 	public function getNoticePath(){
 		return $this->noticePath;
+	}
+
+	public function getVacancies(){
+		return $this->vacancies;
 	}
 
 	public abstract function getType();

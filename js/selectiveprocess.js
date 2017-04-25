@@ -194,6 +194,7 @@ function saveSelectiveProcess(saveMethod){
 	var course = $("#course").val();
 	var studentType = $("#student_type").val();
 	var noticeName = $("#selective_process_name").val();
+	var vacancies = $("#total_vacancies").val();
 
 	var preProject = $("#phase_select_2").val();
 	var preProjectWeight = $("#phase_weight_2").val();
@@ -217,6 +218,7 @@ function saveSelectiveProcess(saveMethod){
 		course: course,
 	    student_type: studentType,
 	    selective_process_name: noticeName,
+	    total_vacancies: vacancies,
 		phase_2: preProject,
 		phase_weight_2: preProjectWeight,
 		phase_grade_2: preProjectGrade,
@@ -411,26 +413,32 @@ function saveResearchLine(){
 }
 
 function setDatesDefined(processId, phasesIds){
+	
 	var datesWereDefined = checkIfDatesWereDefined(phasesIds);
 
-	if(datesWereDefined){
-		var siteUrl = $("#site_url").val();
-		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/setDatesDefined/" + processId;
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/setDatesDefined/" + processId;
 
-		$.get(
-			urlToPost,
-			function(response){
+	var data = {
+		dates_defined: datesWereDefined
+	};
+
+	$.post(
+		urlToPost,
+		data,
+		function(response){
+			if(datesWereDefined){
 				openTab('#define_teachers_link');
 				$("#warning_message").hide();
 				$("#save_dates_btn").attr('id', 'dates_defined');
 			}
-		);
-	}
-	else{
-		openTab('#define_teachers_link');
-		$("#warning_message").show();
-		$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu a data de todas as fases.");
-	}
+			else{
+				openTab('#define_teachers_link');
+				$("#warning_message").show();
+				$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu a data de todas as fases.");
+			}
+		}
+	);
 }
 
 
@@ -438,24 +446,29 @@ function setTeachersSelected(processId){
 
 	var hasTeachers = $("#teachers_added_to_process_table").find('table > tbody:last > tr').length != 0;
 
-	if(hasTeachers){
+	var data = {
+		teachers_selected: hasTeachers
+	};
 
-		var siteUrl = $("#site_url").val();
-		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/setTeachersSelected/" + processId;
+	var siteUrl = $("#site_url").val();
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/setTeachersSelected/" + processId;
 
-		$.get(
-			urlToPost,
-			function(data){
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			if(hasTeachers){
 				openTab('#config_subscription_link');
 				$("#warning_message").hide();
 			}
-		);
-	}
-	else{
-		openTab('#config_subscription_link');
-		$("#warning_message").show();
-		$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu nenhum professor para fazer parte da comissão de seleção.");
-	}
+			else{
+				openTab('#config_subscription_link');
+				$("#warning_message").show();
+				$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu nenhum professor para fazer parte da comissão de seleção.");
+			}
+		}
+	);
+
 }
 
 function openTab(tabId){
@@ -502,7 +515,7 @@ function organizePhasesOnDefineDate(siteUrl, processId, phases){
 		function(data){
 			$("#define_dates_timeline").html(data);
 		}
-	}
+	);
 }
 
 

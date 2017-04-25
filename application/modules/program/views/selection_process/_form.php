@@ -18,13 +18,20 @@
 <br>
 
 <div class="row">
+	<div class="col-md-9">
+		<?= form_label("Nome do edital", "selective_process_name"); ?>
+		<?= form_input($name); ?>
+	</div>
+</div>
+<br>
+<div class="row">
 	<div class="col-md-3">
 		<?= form_label("Processo Seletivo para:", "student_type"); ?>
 		<?= form_dropdown("student_type", $studentType, $selectedStudentType, "id='student_type' class='form-control'"); ?>
 	</div>
 	<div class="col-md-6">
-		<?= form_label("Nome do edital", "selective_process_name"); ?>
-		<?= form_input($name); ?>
+		<?= form_label("Número de vagas:", "vacancies"); ?>
+		<?= form_input($vacancies); ?>
 	</div>
 </div>
 
