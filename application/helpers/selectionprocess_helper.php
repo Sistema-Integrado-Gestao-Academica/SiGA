@@ -138,3 +138,75 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 	echo "</form>";
 
 }
+
+
+function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEndDate, $phases){
+
+    // Subscription
+    writeTimelineLabel("blue", "Inscrição");
+    $text = "Período de inscrições";
+    if($subscriptionStartDate != NULL && $subscriptionEndDate !== NULL){
+        $text = "Período definido";
+        $bodyText = function() use ($subscriptionStartDate, $subscriptionEndDate, $processId){
+            echo "<b>Data de início:</b><br>";
+            echo $subscriptionStartDate;
+            echo "<b><br>Data de fim:</b><br>";
+            echo $subscriptionEndDate;
+            echo "<br><br>";
+            echo "<b>Editar data definida</b>";
+            defineDateForm($processId, 'define_subscription_date', "start_date", "end_date", $subscriptionStartDate, $subscriptionEndDate);
+        };
+    }
+    else{
+        $text = "Período de inscrições não definido";
+        $bodyText = function() use ($processId){
+            defineDateForm($processId, 'define_subscription_date', "start_date", "end_date");
+        };
+    }
+    echo "<li>";
+        echo "<i class='fa fa-calendar-o bg-blue'></i>";
+        echo "<div class='timeline-item' id='subscription'>";
+            writeTimelineItem($text, FALSE, "#", $bodyText);
+        echo "</div>";
+    echo "</li>";
+
+    // Phases
+    if($phases){
+        foreach ($phases as $phase) {
+            $phaseId = $phase->getPhaseId();
+            $phaseName = $phase->getPhaseName();
+            $labelId = "phase_label_".$phaseId;
+            writeTimelineLabel("white", $phaseName, $labelId);
+            $startDate = $phase->getStartDate();
+            if(!is_null($startDate)){
+                $text = "Período definido";
+                $bodyText = function() use ($phase, $processId, $phaseId){
+                    echo "<b>Data de início:</b><br>";
+                    $startDate = $phase->getFormattedStartDate();
+                    echo $startDate;
+                    $endDate = $phase->getFormattedEndDate();
+                    echo "<b><br>Data de fim:</b><br>";
+                    echo $endDate;
+                    echo "<hr>";
+                    echo "<b>Editar data definida</b>";
+                    defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date", $startDate, $endDate);
+                };
+            }
+            else{
+                $text = "Período para a fase <b>{$phaseName}</b> não definido";
+                $bodyText = function() use ($processId, $phaseId){
+                    defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date");
+                };
+
+            }
+            echo "<li>";
+                echo "<i class='fa fa-calendar-o bg-blue' id='phase_icon_{$phaseId}'></i>";
+                echo "<div id='phase_{$phaseId}' class='timeline-item'>";
+                    writeTimelineItem($text, FALSE, "#phase_{$phaseId}", $bodyText, "");
+                echo "</div>";
+            echo "</li>";
+
+        }
+    }
+
+}

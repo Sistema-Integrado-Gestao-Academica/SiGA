@@ -245,9 +245,11 @@ function saveSelectiveProcess(saveMethod){
 					}, 1000);
 				}
 				else{
-					var phases = JSON.parse(response.phases);
-					organizePhases(phases, siteUrl, processId);
-					openTab("#dates_link");
+					if(response.phasesChanged){
+						var phases = JSON.parse(response.phases);
+						organizePhasesOnDefineDate(siteUrl, processId, phases);
+					}
+					openTab("#dates_link");					
 				}
 			}
 			else{
@@ -487,56 +489,20 @@ function checkIfDatesWereDefined(phasesIds){
 	return datesWereDefined;
 }
 
-function organizePhases(currentPhases, siteUrl, processId){
+function organizePhasesOnDefineDate(siteUrl, processId, phases){
 
-	var elementsOnTimeline = $("#define_dates_timeline").find('li div');
-	var previousPhases = {};
-
-	var length = elementsOnTimeline.length;
-	var previousPhasesLength = 0;
-	for(var i=3; i < length; i+=3){
-		element = elementsOnTimeline[i];
-		id = element.id.replace("phase_", "");
-		previousPhases[id] = id;
-		previousPhasesLength ++;
+	var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addDefineDatesTimeline/" + processId;
+	var data = {
+		phases: phases,
 	}
 
-	// Adding new phases
-	var newPhases = {};
-	var currentPhasesIds = Object.keys(currentPhases);
-	var length = currentPhasesIds.length;
-	for(var i=0; i < length; i++){
-		var currentPhaseId = currentPhasesIds[i];
-		if(!previousPhases[currentPhaseId]){
-			newPhases[currentPhaseId] = currentPhases[currentPhaseId];
+	$.post(
+		urlToPost,
+		data,
+		function(data){
+			$("#define_dates_timeline").html(data);
 		}
 	}
-
-	if(!jQuery.isEmptyObject(newPhases)){
-		var urlToPost = siteUrl + "/program/ajax/selectiveprocessajax/addNewDefineDateItem/" + processId;
-		var data = {
-			phases: newPhases,
-		}
-
-		$.post(
-			urlToPost,
-			data,
-			function(data){
-				$("#define_dates_timeline").append(data);
-			}
-		);
-
-	}
-	// Removing deleted phases
-	for(var i=0; i < previousPhasesLength; i++){
-		var previousPhase = previousPhases[i];
-		if(!currentPhases[previousPhase]){
-			$("#phase_label_" + previousPhase).remove();
-			$("#phase_icon_" + previousPhase).remove();
-			$("#phase_" + previousPhase).remove();
-		}
-	}
-
 }
 
 
