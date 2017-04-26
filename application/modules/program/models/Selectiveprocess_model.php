@@ -200,7 +200,7 @@ class SelectiveProcess_model extends CI_Model {
 		return $selectiveProcess;
 	}
 
-	private function convertArrayToObject($foundProcess){
+	public function convertArrayToObject($foundProcess){
 		if($foundProcess !== FALSE){
 
 			$phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);

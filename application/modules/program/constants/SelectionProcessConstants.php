@@ -20,13 +20,15 @@ class SelectionProcessConstants {
 	const REGULAR_STUDENT_PORTUGUESE = "Aluno regular";
 	const SPECIAL_STUDENT_PORTUGUESE = "Aluno especial";
 
-	const NOT_DISCLOSED = "Não divulgado";
-	const DISCLOSED = "Divulgado";
-	const OPEN_FOR_SUBSCRIPTIONS = "Inscrições abertas";
-	const IN_HOMOLOGATION_PHASE = "Em fase de homologação";
-	const IN_PRE_PROJECT_PHASE = "Em fase de Avaliação de Pré-Projeto";
-	const IN_WRITTEN_TEST_PHASE = "Em fase de Prova escrita";
-	const IN_ORAL_TEST_PHASE = "Em fase de Prova Oral";
-	const FINISHED = "Encerrado";
-	const INCOMPLETE_CONFIG = "Configuração incompleta";
+	const DRAFT = "<p class='label label-warning'> Rascunho </p>";
+	const DISCLOSED = "<p class='label label-success'>Divulgado</p>";
+	const OPEN_FOR_SUBSCRIPTIONS = "<p class='label label-info'>Inscrições abertas</p>";
+	const IN_HOMOLOGATION_PHASE = "<p class='label label-success'>Em fase de Homologação</p>";
+	const IN_PRE_PROJECT_PHASE = "<p class='label label-success'>Em fase de Avaliação de Pré-Projeto</p>";
+	const IN_WRITTEN_TEST_PHASE = "<p class='label label-success'>Em fase de Prova escrita</p>";
+	const IN_ORAL_TEST_PHASE = "<p class='label label-success'>Em fase de Prova Oral</p>";
+	const FINISHED = "<p class='label label-danger'>Encerrado</p>";
+	const INCOMPLETE_CONFIG = "<p class='label label-danger'>Configuração incompleta</p>";
+	const WAITING_NEXT_PHASE = "<p class='label label-warning'> Aguardando próxima fase </p>";
 }
+

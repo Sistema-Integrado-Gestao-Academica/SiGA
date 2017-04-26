@@ -126,18 +126,12 @@ class SelectiveProcess extends MX_Controller {
         if($selectiveProcesses !== FALSE){
             foreach ($selectiveProcesses as $selectiveProcess) {
                 $selectiveProcessId = $selectiveProcess->getId();
-                $noticePath = $selectiveProcess->getNoticePath();
-                if(!is_null($noticePath)){
-                    $status[$selectiveProcessId] = "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
-                }
-                else{
-                    $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-                }
+                $status[$selectiveProcessId] = getProcessStatus($selectiveProcess);
                 $settings = $selectiveProcess->getSettings();
                 $noticeWithAllConfig = $settings->isDatesDefined() && $settings->isNeededDocsSelected() && $settings->isTeachersSelected();
                 $configStatusNotices[$selectiveProcessId] = $noticeWithAllConfig;
                 if(!$noticeWithAllConfig){
-                    $status[$selectiveProcessId] .= "<br><span class='label label-danger'>".SelectionProcessConstants::INCOMPLETE_CONFIG."</span>";
+                    $status[$selectiveProcessId] .= "<br>".SelectionProcessConstants::INCOMPLETE_CONFIG;
                 }
             }
         }

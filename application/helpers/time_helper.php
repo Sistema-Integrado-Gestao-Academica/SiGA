@@ -82,8 +82,8 @@ function formatDateToDateTime($date){
 
 function validateDatesDiff($startDate, $endDate){
 
-	// The end date must be later than the start date
-	if($endDate <= $startDate){
+	// The end date must be later than or equal the start date
+	if($endDate < $startDate){
 		$validDate = FALSE;
 	}
 	else{

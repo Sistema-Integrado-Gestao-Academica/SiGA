@@ -1,4 +1,5 @@
 <?php
+require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 
 function createTimelineItemToAddDivulgation($processId){
 
@@ -208,6 +209,94 @@ function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEnd
 
         }
     }
-
 }
 
+function getProcessStatus($process){
+
+	$status = NULL;
+
+	$noticePath = $process->getNoticePath();
+	if(!is_null($noticePath)){
+		$settings = $process->getSettings();
+
+		$startDate = $settings->getStartDate();
+		$today = new Datetime("America/Sao_Paulo");
+		$today->setTime("0","0","0");
+
+		$beforeSubscription = validateDatesDiff($today, $startDate);
+		$beforeSubscription = $today === $startDate ? !$beforeSubscription : $beforeSubscription;
+
+		if($beforeSubscription){
+			$status = SelectionProcessConstants::DISCLOSED;
+		}
+		else{
+			$endDate = $settings->getEndDate();
+			$phases = $settings->getPhases();	
+
+			array_unshift($phases, $settings);
+
+			$result = checkIfIsInSomePhase($today, $phases);
+
+			if($result['isInPhase']){
+				$status = $result['status'];
+			}
+			else{
+				$lastPhase = array_pop($phases);
+				$notFinished = validateDatesDiff($today, $lastPhase->getEndDate());
+				if($notFinished){
+					$status = SelectionProcessConstants::WAITING_NEXT_PHASE;
+				}
+				else{
+					$status = SelectionProcessConstants::FINISHED;
+				}
+
+			}
+		}
+	}
+	else{
+		$status = SelectionProcessConstants::DRAFT;
+	}
+
+
+	return $status;
+}
+
+function checkIfIsInSomePhase($today, $phases){
+
+	$phasesWithStatus = array(
+		SelectionProcessConstants::HOMOLOGATION_PHASE => SelectionProcessConstants::IN_HOMOLOGATION_PHASE,
+		SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE => SelectionProcessConstants::IN_PRE_PROJECT_PHASE,
+		SelectionProcessConstants::WRITTEN_TEST_PHASE => SelectionProcessConstants::IN_WRITTEN_TEST_PHASE,
+		SelectionProcessConstants::ORAL_TEST_PHASE => SelectionProcessConstants::IN_ORAL_TEST_PHASE
+	);
+
+	$isInPhase = FALSE;
+	$status = NULL;
+
+	if($phases){
+		foreach ($phases as $phase) {
+			$startDate = $phase->getStartDate();
+			$endDate = $phase->getEndDate();
+
+			$isInPhase = validateDateInPeriod($today, $startDate, $endDate);
+	
+			if($isInPhase){
+				if(method_exists($phase, 'getPhaseName')){
+					$phaseName = $phase->getPhaseName();
+					$status = $phasesWithStatus[$phaseName];
+				}
+				else{
+					$status = SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
+				}
+				break;
+			}			
+		}
+	}
+
+	$data = array(
+		'isInPhase' => $isInPhase,
+		'status' => $status
+	);
+
+	return $data;
+}

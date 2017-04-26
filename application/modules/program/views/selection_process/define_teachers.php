@@ -10,7 +10,7 @@
 </div>
 <div class="col-sm-2 pull-right">
     <?php $saveBtn = 'saveSelectedTeachers('.$processId.')'; ?>
-    <button class='btn btn-primary' type="button" onclick=<?=$saveBtn?>>Salvar e Continuar</button>
+    <button class='btn btn-primary' type="button" onclick=<?=$saveBtn?>>Continuar</button>
 </div>
 
 <br>
