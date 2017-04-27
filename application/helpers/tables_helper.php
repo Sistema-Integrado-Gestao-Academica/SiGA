@@ -22,15 +22,26 @@ require_once(APPPATH."/data_types/view_types/WrapperCallout.php");
  * Builds the table declaration html code with the standard css class
  * @param $tableId - The html ID for the table
  */
-function buildTableDeclaration($tableId = FALSE){
+function buildTableDeclaration($boxId=FALSE, $tableId=FALSE, $tableTitle=FALSE){
+	if($boxId !== FALSE){
+		echo "<div id='{$boxId}' class='box'>";
+	}else{
+		echo "<div class='box'>";
+	}
+
+	if($tableTitle){
+		echo "<div class='box-header'>";
+	        echo "<h3 class='box-title'>{$tableTitle}</h3>";
+		echo "</div>";
+	}
+
+	echo "<div class='box-body table-responsive no-padding'>";
 
 	if($tableId !== FALSE){
-		echo "<div id='".$tableId."' class=\"box-body table-responsive no-padding\">";
+		echo "<table id='{$tableId}' class='table table-bordered table-hover'>";
 	}else{
-		echo "<div class=\"box-body table-responsive no-padding\">";
+		echo "<table class='table table-bordered table-hover'>";
 	}
-	echo "<table class=\"table table-bordered table-hover\">";
-	echo "<tbody>";
 }
 
 /**
@@ -39,11 +50,14 @@ function buildTableDeclaration($tableId = FALSE){
  */
 function buildTableHeaders($headersNames){
 
-	echo "<tr>";
-	foreach($headersNames as $headerName){
-		echo "<th class=\"text-center\">".$headerName." </th>";
-	}
-	echo "</tr>";
+	echo "<thead>";
+		echo "<tr>";
+		foreach($headersNames as $headerName){
+			echo "<th class=\"text-center\">".$headerName." </th>";
+		}
+		echo "</tr>";
+	echo "</thead>";
+	echo "<tbody>";
 }
 
 /**
@@ -52,6 +66,7 @@ function buildTableHeaders($headersNames){
 function buildTableEndDeclaration(){
 	echo "</tbody>";
 	echo "</table>";
+	echo "</div>";
 	echo "</div>";
 }
 
