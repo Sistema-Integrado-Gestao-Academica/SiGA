@@ -13,7 +13,8 @@ echo anchor(
 <div align='right'>
 	<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
 	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
-	<i class='fa fa-bullhorn'> Divulgações </i>
+	<i class='fa fa-bullhorn'> Divulgações </i> &nbsp&nbsp
+	<i class='fa fa-group'> Incrições realizadas </i>
 </div>
 
 <?php
@@ -53,14 +54,16 @@ if($validSelectiveProcesses){
 			echo "</td>";
 
 			echo "<td>";
-				$classDivulgationsButton = $noticeWithAllConfig[$processId] ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
 				createProcessModal($process, $settings, $processesTeachers, $processesDocs, $processesResearchLines);
 				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-primary'><i class='fa fa-eye'></i></a>";
 				echo "&nbsp";
 				$courseId = $course[Course_model::ID_ATTR];
 				echo anchor("edit_selection_process/{$processId}", "<i class='fa fa-edit'></i>", "class='btn btn-success'");
 				echo "&nbsp";
+				$classDivulgationsButton = $noticeWithAllConfig[$processId] ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
 				echo anchor("selection_process/secretary_divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", $classDivulgationsButton);
+				echo "&nbsp";
+				echo anchor("selection_process/homolog/subscriptions/{$processId}", "<i class='fa fa-group'></i>", "class='btn btn-default'");
 
 			echo "</td>";
 

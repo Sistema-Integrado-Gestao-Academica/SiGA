@@ -90,6 +90,14 @@ class SelectiveProcessSubscription_model extends CI_Model {
         return $this->get('id', $subscriptionId);
     }
 
+    public function getProcessSubscriptions($processId, $finalized=TRUE){
+        return $this->get(
+            ['id_process' => $processId, 'finalized' => $finalized],
+            FALSE,
+            FALSE
+        );
+    }
+
     public function getSubscriptionDocs($subscriptionId){
         $this->db->select('id_doc, doc_name, doc_path, id_subscription');
         $this->db->from('selection_process_subscription_docs');
