@@ -64,9 +64,9 @@ function withPermission($requiredPermission, callable $onSuccess, callable $onEr
 	}
 }
 
-function userInGroup($requiredGroup){
+function userInGroup($requiredGroup, $user=FALSE){
 	$group = new Module();
-	return $group->checkUserGroup($requiredGroup);
+	return $group->checkUserGroup($requiredGroup, $user);
 }
 
 /**

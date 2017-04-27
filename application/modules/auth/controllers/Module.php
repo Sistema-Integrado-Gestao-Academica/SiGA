@@ -44,7 +44,7 @@ class Module extends MX_Controller {
                 }
             }
         }else{
-            $groups = FALSE;
+            $groups = [];
         }
 
         return $groups;
@@ -63,8 +63,8 @@ class Module extends MX_Controller {
                 $userGroups = $session->getUserGroups();
             }
 
-			foreach($userGroups as $group){
-				$haveGroup = FALSE;
+			$haveGroup = FALSE;
+            foreach($userGroups as $group){
 				if($group->getName() === $requiredGroup){
 					$haveGroup = TRUE;
 					break;
