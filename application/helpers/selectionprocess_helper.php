@@ -276,6 +276,7 @@ function checkIfIsInSomePhase($today, $phases){
 	if($phases){
 		foreach ($phases as $phase) {
 			$startDate = $phase->getStartDate();
+
 			$endDate = $phase->getEndDate();
 
 			$isInPhase = validateDateInPeriod($today, $startDate, $endDate);
@@ -299,4 +300,29 @@ function checkIfIsInSomePhase($today, $phases){
 	);
 
 	return $data;
+}
+
+function getPhaseName($phaseId){
+
+	$name = FALSE;
+	switch ($phaseId) {
+		case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
+			$name = SelectionProcessConstants::HOMOLOGATION_PHASE;
+			break;
+		
+		case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
+			$name = SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE;
+			break;
+
+		case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
+			$name = SelectionProcessConstants::WRITTEN_TEST_PHASE;
+			break;
+		
+		case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
+			$name = SelectionProcessConstants::ORAL_TEST_PHASE;
+			break;
+	}
+
+
+	return $name;
 }

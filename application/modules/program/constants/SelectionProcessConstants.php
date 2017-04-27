@@ -30,5 +30,7 @@ class SelectionProcessConstants {
 	const FINISHED = "<p class='label label-danger'>Encerrado</p>";
 	const INCOMPLETE_CONFIG = "<p class='label label-danger'>Configuração incompleta</p>";
 	const WAITING_NEXT_PHASE = "<p class='label label-warning'> Aguardando próxima fase </p>";
+
+	const PRE_PROJECT_DOCUMENT_ID = 10;
 }
 

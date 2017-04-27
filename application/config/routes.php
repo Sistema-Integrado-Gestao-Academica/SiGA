@@ -224,6 +224,10 @@ $route['selection_process/remove_teacher'] = 'program/selectiveprocessconfig/rem
 $route['selection_process/secretary_divulgations/(:num)'] = 'program/selectiveprocessdivulgation/index/$1';
 $route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocessdivulgation/downloadDivulgationFile/$1';
 
+// Selection process evaluation routes
+$route['selection_process_evaluation'] = 'program/selectiveprocessevaluation/index';
+$route['teacher_candidates/(:num)/(:num)'] = 'program/selectiveprocessevaluation/showTeacherCandidates/$1/$2';
+
 
 /*
  * Enrollment routes
