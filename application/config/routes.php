@@ -216,6 +216,7 @@ $route['selection_process/download/doc/(:num)/(:num)'] = 'program/selectiveProce
 // Selection process homolog routes
 $route['selection_process/homolog/subscriptions/(:num)'] = 'program/selectiveProcessHomolog/subscriptions/$1';
 $route['selection_process/homolog/subscription/(:num)'] = 'program/selectiveProcessHomolog/homologate/$1';
+$route['selection_process/homolog/register/(:num)'] = 'program/selectiveProcessHomolog/registerSubscriptionHomologation/$1';
 
 // Selection process config routes
 $route['selection_process/config/(:num)'] = 'program/selectiveprocessconfig/index/$1';

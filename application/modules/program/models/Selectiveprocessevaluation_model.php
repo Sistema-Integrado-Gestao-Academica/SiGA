@@ -9,6 +9,26 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 	public $TEACHER_PROCESS_TABLE = "teacher_selection_process";
 	public $PROCESS_TABLE = "selection_process";
 
+	public function saveOrUpdate(
+		$subscriptionId, $teacherId, $processPhaseId, $data=[]){
+
+		$evaluationIdentifiers = [
+            'id_subscription' => $subscriptionId,
+            'id_teacher' => $teacherId,
+            'id_process_phase' => $processPhaseId
+        ];
+
+        $foundEvaluation = $this->get($evaluationIdentifiers);
+
+        if($foundEvaluation !== FALSE){
+        	$this->db->where($evaluationIdentifiers);
+        	$this->db->update($this->TABLE, $data);
+        }else{
+        	$evaluation = array_merge($evaluationIdentifiers, $data);
+        	$this->persist($evaluation);
+        }
+	}
+
 	public function getProcessesForEvaluationByTeacher($teacherId){
 
 		// Trocar process_type para status
@@ -47,7 +67,6 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		return $phaseName;
 	}
-    
 
     public function getTeacherCandidates($teacherId, $idProcess){
 
@@ -60,5 +79,15 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		return $result->result_array();
 	}
-	
+
+	public function getEvaluationTeachers($subscriptionId){
+		$this->db->distinct();
+		$this->db->select('u.name, u.email, spe.*');
+		$this->db->from("users u");
+		$this->db->join("selection_process_evaluation spe ", "spe.id_teacher=u.id");
+		$this->db->where("spe.id_subscription", $subscriptionId);
+		$teachers = checkArray($this->db->get()->result_array());
+
+		return $teachers;
+	}
 }

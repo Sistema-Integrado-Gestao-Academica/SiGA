@@ -1,5 +1,6 @@
 var subscriptionTeachers = [];
 var teacherPairTable;
+
 $(document).ready(function(){
   $(function() {
     $('#define_teacher_pair_table').dataTable();
@@ -16,7 +17,7 @@ $(document).ready(function(){
 
     // Must be a pair of teachers
     if(subscriptionTeachers.length == 2){
-
+      homologateSubscription();
     }else{
       bootbox.alert({
         size: "small",
@@ -27,18 +28,40 @@ $(document).ready(function(){
   });
 });
 
-function addTeacherToSubscription(event, teacherId, teacherName, subscriptionId){
+function homologateSubscription(){
+  var siteUrl = $("#site_url").val();
+  var subscriptionId = $("#subscriptionId").val();
+  var url = siteUrl + '/selection_process/homolog/register/' + subscriptionId;
+
+  $.post(
+      url,
+      {
+        subscriptionTeachers: subscriptionTeachers
+      },
+      function(data){
+        console.log(data);
+        data = JSON.parse(data);
+        if('error' in data){
+          bootbox.alert({
+            size: "small",
+            message: data.message,
+            backdrop: true
+          });
+        }else{
+          // Redirect to given url
+          window.location.href = siteUrl + data.redirectTo;
+        }
+      }
+    );
+}
+
+function addTeacherToSubscription(event, teacherId, teacherName){
   event.preventDefault();
 
   if(subscriptionTeachers.length <= 1){
 
-    var subscriptionTeacher = {
-      teacherId: teacherId,
-      subscriptionId: subscriptionId
-    };
-
-    if(!teacherIsInPair(teacherId)){
-      subscriptionTeachers.push(subscriptionTeacher);
+    if(!subscriptionTeachers.includes(teacherId)){
+      subscriptionTeachers.push(teacherId);
 
       var removeBtnId = "remove_" + teacherId;
       var node = teacherPairTable.row
@@ -51,8 +74,12 @@ function addTeacherToSubscription(event, teacherId, teacherName, subscriptionId)
 
       // Registering listener to delete click event
       $("#"+removeBtnId).click(function(){
-        removeTeacherFromPair(teacherId);
-        teacherPairTable.row(node).remove().draw();
+        var removed = removeTeacherFromPair(teacherId);
+        if(removed){
+          teacherPairTable.row(node).remove().draw();
+        }else{
+          teacherPairTable.clear().draw();
+        }
       });
 
     }else{
@@ -71,28 +98,13 @@ function addTeacherToSubscription(event, teacherId, teacherName, subscriptionId)
   }
 }
 
-function teacherIsInPair(teacherId){
-  var alreadyAdded = false;
-  subscriptionTeachers.every(function(value, index){
-    if(value.teacherId == teacherId){
-      alreadyAdded = true;
-      return false;
-    }else{
-      return true;
-    }
-  });
-  return alreadyAdded;
-}
-
 function removeTeacherFromPair(teacherId){
-  var indexToDelete;
-  subscriptionTeachers.every(function(value, index){
-    if(value.teacherId == teacherId){
-      indexToDelete = index;
-      return false;
-    }else{
-      return true;
-    }
-  });
-  subscriptionTeachers.splice(indexToDelete, 1);
+  var index = subscriptionTeachers.indexOf(teacherId);
+  if(index >= 0){
+    subscriptionTeachers.splice(index, 1);
+    return true;
+  }else{
+    subscriptionTeachers = [];
+    return false;
+  }
 }

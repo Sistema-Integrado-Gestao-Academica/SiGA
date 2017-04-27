@@ -1,7 +1,7 @@
 
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH.'exception/UploadException.php');
+require_once(APPPATH.'exception/SelectionProcessException.php');
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
 
 class SelectiveProcessHomolog extends MX_Controller {
@@ -27,25 +27,6 @@ class SelectiveProcessHomolog extends MX_Controller {
             },
             function() use ($self, $processId){
                 $self->subscriptionsPage($processId);
-            }
-        );
-    }
-
-    // List subscription details and option to homologate it
-    public function homologate($subscriptionId){
-        $subscription = $this
-            ->process_subscription_model
-            ->getBySubscriptionId($subscriptionId);
-        $process = $this->process_model->getById($subscription['id_process']);
-
-        $self = $this;
-        withPermissionAnd(
-            PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $process){
-                return $self->checkIfUserIsSecretary($process->getCourse());
-            },
-            function() use ($self, $subscription, $process){
-                $self->homologateSubscriptionPage($subscription, $process);
             }
         );
     }
@@ -81,6 +62,25 @@ class SelectiveProcessHomolog extends MX_Controller {
         );
     }
 
+    // List subscription details and option to homologate it
+    public function homologate($subscriptionId){
+        $subscription = $this
+            ->process_subscription_model
+            ->getBySubscriptionId($subscriptionId);
+        $process = $this->process_model->getById($subscription['id_process']);
+
+        $self = $this;
+        withPermissionAnd(
+            PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $process){
+                return $self->checkIfUserIsSecretary($process->getCourse());
+            },
+            function() use ($self, $subscription, $process){
+                $self->homologateSubscriptionPage($subscription, $process);
+            }
+        );
+    }
+
     private function homologateSubscriptionPage($subscription, $process){
         $teachers = $this
             ->process_model
@@ -96,6 +96,57 @@ class SelectiveProcessHomolog extends MX_Controller {
             "program/selection_process_homolog/homologate",
             $data
         );
+    }
+
+    // Register the secretary homologation
+    public function registerSubscriptionHomologation($subscriptionId){
+
+        $subscriptionTeachers = $this->input->post('subscriptionTeachers');
+
+        $subscription = $this
+            ->process_subscription_model
+            ->getBySubscriptionId($subscriptionId);
+        $process = $this->process_model->getById($subscription['id_process']);
+
+        $self = $this;
+        withPermissionAnd(
+            PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $process){
+                return $self->checkIfUserIsSecretary($process->getCourse());
+            },
+            function() use ($self, $subscription, $process, $subscriptionTeachers){
+                $self->registerHomologation($subscription, $process, $subscriptionTeachers);
+            }
+        );
+    }
+
+    private function registerHomologation($subscription, $process, $subscriptionTeachers){
+        $this->load->service(
+            'program/SelectionProcessEvaluation',
+            'evaluation_service'
+        );
+
+        try{
+            $homologated = $this->evaluation_service->homologateSubscription(
+                $subscription, $process, $subscriptionTeachers
+            );
+
+            $status = $homologated ? 'success' : 'danger';
+            $msg = $homologated
+                ? 'Inscrição homologada com sucesso!'
+                : 'Não foi possível homologar esta inscrição, confira os dados informados.';
+            getSession()->showFlashMessage($status, $msg);
+
+            $redirectToUrl = "/selection_process/homolog/subscriptions/{$process->getId()}";
+            $success = ['redirectTo' => $redirectToUrl];
+            echo json_encode($success, JSON_UNESCAPED_UNICODE);
+        }catch(SelectionProcessException $e){
+            $error = [
+                'error' => TRUE,
+                'message' => $e->getMessage()
+            ];
+            echo json_encode($error, JSON_UNESCAPED_UNICODE);
+        }
     }
 
     private function checkIfUserIsSecretary($course){

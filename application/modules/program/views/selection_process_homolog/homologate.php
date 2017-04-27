@@ -7,6 +7,8 @@
 <h3><i class="fa fa-users"></i> Definir dupla de docentes avaliadores</h3>
 <br>
 
+<?php newInputField('hidden', 'subscriptionId', $subscription['id']); ?>
+
 <div class="row">
   <div class="col-md-6">
     <?php if(!empty($teachers)): ?>
@@ -36,7 +38,7 @@
               form_button([
                 'class' => 'btn btn-primary',
                 'content' => "<i class='fa fa-plus-square'></i>",
-                'onClick' => "addTeacherToSubscription(event, {$teacher['id']}, '{$teacher['name']}', {$subscription['id']});"
+                'onClick' => "addTeacherToSubscription(event, {$teacher['id']}, '{$teacher['name']}');"
               ]);
             ?>
           </td>
@@ -78,7 +80,7 @@
       'id' => 'confirm_teacher_pair',
       'name' => 'confirm_teacher_pair',
       'class' => 'btn btn-success btn-lg btn-block',
-      'content' => "<i class='fa fa-check'></i> Confirmar dupla de professores"
+      'content' => "<i class='fa fa-check'></i> Confirmar dupla de professores e homologar inscrição"
     ]);
   ?>
 </div>
