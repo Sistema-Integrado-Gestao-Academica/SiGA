@@ -18,7 +18,7 @@ class SelectiveProcessConfig extends MX_Controller {
     }
 
     public function index($processId){
-        
+
         $subscriptionConfigData = $this->getDataSubscriptionConfig($processId);
         $courseId = $subscriptionConfigData['course']['id_course'];
         $defineTeachersData = $this->getDateDefineTeachers($processId, $courseId);
@@ -54,7 +54,7 @@ class SelectiveProcessConfig extends MX_Controller {
     }
 
     public function subscriptionConfig($processId){
-        
+
         $data = $this->getDataSubscriptionConfig($processId);
         loadTemplateSafelyByPermission(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
@@ -64,7 +64,7 @@ class SelectiveProcessConfig extends MX_Controller {
     }
 
     public function getDataSubscriptionConfig($processId){
-        
+
         $data = $this->getProcessDocs($processId);
         $processDocs = $data['processDocs'];
         $processDocs = $processDocs ? $processDocs : [];
@@ -146,14 +146,8 @@ class SelectiveProcessConfig extends MX_Controller {
     }
 
     public function getDefineTeachersViewData($processId, $programId){
-
-        $session = getSession();
-        $user = $session->getUserData();
-        $secretaryId = $user->getId();
-
         $this->load->model('program/program_model');
         $programsTeachers = $this->program_model->getProgramTeachers($programId);
-
         $processTeachers = $this->process_model->getProcessTeachers($processId);
 
         $data = array(
