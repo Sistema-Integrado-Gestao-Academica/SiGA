@@ -88,3 +88,12 @@ function logoutUser(){
 	$login->logout("Você deve ter permissão para acessar essa página.
 			      Você foi deslogado por motivos de segurança.", "danger", '/');
 }
+
+/**
+*/
+function getLoggedUserId(){
+	$userData = getSession()->getUserData();
+    $userId = $userData->getId();
+
+    return $userId;
+}
