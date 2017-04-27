@@ -31,7 +31,6 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 	public function getProcessesForEvaluationByTeacher($teacherId){
 
-		// Trocar process_type para status
 		$this->db->select("process.*");
 		$this->db->join("selection_process process", "process.id_process = teacher_process.id_process");
 		$this->db->from("teacher_selection_process teacher_process");
@@ -68,16 +67,52 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		return $phaseName;
 	}
 
+	public function getPhaseProcessIdByPhaseId($processId, $phaseId){
+
+		$this->db->select("id");
+		$this->db->where("id_phase", $phaseId);
+		$this->db->where("id_process", $processId);
+
+		$idPhaseProcess = $this->db->get("process_phase")->row();
+
+		return $idPhaseProcess;
+	}
+    
     public function getTeacherCandidates($teacherId, $idProcess){
 
-    	$query = "SELECT subs.candidate_id, eval.* ";
-		$query .= "FROM `selection_process_user_subscription` subs ";
-		$query .= "JOIN `selection_process_evaluation`eval ON `id_process_phase` IN (SELECT `id` FROM `process_phase` WHERE `id_process` = {$idProcess}) ";
-		$query .= "WHERE `id_subscription` IN (SELECT `id_subscription` FROM `selection_process_evaluation` WHERE `id_teacher` = {$teacherId}) ";
+    	$query = "SELECT * FROM `selection_process_evaluation`";
+		$query .= "WHERE `id_process_phase` IN (SELECT `id` FROM `process_phase` WHERE `id_process` = {$idProcess}) ";
+		$query .= "AND `id_subscription` IN (SELECT `id_subscription` FROM `selection_process_evaluation` WHERE `id_teacher` = {$teacherId}) ";
 
-		$result = $this->db->query($query);
+		$evaluations = $this->db->query($query);
 
-		return $result->result_array();
+		$candidates = $this->getCandidates($evaluations->result_array());
+		return $candidates;
+	}
+
+	private function getCandidates($evaluations){
+			
+		if($evaluations){
+			$this->load->model("program/selectiveProcessSubscription_model", "subscription_model");
+			foreach ($evaluations as $key => $evaluation) {
+				$idSubscription = $evaluation['id_subscription'];
+				$subscription = $this->subscription_model->getBySubscriptionId($idSubscription);
+				$evaluations[$key]['candidate_id'] = $subscription['candidate_id'];
+			}
+		}
+
+		return $evaluations;
+	}
+
+	public function saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId){
+
+		$this->db->where('id_teacher', $teacherId);
+		$this->db->where('id_subscription', $subscriptionId);
+		$this->db->where('id_process_phase', $phaseprocessId);
+
+		$saved = $this->db->update("selection_process_evaluation", array('grade' => $grade));
+
+		return $saved;
 	}
 
 	public function getEvaluationTeachers($subscriptionId){
