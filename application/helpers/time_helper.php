@@ -102,19 +102,17 @@ function convertDateTimeToDateBR($date){
 	return $date;
 }
 
+function validateDateInPeriod($date, DateTime $startDate=null, DateTime $endDate=null){
 
-// params should be in datetime (not in string)
-function validateDateInPeriod($date, $startDate, $endDate){
-
-	$intervalStartDate = $startDate->diff($date);
-	$intervalEndDate = $endDate->diff($date);
-	$validStartDate = ($intervalStartDate->invert == 0 && $intervalStartDate->days >= 0) || ($intervalStartDate->invert == 1 && $intervalStartDate->days == 0);
-	$validEndDate = ($intervalEndDate->invert == 1 && $intervalEndDate->days > 0) || ($intervalEndDate->invert == 0 && $intervalEndDate->days == 0);
-	if($validStartDate && $validEndDate){
-		$validDate = TRUE;
-	}
-	else{
-		$validDate = FALSE;
+	$validDate = FALSE;
+	if(!is_null($startDate) && !is_null($endDate)){
+		$intervalStartDate = $startDate->diff($date);
+		$intervalEndDate = $endDate->diff($date);
+		$validStartDate = ($intervalStartDate->invert == 0 && $intervalStartDate->days >= 0) || ($intervalStartDate->invert == 1 && $intervalStartDate->days == 0);
+		$validEndDate = ($intervalEndDate->invert == 1 && $intervalEndDate->days > 0) || ($intervalEndDate->invert == 0 && $intervalEndDate->days == 0);
+		if($validStartDate && $validEndDate){
+			$validDate = TRUE;
+		}
 	}
 	return $validDate;
 }
