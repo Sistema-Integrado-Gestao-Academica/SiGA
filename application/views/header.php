@@ -41,7 +41,8 @@
 	<link rel="stylesheet" href=<?=base_url("css/AdminLTE.css")?>>
 	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.min.css")?>>
 	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.structure.min.css")?>>
-	<link rel="stylesheet" href=<?=base_url("css/jquery-ui.theme.min.css")?>>
+    <link rel="stylesheet" href=<?=base_url("css/jquery-ui.theme.min.css")?>>
+	<link rel="stylesheet" href=<?=base_url("css/datatables/dataTables-1.10.15.bootstrap.min.css")?>>
 
 	<script src=<?=base_url("js/jquery-2.1.1.min.js")?>></script>
 	<script src=<?=base_url("js/jquery.inputmask.js")?>></script>
@@ -61,11 +62,28 @@
     <script src=<?=base_url("js/user.js")?>></script>
     <script src=<?=base_url("js/course.js")?>></script>
     <script src=<?=base_url("js/selectiveprocess.js")?>></script>
-	<script src=<?=base_url("js/bootstrap-filestyle.min.js")?>></script>
+    <script src=<?=base_url("js/bootstrap-filestyle.min.js")?>></script>
+    <script src=<?=base_url("js/plugins/datatables/jquery.dataTables-1.10.15.min.js")?>></script>
+    <script src=<?=base_url("js/plugins/datatables/dataTables-1.10.15.bootstrap.min.js")?>></script>
+    <script src=<?=base_url("js/bootbox.min.js")?>></script>
 	<link rel="icon" href="<?=base_url()?>/favicon.ico" type="image/ico">
 </head>
 
 <body class="skin-green-light">
+    <script>
+        $.extend($.fn.dataTable.defaults, {
+            paging: false,
+            ordering: true,
+            searching: true,
+            language: {
+              search: 'Pesquisar',
+              emptyTable: 'Nenhum dado encontrado.',
+              infoFiltered: ' (filtrado de _MAX_ registros)',
+              info: 'Mostrando _START_ de _END_ de _TOTAL_ registro(s).',
+              infoEmpty: 'Nenhum dado para listar.'
+            }
+        } );
+    </script>
 	<header>
 		<?php
 			$this->load->helper('url');
