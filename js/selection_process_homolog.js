@@ -39,7 +39,6 @@ function homologateSubscription(){
         subscriptionTeachers: subscriptionTeachers
       },
       function(data){
-        console.log(data);
         data = JSON.parse(data);
         if('error' in data){
           bootbox.alert({

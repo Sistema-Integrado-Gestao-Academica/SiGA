@@ -55,6 +55,15 @@ class SelectiveProcessSubscription_model extends CI_Model {
         }
     }
 
+    public function homologateSubscription($subscriptionId){
+        if($this->exists('id', $subscriptionId)){
+            $this->db->where('id', $subscriptionId);
+            $this->db->update($this->TABLE, [
+               'homologated' => TRUE
+            ]);
+        }
+    }
+
     private function generateCandidateId(){
         $this->load->helper('string');
         $candidateId = random_string('numeric', self::CANDIDATE_ID_LENGTH);

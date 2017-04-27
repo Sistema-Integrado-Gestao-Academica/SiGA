@@ -8,14 +8,10 @@ class SelectionProcessEvaluation extends CI_Model {
 
     public function __construct(){
         parent::__construct();
-        // $this->load->model(
-        //     'program/selectiveprocessconfig_model',
-        //     'process_config_model'
-        // );
-        // $this->load->model(
-        //     'program/selectiveProcessSubscription_model',
-        //     'process_subscription_model'
-        // );
+        $this->load->model(
+            'program/selectiveProcessSubscription_model',
+            'process_subscription_model'
+        );
         $this->load->model(
             'program/selectiveProcess_model',
             'process_model'
@@ -30,6 +26,7 @@ class SelectionProcessEvaluation extends CI_Model {
         $this->validateSubscriptionTeachers($subscriptionTeachers);
         $this->db->trans_start();
         $this->registerEvaluationTeachers($subscription, $subscriptionTeachers);
+        $this->setSubscriptionHomologated($subscription);
         $this->db->trans_complete();
         return $this->db->trans_status();
     }
@@ -47,6 +44,10 @@ class SelectionProcessEvaluation extends CI_Model {
                 }
             }
         }
+    }
+
+    private function setSubscriptionHomologated($subscription){
+        $this->process_subscription_model->homologateSubscription($subscription['id']);
     }
 
     private function validateSubscriptionTeachers($subscriptionTeachers){
