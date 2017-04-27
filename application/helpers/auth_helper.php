@@ -7,23 +7,66 @@ require_once(MODULESPATH."auth/controllers/SessionManager.php");
 require_once(MODULESPATH."auth/constants/PermissionConstants.php");
 
 function getSession() {
-
-	$session = SessionManager::getInstance();
-
-	return $session;
+	return SessionManager::getInstance();
 }
 
-function withPermission($requiredPermission, callable $onSuccess, callable $onError=null){
-	$permission = new UserPermission();
-	$hasPermission = $permission->checkUserPermission($requiredPermission);
-	if($hasPermission){
-		$onSuccess();
+/*
+ * Check if the user have the required permission and execute an additional check.
+ *
+ * @param $requiredPermission {string|array} - Permission(s) name(s) required to access
+ * @param $extraCheck {callable} - Function to execute as extra check. MUST return a boolean.
+ * @param $onSucess {callable} - Success callback
+ * @param $onError {callable} - Failure callback
+ * @return void
+ */
+function withPermissionAnd($requiredPermission, callable $extraCheck,
+	callable $onSuccess, callable $onError=null){
+	if($extraCheck()){
+		withPermission($requiredPermission, $onSuccess, $onError);
 	}else{
-		if(!is_null($haveNoPermission)){
+		if(!is_null($onError)){
 			$onError();
 		}
 		logoutUser();
 	}
+}
+
+/*
+ * Check if the user have the required permission(s) before executing some action.
+ *
+ *	The current user is logged out if have no permission.
+ *
+ * @param $requiredPermission {string|array} - Permission(s) name(s) required to access
+ * @param $onSucess {callable} - Action to be executed if user have the required permission(s)
+ * @param $onError {callable} -  Action to be executed if user haven't the required permission(s)
+ * @return void
+ */
+function withPermission($requiredPermission, callable $onSuccess, callable $onError=null){
+	$permissionObj = new UserPermission();
+	if(is_array($requiredPermission)){
+		$hasPermission = FALSE;
+		foreach ($requiredPermission as $permission) {
+			$hasPermission = $permissionObj->checkUserPermission($permission);
+			if($hasPermission){
+				break;
+			}
+		}
+	}else{
+		$hasPermission = $permissionObj->checkUserPermission($requiredPermission);
+	}
+	if($hasPermission){
+		$onSuccess();
+	}else{
+		if(!is_null($onError)){
+			$onError();
+		}
+		logoutUser();
+	}
+}
+
+function userInGroup($requiredGroup){
+	$group = new Module();
+	return $group->checkUserGroup($requiredGroup);
 }
 
 /**
