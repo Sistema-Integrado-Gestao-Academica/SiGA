@@ -3,10 +3,6 @@
 
 require_once(APPPATH.'exception/UploadException.php');
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
-require_once(MODULESPATH."/auth/constants/GroupConstants.php");
-require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
-require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
-require_once(MODULESPATH."/program/domain/selection_process/SelectionProcess.php");
 
 class SelectiveProcessPublic extends MX_Controller {
 
@@ -58,14 +54,19 @@ class SelectiveProcessPublic extends MX_Controller {
     }
 
     public function subscribe($processId, $extraData=[]){
+        $this->load->service(
+            'program/SelectionProcessSubscription',
+            'subscription_service'
+        );
+        $this->load->model('course_model');
+
         $process = $this->process_model->getById($processId);
         $requiredDocs = $this->process_config_model->getProcessDocs($processId);
         $userData = getSession()->getUserData();
         $userSubscription = $this->process_subscription_model->getByUserAndProcess(
             $processId, $userData->getId()
         );
-        $subscriptionDocs = $this->getSubscriptionDocs($userSubscription);
-        $this->load->model('course_model');
+        $subscriptionDocs = $this->subscription_service->getSubscriptionDocs($userSubscription);
         $researchLines = $this->course_model->getCourseResearchLines($process->getCourse());
 
         $data = [
@@ -94,25 +95,6 @@ class SelectiveProcessPublic extends MX_Controller {
             $template,
             array_merge($data, $extraData)
         );
-    }
-
-    private function getSubscriptionDocs($subscription){
-        $subscriptionDocs = [];
-        if($subscription){
-            $subscriptionDocs = $this->process_subscription_model->getSubscriptionDocs(
-                $subscription['id']
-            );
-
-            // Save the doc ID as the key of array
-            $docs = [];
-            if($subscriptionDocs){
-                foreach($subscriptionDocs as $subscriptionDoc){
-                    $docs[$subscriptionDoc['id_doc']] = $subscriptionDoc;
-                }
-            }
-            $subscriptionDocs = $docs;
-        }
-        return $subscriptionDocs;
     }
 
     public function subscribeTo($processId){
@@ -175,7 +157,11 @@ class SelectiveProcessPublic extends MX_Controller {
 
     public function dowloadSubscriptionDoc($docId, $subscriptionId){
         $self = $this;
-        withPermission(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+        withPermission(
+            [
+                PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+                PermissionConstants::SELECTION_PROCESS_PERMISSION
+            ],
             function() use($self, $docId, $subscriptionId){
                 $doc = $self->process_subscription_model->getSubscriptionDoc(
                     $subscriptionId,

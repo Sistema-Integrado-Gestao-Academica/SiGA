@@ -50,6 +50,25 @@ class SelectionProcessSubscription extends CI_Model {
         $this->getSubmittedDocs($processId, $user, $candidateId);
     }
 
+    public function getSubscriptionDocs($subscription){
+        $subscriptionDocs = [];
+        if($subscription){
+            $subscriptionDocs = $this->process_subscription_model->getSubscriptionDocs(
+                $subscription['id']
+            );
+
+            // Save the doc ID as the key of array
+            $docs = [];
+            if($subscriptionDocs){
+                foreach($subscriptionDocs as $subscriptionDoc){
+                    $docs[$subscriptionDoc['id_doc']] = $subscriptionDoc;
+                }
+            }
+            $subscriptionDocs = $docs;
+        }
+        return $subscriptionDocs;
+    }
+
     private function saveUserSubscription($processId, $user, $data){
         $data = $this->prepareArrayToSave($data);
         $data['id_user'] = $user->getId();
