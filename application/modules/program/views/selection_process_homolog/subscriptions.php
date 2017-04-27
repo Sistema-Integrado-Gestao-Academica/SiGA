@@ -5,6 +5,7 @@
 <?php if($finalizedSubscriptions !== FALSE): ?>
   <div align='right'>
     <i class='fa fa-eye'> Visualizar informações</i> &nbsp&nbsp
+    <i class='fa fa-thumbs-o-up'> Homologar inscrição</i> &nbsp&nbsp
   </div>
   <?php
     buildTableDeclaration();
@@ -34,6 +35,13 @@
               'data-toggle' => 'modal',
               'data-target' => "#subscription_{$candidateId}_modal"
             ]);
+          ?>
+          <?=
+            anchor(
+              "selection_process/homolog/subscription/{$subscription['id']}",
+              "<i class='fa fa-thumbs-o-up'></i>",
+              "class='btn btn-success'"
+            );
           ?>
         </td>
       </tr>

@@ -23,13 +23,29 @@ class SelectiveProcessHomolog extends MX_Controller {
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
             function() use ($self, $process){
-                // Check if the logged user is secretary of the process course
-                $self->load->model('secretary/secretary_model');
-                $userId = getSession()->getUserData()->getId();
-                return $self->secretary_model->isSecretaryOfCourse($userId, $process->getCourse());
+                return $self->checkIfUserIsSecretary($process->getCourse());
             },
             function() use ($self, $processId){
                 $self->subscriptionsPage($processId);
+            }
+        );
+    }
+
+    // List subscription details and option to homologate it
+    public function homologate($subscriptionId){
+        $subscription = $this
+            ->process_subscription_model
+            ->getBySubscriptionId($subscriptionId);
+        $process = $this->process_model->getById($subscription['id_process']);
+
+        $self = $this;
+        withPermissionAnd(
+            PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $process){
+                return $self->checkIfUserIsSecretary($process->getCourse());
+            },
+            function() use ($self, $subscription, $process){
+                $self->homologateSubscriptionPage($subscription, $process);
             }
         );
     }
@@ -63,6 +79,30 @@ class SelectiveProcessHomolog extends MX_Controller {
             "program/selection_process_homolog/subscriptions",
             $data
         );
+    }
+
+    private function homologateSubscriptionPage($subscription, $process){
+        $teachers = $this
+            ->process_model
+            ->getProcessTeachers($process->getId());
+
+        $data = [
+            'process' => $process,
+            'subscription' => $subscription,
+            'teachers' => $teachers
+        ];
+
+        $this->load->template(
+            "program/selection_process_homolog/homologate",
+            $data
+        );
+    }
+
+    private function checkIfUserIsSecretary($course){
+        // Check if the logged user is secretary of the course
+        $this->load->model('secretary/secretary_model');
+        $userId = getSession()->getUserData()->getId();
+        return $this->secretary_model->isSecretaryOfCourse($userId, $course);
     }
 
 }
