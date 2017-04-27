@@ -21,7 +21,7 @@ function alert($content, $type="info", $title=FALSE, $icon="info", $dismissible=
 	echo "</div>";
 }
 
-function newModal($id, $title, $body, $footer, $formPath=FALSE, $class="modal fade"){
+function newModal($id, $title, $body=null, $footer=null, $formPath=FALSE, $class="modal fade"){
 	echo "<div id='{$id}' class='{$class}'>";
     echo "<div class='modal-dialog'>";
         echo "<div class='modal-content'>";
@@ -35,10 +35,19 @@ function newModal($id, $title, $body, $footer, $formPath=FALSE, $class="modal fa
             }
 
             echo "<div class='modal-body'>";
-            	$body();
+            if(is_callable($body)){
+	        	$body();
+        	}else{
+        		echo $body;
+        	}
             echo "</div>";
+
             echo "<div class='modal-footer'>";
+            if(is_callable($footer)){
                 $footer();
+            }else{
+        		echo $footer;
+        	}
             echo "</div>";
 
             if($formPath){
