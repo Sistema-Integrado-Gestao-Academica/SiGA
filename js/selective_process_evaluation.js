@@ -30,11 +30,14 @@ function saveGrade(teacherId, subscriptionId, phaseprocessId){
 			var response = JSON.parse(responseJson);
 			var id = "#" + phaseprocessId + "_" + subscriptionId + "_label";
 			var id = "#" + phaseprocessId + "_" + subscriptionId + "_label";
-			if(response.type === "success"){
+			if(response.type === "success" && typeof response.label !== 'undefined'){
+				$(id).html("Resultado: " + response.label);
+			}
+			else if(typeof response.label !== 'undefined'){
 				$(id).html("Resultado: " + response.label);
 			}
 			else{
-				$(id).html("Resultado: " + response.label);
+				$(id).html("Resultado: -");
 			}
 			var message ="<p class='alert-" + response.type + "'>" + response.message + "</p>";
 			$("#status_" + fieldId).html(message);

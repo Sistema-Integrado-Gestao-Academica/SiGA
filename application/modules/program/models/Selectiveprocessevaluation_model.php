@@ -84,7 +84,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		$this->db->where("id", $idPhaseProcess);
 		$phase = $this->db->get("process_phase")->row();
 
-		return $phase;
+		return $phase->grade;
 	}
     
     public function getTeacherCandidates($teacherId, $idProcess){
@@ -114,13 +114,13 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		return $evaluations;
 	}
 
-	public function saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId, $approved){
+	public function saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId){
 
 		$this->db->where('id_teacher', $teacherId);
 		$this->db->where('id_subscription', $subscriptionId);
 		$this->db->where('id_process_phase', $phaseprocessId);
 
-		$saved = $this->db->update("selection_process_evaluation", $data);
+		$saved = $this->db->update("selection_process_evaluation", array('grade' => $grade));
 
 		return $saved;
 	}
@@ -134,5 +134,15 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		$teachers = checkArray($this->db->get()->result_array());
 
 		return $teachers;
+	}
+
+	public function getCandidatePhaseEvaluations($idSubscription, $idPhaseProcess){
+		
+		$this->db->select("grade");
+		$this->db->from($this->TABLE);
+		$this->db->where("id_subscription", $idSubscription);
+		$this->db->where("id_process_phase", $idPhaseProcess);
+
+		return $this->db->get()->result_array();
 	}
 }

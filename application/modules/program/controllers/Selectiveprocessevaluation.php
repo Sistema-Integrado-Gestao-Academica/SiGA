@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
 require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 require_once(MODULESPATH."/program/exception/SelectionProcessException.php");
@@ -74,7 +75,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
         );
 
        
-        loadTemplateSafelyByGroup(GroupConstants::TEACHER_GROUP, "program/selection_process_evaluation/evaluate", $data);
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_EVALUATION, "program/selection_process_evaluation/evaluate", $data);
     }
 
     private function getPhasesNames($candidates){
@@ -98,7 +99,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
                 $candidateId = $candidate['candidate_id'];
                 unset($candidate['candidate_id']);
                 $candidatesEvaluations[$candidateId][] = $candidate;
-            }
+                }
         }
 
         $candidatesEvaluations = $this->groupByProcessPhase($candidatesEvaluations);
@@ -114,7 +115,9 @@ class SelectiveProcessEvaluation extends MX_Controller {
             foreach ($candidatesEvaluations as $key => $candidateEvaluation) {
                 foreach ($candidateEvaluation as $evaluation) {
                     $idProcessPhase = $evaluation['id_process_phase'];
-                    $evaluations[$key][$idProcessPhase][] = $evaluation;
+                    $evaluations[$key][$idProcessPhase]['evaluations'][] = $evaluation;
+                    $phaseResult = $this->getCandidatePhaseResult($evaluation['id_subscription'], $idProcessPhase);
+                    $evaluations[$key][$idProcessPhase]['phase_result'] = $phaseResult;
                 }
             }
         }
@@ -126,7 +129,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $self = $this;
         withPermissionAnd(PermissionConstants::SELECTION_PROCESS_EVALUATION,
             function() use($self){
-                $self->checkIfIsLoggedTeacher();
+                return $self->checkIfIsLoggedTeacher();
             },
             function() use($self){
                 $self->saveGrade();
@@ -156,17 +159,14 @@ class SelectiveProcessEvaluation extends MX_Controller {
                 "evaluation_service"
             );
 
-            $saved = $this->process_evaluation_model->saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId, $approved);
+            $saved = $this->process_evaluation_model->saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId);
             if($saved){
-                $data = array('grade' => $grade, 'approved' => $approved);
-                // $labelCandidate = $this->getCandidateFinalResult($);
-                // $phase = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
-                // $approved = $grade >= $phase->grade ? TRUE : FALSE;
-                // $labelCandidate = $approved ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-warning'>Reprovado</b>"; 
+                $labelCandidate = $this->getCandidatePhaseResult($subscriptionId, $phaseprocessId);
+
                 $response = array(
                     'type' => "success",
-                    'message' => "Nota salva com sucesso"
-                    // 'label' => $labelCandidate
+                    'message' => "Nota salva com sucesso",
+                    'label' => $labelCandidate
                 );
             }
             else{
@@ -186,7 +186,40 @@ class SelectiveProcessEvaluation extends MX_Controller {
 
         echo json_encode($response);
     }
+
+    private function getCandidatePhaseResult($subscriptionId, $phaseprocessId){
+
+        $phaseResult = FALSE;
+        $candidateGradesOnPhase = $this->process_evaluation_model->getCandidatePhaseEvaluations($subscriptionId, $phaseprocessId); 
+        $passingScore = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
+
+        $totalGrade = 0;
+        foreach ($candidateGradesOnPhase as $result) {
+            
+            if(is_null($result['grade'])){
+                $phaseResult = FALSE;
+                break;
+            }
+            else{
+                $phaseResult = TRUE;
+                $totalGrade += $result['grade'];
+            }
+
+        }
+
+        if($phaseResult){
+            $approvedOnPhase = FALSE;
+            if(($totalGrade/2) >= $passingScore){
+                $approvedOnPhase = TRUE;
+            }
+            $labelCandidate = $approvedOnPhase ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-danger'>Reprovado</b>"; 
+        }
+        else{
+            $labelCandidate = "<b class='text text-warning'>-</b>";
+        }
+
+        return $labelCandidate;
+    }
+
 }
 
-        // $candidateApproved = ($candidateApproved && $evaluation['approved']) || FALSE;
-        // $evaluatedForAll = ($evaluatedForAll && !is_null($evaluation['grade'])) || FALSE;

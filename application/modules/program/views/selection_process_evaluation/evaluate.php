@@ -1,8 +1,10 @@
 <script src=<?=base_url("js/selective_process_evaluation.js")?>></script>
-<h2 class="principal">Candidatos</h2>
+<h2 class="principal">Avaliação de Candidatos<b></b>
+	<br>
+	<small>Fase atual: <b><?= $phasesNames[$currentPhaseProcessId]->phase_name ?></b></small>
+</h2>
 
 <div class="row">
-
 <div class="col-md-10 col-md-offset-1">
   <?php
     alert(function(){
@@ -10,6 +12,8 @@
     });
   ?>
 </div>
+
+<br>
 <br>
 <?php if ($candidates){ 
 	foreach ($candidates as $candidateId => $candidate) {
@@ -26,7 +30,7 @@
 			<div class="box-body">
 	  <?php 
 		foreach ($candidate as $processPhase => $phaseEvaluations) :
-			$idSubscription = $phaseEvaluations[0]['id_subscription']; 
+			$idSubscription = $phaseEvaluations['evaluations'][0]['id_subscription']; 
 			$idForLabel = $processPhase."_".$idSubscription."_label";
 			$phaseName = $phasesNames[$processPhase]->phase_name;?>			
 			<div class="row">
@@ -34,11 +38,11 @@
 					<h4>Fase: <b> <?=$phaseName ?></b> </h4>
 				</div> 
 				<div class="col-lg-6">
-					<h4 id=<?=$idForLabel?>></h4>
+					<h4 id=<?=$idForLabel?>>Resultado: <b><?= $phaseEvaluations['phase_result'] ?></b></h4>
 				</div>
 			</div>
 			<div class="row">
-				<?php showEvaluations($phaseEvaluations, $teacherId, $phaseName, $currentPhaseProcessId);?>
+				<?php showEvaluations($phaseEvaluations['evaluations'], $teacherId, $phaseName, $currentPhaseProcessId);?>
 			</div> <!-- /. row -->
 		<?php endforeach ?>
 			</div> <!-- /. box-body -->
@@ -48,14 +52,12 @@
 	} 
 } ?>
 </div>
+<?php echo anchor("selection_process_evaluation", "Voltar", "class='btn btn-danger pull-left'"); ?>
 
 <?php
 function showEvaluations($phaseEvaluations, $teacherId, $phaseName, $currentPhaseProcessId){
 
 	if($phaseEvaluations){
-		$candidateApproved = TRUE;
-		$evaluatedForAll = TRUE;
-	  
 	  foreach ($phaseEvaluations as $evaluation) {
 	  	echo "<div class='col-lg-6'>";
 				showForm($evaluation, $teacherId, $currentPhaseProcessId);
