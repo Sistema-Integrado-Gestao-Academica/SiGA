@@ -14,6 +14,10 @@ class SelectiveProcessHomolog extends MX_Controller {
             'program/selectiveProcessSubscription_model',
             'process_subscription_model'
         );
+        $this->load->model(
+            'program/selectiveProcessEvaluation_model',
+            'process_evaluation_model'
+        );
     }
 
     // List all finalized subscriptions to the secretary
@@ -37,6 +41,10 @@ class SelectiveProcessHomolog extends MX_Controller {
             ->process_subscription_model
             ->getProcessSubscriptions($processId, $finalized=TRUE);
 
+        $homologatedSubscriptions = $this
+            ->process_subscription_model
+            ->getProcessSubscriptions($processId, $finalized=TRUE, $homologated=TRUE);
+
         $this->load->service(
             'program/SelectionProcessSubscription',
             'subscription_service'
@@ -46,12 +54,19 @@ class SelectiveProcessHomolog extends MX_Controller {
             return $subscriptionService->getSubscriptionDocs($subscription);
         };
 
+        $evaluationModel = $this->process_evaluation_model;
+        $getSubscriptionTeachers = function($subscriptionId) use ($evaluationModel) {
+            return $evaluationModel->getEvaluationTeachers($subscriptionId);
+        };
+
         $requiredDocs = $this->process_config_model->getProcessDocs($processId);
 
         $data = [
             'process' => $process,
             'finalizedSubscriptions' => $finalizedSubscriptions,
+            'homologatedSubscriptions' => $homologatedSubscriptions,
             'getSubscriptionDocsService' => $getSubscriptionDocs,
+            'getSubscriptionTeachersService' => $getSubscriptionTeachers,
             'requiredDocs' => $requiredDocs,
             'countries' => getAllCountries()
         ];

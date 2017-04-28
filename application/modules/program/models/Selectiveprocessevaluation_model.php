@@ -82,7 +82,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 	public function getEvaluationTeachers($subscriptionId){
 		$this->db->distinct();
-		$this->db->select('u.name, u.email, spe.*');
+		$this->db->select('u.name, u.email');
 		$this->db->from("users u");
 		$this->db->join("selection_process_evaluation spe ", "spe.id_teacher=u.id");
 		$this->db->where("spe.id_subscription", $subscriptionId);
