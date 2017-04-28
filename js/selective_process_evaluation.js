@@ -13,7 +13,8 @@ $(document).ready(function(){
 function saveGrade(teacherId, subscriptionId, phaseprocessId){
 
 	var siteUrl = $("#site_url").val();
-	var grade = $("#candidate_grade_" + teacherId + "_" + subscriptionId + "_" + phaseprocessId).val();
+	var fieldId = teacherId + "_" + subscriptionId + "_" + phaseprocessId;
+	var grade = $("#candidate_grade_" + fieldId).val();
 	var data = {
 		grade: grade,
 		teacherId: teacherId,
@@ -25,8 +26,18 @@ function saveGrade(teacherId, subscriptionId, phaseprocessId){
 	$.post(
 		urlToPost,
 		data,
-		function(response){
-			$(save_candidate_grade_status).html(response);
+		function(responseJson){
+			var response = JSON.parse(responseJson);
+			var id = "#" + phaseprocessId + "_" + subscriptionId + "_label";
+			var id = "#" + phaseprocessId + "_" + subscriptionId + "_label";
+			if(response.type === "success"){
+				$(id).html("Resultado: " + response.label);
+			}
+			else{
+				$(id).html("Resultado: " + response.label);
+			}
+			var message ="<p class='alert-" + response.type + "'>" + response.message + "</p>";
+			$("#status_" + fieldId).html(message);
 		}
 	);
 }

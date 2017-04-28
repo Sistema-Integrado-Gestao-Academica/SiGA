@@ -62,8 +62,6 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $phaseName = getPhaseName($phaseId);
         $candidates = $this->process_evaluation_model->getTeacherCandidates($teacherId, $processId);
 
-        $doc = $phaseId == SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID ? SelectionProcessConstants::PRE_PROJECT_DOCUMENT_ID: FALSE;
-
         $phasesNames = $this->getPhasesNames($candidates);
         $candidates = $this->groupCandidates($candidates);
 
@@ -74,7 +72,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
             'phasesNames' => $phasesNames,
             'teacherId' => $teacherId,
             'currentPhaseProcessId' => $currentPhaseProcess->id,
-            'doc' => $doc
+            'docs' => FALSE
         );
 
        
@@ -105,7 +103,25 @@ class SelectiveProcessEvaluation extends MX_Controller {
             }
         }
 
+        $candidatesEvaluations = $this->groupByProcessPhase($candidatesEvaluations);
+
+
         return $candidatesEvaluations;
+    }
+
+    private function groupByProcessPhase($candidatesEvaluations){
+
+        $evaluations = array();
+        if($candidatesEvaluations){
+            foreach ($candidatesEvaluations as $key => $candidateEvaluation) {
+                foreach ($candidateEvaluation as $evaluation) {
+                    $idProcessPhase = $evaluation['id_process_phase'];
+                    $evaluations[$key][$idProcessPhase][] = $evaluation;
+                }
+            }
+        }
+
+        return $evaluations;
     }
 
     public function saveCandidateGrade(){
@@ -121,17 +137,37 @@ class SelectiveProcessEvaluation extends MX_Controller {
             $subscriptionId = $this->input->post("subscriptionId");
             $phaseprocessId = $this->input->post("phaseprocessId");
 
-            $saved = $this->process_evaluation_model->saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId);
+            $phase = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
+
+            $approved = $grade >= $phase->grade ? TRUE : FALSE;
+            
+            $saved = $this->process_evaluation_model->saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId, $approved);
             if($saved){
-                alert(function(){echo "Nota salva com sucesso";}, "success", FALSE, $icon="fa fa-thumbs-up");
+                $labelCandidate = $approved ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-warning'>Reprovado</b>"; 
+                $response = array(
+                    'type' => "success",
+                    'message' => "Nota salva com sucesso",
+                    'label' => $labelCandidate
+                );
             }
             else{
-                alert(function(){echo "Não foi possível salvar a nota do candidato. Tente novamente.";}, "danger", FALSE, $icon="fa fa-thumbs-down");
+                $response = array(
+                    'type' => "danger",
+                    'message' => "Não foi possível salvar a nota do candidato. Tente novamente."
+                );
             }
         }
         else{
             $message = empty($grade) ? GRADE_REQUIRED : INVALID_GRADE;
-            alert(function() use ($message) {echo $message;}, "danger", FALSE, $icon="fa fa-thumbs-down");
+            $response = array(
+                'type' => "danger",
+                'message' => $message
+            );
         }
+
+        echo json_encode($response);
     }
 }
+
+        // $candidateApproved = ($candidateApproved && $evaluation['approved']) || FALSE;
+        // $evaluatedForAll = ($evaluatedForAll && !is_null($evaluation['grade'])) || FALSE;

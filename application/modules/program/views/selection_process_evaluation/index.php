@@ -1,11 +1,13 @@
 <h2 class="principal">Seus processos seletivos abertos</h2>
 
-<div class="col-md-10 col-md-offset-1">
-  <?php
-    alert(function(){
-      echo '<p>Aqui você pode ver os processos seletivos abertos aos quais você está vinculado.</p>';
-    });
-  ?>
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <?php
+      alert(function(){
+        echo '<p>Aqui você pode ver os processos seletivos abertos aos quais você está vinculado.</p>';
+      });
+    ?>
+  </div>
 </div>
 <br>
 
@@ -31,7 +33,7 @@
         </td>
         <td>
           <?php if($processesPhase[$id]['canEvaluate']){
-            echo anchor("teacher_candidates/{$id}/{$phaseId}", "Iniciar Avaliação", "class='btn btn-primary'");
+            echo anchor("teacher_candidates/{$id}/{$phaseId}", "Avaliar candidatos", "class='btn btn-primary'");
           }
           else {?>
             <p class='text text-warning'>Nenhuma ação disponível no momento.</p>

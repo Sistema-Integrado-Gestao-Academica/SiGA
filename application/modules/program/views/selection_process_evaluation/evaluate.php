@@ -1,10 +1,20 @@
-<h2 class="principal">Candidatos do processo seletivo</h2>
 <script src=<?=base_url("js/selective_process_evaluation.js")?>></script>
+<h2 class="principal">Candidatos</h2>
 
-<div id="save_candidate_grade_status"></div>
+<div class="row">
+
+<div class="col-md-10 col-md-offset-1">
+  <?php
+    alert(function(){
+      echo '<p>Você só poderá salvar a nota do candidato para a fase atual.</p>';
+    });
+  ?>
+</div>
+<br>
 <?php if ($candidates){ 
 	foreach ($candidates as $candidateId => $candidate) {
 		 ?>
+	<div class="col-lg-10 col-lg-offset-1">
 		<!-- Primary box -->
 		<div class="box box-primary">
 		  <div class="box-header">
@@ -13,40 +23,54 @@
 				  <button class="btn btn-primary btn-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
 			  </div>
 		  </div>
-		<div class="box-body row">
+			<div class="box-body">
 	  <?php 
-		$evaluations = count($candidate);
-		for ($key = 0; $key < $evaluations; $key+=2) {
-		$idProcessPhase = $candidate[$key]['id_process_phase'];
-		$phaseName = $phasesNames[$idProcessPhase]->phase_name; ?>
-		<div class="col-lg-4">
-			Avaliação: <b> <?=$phaseName ?></b>
-			<?php showEvaluations($candidate[$key], $candidate[$key + 1], $teacherId, $phaseName, $currentPhaseProcessId);?>
-		</div>
-
-		<?php 
-		} ?>
-			</div> <!-- /. box-body row -->
+		foreach ($candidate as $processPhase => $phaseEvaluations) :
+			$idSubscription = $phaseEvaluations[0]['id_subscription']; 
+			$idForLabel = $processPhase."_".$idSubscription."_label";
+			$phaseName = $phasesNames[$processPhase]->phase_name;?>			
+			<div class="row">
+				<div class="col-lg-6">
+					<h4>Fase: <b> <?=$phaseName ?></b> </h4>
+				</div> 
+				<div class="col-lg-6">
+					<h4 id=<?=$idForLabel?>></h4>
+				</div>
+			</div>
+			<div class="row">
+				<?php showEvaluations($phaseEvaluations, $teacherId, $phaseName, $currentPhaseProcessId);?>
+			</div> <!-- /. row -->
+		<?php endforeach ?>
+			</div> <!-- /. box-body -->
 		</div><!-- /.box -->
+	</div>
 <?php 
 	} 
-}
+} ?>
+</div>
 
-function showEvaluations($evaluationFisrtTeacher, $evaluationSecondTeacher, $teacherId, $phaseName, $currentPhaseProcessId){
-	
-  echo "<br><br>";
-	showForm($evaluationFisrtTeacher, $teacherId, $currentPhaseProcessId);
-  echo "<hr>";
-  showForm($evaluationSecondTeacher, $teacherId, $currentPhaseProcessId);
+<?php
+function showEvaluations($phaseEvaluations, $teacherId, $phaseName, $currentPhaseProcessId){
+
+	if($phaseEvaluations){
+		$candidateApproved = TRUE;
+		$evaluatedForAll = TRUE;
+	  
+	  foreach ($phaseEvaluations as $evaluation) {
+	  	echo "<div class='col-lg-6'>";
+				showForm($evaluation, $teacherId, $currentPhaseProcessId);
+			echo "</div>";
+	  }
+	}
 }	
 
 function showForm($evaluation, $teacherId, $currentPhaseProcessId){
 	
-  $id = "candidate_grade_".$evaluation['id_teacher']."_".$evaluation['id_subscription'].'_'.$evaluation['id_process_phase'];
+  $fieldId = $evaluation['id_teacher']."_".$evaluation['id_subscription'].'_'.$evaluation['id_process_phase'];
   
   $gradeInput = array(
-		"id" => $id,
-		"name" => $id,
+		"id" => "candidate_grade_".$fieldId,
+		"name" => "candidate_grade_".$fieldId,
 		"type" => "number",
 		"min" => 0,
 		"max" => 100,
@@ -58,31 +82,25 @@ function showForm($evaluation, $teacherId, $currentPhaseProcessId){
   
   $submitBtn = FALSE;
 	$isTeacherEvaluation = $teacherId == $evaluation['id_teacher'];
-	$label = "Nota do outro avaliador";
+	$label = $isTeacherEvaluation ? "Sua nota": "Nota do outro avaliador";
 
-  if($isTeacherEvaluation){
-  	$label = "Sua nota";
+	echo form_label($label, "grade_label");
+	if($isTeacherEvaluation){
 		$ids = $teacherId.','.$evaluation['id_subscription'].','.$evaluation['id_process_phase'];
 		$submitBtn = $currentPhaseProcessId == $evaluation['id_process_phase'] 
 								? "<button type='button' onclick='saveCandidateGrade({$ids})' class='btn btn-primary'> Salvar</button>"
-								: FALSE;
-  }
-  else{
-  	$gradeInput['disabled'] = TRUE;
-  }
+								: "<button type='button' class='btn btn-primary disabled'> Salvar</button>";
+		echo "<div class='input-group'>";
+			echo form_input($gradeInput);
+		    echo "<span class='input-group-btn'>{$submitBtn}</span>";
+		echo "</div>";
+	}
+	else{
+		$gradeInput['disabled'] = TRUE;
+		echo form_input($gradeInput);
+	}
 
-  echo form_label($label, "grade_label");
-  echo "<div class='row'>";
-	  echo "<div class='col-lg-9'>";
-	  	echo form_input($gradeInput);
-	  echo "</div>";
-	  if($submitBtn){
-	  	echo "<div class='col-lg-2'>";
-				echo $submitBtn;
-	  	echo "</div>";
-	  }
-	echo "</div>";
-
+	echo "<div id=status_{$fieldId}></div>";
 }
 
 ?>

@@ -78,11 +78,22 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		return $idPhaseProcess;
 	}
     
+    public function getPassingScoreOfPhaseByProcessPhaseId($idPhaseProcess){
+
+		$this->db->select("grade");
+		$this->db->where("id", $idPhaseProcess);
+
+		$phase = $this->db->get("process_phase")->row();
+
+		return $phase;
+	}
+    
     public function getTeacherCandidates($teacherId, $idProcess){
 
     	$query = "SELECT * FROM `selection_process_evaluation`";
 		$query .= "WHERE `id_process_phase` IN (SELECT `id` FROM `process_phase` WHERE `id_process` = {$idProcess}) ";
 		$query .= "AND `id_subscription` IN (SELECT `id_subscription` FROM `selection_process_evaluation` WHERE `id_teacher` = {$teacherId}) ";
+		$query .= "ORDER BY `id_process_phase`";
 
 		$evaluations = $this->db->query($query);
 
@@ -104,13 +115,14 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		return $evaluations;
 	}
 
-	public function saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId){
+	public function saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId, $approved){
 
 		$this->db->where('id_teacher', $teacherId);
 		$this->db->where('id_subscription', $subscriptionId);
 		$this->db->where('id_process_phase', $phaseprocessId);
 
-		$saved = $this->db->update("selection_process_evaluation", array('grade' => $grade));
+		$data = array('grade' => $grade, 'approved' => $approved);
+		$saved = $this->db->update("selection_process_evaluation", $data);
 
 		return $saved;
 	}
