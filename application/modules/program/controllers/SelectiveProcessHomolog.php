@@ -8,6 +8,7 @@ class SelectiveProcessHomolog extends MX_Controller {
 
     public function __construct(){
         parent::__construct();
+        $this->load->helper('selectionprocess');
         $this->load->model('program/selectiveprocess_model', 'process_model');
         $this->load->model('program/selectiveprocessconfig_model', 'process_config_model');
         $this->load->model(
