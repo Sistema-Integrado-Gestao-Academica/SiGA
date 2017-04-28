@@ -548,7 +548,7 @@
   if($userSubscription !== FALSE){
 
     $finalizeSubscriptionModalBody =
-      function() use ($userSubscription, $subscriptionDocs, $requiredDocs, $countries){
+      function() use ($userSubscription, $subscriptionDocs, $requiredDocs, $countries, $researchLines){
         alert(function(){
           echo 'Ao finalizar a inscrição <b>não</b> será possível alterar os dados informados e nem os documentos enviados. Confira os dados informados abaixo.';
         }, 'info', false, 'fa fa-info', false);

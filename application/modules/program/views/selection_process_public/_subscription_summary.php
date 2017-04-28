@@ -43,6 +43,13 @@
     echo "</div>";
   echo "</div>";
 
+  echo "<div class='row'>";
+    echo "<div class='col-md-12'>";
+      echo "<h4 class='text-center'><i class='fa fa-book'></i> Linha de pesquisa</h4>";
+        echo "<p>{$researchLines[$userSubscription['research_line']]}</p>";
+    echo "</div>";
+  echo "</div>";
+
   echo "<h4 class='text-center'><i class='fa fa-files-o'></i> Documentos</h4>";
   echo "<div class='row'>";
     echo "<div class='col-md-6'>";

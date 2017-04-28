@@ -32,6 +32,11 @@
         <i class="fa fa-user"></i>
       </div>
     </div>
-    <?php include(MODULESPATH.'program/views/selection_process_public/_subscription_summary.php');?>
+    <?php
+      call_user_func(function() use ($userSubscription, $subscriptionDocs,
+        $requiredDocs, $countries, $researchLines){
+          include(MODULESPATH.'program/views/selection_process_public/_subscription_summary.php');
+      });
+    ?>
   </div>
 </div>

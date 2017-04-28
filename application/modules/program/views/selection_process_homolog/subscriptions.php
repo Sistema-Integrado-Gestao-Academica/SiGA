@@ -10,7 +10,7 @@
   <h4><i class="fa fa-list"></i> Inscrições finalizadas pelo candidato:</h4>
   <br>
   <?php
-    call_user_func(function() use($finalizedSubscriptions, $process, $getSubscriptionDocsService, $requiredDocs, $countries){
+    call_user_func(function() use($finalizedSubscriptions, $process, $getSubscriptionDocsService, $requiredDocs, $countries, $researchLines){
         $subscriptions = $finalizedSubscriptions;
         $actions = function($subscription) {
             echo form_button([
@@ -27,11 +27,11 @@
               "class='btn btn-success'"
             );
         };
-        $postList = function() use ($subscriptions,
+        $postList = function() use ($subscriptions, $researchLines,
           $getSubscriptionDocsService, $requiredDocs, $countries) {
             foreach($subscriptions as $userSubscription){
               $subscriptionDocs = $getSubscriptionDocsService($userSubscription);
-              $subscriptionData = function() use ($userSubscription, $subscriptionDocs, $requiredDocs, $countries){
+              $subscriptionData = function() use ($userSubscription, $subscriptionDocs, $requiredDocs, $countries, $researchLines){
                 include(MODULESPATH.'program/views/selection_process_public/_subscription_summary.php');
               };
               newModal(
@@ -52,7 +52,8 @@
   <h4><i class="fa fa-check-circle"></i> Inscrições homologadas:</h4>
   <br>
   <?php
-    call_user_func(function() use($homologatedSubscriptions, $process, $getSubscriptionDocsService, $requiredDocs, $countries, $getSubscriptionTeachersService){
+    call_user_func(function() use($homologatedSubscriptions, $process, $getSubscriptionDocsService, $requiredDocs, $countries,
+      $getSubscriptionTeachersService, $researchLines){
         $subscriptions = $homologatedSubscriptions;
         $actions = function($subscription){
             echo form_button([
@@ -71,12 +72,12 @@
               'data-target' => "#subscription_teachers_{$subscription['candidate_id']}_modal"
             ]);
         };
-        $postList = function() use ($subscriptions,
+        $postList = function() use ($subscriptions, $researchLines,
           $getSubscriptionDocsService, $requiredDocs,
           $countries, $getSubscriptionTeachersService) {
             foreach($subscriptions as $userSubscription){
               $subscriptionDocs = $getSubscriptionDocsService($userSubscription);
-              $subscriptionData = function() use ($userSubscription, $subscriptionDocs, $requiredDocs, $countries){
+              $subscriptionData = function() use ($userSubscription, $subscriptionDocs, $requiredDocs, $countries, $researchLines){
                 include(MODULESPATH.'program/views/selection_process_public/_subscription_summary.php');
               };
               newModal(

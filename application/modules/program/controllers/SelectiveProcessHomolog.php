@@ -30,14 +30,14 @@ class SelectiveProcessHomolog extends MX_Controller {
             function() use ($self, $process){
                 return checkIfUserIsSecretary($process->getCourse());
             },
-            function() use ($self, $processId){
-                $self->subscriptionsPage($processId);
+            function() use ($self, $process){
+                $self->subscriptionsPage($process);
             }
         );
     }
 
-    private function subscriptionsPage($processId){
-        $process = $this->process_model->getById($processId);
+    private function subscriptionsPage($process){
+        $processId = $process->getId();
         $finalizedSubscriptions = $this
             ->process_subscription_model
             ->getProcessSubscriptions($processId, $finalized=TRUE);
@@ -62,6 +62,9 @@ class SelectiveProcessHomolog extends MX_Controller {
 
         $requiredDocs = $this->process_config_model->getProcessDocs($processId);
 
+        $this->load->model('course_model');
+        $researchLines = $this->course_model->getCourseResearchLines($process->getCourse());
+
         $data = [
             'process' => $process,
             'finalizedSubscriptions' => $finalizedSubscriptions,
@@ -69,6 +72,11 @@ class SelectiveProcessHomolog extends MX_Controller {
             'getSubscriptionDocsService' => $getSubscriptionDocs,
             'getSubscriptionTeachersService' => $getSubscriptionTeachers,
             'requiredDocs' => $requiredDocs,
+            'researchLines' => makeDropdownArray(
+                $researchLines,
+                'id_research_line',
+                'description'
+            ),
             'countries' => getAllCountries()
         ];
 
