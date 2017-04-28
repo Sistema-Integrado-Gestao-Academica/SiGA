@@ -468,7 +468,7 @@
            a inscrição no processo seletivo.</p>
         <p>Clique no ícone <i class="fa fa-file"></i>
            para selecionar o respectivo arquivo.</p>
-        <p>Submeta apenas arquivos PDF (.pdf).</p>
+        <p>Submeta apenas arquivos PDF (.pdf) de no máximo 15MB.</p>
       </small>
     </h3>
     <br>

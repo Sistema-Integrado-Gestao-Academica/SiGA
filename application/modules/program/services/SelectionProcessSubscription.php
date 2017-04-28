@@ -98,7 +98,7 @@ class SelectionProcessSubscription extends CI_Model {
                     $docFieldId,
                     self::SUBSCRIPTIONS_FOLDER_NAME,
                     'pdf',
-                    ['overwrite' => true]
+                    ['overwrite' => true, 'max_size' => '15000']
                 );
                 $this->process_subscription_model->saveOrUpdateSubscriptionDoc([
                     'id_subscription' => $subscription['id'],
