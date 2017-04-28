@@ -68,8 +68,10 @@
 			}
 		}else{
 			foreach ($disciplines as $courses){
-				foreach($courses as $courseDisciplines){
-					$tableContent($courseDisciplines);
+				if($courses){
+					foreach($courses as $courseDisciplines){
+						$tableContent($courseDisciplines);
+					}
 				}
 			}
 		}
