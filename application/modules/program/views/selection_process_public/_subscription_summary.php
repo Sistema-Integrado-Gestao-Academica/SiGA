@@ -47,6 +47,7 @@
   echo "<div class='row'>";
     echo "<div class='col-md-6'>";
       echo "<h4 class='text-left'><i class='fa fa-files-o'></i> Documentos requeridos <br><small>Documentos necessários.</small></h4>";
+      $requiredDocs = !empty($requiredDocs) ? $requiredDocs : array();
       foreach($requiredDocs as $doc){
         $notTotallyRequired = !$doc['totally_required'] ? '*' : '';
         echo "<p>{$doc['doc_name']} {$notTotallyRequired}</p>";

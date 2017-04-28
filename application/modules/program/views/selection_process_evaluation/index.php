@@ -29,7 +29,7 @@
           <?= $process->getName() ?>
         </td>
         <td>
-          <?= $processesPhase[$id]['status']?>
+          <?= lang($process->getStatus())?>
         </td>
         <td>
           <?php if($processesPhase[$id]['canEvaluate']){

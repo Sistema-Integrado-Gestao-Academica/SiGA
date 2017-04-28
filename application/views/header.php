@@ -61,6 +61,7 @@
     <script src=<?=base_url("js/request.js")?>></script>
     <script src=<?=base_url("js/user.js")?>></script>
     <script src=<?=base_url("js/course.js")?>></script>
+    <script src=<?=base_url("js/selectiveprocess.js")?>></script>
     <script src=<?=base_url("js/bootstrap-filestyle.min.js")?>></script>
     <script src=<?=base_url("js/plugins/datatables/jquery.dataTables-1.10.15.min.js")?>></script>
     <script src=<?=base_url("js/plugins/datatables/dataTables-1.10.15.bootstrap.min.js")?>></script>

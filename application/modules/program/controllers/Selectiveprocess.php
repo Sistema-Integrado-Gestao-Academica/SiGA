@@ -77,14 +77,13 @@ class SelectiveProcess extends MX_Controller {
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
         $configData = $this->getConfigDataOfProcesses($selectiveProcesses);
-        $status = $this->getProcessStatus($selectiveProcesses);
 
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses
         );
 
-        $data = $data + $configData + $status;
+        $data = $data + $configData;
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
     }
@@ -119,31 +118,6 @@ class SelectiveProcess extends MX_Controller {
         return $data;
     }
 
-    private function getProcessStatus($selectiveProcesses){
-
-        $status = array();
-        $configStatusNotices = array();
-        if($selectiveProcesses !== FALSE){
-            foreach ($selectiveProcesses as $selectiveProcess) {
-                $selectiveProcessId = $selectiveProcess->getId();
-                $status[$selectiveProcessId] = getProcessStatus($selectiveProcess);
-                $settings = $selectiveProcess->getSettings();
-                $noticeWithAllConfig = $settings->isDatesDefined() && $settings->isNeededDocsSelected() && $settings->isTeachersSelected();
-                $configStatusNotices[$selectiveProcessId] = $noticeWithAllConfig;
-                if(!$noticeWithAllConfig){
-                    $status[$selectiveProcessId] .= "<br>".SelectionProcessConstants::INCOMPLETE_CONFIG;
-                }
-            }
-        }
-
-        $data = array(
-            'status' => $status,
-            'noticeWithAllConfig' => $configStatusNotices
-        );
-
-        return $data;
-    }
-
     public function openSelectiveProcess($courseId){
 
         $this->load->model("program/course_model");
@@ -161,7 +135,7 @@ class SelectiveProcess extends MX_Controller {
     }
 
 
-    private function getCourseSelectiveProcesses($courseId){
+    private function  getCourseSelectiveProcesses($courseId){
 
         $processes = $this->process_model->getCourseSelectiveProcesses($courseId);
 
@@ -170,7 +144,6 @@ class SelectiveProcess extends MX_Controller {
             $selectiveProcesses = array();
 
             foreach($processes as $process){
-
                 $phasesOrder = unserialize($process[SelectiveProcess_model::PHASE_ORDER_ATTR]);
                 $startDate = convertDateTimeToDateBR($process[SelectiveProcess_model::START_DATE_ATTR]);
                 $endDate = convertDateTimeToDateBR($process[SelectiveProcess_model::END_DATE_ATTR]);
@@ -191,7 +164,8 @@ class SelectiveProcess extends MX_Controller {
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
                             $process[SelectiveProcess_model::ID_ATTR],
-                            $process['total_vacancies']
+                            $process['total_vacancies'],
+                            $process['status']
                         );
                         $selectionProcess->addSettings($settings);
                         $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -209,7 +183,8 @@ class SelectiveProcess extends MX_Controller {
                             $process[SelectiveProcess_model::COURSE_ATTR],
                             $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
                             $process[SelectiveProcess_model::ID_ATTR],
-                            $process['total_vacancies']
+                            $process['total_vacancies'],
+                            $process['status']
                         );
                         $selectionProcess->addSettings($settings);
                         $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -222,6 +197,10 @@ class SelectiveProcess extends MX_Controller {
                 }
 
                 if($selectionProcess !== FALSE){
+                    $statusByDate = getProcessStatusByDate($selectionProcess);
+                    $selectionProcess = $statusByDate != $process['status'] 
+                                        ? $this->changeProcessStatus($selectionProcess, $statusByDate)
+                                        : $selectionProcess;
                     $selectiveProcesses[] = $selectionProcess;
                 }else{
                     // Something is wrong with the data registered on database
@@ -233,6 +212,7 @@ class SelectiveProcess extends MX_Controller {
         }else{
             $selectiveProcesses = FALSE;
         }
+
         return $selectiveProcesses;
     }
 
@@ -337,5 +317,44 @@ class SelectiveProcess extends MX_Controller {
             $this->session->set_flashdata($status, $message);
             $this->downloadNotice($selectiveProcessId, $courseId);
         }
+    }
+
+    private function changeProcessStatus($selectionProcess, $statusByDate){
+
+        if($statusByDate == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS){
+            $selectionProcess->setStatus($statusByDate);
+            $this->process_model->changeProcessStatus($selectionProcess->getId(), $statusByDate);
+        }
+        else{
+            $selectionProcess->setSuggestedPhase($statusByDate);
+        }
+
+        return $selectionProcess;
+    }
+
+    public function goToNextPhase($processId, $courseId){
+
+        $self = $this;
+        withPermissionAnd(
+            PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $processId, $courseId){
+                return checkIfUserIsSecretary($courseId);
+            },
+            function() use ($self, $processId, $courseId){
+                $statusByDate = $self->input->post("suggested_phase");
+                $changed = $self->process_model->changeProcessStatus($processId, $statusByDate);
+                if($changed){
+                    $type = "success";
+                    $message = "O processo foi avançado com sucesso.";
+                }
+                else{
+                    $type = "danger";
+                    $message = "Não foi possível passar para a próxima fase. Tente novamente.";
+                }
+                getSession()->showFlashMessage($type, $message);
+                $self->courseSelectiveProcesses($courseId);
+            }
+        );
+
     }
 }

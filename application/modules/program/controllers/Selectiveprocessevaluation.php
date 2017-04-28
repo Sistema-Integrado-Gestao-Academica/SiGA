@@ -19,7 +19,6 @@ class SelectiveProcessEvaluation extends MX_Controller {
     public function index(){
         
         $openSelectiveProcesses = $this->process_evaluation_model->getProcessesForEvaluationByTeacher(getLoggedUserId());
-
         $processesPhase = $this->getProcessesPhases($openSelectiveProcesses);
 
         $data = array(
@@ -42,8 +41,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
         if($openSelectiveProcesses){
             foreach ($openSelectiveProcesses as $process) {
                 $id = $process->getId();
-                $status = getProcessStatus($process);
-                $processesPhase[$id]['status'] = $status; 
+                $status = $process->getStatus();
                 $processesPhase[$id]['canEvaluate'] = 
                     $status == SelectionProcessConstants::IN_PRE_PROJECT_PHASE ||
                     $status == SelectionProcessConstants::IN_WRITTEN_TEST_PHASE ||
@@ -125,29 +123,50 @@ class SelectiveProcessEvaluation extends MX_Controller {
     }
 
     public function saveCandidateGrade(){
-        
+        $self = $this;
+        withPermissionAnd(PermissionConstants::SELECTION_PROCESS_EVALUATION,
+            function() use($self){
+                $self->checkIfIsLoggedTeacher();
+            },
+            function() use($self){
+                $self->saveGrade();
+            }
+        );
+    }
+
+    private function checkIfIsLoggedTeacher(){
+        $teacherId = $this->input->post("teacherId");
+        return $teacherId == getLoggedUserId();
+    }
+
+    private function saveGrade(){
         define('GRADE_REQUIRED', "A nota é obrigatória.");
         define('INVALID_GRADE', "Nota inválida. A nota deve ser de 0 a 100");
 
-
+        $teacherId = $this->input->post("teacherId");
         $grade = $this->input->post("grade");
+        
         $validGrade = !empty($grade) && $grade >= 0 && $grade <=100;
         if($validGrade){
-            $teacherId = $this->input->post("teacherId");
             $subscriptionId = $this->input->post("subscriptionId");
             $phaseprocessId = $this->input->post("phaseprocessId");
 
-            $phase = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
+            $this->load->service(
+                "program/SelectionProcessEvaluation",
+                "evaluation_service"
+            );
 
-            $approved = $grade >= $phase->grade ? TRUE : FALSE;
-            
             $saved = $this->process_evaluation_model->saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId, $approved);
             if($saved){
-                $labelCandidate = $approved ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-warning'>Reprovado</b>"; 
+                $data = array('grade' => $grade, 'approved' => $approved);
+                // $labelCandidate = $this->getCandidateFinalResult($);
+                // $phase = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
+                // $approved = $grade >= $phase->grade ? TRUE : FALSE;
+                // $labelCandidate = $approved ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-warning'>Reprovado</b>"; 
                 $response = array(
                     'type' => "success",
-                    'message' => "Nota salva com sucesso",
-                    'label' => $labelCandidate
+                    'message' => "Nota salva com sucesso"
+                    // 'label' => $labelCandidate
                 );
             }
             else{

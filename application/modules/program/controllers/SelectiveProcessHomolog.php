@@ -27,7 +27,7 @@ class SelectiveProcessHomolog extends MX_Controller {
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
             function() use ($self, $process){
-                return $self->checkIfUserIsSecretary($process->getCourse());
+                return checkIfUserIsSecretary($process->getCourse());
             },
             function() use ($self, $processId){
                 $self->subscriptionsPage($processId);
@@ -88,7 +88,7 @@ class SelectiveProcessHomolog extends MX_Controller {
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
             function() use ($self, $process){
-                return $self->checkIfUserIsSecretary($process->getCourse());
+                return checkIfUserIsSecretary($process->getCourse());
             },
             function() use ($self, $subscription, $process){
                 $self->homologateSubscriptionPage($subscription, $process);
@@ -127,7 +127,7 @@ class SelectiveProcessHomolog extends MX_Controller {
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
             function() use ($self, $process){
-                return $self->checkIfUserIsSecretary($process->getCourse());
+                return checkIfUserIsSecretary($process->getCourse());
             },
             function() use ($self, $subscription, $process, $subscriptionTeachers){
                 $self->registerHomologation($subscription, $process, $subscriptionTeachers);
@@ -164,11 +164,5 @@ class SelectiveProcessHomolog extends MX_Controller {
         }
     }
 
-    private function checkIfUserIsSecretary($course){
-        // Check if the logged user is secretary of the course
-        $this->load->model('secretary/secretary_model');
-        $userId = getSession()->getUserData()->getId();
-        return $this->secretary_model->isSecretaryOfCourse($userId, $course);
-    }
 
 }

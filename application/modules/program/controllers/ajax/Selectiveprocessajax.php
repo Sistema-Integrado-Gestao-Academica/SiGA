@@ -133,6 +133,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $process = $data['process'];
         if($process !== FALSE){
             try{
+                $process->setStatus(SelectionProcessConstants::DRAFT);                
                 // Try to save the selection process
                 $processId = $this->process_model->save($process);
 

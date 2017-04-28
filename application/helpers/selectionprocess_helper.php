@@ -211,7 +211,7 @@ function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEnd
     }
 }
 
-function getProcessStatus($process){
+function getProcessStatusByDate($process){
 
 	$status = NULL;
 
@@ -222,6 +222,7 @@ function getProcessStatus($process){
 		$startDate = $settings->getStartDate();
 		$today = new Datetime("America/Sao_Paulo");
 		$today->setTime("0","0","0");
+		$startDate->setTime("0","0","0");
 
 		$beforeSubscription = validateDatesDiff($today, $startDate);
 		$beforeSubscription = $today === $startDate ? !$beforeSubscription : $beforeSubscription;
@@ -231,6 +232,7 @@ function getProcessStatus($process){
 		}
 		else{
 			$endDate = $settings->getEndDate();
+			$endDate->setTime("0","0","0");
 			$phases = $settings->getPhases();	
 
 			array_unshift($phases, $settings);
@@ -244,7 +246,7 @@ function getProcessStatus($process){
 				$lastPhase = array_pop($phases);
 				$notFinished = validateDatesDiff($today, $lastPhase->getEndDate());
 				if($notFinished){
-					$status = SelectionProcessConstants::WAITING_NEXT_PHASE;
+					$status = $process->getStatus();
 				}
 				else{
 					$status = SelectionProcessConstants::FINISHED;
@@ -325,4 +327,13 @@ function getPhaseName($phaseId){
 
 
 	return $name;
+}
+
+
+function checkIfUserIsSecretary($course){
+    // Check if the logged user is secretary of the course
+	$ci =& get_instance();
+	$ci->load->model('secretary/secretary_model');
+    $userId = getSession()->getUserData()->getId();
+    return $ci->secretary_model->isSecretaryOfCourse($userId, $course);
 }

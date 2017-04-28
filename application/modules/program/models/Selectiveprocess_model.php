@@ -100,6 +100,7 @@ class SelectiveProcess_model extends CI_Model {
 		$noticeName = $process->getName();
 		$vacancies = $process->getVacancies();
 		$settings = $process->getSettings();
+		$status = $process->getStatus();
 		$startDate = NULL;
 		$endDate = NULL;
 		$phasesOrder = NULL;
@@ -115,6 +116,10 @@ class SelectiveProcess_model extends CI_Model {
 			self::PHASE_ORDER_ATTR => $phasesOrder,
 			'total_vacancies' => $vacancies
 		);
+
+		if($status != FALSE){
+			$processToSave['status'] = $status;
+		}
 
 		return $processToSave;
 	}
@@ -231,7 +236,8 @@ class SelectiveProcess_model extends CI_Model {
 						$foundProcess[self::COURSE_ATTR],
 						$foundProcess[self::NOTICE_NAME_ATTR],
 						$foundProcess[self::ID_ATTR],
-						$foundProcess['total_vacancies']
+						$foundProcess['total_vacancies'],
+						$foundProcess['status']
 					);
 					$selectiveProcess->addSettings($settings);
 					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -250,7 +256,8 @@ class SelectiveProcess_model extends CI_Model {
 						$foundProcess[self::COURSE_ATTR],
 						$foundProcess[self::NOTICE_NAME_ATTR],
 						$foundProcess[self::ID_ATTR],
-						$foundProcess['total_vacancies']
+						$foundProcess['total_vacancies'],
+						$foundProcess['status']
 					);
 					$selectiveProcess->addSettings($settings);
 					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -437,5 +444,12 @@ class SelectiveProcess_model extends CI_Model {
         	}
         }
 		return $selectiveProcesses;
+    }
+
+    public function changeProcessStatus($processId, $newStatus){
+    	$this->db->where('id_process', $processId);
+    	$changed = $this->db->update($this->TABLE, ['status' => $newStatus]);
+
+    	return $changed;
     }
 }

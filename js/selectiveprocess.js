@@ -8,6 +8,7 @@ $(document).ready(function(){
 			sortable = false;
 		}
 
+
 		getPhasesToSort(sortable);
 
 		$(this).change(function(){

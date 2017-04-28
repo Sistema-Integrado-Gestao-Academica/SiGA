@@ -15,6 +15,7 @@ echo anchor(
 	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
 	<i class='fa fa-bullhorn'> Divulgações </i> &nbsp&nbsp
 	<i class='fa fa-group'> Incrições realizadas </i>
+	<i class='fa fa-arrow-circle-o-right'> Ir para próxima fase </i>
 </div>
 
 <?php
@@ -45,12 +46,16 @@ if($validSelectiveProcesses){
 
 			$processId = $process->getId();
 			echo "<td>";
-				echo $status[$processId];
-				if(!$noticeWithAllConfig[$processId]){
-					echo "<h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
-					echo "<h6 class='text-warning'>Você só poderá divulgá-lo quando terminar a configuração.</h6>";
+				echo lang($process->getStatus());
+				$noticeWithAllConfig = $settings->isDatesDefined() && $settings->isNeededDocsSelected() && $settings->isTeachersSelected();
+				if(!$noticeWithAllConfig){
+					$message = "<br><h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
+                    $message .= "<h6 class='text-warning'>Você só poderá divulgá-lo quando terminar a configuração.</h6>";
+                    echo "<br>".lang(SelectionProcessConstants::INCOMPLETE_CONFIG).$message	;
 				}
-
+				if($process->getSuggestedPhase()){
+                    echo "<br>".lang(SelectionProcessConstants::WAITING_NEXT_PHASE);
+				}
 			echo "</td>";
 
 			echo "<td>";
@@ -60,10 +65,15 @@ if($validSelectiveProcesses){
 				$courseId = $course[Course_model::ID_ATTR];
 				echo anchor("edit_selection_process/{$processId}", "<i class='fa fa-edit'></i>", "class='btn btn-success'");
 				echo "&nbsp";
-				$classDivulgationsButton = $noticeWithAllConfig[$processId] ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
+				$classDivulgationsButton = $noticeWithAllConfig ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
 				echo anchor("selection_process/secretary_divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", $classDivulgationsButton);
 				echo "&nbsp";
 				echo anchor("selection_process/homolog/subscriptions/{$processId}", "<i class='fa fa-group'></i>", "class='btn btn-default'");
+				echo "&nbsp";
+				if($process->getSuggestedPhase()){
+					createNextPhaseModal($process);
+					echo "<a href='#nextphasemodal{$processId}' data-toggle='modal' class='btn btn-info'><i class='fa fa-arrow-circle-o-right'></i></a>";
+				}
 
 			echo "</td>";
 
@@ -262,6 +272,52 @@ function showSubsConfigTab($processDocs, $researchLines){
 		    echo "</div>";
 		echo "</div>";
 	}
+}
+
+function createNextPhaseModal($process){
+
+	$phasesWithStatus = array(
+            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE, 
+            SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE, 
+            SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE, 
+            SelectionProcessConstants::IN_ORAL_TEST_PHASE => SelectionProcessConstants::ORAL_TEST_PHASE
+        );
+
+	$processId = $process->getId();
+	$suggestedPhase = $process->getSuggestedPhase();
+	$phaseName = $phasesWithStatus[$suggestedPhase];
+	$courseId = $process->getCourse();
+
+	$body = function() use ($suggestedPhase, $phaseName, $processId, $courseId){
+		$hidden = array(
+			'id' => 'suggested_phase',
+			'name' => 'suggested_phase',
+			'type' => 'hidden',
+			'value' => $suggestedPhase
+		);
+
+		echo form_input($hidden);
+
+		echo "<h4>Deseja passar para a fase de <b>".$phaseName."</b>?</h4>";
+	};
+
+	$footer = function(){
+		echo form_button(array(
+		    "class" => "btn btn-danger pull-left",
+		    "content" => "Não",
+		    "type" => "button",
+		    "data-dismiss"=>'modal'
+		));
+		
+		echo form_button(array(
+		    "class" => "btn btn-success",
+		    "content" => "Sim",
+		    "type" => "submit"
+		));
+	};
+	$processName = $process->getName();
+	$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
+	newModal("nextphasemodal".$processId, "Passar para a próxima fase</b>", $body, $footer, $formPath);
 }
 
 ?>

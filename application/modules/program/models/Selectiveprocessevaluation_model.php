@@ -82,7 +82,6 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		$this->db->select("grade");
 		$this->db->where("id", $idPhaseProcess);
-
 		$phase = $this->db->get("process_phase")->row();
 
 		return $phase;
@@ -121,7 +120,6 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		$this->db->where('id_subscription', $subscriptionId);
 		$this->db->where('id_process_phase', $phaseprocessId);
 
-		$data = array('grade' => $grade, 'approved' => $approved);
 		$saved = $this->db->update("selection_process_evaluation", $data);
 
 		return $saved;

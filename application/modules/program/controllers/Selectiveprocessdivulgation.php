@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
+
 
 class SelectiveProcessDivulgation extends MX_Controller {
 
@@ -73,24 +75,33 @@ class SelectiveProcessDivulgation extends MX_Controller {
                 'initial_divulgation' => $initial_divulgation,
                 'date' => $today,
             );
+            $noticeUploaded = TRUE;
             if($initial_divulgation){
-                $this->divulgation_model->updateNoticeFile($processId, $filePath);
+                $noticeUploaded = $this->divulgation_model->updateNoticeFile($processId, $filePath);
+                $changed = $this->process_model->changeProcessStatus($processId, SelectionProcessConstants::DISCLOSED);
             }
             else{
                 $data['file_path'] = $filePath;
             }
-            if($related_phase !== "0"){
-                $data['related_id_phase'] = $related_phase;
-            }
-            $saved = $this->divulgation_model->saveProcessDivulgation($data);
-            if($saved){
-                $status = "success";
-                $message = "Nova divulgação realizada com sucesso.";
+            if($noticeUploaded && $changed){
+                if($related_phase !== "0"){
+                    $data['related_id_phase'] = $related_phase;
+                }
+                $saved = $this->divulgation_model->saveProcessDivulgation($data);
+                if($saved){
+                    $status = "success";
+                    $message = "Nova divulgação realizada com sucesso.";
+                }
+                else{
+                    $status = "danger";
+                    $message = "Não foi possível fazer a nova divulgação. Tente novamente.";
+                }
             }
             else{
                 $status = "danger";
                 $message = "Não foi possível fazer a nova divulgação. Tente novamente.";
             }
+
         }
         else{
             $status = "danger";

@@ -21,6 +21,8 @@ abstract class SelectionProcess{
 	private $id;
 	private $name;
 	private $vacancies;
+	private $status;
+	private $suggestedPhase = FALSE;
 
 	// Foreign Key from Course. Course id
 	private $course;
@@ -28,11 +30,12 @@ abstract class SelectionProcess{
 	private $noticePath;
 	protected $settings;
 
-	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies){
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE){
 		$this->setCourse($course);
 		$this->setName($name);
 		$this->setId($id);
 		$this->setVacancies($vacancies);
+		$this->setStatus($status);
 	}
 
 	public function addSettings($settings){
@@ -108,6 +111,14 @@ abstract class SelectionProcess{
         }
 	}
 
+	public function setStatus($status){
+		$this->status = $status;
+	}
+
+	public function setSuggestedPhase($suggestedPhase){
+		$this->suggestedPhase = $suggestedPhase;
+	}
+
 	public function getName(){
 		return $this->name;
 	}
@@ -131,6 +142,16 @@ abstract class SelectionProcess{
 	public function getVacancies(){
 		return $this->vacancies;
 	}
+
+	public function getStatus(){
+		return $this->status;
+	}
+
+	public function getSuggestedPhase(){
+		return $this->suggestedPhase;
+	}
+
+	
 
 	public abstract function getType();
 	public abstract function getFormmatedType();
