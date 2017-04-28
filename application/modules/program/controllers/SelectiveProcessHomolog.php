@@ -19,6 +19,8 @@ class SelectiveProcessHomolog extends MX_Controller {
             'program/selectiveProcessEvaluation_model',
             'process_evaluation_model'
         );
+
+        $this->load->helper("selectionprocess");
     }
 
     // List all finalized subscriptions to the secretary

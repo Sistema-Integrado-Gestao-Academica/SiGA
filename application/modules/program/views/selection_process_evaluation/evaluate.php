@@ -1,21 +1,26 @@
 <script src=<?=base_url("js/selective_process_evaluation.js")?>></script>
+
 <h2 class="principal">Avaliação de Candidatos<b></b>
+<br>
+<?php echo anchor("selection_process_evaluation", "Voltar", "class='btn btn-danger pull-right'"); ?>
+
+<?php if ($candidates){  ?>
+		<br>
+		<small>Fase atual: <b><?= $phasesNames[$currentPhaseProcessId]->phase_name ?></b></small>
+	</h2>
+
+	<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+	  <?php
+	    alert(function(){
+	      echo '<p>Você só poderá salvar a nota do candidato para a fase atual.</p>';
+	    });
+	  ?>
+	</div>
+
 	<br>
-	<small>Fase atual: <b><?= $phasesNames[$currentPhaseProcessId]->phase_name ?></b></small>
-</h2>
-
-<div class="row">
-<div class="col-md-10 col-md-offset-1">
-  <?php
-    alert(function(){
-      echo '<p>Você só poderá salvar a nota do candidato para a fase atual.</p>';
-    });
-  ?>
-</div>
-
-<br>
-<br>
-<?php if ($candidates){ 
+	<br>
+<?php 
 	foreach ($candidates as $candidateId => $candidate) {
 		 ?>
 	<div class="col-lg-10 col-lg-offset-1">
@@ -30,7 +35,7 @@
 			<div class="box-body">
 	  <?php 
 		foreach ($candidate as $processPhase => $phaseEvaluations) :
-			$idSubscription = $phaseEvaluations['evaluations'][0]['id_subscription']; 
+			$idSubscription = key($phaseEvaluations);
 			$idForLabel = $processPhase."_".$idSubscription."_label";
 			$phaseName = $phasesNames[$processPhase]->phase_name;?>			
 			<div class="row">
@@ -42,17 +47,31 @@
 				</div>
 			</div>
 			<div class="row">
-				<?php showEvaluations($phaseEvaluations['evaluations'], $teacherId, $phaseName, $currentPhaseProcessId);?>
+				<?php showEvaluations($phaseEvaluations[$idSubscription], $teacherId, $phaseName, $currentPhaseProcessId);?>
 			</div> <!-- /. row -->
 		<?php endforeach ?>
 			</div> <!-- /. box-body -->
+			<div class="box-footer">
+				<h4><i class='fa fa-files-o'></i> Documentos do Candidato</h4> 
+				<?php 
+					if($docs && isset($docs[$idSubscription])){
+						foreach ($docs[$idSubscription] as $doc) {
+							echo "&nbsp";
+							echo anchor("selection_process/download/doc/{$doc['id_doc']}/{$idSubscription}",
+						          "<i class='fa fa-cloud-download'></i> {$doc['doc_name']} ", "class='btn btn-info'");
+						}
+					}?>
+			</div><!-- /.box -->
 		</div><!-- /.box -->
 	</div>
 <?php 
-	} 
-} ?>
+	}
+}
+else{
+	echo "<br><br>";
+	callout("info", "Sem candidatos para avaliar.");
+	} ?>
 </div>
-<?php echo anchor("selection_process_evaluation", "Voltar", "class='btn btn-danger pull-left'"); ?>
 
 <?php
 function showEvaluations($phaseEvaluations, $teacherId, $phaseName, $currentPhaseProcessId){
@@ -92,6 +111,9 @@ function showForm($evaluation, $teacherId, $currentPhaseProcessId){
 		$submitBtn = $currentPhaseProcessId == $evaluation['id_process_phase'] 
 								? "<button type='button' onclick='saveCandidateGrade({$ids})' class='btn btn-primary'> Salvar</button>"
 								: "<button type='button' class='btn btn-primary disabled'> Salvar</button>";
+		if($currentPhaseProcessId != $evaluation['id_process_phase']){
+			$gradeInput['disabled'] = TRUE;
+		}
 		echo "<div class='input-group'>";
 			echo form_input($gradeInput);
 		    echo "<span class='input-group-btn'>{$submitBtn}</span>";

@@ -16,6 +16,7 @@ echo anchor(
 	<i class='fa fa-bullhorn'> Divulgações </i> &nbsp&nbsp
 	<i class='fa fa-group'> Incrições realizadas </i>
 	<i class='fa fa-arrow-circle-o-right'> Ir para próxima fase </i>
+	<i class='fa fa-list-ol'> Resultados </i>
 </div>
 
 <?php
@@ -73,6 +74,10 @@ if($validSelectiveProcesses){
 				if($process->getSuggestedPhase()){
 					createNextPhaseModal($process);
 					echo "<a href='#nextphasemodal{$processId}' data-toggle='modal' class='btn btn-info'><i class='fa fa-arrow-circle-o-right'></i></a>";
+				}
+				if($noticeWithAllConfig){
+					echo "&nbsp";
+					echo anchor("selection_process/results/{$processId}", "<i class='fa fa-list-ol'></i>", "class='btn bg-olive'");
 				}
 
 			echo "</td>";

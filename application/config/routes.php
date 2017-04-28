@@ -205,6 +205,8 @@ $route['edit_selection_process/(:num)'] = 'program/selectiveprocess/edit/$1';
 $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionProcess';
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
 $route['selection_process/next_phase/(:num)/(:num)'] = 'program/selectiveprocess/goToNextPhase/$1/$2';
+$route['selection_process/results/(:num)'] = 'program/selectiveprocess/showResults/$1';
+$route['selection_process/results/generatePDF'] = 'program/selectiveprocess/generatePDF';
 
 // Selection process public routes
 $route['selection_process/public'] = 'program/selectiveProcessPublic/index';

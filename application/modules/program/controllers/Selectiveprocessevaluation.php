@@ -14,7 +14,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $this->load->model("program/selectiveprocess_model", "process_model");
         $this->load->model("program/selectiveprocessevaluation_model", "process_evaluation_model");
 
-        $this->load->helper("selectionprocess_helper");
+        $this->load->helper("selectionprocess");
     }
 
     public function index(){
@@ -61,69 +61,65 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $phaseName = getPhaseName($phaseId);
         $candidates = $this->process_evaluation_model->getTeacherCandidates($teacherId, $processId);
 
+        $candidates = $this->getCandidates($candidates, TRUE);
         $phasesNames = $this->getPhasesNames($candidates);
-        $candidates = $this->groupCandidates($candidates);
-
         $currentPhaseProcess = $this->process_evaluation_model->getPhaseProcessIdByPhaseId($processId, $phaseId);
 
+        $docs = $this->getCandidatesDocs($candidates);
+        
         $data = array(
             'candidates' => $candidates,
             'phasesNames' => $phasesNames,
             'teacherId' => $teacherId,
             'currentPhaseProcessId' => $currentPhaseProcess->id,
-            'docs' => FALSE
+            'docs' => $docs
         );
 
        
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_EVALUATION, "program/selection_process_evaluation/evaluate", $data);
+        loadTemplateSafelyByPermission(
+            PermissionConstants::SELECTION_PROCESS_EVALUATION, 
+            "program/selection_process_evaluation/evaluate", 
+            $data
+        );
+    }
+
+    public function getCandidates($evaluations, $resultInLabelForm = FALSE){
+        
+        $candidatesEvaluations = array();
+        if($evaluations){
+            $this->load->model("program/selectiveProcessSubscription_model", "subscription_model");
+            foreach ($evaluations as $key => $evaluation) {
+                $idSubscription = $evaluation['id_subscription'];
+                $subscription = $this->subscription_model->getBySubscriptionId($idSubscription);
+                $candidateId = $subscription['candidate_id'];
+                $idProcessPhase = $evaluation['id_process_phase'];
+                $candidatesEvaluations[$candidateId][$idProcessPhase][$idSubscription][] = $evaluation;
+                if($resultInLabelForm){
+                    $phaseResult = $this->getCandidatePhaseResultLabel($evaluation['id_subscription'], $idProcessPhase);
+                }
+                else{
+                    $phaseResult = $this->getCandidatePhaseResult($evaluation['id_subscription'], $idProcessPhase);
+                }
+                $candidatesEvaluations[$candidateId][$idProcessPhase]['phase_result'] = $phaseResult;
+            }
+        }
+        
+
+        return $candidatesEvaluations;
     }
 
     private function getPhasesNames($candidates){
         $phasesNames = array();
         if($candidates){
-            foreach ($candidates as $key => $candidate) {
-                $processphaseId = $candidate['id_process_phase'];
+            $candidate = reset($candidates);
+            foreach ($candidate as $processphaseId => $candidate) {
                 $phasesNames[$processphaseId] = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($processphaseId);
             }
         }
 
-
         return $phasesNames;
     }
 
-    private function groupCandidates($candidates){
-
-        $candidatesEvaluations = array();
-        if($candidates){
-            foreach ($candidates as $candidate) {
-                $candidateId = $candidate['candidate_id'];
-                unset($candidate['candidate_id']);
-                $candidatesEvaluations[$candidateId][] = $candidate;
-                }
-        }
-
-        $candidatesEvaluations = $this->groupByProcessPhase($candidatesEvaluations);
-
-
-        return $candidatesEvaluations;
-    }
-
-    private function groupByProcessPhase($candidatesEvaluations){
-
-        $evaluations = array();
-        if($candidatesEvaluations){
-            foreach ($candidatesEvaluations as $key => $candidateEvaluation) {
-                foreach ($candidateEvaluation as $evaluation) {
-                    $idProcessPhase = $evaluation['id_process_phase'];
-                    $evaluations[$key][$idProcessPhase]['evaluations'][] = $evaluation;
-                    $phaseResult = $this->getCandidatePhaseResult($evaluation['id_subscription'], $idProcessPhase);
-                    $evaluations[$key][$idProcessPhase]['phase_result'] = $phaseResult;
-                }
-            }
-        }
-
-        return $evaluations;
-    }
 
     public function saveCandidateGrade(){
         $self = $this;
@@ -159,9 +155,10 @@ class SelectiveProcessEvaluation extends MX_Controller {
                 "evaluation_service"
             );
 
-            $saved = $this->process_evaluation_model->saveCandidateGrade($grade, $teacherId, $subscriptionId, $phaseprocessId);
+            $data = ['grade' => $grade];
+            $saved = $this->process_evaluation_model->saveOrUpdate($subscriptionId, $teacherId, $phaseprocessId, $data);
             if($saved){
-                $labelCandidate = $this->getCandidatePhaseResult($subscriptionId, $phaseprocessId);
+                $labelCandidate = $this->getCandidatePhaseResultLabel($subscriptionId, $phaseprocessId);
 
                 $response = array(
                     'type' => "success",
@@ -187,9 +184,9 @@ class SelectiveProcessEvaluation extends MX_Controller {
         echo json_encode($response);
     }
 
-    private function getCandidatePhaseResult($subscriptionId, $phaseprocessId){
+    public function getCandidatePhaseResult($subscriptionId, $phaseprocessId){
 
-        $phaseResult = FALSE;
+        $hasResult = FALSE;
         $candidateGradesOnPhase = $this->process_evaluation_model->getCandidatePhaseEvaluations($subscriptionId, $phaseprocessId); 
         $passingScore = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
 
@@ -197,28 +194,60 @@ class SelectiveProcessEvaluation extends MX_Controller {
         foreach ($candidateGradesOnPhase as $result) {
             
             if(is_null($result['grade'])){
-                $phaseResult = FALSE;
+                $hasResult = FALSE;
                 break;
             }
             else{
-                $phaseResult = TRUE;
+                $hasResult = TRUE;
                 $totalGrade += $result['grade'];
             }
 
         }
 
-        if($phaseResult){
-            $approvedOnPhase = FALSE;
+        $approvedOnPhase = FALSE;
+        if($hasResult){
             if(($totalGrade/2) >= $passingScore){
                 $approvedOnPhase = TRUE;
             }
-            $labelCandidate = $approvedOnPhase ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-danger'>Reprovado</b>"; 
+        }
+
+        $phaseResult = ['hasResult' => $hasResult, 'approved' => $approvedOnPhase];
+
+        return $phaseResult;
+    }
+
+    public function getCandidatePhaseResultLabel($subscriptionId, $phaseprocessId){
+
+        $phaseResult = $this->getCandidatePhaseResult($subscriptionId, $phaseprocessId);
+
+        if($phaseResult['hasResult']){
+
+            $labelCandidate = $phaseResult['approved'] ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-danger'>Reprovado</b>"; 
         }
         else{
+
             $labelCandidate = "<b class='text text-warning'>-</b>";
         }
 
         return $labelCandidate;
+
+    }
+
+
+    private function getCandidatesDocs($candidates){
+        
+        $this->load->model(
+            'program/selectiveProcessSubscription_model',
+            'process_subscription_model'
+        );
+
+        foreach ($candidates as $candidate) {
+            $phaseId = reset($candidate);
+            $subscriptionId = key($phaseId);             
+            $docs[$subscriptionId] = $this->process_subscription_model->getSubscriptionDocs($subscriptionId, TRUE);
+        }
+        
+        return $docs;
     }
 
 }

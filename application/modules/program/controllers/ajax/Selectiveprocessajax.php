@@ -308,24 +308,31 @@ class SelectiveProcessAjax extends MX_Controller {
         $endDate = $this->input->post("end_date");
         $error = "";
         if(is_null($startDate) || empty($startDate) || is_null($endDate) || empty($endDate)){
-            $error .= "<br>Você deve escolher a data de início e de fim.";
+            $error .= "<br>Período inválido.<br>Você deve escolher a data de início e de fim.";
         }
         else{
             $startDate = convertDateToDateTime($startDate);
             $endDate = convertDateToDateTime($endDate);
             $startDateToValidation = new Datetime($startDate);
+            $startDateToValidation->setTime("0","0","0");
             $endDateToValidation = new Datetime($endDate);
+            $endDateToValidation->setTime("0","0","0");
 
-            $validDates = validateDatesDiff($startDateToValidation, $endDateToValidation);
+            $futureDate = validateIfDateIsFutureDate($startDateToValidation);
+            $validPeriod = validateDatesDiff($startDateToValidation, $endDateToValidation);
 
-            if($validDates){
+            if($validPeriod && $futureDate){
                 $validDateBasedOnPhases = $this->validateSubscriptionDate($processId, $endDateToValidation);
                 
                 if($validDateBasedOnPhases){
                     $saved = $this->process_model->saveSubscriptionDate($processId, $startDate, $endDate);
-                    if(!$saved){
-                        $error .= "<br>Não foi possível definir a data";
+                    if($saved){
+                        $successMessage = "Período definido com sucesso";
                     }
+                    else{
+                        $error .= "<br>Período inválido.<br>Não foi possível definir a data";
+                    }
+
                 }
                 else{
                     $error .= "<br>Período inválido.<br> Verifique se o período é anterior ao período da fase seguinte.";
@@ -333,7 +340,12 @@ class SelectiveProcessAjax extends MX_Controller {
                
             }
             else{
-                $error .= "<br>A data final deve ser maior que a data inicial";
+                if(!$futureDate){
+                    $error .= "<br>Período inválido.<br>A data inicial não pode ser uma data anterior a data de hoje.";
+                }
+                else{
+                    $error .= "<br>Período inválido.<br>A data final deve ser maior que a data inicial.";
+                }
             }
 
         }
@@ -341,9 +353,9 @@ class SelectiveProcessAjax extends MX_Controller {
         if($error){
             $text = "Período de inscrição não definido";
             $bodyText = function() use ($processId, $error){
-                echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
-                echo $error;
-                echo "</div>";
+                alert(function() use ($error){
+                    echo $error;
+                }, "danger");
                 defineDateForm($processId, 'define_subscription_date', "start_date", "end_date");
             };
         }
@@ -351,12 +363,15 @@ class SelectiveProcessAjax extends MX_Controller {
             $text = "Período definido";
             $formattedStartDate = convertDateTimeToDateBR($startDate);
             $formattedEndDate = convertDateTimeToDateBR($endDate);
-            $bodyText = function() use ($formattedStartDate, $formattedEndDate, $processId){
+            $bodyText = function() use ($formattedStartDate, $formattedEndDate, $processId, $successMessage){
                 echo "<b>Data de início:</b><br>";
                 echo $formattedStartDate;
                 echo "<b><br>Data de fim:</b><br>";
                 echo $formattedEndDate;
                 echo "<br><br>";
+                alert(function() use ($successMessage){
+                    echo $successMessage;
+                }, "success");
                 echo "<b>Editar data definida</b>";
                 defineDateForm($processId, 'define_subscription_date', "start_date", "end_date", $formattedStartDate, $formattedEndDate);
             };
@@ -373,17 +388,20 @@ class SelectiveProcessAjax extends MX_Controller {
 
         $error = "";
         if(is_null($startDate) || empty($startDate) || is_null($endDate) || empty($endDate)){
-            $error .= "<br>Você deve escolher a data de início e de fim.";
+            $error .= "<br>Período inválido.<br>Você deve escolher a data de início e de fim.";
         }
         else{
             $startDate = convertDateToDateTime($startDate);
             $endDate = convertDateToDateTime($endDate);
             $startDateToValidation = new Datetime($startDate);
+            $startDateToValidation->setTime("0","0","0");
             $endDateToValidation = new Datetime($endDate);
+            $endDateToValidation->setTime("0","0","0");
 
-            $validDates = validateDatesDiff($startDateToValidation, $endDateToValidation);
+            $futureDate = validateIfDateIsFutureDate($startDateToValidation);
+            $validPeriod = validateDatesDiff($startDateToValidation, $endDateToValidation);
             
-            if($validDates){
+            if($validPeriod && $futureDate){
 
                 $validDateBasedOnPhases = $this->validateDateBasedOnPhases($processId, $phaseId, $startDateToValidation, $endDateToValidation);
                 
@@ -395,8 +413,11 @@ class SelectiveProcessAjax extends MX_Controller {
                     );
 
                     $saved = $this->process_model->savePhaseDate($processId, $phaseId, $dataToSave);
-                    if(!$saved){
-                        $error .= "<br>Não foi possível definir a data";
+                    if($saved){
+                        $successMessage = "Período definido com sucesso";
+                    }
+                    else{
+                        $error .= "<br>Período inválido.<br>Não foi possível definir a data";
                     }
                 }
                 else{
@@ -404,7 +425,12 @@ class SelectiveProcessAjax extends MX_Controller {
                 }
             }
             else{
-                $error .= "<br>A data final deve ser maior que a data inicial";
+                if(!$futureDate){
+                    $error .= "<br>Período inválido.<br>A data inicial não pode ser uma data anterior a data de hoje.";
+                }
+                else{
+                    $error .= "<br>Período inválido.<br>A data final deve ser maior que a data inicial.";
+                }
             }
 
         }
@@ -412,15 +438,15 @@ class SelectiveProcessAjax extends MX_Controller {
         if($error){
             $text = "Período para a fase não definido";
             $bodyText = function() use ($processId, $phaseId, $error){
-                echo "<div class='alert alert-danger alert-dismissible' role='alert'>";
-                echo $error;
-                echo "</div>";
+                alert(function() use ($error){
+                    echo $error;
+                }, "danger");
                 defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date");
             };
         }
         else{
             $text = "Período definido";
-            $bodyText = function() use ($processId, $phaseId){
+            $bodyText = function() use ($processId, $phaseId, $successMessage){
                 echo "<b>Data de início:</b><br>";
                 $phase = $this->process_model->getPhaseById($processId, $phaseId);
                 $startDate = convertDateTimeToDateBR($phase[0]['start_date']);
@@ -429,6 +455,9 @@ class SelectiveProcessAjax extends MX_Controller {
                 echo "<b><br>Data de fim:</b><br>";
                 echo $endDate;
                 echo "<hr>";
+                alert(function() use ($successMessage){
+                    echo $successMessage;
+                }, "success");
                 echo "<b>Editar data definida</b>";
                 defineDateForm($processId, 'define_date_phase_'.$phaseId, "phase_{$phaseId}_start_date", "phase_{$phaseId}_end_date", $startDate, $endDate);
             };

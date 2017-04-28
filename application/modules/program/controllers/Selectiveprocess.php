@@ -357,4 +357,69 @@ class SelectiveProcess extends MX_Controller {
         );
 
     }
+
+    public function showResults($processId){
+        $selectiveProcess = $this->process_model->getById($processId);
+
+        $this->load->model("program/selectiveprocessevaluation_model", "process_evaluation_model");
+        $allProcessCandidates = $this->process_evaluation_model->getProcessCandidates($processId);
+
+        $this->load->module("program/selectiveprocessevaluation");
+        $allProcessCandidates = $this->selectiveprocessevaluation->getCandidates($allProcessCandidates);
+        
+        $candidatesResults = [];
+        if($allProcessCandidates){
+
+            foreach ($allProcessCandidates as $candidateId => $evaluations) {
+                foreach ($evaluations as $phaseprocessId => $evaluation) {
+                    $candidatesResults[$phaseprocessId][$candidateId] = $evaluation['phase_result'];
+                }
+            }
+
+            $approvedCandidates = array();
+            if($candidatesResults){
+                foreach ($candidatesResults as $key => $results) {
+                    $hasResult = TRUE;
+                    $phase = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($key);
+                    $approvedCandidatesInPhase = array();
+                    foreach ($results as $candidateId => $result) {
+                        if($phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE){
+                            $hasResult = TRUE;
+                        }
+                        else{
+                            $hasResult = $result['hasResult'] && $hasResult;
+                        }
+                        
+                        if($hasResult && ($result['approved'] || $phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE)){
+                            $approvedCandidatesInPhase[] = $candidateId; 
+                        }
+                    }
+                    if(!empty($approvedCandidatesInPhase)){
+                        $approvedCandidates[$phase->phase_name] = $approvedCandidatesInPhase;                        
+                    }
+                }
+            }
+        }
+
+        $data = array(
+            'approvedCandidates' => $approvedCandidates,
+            'process' => $selectiveProcess
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/results", $data);
+    }
+
+    public function generatePDF(){
+
+        $candidates = $this->input->post('candidates');
+
+        $data = array(
+            'candidates' => json_decode($candidates),
+            'phaseName' => $this->input->post('phaseName'),
+            'processId' => $this->input->post('processId')
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/phase_result", $data);
+
+    }
 }

@@ -126,3 +126,16 @@ function getYearsOfAPeriod($startYear, $endYear){
 
 	return $years;
 }
+
+/**
+* @param $dateToValidate in datetime
+*/
+function validateIfDateIsFutureDate($dateToValidate){
+
+	$today = new DateTime("America/Sao_Paulo");
+	$today->setTime("0","0","0");
+
+	$validDate = validateDatesDiff($today, $dateToValidate);
+
+	return $validDate;
+}
