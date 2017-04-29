@@ -2,6 +2,10 @@ var subscriptionTeachers = [];
 var teacherPairTable;
 
 $(document).ready(function(){
+
+  var definedTeachersJson = $("#defined_teachers_json").val();
+  var definedTeachers = JSON.parse(definedTeachersJson);
+
   $(function() {
     $('#define_teacher_pair_table').dataTable();
     $('#defined_teacher_pair_table').dataTable({
@@ -10,6 +14,11 @@ $(document).ready(function(){
       }
     });
     teacherPairTable = $('#defined_teacher_pair_table').DataTable();
+
+    // Initialize the table with previous data
+    definedTeachers.forEach(function(teacher){
+      addTeacherToSubscription(null, parseInt(teacher.id), teacher.name );
+    });
   });
 
   $("#confirm_teacher_pair").click(function(event){
@@ -55,7 +64,9 @@ function homologateSubscription(){
 }
 
 function addTeacherToSubscription(event, teacherId, teacherName){
-  event.preventDefault();
+  if(event){
+    event.preventDefault();
+  }
 
   if(subscriptionTeachers.length <= 1){
 

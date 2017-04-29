@@ -66,22 +66,6 @@
   ?>
 </div>
 
-<script>
-  $(".reject-subscription-btn").click(function(event){
-    event.preventDefault();
-    var rejectUrl = $(this).prop('href');
-    bootbox.confirm({
-      size: "small",
-      message: "Confirma a rejeição desta inscrição?",
-      callback: function(result){
-        if(result){
-          window.location.href = rejectUrl;
-        }
-      }
-    })
-  });
-</script>
-
 <br>
 <div class="row">
   <h4><i class="fa fa-thumbs-o-up text-success"></i> Inscrições homologadas:</h4>
@@ -104,6 +88,8 @@
               'data-target' => "#subscription_homolog_{$subscription['candidate_id']}_modal"
             ]);
 
+            echo "&nbsp&nbsp";
+
             echo form_button([
               'id' => "subscription_teachers_{$subscription['candidate_id']}_modal_btn",
               'class' => 'btn bg-navy',
@@ -111,6 +97,14 @@
               'data-toggle' => 'modal',
               'data-target' => "#subscription_teachers_{$subscription['candidate_id']}_modal"
             ]);
+
+            echo "&nbsp&nbsp";
+
+            echo anchor(
+              "selection_process/reject/subscription/{$subscription['id']}",
+              "<i class='fa fa-thumbs-o-down'></i>",
+              "class='reject-subscription-btn btn btn-danger'"
+            );
         };
         $postList = function() use ($subscriptions, $researchLines,
           $getSubscriptionDocsService, $requiredDocs,
@@ -198,5 +192,20 @@
     });
   ?>
 </div>
-
 <br>
+
+<script>
+  $(".reject-subscription-btn").click(function(event){
+    event.preventDefault();
+    var rejectUrl = $(this).prop('href');
+    bootbox.confirm({
+      size: "small",
+      message: "Confirma a rejeição desta inscrição?",
+      callback: function(result){
+        if(result){
+          window.location.href = rejectUrl;
+        }
+      }
+    })
+  });
+</script>

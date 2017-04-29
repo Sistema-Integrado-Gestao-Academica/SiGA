@@ -25,10 +25,23 @@ class SelectionProcessEvaluation extends CI_Model {
     public function homologateSubscription($subscription, $process, $subscriptionTeachers){
         $this->validateSubscriptionTeachers($subscriptionTeachers);
         $this->db->trans_start();
+        $this->deleteSubscriptionPreviousEvaluations($subscription);
         $this->registerEvaluationTeachers($subscription, $subscriptionTeachers);
         $this->setSubscriptionHomologated($subscription);
         $this->db->trans_complete();
         return $this->db->trans_status();
+    }
+
+    public function rejectSubscription($subscription){
+        $this->db->trans_start();
+        $this->process_subscription_model->rejectSubscription($subscription['id']);
+        $this->deleteSubscriptionPreviousEvaluations($subscription);
+        $this->db->trans_complete();
+        return $this->db->trans_status();
+    }
+
+    private function deleteSubscriptionPreviousEvaluations($subscription){
+        $this->process_evaluation_model->deleteSubscriptionEvaluations($subscription['id']);
     }
 
     private function registerEvaluationTeachers($subscription, $subscriptionTeachers){

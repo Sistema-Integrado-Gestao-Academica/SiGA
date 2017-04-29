@@ -20,6 +20,11 @@ class SelectiveProcessHomolog extends MX_Controller {
             'process_evaluation_model'
         );
 
+        $this->load->service(
+            'program/SelectionProcessEvaluation',
+            'evaluation_service'
+        );
+
         $this->load->helper("selectionprocess");
     }
 
@@ -117,16 +122,36 @@ class SelectiveProcessHomolog extends MX_Controller {
             ->process_model
             ->getProcessTeachers($process->getId());
 
+        $definedTeachers = $this
+            ->process_evaluation_model
+            ->getEvaluationTeachers($subscription['id']);
+        $definedTeachers = $this->teachersToDataTable($definedTeachers);
+
         $data = [
             'process' => $process,
             'subscription' => $subscription,
-            'teachers' => $teachers
+            'teachers' => $teachers,
+            'definedTeachers' => json_encode($definedTeachers, JSON_UNESCAPED_UNICODE)
         ];
 
         $this->load->template(
             "program/selection_process_homolog/homologate",
             $data
         );
+    }
+
+    private function teachersToDataTable($teachers){
+        $teachers = !empty($teachers) ? $teachers : [];
+        $teachersToDisplay = [];
+        foreach($teachers as $teacher){
+            $removeBtn = "<a id='remove_{$teacher['id']}' class='btn btn-danger'><i class='fa fa-minus-square'></i></a>";
+            $teachersToDisplay[] = [
+                'id' => $teacher['id'],
+                'name' => $teacher['name'],
+                'removeBtn' => $removeBtn
+            ];
+        }
+        return $teachersToDisplay;
     }
 
     // Register the secretary homologation
@@ -152,11 +177,6 @@ class SelectiveProcessHomolog extends MX_Controller {
     }
 
     private function registerHomologation($subscription, $process, $subscriptionTeachers){
-        $this->load->service(
-            'program/SelectionProcessEvaluation',
-            'evaluation_service'
-        );
-
         try{
             $homologated = $this->evaluation_service->homologateSubscription(
                 $subscription, $process, $subscriptionTeachers
@@ -199,9 +219,7 @@ class SelectiveProcessHomolog extends MX_Controller {
     }
 
     private function rejectSubscription($subscription, $process){
-        $rejected = $this
-            ->process_subscription_model
-            ->rejectSubscription($subscription['id']);
+        $rejected = $this->evaluation_service->rejectSubscription($subscription);
 
         $status = $rejected ? 'success' : 'danger';
         $message = $rejected

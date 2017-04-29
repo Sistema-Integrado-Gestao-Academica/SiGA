@@ -7,8 +7,6 @@
 <h3><i class="fa fa-users"></i> Definir dupla de docentes avaliadores</h3>
 <br>
 
-<?php newInputField('hidden', 'subscriptionId', $subscription['id']); ?>
-
 <div class="row">
   <div class="col-md-6">
     <?php if(!empty($teachers)): ?>
@@ -92,5 +90,8 @@
     overflow-y: auto;
   }
 </style>
+
+<?php newInputField('hidden', 'subscriptionId', $subscription['id']); ?>
+<?php newInputField('hidden', 'defined_teachers_json', $definedTeachers); ?>
 
 <script src=<?=base_url("js/selection_process_homolog.js")?>></script>

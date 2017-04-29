@@ -79,7 +79,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		return $idPhaseProcess;
 	}
-    
+
     public function getPassingScoreOfPhaseByProcessPhaseId($idPhaseProcess){
 
 		$this->db->select("grade");
@@ -88,7 +88,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		return $phase->grade;
 	}
-    
+
     public function getTeacherCandidates($teacherId, $idProcess){
 
     	$query = "SELECT * FROM `selection_process_evaluation`";
@@ -104,7 +104,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 	public function getEvaluationTeachers($subscriptionId){
 		$this->db->distinct();
-		$this->db->select('u.name, u.email');
+		$this->db->select('u.id, u.name, u.email');
 		$this->db->from("users u");
 		$this->db->join("selection_process_evaluation spe ", "spe.id_teacher=u.id");
 		$this->db->where("spe.id_subscription", $subscriptionId);
@@ -113,8 +113,13 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		return $teachers;
 	}
 
+	public function deleteSubscriptionEvaluations($subscriptionId){
+		$this->db->where('id_subscription', $subscriptionId);
+		$this->db->delete('selection_process_evaluation');
+	}
+
 	public function getCandidatePhaseEvaluations($idSubscription, $idPhaseProcess){
-		
+
 		$this->db->select("grade");
 		$this->db->from($this->TABLE);
 		$this->db->where("id_subscription", $idSubscription);
