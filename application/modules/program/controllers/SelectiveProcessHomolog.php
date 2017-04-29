@@ -42,11 +42,15 @@ class SelectiveProcessHomolog extends MX_Controller {
         $processId = $process->getId();
         $finalizedSubscriptions = $this
             ->process_subscription_model
-            ->getProcessSubscriptions($processId, $finalized=TRUE);
+            ->getProcessFinalizedSubscriptions($processId);
 
         $homologatedSubscriptions = $this
             ->process_subscription_model
-            ->getProcessSubscriptions($processId, $finalized=TRUE, $homologated=TRUE);
+            ->getProcessHomologatedSubscriptions($processId);
+
+        $rejectedSubscriptions = $this
+            ->process_subscription_model
+            ->getProcessRejectedSubscriptions($processId);
 
         $this->load->service(
             'program/SelectionProcessSubscription',
@@ -71,6 +75,7 @@ class SelectiveProcessHomolog extends MX_Controller {
             'process' => $process,
             'finalizedSubscriptions' => $finalizedSubscriptions,
             'homologatedSubscriptions' => $homologatedSubscriptions,
+            'rejectedSubscriptions' => $rejectedSubscriptions,
             'getSubscriptionDocsService' => $getSubscriptionDocs,
             'getSubscriptionTeachersService' => $getSubscriptionTeachers,
             'requiredDocs' => $requiredDocs,
@@ -175,5 +180,35 @@ class SelectiveProcessHomolog extends MX_Controller {
         }
     }
 
+    public function reject($subscriptionId){
+        $subscription = $this
+            ->process_subscription_model
+            ->getBySubscriptionId($subscriptionId);
+        $process = $this->process_model->getById($subscription['id_process']);
 
+        $self = $this;
+        withPermissionAnd(
+            PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $process){
+                return checkIfUserIsSecretary($process->getCourse());
+            },
+            function() use ($self, $subscription, $process){
+                $self->rejectSubscription($subscription, $process);
+            }
+        );
+    }
+
+    private function rejectSubscription($subscription, $process){
+        $rejected = $this
+            ->process_subscription_model
+            ->rejectSubscription($subscription['id']);
+
+        $status = $rejected ? 'success' : 'danger';
+        $message = $rejected
+            ? 'Inscrição rejeitada com sucesso!'
+            : 'Não foi possível rejeitar esta inscrição.';
+
+        getSession()->showFlashMessage($status, $message);
+        redirect("selection_process/homolog/subscriptions/{$process->getId()}");
+    }
 }

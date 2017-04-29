@@ -198,7 +198,7 @@ class SelectiveProcess extends MX_Controller {
 
                 if($selectionProcess !== FALSE){
                     $statusByDate = getProcessStatusByDate($selectionProcess);
-                    $selectionProcess = $statusByDate != $process['status'] 
+                    $selectionProcess = $statusByDate != $process['status']
                                         ? $this->changeProcessStatus($selectionProcess, $statusByDate)
                                         : $selectionProcess;
                     $selectiveProcesses[] = $selectionProcess;
@@ -218,7 +218,7 @@ class SelectiveProcess extends MX_Controller {
 
     private function getEditProcessViewData($processId){
         $selectiveProcess = $this->process_model->getById($processId);
-        
+
         // If process has a notice path it was already divulgated
         $noticePath = $selectiveProcess->getNoticePath();
         $canNotEdit = is_null($noticePath) ? FALSE : TRUE;
@@ -366,8 +366,9 @@ class SelectiveProcess extends MX_Controller {
 
         $this->load->module("program/selectiveprocessevaluation");
         $allProcessCandidates = $this->selectiveprocessevaluation->getCandidates($allProcessCandidates);
-        
+
         $candidatesResults = [];
+        $approvedCandidates = [];
         if($allProcessCandidates){
 
             foreach ($allProcessCandidates as $candidateId => $evaluations) {
@@ -376,7 +377,6 @@ class SelectiveProcess extends MX_Controller {
                 }
             }
 
-            $approvedCandidates = array();
             if($candidatesResults){
                 foreach ($candidatesResults as $key => $results) {
                     $hasResult = TRUE;
@@ -389,13 +389,13 @@ class SelectiveProcess extends MX_Controller {
                         else{
                             $hasResult = $result['hasResult'] && $hasResult;
                         }
-                        
+
                         if($hasResult && ($result['approved'] || $phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE)){
-                            $approvedCandidatesInPhase[] = $candidateId; 
+                            $approvedCandidatesInPhase[] = $candidateId;
                         }
                     }
                     if(!empty($approvedCandidatesInPhase)){
-                        $approvedCandidates[$phase->phase_name] = $approvedCandidatesInPhase;                        
+                        $approvedCandidates[$phase->phase_name] = $approvedCandidatesInPhase;
                     }
                 }
             }

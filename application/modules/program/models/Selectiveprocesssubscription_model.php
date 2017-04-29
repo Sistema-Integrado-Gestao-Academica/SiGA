@@ -56,11 +56,21 @@ class SelectiveProcessSubscription_model extends CI_Model {
     }
 
     public function homologateSubscription($subscriptionId){
+        return $this->setHomologated($subscriptionId, TRUE);
+    }
+
+    public function rejectSubscription($subscriptionId){
+        return $this->setHomologated($subscriptionId, FALSE);
+    }
+
+    private function setHomologated($subscriptionId, $value=NULL){
         if($this->exists('id', $subscriptionId)){
             $this->db->where('id', $subscriptionId);
-            $this->db->update($this->TABLE, [
-               'homologated' => TRUE
+            return $this->db->update($this->TABLE, [
+               'homologated' => $value
             ]);
+        }else{
+            return FALSE;
         }
     }
 

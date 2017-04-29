@@ -14,8 +14,8 @@ echo anchor(
 	<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
 	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
 	<i class='fa fa-bullhorn'> Divulgações </i> &nbsp&nbsp
-	<i class='fa fa-group'> Incrições realizadas </i>
-	<i class='fa fa-arrow-circle-o-right'> Ir para próxima fase </i>
+	<i class='fa fa-group'> Incrições realizadas </i> &nbsp&nbsp
+	<i class='fa fa-arrow-circle-o-right'> Ir para próxima fase </i> &nbsp&nbsp
 	<i class='fa fa-list-ol'> Resultados </i>
 </div>
 
@@ -282,9 +282,9 @@ function showSubsConfigTab($processDocs, $researchLines){
 function createNextPhaseModal($process){
 
 	$phasesWithStatus = array(
-            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE, 
-            SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE, 
-            SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE, 
+            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
+            SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
+            SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE,
             SelectionProcessConstants::IN_ORAL_TEST_PHASE => SelectionProcessConstants::ORAL_TEST_PHASE
         );
 
@@ -313,7 +313,7 @@ function createNextPhaseModal($process){
 		    "type" => "button",
 		    "data-dismiss"=>'modal'
 		));
-		
+
 		echo form_button(array(
 		    "class" => "btn btn-success",
 		    "content" => "Sim",

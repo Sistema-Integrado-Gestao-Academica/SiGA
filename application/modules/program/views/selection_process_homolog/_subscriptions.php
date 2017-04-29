@@ -1,9 +1,7 @@
 <?php if($subscriptions !== FALSE): ?>
 
   <div align='right'>
-    <i class='fa fa-eye'> Visualizar informações</i> &nbsp&nbsp
-    <i class='fa fa-thumbs-o-up'> Homologar inscrição</i> &nbsp&nbsp
-    <i class='fa fa-users'> Docentes vinculados</i> &nbsp&nbsp
+    <?php $subtitles(); ?>
   </div>
 
   <?php
