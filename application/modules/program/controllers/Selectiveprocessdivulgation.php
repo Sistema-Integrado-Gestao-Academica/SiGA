@@ -19,11 +19,11 @@ class SelectiveProcessDivulgation extends MX_Controller {
     }
 
     public function index($selectiveProcessId){
-        
+
         $selectiveProcess = $this->process_model->getById($selectiveProcessId);
 
         $settings = $selectiveProcess->getSettings();
-        $allConfigs = $settings->isDatesDefined() && $settings->isNeededDocsSelected() 
+        $allConfigs = $settings->isDatesDefined() && $settings->isNeededDocsSelected()
                         && $settings->isTeachersSelected();
         if(!$allConfigs){
             show_error("Você deve terminar de configurar o processo para divulgá-lo!");
@@ -64,12 +64,12 @@ class SelectiveProcessDivulgation extends MX_Controller {
         else{
            $filePath = NULL;
         }
-        
+
         $today = new Datetime();
         $today = $today->format("Y/m/d");
         if($filePath || $filePath == NULL){
             $data = array(
-                'id_process' => $processId, 
+                'id_process' => $processId,
                 'description' => $description,
                 'message' => $message,
                 'initial_divulgation' => $initial_divulgation,
@@ -82,6 +82,7 @@ class SelectiveProcessDivulgation extends MX_Controller {
             }
             else{
                 $data['file_path'] = $filePath;
+                $changed = TRUE;
             }
             if($noticeUploaded && $changed){
                 if($related_phase !== "0"){
@@ -108,7 +109,7 @@ class SelectiveProcessDivulgation extends MX_Controller {
             $errors = $this->upload->display_errors();
             $message = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
         }
-        
+
         $this->session->set_flashdata($status, $message);
         $this->index($processId);
     }
@@ -117,7 +118,7 @@ class SelectiveProcessDivulgation extends MX_Controller {
 
         $divulgation = $this->divulgation_model->getProcessDivulgationById($divulgationId);
         $filePath = $divulgation['file_path'];
-        
+
         $this->load->helper('download');
         if(file_exists($filePath)){
             force_download($filePath, NULL);
@@ -127,7 +128,7 @@ class SelectiveProcessDivulgation extends MX_Controller {
             $message = "Nenhum arquivo encontrado.";
             $this->session->set_flashdata($status, $message);
             $processId = $divulgation['id_process'];
-            redirect("selection_process/secretary_divulgations/{$processId}");             
+            redirect("selection_process/secretary_divulgations/{$processId}");
         }
     }
 
