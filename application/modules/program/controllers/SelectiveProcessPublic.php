@@ -3,6 +3,7 @@
 
 require_once(APPPATH.'exception/UploadException.php');
 require_once(MODULESPATH."/auth/constants/PermissionConstants.php");
+require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 
 class SelectiveProcessPublic extends MX_Controller {
 
@@ -15,6 +16,7 @@ class SelectiveProcessPublic extends MX_Controller {
             'program/selectiveProcessSubscription_model',
             'process_subscription_model'
         );
+        $this->load->helper('selectionprocess');
     }
 
     // List all open selective processes
@@ -54,13 +56,64 @@ class SelectiveProcessPublic extends MX_Controller {
     }
 
     public function subscribe($processId, $extraData=[]){
+        $self = $this;
+        $process = $this->process_model->getById($processId);
+        withPermissionAnd(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            function() use ($process) {
+                // This page can only be accessed when is in subscription period
+                return inSubscriptionPeriod($process);
+            },
+            function() use ($self, $process, $extraData){
+                $self->getSubscribePage($process, $extraData);
+            },
+            function(){
+                getSession()->showFlashMessage(
+                    'warning',
+                    'Este processo está fora do período de inscrições.'
+                );
+                redirect('selection_process/public');
+            },
+            $logoutUser=FALSE
+        );
+    }
+
+    private function getSubscribePage($process, $extraData=[]){
+
+        $data = $this->getSubscriptionPageData($process);
+
+        $userSubscription = $data['userSubscription'];
+
+        $template = !$userSubscription['finalized']
+            // View to edit info and docs and then finalize subscription
+            ? "program/selection_process_public/subscribe"
+            // View to visualized finalized subscription data
+            : "program/selection_process_public/subscription";
+
+        $this->load->template(
+            $template,
+            array_merge($data, $extraData)
+        );
+    }
+
+    public function subscription($processId){
+        $process = $this->process_model->getById($processId);
+        $data = $this->getSubscriptionPageData($process);
+
+        loadTemplateSafelyByPermission(
+            PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            "program/selection_process_public/subscription",
+            $data
+        );
+    }
+
+    private function getSubscriptionPageData($process){
         $this->load->service(
             'program/SelectionProcessSubscription',
             'subscription_service'
         );
         $this->load->model('course_model');
 
-        $process = $this->process_model->getById($processId);
+        $processId = $process->getId();
         $requiredDocs = $this->process_config_model->getProcessDocs($processId);
         $userData = getSession()->getUserData();
         $userSubscription = $this->process_subscription_model->getByUserAndProcess(
@@ -69,7 +122,7 @@ class SelectiveProcessPublic extends MX_Controller {
         $subscriptionDocs = $this->subscription_service->getSubscriptionDocs($userSubscription);
         $researchLines = $this->course_model->getCourseResearchLines($process->getCourse());
 
-        $data = [
+        return [
             'process' => $process,
             'requiredDocs' => $requiredDocs,
             'subscriptionDocs' => $subscriptionDocs,
@@ -83,18 +136,6 @@ class SelectiveProcessPublic extends MX_Controller {
             ),
             'filesErrors' => ''
         ];
-
-        $template = !$userSubscription['finalized']
-            // View to edit info and docs and then finalize subscription
-            ? "program/selection_process_public/subscribe"
-            // View to visualized finalized subscription data
-            : "program/selection_process_public/subscription";
-
-        loadTemplateSafelyByPermission(
-            PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
-            $template,
-            array_merge($data, $extraData)
-        );
     }
 
     public function subscribeTo($processId){

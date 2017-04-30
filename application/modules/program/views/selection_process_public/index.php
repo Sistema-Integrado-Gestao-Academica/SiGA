@@ -34,20 +34,35 @@
               <h4>Curso: <strong><?= $courses[$process->getId()] ?></strong></h4>
 
               <br>
-              <h4 class="text-center"><i class="fa fa-calendar"></i> Período de inscrições</h4>
+              <h4 class="text-center">
+                <i class="fa fa-calendar"></i> Período de inscrições
+              </h4>
 
               <p><b>Data de início</b>: <?= $process->getSettings()->getFormattedStartDate() ?></p>
               <p><b>Data de fim</b>: <?= $process->getSettings()->getFormattedEndDate() ?></p>
+              <?php if(!inSubscriptionPeriod($process)): ?>
+                <h4 class="text-center">
+                  <span class="label label-danger">Fora do perído de inscrições!</span>
+                </h4>
+              <?php endif ?>
           </div>
           <div class="box-footer">
             <div class="row">
               <div class="col-md-6">
-                <?=
-                  anchor(
-                    "selection_process/subscribe/{$process->getId()}",
-                    "<i class='fa fa-plus-square'></i> Inscreva-me!",
-                    "class='btn bg-blue btn-md btn-block'"
-                  )
+                <?php
+                  if(inSubscriptionPeriod($process)){
+                    echo anchor(
+                      "selection_process/subscribe/{$process->getId()}",
+                      "<i class='fa fa-plus-square'></i> Inscreva-me!",
+                      "class='btn bg-blue btn-md btn-block'"
+                    );
+                  }else{
+                    echo anchor(
+                      "#",
+                      "<i class='fa fa-plus-square'></i> Inscreva-me!",
+                      "class='btn bg-blue btn-md btn-block' disabled"
+                    );
+                  }
                 ?>
               </div>
               <div class="col-md-6">
