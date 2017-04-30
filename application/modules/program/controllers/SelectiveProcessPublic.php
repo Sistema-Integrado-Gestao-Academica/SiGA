@@ -37,6 +37,25 @@ class SelectiveProcessPublic extends MX_Controller {
         );
     }
 
+    public function myProcesses(){
+        $userId = getLoggedUserId();
+        $processes = $this
+            ->process_model
+            ->getUserParticipatingProcesses($userId);
+        $courses = $this->getCoursesName($processes);
+
+        $data = [
+            'processes' => $processes,
+            'courses' => $courses
+        ];
+
+        loadTemplateSafelyByPermission(
+            PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            "program/selection_process_public/myProcesses",
+            $data
+        );
+    }
+
     public function divulgations($processId){
         $selectiveProcess = $this->process_model->getById($processId);
         $processDivulgations = $this->divulgation_model->getProcessDivulgations($processId);
@@ -96,13 +115,31 @@ class SelectiveProcessPublic extends MX_Controller {
     }
 
     public function subscription($processId){
-        $process = $this->process_model->getById($processId);
-        $data = $this->getSubscriptionPageData($process);
-
-        loadTemplateSafelyByPermission(
-            PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
-            "program/selection_process_public/subscription",
-            $data
+        $userSubscription = $this->process_subscription_model->getByUserAndProcess(
+            $processId, getLoggedUserId()
+        );
+        $self = $this;
+        withPermissionAnd(PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
+            function() use ($userSubscription) {
+                // The user must have a subscription on the given process
+                return $userSubscription !== FALSE;
+            },
+            function() use ($self, $processId){
+                $process = $self->process_model->getById($processId);
+                $data = $self->getSubscriptionPageData($process);
+                $self->load->template(
+                    "program/selection_process_public/subscription",
+                    $data
+                );
+            },
+            function(){
+                getSession()->showFlashMessage(
+                    'warning',
+                    'Você não possui inscrições neste processo seletivo.'
+                );
+                redirect('selection_process/my_processes');
+            },
+            $logoutUser=FALSE
         );
     }
 

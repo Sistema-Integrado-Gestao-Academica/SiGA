@@ -1,5 +1,16 @@
 <h2 class="principal">Processos seletivos abertos</h2>
 
+<div class="row">
+  <?=
+    anchor(
+      "selection_process/my_processes",
+      "<i class='fa fa-arrow-circle-right'></i> Meus processos seletivos",
+      "class='btn-lg'"
+    );
+  ?>
+</div>
+<br>
+
 <?php if(!empty($openSelectiveProcesses)): ?>
   <div class="col-md-10 col-md-offset-1">
     <?php
@@ -42,7 +53,7 @@
               <p><b>Data de fim</b>: <?= $process->getSettings()->getFormattedEndDate() ?></p>
               <?php if(!inSubscriptionPeriod($process)): ?>
                 <h4 class="text-center">
-                  <span class="label label-danger">Fora do perído de inscrições!</span>
+                  <span class="label label-danger">Fora do período de inscrições!</span>
                 </h4>
               <?php endif ?>
           </div>

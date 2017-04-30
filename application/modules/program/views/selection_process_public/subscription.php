@@ -11,11 +11,7 @@
 </div>
 
 <div class="row">
-  <?= anchor(
-    "selection_process/public",
-    "Voltar",
-    "class='pull-right btn btn-danger'"
-  ); ?>
+  <?php goBackBtn("selection_process/my_processes"); ?>
 </div>
 
 <div class="row">

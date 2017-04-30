@@ -205,78 +205,6 @@ class SelectiveProcess_model extends CI_Model {
 		return $selectiveProcess;
 	}
 
-	public function convertArrayToObject($foundProcess){
-		if($foundProcess !== FALSE){
-
-			$phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);
-	        $startDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::START_DATE_ATTR]);
-	        $endDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::END_DATE_ATTR]);
-	        $phases = $this->getPhases($foundProcess['id_process']);
-	        $phases = $this->sortPhasesBasedInOrder($phases, $phasesOrder);
-	        try{
-	        	$settings = new ProcessSettings(
-		            $startDate,
-		            $endDate,
-		            $phases,
-		            $phasesOrder,
-		            $foundProcess['dates_defined'],
-                    $foundProcess['needed_docs_selected'],
-                    $foundProcess['teachers_selected']
-	        	);
-	        }
-	        catch(SelectionProcessException $e){
-				$selectiveProcess = FALSE;
-				throw new SelectionProcessException($e);
-			}
-			if($foundProcess[self::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
-
-				try{
-
-					$selectiveProcess = new RegularStudentProcess(
-						$foundProcess[self::COURSE_ATTR],
-						$foundProcess[self::NOTICE_NAME_ATTR],
-						$foundProcess[self::ID_ATTR],
-						$foundProcess['total_vacancies'],
-						$foundProcess['status']
-					);
-					$selectiveProcess->addSettings($settings);
-					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
-					if(!is_null($noticePath)){
-                    	$selectiveProcess->setNoticePath($noticePath);
-					}
-
-
-				}catch(SelectionProcessException $e){
-					$selectiveProcess = FALSE;
-				}
-			}else{
-				try{
-
-					$selectiveProcess = new SpecialStudentProcess(
-						$foundProcess[self::COURSE_ATTR],
-						$foundProcess[self::NOTICE_NAME_ATTR],
-						$foundProcess[self::ID_ATTR],
-						$foundProcess['total_vacancies'],
-						$foundProcess['status']
-					);
-					$selectiveProcess->addSettings($settings);
-					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
-					if(!is_null($noticePath)){
-                    	$selectiveProcess->setNoticePath($noticePath);
-					}
-
-				}catch(SelectionProcessException $e){
-					$selectiveProcess = FALSE;
-				}
-			}
-
-		}else{
-			$selectiveProcess = FALSE;
-		}
-
-		return $selectiveProcess;
-	}
-
 	private function getByName($name){
 
 		$process = $this->get(self::NOTICE_NAME_ATTR, $name);
@@ -434,15 +362,19 @@ class SelectiveProcess_model extends CI_Model {
                 ORDER BY 'selection_process.id_course'";
         $foundProcesses = $this->db->query($query)->result_array();
         $foundProcesses = checkArray($foundProcesses);
-		$selectiveProcesses = array();
-        if($foundProcesses !== FALSE){
 
-        	foreach ($foundProcesses as $foundProcess) {
-        		$selectiveProcess = $this->convertArrayToObject($foundProcess);
-        		$selectiveProcesses[] = $selectiveProcess;
-        	}
-        }
-		return $selectiveProcesses;
+        return $this->convertProcessesInObjects($foundProcesses);
+    }
+
+    public function getUserParticipatingProcesses($userId){
+        $this->db->select('sp.*');
+        $this->db->from('selection_process sp');
+        $this->db->join("selection_process_user_subscription as us", "sp.id_process = us.id_process");
+        $this->db->where('us.id_user', $userId);
+        $processes = $this->db->get()->result_array();
+        $processes = checkArray($processes);
+
+        return $this->convertProcessesInObjects($processes);
     }
 
     public function changeProcessStatus($processId, $newStatus){
@@ -450,5 +382,87 @@ class SelectiveProcess_model extends CI_Model {
     	$changed = $this->db->update($this->TABLE, ['status' => $newStatus]);
 
     	return $changed;
+    }
+
+    private function convertProcessesInObjects($processes){
+        $selectiveProcesses = array();
+        if($processes !== FALSE){
+            foreach ($processes as $process) {
+                $selectiveProcesses[] = $this->convertArrayToObject($process);
+            }
+        }
+        return $selectiveProcesses;
+    }
+
+    public function convertArrayToObject($foundProcess){
+        if($foundProcess !== FALSE){
+
+            $phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);
+            $startDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::START_DATE_ATTR]);
+            $endDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::END_DATE_ATTR]);
+            $phases = $this->getPhases($foundProcess['id_process']);
+            $phases = $this->sortPhasesBasedInOrder($phases, $phasesOrder);
+            try{
+                $settings = new ProcessSettings(
+                    $startDate,
+                    $endDate,
+                    $phases,
+                    $phasesOrder,
+                    $foundProcess['dates_defined'],
+                    $foundProcess['needed_docs_selected'],
+                    $foundProcess['teachers_selected']
+                );
+            }
+            catch(SelectionProcessException $e){
+                $selectiveProcess = FALSE;
+                throw new SelectionProcessException($e);
+            }
+            if($foundProcess[self::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
+
+                try{
+
+                    $selectiveProcess = new RegularStudentProcess(
+                        $foundProcess[self::COURSE_ATTR],
+                        $foundProcess[self::NOTICE_NAME_ATTR],
+                        $foundProcess[self::ID_ATTR],
+                        $foundProcess['total_vacancies'],
+                        $foundProcess['status']
+                    );
+                    $selectiveProcess->addSettings($settings);
+                    $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
+                    if(!is_null($noticePath)){
+                        $selectiveProcess->setNoticePath($noticePath);
+                    }
+
+
+                }catch(SelectionProcessException $e){
+                    $selectiveProcess = FALSE;
+                }
+            }else{
+                try{
+
+                    $selectiveProcess = new SpecialStudentProcess(
+                        $foundProcess[self::COURSE_ATTR],
+                        $foundProcess[self::NOTICE_NAME_ATTR],
+                        $foundProcess[self::ID_ATTR],
+                        $foundProcess['total_vacancies'],
+                        $foundProcess['status']
+                    );
+                    $selectiveProcess->addSettings($settings);
+                    $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
+                    if(!is_null($noticePath)){
+                        $selectiveProcess->setNoticePath($noticePath);
+                    }
+
+                }catch(SelectionProcessException $e){
+                    $selectiveProcess = FALSE;
+                }
+            }
+
+        }else{
+            $selectiveProcess = FALSE;
+        }
+
+        return $selectiveProcess;
     }
 }
