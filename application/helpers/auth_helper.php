@@ -17,17 +17,20 @@ function getSession() {
  * @param $extraCheck {callable} - Function to execute as extra check. MUST return a boolean.
  * @param $onSucess {callable} - Success callback
  * @param $onError {callable} - Failure callback
+ * @param $logoutUser {boolean} -  Whether to logout current user or not
  * @return void
  */
 function withPermissionAnd($requiredPermission, callable $extraCheck,
-	callable $onSuccess, callable $onError=null){
+	callable $onSuccess, callable $onError=null, $logoutUser=TRUE){
 	if($extraCheck()){
-		withPermission($requiredPermission, $onSuccess, $onError);
+		withPermission($requiredPermission, $onSuccess, $onError, $logoutUser);
 	}else{
 		if(!is_null($onError)){
 			$onError();
 		}
-		logoutUser();
+		if($logoutUser){
+			logoutUser();
+		}
 	}
 }
 
@@ -39,9 +42,10 @@ function withPermissionAnd($requiredPermission, callable $extraCheck,
  * @param $requiredPermission {string|array} - Permission(s) name(s) required to access
  * @param $onSucess {callable} - Action to be executed if user have the required permission(s)
  * @param $onError {callable} -  Action to be executed if user haven't the required permission(s)
+ * @param $logoutUser {boolean} -  Whether to logout current user or not
  * @return void
  */
-function withPermission($requiredPermission, callable $onSuccess, callable $onError=null){
+function withPermission($requiredPermission, callable $onSuccess, callable $onError=null, $logoutUser=TRUE){
 	$permissionObj = new UserPermission();
 	if(is_array($requiredPermission)){
 		$hasPermission = FALSE;
@@ -60,7 +64,10 @@ function withPermission($requiredPermission, callable $onSuccess, callable $onEr
 		if(!is_null($onError)){
 			$onError();
 		}
-		logoutUser();
+
+		if($logoutUser){
+			logoutUser();
+		}
 	}
 }
 
