@@ -211,6 +211,11 @@ function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEnd
     }
 }
 
+function inSubscriptionPeriod($process){
+    $processStatus = getProcessStatusByDate($process);
+    return $processStatus == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
+}
+
 function getProcessStatusByDate($process){
 
 	$status = NULL;
@@ -233,7 +238,7 @@ function getProcessStatusByDate($process){
 		else{
 			$endDate = $settings->getEndDate();
 			$endDate->setTime("0","0","0");
-			$phases = $settings->getPhases();	
+			$phases = $settings->getPhases();
 
 			array_unshift($phases, $settings);
 
@@ -282,7 +287,7 @@ function checkIfIsInSomePhase($today, $phases){
 			$endDate = $phase->getEndDate();
 
 			$isInPhase = validateDateInPeriod($today, $startDate, $endDate);
-	
+
 			if($isInPhase){
 				if(method_exists($phase, 'getPhaseName')){
 					$phaseName = $phase->getPhaseName();
@@ -292,7 +297,7 @@ function checkIfIsInSomePhase($today, $phases){
 					$status = SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
 				}
 				break;
-			}			
+			}
 		}
 	}
 
@@ -311,7 +316,7 @@ function getPhaseName($phaseId){
 		case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
 			$name = SelectionProcessConstants::HOMOLOGATION_PHASE;
 			break;
-		
+
 		case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
 			$name = SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE;
 			break;
@@ -319,7 +324,7 @@ function getPhaseName($phaseId){
 		case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
 			$name = SelectionProcessConstants::WRITTEN_TEST_PHASE;
 			break;
-		
+
 		case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
 			$name = SelectionProcessConstants::ORAL_TEST_PHASE;
 			break;
