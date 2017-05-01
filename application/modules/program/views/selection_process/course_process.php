@@ -308,13 +308,14 @@ function createNextPhaseModal($process){
 	if(isset($phasesWithStatus[$suggestedPhase])){
 		$phaseName = $phasesWithStatus[$suggestedPhase];
 		$question = "Deseja passar para a fase de <b>".$phaseName."</b>?";
-		$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
 	}
 	else{
-		$question = "Deseja <b>finalizar</b> o processo?";
-		$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
+		$question = $suggestedPhase == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS
+			? "Deseja <b>iniciar as inscrições</b> do processo?"
+			: "Deseja <b>finalizar</b> o processo?";
 	}
 
+	$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
 
 	$body = function() use ($suggestedPhase, $question){
 		$hidden = array(
