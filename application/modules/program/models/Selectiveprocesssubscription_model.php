@@ -114,6 +114,11 @@ class SelectiveProcessSubscription_model extends CI_Model {
         return $this->getProcessSubscriptions($processId, TRUE, NULL);
     }
 
+    // Return the NOT finalized subscriptions of a process
+    public function getProcessNotFinalizedSubscriptions($processId){
+        return $this->getProcessSubscriptions($processId, FALSE, NULL);
+    }
+
     // Return the finalized and homologated subscriptions of a process
     public function getProcessHomologatedSubscriptions($processId){
         return $this->getProcessSubscriptions($processId, TRUE, TRUE);

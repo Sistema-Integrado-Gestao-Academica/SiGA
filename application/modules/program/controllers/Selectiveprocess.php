@@ -286,7 +286,7 @@ class SelectiveProcess extends MX_Controller {
                             'weight' => $weight,
                             'grade' => $grade,
                             'knockoutPhase' => $knockoutPhase
-                        ); 
+                        );
                         $hasThePhase = TRUE;
                         break;
                     }
@@ -298,7 +298,7 @@ class SelectiveProcess extends MX_Controller {
                     'weight' => "-1", // Phase not selected
                     'grade' => "-1",// Phase not selected
                     'knockoutPhase' => TRUE
-                ); 
+                );
             }
         }
 
@@ -345,7 +345,7 @@ class SelectiveProcess extends MX_Controller {
                 $statusByDate = $self->input->post("suggested_phase");
 
                 $self->load->service(
-                    'program/SelectiveProcessPhaseChange',
+                    'program/SelectionProcessPhaseChange',
                     'phase_change_service'
                 );
 
@@ -360,7 +360,7 @@ class SelectiveProcess extends MX_Controller {
                         : "Não foi possível passar para a próxima fase. Tente novamente.";
 
                     getSession()->showFlashMessage($type, $message);
-                    $self->courseSelectiveProcesses($courseId);
+                    redirect("program/selectiveprocess/courseSelectiveProcesses/{$courseId}");
                 } catch (SelectionProcessException $e) {
 
                 }
