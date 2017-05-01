@@ -36,10 +36,11 @@ class Notification extends MX_Controller{
 	 *		  The data can come the same way as $receiver (array or User object).
 	 *		  If set to FALSE, the logged user will be used.
 	 * @param $onlyBar - Flag to determine whether is to send the notification only via bar or not.
+	 * @param $emailMessage - In case of $onlyBar is FALSE, this string holds the email message to be sent. If empty, the same message of bar will be used.
 	 * @return an array with 2 positions only containing booleans. The first position signals if
 	 * 		   the bar notification was sent and the second signal if the email was sent
 	 */
-	public function notifyUser($receiver, $params=array(), $handler=FALSE, $sender=FALSE, $onlyBar=FALSE){
+	public function notifyUser($receiver, $params=array(), $handler=FALSE, $sender=FALSE, $onlyBar=FALSE, $emailMessage=FALSE){
 
 		if(is_array($receiver)){
 			// If is an array it should have at least the keys 'id', 'name' and 'email'
@@ -87,6 +88,12 @@ class Notification extends MX_Controller{
 
 			if(is_array($params) && !array_key_exists('subject', $params)){
 				$params['subject'] = "Mensagem de usuário";
+			}
+
+			if(is_callable($emailMessage) || is_string($emailMessage)){
+				$message = is_callable($emailMessage)
+					? $emailMessage()
+					: $emailMessage;
 			}
 
 			// If not only bar notification, send email too
