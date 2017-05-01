@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH.'exception/SelectionProcessException.php');
+require_once(MODULESPATH."/auth/constants/GroupConstants.php");
 require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 
 class SelectionProcessPhaseChange extends CI_Model {
@@ -34,16 +35,19 @@ class SelectionProcessPhaseChange extends CI_Model {
                 // It is going to subscription phase
                 assert(
                     $newStatus == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS,
-                    'After process is disclosed,, the next phase should be subscription.'
+                    'After process is disclosed, the next phase should be subscription.'
                 );
                 $this->db->trans_start();
-                $this->changeToSusbcriptionPhase($process);
+                $this->changeToStatus(
+                    $process,
+                    SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS
+                );
+                $this->notifySubscriptionsAreOpen($process);
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
 
             case SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS:
-
                 // It is going to homologation phase
                 assert(
                     $newStatus == SelectionProcessConstants::IN_HOMOLOGATION_PHASE,
@@ -51,6 +55,11 @@ class SelectionProcessPhaseChange extends CI_Model {
                 );
                 $this->db->trans_start();
                 $this->changeToHomologationPhase($process);
+                $this->changeToStatus(
+                    $process,
+                    SelectionProcessConstants::IN_HOMOLOGATION_PHASE
+                );
+                $this->notifyInHomologationPhase($process);
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
@@ -97,18 +106,26 @@ class SelectionProcessPhaseChange extends CI_Model {
         }
     }
 
-    private function changeToSusbcriptionPhase($process){
-        $this->process_model->changeProcessStatus(
-            $process->getId(),
-            SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS
-        );
+    private function notifySubscriptionsAreOpen($process){
+        $this->load->model("auth/usuarios_model", "user_model");
+        $guests = $this->user_model->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
+        $guests = !empty($guests) ? $guests : [];
+
+        foreach ($guests as $user) {
+            $params = [
+                'subject' => "Inscrições abertas do processo {$process->getName()}"
+            ];
+
+            $message = function ($params) use ($process){
+                return "Informamos que as inscrições para o processo <b>{$process->getName()}</b> estão abertas.";
+            };
+
+            $this->notification->notifyUser($user, $params, $message, $sender=FALSE, $onlyBar=FALSE);
+        }
     }
 
-    private function changeToHomologationPhase($process){
-        $this->process_model->changeProcessStatus(
-            $process->getId(),
-            SelectionProcessConstants::IN_HOMOLOGATION_PHASE
-        );
+    private function notifyInHomologationPhase($process){
+
     }
 
     private function changeToStatus($process, $newStatus){

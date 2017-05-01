@@ -233,7 +233,9 @@ function getProcessStatusByDate($process){
 		$startDate->setTime("0","0","0");
 
 		$beforeSubscription = validateDatesDiff($today, $startDate);
-		$beforeSubscription = $today === $startDate ? !$beforeSubscription : $beforeSubscription;
+		$beforeSubscription = $today == $startDate
+            ? !$beforeSubscription
+            : $beforeSubscription;
 
 		if($beforeSubscription){
 			$status = SelectionProcessConstants::DISCLOSED;
