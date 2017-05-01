@@ -60,7 +60,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 	public function getPhaseNameByPhaseProcessId($processphaseId){
 
-		$this->db->select("phase.phase_name");
+		$this->db->select("phase.phase_name, pp.weight");
 		$this->db->join("phase", "phase.id_phase = pp.id_phase");
 		$this->db->where("id", $processphaseId);
 
@@ -132,7 +132,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		$query = "SELECT * FROM `selection_process_evaluation`";
 		$query .= "WHERE `id_process_phase` IN (SELECT `id` FROM `process_phase` WHERE `id_process` = {$processId}) ";
-		$query .= "ORDER BY `id_subscription`";
+		$query .= "ORDER BY `id_process_phase`";
 
 
 		$evaluations = $this->db->query($query);

@@ -1,16 +1,19 @@
 <h2 class="principal">Processo Seletivo <b><i><?=$processName?></i></b> </h2>
+<?php $resultLabel = $phaseName == "Final" ? "<b>Resultado Final</b><br>Candidatos selecionados" : "Resultado da fase de <b>{$phaseName}</b>";?>
 <div class="box box-primary">
     <div class="box-header">
-        <h3 class="box-title">Resultado da fase de <b><?=$phaseName?></b></h3>
+        <h3 class="box-title"><?=$resultLabel?></h3>
     </div>
     <div class="box-body">
-        <ul class="list-unstyled">
-        	<h4><center> Candidatos aprovados </center></h4>
-        	<?php
-        	foreach ($candidates->candidates as $candidateId) {
-    			echo "<h4><li><center><b>{$candidateId}</b></center></li></h4>";
-        	}?>
-        </ul>
+        <?php 
+        if($phaseName == SelectionProcessConstants::HOMOLOGATION_PHASE){
+            createHomologationTable($candidates->candidates);
+        }
+        elseif($phaseName == "Final"){
+            createFinalTable($candidates->candidates);
+        }else{
+            createTableByPhase($candidates->candidates);
+        } ?>
     </div><!-- /.box-body -->
     <div class="box-footer no-print">
         <button id= "print_report_btn" class= "btn btn-primary btn-flat" type= "submit"><i class='fa fa-print'></i> Imprimir Resultado</button>
@@ -21,6 +24,68 @@
     ); ?>
     </div><!-- /.box-footer-->
 </div>
+
+<?php
+    function createHomologationTable($candidates){
+        buildTableDeclaration(); 
+        buildTableHeaders(array('Candidatos homologados'));
+        foreach ($candidates as $candidateId => $result) {
+            echo "<tr>";
+            echo "<td><h4><center>{$candidateId}</center></h4></td>";
+            echo "</tr>";
+        }
+        buildTableEndDeclaration();
+    }
+
+    function createTableByPhase($candidates){
+        buildTableDeclaration(); 
+        buildTableHeaders(array('Candidato', 'Nota', 'Resultado'));
+        foreach ($candidates as $candidateId => $result) {
+            $average = $result->average;
+            $labelResult = $result->label;
+            echo "<tr>";
+            echo "<td><h4><center>{$candidateId}</center></h4></td>";
+            echo "<td><center>{$average}</center></td>";
+            echo "<td><center>{$labelResult}</center></td>";
+            echo "</tr>";
+        }
+        buildTableEndDeclaration();
+    }
+
+    function createFinalTable($candidates){
+        buildTableDeclaration(); 
+        $headers = array('Classificação', 'Candidato');
+        $first = key($candidates);
+        $candidatesHeaders = clone $candidates->$first;
+        unset($candidatesHeaders->final_average);
+        unset($candidatesHeaders->selected);
+        foreach ($candidatesHeaders as $header) {
+            $headers[] = "Nota da Fase ".$header->phaseName."- Peso ".$header->phaseWeight;
+        }
+        $headers[] = "Nota Final";
+        buildTableHeaders($headers);
+        $classificacao = 1;
+        foreach ($candidates as $candidateId => $result) {
+            $selected = $result->selected;
+            $finalAverage = number_format($result->final_average, 2, ',', ' ');
+            unset($result->final_average);
+            unset($result->selected);
+            if($selected){
+                echo "<tr>";
+                echo "<td><center>{$classificacao}º</center></td>";
+                echo "<td><h4><center>{$candidateId}</center></h4></td>";
+                foreach ($result as $phaseResult) {
+                    $average = $phaseResult->average;
+                    echo "<td><center>{$average}</center></td>";
+                }
+                echo "<td><center>{$finalAverage}</center></td>";
+                echo "</tr>";
+                $classificacao++;
+            }
+        }
+        buildTableEndDeclaration();
+    }
+?>
 
 <script>
     $(document).ready(function(){

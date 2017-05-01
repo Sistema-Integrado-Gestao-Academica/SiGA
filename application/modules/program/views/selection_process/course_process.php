@@ -299,7 +299,7 @@ function createNextPhaseModal($process){
 	}
 	else{
 		$question = "Deseja <b>finalizar</b> o processo?";
-		$formPath = "selection_process/finalize_process/{$processId}/{$courseId}";
+		$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
 	}
 
 

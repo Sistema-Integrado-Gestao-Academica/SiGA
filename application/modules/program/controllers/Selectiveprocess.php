@@ -379,7 +379,9 @@ class SelectiveProcess extends MX_Controller {
         $allProcessCandidates = $this->selectiveprocessevaluation->getCandidates($allProcessCandidates);
 
         $candidatesResults = [];
-        $approvedCandidates = [];
+        $resultCandidatesByPhase = [];
+        $status =  $selectiveProcess->getStatus();
+        $phasesResultPerCandidate = [];
         if($allProcessCandidates){
 
             foreach ($allProcessCandidates as $candidateId => $evaluations) {
@@ -392,7 +394,7 @@ class SelectiveProcess extends MX_Controller {
                 foreach ($candidatesResults as $key => $results) {
                     $hasResult = TRUE;
                     $phase = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($key);
-                    $approvedCandidatesInPhase = array();
+                    $resultOfCandidatesInPhase = array();
                     foreach ($results as $candidateId => $result) {
                         if($phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE){
                             $hasResult = TRUE;
@@ -401,23 +403,73 @@ class SelectiveProcess extends MX_Controller {
                             $hasResult = $result['hasResult'] && $hasResult;
                         }
 
-                        if($hasResult && ($result['approved'] || $phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE)){
-                            $approvedCandidatesInPhase[] = $candidateId;
+                        if($hasResult){
+                            $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
+                            $result['label'] = $label;
+                            $resultOfCandidatesInPhase[$candidateId] = $result;
+
+                            if($status === SelectionProcessConstants::FINISHED){
+                                $phaseInfo =  array('phase_weight' => $phase->weight);
+                                $phasesResultPerCandidate[$candidateId][$phase->phase_name] = $result + $phaseInfo;
+                            }
                         }
                     }
-                    if(!empty($approvedCandidatesInPhase)){
-                        $approvedCandidates[$phase->phase_name] = $approvedCandidatesInPhase;
+                    if(!empty($resultOfCandidatesInPhase)){
+                        $resultCandidatesByPhase[$phase->phase_name] = $resultOfCandidatesInPhase;
                     }
                 }
             }
         }
 
+        if($phasesResultPerCandidate){
+            $quantityOfPhases = sizeof($resultCandidatesByPhase);
+            $selectedCandidates = $this->getFinalResult($quantityOfPhases, $phasesResultPerCandidate);
+            $resultCandidatesByPhase = $selectedCandidates + $resultCandidatesByPhase;
+        }
+
         $data = array(
-            'approvedCandidates' => $approvedCandidates,
+            'resultCandidatesByPhase' => $resultCandidatesByPhase,
             'process' => $selectiveProcess
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/results", $data);
+    }
+
+    private function getFinalResult($quantityOfPhases, $phasesResultPerCandidate){
+
+        $selectedCandidates = array();
+        $candidatesScore = array();
+        $quantityOfPhases = $quantityOfPhases - 1;
+        if($phasesResultPerCandidate){
+            foreach ($phasesResultPerCandidate as $candidateId => $phasesResults) {
+                unset($phasesResults[SelectionProcessConstants::HOMOLOGATION_PHASE]);
+                $candidatePoints = 0;
+                $totalWeight = 0;
+                $approvedTimes = 0;
+                foreach ($phasesResults as $phaseName => $phaseResult) {
+                    $phaseWeight = $phaseResult['phase_weight'];
+                    $candidatePoints += ($phaseWeight * $phaseResult['average']);
+                    $totalWeight += $phaseWeight;                        
+                    
+                    $candidatesScore[$candidateId][] = array(
+                        'phaseName' => $phaseName,
+                        'average' => $phaseResult['average'],
+                        'phaseWeight' => $phaseWeight,
+                    );
+                    $approvedTimes = $phaseResult['approved'] ? $approvedTimes + 1 : $approvedTimes;
+                }
+
+                $candidatePointsAverage = $candidatePoints/$totalWeight;
+                $candidatesScore[$candidateId]['final_average'] = $candidatePointsAverage;
+                $selected = $approvedTimes == $quantityOfPhases ? TRUE : FALSE; 
+                $candidatesScore[$candidateId]['selected'] = $selected;
+            }
+        }
+
+        arsort($candidatesScore);
+        $selectedCandidates['Final'] = $candidatesScore;
+
+        return $selectedCandidates;
     }
 
     public function generatePDF(){

@@ -94,11 +94,9 @@ class SelectiveProcessEvaluation extends MX_Controller {
                 $candidateId = $subscription['candidate_id'];
                 $idProcessPhase = $evaluation['id_process_phase'];
                 $candidatesEvaluations[$candidateId][$idProcessPhase][$idSubscription][] = $evaluation;
+                $phaseResult = $this->getCandidatePhaseResult($evaluation['id_subscription'], $idProcessPhase);
                 if($resultInLabelForm){
-                    $phaseResult = $this->getCandidatePhaseResultLabel($evaluation['id_subscription'], $idProcessPhase);
-                }
-                else{
-                    $phaseResult = $this->getCandidatePhaseResult($evaluation['id_subscription'], $idProcessPhase);
+                    $phaseResult = $this->getCandidatePhaseResultLabel($phaseResult);
                 }
                 $candidatesEvaluations[$candidateId][$idProcessPhase]['phase_result'] = $phaseResult;
             }
@@ -158,7 +156,8 @@ class SelectiveProcessEvaluation extends MX_Controller {
             $data = ['grade' => $grade];
             $saved = $this->process_evaluation_model->saveOrUpdate($subscriptionId, $teacherId, $phaseprocessId, $data);
             if($saved){
-                $labelCandidate = $this->getCandidatePhaseResultLabel($subscriptionId, $phaseprocessId);
+                $phaseResult = $this->getCandidatePhaseResult($subscriptionId, $phaseprocessId);
+                $labelCandidate = $this->getCandidatePhaseResultLabel($phaseResult);
 
                 $response = array(
                     'type' => "success",
@@ -191,6 +190,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $phaseEvaluationElements = $this->process_evaluation_model->getPhaseEvaluationElementsOfPhaseByProcessPhaseId($phaseprocessId);
 
         $totalGrade = 0;
+        $knockoutPhase = $phaseEvaluationElements->knockout_phase;
         foreach ($candidateGradesOnPhase as $result) {
             
             if(is_null($result['grade'])){
@@ -205,37 +205,28 @@ class SelectiveProcessEvaluation extends MX_Controller {
         }
 
         $approvedOnPhase = FALSE;
-        $knockoutPhase = $phaseEvaluationElements->knockout_phase;
         $passingScore = $phaseEvaluationElements->grade;
+        $average = 0;
         if($hasResult && $knockoutPhase){
-            if(($totalGrade/2) >= $passingScore){
+            $average = $totalGrade/2;
+            if($average >= $passingScore){
                 $approvedOnPhase = TRUE;
             }
         }
         elseif (!$knockoutPhase) {
+            $average = $totalGrade/2;
             $approvedOnPhase = TRUE;
         }
 
-        $phaseResult = ['hasResult' => $hasResult, 'approved' => $approvedOnPhase, 'knockoutPhase' => $knockoutPhase];
+        $phaseResult = ['hasResult' => $hasResult, 'approved' => $approvedOnPhase, 'knockoutPhase' => $knockoutPhase, 'average' => $average];
 
         return $phaseResult;
     }
 
-    public function getCandidatePhaseResultLabel($subscriptionId, $phaseprocessId){
-
-        $phaseResult = $this->getCandidatePhaseResult($subscriptionId, $phaseprocessId);
+    public function getCandidatePhaseResultLabel($phaseResult){
 
         if($phaseResult['hasResult']){
-            if($phaseResult['approved'] && $phaseResult['knockoutPhase']){
-                $labelCandidate =  "<b class='text text-success'>Aprovado</b>";    
-            }
-            elseif ($phaseResult['approved'] && !$phaseResult['knockoutPhase']) {
-                $labelCandidate =  "<b class='text text-success'>Classificado</b>";    
-            }
-            else{
-
-                $labelCandidate =  "<b class='text text-danger'>Reprovado</b>"; 
-            }
+            $labelCandidate = $phaseResult['approved'] ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-danger'>Eliminado</b>"; 
         }
         else{
 
