@@ -34,6 +34,8 @@
 
               <p><b>Data de início</b>: <?= $process->getSettings()->getFormattedStartDate() ?></p>
               <p><b>Data de fim</b>: <?= $process->getSettings()->getFormattedEndDate() ?></p>
+
+              <h4 class="text-center"><?= lang($process->getStatus()) ?></h4>
           </div>
           <div class="box-footer">
             <div class="row">

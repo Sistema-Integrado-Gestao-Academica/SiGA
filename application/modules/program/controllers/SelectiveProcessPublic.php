@@ -223,12 +223,20 @@ class SelectiveProcessPublic extends MX_Controller {
                     $subscriptionId
                 );
 
+                $subscription = $this
+                    ->process_subscription_model
+                    ->getBySubscriptionId($subscriptionId);
+
                 $status = $finalized ? 'success' : 'danger';
                 $msg = $finalized
                     ? 'Sua inscrição foi finalizada com sucesso!'
                     : 'Não foi possível finalizar a inscrição informada.';
                 getSession()->showFlashMessage($status, $msg);
-                redirect('selection_process/public');
+
+                $redirectUrl = $finalized
+                    ? "selection_process/subscription/{$subscription['id_process']}"
+                    : "selection_process/public";
+                redirect($redirectUrl);
             }
         );
     }
