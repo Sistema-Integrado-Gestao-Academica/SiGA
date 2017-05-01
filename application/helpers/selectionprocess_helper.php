@@ -212,8 +212,11 @@ function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEnd
 }
 
 function inSubscriptionPeriod($process){
-    $processStatus = getProcessStatusByDate($process);
-    return $processStatus == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
+    return $process->getStatus() == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
+}
+
+function inHomologationPeriod($process){
+    return $process->getStatus() == SelectionProcessConstants::IN_HOMOLOGATION_PHASE;
 }
 
 function getProcessStatusByDate($process){

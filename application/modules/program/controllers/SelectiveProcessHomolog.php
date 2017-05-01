@@ -35,11 +35,21 @@ class SelectiveProcessHomolog extends MX_Controller {
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
             function() use ($self, $process){
-                return checkIfUserIsSecretary($process->getCourse());
+                // This page can only be accessed when is in homologation period
+                return inHomologationPeriod($process)
+                       && checkIfUserIsSecretary($process->getCourse());
             },
             function() use ($self, $process){
                 $self->subscriptionsPage($process);
-            }
+            },
+            function() use ($process){
+                getSession()->showFlashMessage(
+                    'warning',
+                    'Este processo está fora do período de homologação e/ou você não é secretário deste curso.'
+                );
+                redirect("program/selectiveprocess/courseSelectiveProcesses/{$process->getCourse()}");
+            },
+            $logoutUser = FALSE
         );
     }
 
