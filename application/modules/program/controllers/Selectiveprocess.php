@@ -199,7 +199,7 @@ class SelectiveProcess extends MX_Controller {
 
                 if($selectionProcess !== FALSE){
                     $statusByDate = getProcessStatusByDate($selectionProcess);
-                    $selectionProcess = $statusByDate != $process['status']
+                    $selectionPtrocess = $statusByDate != $process['status']
                                         ? $this->changeProcessStatus($selectionProcess, $statusByDate)
                                         : $selectionProcess;
                     $selectiveProcesses[] = $selectionProcess;
@@ -335,26 +335,35 @@ class SelectiveProcess extends MX_Controller {
     }
 
     public function goToNextPhase($processId, $courseId){
-
         $self = $this;
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $processId, $courseId){
+            function() use ($self, $courseId){
                 return checkIfUserIsSecretary($courseId);
             },
             function() use ($self, $processId, $courseId){
                 $statusByDate = $self->input->post("suggested_phase");
-                $changed = $self->process_model->changeProcessStatus($processId, $statusByDate);
-                if($changed){
-                    $type = "success";
-                    $message = "O processo foi avançado com sucesso.";
+
+                $self->load->service(
+                    'program/SelectiveProcessPhaseChange',
+                    'phase_change_service'
+                );
+
+                try{
+                    $changed = $self
+                        ->phase_change_service
+                        ->changeProcessPhase($processId, $statusByDate);
+
+                    $type = $changed ? "success" : "danger";
+                    $message = $changed
+                        ? "O processo foi avançado com sucesso."
+                        : "Não foi possível passar para a próxima fase. Tente novamente.";
+
+                    getSession()->showFlashMessage($type, $message);
+                    $self->courseSelectiveProcesses($courseId);
+                } catch (SelectionProcessException $e) {
+
                 }
-                else{
-                    $type = "danger";
-                    $message = "Não foi possível passar para a próxima fase. Tente novamente.";
-                }
-                getSession()->showFlashMessage($type, $message);
-                $self->courseSelectiveProcesses($courseId);
             }
         );
 
@@ -421,8 +430,8 @@ class SelectiveProcess extends MX_Controller {
         $data = array(
             'candidates' => json_decode($candidates),
             'phaseName' => $this->input->post('phaseName'),
-            'processName' => $process->getName(),  
-            'processId' => $process->getId()    
+            'processName' => $process->getName(),
+            'processId' => $process->getId()
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/phase_result", $data);

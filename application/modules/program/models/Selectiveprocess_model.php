@@ -388,9 +388,7 @@ class SelectiveProcess_model extends CI_Model {
 
     public function changeProcessStatus($processId, $newStatus){
     	$this->db->where('id_process', $processId);
-    	$changed = $this->db->update($this->TABLE, ['status' => $newStatus]);
-
-    	return $changed;
+    	return $this->db->update($this->TABLE, ['status' => $newStatus]);
     }
 
     private function convertProcessesInObjects($processes){

@@ -331,7 +331,7 @@ function createNextPhaseModal($process){
 		));
 	};
 	$processName = $process->getName();
-	newModal("nextphasemodal".$processId, "Passar para a próxima fase</b>", $body, $footer, $formPath);
+	newModal("nextphasemodal".$processId, "Passar para a próxima fase", $body, $footer, $formPath);
 }
 
 ?>
