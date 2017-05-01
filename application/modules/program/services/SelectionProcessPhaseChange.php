@@ -36,40 +36,59 @@ class SelectionProcessPhaseChange extends CI_Model {
                     $newStatus == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS,
                     'After process is disclosed,, the next phase should be subscription.'
                 );
+                $this->db->trans_start();
                 $this->changeToSusbcriptionPhase($process);
+                $this->db->trans_complete();
+                return $this->db->trans_status();
                 break;
 
             case SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS:
+
                 // It is going to homologation phase
                 assert(
                     $newStatus == SelectionProcessConstants::IN_HOMOLOGATION_PHASE,
                     'After subscriptions, the next phase should be homologation.'
                 );
+                $this->db->trans_start();
                 $this->changeToHomologationPhase($process);
+                $this->db->trans_complete();
+                return $this->db->trans_status();
                 break;
 
             case SelectionProcessConstants::IN_HOMOLOGATION_PHASE:
                 $this->checkNextPhase($process, $newStatus);
+                $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
                 $this->notifyHomologationIsOver($process, $newStatus);
+                $this->db->trans_complete();
+                return $this->db->trans_status();
                 break;
 
             case SelectionProcessConstants::IN_PRE_PROJECT_PHASE:
                 $this->checkNextPhase($process, $newStatus);
+                $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
                 $this->notifyPreProjectIsOver($process, $newStatus);
+                $this->db->trans_complete();
+                return $this->db->trans_status();
                 break;
 
             case SelectionProcessConstants::IN_WRITTEN_TEST_PHASE:
                 $this->checkNextPhase($process, $newStatus);
+                $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
                 $this->notifyWrittenTestIsOver($process, $newStatus);
+                $this->db->trans_complete();
+                return $this->db->trans_status();
                 break;
 
             case SelectionProcessConstants::IN_ORAL_TEST_PHASE:
                 $this->checkNextPhase($process, $newStatus);
+                $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
                 $this->notifyOralTestIsOver($process, $newStatus);
+                $this->db->trans_complete();
+                return $this->db->trans_status();
                 break;
 
             default:
@@ -99,23 +118,120 @@ class SelectionProcessPhaseChange extends CI_Model {
         );
     }
 
-    private notifyHomologationIsOver($process, $newStatus){
+    private function notifyHomologationIsOver($process, $newStatus){
+        $this->notifyHomologatedSubscriptions($process, $newStatus);
+        $this->notifyRejectedSubscriptions($process, $newStatus);
+        $this->notifyNotFinalizedSubscriptions($process, $newStatus);
+    }
+
+    private function notifyHomologatedSubscriptions($process, $newStatus){
+        $homologated = $this
+            ->process_subscription_model
+            ->getProcessHomologatedSubscriptions($process->getId());
+
+        $barMessage = function ($params) use ($process){
+            return "Sua inscrição no processo <b>{$process->getName()}</b> foi homologada com sucesso!";
+        };
+
+        $emailMessage = function ($subscription) use ($process){
+            $message = "Olá, {$subscription['full_name']}!<br><br>";
+            $message .= "Informamos que sua inscrição no processo <b>{$process->getName()}</b> foi <b><font color='green'>homologada</font></b> na fase de homologação.<br>";
+            return $message;
+        };
+
+        $messages = [
+            'bar' => $barMessage,
+            'email' => $emailMessage
+        ];
+
+        $this->notifyHomologationResults($homologated, $process, $newStatus, $messages);
+    }
+
+    private function notifyRejectedSubscriptions($process, $newStatus){
+        $rejected = $this
+            ->process_subscription_model
+            ->getProcessRejectedSubscriptions($process->getId());
+
+        $barMessage = function ($params) use ($process){
+            return "Sua inscrição no processo <b>{$process->getName()}</b> foi rejeitada na fase de homologação.";
+        };
+
+        $emailMessage = function ($subscription) use ($process){
+            $message = "Olá, {$subscription['full_name']}!<br><br>";
+            $message .= "Informamos que sua inscrição no processo <b>{$process->getName()}</b> foi <b><font color='red'>rejeitada</font></b> na fase de homologação.<br>";
+            return $message;
+        };
+
+        $messages = [
+            'bar' => $barMessage,
+            'email' => $emailMessage
+        ];
+
+        $this->notifyHomologationResults($rejected, $process, $newStatus, $messages);
+    }
+
+    private function notifyNotFinalizedSubscriptions($process, $newStatus){
+        $notFinalized = $this
+            ->process_subscription_model
+            ->getProcessNotFinalizedSubscriptions($process->getId());
+
+        $barMessage = function ($params) use ($process){
+            return "O processo <b>{$process->getName()}</b> passou da fase de inscrição e homologação e você não concluiu sua inscrição.";
+        };
+
+        $emailMessage = function ($subscription) use ($process){
+            $message = "Olá, {$subscription['full_name']}!<br><br>";
+            $message .= "Informamos que o processo <b>{$process->getName()}</b> passou da fase de inscrição e homologação e você não concluiu sua inscrição, portanto ela foi rejeitada automaticamente.";
+            return $message;
+        };
+
+        $messages = [
+            'bar' => $barMessage,
+            'email' => $emailMessage
+        ];
+
+        $this->notifyHomologationResults($notFinalized, $process, $newStatus, $messages);
+    }
+
+    private function notifyHomologationResults($subscriptions, $process, $newStatus, array $messages){
+
+        if(!empty($subscriptions)){
+            foreach ($subscriptions as $subscription) {
+                $user = [
+                    'id' => $subscription['id_user'],
+                    'name' => $subscription['full_name'],
+                    'email' => $subscription['email']
+                ];
+
+                $params = [
+                    'subject' => "Resultado da Fase de Homologação do processo {$process->getName()}"
+                ];
+
+                $this->notification->notifyUser($user, $params, $messages['bar'], $sender=FALSE, $onlyBar=FALSE, $messages['email']($subscription));
+            }
+        }
+    }
+
+
+    private function notifyPreProjectIsOver($process, $newStatus){
 
     }
 
-    private notifyPreProjectIsOver($process, $newStatus){
+    private function notifyWrittenTestIsOver($process, $newStatus){
 
     }
 
-    private notifyWrittenTestIsOver($process, $newStatus){
-
-    }
-
-    private notifyOralTestIsOver($process, $newStatus){
+    private function notifyOralTestIsOver($process, $newStatus){
 
     }
 
     private function checkNextPhase($process, $newStatus){
+
+        assert(
+            $process->getStatus() != $newStatus,
+            "Trying to change the phase to the current phase of a process."
+        );
+
         // It should be going to next phase in process order
         $phasesOrder = $process->getSettings()->getPhasesOrder();
 
@@ -128,9 +244,16 @@ class SelectionProcessPhaseChange extends CI_Model {
                 "The new phase '{$phaseName}' should be in phases order array"
             );
 
-            // $newStatus should be after the homologation phase in phases order
-            $homologationIndex = array_search("homologation", $phasesOrder);
-            assert($newStatus == $processOrder[intval($homologationIndex) + 1]);
+            $currentPhaseName = str_replace('_phase', '', $process->getStatus());
+
+            // $newStatus should be after the current phase in phases order
+            $currentPhaseIndex = array_search($currentPhaseName, $phasesOrder);
+            // If index wasn't found is because is the homologation phase (the first one)
+            $currentPhaseIndex = $currentPhaseIndex === FALSE ? -1 : $currentPhaseIndex;
+            assert(
+                $phaseName == $phasesOrder[intval($currentPhaseIndex) + 1],
+                "The next phase should be after the homologation in phases order array."
+            );
         }
     }
 }
