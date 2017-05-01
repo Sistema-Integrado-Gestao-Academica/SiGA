@@ -14,7 +14,7 @@ echo anchor(
 	<i class='fa fa-eye'> Visualizar </i> &nbsp&nbsp
 	<i class='fa fa-edit'> Editar </i> &nbsp&nbsp
 	<i class='fa fa-bullhorn'> Divulgações </i> &nbsp&nbsp
-	<i class='fa fa-group'> Incrições realizadas </i> &nbsp&nbsp
+	<i class='fa fa-check-circle'> Homologações </i> &nbsp&nbsp
 	<i class='fa fa-arrow-circle-o-right'> Ir para próxima fase </i> &nbsp&nbsp
 	<i class='fa fa-list-ol'> Resultados </i>
 </div>
@@ -69,7 +69,7 @@ if($validSelectiveProcesses){
 				$classDivulgationsButton = $noticeWithAllConfig ?  "class='btn bg-navy'" : "class='btn bg-navy disabled'";
 				echo anchor("selection_process/secretary_divulgations/{$processId}", "<i class='fa fa-bullhorn'></i>", $classDivulgationsButton);
 				echo "&nbsp";
-				echo anchor("selection_process/homolog/subscriptions/{$processId}", "<i class='fa fa-group'></i>", "class='btn btn-default'");
+				echo anchor("selection_process/homolog/subscriptions/{$processId}", "<i class='fa fa-check-circle'></i>", "class='btn btn-default'");
 				echo "&nbsp";
 				if($process->getSuggestedPhase()){
 					createNextPhaseModal($process);
