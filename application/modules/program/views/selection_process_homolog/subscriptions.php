@@ -78,6 +78,8 @@
           echo "<i class='fa fa-eye'> Visualizar informações</i>";
           echo "&nbsp&nbsp";
           echo "<i class='fa fa-users'> Docentes vinculados</i>";
+          echo "&nbsp&nbsp";
+          echo "<i class='fa fa-thumbs-o-down text-danger'> Rejeitar inscrição</i>";
         };
         $actions = function($subscription){
             echo form_button([
