@@ -8,6 +8,8 @@
 		SelectionProcessConstants::SPECIAL_STUDENT => 'Alunos Especiais'
 	);
 
+	$class = !empty($selectedStudentType) ? 'form-control disabled' : 'form-control';
+
 ?>
 
 <!-- Basic data of selection process -->
@@ -27,7 +29,7 @@
 <div class="row">
 	<div class="col-md-3">
 		<?= form_label("Processo Seletivo para:", "student_type"); ?>
-		<?= form_dropdown("student_type", $studentType, $selectedStudentType, "id='student_type' class='form-control'"); ?>
+		<?= form_dropdown("student_type", $studentType, $selectedStudentType, "id='student_type' class={$class}"); ?>
 	</div>
 	<div class="col-md-6">
 		<?= form_label("Número de vagas:", "vacancies"); ?>

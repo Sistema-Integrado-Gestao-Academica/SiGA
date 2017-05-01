@@ -232,9 +232,7 @@ class SelectiveProcess extends MX_Controller {
         $editProcessData = array(
             'process' => $selectiveProcess,
             'processId' => $processId,
-            'phasesNames' => $phases['phasesNames'],
-            'phasesWeights' => $phases['phasesWeights'],
-            'phasesGrades' => $phases['phasesGrades'],
+            'phases' => $phases,
             'allPhases' => $allPhases,
             'canNotEdit' => $canNotEdit
         );
@@ -262,9 +260,7 @@ class SelectiveProcess extends MX_Controller {
 
     private function getProcessPhasesToEdit($selectiveProcess, $allPhases){
 
-        $phasesNames = array();
-        $phasesWeights = array();
-        $phasesGrades = array();
+        $phases = array();
         $processPhases = $selectiveProcess->getSettings()->getPhases();
 
         foreach ($allPhases as $phase) {
@@ -274,32 +270,37 @@ class SelectiveProcess extends MX_Controller {
                 foreach ($processPhases as $processPhase) {
                     $processPhaseId = $processPhase->getPhaseId();
                     if($phaseId == $processPhaseId){
-                        $phasesNames[$phaseId] = $processPhase->getPhaseName();
+                        $name = $processPhase->getPhaseName();
                         if($phaseId != SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
-                            $phasesWeights[$phaseId] = $processPhase->getWeight();
-                            $phasesGrades[$phaseId] = $processPhase->getGrade();
+                            $weight = $processPhase->getWeight();
+                            $grade = $processPhase->getGrade();
+                            $knockoutPhase = $processPhase->isKnockoutPhase();
                         }
                         else{
-                            $phasesWeights[$phaseId] = "0";
-                            $phasesGrades[$phaseId] = "0";
+                            $weight = 0;
+                            $grade = 0;
+                            $knockoutPhase = FALSE;
                         }
+                        $phases[$phaseId] = array(
+                            'name' => $name,
+                            'weight' => $weight,
+                            'grade' => $grade,
+                            'knockoutPhase' => $knockoutPhase
+                        ); 
                         $hasThePhase = TRUE;
                         break;
                     }
                 }
             }
             if(!$hasThePhase){
-                $phasesNames[$phaseId] = $phase->getPhaseName();
-                $phasesWeights[$phaseId] = "-1"; // Phase Not selected
-                $phasesGrades[$phaseId] = "-1"; // Phase Not selected
+                $phases[$phaseId] = array(
+                    'name' => $phase->getPhaseName(),
+                    'weight' => "-1", // Phase not selected
+                    'grade' => "-1",// Phase not selected
+                    'knockoutPhase' => TRUE
+                ); 
             }
         }
-
-        $phases = array(
-            'phasesNames' => $phasesNames,
-            'phasesWeights' => $phasesWeights,
-            'phasesGrades' => $phasesGrades
-        );
 
         return $phases;
     }
@@ -322,13 +323,13 @@ class SelectiveProcess extends MX_Controller {
 
     private function changeProcessStatus($selectionProcess, $statusByDate){
 
-        if($statusByDate == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS){
-            $selectionProcess->setStatus($statusByDate);
-            $this->process_model->changeProcessStatus($selectionProcess->getId(), $statusByDate);
-        }
-        else{
+        // if($statusByDate == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS){
+        //     $selectionProcess->setStatus($statusByDate);
+        //     $this->process_model->changeProcessStatus($selectionProcess->getId(), $statusByDate);
+        // }
+        // else{
             $selectionProcess->setSuggestedPhase($statusByDate);
-        }
+        // }
 
         return $selectionProcess;
     }

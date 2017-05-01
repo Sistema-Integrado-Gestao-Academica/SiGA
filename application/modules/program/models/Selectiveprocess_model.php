@@ -33,6 +33,7 @@ class SelectiveProcess_model extends CI_Model {
 	const PROCESS_PHASE_GRADE_ATTR= "grade";
 	const PROCESS_PHASE_START_DATE_ATTR = "start_date";
 	const PROCESS_PHASE_END_DATE_ATTR = "end_date";
+    const KNOCKOUT_PHASE_ATTR = "knockout_phase";
 
 	// Methods
 	const INSERT_ON_DB = 1;
@@ -140,16 +141,21 @@ class SelectiveProcess_model extends CI_Model {
 					$phaseWeight = SelectionProcessConstants::HOMOLOGATION_PHASE_WEIGHT;
 
 					$phaseGrade = SelectionProcessConstants::HOMOLOGATION_PHASE_GRADE;
-				}else{
+
+                    $knockoutPhase = FALSE;
+				}
+                else{
 					$phaseWeight = $phase->getWeight();
 					$phaseGrade = $phase->getGrade();
-				}
+                    $knockoutPhase = $phase->isKnockoutPhase();
+                }
 
 				$arrayToSave = array(
 					self::ID_ATTR => $processId,
 					self::ID_PHASE_ATTR => $phaseId,
 					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight,
-					self::PROCESS_PHASE_GRADE_ATTR => $phaseGrade
+					self::PROCESS_PHASE_GRADE_ATTR => $phaseGrade,
+                    self::KNOCKOUT_PHASE_ATTR => $knockoutPhase
 				);
 
 				$this->db->where(self::ID_ATTR, $processId);
@@ -184,7 +190,8 @@ class SelectiveProcess_model extends CI_Model {
 		}
 
 		foreach ($oldPhases as $oldPhaseId => $oldPhase) {
-			$this->db->where(self::ID_PHASE_ATTR, $oldPhaseId);
+            $this->db->where(self::ID_PHASE_ATTR, $oldPhaseId);
+			$this->db->where(self::ID_ATTR, $processId);
 			$this->db->delete(self::PROCESS_PHASE_TABLE);
 		}
 
@@ -236,18 +243,19 @@ class SelectiveProcess_model extends CI_Model {
 	            $grade = $grade == NULL ? FALSE : $grade;
 	            $startDate = convertDateTimeToDateBR($processPhase['start_date']);
 	            $endDate = convertDateTimeToDateBR($processPhase['end_date']);
+                $knockoutPhase = $processPhase['knockout_phase'];
 	            switch ($processPhaseId) {
 	                case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
 	                    $phase = new Homologation($processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
-	                    $phase = new PreProjectEvaluation($weight, $grade, $processPhaseId, $startDate, $endDate);
+	                    $phase = new PreProjectEvaluation($weight, $grade, $processPhaseId, $startDate, $endDate, $knockoutPhase);
 	                    break;
 	                case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
-	                    $phase = new WrittenTest($weight, $grade, $processPhaseId, $startDate, $endDate);
+	                    $phase = new WrittenTest($weight, $grade, $processPhaseId, $startDate, $endDate, $knockoutPhase);
 	                    break;
 	                case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
-	                    $phase = new OralTest($weight, $grade, $processPhaseId, $startDate, $endDate);
+	                    $phase = new OralTest($weight, $grade, $processPhaseId, $startDate, $endDate, $knockoutPhase);
 	                    break;
 	                default:
 	                    $phase = NULL;
@@ -256,6 +264,7 @@ class SelectiveProcess_model extends CI_Model {
 	            $phases[] = $phase;
 	        }
         }
+
 
         return $phases;
     }

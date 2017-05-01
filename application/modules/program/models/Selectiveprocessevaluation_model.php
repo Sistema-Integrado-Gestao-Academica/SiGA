@@ -80,13 +80,13 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		return $idPhaseProcess;
 	}
 
-    public function getPassingScoreOfPhaseByProcessPhaseId($idPhaseProcess){
+    public function getPhaseEvaluationElementsOfPhaseByProcessPhaseId($idPhaseProcess){
 
-		$this->db->select("grade");
+		$this->db->select("grade, knockout_phase");
 		$this->db->where("id", $idPhaseProcess);
 		$phase = $this->db->get("process_phase")->row();
 
-		return $phase->grade;
+		return $phase;
 	}
 
     public function getTeacherCandidates($teacherId, $idProcess){

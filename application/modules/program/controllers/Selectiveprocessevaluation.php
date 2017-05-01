@@ -188,7 +188,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
 
         $hasResult = FALSE;
         $candidateGradesOnPhase = $this->process_evaluation_model->getCandidatePhaseEvaluations($subscriptionId, $phaseprocessId); 
-        $passingScore = $this->process_evaluation_model->getPassingScoreOfPhaseByProcessPhaseId($phaseprocessId);
+        $phaseEvaluationElements = $this->process_evaluation_model->getPhaseEvaluationElementsOfPhaseByProcessPhaseId($phaseprocessId);
 
         $totalGrade = 0;
         foreach ($candidateGradesOnPhase as $result) {
@@ -205,13 +205,18 @@ class SelectiveProcessEvaluation extends MX_Controller {
         }
 
         $approvedOnPhase = FALSE;
-        if($hasResult){
+        $knockoutPhase = $phaseEvaluationElements->knockout_phase;
+        $passingScore = $phaseEvaluationElements->grade;
+        if($hasResult && $knockoutPhase){
             if(($totalGrade/2) >= $passingScore){
                 $approvedOnPhase = TRUE;
             }
         }
+        elseif (!$knockoutPhase) {
+            $approvedOnPhase = TRUE;
+        }
 
-        $phaseResult = ['hasResult' => $hasResult, 'approved' => $approvedOnPhase];
+        $phaseResult = ['hasResult' => $hasResult, 'approved' => $approvedOnPhase, 'knockoutPhase' => $knockoutPhase];
 
         return $phaseResult;
     }
@@ -221,8 +226,16 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $phaseResult = $this->getCandidatePhaseResult($subscriptionId, $phaseprocessId);
 
         if($phaseResult['hasResult']){
+            if($phaseResult['approved'] && $phaseResult['knockoutPhase']){
+                $labelCandidate =  "<b class='text text-success'>Aprovado</b>";    
+            }
+            elseif ($phaseResult['approved'] && !$phaseResult['knockoutPhase']) {
+                $labelCandidate =  "<b class='text text-success'>Classificado</b>";    
+            }
+            else{
 
-            $labelCandidate = $phaseResult['approved'] ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-danger'>Reprovado</b>"; 
+                $labelCandidate =  "<b class='text text-danger'>Reprovado</b>"; 
+            }
         }
         else{
 
@@ -241,6 +254,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
             'process_subscription_model'
         );
 
+        $docs = [];
         foreach ($candidates as $candidate) {
             $phaseId = reset($candidate);
             $subscriptionId = key($phaseId);             

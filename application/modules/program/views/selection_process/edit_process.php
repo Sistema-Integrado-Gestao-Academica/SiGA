@@ -68,12 +68,19 @@ $processHidden = array(
 
 if($canNotEdit){
 	$name["readonly"] = TRUE;
+	$vacancies["readonly"] = TRUE;
+	$phaseGrade["readonly"] = TRUE;
+	$phaseWeight["readonly"] = TRUE;
 }
-
 
 $selectedStudentType = $process->getType();
 
 include '_form.php';
+
+$knockoutPhaseType = array(
+	TRUE => 'Eliminatória',
+	FALSE => 'Classificatória'
+);
 
 ?>
 <?= form_input($processHidden); ?>
@@ -95,23 +102,24 @@ include '_form.php';
 		</b></small></h4>
 
 	<?php
-		if(!empty($phasesNames)){
+		if(!empty($phases)){
 
-			foreach($phasesNames as $id => $phase){
+			foreach($phases as $id => $phase){
 
 				// Homologation phase is obrigatory and do not have weight
-				if($phase !== SelectionProcessConstants::HOMOLOGATION_PHASE){
+				if($id !== SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
 						$selectName = "phase_select_".$id;
 						$selectId = $selectName;
-						$weight = $phasesWeights[$id];
-						$grade = $phasesGrades[$id];
+						$weight = $phase['weight'];
+						$grade = $phase['grade'];
 
 						$phaseWeight["id"] = "phase_weight_".$id;
 						$phaseWeight["name"] = "phase_weight_".$id;
 
-						$phaseGrade["id"] = "phase_grade_".$id;
-						$phaseGrade["name"] = "phase_grade_".$id;
-
+						$gradeName = "phase_grade_".$id;
+						$phaseGrade["id"] = $gradeName;
+						$phaseGrade["name"] = $gradeName;
+						$gradeDiv = $gradeName."_div";
 
 						if($weight != -1){
 							$selectedItem = TRUE;
@@ -129,26 +137,43 @@ include '_form.php';
 							FALSE => "Não",
 						);
 
+						$selectPhaseName = "phase_type_".$id;
+						$selectPhaseId = $selectPhaseName;
+						$selectedType = $phase['knockoutPhase'];
+
 						$class = $canNotEdit ? "disabled" : "";
+
+
+						$fields = "phase_".$id."_fields";
 			?>
 						<div class="row">
 							<div class="col-md-10">
 								<div class="input-group">
 									<span class="input-group-addon">
-										<?= form_label($phase, $selectName."_label"); ?>
+										<?= form_label($phase['name'], $selectName."_label"); ?>
 									</span>
 									<div class="input-group-btn">
-										<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}', class=form-control {$class}"); ?>
+										<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}' class=form-control {$class}"); ?>
 									</div>
 								</div>
-								<div class="row">
-									<div class="col-md-6">
-											<?= form_label("Peso", $phaseWeight['name']); ?>
-										<?= form_input($phaseWeight); ?>
+								<div id=<?=$fields?> style="display:none;">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<?= form_label("Tipo da fase", "phase_type"); ?>
+										</span>
+										<div class="input-group-btn">
+											<?= form_dropdown($selectPhaseName, $knockoutPhaseType, $selectedType, "id='{$selectPhaseId}' class=form-control {$class}"); ?>
+										</div>
 									</div>
-									<div class="col-md-6">
-											<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
-										<?= form_input($phaseGrade); ?>
+									<div class="row">
+										<div class="col-md-6">
+												<?= form_label("Peso", $phaseWeight['name']); ?>
+											<?= form_input($phaseWeight); ?>
+										</div>
+										<div class="col-md-6" id=<?=$gradeDiv?> style="display: none;">
+												<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
+											<?= form_input($phaseGrade); ?>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -162,7 +187,7 @@ include '_form.php';
 						<div class="input-group">
 						<span class="input-group-addon">
 
-							<?= form_label($phase); ?>
+							<?= form_label($phase['name']); ?>
 						<span class="label label-default">Fase obrigatória e sem peso.</span>
 						</span>
 

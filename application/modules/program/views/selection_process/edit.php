@@ -56,8 +56,7 @@
     <div class="tab-content">
       <div class='tab-pane fade in active' id="edit_process_tab">
             <?php
-                call_user_func(function () use ($process, $phasesNames, $phasesWeights, 
-                                                $canNotEdit, $phasesGrades){
+                call_user_func(function () use ($process, $phases, $canNotEdit){
                     include('edit_process.php');
                 });
              ?>

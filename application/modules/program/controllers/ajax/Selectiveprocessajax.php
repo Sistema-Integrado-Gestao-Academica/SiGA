@@ -242,32 +242,35 @@ class SelectiveProcessAjax extends MX_Controller {
                 $preProject = $this->input->post("phase_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
                 $preProjectWeight = $this->input->post("phase_weight_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
                 $preProjectGrade = $this->input->post("phase_grade_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
+                $preProjectType = $this->input->post("phase_type_".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
 
                 $writtenTest = $this->input->post("phase_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
                 $writtenTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
                 $writtenTestGrade = $this->input->post("phase_grade_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
+                $writtenTestType = $this->input->post("phase_type_".SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
 
                 $oralTest = $this->input->post("phase_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
                 $oralTestWeight = $this->input->post("phase_weight_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
                 $oralTestGrade = $this->input->post("phase_grade_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+                $oralTestType = $this->input->post("phase_type_".SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+
 
                 $phases = array();
 
                 $notSelected = "0";
 
-
                 if($preProject !== $notSelected){
-                    $preProject = new PreProjectEvaluation($preProjectWeight, $preProjectGrade, SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID);
+                    $preProject = new PreProjectEvaluation($preProjectWeight, $preProjectGrade, SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID, FALSE, FALSE, $preProjectType);
                     $phases[] = $preProject;
                 }
 
                 if($writtenTest !== $notSelected){
-                    $writtenTest = new WrittenTest($writtenTestWeight, $writtenTestGrade, SelectionProcessConstants::WRITTEN_TEST_PHASE_ID);
+                    $writtenTest = new WrittenTest($writtenTestWeight, $writtenTestGrade, SelectionProcessConstants::WRITTEN_TEST_PHASE_ID, FALSE, FALSE, $writtenTestType);
                     $phases[] = $writtenTest;
                 }
 
                 if($oralTest !== $notSelected){
-                    $oralTest = new OralTest($oralTestWeight, $oralTestGrade, SelectionProcessConstants::ORAL_TEST_PHASE_ID);
+                    $oralTest = new OralTest($oralTestWeight, $oralTestGrade, SelectionProcessConstants::ORAL_TEST_PHASE_ID, FALSE, FALSE, $oralTestType);
                     $phases[] = $oralTest;
                 }
 

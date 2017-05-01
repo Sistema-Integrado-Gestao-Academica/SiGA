@@ -38,8 +38,7 @@
 		"max" => 100,
 		"steps" => 1,
 		"class" => "form-control",
-		"placeholder" => "Informe a nota de corte",
-		"required" => "true"
+		"placeholder" => "Informe a nota de corte"
 	);
 
 	$saveProcessBtn = array(
@@ -58,6 +57,11 @@
 	$selectedStudentType = "";
 
 	include '_form.php';
+
+	$knockoutPhaseType = array(
+		TRUE => 'Eliminatória',
+		FALSE => 'Classificatória'
+	);
 
 ?>
 <!-- Selection Process Settings -->
@@ -95,10 +99,17 @@
 				$phaseWeight["name"] = "phase_weight_".$phase->getPhaseId();
 				$phaseWeight["value"] = $phase->getWeight();
 
-				$phaseGrade["id"] = "phase_grade_".$phase->getPhaseId();
-				$phaseGrade["name"] = "phase_grade_".$phase->getPhaseId();
+				$gradeName = "phase_grade_".$phase->getPhaseId();
+				$phaseGrade["id"] = $gradeName;
+				$phaseGrade["name"] = $gradeName;
+				$gradeDiv = $gradeName."_div";
 
 				$phaseName = $phase->getPhaseName();
+
+				$selectPhaseName = "phase_type_".$phase->getPhaseId();
+				$selectPhaseId = $selectPhaseName;
+
+				$fields = "phase_".$phase->getPhaseId()."_fields";
 	?>	
 				<hr>
 				<div class="row">
@@ -111,14 +122,24 @@
 								<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}', class='form-control'"); ?>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-md-6">
-									<?= form_label("Peso", $phaseWeight['name']); ?>
-								<?= form_input($phaseWeight); ?>
+						<div id=<?=$fields?> style="display:none;">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<?= form_label("Tipo da fase", "phase_type"); ?>
+								</span>
+								<div class="input-group-btn">
+									<?= form_dropdown($selectPhaseName, $knockoutPhaseType, $selectedItem, "id='{$selectPhaseId}', class='form-control'"); ?>
+								</div>
 							</div>
-							<div class="col-md-6">
-									<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
-								<?= form_input($phaseGrade); ?>
+							<div class="row">
+								<div class="col-md-6">
+										<?= form_label("Peso", $phaseWeight['name']); ?>
+									<?= form_input($phaseWeight); ?>
+								</div>
+								<div class="col-md-6" id=<?=$gradeDiv?> style="display: none;">
+										<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
+									<?= form_input($phaseGrade); ?>
+								</div>
 							</div>
 						</div>
 					</div>

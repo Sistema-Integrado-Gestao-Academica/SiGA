@@ -1,42 +1,52 @@
 $(document).ready(function(){
 
-	var sortable = true;
 	
 	$("#phase_select_2").ready(function(){
+		var toSort = true;
+
+		showOrHide("#phase_select_2", "#phase_2_fields");
 
 		if($('#phase_select_2').attr('disabled')){
-			sortable = false;
+			toSort = false;
 		}
 
-
-		getPhasesToSort(sortable);
+		getPhasesToSort(toSort);
 
 		$(this).change(function(){
-			getPhasesToSort(sortable);
+			getPhasesToSort(toSort);
+			showOrHide("#phase_select_2", "#phase_2_fields");
 		});
 	});
 
 	$("#phase_select_3").ready(function(){
+		var toSort = true;
+
+		showOrHide("#phase_select_3", "#phase_3_fields");
 
 		if($('#phase_select_3').attr('disabled')){
-			sortable = false;
+			toSort = false;
 		}
-		getPhasesToSort(sortable);
+		getPhasesToSort(toSort);
 
 		$(this).change(function(){
-			getPhasesToSort(sortable);
+			getPhasesToSort(toSort);
+			showOrHide("#phase_select_3", "#phase_3_fields");
 		});
 	});
 
 	$("#phase_select_4").ready(function(){
+		var toSort = true;
+		
+		showOrHide("#phase_select_4", "#phase_4_fields");
 
 		if($('#phase_select_4').attr('disabled')){
-			sortable = false;
+			toSort = false;
 		}
-		getPhasesToSort(sortable);
+		getPhasesToSort(toSort);
 
 		$(this).change(function(){
-			getPhasesToSort(sortable);
+			getPhasesToSort(toSort);
+			showOrHide("#phase_select_4", "#phase_4_fields");
 		});
 	});
 
@@ -180,7 +190,44 @@ $(document).ready(function(){
 		openTab('#edit_process_link');
 	});
 
+	$("#phase_type_2").ready(function(){
+
+		showOrHide("#phase_type_2", "#phase_grade_2_div");
+		
+		$(this).change(function(){
+			showOrHide("#phase_type_2", "#phase_grade_2_div");
+		});
+	});
+
+	$("#phase_type_3").ready(function(){
+		showOrHide("#phase_type_3", "#phase_grade_3_div");
+		
+		$(this).change(function(){
+			showOrHide("#phase_type_3", "#phase_grade_3_div");
+		});
+	
+	});
+
+	$("#phase_type_4").ready(function(){
+		showOrHide("#phase_type_4", "#phase_grade_4_div");
+		
+		$(this).change(function(){
+			showOrHide("#phase_type_4", "#phase_grade_4_div");
+		});
+		
+	});
 });
+
+function showOrHide(typeSelectElementId, divId){
+	
+	if($(typeSelectElementId).val() == 1){
+		$(divId).show();
+	}
+	else{
+		$(divId).hide();
+	}
+
+}
 
 function makeSortable(){
 	$("#sortable").sortable();
@@ -199,14 +246,17 @@ function saveSelectiveProcess(saveMethod){
 	var preProject = $("#phase_select_2").val();
 	var preProjectWeight = $("#phase_weight_2").val();
 	var preProjectGrade = $("#phase_grade_2").val();
+	var preProjectType = $("#phase_type_2").val();
 
 	var writtenTest = $("#phase_select_3").val();
 	var writtenTestWeight = $("#phase_weight_3").val();
 	var writtenTestGrade = $("#phase_grade_3").val();
+	var writtenTestType = $("#phase_type_3").val();
 
 	var oralTest = $("#phase_select_4").val();
 	var oralTestWeight = $("#phase_weight_4").val();
 	var oralTestGrade = $("#phase_grade_4").val();
+	var oralTestType = $("#phase_type_4").val();
 
 	var phasesOrder = $("#sortable").sortable("toArray");
 
@@ -222,12 +272,15 @@ function saveSelectiveProcess(saveMethod){
 		phase_2: preProject,
 		phase_weight_2: preProjectWeight,
 		phase_grade_2: preProjectGrade,
+		phase_type_2: preProjectType,
 	    phase_3: writtenTest,
 	    phase_weight_3: writtenTestWeight,
 		phase_grade_3: writtenTestGrade,
+		phase_type_3: writtenTestType,
 	    phase_4: oralTest,
 	    phase_weight_4: oralTestWeight,
 		phase_grade_4: oralTestGrade,
+		phase_type_4: oralTestType,
 	    phases_order: phasesOrder
 	}
 	if(document.getElementById("processId")){
@@ -262,7 +315,7 @@ function saveSelectiveProcess(saveMethod){
 	);
 }
 
-function getPhasesToSort(sortable){
+function getPhasesToSort(toSort){
 
 	var preProject;
 	var writtenTest;
@@ -313,8 +366,9 @@ function getPhasesToSort(sortable){
 				else{
 					$("#edit_selective_process_btn").removeClass('disabled');
 				}
-				if(sortable){
-					makeSortable();
+				makeSortable();
+				if(!toSort){
+					$("#sortable").sortable("disable");
 				}
 			}
 		);
@@ -435,7 +489,7 @@ function setDatesDefined(processId, phasesIds){
 			else{
 				openTab('#define_teachers_link');
 				$("#warning_message").show();
-				$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu a data de todas as fases.");
+				$("#warning_message").append("<br><i class='fa fa-warning'></i>Você não definiu a data de todas as fases.");
 			}
 		}
 	);
@@ -464,7 +518,7 @@ function setTeachersSelected(processId){
 			else{
 				openTab('#config_subscription_link');
 				$("#warning_message").show();
-				$("#warning_message").html("<i class='fa fa-warning'></i>Você não definiu nenhum professor para fazer parte da comissão de seleção.");
+				$("#warning_message").append("<br><i class='fa fa-warning'></i>Você não definiu nenhum professor para fazer parte da comissão de seleção.");
 			}
 		}
 	);
