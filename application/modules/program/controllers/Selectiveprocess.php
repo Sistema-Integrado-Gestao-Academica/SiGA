@@ -145,57 +145,8 @@ class SelectiveProcess extends MX_Controller {
             $selectiveProcesses = array();
 
             foreach($processes as $process){
-                $phasesOrder = unserialize($process[SelectiveProcess_model::PHASE_ORDER_ATTR]);
-                $startDate = convertDateTimeToDateBR($process[SelectiveProcess_model::START_DATE_ATTR]);
-                $endDate = convertDateTimeToDateBR($process[SelectiveProcess_model::END_DATE_ATTR]);
-                $phases = $this->process_model->getPhases($process['id_process']);
-                $phases = $this->process_model->sortPhasesBasedInOrder($phases, $phasesOrder);
-                $settings = new ProcessSettings(
-                    $startDate,
-                    $endDate,
-                    $phases,
-                    $phasesOrder,
-                    $process['dates_defined'],
-                    $process['needed_docs_selected'],
-                    $process['teachers_selected']
-                );
-                if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
-                    try{
-                        $selectionProcess = new RegularStudentProcess(
-                            $process[SelectiveProcess_model::COURSE_ATTR],
-                            $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR],
-                            $process['total_vacancies'],
-                            $process['status']
-                        );
-                        $selectionProcess->addSettings($settings);
-                        $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
-                        if(!is_null($noticePath)){
-                            $selectionProcess->setNoticePath($noticePath);
-                        }
-
-                    }catch(SelectionProcessException $e){
-                        $selectionProcess = FALSE;
-                    }
-
-                }else{
-                    try{
-                        $selectionProcess = new SpecialStudentProcess(
-                            $process[SelectiveProcess_model::COURSE_ATTR],
-                            $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR],
-                            $process['total_vacancies'],
-                            $process['status']
-                        );
-                        $selectionProcess->addSettings($settings);
-                        $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
-                        if(!is_null($noticePath)){
-                            $selectionProcess->setNoticePath($noticePath);
-                        }
-                    }catch(SelectionProcessException $e){
-                        $selectionProcess = FALSE;
-                    }
-                }
+                
+                $selectionProcess = $this->process_model->convertArrayToObject($process);
 
                 if($selectionProcess !== FALSE){
                     $statusByDate = getProcessStatusByDate($selectionProcess);

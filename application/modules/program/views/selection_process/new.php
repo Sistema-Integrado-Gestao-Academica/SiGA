@@ -23,6 +23,17 @@
 		"placeholder" => "Informe o número de vagas"
 	);
 
+	$passingScore = array(
+		"id" => "passing_score",
+		"name" => "passing_score",
+		"type" => "number",
+		"min" => 0,
+		"max" => 100,
+		"steps" => 1,
+		"class" => "form-control",
+		"placeholder" => "Nota de corte para classificação"
+	);
+
 	$phaseWeight = array(
 		"type" => "number",
 		"min" => 0,
@@ -137,7 +148,7 @@
 									<?= form_input($phaseWeight); ?>
 								</div>
 								<div class="col-md-6" id=<?=$gradeDiv?> style="display: none;">
-										<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
+										<?= form_label("Nota de Corte da Fase", $phaseGrade['name']); ?>
 									<?= form_input($phaseGrade); ?>
 								</div>
 							</div>

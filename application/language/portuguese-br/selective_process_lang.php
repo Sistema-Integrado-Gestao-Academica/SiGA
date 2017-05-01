@@ -24,4 +24,3 @@ $lang[SelectionProcessConstants::IN_WRITTEN_TEST_PHASE] = "<p class='label label
 $lang[SelectionProcessConstants::IN_ORAL_TEST_PHASE] = "<p class='label label-success'>Em fase de Prova Oral</p>";
 $lang[SelectionProcessConstants::FINISHED] = "<p class='label label-danger'>Encerrado</p>";
 $lang[SelectionProcessConstants::INCOMPLETE_CONFIG] = "<p class='label label-danger'>Configuração incompleta</p>";
-$lang[SelectionProcessConstants::WAITING_NEXT_PHASE] = "<p class='label label-warning'> Aguardando avanço para a próxima fase </p>";

@@ -55,11 +55,11 @@ if($validSelectiveProcesses){
                     echo "<br>".lang(SelectionProcessConstants::INCOMPLETE_CONFIG).$message	;
 				}
 				if($process->getSuggestedPhase()){
-                    echo "<br>".lang(SelectionProcessConstants::WAITING_NEXT_PHASE);
+					getWaitingPhaseLabel($process->getSuggestedPhase());
 				}
 			echo "</td>";
 
-			echo "<td>";
+			echo "<td style='white-space: nowrap'>";
 				createProcessModal($process, $settings, $processesTeachers, $processesDocs, $processesResearchLines);
 				echo "<a href='#selectiveprocessmodal{$processId}' data-toggle='modal' class='btn btn-primary'><i class='fa fa-eye'></i></a>";
 				echo "&nbsp";
@@ -332,6 +332,23 @@ function createNextPhaseModal($process){
 	};
 	$processName = $process->getName();
 	newModal("nextphasemodal".$processId, "Passar para a próxima fase", $body, $footer, $formPath);
+}
+
+function getWaitingPhaseLabel($suggestedStatus){
+	
+	$phasesWithStatus = array(
+		SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS => "com as inscrições abertas",
+		SelectionProcessConstants::IN_HOMOLOGATION_PHASE => "na fase de ".SelectionProcessConstants::HOMOLOGATION_PHASE,
+		SelectionProcessConstants::IN_PRE_PROJECT_PHASE => "na fase de ".SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
+		SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => "na fase de ".SelectionProcessConstants::WRITTEN_TEST_PHASE,
+		SelectionProcessConstants::IN_ORAL_TEST_PHASE => "na fase de ".SelectionProcessConstants::ORAL_TEST_PHASE,
+		SelectionProcessConstants::FINISHED => "encerrado"
+	);
+
+	$newPhase = $phasesWithStatus[$suggestedStatus];
+
+	echo "<br><h6 class='text-warning'>De acordo com as datas definidas, o processo deveria estar {$newPhase}. <br>Clique no ícone <i class='fa fa-arrow-circle-o-right'></i> para avançar o processo.</h6>";
+
 }
 
 ?>

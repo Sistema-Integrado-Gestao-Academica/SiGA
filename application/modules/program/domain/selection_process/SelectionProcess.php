@@ -18,10 +18,17 @@ abstract class SelectionProcess{
 
 	const MIN_ID = 1;
 
+	const MIN_PASSING_SCORE = 0;
+    const MAX_PASSING_SCORE = 100;
+
+    const INVALID_PASSING_SCORE = "A nota de corte do processo está fora do intervalo permitido.";
+    const PASSING_SCORE_REQUIRED = "A nota de corte do processo é obrigatória.";
+
 	private $id;
 	private $name;
 	private $vacancies;
 	private $status;
+	private $passingScore;
 	private $suggestedPhase = FALSE;
 
 	// Foreign Key from Course. Course id
@@ -30,12 +37,13 @@ abstract class SelectionProcess{
 	private $noticePath;
 	protected $settings;
 
-	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE){
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE, $passingScore){
 		$this->setCourse($course);
 		$this->setName($name);
 		$this->setId($id);
 		$this->setVacancies($vacancies);
 		$this->setStatus($status);
+		$this->setPassingScore($passingScore);
 	}
 
 	public function addSettings($settings){
@@ -111,6 +119,21 @@ abstract class SelectionProcess{
         }
 	}
 
+	public function setPassingScore($passingScore){
+		if($passingScore != ''){
+            if($passingScore >= self::MIN_PASSING_SCORE && $passingScore <= self::MAX_PASSING_SCORE){
+                
+                $this->passingScore = $passingScore;
+            }
+            else{
+                throw new SelectionProcessException(self::INVALID_PASSING_SCORE);
+            }
+        }
+        else{
+            throw new SelectionProcessException(self::PASSING_SCORE_REQUIRED);
+        }
+	}
+
 	public function setStatus($status){
 		$this->status = $status;
 	}
@@ -151,7 +174,9 @@ abstract class SelectionProcess{
 		return $this->suggestedPhase;
 	}
 
-	
+	public function getPassingScore(){
+		return $this->passingScore;
+	}
 
 	public abstract function getType();
 	public abstract function getFormmatedType();

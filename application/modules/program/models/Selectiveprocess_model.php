@@ -102,6 +102,7 @@ class SelectiveProcess_model extends CI_Model {
 		$vacancies = $process->getVacancies();
 		$settings = $process->getSettings();
 		$status = $process->getStatus();
+        $passingScore = $process->getPassingScore();
 		$startDate = NULL;
 		$endDate = NULL;
 		$phasesOrder = NULL;
@@ -115,7 +116,8 @@ class SelectiveProcess_model extends CI_Model {
 			self::PROCESS_TYPE_ATTR => $processType,
 			self::NOTICE_NAME_ATTR => $noticeName,
 			self::PHASE_ORDER_ATTR => $phasesOrder,
-			'total_vacancies' => $vacancies
+			'total_vacancies' => $vacancies,
+            'passing_score' => $passingScore
 		);
 
 		if($status != FALSE){
@@ -433,7 +435,8 @@ class SelectiveProcess_model extends CI_Model {
                         $foundProcess[self::NOTICE_NAME_ATTR],
                         $foundProcess[self::ID_ATTR],
                         $foundProcess['total_vacancies'],
-                        $foundProcess['status']
+                        $foundProcess['status'],
+                        $foundProcess['passing_score']
                     );
                     $selectiveProcess->addSettings($settings);
                     $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
@@ -453,7 +456,8 @@ class SelectiveProcess_model extends CI_Model {
                         $foundProcess[self::NOTICE_NAME_ATTR],
                         $foundProcess[self::ID_ATTR],
                         $foundProcess['total_vacancies'],
-                        $foundProcess['status']
+                        $foundProcess['status'],
+                        $foundProcess['passing_score']
                     );
                     $selectiveProcess->addSettings($settings);
                     $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];

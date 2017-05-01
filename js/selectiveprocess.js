@@ -242,6 +242,7 @@ function saveSelectiveProcess(saveMethod){
 	var studentType = $("#student_type").val();
 	var noticeName = $("#selective_process_name").val();
 	var vacancies = $("#total_vacancies").val();
+	var passing_score = $("#passing_score").val();
 
 	var preProject = $("#phase_select_2").val();
 	var preProjectWeight = $("#phase_weight_2").val();
@@ -269,6 +270,7 @@ function saveSelectiveProcess(saveMethod){
 	    student_type: studentType,
 	    selective_process_name: noticeName,
 	    total_vacancies: vacancies,
+	    passing_score: passing_score,
 		phase_2: preProject,
 		phase_weight_2: preProjectWeight,
 		phase_grade_2: preProjectGrade,

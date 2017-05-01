@@ -23,7 +23,6 @@ $vacancies = array(
 	"min" => 0,
 	"steps" => 1,
 	"class" => "form-control",
-	"placeholder" => "Informe o número de vagas",
 	"value" => $process->getVacancies()
 );
 
@@ -65,10 +64,22 @@ $processHidden = array(
 	"value" => $processId
 );
 
+$passingScore = array(
+	"id" => "passing_score",
+	"name" => "passing_score",
+	"type" => "number",
+	"min" => 0,
+	"max" => 100,
+	"steps" => 1,
+	"class" => "form-control",
+	"value" => $process->getPassingScore()
+);
+
 
 if($canNotEdit){
 	$name["readonly"] = TRUE;
 	$vacancies["readonly"] = TRUE;
+	$passingScore["readonly"] = TRUE;
 	$phaseGrade["readonly"] = TRUE;
 	$phaseWeight["readonly"] = TRUE;
 }
@@ -171,7 +182,7 @@ $knockoutPhaseType = array(
 											<?= form_input($phaseWeight); ?>
 										</div>
 										<div class="col-md-6" id=<?=$gradeDiv?> style="display: none;">
-												<?= form_label("Nota de Corte", $phaseGrade['name']); ?>
+												<?= form_label("Nota de Corte da Fase", $phaseGrade['name']); ?>
 											<?= form_input($phaseGrade); ?>
 										</div>
 									</div>

@@ -219,6 +219,7 @@ class SelectiveProcessAjax extends MX_Controller {
         $studentType = $this->input->post("student_type");
         $noticeName = $this->input->post("selective_process_name");
         $totalVacancies = $this->input->post("total_vacancies");
+        $passingScore = $this->input->post("passing_score");
 
         $process = FALSE;
         $message = "";
@@ -226,11 +227,11 @@ class SelectiveProcessAjax extends MX_Controller {
 
             switch($studentType){
                 case SelectionProcessConstants::REGULAR_STUDENT:
-                    $process = new RegularStudentProcess($courseId, $noticeName, FALSE, $totalVacancies);
+                    $process = new RegularStudentProcess($courseId, $noticeName, FALSE, $totalVacancies, FALSE, $passingScore);
                     break;
 
                 case SelectionProcessConstants::SPECIAL_STUDENT:
-                    $process = new SpecialStudentProcess($courseId, $noticeName, FALSE, $totalVacancies);
+                    $process = new SpecialStudentProcess($courseId, $noticeName, FALSE, $totalVacancies, FALSE, $passingScore);
                     break;
 
                 default:
