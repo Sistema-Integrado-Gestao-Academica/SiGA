@@ -45,14 +45,14 @@ class SelectionProcessEvaluation extends CI_Model {
     }
 
     private function registerEvaluationTeachers($subscription, $subscriptionTeachers){
-        $processPhases = $this->process_model->getPhases($subscription['id_process']);
+        $processPhases = $this->process_model->getProcessPhases($subscription['id_process']);
         if(!empty($processPhases)){
             foreach ($subscriptionTeachers as $teacherId) {
                 foreach ($processPhases as $phase) {
                     $this->process_evaluation_model->saveOrUpdate(
                         $subscription['id'],
                         $teacherId,
-                        $phase->getPhaseId()
+                        $phase['id']
                     );
                 }
             }

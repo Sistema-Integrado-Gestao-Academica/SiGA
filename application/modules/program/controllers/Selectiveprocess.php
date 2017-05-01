@@ -78,6 +78,7 @@ class SelectiveProcess extends MX_Controller {
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
         $configData = $this->getConfigDataOfProcesses($selectiveProcesses);
 
+
         $data = array(
             'course' => $course,
             'selectiveProcesses' => $selectiveProcesses
@@ -412,11 +413,15 @@ class SelectiveProcess extends MX_Controller {
     public function generatePDF(){
 
         $candidates = $this->input->post('candidates');
+        $processId = $this->input->post('processId');
+
+        $process = $this->process_model->getById($processId);
 
         $data = array(
             'candidates' => json_decode($candidates),
             'phaseName' => $this->input->post('phaseName'),
-            'processId' => $this->input->post('processId')
+            'processName' => $process->getName(),  
+            'processId' => $process->getId()    
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/phase_result", $data);

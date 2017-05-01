@@ -1,4 +1,4 @@
-<h2 class="principal">Resultados do Processos Seletivo <b><i><?=$process->getName()?></i></b> </h2>
+<h2 class="principal">Processo Seletivo <b><i><?=$process->getName()?></i></b> </h2>
 <?php require_once (MODULESPATH."/program/constants/SelectionProcessConstants.php");  ?>
 <div class="row">
     <?php $courseId = $process->getCourse(); ?>
@@ -37,7 +37,10 @@
 				</div>
 
 	<?php	}
-	endif ?>
+	else:
+        callout("info", "Ainda não há resultados para esse processo.");
+
+    endif ?>
 
 <?php
 	function printButton($candidates, $phaseName, $processId){

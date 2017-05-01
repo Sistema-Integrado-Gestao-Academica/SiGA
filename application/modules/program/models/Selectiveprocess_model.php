@@ -212,7 +212,7 @@ class SelectiveProcess_model extends CI_Model {
 		return $process;
 	}
 
-	private function getProcessPhases($processId){
+	public function getProcessPhases($processId){
 		$this->db->select("*");
 		$this->db->from(self::PROCESS_PHASE_TABLE);
 		$this->db->where(self::ID_ATTR, $processId);

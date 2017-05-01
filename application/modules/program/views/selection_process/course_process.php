@@ -290,10 +290,20 @@ function createNextPhaseModal($process){
 
 	$processId = $process->getId();
 	$suggestedPhase = $process->getSuggestedPhase();
-	$phaseName = $phasesWithStatus[$suggestedPhase];
 	$courseId = $process->getCourse();
 
-	$body = function() use ($suggestedPhase, $phaseName, $processId, $courseId){
+	if(isset($phasesWithStatus[$suggestedPhase])){
+		$phaseName = $phasesWithStatus[$suggestedPhase];
+		$question = "Deseja passar para a fase de <b>".$phaseName."</b>?";
+		$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
+	}
+	else{
+		$question = "Deseja <b>finalizar</b> o processo?";
+		$formPath = "selection_process/finalize_process/{$processId}/{$courseId}";
+	}
+
+
+	$body = function() use ($suggestedPhase, $question){
 		$hidden = array(
 			'id' => 'suggested_phase',
 			'name' => 'suggested_phase',
@@ -303,7 +313,7 @@ function createNextPhaseModal($process){
 
 		echo form_input($hidden);
 
-		echo "<h4>Deseja passar para a fase de <b>".$phaseName."</b>?</h4>";
+		echo "<h4>{$question}</h4>";
 	};
 
 	$footer = function(){
@@ -321,7 +331,6 @@ function createNextPhaseModal($process){
 		));
 	};
 	$processName = $process->getName();
-	$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
 	newModal("nextphasemodal".$processId, "Passar para a próxima fase</b>", $body, $footer, $formPath);
 }
 

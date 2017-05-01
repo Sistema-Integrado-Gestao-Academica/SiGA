@@ -134,6 +134,7 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 		$query .= "WHERE `id_process_phase` IN (SELECT `id` FROM `process_phase` WHERE `id_process` = {$processId}) ";
 		$query .= "ORDER BY `id_subscription`";
 
+
 		$evaluations = $this->db->query($query);
 
 		return $evaluations->result_array();

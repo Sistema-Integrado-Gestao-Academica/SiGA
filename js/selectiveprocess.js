@@ -180,7 +180,6 @@ $(document).ready(function(){
 		openTab('#edit_process_link');
 	});
 
-
 });
 
 function makeSortable(){
