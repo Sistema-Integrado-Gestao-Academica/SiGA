@@ -139,4 +139,24 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		return $evaluations->result_array();
 	}
+
+	public function getProcessCandidatesOfPhase($processId, $processPhaseId, $onlyApproved=FALSE){
+
+		$this->db->select('pe.id_process_phase, pe.id_subscription, AVG(pe.grade) as average_grade, pp.id_phase, pp.weight, pp.grade, pp.knockout_phase, us.*');
+		$this->db->from('selection_process_evaluation pe');
+		$this->db->join('selection_process_user_subscription us', 'us.id = pe.id_subscription');
+		$this->db->join('process_phase pp', 'pp.id = pe.id_process_phase');
+		$this->db->where('us.id_process', $processId);
+		$this->db->where('pe.id_process_phase', $processPhaseId);
+		$this->db->group_by(['pe.id_process_phase', 'pe.id_subscription']);
+
+		if($onlyApproved){
+			$this->db->having('(AVG(pe.grade) >= pp.grade OR pp.knockout_phase = 0)');
+		}
+
+		$candidates = $this->db->get()->result_array();
+		$candidates = checkArray($candidates);
+
+		return $candidates;
+	}
 }
