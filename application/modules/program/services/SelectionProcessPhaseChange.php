@@ -16,6 +16,10 @@ class SelectionProcessPhaseChange extends CI_Model {
             'program/selectiveProcessSubscription_model',
             'process_subscription_model'
         );
+        $this->load->model(
+            'program/selectiveProcessEvaluation_model',
+            'process_evaluation_model'
+        );
         $this->load->module("notification/notification");
     }
 
@@ -42,7 +46,11 @@ class SelectionProcessPhaseChange extends CI_Model {
                     $process,
                     SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS
                 );
-                $this->notifySubscriptionsAreOpen($process);
+
+                // Notifying all guests takes too long, disasbling for now
+                //
+                // $this->notifySubscriptionsAreOpen($process);
+
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
@@ -54,7 +62,6 @@ class SelectionProcessPhaseChange extends CI_Model {
                     'After subscriptions, the next phase should be homologation.'
                 );
                 $this->db->trans_start();
-                $this->changeToHomologationPhase($process);
                 $this->changeToStatus(
                     $process,
                     SelectionProcessConstants::IN_HOMOLOGATION_PHASE
@@ -229,17 +236,132 @@ class SelectionProcessPhaseChange extends CI_Model {
         }
     }
 
-
     private function notifyPreProjectIsOver($process, $newStatus){
+        $processPhaseId = $this->process_evaluation_model->getPhaseProcessIdByPhaseId(
+            $process->getId(),
+            SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID
+        )->id;
 
+        $candidates = $this
+            ->process_evaluation_model
+            ->getProcessCandidatesOfPhase($process->getId(), $processPhaseId);
+
+        $barMessage = function($params) use ($process){
+            return $params['approved']
+                ? "Parabéns, você foi <b>aprovado</b> na fase de Avaliação de Pré-projeto do processo <b>{$process->getName()}</b>."
+                : "Infelizmente você foi <b>reprovado</b> na fase de Avaliação de Pré-projeto do processo <b>{$process->getName()}</b>.";
+        };
+
+        $emailMessage = function($candidate, $approved) use ($process){
+            $msg = "Olá, {$candidate['full_name']}!<br><br>";
+            $msg .= $approved
+                ? "Informamos que você foi <b><font color='green'>aprovado</font></b> na fase de Avaliação de Pré-projeto do processo <b>{$process->getName()}</b>."
+                : "Informamos, infelizmente, que você foi <b><font color='red'>reprovado</font></b> na fase de Avaliação de Pré-projeto do processo <b>{$process->getName()}</b>.";
+            return $msg;
+        };
+
+        $this->notifyOtherPhasesResults(
+            'Avaliação de Pré-projeto',
+            $candidates,
+            $process,
+            $barMessage,
+            $emailMessage
+        );
     }
 
     private function notifyWrittenTestIsOver($process, $newStatus){
+        $processPhaseId = $this->process_evaluation_model->getPhaseProcessIdByPhaseId(
+            $process->getId(),
+            SelectionProcessConstants::WRITTEN_TEST_PHASE_ID
+        )->id;
 
+        $candidates = $this
+            ->process_evaluation_model
+            ->getProcessCandidatesOfPhase($process->getId(), $processPhaseId);
+
+        $barMessage = function($params) use ($process){
+            return $params['approved']
+                ? "Parabéns, você foi <b>aprovado</b> na fase de Prova Escrita do processo <b>{$process->getName()}</b>."
+                : "Infelizmente você foi <b>reprovado</b> na fase de Prova Escrita do processo <b>{$process->getName()}</b>.";
+        };
+
+        $emailMessage = function($candidate, $approved) use ($process){
+            $msg = "Olá, {$candidate['full_name']}!<br><br>";
+            $msg .= $approved
+                ? "Informamos que você foi <b><font color='green'>aprovado</font></b> na fase de Prova Escrita do processo <b>{$process->getName()}</b>."
+                : "Informamos, infelizmente, que você foi <b><font color='red'>reprovado</font></b> na fase de Prova Escrita do processo <b>{$process->getName()}</b>.";
+            return $msg;
+        };
+
+        $this->notifyOtherPhasesResults(
+            'Prova Escrita',
+            $candidates,
+            $process,
+            $barMessage,
+            $emailMessage
+        );
     }
 
     private function notifyOralTestIsOver($process, $newStatus){
+        $processPhaseId = $this->process_evaluation_model->getPhaseProcessIdByPhaseId(
+            $process->getId(),
+            SelectionProcessConstants::ORAL_TEST_PHASE_ID
+        )->id;
 
+        $candidates = $this
+            ->process_evaluation_model
+            ->getProcessCandidatesOfPhase($process->getId(), $processPhaseId);
+
+        $barMessage = function($params) use ($process){
+            return $params['approved']
+                ? "Parabéns, você foi <b>aprovado</b> na fase de Prova Oral do processo <b>{$process->getName()}</b>."
+                : "Infelizmente você foi <b>reprovado</b> na fase de Prova Oral do processo <b>{$process->getName()}</b>.";
+        };
+
+        $emailMessage = function($candidate, $approved) use ($process){
+            $msg = "Olá, {$candidate['full_name']}!<br><br>";
+            $msg .= $approved
+                ? "Informamos que você foi <b><font color='green'>aprovado</font></b> na fase de Prova Oral do processo <b>{$process->getName()}</b>."
+                : "Informamos, infelizmente, que você foi <b><font color='red'>reprovado</font></b> na fase de Prova Oral do processo <b>{$process->getName()}</b>.";
+            return $msg;
+        };
+
+        $this->notifyOtherPhasesResults(
+            'Prova Oral',
+            $candidates,
+            $process,
+            $barMessage,
+            $emailMessage
+        );
+    }
+
+    private function notifyOtherPhasesResults($phaseName, $candidates, $process, $barMessage, $emailMessage=FALSE){
+        if(!empty($candidates)){
+            foreach ($candidates as $candidate) {
+                $user = [
+                    'id' => $candidate['id_user'],
+                    'name' => $candidate['full_name'],
+                    'email' => $candidate['email']
+                ];
+
+                $approved = $this->candidateIsApprovedInPhase($candidate);
+
+                $params = [
+                    'subject' => "Resultado da Fase de {$phaseName} do processo {$process->getName()}",
+                    'approved' => $approved
+                ];
+
+                $this->notification->notifyUser($user, $params, $barMessage, $sender=FALSE, $onlyBar=FALSE, $emailMessage($candidate, $approved));
+            }
+        }
+    }
+
+    private function candidateIsApprovedInPhase($candidateData){
+        $candidateAverageGrade = $candidateData['average_grade'];
+        $phasePassingScore = $candidateData['grade'];
+        $notKnockoutPhase = !$candidateData['knockout_phase'];
+
+        return ($candidateAverageGrade >= $phasePassingScore) || $notKnockoutPhase;
     }
 
     private function checkNextPhase($process, $newStatus){
