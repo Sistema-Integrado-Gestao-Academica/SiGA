@@ -150,9 +150,10 @@ class SelectiveProcess extends MX_Controller {
 
                 if($selectionProcess !== FALSE){
                     $statusByDate = getProcessStatusByDate($selectionProcess);
-                    $selectionPtrocess = $statusByDate != $process['status']
-                                        ? $this->changeProcessStatus($selectionProcess, $statusByDate)
-                                        : $selectionProcess;
+                    if ($statusByDate != $process['status']){
+                        $statusByPhasesOrder = $this->getStatusByPhaseOnProcess($selectionProcess);
+                        $selectionProcess->setSuggestedPhase($statusByPhasesOrder);
+                    }
                     $selectiveProcesses[] = $selectionProcess;
                 }else{
                     // Something is wrong with the data registered on database
@@ -166,6 +167,51 @@ class SelectiveProcess extends MX_Controller {
         }
 
         return $selectiveProcesses;
+    }
+
+    private function getStatusByPhaseOnProcess($selectionProcess){
+        
+        $currentStatus = $selectionProcess->getStatus();
+        $newStatus = $currentStatus;
+        
+        $phasesWithStatus = array(
+            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
+            SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
+            SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE,
+            SelectionProcessConstants::IN_ORAL_TEST_PHASE => SelectionProcessConstants::ORAL_TEST_PHASE
+        );
+
+        if($currentStatus == SelectionProcessConstants::DISCLOSED){
+            $newStatus = SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
+        }
+        elseif ($currentStatus == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS) {
+            $newStatus = SelectionProcessConstants::IN_HOMOLOGATION_PHASE;
+        }
+        else{
+            $settings = $selectionProcess->getSettings();
+            $phasesOrder = $settings->getPhasesOrder();
+            $phases = $settings->getPhases();
+
+            $lastPhaseName = $phases[0]->getPhaseName();
+            if($phases){
+                foreach($phases as $id => $phase){
+                    $phaseName = $phase->getPhaseName();
+                    if($phasesWithStatus[$currentStatus] == $phaseName){
+                        if(isset($phases[$id + 1])){
+                            $newStatus = array_search($phases[$id + 1]->getPhaseName(), $phasesWithStatus);
+                            break;
+                        }
+                        else{
+                            $newStatus = SelectionProcessConstants::FINISHED;
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return $newStatus;
     }
 
     private function getEditProcessViewData($processId){
@@ -270,19 +316,6 @@ class SelectiveProcess extends MX_Controller {
             $this->session->set_flashdata($status, $message);
             $this->downloadNotice($selectiveProcessId, $courseId);
         }
-    }
-
-    private function changeProcessStatus($selectionProcess, $statusByDate){
-
-        // if($statusByDate == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS){
-        //     $selectionProcess->setStatus($statusByDate);
-        //     $this->process_model->changeProcessStatus($selectionProcess->getId(), $statusByDate);
-        // }
-        // else{
-            $selectionProcess->setSuggestedPhase($statusByDate);
-        // }
-
-        return $selectionProcess;
     }
 
     public function goToNextPhase($processId, $courseId){
