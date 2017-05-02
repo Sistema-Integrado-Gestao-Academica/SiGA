@@ -345,3 +345,28 @@ function checkIfUserIsSecretary($course){
     $userId = getSession()->getUserData()->getId();
     return $ci->secretary_model->isSecretaryOfCourse($userId, $course);
 }
+
+function sortArrayApprovedCandidades($previous, $next){
+    if ($previous['final_average'] == $next['final_average']) {
+        return 0;
+    }
+    return ($previous['final_average'] > $next['final_average']) ? -1 : 1;
+}
+
+
+function array_swap($key1, $key2, $array) {
+    
+    $newArray = array();
+    foreach ($array as $key => $value) {
+        if ($key == $key1) {
+        	$newArray[$key2] = $array[$key2];
+        } 
+        elseif ($key == $key2) {
+            $newArray[$key1] = $array[$key1];
+        } 
+        else {
+            $newArray[$key] = $value;
+        }
+    }
+    return $newArray;
+}

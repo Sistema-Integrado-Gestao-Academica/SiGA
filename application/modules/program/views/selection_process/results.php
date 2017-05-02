@@ -103,22 +103,18 @@
         buildTableHeaders($headers);
         $classificacao = 1;
         foreach ($candidates as $candidateId => $result) {
-            $selected = $result['selected'];
             $finalAverage = number_format($result['final_average'], 2, ',', ' ');
             unset($result['final_average']);
-            unset($result['selected']);
-            if($selected){
-                echo "<tr>";
-                echo "<td><center>{$classificacao}º</center></td>";
-                echo "<td><h4><center>{$candidateId}</center></h4></td>";
-                foreach ($result as $phaseResult) {
-                    $average = $phaseResult['average'];
-                    echo "<td><center>{$average}</center></td>";
-                }
-                echo "<td><center>{$finalAverage}</center></td>";
-                echo "</tr>";
-                $classificacao++;
+            echo "<tr>";
+            echo "<td><center>{$classificacao}º</center></td>";
+            echo "<td><h4><center>{$candidateId}</center></h4></td>";
+            foreach ($result as $phaseResult) {
+                $average = $phaseResult['average'];
+                echo "<td><center>{$average}</center></td>";
             }
+            echo "<td><center>{$finalAverage}</center></td>";
+            echo "</tr>";
+            $classificacao++;
         }
         buildTableEndDeclaration();
     }

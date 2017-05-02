@@ -147,12 +147,13 @@ function createProcessModal($process, $settings, $processesTeachers, $processesD
 
 function showBasicDataTab($process, $phases, $settings){
 	echo "<div class='row' align='left'>";
-	    echo "<div class='col-lg-4'>";
+	    echo "<div class='col-lg-6'>";
 			echo "<h4><i class='fa fa-user'></i> ".$process->getFormmatedType()."</h4>";
 		echo "</div>";
-		echo "<div class='col-lg-3'>";
+		echo "<div class='col-lg-6'>";
 			echo "<h4><i class='fa fa-group'></i> Vagas: ".$process->getVacancies()."</h4>";
 		echo "</div>";
+	echo "</div>";
 
 		$startDate = $settings->getStartDate();
 	    $endDate = $settings->getEndDate();
@@ -162,12 +163,17 @@ function showBasicDataTab($process, $phases, $settings){
 	        $date = $formattedStartDate." a ".$formattedEndDate;
 	    }
 	    else{
-	       	$date = "Período de inscrições não definido";
+	       	$date = "Não definido";
 	    }
 
-	    echo "<div class='col-lg-5'>";
-			echo "<center><h4><i class='fa fa-calendar-o'></i> Inscrições: <br>";
-			echo $date."</center></h4>";
+	echo "<div class='row' align='left'>";
+	    echo "<div class='col-lg-6'>";
+			echo "<h4><i class='fa fa-calendar-o'></i> Inscrições: <br>";
+			echo $date."</h4>";
+		echo "</div>";
+		echo "<div class='col-lg-6'>";
+			echo "<h4><i class='fa fa-compass'></i> Nota de Corte:";
+			echo $process->getPassingScore()."</h4>";
 		echo "</div>";
 	echo "</div>";
 
@@ -199,11 +205,18 @@ function showBasicDataTab($process, $phases, $settings){
 		            echo "<i class='fa fa-calendar-o'></i> ";
 		            echo $date;
 		            echo "<br>";
-		            $weight = $phaseId != 1 ? $phase->getWeight() : "0";
-					echo "Peso: ".$weight;
-		            echo "<br>";
-					$grade = $phaseId != 1 ? $phase->getGrade() : "0";
-					echo "Nota de Corte: ".$grade;
+		            if($phaseId != 1){
+			            $weight = $phaseId != 1 ?  $phase->getWeight() : "Sem peso";
+						echo "Peso: ".$weight;
+			            echo "<br>";
+						$type =  $phase->isKnockoutPhase() ? "Eliminatória" : "Classificatória";
+						echo "Tipo: ".$type;
+		            	echo "<br>";	
+		            }
+		            if($phaseId != 1 && $phase->isKnockoutPhase()){
+						$grade = $phaseId != 1 ? $phase->getGrade() : "Sem nota de corte";
+						echo "Nota de Corte: ".$grade;
+		            }
 		        echo "</p>";
 		    		echo "</div>";
 				echo "</div>";
@@ -254,7 +267,7 @@ function showSubsConfigTab($processDocs, $researchLines){
 		        echo "<ul class='list-unstyled row' align='left'>";
 		        	foreach ($processDocs as $doc) {
 		        		$docName = $doc['doc_name'];
-		            	echo "<li class='col-lg-6'>{$docName}</li>";
+		            	echo "<li class='col-lg-6' style='white-space: normal'>{$docName}</li>";
 		        	}
 		        echo "</ul>";
 		    echo "</div>";

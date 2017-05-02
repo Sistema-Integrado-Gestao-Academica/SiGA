@@ -1,7 +1,7 @@
 <br>
 <br>
 <div id="define_teachers_tables" class="row">
-    <?php include('define_teachers_tables.php'); ?>;
+    <?php include('define_teachers_tables.php'); ?>
 </div>
 <br>
 <br>

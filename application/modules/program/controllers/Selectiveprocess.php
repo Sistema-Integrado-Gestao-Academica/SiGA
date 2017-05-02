@@ -196,6 +196,7 @@ class SelectiveProcess extends MX_Controller {
             if($phases){
                 foreach($phases as $id => $phase){
                     $phaseName = $phase->getPhaseName();
+
                     if($phasesWithStatus[$currentStatus] == $phaseName){
                         if(isset($phases[$id + 1])){
                             $newStatus = array_search($phases[$id + 1]->getPhaseName(), $phasesWithStatus);
@@ -407,7 +408,8 @@ class SelectiveProcess extends MX_Controller {
 
         if($phasesResultPerCandidate){
             $quantityOfPhases = sizeof($resultCandidatesByPhase);
-            $selectedCandidates = $this->getFinalResult($quantityOfPhases, $phasesResultPerCandidate);
+            $selectedCandidates = $this->getFinalResult($quantityOfPhases, $phasesResultPerCandidate, 
+                                                        $selectiveProcess->getPassingScore(), $selectiveProcess->getVacancies());
             $resultCandidatesByPhase = $selectedCandidates + $resultCandidatesByPhase;
         }
 
@@ -419,42 +421,88 @@ class SelectiveProcess extends MX_Controller {
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/results", $data);
     }
 
-    private function getFinalResult($quantityOfPhases, $phasesResultPerCandidate){
+    private function getFinalResult($quantityOfPhases, $phasesResultPerCandidate, $passingScore, $vacancies){
 
         $selectedCandidates = array();
         $candidatesScore = array();
         $quantityOfPhases = $quantityOfPhases - 1;
+        $approvedCandidates = 0;
         if($phasesResultPerCandidate){
             foreach ($phasesResultPerCandidate as $candidateId => $phasesResults) {
                 unset($phasesResults[SelectionProcessConstants::HOMOLOGATION_PHASE]);
                 $candidatePoints = 0;
                 $totalWeight = 0;
                 $approvedTimes = 0;
-                foreach ($phasesResults as $phaseName => $phaseResult) {
-                    $phaseWeight = $phaseResult['phase_weight'];
-                    $candidatePoints += ($phaseWeight * $phaseResult['average']);
-                    $totalWeight += $phaseWeight;                        
-                    
-                    $candidatesScore[$candidateId][] = array(
-                        'phaseName' => $phaseName,
-                        'average' => $phaseResult['average'],
-                        'phaseWeight' => $phaseWeight,
-                    );
-                    $approvedTimes = $phaseResult['approved'] ? $approvedTimes + 1 : $approvedTimes;
-                }
+                if(!empty($phasesResults)){
+                    foreach ($phasesResults as $phaseName => $phaseResult) {
+                        $phaseWeight = $phaseResult['phase_weight'];
+                        $candidatePoints += ($phaseWeight * $phaseResult['average']);
+                        $totalWeight += $phaseWeight;
 
-                $candidatePointsAverage = $candidatePoints/$totalWeight;
-                $candidatesScore[$candidateId]['final_average'] = $candidatePointsAverage;
-                $selected = $approvedTimes == $quantityOfPhases ? TRUE : FALSE; 
-                $candidatesScore[$candidateId]['selected'] = $selected;
+                        $candidatesScore[$candidateId][$phaseWeight] = array(
+                            'phaseName' => $phaseName,
+                            'average' => $phaseResult['average'],
+                            'phaseWeight' => $phaseWeight,
+                        );
+                        $approvedTimes = $phaseResult['approved'] ? $approvedTimes + 1 : $approvedTimes;
+                    }
+
+                    
+                    $candidatePointsAverage = $candidatePoints/$totalWeight;
+                    $selected = ($approvedTimes == $quantityOfPhases) &&  $candidatePointsAverage >= $passingScore ? TRUE : FALSE; 
+                    if(!$selected){
+                        unset($candidatesScore[$candidateId]);
+                    }
+                    else{
+                        $candidatesScore[$candidateId]['final_average'] = $candidatePointsAverage;
+                        $approvedCandidates++;
+                    }
+                }
             }
         }
 
-        arsort($candidatesScore);
-        $selectedCandidates['Final'] = $candidatesScore;
+        $candidatesScore = $this->sortCandidates($candidatesScore);
+        $selectedCandidates['Final'] = $approvedCandidates > $vacancies ? array_slice($candidatesScore, 0, $vacancies, TRUE) : $candidatesScore;
 
         return $selectedCandidates;
     }
+
+    private function sortCandidates($candidatesScore){
+
+        uasort($candidatesScore, 'sortArrayApprovedCandidades');
+        $lastScore = NULL;
+        $candidates = $candidatesScore;
+        $keys = array_keys($candidates);
+        $index = 0;
+        foreach ($candidatesScore as $candidateId => $candidateScore) {
+
+            if($lastScore != NULL){
+                if($candidateScore['final_average'] == $lastScore['final_average']){              
+                    $lastWeight = 0;
+                    krsort($candidateScore);
+                    $phase = key($candidateScore);
+                    $candidateAverage = $candidateScore[$phase]['average'];
+                    krsort($lastScore);
+                    $lastPhase = key($lastScore);
+                    $lastAverage = $lastScore[$lastPhase]['average'];
+                        
+                    if($candidateAverage > $lastAverage){
+                        $key = $keys[$index - 1];
+                        $candidates = array_swap($key, $candidateId, $candidates);
+                    }
+                }
+                
+            }
+            $lastScore = $candidateScore;
+            $index++;
+        }
+
+        return $candidates;
+    }
+
+
+
+    
 
     public function generatePDF(){
 

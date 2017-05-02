@@ -27,7 +27,7 @@ class ProcessSettings{
 		if($startDate != NULL){
 			$this->setStartDate($startDate);
 			$this->setEndDate($endDate);
-			$this->validateDatesDiff();
+			validateDatesDiff($this->getStartDate(), $this->getEndDate());
 		}
 		$this->setPhases($phases);
 		$this->setPhasesOrder($phasesOrder);
@@ -48,17 +48,6 @@ class ProcessSettings{
 			}
 		}else{
 			throw new SelectionProcessException(self::INVALID_PHASE);
-		}
-	}
-
-	private function validateDatesDiff(){
-
-		$startDate = $this->getStartDate();
-		$endDate = $this->getEndDate();
-
-		// The end date must be later than the start date
-		if($endDate <= $startDate){
-			throw new SelectionProcessException(self::INVALID_DATE_INTERVAL);
 		}
 	}
 
