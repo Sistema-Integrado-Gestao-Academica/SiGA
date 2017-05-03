@@ -65,6 +65,7 @@
 		"value" => $course['id_course']
 	);
 
+	$canNotEdit = FALSE;
 	$selectedStudentType = "";
 
 	include '_form.php';

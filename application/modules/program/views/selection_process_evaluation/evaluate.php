@@ -34,34 +34,39 @@
 		  </div>
 			<div class="box-body">
 	  <?php 
-		foreach ($candidate as $processPhase => $phaseEvaluations) :
-			$idSubscription = key($phaseEvaluations);
-			$idForLabel = $processPhase."_".$idSubscription."_label";
-			$phaseName = $phasesNames[$processPhase]->phase_name;?>			
-			<div class="row">
-				<div class="col-lg-6">
-					<h4>Fase: <b> <?=$phaseName ?></b> </h4>
-				</div> 
-				<div class="col-lg-6">
-					<h4 id=<?=$idForLabel?>>Resultado: <b><?= $phaseEvaluations['phase_result'] ?></b></h4>
+	  	if($candidate){
+			foreach ($candidate as $processPhase => $phaseEvaluations) :
+	  		
+				$idSubscription = key($phaseEvaluations);
+				$idForLabel = $processPhase."_".$idSubscription."_label";
+				$phaseName = $phasesNames[$processPhase]->phase_name;?>			
+				<div class="row">
+					<div class="col-lg-6">
+						<h4>Fase: <b> <?=$phaseName ?></b> </h4>
+					</div> 
+					<div class="col-lg-6">
+						<h4 id=<?=$idForLabel?>>Resultado: <b><?= $phaseEvaluations['phase_result'] ?></b></h4>
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<?php showEvaluations($phaseEvaluations[$idSubscription], $teacherId, $phaseName, $currentPhaseProcessId);?>
-			</div> <!-- /. row -->
-		<?php endforeach ?>
-			</div> <!-- /. box-body -->
-			<div class="box-footer">
-				<h4><i class='fa fa-files-o'></i> Documentos do Candidato</h4> 
-				<?php 
-					if($docs && isset($docs[$idSubscription])){
-						foreach ($docs[$idSubscription] as $doc) {
-							echo "&nbsp";
-							echo anchor("selection_process/download/doc/{$doc['id_doc']}/{$idSubscription}",
-						          "<i class='fa fa-cloud-download'></i> {$doc['doc_name']} ", "class='btn btn-info'");
-						}
-					}?>
-			</div><!-- /.box -->
+				<div class="row">
+					<?php showEvaluations($phaseEvaluations[$idSubscription], $teacherId, $phaseName, $currentPhaseProcessId);?>
+				</div> <!-- /. row -->
+			<?php endforeach ?>
+				</div> <!-- /. box-body -->
+				<div class="box-footer">
+					<h4><i class='fa fa-files-o'></i> Documentos do Candidato</h4> 
+					<?php 
+						if($docs && isset($docs[$idSubscription])){
+							if($docs[$idSubscription]){
+								foreach ($docs[$idSubscription] as $doc) {
+									echo "&nbsp";
+									echo anchor("selection_process/download/doc/{$doc['id_doc']}/{$idSubscription}",
+								          "<i class='fa fa-cloud-download'></i> {$doc['doc_name']} ", "class='btn btn-info'");
+								}
+							}
+						}?>
+				</div><!-- /.box -->
+			<?php } ?>
 		</div><!-- /.box -->
 	</div>
 <?php 
