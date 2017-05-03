@@ -8,7 +8,7 @@
 		SelectionProcessConstants::SPECIAL_STUDENT => 'Alunos Especiais'
 	);
 
-	$class = !empty($selectedStudentType) ? 'form-control disabled' : 'form-control';
+	$class = $canNotEdit ? 'form-control disabled' : 'form-control';
 
 ?>
 

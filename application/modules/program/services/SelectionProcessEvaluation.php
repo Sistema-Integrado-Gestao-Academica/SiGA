@@ -52,7 +52,8 @@ class SelectionProcessEvaluation extends CI_Model {
                     $this->process_evaluation_model->saveOrUpdate(
                         $subscription['id'],
                         $teacherId,
-                        $phase['id']
+                        $phase['id'],
+                        ['grade' => NULL]
                     );
                 }
             }

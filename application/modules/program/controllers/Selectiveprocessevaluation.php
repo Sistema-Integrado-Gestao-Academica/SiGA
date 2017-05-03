@@ -65,8 +65,10 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $phasesNames = $this->getPhasesNames($candidates);
         $currentPhaseProcess = $this->process_evaluation_model->getPhaseProcessIdByPhaseId($processId, $phaseId);
 
+        $candidates = $this->orderByPhasesInProcess($candidates, $processId);
+        $candidates = $this->erasePhaseOfEliminatedCandidate($candidates);
+ 
         $docs = $this->getCandidatesDocs($candidates);
-        
         $data = array(
             'candidates' => $candidates,
             'phasesNames' => $phasesNames,
@@ -81,6 +83,75 @@ class SelectiveProcessEvaluation extends MX_Controller {
             "program/selection_process_evaluation/evaluate", 
             $data
         );
+    }
+
+    public function orderByPhasesInProcess($candidates, $processId, $hasHomologation = FALSE){
+        
+        $process = $this->process_model->getById($processId);
+        $phasesOrder = $process->getSettings()->getPhasesOrder();
+        $candidatesSorted = array();
+
+        if($hasHomologation){
+            array_unshift($phasesOrder, 'homologation');
+        }
+
+        if($candidates){
+            foreach ($candidates as $candidateId => $candidatePhases) {
+                $candidatesSorted[$candidateId] = $candidatePhases;
+                if($candidatePhases){
+                    $index = 0;
+                    $idsProcessPhase = array_keys($candidates[$candidateId]);
+                    while ($index < sizeof($candidatePhases)) {
+                        $idProcessPhase = $idsProcessPhase[$index];
+                        $phaseName = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($idProcessPhase);
+                        $dbName = lang($phaseName->phase_name);
+                        $indexOfPhaseOrder = array_search($dbName, $phasesOrder);
+                        if($index != $indexOfPhaseOrder){
+                            $idsProcessPhase = array_keys($candidatesSorted[$candidateId]);
+                            $keyInRightPosition = $idsProcessPhase[$indexOfPhaseOrder];
+                            $newArray = array_swap($idProcessPhase, $keyInRightPosition, $candidatePhases);
+                            $candidates[$candidateId] = $newArray;
+                            $candidatesSorted[$candidateId] = $newArray;
+                        }
+
+                        $index++;                        
+                    }
+                }
+            }
+        }
+
+        var_dump($candidates);exit;
+        return $candidates;
+    }
+
+    private function erasePhaseOfEliminatedCandidate($candidates){
+        if($candidates){
+            $phaseNotEvaluatedMsg = "<b class='text text-warning'>-</b>";
+            $eliminatedOnPhaseMsg = "<b class='text text-danger'>Eliminado</b>";
+            foreach ($candidates as $candidateId => $candidatePhases) {
+                $erasePhase = FALSE;
+                if($candidatePhases){
+                    $index = 0;
+                    foreach ($candidatePhases as $idProcessPhase => $phaseResult) {
+                        if($erasePhase){
+                            unset($candidates[$candidateId][$idProcessPhase]);
+                        }
+                        else{
+                            $phaseNotEvaluated = $phaseNotEvaluatedMsg == $phaseResult['phase_result'];
+                            $eliminatedOnPhase = $eliminatedOnPhaseMsg == $phaseResult['phase_result'];
+                            if($index == 0 && $phaseNotEvaluated){
+                                break;
+                            }
+                            elseif ($eliminatedOnPhase) {
+                                $erasePhase = TRUE;                            
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $candidates;
     }
 
     public function getCandidates($evaluations, $resultInLabelForm = FALSE){

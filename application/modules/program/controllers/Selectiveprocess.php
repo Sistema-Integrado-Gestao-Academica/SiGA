@@ -367,11 +367,20 @@ class SelectiveProcess extends MX_Controller {
         $resultCandidatesByPhase = [];
         $status =  $selectiveProcess->getStatus();
         $phasesResultPerCandidate = [];
+        $allProcessCandidates = $this->selectiveprocessevaluation->orderByPhasesInProcess($allProcessCandidates, $processId, TRUE);
         if($allProcessCandidates){
-
             foreach ($allProcessCandidates as $candidateId => $evaluations) {
-                foreach ($evaluations as $phaseprocessId => $evaluation) {
-                    $candidatesResults[$phaseprocessId][$candidateId] = $evaluation['phase_result'];
+                if($evaluations){
+                    $eraseCandidate = FALSE;
+                    foreach ($evaluations as $phaseprocessId => $evaluation) {
+                        if(!$eraseCandidate){
+                            $candidatesResults[$phaseprocessId][$candidateId] = $evaluation['phase_result'];
+
+                            if(!$evaluation['phase_result']['approved']){
+                                $eraseCandidate = TRUE;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -389,13 +398,16 @@ class SelectiveProcess extends MX_Controller {
                         }
 
                         if($hasResult){
-                            $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
-                            $result['label'] = $label;
-                            $resultOfCandidatesInPhase[$candidateId] = $result;
+                            $phaseWasFinished = $this->checkIfPhaseWasFinished($phase->phase_name, $selectiveProcess);
+                            if($phaseWasFinished){
+                                $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
+                                $result['label'] = $label;
+                                $resultOfCandidatesInPhase[$candidateId] = $result;
 
-                            if($status === SelectionProcessConstants::FINISHED){
-                                $phaseInfo =  array('phase_weight' => $phase->weight);
-                                $phasesResultPerCandidate[$candidateId][$phase->phase_name] = $result + $phaseInfo;
+                                if($status === SelectionProcessConstants::FINISHED){
+                                    $phaseInfo =  array('phase_weight' => $phase->weight);
+                                    $phasesResultPerCandidate[$candidateId][$phase->phase_name] = $result + $phaseInfo;
+                                }
                             }
                         }
                     }
@@ -419,6 +431,53 @@ class SelectiveProcess extends MX_Controller {
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/results", $data);
+    }
+
+    private function checkIfPhaseWasFinished($currentPhaseName, $selectiveProcess){
+
+        $currentStatus = $selectiveProcess->getStatus();
+        $phases = $selectiveProcess->getSettings()->getPhases();
+        
+        $phasesWithStatus = array(
+            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE
+        );
+
+        if($phases){
+            foreach ($phases as $phase) {
+                $phaseName = $phase->getPhaseName();
+                switch ($phaseName) {
+                    case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE:
+                        $phasesWithStatus[SelectionProcessConstants::IN_PRE_PROJECT_PHASE] = $phaseName;
+                        break;
+                    
+                    case SelectionProcessConstants::WRITTEN_TEST_PHASE:
+                        $phasesWithStatus[SelectionProcessConstants::IN_WRITTEN_TEST_PHASE] = $phaseName;
+                        break;
+                    
+                    case SelectionProcessConstants::ORAL_TEST_PHASE:
+                        $phasesWithStatus[SelectionProcessConstants::IN_ORAL_TEST_PHASE] = $phaseName;
+                        break;
+
+                    default:
+                        $phasesWithStatus[SelectionProcessConstants::IN_HOMOLOGATION_PHASE] = $phaseName;
+                        break;
+                }
+            }
+        }
+
+        $finishedPhases = array();
+        foreach ($phasesWithStatus as $status => $phaseName) {
+            
+            if($status == $currentStatus){
+                break;
+            }
+            else{
+                $finishedPhases[] = $phaseName;
+            }
+
+        }
+
+        return in_array($currentPhaseName, $finishedPhases);
     }
 
     private function getFinalResult($quantityOfPhases, $phasesResultPerCandidate, $passingScore, $vacancies){
