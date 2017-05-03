@@ -3,9 +3,15 @@
 <div class="row">
   <div class="col-md-8 col-md-offset-2">
     <?php
-      alert(function(){
-        echo "<p>Você já finalizou sua inscrição neste processo. Veja os dados submetidos abaixo.</p>";
-      });
+      if(!$userSubscription['finalized']){
+        alert(function(){
+          echo "<p>Você ainda <b>não</b> finalizou sua inscrição neste processo. Para efetivar sua inscrição e enviá-la para homologação você deve finalizá-la.</p>";
+        }, 'danger');
+      }else{
+        alert(function(){
+          echo "<p>Você já finalizou sua inscrição neste processo. Veja os dados submetidos abaixo.</p>";
+        });
+      }
     ?>
   </div>
 </div>
