@@ -89,7 +89,6 @@ class SelectiveProcessEvaluation extends MX_Controller {
         
         $process = $this->process_model->getById($processId);
         $phasesOrder = $process->getSettings()->getPhasesOrder();
-        $candidatesSorted = array();
 
         if($hasHomologation){
             array_unshift($phasesOrder, 'homologation');
@@ -100,18 +99,17 @@ class SelectiveProcessEvaluation extends MX_Controller {
                 $candidatesSorted[$candidateId] = $candidatePhases;
                 if($candidatePhases){
                     $index = 0;
-                    $idsProcessPhase = array_keys($candidates[$candidateId]);
+                    $newArray = $candidatePhases;
                     while ($index < sizeof($candidatePhases)) {
+                        $idsProcessPhase = array_keys($newArray);
                         $idProcessPhase = $idsProcessPhase[$index];
                         $phaseName = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($idProcessPhase);
                         $dbName = lang($phaseName->phase_name);
                         $indexOfPhaseOrder = array_search($dbName, $phasesOrder);
                         if($index != $indexOfPhaseOrder){
-                            $idsProcessPhase = array_keys($candidatesSorted[$candidateId]);
                             $keyInRightPosition = $idsProcessPhase[$indexOfPhaseOrder];
-                            $newArray = array_swap($idProcessPhase, $keyInRightPosition, $candidatePhases);
+                            $newArray = array_swap($idProcessPhase, $keyInRightPosition, $newArray);
                             $candidates[$candidateId] = $newArray;
-                            $candidatesSorted[$candidateId] = $newArray;
                         }
 
                         $index++;                        
@@ -120,10 +118,9 @@ class SelectiveProcessEvaluation extends MX_Controller {
             }
         }
 
-        var_dump($candidates);exit;
         return $candidates;
     }
-
+    
     private function erasePhaseOfEliminatedCandidate($candidates){
         if($candidates){
             $phaseNotEvaluatedMsg = "<b class='text text-warning'>-</b>";

@@ -370,5 +370,6 @@ function array_swap($key1, $key2, $array) {
             $newArray[$key] = $value;
         }
     }
+
     return $newArray;
 }

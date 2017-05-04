@@ -92,29 +92,31 @@
     function createFinalTable($candidates){
         buildTableDeclaration(); 
         $headers = array('Classificação', 'Candidato');
-        $first = key($candidates);
-        $candidatesHeaders = $candidates[$first];
-        unset($candidatesHeaders['final_average']);
-        unset($candidatesHeaders['selected']);
-        foreach ($candidatesHeaders as $header) {
-            $headers[] = "Nota da Fase ".$header['phaseName']."- Peso ".$header['phaseWeight'];
-        }
-        $headers[] = "Nota Final";
-        buildTableHeaders($headers);
-        $classificacao = 1;
-        foreach ($candidates as $candidateId => $result) {
-            $finalAverage = number_format($result['final_average'], 2, ',', ' ');
-            unset($result['final_average']);
-            echo "<tr>";
-            echo "<td><center>{$classificacao}º</center></td>";
-            echo "<td><h4><center>{$candidateId}</center></h4></td>";
-            foreach ($result as $phaseResult) {
-                $average = $phaseResult['average'];
-                echo "<td><center>{$average}</center></td>";
+        if($candidates){
+            $first = key($candidates);
+            $candidatesHeaders = $candidates[$first];
+            unset($candidatesHeaders['final_average']);
+            unset($candidatesHeaders['selected']);
+            foreach ($candidatesHeaders as $header) {
+                $headers[] = "Nota da Fase ".$header['phaseName']."- Peso ".$header['phaseWeight'];
             }
-            echo "<td><center>{$finalAverage}</center></td>";
-            echo "</tr>";
-            $classificacao++;
+            $headers[] = "Nota Final";
+            buildTableHeaders($headers);
+            $classificacao = 1;
+            foreach ($candidates as $candidateId => $result) {
+                $finalAverage = number_format($result['final_average'], 2, ',', ' ');
+                unset($result['final_average']);
+                echo "<tr>";
+                echo "<td><center>{$classificacao}º</center></td>";
+                echo "<td><h4><center>{$candidateId}</center></h4></td>";
+                foreach ($result as $phaseResult) {
+                    $average = $phaseResult['average'];
+                    echo "<td><center>{$average}</center></td>";
+                }
+                echo "<td><center>{$finalAverage}</center></td>";
+                echo "</tr>";
+                $classificacao++;
+            }
         }
         buildTableEndDeclaration();
     }
