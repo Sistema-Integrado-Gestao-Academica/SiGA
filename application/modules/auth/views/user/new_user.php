@@ -1,5 +1,5 @@
-<div class="form-box" id="login-box"> 
-	<div class="header">Cadastrar um novo usuário</div>
+<div class="form-box" id="login-box">
+	<div class="header">Cadastra-se no SiGA!</div>
 	<?= form_open("register_user", '', $hidden) ?>
 		<div class="body bg-gray">
 			<div class="form-group">
@@ -16,7 +16,7 @@
 				)) ?>
 				<?= form_error("name") ?>
 			</div>
-			
+
 			<div class="form-group">
 				<?= form_label("CPF", "cpf") ?>
 				<?= form_input(array(
@@ -31,7 +31,7 @@
 				)) ?>
 				<?= form_error("cpf") ?>
 			</div>
-				
+
 			<div class="form-group">
 				<?= form_label("E-mail", "email") ?>
 				<?= form_input(array(
@@ -79,12 +79,24 @@
 				)) ?>
 				<?= form_error("password") ?>
 			</div>
+
+			<div class="form-group">
+				<?= form_label("Confirmação da senha", "password_confirmation") ?>
+				<?= form_password(array(
+					"name" => "password_confirmation",
+					"id" => "password_confirmation",
+					"class" => "form-campo",
+					"class" => "form-control",
+					"maxlength" => "255"
+				)) ?>
+				<?= form_error("password_confirmation") ?>
+			</div>
 		</div>
 
 		<div class="footer">
 			<?= form_button(array(
-				"class" => "btn bg-olive btn-block",
-				"content" => "Cadastrar",
+				"class" => "btn bg-olive btn-lg btn-block",
+				"content" => "Solicitar Cadastro!",
 				"type" => "submit"
 			)) ?>
 		</div>

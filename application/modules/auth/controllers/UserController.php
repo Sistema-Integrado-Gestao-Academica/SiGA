@@ -215,9 +215,9 @@ class UserController extends MX_Controller {
 			$status = "danger";
 			$message = "Não foi possível remover o grupo informado. Tente novamente.";
 		}
-		
+
 		if($idGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP_ID){
-			
+
 			$this->removeCoursesWhenIsSecretaryGroup($idUser);
 		}
 
@@ -241,7 +241,7 @@ class UserController extends MX_Controller {
 		}
 
 		if($idGroup == GroupConstants::ACADEMIC_SECRETARY_GROUP_ID){
-			
+
 			$this->removeCoursesWhenIsSecretaryGroup($idUser);
 		}
 
@@ -488,7 +488,14 @@ class UserController extends MX_Controller {
 			'email'      => $email,
 			'login'      => $login,
 			'password' 	 => $password,
-			'active' => 0
+
+			// ACTIVATING USER BY DEFAULT BECAUSE CONFIRMATION EMAIL IS DISABLED FOR NOW
+
+			// 'active' => 0
+			'active' => TRUE,
+
+			// ENABLING THIS FLAG TO IDENTIFY USERS THAT REGISTERED WITHOUT CONFIRMATION
+			'not_activated' => TRUE
 		);
 
 		$invitation = $this->input->post("userInvitation");
@@ -517,6 +524,7 @@ class UserController extends MX_Controller {
 		$this->form_validation->set_rules("email", "E-mail", "required|valid_email|verify_if_email_no_exists");
 		$this->form_validation->set_rules("login", "Login", "required|alpha_dash|verify_if_login_no_exists");
 		$this->form_validation->set_rules("password", "Senha", "required");
+		$this->form_validation->set_rules("password_confirmation", "Confirmação da senha", "required|matches[password]");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
 
@@ -536,7 +544,9 @@ class UserController extends MX_Controller {
 		$this->usuarios_model->saveGroup($user, $group);
 		$savedUser = $this->usuarios_model->getUserDataByLogin($user['login']);
 
-		$activation = $this->useractivation->generateActivation($savedUser);
+		// DISABLING ACTIVATION CODE GENERATION BECAUSE EMAIL IS DISABLED FOR NOW
+
+		// $activation = $this->useractivation->generateActivation($savedUser);
 
 		if(!is_null($invitation)){
 			$this->invitation_model->disable($invitation);
@@ -551,8 +561,18 @@ class UserController extends MX_Controller {
 			$message = "Não foi possível realizar o cadastro solicitado. Tente novamente.";
 		}else{
 
-			$this->load->module("notification/emailSender");
-			$message = $this->emailsender->sendConfirmationEmail($savedUser, $activation);
+			// DISABLING CONFIRMATION EMAIL SENDING FOR NOW
+
+			// $this->load->module("notification/emailSender");
+			// $message = $this->emailsender->sendConfirmationEmail($savedUser, $activation);
+
+			$message = [
+				'status' => 'success',
+				'message' => 'Cadastro efetuado com sucesso!'
+			];
+
+
+			//////
 
 			$status = $message['status'];
 			$message = $message['message'];
