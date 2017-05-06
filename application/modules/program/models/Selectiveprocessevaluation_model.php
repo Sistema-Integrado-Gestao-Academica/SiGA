@@ -159,4 +159,21 @@ class SelectiveProcessEvaluation_model extends CI_Model {
 
 		return $candidates;
 	}
+
+	public function getTeachersNullEvaluationsOfPhase($processId, $processPhaseId){
+
+		$this->db->distinct();
+		$this->db->select('u.name as teacher_name, us.candidate_id');
+		$this->db->from('selection_process_evaluation pe');
+		$this->db->join('selection_process_user_subscription us', 'us.id = pe.id_subscription');
+		$this->db->where('us.id_process', $processId);
+		$this->db->where('pe.id_process_phase', $processPhaseId);
+		$this->db->where('pe.grade', NULL);
+		$this->db->join('users u', 'u.id = pe.id_teacher');
+
+		$evaluations = $this->db->get()->result_array();
+		$evaluations = checkArray($evaluations);
+
+		return $evaluations;
+	}
 }

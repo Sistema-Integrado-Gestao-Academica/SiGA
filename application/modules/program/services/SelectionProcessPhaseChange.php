@@ -82,6 +82,10 @@ class SelectionProcessPhaseChange extends CI_Model {
                 break;
 
             case SelectionProcessConstants::IN_PRE_PROJECT_PHASE:
+                $this->checkIfCanFinishPhase(
+                    $process,
+                    SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID
+                );
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
@@ -91,6 +95,10 @@ class SelectionProcessPhaseChange extends CI_Model {
                 break;
 
             case SelectionProcessConstants::IN_WRITTEN_TEST_PHASE:
+                $this->checkIfCanFinishPhase(
+                    $process,
+                    SelectionProcessConstants::WRITTEN_TEST_PHASE_ID
+                );
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
@@ -100,6 +108,10 @@ class SelectionProcessPhaseChange extends CI_Model {
                 break;
 
             case SelectionProcessConstants::IN_ORAL_TEST_PHASE:
+                $this->checkIfCanFinishPhase(
+                    $process,
+                    SelectionProcessConstants::ORAL_TEST_PHASE_ID
+                );
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
@@ -244,6 +256,29 @@ class SelectionProcessPhaseChange extends CI_Model {
 
                 $this->notification->notifyUser($user, $params, $messages['bar'], $sender=FALSE, $onlyBar=FALSE, $messages['email']($subscription));
             }
+        }
+    }
+
+    private function checkIfCanFinishPhase($process, $processPhase){
+        $processPhaseId = $this->process_evaluation_model->getPhaseProcessIdByPhaseId(
+            $process->getId(),
+            $processPhase
+        )->id;
+
+        $pendingEvaluations = $this
+            ->process_evaluation_model
+            ->getTeachersNullEvaluationsOfPhase($process->getId(), $processPhaseId);
+
+        if($pendingEvaluations !== FALSE){
+
+            $message = "Não é possível avançar de fase, pois os seguintes professores ainda possuem avaliações pendentes:<br><br>";
+
+            foreach ($pendingEvaluations as $evaluation) {
+                $message .= "Professor(a) <b>{$evaluation['teacher_name']}</b> falta avaliar o(a) candidato(a) <b>{$evaluation['candidate_id']}</b>.";
+                $message .= "<br>";
+            }
+
+            throw new SelectionProcessException($message);
         }
     }
 
