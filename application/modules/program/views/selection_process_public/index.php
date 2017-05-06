@@ -53,7 +53,7 @@
               <p><b>Data de fim</b>: <?= $process->getSettings()->getFormattedEndDate() ?></p>
               <?php if(!inSubscriptionPeriod($process)): ?>
                 <h4 class="text-center">
-                  <span class="label label-danger">Fora do período de inscrições!</span>
+                  <span class="label label-danger">Inscrições não abertas pela secretaria ou encerradas</span>
                 </h4>
               <?php endif ?>
           </div>
