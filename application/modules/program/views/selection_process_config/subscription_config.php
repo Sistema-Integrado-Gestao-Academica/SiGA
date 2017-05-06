@@ -96,6 +96,12 @@
 <?php endif ?>
 <br>
 <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
     <?= form_button($submitBtn) ?>
   <?= form_close() ?>
 

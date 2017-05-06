@@ -4,6 +4,7 @@
     $processId = $process->getId();
 ?>
 
+<div class="alert alert-success" id="success_message" style="display: none"></div>
 <div class="alert alert-warning" id="warning_message" style="display: none"></div>
 <link rel="stylesheet" href=<?=base_url("css/form_wizard.css")?>>
 <div class="wizard">
@@ -65,3 +66,12 @@
         </div>
     </div>
 </form>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $("#success_message").show();
+    $("#success_message").html("Processo seletivo aberto com sucesso");
+});
+    
+</script>

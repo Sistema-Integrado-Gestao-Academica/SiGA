@@ -4,7 +4,7 @@ require_once(MODULESPATH."/program/constants/SelectionProcessConstants.php");
 
 echo anchor(
 	"program/selectiveprocess/openSelectiveProcess/{$course[Course_model::ID_ATTR]}",
-	"<i class='fa fa-plus-square'></i> Abrir edital para <b>".$course[Course_model::COURSE_NAME_ATTR]."</b>",
+	"<i class='fa fa-plus-square'></i> Abrir processo seletivo para <b>".$course[Course_model::COURSE_NAME_ATTR]."</b>",
 	"class = 'btn btn-lg'"
 );
 ?>
@@ -50,9 +50,13 @@ if($validSelectiveProcesses){
 				echo lang($process->getStatus());
 				$noticeWithAllConfig = $settings->isDatesDefined() && $settings->isNeededDocsSelected() && $settings->isTeachersSelected();
 				if(!$noticeWithAllConfig){
-					$message = "<br><h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
+					$message = "<h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
                     $message .= "<h6 class='text-warning'>Você só poderá divulgá-lo quando terminar a configuração.</h6>";
                     echo "<br>".lang(SelectionProcessConstants::INCOMPLETE_CONFIG).$message	;
+				}
+				else{
+					$message = $process->getStatus() == SelectionProcessConstants::DRAFT ? "<h6 class='text-success'><i class='fa fa-warning'></i>Você já pode divulgar o edital.</h6>" : "";
+					echo "<br>".$message;
 				}
 				if($process->getSuggestedPhase()){
 					getWaitingPhaseLabel($process->getSuggestedPhase());

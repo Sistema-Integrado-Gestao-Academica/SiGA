@@ -483,6 +483,7 @@ function setDatesDefined(processId, phasesIds){
 		urlToPost,
 		data,
 		function(response){
+			$("#success_message").hide();
 			if(datesWereDefined){
 				openTab('#define_teachers_link');
 				$("#warning_message").hide();

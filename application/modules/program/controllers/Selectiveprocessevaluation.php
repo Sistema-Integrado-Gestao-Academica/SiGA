@@ -211,7 +211,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
         $teacherId = $this->input->post("teacherId");
         $grade = $this->input->post("grade");
         
-        $validGrade = !empty($grade) && $grade >= 0 && $grade <=100;
+        $validGrade = $grade != '' && $grade >= 0 && $grade <=100;
         if($validGrade){
             $subscriptionId = $this->input->post("subscriptionId");
             $phaseprocessId = $this->input->post("phaseprocessId");
@@ -241,7 +241,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
             }
         }
         else{
-            $message = empty($grade) ? GRADE_REQUIRED : INVALID_GRADE;
+            $message = $grade == '' ? GRADE_REQUIRED : INVALID_GRADE;
             $response = array(
                 'type' => "danger",
                 'message' => $message

@@ -574,7 +574,7 @@
             echo "<li class='text-left'>{$doc['doc_name']}</li>";
           }
           echo "</ul>";
-        }, 'danger');
+        }, 'danger', false, 'fa fa-info', false);
       }
     };
 
