@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	
+
 	$("#phase_select_2").ready(function(){
 		var toSort = true;
 
@@ -36,7 +36,7 @@ $(document).ready(function(){
 
 	$("#phase_select_4").ready(function(){
 		var toSort = true;
-		
+
 		showOrHide("#phase_select_4", "#phase_4_fields");
 
 		if($('#phase_select_4').attr('disabled')){
@@ -193,7 +193,7 @@ $(document).ready(function(){
 	$("#phase_type_2").ready(function(){
 
 		showOrHide("#phase_type_2", "#phase_grade_2_div");
-		
+
 		$(this).change(function(){
 			showOrHide("#phase_type_2", "#phase_grade_2_div");
 		});
@@ -201,25 +201,25 @@ $(document).ready(function(){
 
 	$("#phase_type_3").ready(function(){
 		showOrHide("#phase_type_3", "#phase_grade_3_div");
-		
+
 		$(this).change(function(){
 			showOrHide("#phase_type_3", "#phase_grade_3_div");
 		});
-	
+
 	});
 
 	$("#phase_type_4").ready(function(){
 		showOrHide("#phase_type_4", "#phase_grade_4_div");
-		
+
 		$(this).change(function(){
 			showOrHide("#phase_type_4", "#phase_grade_4_div");
 		});
-		
+
 	});
 });
 
 function showOrHide(typeSelectElementId, divId){
-	
+
 	if($(typeSelectElementId).val() == 1){
 		$(divId).show();
 	}
@@ -306,7 +306,7 @@ function saveSelectiveProcess(saveMethod){
 						var phases = JSON.parse(response.phases);
 						organizePhasesOnDefineDate(siteUrl, processId, phases);
 					}
-					openTab("#dates_link");					
+					openTab("#dates_link");
 				}
 			}
 			else{
@@ -469,7 +469,7 @@ function saveResearchLine(){
 }
 
 function setDatesDefined(processId, phasesIds){
-	
+
 	var datesWereDefined = checkIfDatesWereDefined(phasesIds);
 
 	var siteUrl = $("#site_url").val();
@@ -500,7 +500,7 @@ function setDatesDefined(processId, phasesIds){
 
 function setTeachersSelected(processId){
 
-	var hasTeachers = $("#teachers_added_to_process_table").find('table > tbody:last > tr').length != 0;
+	var hasTeachers = $("#teachers_added_to_process_table").find('tbody:last > tr').length != 0;
 
 	var data = {
 		teachers_selected: hasTeachers
