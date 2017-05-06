@@ -27,6 +27,20 @@ if ($session->isLogged()) {
 </div></aside>
 <div class="container">
 </br></br>
+
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+	<?php
+		alert(function(){
+			echo "<p class='text-center'>";
+			echo anchor('register', "<span class='label label-primary'>Cadastre-se</span>")
+				." no sistema para <b>se inscrever</b> nos processos seletivos do programa.";
+			echo "</p>";
+		}, 'info', "Bem-vindo ao SiGA!");
+	?>
+	</div>
+</div>
+
 </br>
 <img src="<?php echo base_url('img/base_logo_siga.png'); ?>" alt="Logo SiGA" class="img-responsive img-center" style="width:240px;height:110px;" />
 
