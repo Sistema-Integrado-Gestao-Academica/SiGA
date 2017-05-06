@@ -145,7 +145,7 @@ class SelectiveProcess extends MX_Controller {
             $selectiveProcesses = array();
 
             foreach($processes as $process){
-                
+
                 $selectionProcess = $this->process_model->convertArrayToObject($process);
 
                 if($selectionProcess !== FALSE){
@@ -170,10 +170,10 @@ class SelectiveProcess extends MX_Controller {
     }
 
     private function getStatusByPhaseOnProcess($selectionProcess){
-        
+
         $currentStatus = $selectionProcess->getStatus();
         $newStatus = $currentStatus;
-        
+
         $phasesWithStatus = array(
             SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
             SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
@@ -347,7 +347,8 @@ class SelectiveProcess extends MX_Controller {
                     getSession()->showFlashMessage($type, $message);
                     redirect("program/selectiveprocess/courseSelectiveProcesses/{$courseId}");
                 } catch (SelectionProcessException $e) {
-
+                    getSession()->showFlashMessage('danger', $e->getMessage());
+                    redirect("program/selectiveprocess/courseSelectiveProcesses/{$courseId}");
                 }
             }
         );
@@ -420,7 +421,7 @@ class SelectiveProcess extends MX_Controller {
 
         if($phasesResultPerCandidate){
             $quantityOfPhases = sizeof($resultCandidatesByPhase);
-            $selectedCandidates = $this->getFinalResult($quantityOfPhases, $phasesResultPerCandidate, 
+            $selectedCandidates = $this->getFinalResult($quantityOfPhases, $phasesResultPerCandidate,
                                                         $selectiveProcess->getPassingScore(), $selectiveProcess->getVacancies());
             $resultCandidatesByPhase = $selectedCandidates + $resultCandidatesByPhase;
         }
@@ -437,7 +438,7 @@ class SelectiveProcess extends MX_Controller {
 
         $currentStatus = $selectiveProcess->getStatus();
         $phases = $selectiveProcess->getSettings()->getPhases();
-        
+
         $phasesWithStatus = array(
             SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE
         );
@@ -449,11 +450,11 @@ class SelectiveProcess extends MX_Controller {
                     case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE:
                         $phasesWithStatus[SelectionProcessConstants::IN_PRE_PROJECT_PHASE] = $phaseName;
                         break;
-                    
+
                     case SelectionProcessConstants::WRITTEN_TEST_PHASE:
                         $phasesWithStatus[SelectionProcessConstants::IN_WRITTEN_TEST_PHASE] = $phaseName;
                         break;
-                    
+
                     case SelectionProcessConstants::ORAL_TEST_PHASE:
                         $phasesWithStatus[SelectionProcessConstants::IN_ORAL_TEST_PHASE] = $phaseName;
                         break;
@@ -467,7 +468,7 @@ class SelectiveProcess extends MX_Controller {
 
         $finishedPhases = array();
         foreach ($phasesWithStatus as $status => $phaseName) {
-            
+
             if($status == $currentStatus){
                 break;
             }
@@ -506,9 +507,9 @@ class SelectiveProcess extends MX_Controller {
                         $approvedTimes = $phaseResult['approved'] ? $approvedTimes + 1 : $approvedTimes;
                     }
 
-                    
+
                     $candidatePointsAverage = $candidatePoints/$totalWeight;
-                    $selected = ($approvedTimes == $quantityOfPhases) &&  $candidatePointsAverage >= $passingScore ? TRUE : FALSE; 
+                    $selected = ($approvedTimes == $quantityOfPhases) &&  $candidatePointsAverage >= $passingScore ? TRUE : FALSE;
                     if(!$selected){
                         unset($candidatesScore[$candidateId]);
                     }
@@ -536,7 +537,7 @@ class SelectiveProcess extends MX_Controller {
         foreach ($candidatesScore as $candidateId => $candidateScore) {
 
             if($lastScore != NULL){
-                if($candidateScore['final_average'] == $lastScore['final_average']){              
+                if($candidateScore['final_average'] == $lastScore['final_average']){
                     $lastWeight = 0;
                     krsort($candidateScore);
                     $phase = key($candidateScore);
@@ -544,13 +545,13 @@ class SelectiveProcess extends MX_Controller {
                     krsort($lastScore);
                     $lastPhase = key($lastScore);
                     $lastAverage = $lastScore[$lastPhase]['average'];
-                        
+
                     if($candidateAverage > $lastAverage){
                         $key = $keys[$index - 1];
                         $candidates = array_swap($key, $candidateId, $candidates);
                     }
                 }
-                
+
             }
             $lastScore = $candidateScore;
             $index++;
@@ -561,7 +562,7 @@ class SelectiveProcess extends MX_Controller {
 
 
 
-    
+
 
     public function generatePDF(){
 

@@ -30,7 +30,7 @@ class SelectionProcessPhaseChange extends CI_Model {
         $process = $this->process_model->getById($processId);
 
         if($process === FALSE){
-            throw new SelectionProcessException('Invalid process.');
+            throw new SelectionProcessException('O processo informado é inválido.');
         }
 
         $currentStatus = $process->getStatus();
@@ -72,6 +72,7 @@ class SelectionProcessPhaseChange extends CI_Model {
                 break;
 
             case SelectionProcessConstants::IN_HOMOLOGATION_PHASE:
+                $this->checkIfCanFinishHomologation($process);
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $this->changeToStatus($process, $newStatus);
@@ -108,7 +109,7 @@ class SelectionProcessPhaseChange extends CI_Model {
                 break;
 
             default:
-                throw new SelectionProcessException('Invalid status for process.');
+                throw new SelectionProcessException('Status do processo inválido.');
                 break;
         }
     }
@@ -140,6 +141,16 @@ class SelectionProcessPhaseChange extends CI_Model {
             $process->getId(),
             $newStatus
         );
+    }
+
+    private function checkIfCanFinishHomologation($process){
+        $notHomologated = $this
+            ->process_subscription_model
+            ->getProcessFinalizedSubscriptions($process->getId());
+
+        if($notHomologated !== FALSE){
+            throw new SelectionProcessException("Ainda há inscrições deste processo para serem homologadas ou rejeitadas. Finalize a homologação para seguir para a próxima fase.");
+        }
     }
 
     private function notifyHomologationIsOver($process, $newStatus){
