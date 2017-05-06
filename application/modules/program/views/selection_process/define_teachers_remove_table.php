@@ -1,12 +1,15 @@
-<?= "<h4><i class='fa fa-plus-square'></i> Docentes adicionados ao processo:</h4>" ?>
-
 
 <?php if(!empty($processTeachers)): ?>
 
-    <?php buildTableDeclaration("teachers_added_to_process_table");
+    <?php
+    buildTableDeclaration(
+        "teachers_added_to_process_box",
+        "teachers_added_to_process_table",
+        "<h4><i class='fa fa-plus-square'></i> Docentes adicionados ao processo</h4>"
+    );
+
     buildTableHeaders([
         'Nome',
-        'E-mail',
         'Ações'
     ]);
     ?>
@@ -15,7 +18,6 @@
 
     <tr>
         <td><?= $teacher['name'] ?></td>
-        <td><?= $teacher['email'] ?></td>
         <td>
             <?= anchor(
                 "#",
@@ -32,3 +34,9 @@
 <?php else: ?>
     <?= callout('info', 'Nenhum docente vinculado a este processo.') ?>
 <?php endif ?>
+
+<script>
+    $(function() {
+        $('#teachers_added_to_process_table').dataTable();
+    });
+</script>

@@ -17,7 +17,7 @@
 <br>
 
 <style type="text/css">
-    #add_teachers_to_process_table, #teachers_added_to_process_table {
+    #add_teachers_to_process_box, #teachers_added_to_process_box {
         height: 400px;
         overflow-y: auto;
     }
