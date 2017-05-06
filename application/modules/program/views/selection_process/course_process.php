@@ -264,7 +264,7 @@ function showSubsConfigTab($processDocs, $researchLines){
 		        echo "<h3 class='box-title'>Documentos necessários para inscrição</h3>";
 		    echo "</div>";
 		    echo "<div class='box-body'>";
-		        echo "<ul class='list-unstyled row' align='left'>";
+		        echo "<ul class='row' align='left'>";
 		        	foreach ($processDocs as $doc) {
 		        		$docName = $doc['doc_name'];
 		            	echo "<li class='col-lg-6' style='white-space: normal'>{$docName}</li>";
@@ -281,10 +281,10 @@ function showSubsConfigTab($processDocs, $researchLines){
 		        echo "<h3 class='box-title'>Linhas de Pesquisa</h3>";
 		    echo "</div>";
 		    echo "<div class='box-body'>";
-		        echo "<ul class='list-unstyled row' align='left'>";
+		        echo "<ul class='row' align='left'>";
 		        	foreach ($researchLines as $researchLine) {
 						$name = $researchLine['description'];
-		            	echo "<li class='col-lg-6'>{$name}</li>";
+		            	echo "<li class='col-lg-6' style='white-space: normal'=>{$name}</li>";
 		        	}
 		        echo "</ul>";
 		    echo "</div>";

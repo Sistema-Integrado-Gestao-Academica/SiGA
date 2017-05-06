@@ -197,7 +197,7 @@ class SelectiveProcess extends MX_Controller {
                 foreach($phases as $id => $phase){
                     $phaseName = $phase->getPhaseName();
 
-                    if($phasesWithStatus[$currentStatus] == $phaseName){
+                    if(isset($phasesWithStatus[$currentStatus]) && $phasesWithStatus[$currentStatus] == $phaseName){
                         if(isset($phases[$id + 1])){
                             $newStatus = array_search($phases[$id + 1]->getPhaseName(), $phasesWithStatus);
                             break;

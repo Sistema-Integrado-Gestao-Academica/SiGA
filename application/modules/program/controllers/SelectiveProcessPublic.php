@@ -246,7 +246,8 @@ class SelectiveProcessPublic extends MX_Controller {
         withPermission(
             [
                 PermissionConstants::PUBLIC_SELECTION_PROCESS_PERMISSION,
-                PermissionConstants::SELECTION_PROCESS_PERMISSION
+                PermissionConstants::SELECTION_PROCESS_PERMISSION,
+                PermissionConstants::SELECTION_PROCESS_EVALUATION
             ],
             function() use($self, $docId, $subscriptionId){
                 $doc = $self->process_subscription_model->getSubscriptionDoc(
