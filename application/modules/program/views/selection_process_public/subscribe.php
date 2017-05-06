@@ -594,8 +594,42 @@
   "class='pull-left btn btn-danger btn-lg'"
 ); ?>
 
+<?php
+  newModal(
+    'subscription_loading',
+    'Atualizando inscrição...',
+    function(){
+      echo "<h4 class='text-center'>";
+      echo "<p>Estamos atualizando a sua inscrição.</p>";
+      echo "<p>Aguarde até que todos os dados e documentos tenham sido salvos.</p>";
+      echo "</h4>";
+      echo "<br>";
+      echo "<p class='text-center'>";
+      echo "<i class='fa fa-spinner fa-spin fa-5x fa-fw'>";
+      echo "</i><span class='sr-only'>Loading...</span>";
+      echo "<h4 class='text-center'>";
+      echo "<p><i>A página será atualizada quando tudo estiver pronto!</i></p>";
+      echo "</h4>";
+      echo "</p>";
+    },
+    null,
+    $formPath=FALSE,
+    "modal fade",
+    $closable=FALSE
+  );
+?>
+
 <script>
   $(document).ready(function(){
+
+    $("#subscribe_process_btn").click(function(event){
+      $('#subscription_loading').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
+
+      $('#subscription_loading').modal('show');
+    });
 
     checkCandidateGender();
 

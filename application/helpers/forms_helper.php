@@ -21,12 +21,14 @@ function alert($content, $type="info", $title=FALSE, $icon="info", $dismissible=
 	echo "</div>";
 }
 
-function newModal($id, $title, $body=null, $footer=null, $formPath=FALSE, $class="modal fade"){
+function newModal($id, $title, $body=null, $footer=null, $formPath=FALSE, $class="modal fade", $closable=TRUE){
 	echo "<div id='{$id}' class='{$class}'>";
     echo "<div class='modal-dialog'>";
         echo "<div class='modal-content'>";
             	echo "<div class='modal-header text-center'>";
-	                echo "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times; </button>";
+            		if($closable){
+	                	echo "<button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times; </button>";
+            		}
                 echo "<h3 class='modal-title'>{$title}</h3>";
             echo "</div>";
 
