@@ -76,3 +76,4 @@ function decorateNullData($str){
 
     return $str;
 }
+

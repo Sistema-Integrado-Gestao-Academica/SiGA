@@ -749,6 +749,7 @@ class Course extends MX_Controller {
 
 		$success = $this->validateReseachLineData();
 		$session = getSession();
+
 		if ($success) {
 			$researchLine  = $this->input->post("researchLine");
 			$researchCourse   = $this->input->post("research_course");
@@ -757,7 +758,6 @@ class Course extends MX_Controller {
 					'description'    => $researchLine,
 					'id_course' => $researchCourse
 			);
-
 
 			$wasSaved = $this->course_model->saveResearchLine($newResearchLine);
 			if ($wasSaved){
@@ -784,7 +784,6 @@ class Course extends MX_Controller {
 		$this->form_validation->set_rules("researchLine", "Linha de Pesquisa", "required|trim|valid_name");
 		$this->form_validation->set_error_delimiters("<p class='alert-danger'>", "</p>");
 		$success = $this->form_validation->run();
-
 		return $success;
 	}
 

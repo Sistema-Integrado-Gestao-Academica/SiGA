@@ -110,6 +110,11 @@ class CI_Model {
         return $foundData;
     }
 
+    protected function persist($data, $otherTable=FALSE){
+        $table = $otherTable === FALSE ? $this->TABLE : $otherTable;
+        $this->db->insert($table, $data);
+    }
+
     public function exists($field, $value, $otherTable=FALSE){
         $found = $this->get($field, $value, TRUE, FALSE, $otherTable);
         $exists = $found !== FALSE;

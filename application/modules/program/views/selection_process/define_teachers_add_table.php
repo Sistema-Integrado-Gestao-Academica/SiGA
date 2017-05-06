@@ -1,12 +1,14 @@
-<?= "<h4><i class='fa fa-list'></i> Docentes do programa:</h4>" ?>
-
 <?php if(!empty($teachers)): ?>
 
-    <?php buildTableDeclaration("add_teachers_to_process_table");
+    <?php
+    buildTableDeclaration(
+        "add_teachers_to_process_box",
+        "add_teachers_to_process_table",
+        "<h4><i class='fa fa-list'></i> Docentes do programa</h4>"
+    );
 
     buildTableHeaders([
         'Nome',
-        'E-mail',
         'Ações'
     ]);
     ?>
@@ -15,7 +17,6 @@
 
     <tr>
         <td><?= $teacher['name'] ?></td>
-        <td><?= $teacher['email'] ?></td>
         <td>
             <?php if(!$processTeachers || !in_array($teacher, $processTeachers)): ?>
             <?= anchor(
@@ -35,3 +36,9 @@
 <?php else: ?>
     <?= callout('info', 'Nenhum docente cadastrado nos cursos deste programa.') ?>
 <?php endif ?>
+
+<script>
+    $(function() {
+        $('#add_teachers_to_process_table').dataTable();
+    });
+</script>

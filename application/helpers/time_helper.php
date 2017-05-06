@@ -18,9 +18,20 @@ function getCurrentYear(){
 	return $currentYear;
 }
 
-function convertDateToDateTime($date){
+function convertDateToDB($date, $format='d/m/Y'){
+	$dateTimeReady = convertDateToDateTime($date, $format);
+	try{
+		$dateTimeObj = new DateTime($dateTimeReady);
+		$dateDbReady = $dateTimeObj->format("Y/m/d");
+	    return $dateDbReady;
+	}catch(Exception $e){
+		throw new RuntimeException("The '{$date}' is invalid.");
+	}
+}
 
-	$validDate = validateDate($date);
+function convertDateToDateTime($date, $format='d/m/Y'){
+
+	$validDate = validateDate($date, $format);
 
 	if($validDate){
 		$date = formatDateToDateTime($validDate);
@@ -32,9 +43,9 @@ function convertDateToDateTime($date){
 	return $date;
 }
 
-function validateDate($date){
+function validateDate($date, $format="d/m/Y"){
 
-	$date = date_parse_from_format("d/m/Y", $date);
+	$date = date_parse_from_format($format, $date);
 	$dateIsValid = $date["year"] !== FALSE && $date["month"] !== FALSE
 				   && $date["day"] !== FALSE && $date["error_count"] === 0
 				   && $date["warning_count"] === 0;
@@ -71,8 +82,8 @@ function formatDateToDateTime($date){
 
 function validateDatesDiff($startDate, $endDate){
 
-	// The end date must be later than the start date
-	if($endDate <= $startDate){
+	// The end date must be later than or equal the start date
+	if($endDate < $startDate){
 		$validDate = FALSE;
 	}
 	else{
@@ -83,7 +94,6 @@ function validateDatesDiff($startDate, $endDate){
 }
 
 function convertDateTimeToDateBR($date){
-
 	if($date != NULL){
 		$date = new DateTime($date);
 		$date = $date->format("d/m/Y");
@@ -92,19 +102,17 @@ function convertDateTimeToDateBR($date){
 	return $date;
 }
 
+function validateDateInPeriod($date, DateTime $startDate=null, DateTime $endDate=null){
 
-// params should be in datetime (not in string)
-function validateDateInPeriod($date, $startDate, $endDate){
-
-	$intervalStartDate = $startDate->diff($date);
-	$intervalEndDate = $endDate->diff($date);
-	$validStartDate = ($intervalStartDate->invert == 0 && $intervalStartDate->days >= 0) || ($intervalStartDate->invert == 1 && $intervalStartDate->days == 0);
-	$validEndDate = ($intervalEndDate->invert == 1 && $intervalEndDate->days > 0) || ($intervalEndDate->invert == 0 && $intervalEndDate->days == 0);
-	if($validStartDate && $validEndDate){
-		$validDate = TRUE;
-	}
-	else{
-		$validDate = FALSE;
+	$validDate = FALSE;
+	if(!is_null($startDate) && !is_null($endDate)){
+		$intervalStartDate = $startDate->diff($date);
+		$intervalEndDate = $endDate->diff($date);
+		$validStartDate = ($intervalStartDate->invert == 0 && $intervalStartDate->days >= 0) || ($intervalStartDate->invert == 1 && $intervalStartDate->days == 0);
+		$validEndDate = ($intervalEndDate->invert == 1 && $intervalEndDate->days > 0) || ($intervalEndDate->invert == 0 && $intervalEndDate->days == 0);
+		if($validStartDate && $validEndDate){
+			$validDate = TRUE;
+		}
 	}
 	return $validDate;
 }
@@ -117,4 +125,17 @@ function getYearsOfAPeriod($startYear, $endYear){
 	}
 
 	return $years;
+}
+
+/**
+* @param $dateToValidate in datetime
+*/
+function validateIfDateIsFutureDate($dateToValidate){
+
+	$today = new DateTime("America/Sao_Paulo");
+	$today->setTime("0","0","0");
+
+	$validDate = validateDatesDiff($today, $dateToValidate);
+
+	return $validDate;
 }

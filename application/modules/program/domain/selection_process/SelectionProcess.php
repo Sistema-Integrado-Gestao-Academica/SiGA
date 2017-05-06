@@ -11,10 +11,25 @@ abstract class SelectionProcess{
 	const INVALID_SETTINGS = "Configurações inválidas para o processo seletivo.";
 	const INVALID_NOTICE_PATH = "O caminho para o edital informado é inválido ou não existe.";
 
+	const INVALID_VACANCIES = "O número de vagas deve ser maior que zero.";
+	const VACANCIES_REQUIRED = "O número de vagas é de preenchimento obrigatório.";
+
+	const MIN_VACANCIES = 1;
+
 	const MIN_ID = 1;
+
+	const MIN_PASSING_SCORE = 0;
+    const MAX_PASSING_SCORE = 100;
+
+    const INVALID_PASSING_SCORE = "A nota de corte do processo está fora do intervalo permitido.";
+    const PASSING_SCORE_REQUIRED = "A nota de corte do processo é obrigatória.";
 
 	private $id;
 	private $name;
+	private $vacancies;
+	private $status;
+	private $passingScore;
+	private $suggestedPhase = FALSE;
 
 	// Foreign Key from Course. Course id
 	private $course;
@@ -22,10 +37,13 @@ abstract class SelectionProcess{
 	private $noticePath;
 	protected $settings;
 
-	public function __construct($course = FALSE, $name = "", $id = FALSE){
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE, $passingScore){
 		$this->setCourse($course);
 		$this->setName($name);
 		$this->setId($id);
+		$this->setVacancies($vacancies);
+		$this->setStatus($status);
+		$this->setPassingScore($passingScore);
 	}
 
 	public function addSettings($settings){
@@ -87,6 +105,43 @@ abstract class SelectionProcess{
 		}
 	}
 
+	private function setVacancies($vacancies){
+		if($vacancies != ''){
+            if($vacancies >= self::MIN_VACANCIES){
+                $this->vacancies = $vacancies;
+            }
+            else{
+                throw new SelectionProcessException(self::INVALID_VACANCIES);
+            }
+        }
+        else{
+            throw new SelectionProcessException(self::VACANCIES_REQUIRED);
+        }
+	}
+
+	public function setPassingScore($passingScore){
+		if($passingScore != ''){
+            if($passingScore >= self::MIN_PASSING_SCORE && $passingScore <= self::MAX_PASSING_SCORE){
+                
+                $this->passingScore = $passingScore;
+            }
+            else{
+                throw new SelectionProcessException(self::INVALID_PASSING_SCORE);
+            }
+        }
+        else{
+            throw new SelectionProcessException(self::PASSING_SCORE_REQUIRED);
+        }
+	}
+
+	public function setStatus($status){
+		$this->status = $status;
+	}
+
+	public function setSuggestedPhase($suggestedPhase){
+		$this->suggestedPhase = $suggestedPhase;
+	}
+
 	public function getName(){
 		return $this->name;
 	}
@@ -105,6 +160,22 @@ abstract class SelectionProcess{
 
 	public function getNoticePath(){
 		return $this->noticePath;
+	}
+
+	public function getVacancies(){
+		return $this->vacancies;
+	}
+
+	public function getStatus(){
+		return $this->status;
+	}
+
+	public function getSuggestedPhase(){
+		return $this->suggestedPhase;
+	}
+
+	public function getPassingScore(){
+		return $this->passingScore;
 	}
 
 	public abstract function getType();

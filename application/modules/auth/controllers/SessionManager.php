@@ -35,7 +35,7 @@ class SessionManager extends MX_Controller{
 
         $userGroups = $this->module->loadUserGroups($userId);
 
-        if($userGroups !== FALSE){
+        if(!empty($userGroups)){
 
             foreach($userGroups as $group){
                 $user->addGroup($group);
@@ -79,7 +79,7 @@ class SessionManager extends MX_Controller{
     }
 
     public function removeGroupOfUser($user, $groupToRemoveId){
-        $user->removeGroup($groupToRemoveId); 
+        $user->removeGroup($groupToRemoveId);
         $this->saveData(self::CURRENT_USER_LABEL, $user);
     }
 

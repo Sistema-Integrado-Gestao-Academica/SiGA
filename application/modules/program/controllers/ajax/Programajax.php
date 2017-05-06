@@ -1,11 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once(APPPATH.'exception/UploadException.php');
 
 class ProgramAjax extends MX_Controller {
 
     public function addInformationOnPortal(){
         $programId = $this->input->post("program_id");
-        $data = $this->getDataFromForm($programId);            
+        $data = $this->getDataFromForm($programId);
 
         if($data){
             $data['visible'] = TRUE;
@@ -46,7 +47,7 @@ class ProgramAjax extends MX_Controller {
         if($title != $info['title']){
             $titleHasChanged = TRUE;
         }
-        $data = $this->getDataFromForm($programId, $titleHasChanged);            
+        $data = $this->getDataFromForm($programId, $titleHasChanged);
 
         if($data){
             $data['id'] = $infoId;
@@ -68,7 +69,7 @@ class ProgramAjax extends MX_Controller {
     private function getDataFromForm($programId, $checkIfTitleExists = TRUE){
         $title = $this->input->post("title");
         $details = $this->input->post("details");
-       
+
         $validTitle = !is_null($title) && !empty($title);
         if($validTitle){
             $this->load->model("program/program_model");
@@ -76,7 +77,7 @@ class ProgramAjax extends MX_Controller {
                 'id_program' => $programId,
                 'title' => $title,
                 'details' => $details,
-            );  
+            );
             if($checkIfTitleExists){
                 $titleExists = $this->program_model->checkIfTitleExists($title, $programId);
                 if($titleExists){
@@ -109,8 +110,8 @@ class ProgramAjax extends MX_Controller {
         $folderName = "portal";
         $allowedTypes = "jpg|png|pdf|jpeg";
 
-        $path = uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes);
-        if($path){
+        try{
+            $path = uploadFile($fileName, $ids, $fieldId, $folderName, $allowedTypes);
             $this->load->model("program/program_model");
             $saved = $this->program_model->updateInformationField($infoId, array('file_path' => $path));
 
@@ -124,12 +125,8 @@ class ProgramAjax extends MX_Controller {
                     echo "Arquivo não foi incluído. Tente novamente.";
                 }, "danger", FALSE);
             }
-        }
-        else{
-            $this->load->library('upload');
-            $errors = $this->upload->display_errors();
-            callout("danger", $errors);
-
+        }catch(UploadException $e){
+            callout("danger", $e->getErrorData());
         }
     }
 

@@ -13,6 +13,6 @@ class Migration_Adiciona_coluna_projeto_na_producao_intelectual extends CI_Migra
 	}
 
 	public function down(){
-		$this->dbforge->add_column('intellectual_production', "project");
+		$this->dbforge->drop_column('intellectual_production', "project");
 	}
 }

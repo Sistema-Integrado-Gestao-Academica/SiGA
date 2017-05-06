@@ -8,6 +8,8 @@
 		SelectionProcessConstants::SPECIAL_STUDENT => 'Alunos Especiais'
 	);
 
+	$class = $canNotEdit ? 'form-control disabled' : 'form-control';
+
 ?>
 
 <!-- Basic data of selection process -->
@@ -18,31 +20,27 @@
 <br>
 
 <div class="row">
-	<div class="col-md-3">
-		<?= form_label("Processo Seletivo para:", "student_type"); ?>
-		<?= form_dropdown("student_type", $studentType, $selectedStudentType, "id='student_type' class='form-control'"); ?>
-	</div>
 	<div class="col-md-6">
 		<?= form_label("Nome do edital", "selective_process_name"); ?>
 		<?= form_input($name); ?>
 	</div>
+	<div class="col-md-3">
+		<?= form_label("Processo Seletivo para:", "student_type"); ?>
+		<?= form_dropdown("student_type", $studentType, $selectedStudentType, "id='student_type' class={$class}"); ?>
+	</div>
 </div>
-
 <br>
-<br>
-
-<!-- Applying period of selection process -->
-
-<h4><i class="fa fa-calendar"></i> Período de inscrições</h4>
-<br>
-
 <div class="row">
-	<div class="col-md-3">
-		<?= form_label("Data de início do edital", "selective_process_start_date"); ?>
-		<?= form_input($startDate); ?>
+	<div class="col-md-4">
+		<?= form_label("Número de vagas:", "vacancies"); ?>
+		<?= form_input($vacancies); ?>
 	</div>
-	<div class="col-md-3">
-		<?= form_label("Data final do edital", "selective_process_end_date"); ?>
-		<?= form_input($endDate); ?>
+	<div class="col-md-4">
+		<?= form_label("Nota de corte do processo:", "vacancies"); ?>
+		<?= form_input($passingScore); ?>
 	</div>
 </div>
+
+<br>
+<br>
+

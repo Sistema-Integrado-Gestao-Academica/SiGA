@@ -20,15 +20,11 @@ class SelectiveProcess extends MX_Controller {
     const MODEL_NAME = "program/selectiveprocess_model";
     const MODEL_OBJECT = "process_model";
 
-    // Exceptions messages
-    const NOTICE_FILE_ERROR_ON_UPLOAD = "Tente novamente.";
-    const NOTICE_FILE_ERROR_ON_UPDATE = "Não foi possível salvar o arquivo do Edital. Tente novamente.";
-    const NOTICE_FILE_SUCCESS = 'Processo Seletivo e edital salvo com sucesso!';
-
     public function __construct(){
         parent::__construct();
 
         $this->load->model(self::MODEL_NAME, self::MODEL_OBJECT);
+        $this->load->helper('selectionprocess');
     }
 
     public function index() {
@@ -80,43 +76,47 @@ class SelectiveProcess extends MX_Controller {
         $course = $this->course_model->getCourseById($courseId);
 
         $selectiveProcesses = $this->getCourseSelectiveProcesses($courseId);
+        $configData = $this->getConfigDataOfProcesses($selectiveProcesses);
 
-        $status = $this->getProcessStatus($selectiveProcesses);
+
         $data = array(
             'course' => $course,
-            'selectiveProcesses' => $selectiveProcesses,
-            'status' => $status
+            'selectiveProcesses' => $selectiveProcesses
         );
+
+        $data = $data + $configData;
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/course_process", $data);
     }
 
-    private function getProcessStatus($selectiveProcesses){
+    private function getConfigDataOfProcesses($selectiveProcesses){
 
-        $status = array();
+        $processesTeachers = array();
+        $processesDocs = array();
+        $processesResearchLines = array();
+
+        $this->load->model('program/selectiveprocessconfig_model', 'process_config_model');
+
         if($selectiveProcesses !== FALSE){
             foreach ($selectiveProcesses as $selectiveProcess) {
-                $selectiveProcessId = $selectiveProcess->getId();
-                $divulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
-                if(!is_null($divulgation)){
-                    $divulgationDate = $divulgation['date'];
-                    $divulgationDate = new Datetime($divulgationDate);
-                    $today = new Datetime();
-                    if($divulgationDate <= $today){
-                        $status[$selectiveProcessId] = "<span class='label label-success'>".SelectionProcessConstants::DISCLOSED."</span>";
-                    }
-                    else{
-                        $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-                    }
-                }
-                else{
-                    $status[$selectiveProcessId] = "<span class='label label-warning'>".SelectionProcessConstants::NOT_DISCLOSED."</span>";
-                }
+                $processId = $selectiveProcess->getId();
+                $processTeachers = $this->process_model->getProcessTeachers($processId);
+                $processDocs = $this->process_config_model->getProcessDocs($processId);
+                $courseResearchLines = $this->course_model->getCourseResearchLines($selectiveProcess->getCourse());
 
+                $processesTeachers[$processId] = ($processTeachers);
+                $processesDocs[$processId] = ($processDocs);
+                $processesResearchLines[$processId] = ($courseResearchLines);
             }
         }
 
-        return $status;
+        $data = array(
+            'processesTeachers' => $processesTeachers,
+            'processesDocs' => $processesDocs,
+            'processesResearchLines' => $processesResearchLines
+        );
+
+        return $data;
     }
 
     public function openSelectiveProcess($courseId){
@@ -129,138 +129,14 @@ class SelectiveProcess extends MX_Controller {
 
         $data = array(
             'course' => $course,
-            'phases' => $phases
+            'phases' => $phases,
         );
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/new", $data);
     }
 
-    private function setUploadOptions($fileName, $programId, $courseId, $processId){
 
-        // Remember to give the proper permission to the /upload_files folder
-        define("NOTICES_UPLOAD_FOLDER_PATH", "upload_files/notices");
-
-        $desiredPath = APPPATH.NOTICES_UPLOAD_FOLDER_PATH;
-
-        $ids = array(
-            "p" => $programId,
-            "c" => $courseId,
-            "s" => $processId
-        );
-
-        $path = $this->createFolders($desiredPath, $ids);
-
-        $config['upload_path'] = $path;
-        $config['file_name'] = $fileName;
-        $config['allowed_types'] = 'pdf';
-        $config['max_size'] = '5500';
-        $config['remove_spaces'] = TRUE;
-
-        return $config;
-    }
-
-    private function createFolders($desiredPath, $ids){
-
-        foreach ($ids as $folderType => $id) {
-
-            $auxPath = $desiredPath;
-
-            $pathToAdd = "/".$folderType."_".$id;
-
-            if(is_dir($auxPath.$pathToAdd)){
-                $desiredPath .= $pathToAdd;
-                $auxPath = $desiredPath;
-            }
-            else{
-                mkdir($auxPath.$pathToAdd, 0755, TRUE);
-                $desiredPath .= $pathToAdd;
-            }
-        }
-
-        return $desiredPath;
-    }
-
-    public function saveNoticeFile(){
-
-        $courseId = $this->input->post("course");
-        $processId = base64_decode($this->input->post("selection_process_id"));
-
-        $message = $this->uploadNoticeFile($courseId, $processId);
-        switch ($message) {
-            case self::NOTICE_FILE_SUCCESS:
-                $status = "success";
-                $pathToRedirect = "program/selectiveprocess/courseSelectiveProcesses/{$courseId}";
-                break;
-
-            case self::NOTICE_FILE_ERROR_ON_UPDATE:
-                $status = "danger";
-                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
-                break;
-
-            default:
-                $status = "danger";
-                $pathToRedirect = "program/selectiveprocess/tryUploadNoticeFile/{$processId}";
-                break;
-        }
-
-        $this->session->set_flashdata($status, $message);
-        redirect($pathToRedirect);
-    }
-
-    public function uploadNoticeFile($courseId, $processId){
-
-        $this->load->library('upload');
-        $process = $this->process_model->getById($processId);
-
-        $this->load->model("program/course_model");
-        $course = $this->course_model->getCourseById($courseId);
-
-        $config = $this->setUploadOptions($process->getName(), $course["id_program"], $course["id_course"], $processId);
-
-        $this->upload->initialize($config);
-        $status = "";
-        if($this->upload->do_upload("notice_file")){
-
-            $noticeFile = $this->upload->data();
-            $noticePath = $noticeFile['full_path'];
-
-            $wasUpdated = $this->updateNoticeFile($processId, $noticePath);
-
-            if($wasUpdated){
-                $status = self::NOTICE_FILE_SUCCESS;
-            }
-            else{
-                $status = self::NOTICE_FILE_ERROR_ON_UPDATE;
-            }
-        }
-        else{
-            // Errors on file upload
-            $errors = $this->upload->display_errors();
-            $status = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
-        }
-
-        return $status;
-    }
-
-    private function updateNoticeFile($processId, $noticePath){
-
-        $wasUpdated = $this->process_model->updateNoticeFile($processId, $noticePath);
-
-        return $wasUpdated;
-    }
-
-    public function tryUploadNoticeFile($processId){
-
-        $process = $this->process_model->getById($processId);
-
-        $data = array(
-            'process' => $process
-        );
-
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/upload_notice", $data);
-    }
-
-    private function getCourseSelectiveProcesses($courseId){
+    private function  getCourseSelectiveProcesses($courseId){
 
         $processes = $this->process_model->getCourseSelectiveProcesses($courseId);
 
@@ -270,52 +146,14 @@ class SelectiveProcess extends MX_Controller {
 
             foreach($processes as $process){
 
-                $phasesOrder = unserialize($process[SelectiveProcess_model::PHASE_ORDER_ATTR]);
-                $startDate = convertDateTimeToDateBR($process[SelectiveProcess_model::START_DATE_ATTR]);
-                $endDate = convertDateTimeToDateBR($process[SelectiveProcess_model::END_DATE_ATTR]);
-                $phases = $this->process_model->getPhases($process['id_process']);
-                $phases = $this->process_model->sortPhasesBasedInOrder($phases, $phasesOrder);
-                $settings = new ProcessSettings(
-                    $startDate,
-                    $endDate,
-                    $phases,
-                    $phasesOrder
-                );
-                if($process[SelectiveProcess_model::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
-                    try{
-                        $selectionProcess = new RegularStudentProcess(
-                            $process[SelectiveProcess_model::COURSE_ATTR],
-                            $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR]
-                        );
-                        $selectionProcess->addSettings($settings);
-                        $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
-                        if(!is_null($noticePath)){
-                            $selectionProcess->setNoticePath($noticePath);
-                        }
-
-                    }catch(SelectionProcessException $e){
-                        $selectionProcess = FALSE;
-                    }
-
-                }else{
-                    try{
-                        $selectionProcess = new SpecialStudentProcess(
-                            $process[SelectiveProcess_model::COURSE_ATTR],
-                            $process[SelectiveProcess_model::NOTICE_NAME_ATTR],
-                            $process[SelectiveProcess_model::ID_ATTR]
-                        );
-                        $selectionProcess->addSettings($settings);
-                        $noticePath = $process[SelectiveProcess_model::NOTICE_PATH_ATTR];
-                        if(!is_null($noticePath)){
-                            $selectionProcess->setNoticePath($noticePath);
-                        }
-                    }catch(SelectionProcessException $e){
-                        $selectionProcess = FALSE;
-                    }
-                }
+                $selectionProcess = $this->process_model->convertArrayToObject($process);
 
                 if($selectionProcess !== FALSE){
+                    $statusByDate = getProcessStatusByDate($selectionProcess);
+                    if ($statusByDate != $process['status']){
+                        $statusByPhasesOrder = $this->getStatusByPhaseOnProcess($selectionProcess);
+                        $selectionProcess->setSuggestedPhase($statusByPhasesOrder);
+                    }
                     $selectiveProcesses[] = $selectionProcess;
                 }else{
                     // Something is wrong with the data registered on database
@@ -327,106 +165,100 @@ class SelectiveProcess extends MX_Controller {
         }else{
             $selectiveProcesses = FALSE;
         }
+
         return $selectiveProcesses;
     }
 
-    public function addTeacherToProcess(){
-        $processId = $this->input->post('processId');
-        $teacherId = $this->input->post('teacherId');
-        $programId = $this->input->post('programId');
-        $self = $this;
-        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $processId, $teacherId, $programId){
-                $self->process_model->addTeacherToProcess($processId, $teacherId);
-                $self->updateDefineTeacherTables($processId, $programId);
+    private function getStatusByPhaseOnProcess($selectionProcess){
+
+        $currentStatus = $selectionProcess->getStatus();
+        $newStatus = $currentStatus;
+
+        $phasesWithStatus = array(
+            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
+            SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
+            SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE,
+            SelectionProcessConstants::IN_ORAL_TEST_PHASE => SelectionProcessConstants::ORAL_TEST_PHASE
+        );
+
+        if($currentStatus == SelectionProcessConstants::DISCLOSED){
+            $newStatus = SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS;
+        }
+        elseif ($currentStatus == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS) {
+            $newStatus = SelectionProcessConstants::IN_HOMOLOGATION_PHASE;
+        }
+        else{
+            $settings = $selectionProcess->getSettings();
+            $phasesOrder = $settings->getPhasesOrder();
+            $phases = $settings->getPhases();
+
+            $lastPhaseName = $phases[0]->getPhaseName();
+            if($phases){
+                foreach($phases as $id => $phase){
+                    $phaseName = $phase->getPhaseName();
+
+                    if(isset($phasesWithStatus[$currentStatus]) && $phasesWithStatus[$currentStatus] == $phaseName){
+                        if(isset($phases[$id + 1])){
+                            $newStatus = array_search($phases[$id + 1]->getPhaseName(), $phasesWithStatus);
+                            break;
+                        }
+                        else{
+                            $newStatus = SelectionProcessConstants::FINISHED;
+                            break;
+                        }
+                    }
+                }
             }
-        );
+
+        }
+
+        return $newStatus;
     }
 
-    public function removeTeacherFromProcess(){
-        $processId = $this->input->post('processId');
-        $teacherId = $this->input->post('teacherId');
-        $programId = $this->input->post('programId');
-        $self = $this;
-        withPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION,
-            function() use ($self, $processId, $teacherId, $programId){
-                $self->process_model->removeTeacherFromProcess($processId, $teacherId);
-                $self->updateDefineTeacherTables($processId, $programId);
-            }
-        );
-    }
-
-    private function updateDefineTeacherTables($processId, $programId){
-        $data = $this->getDefineTeachersViewData($processId, $programId);
-        $teachers = $data['teachers'];
-        $processTeachers = $data['processTeachers'];
-        include(MODULESPATH.'program/views/selection_process/define_teachers_tables.php');
-    }
-
-    private function getDefineTeachersViewData($processId, $programId){
-
-        $session = getSession();
-        $user = $session->getUserData();
-        $secretaryId = $user->getId();
-
-        $this->load->model('program/program_model');
-        $programsTeachers = $this->program_model->getProgramTeachers($programId);
-
-        $processTeachers = $this->process_model->getProcessTeachers($processId);
-
-        $data = array(
-            'teachers' => $programsTeachers,
-            'processTeachers' => $processTeachers
-        );
-
-        return $data;
-    }
-
-    private function getEditProcessViewData($processId, $courseId){
+    private function getEditProcessViewData($processId){
         $selectiveProcess = $this->process_model->getById($processId);
+
+        // If process has a notice path it was already divulgated
+        $noticePath = $selectiveProcess->getNoticePath();
+        $canNotEdit = is_null($noticePath) ? FALSE : TRUE;
+
         $this->load->module("program/phase");
         $allPhases = $this->phase->getAllPhases();
 
         $phases = $this->getProcessPhasesToEdit($selectiveProcess, $allPhases);
 
-        $noticePath = $selectiveProcess->getNoticePath();
-        $names = explode("/", $noticePath);
-        $noticeFileName = array_pop($names);
-
-        $divulgation = $this->process_model->getProcessDivulgations($processId, TRUE);
-
         $editProcessData = array(
-            'selectiveprocess' => $selectiveProcess,
+            'process' => $selectiveProcess,
             'processId' => $processId,
-            'courseId' => $courseId,
-            'phasesNames' => $phases['phasesNames'],
-            'phasesWeights' => $phases['phasesWeights'],
-            'noticeFileName' => $noticeFileName,
-            'divulgation' => $divulgation
+            'phases' => $phases,
+            'allPhases' => $allPhases,
+            'canNotEdit' => $canNotEdit
         );
 
         return $editProcessData;
     }
 
-    public function edit($processId, $courseId){
+    public function edit($processId){
 
-        $editProcessData = $this->getEditProcessViewData($processId, $courseId);
+        $editProcessData = $this->getEditProcessViewData($processId);
 
         $this->load->model("program/course_model");
-        $course = $this->course_model->getCourseById($courseId);
-        $defineTeacherData = $this->getDefineTeachersViewData($processId, $course['id_program']);
-
-        $data = $editProcessData + $defineTeacherData;
-
+        $process = $editProcessData['process'];
+        $course = $this->course_model->getCourseById($process->getCourse());
+        $this->load->module("program/selectiveprocessconfig");
+        $defineTeacherData = $this->selectiveprocessconfig->getDefineTeachersViewData($processId, $course['id_program']);
+        $configData = $this->selectiveprocessconfig->getDataSubscriptionConfig($processId);
+        $data = $editProcessData + $defineTeacherData + $configData;
         $data['programId'] = $course['id_program'];
+        $data['phasesIds'] = $this->selectiveprocessconfig->getPhasesIds($data['process']);
+
 
         loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/edit", $data);
     }
 
     private function getProcessPhasesToEdit($selectiveProcess, $allPhases){
 
-        $phasesNames = array();
-        $phasesWeights = array();
+        $phases = array();
         $processPhases = $selectiveProcess->getSettings()->getPhases();
 
         foreach ($allPhases as $phase) {
@@ -436,28 +268,37 @@ class SelectiveProcess extends MX_Controller {
                 foreach ($processPhases as $processPhase) {
                     $processPhaseId = $processPhase->getPhaseId();
                     if($phaseId == $processPhaseId){
-                        $phasesNames[$phaseId] = $processPhase->getPhaseName();
+                        $name = $processPhase->getPhaseName();
                         if($phaseId != SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
-                            $phasesWeights[$phaseId] = $processPhase->getWeight();
+                            $weight = $processPhase->getWeight();
+                            $grade = $processPhase->getGrade();
+                            $knockoutPhase = $processPhase->isKnockoutPhase();
                         }
                         else{
-                            $phasesWeights[$phaseId] = "0";
+                            $weight = 0;
+                            $grade = 0;
+                            $knockoutPhase = FALSE;
                         }
+                        $phases[$phaseId] = array(
+                            'name' => $name,
+                            'weight' => $weight,
+                            'grade' => $grade,
+                            'knockoutPhase' => $knockoutPhase
+                        );
                         $hasThePhase = TRUE;
                         break;
                     }
                 }
             }
             if(!$hasThePhase){
-                $phasesNames[$phaseId] = $phase->getPhaseName();
-                $phasesWeights[$phaseId] = "-1"; // Phase Not selected
+                $phases[$phaseId] = array(
+                    'name' => $phase->getPhaseName(),
+                    'weight' => "-1", // Phase not selected
+                    'grade' => "-1",// Phase not selected
+                    'knockoutPhase' => TRUE
+                );
             }
         }
-
-        $phases = array(
-            'phasesNames' => $phasesNames,
-            'phasesWeights' => $phasesWeights
-        );
 
         return $phases;
     }
@@ -474,133 +315,270 @@ class SelectiveProcess extends MX_Controller {
             $status = "danger";
             $message = "Nenhum arquivo encontrado.";
             $this->session->set_flashdata($status, $message);
-            redirect("edit_selection_process/{$selectiveProcessId}/{$courseId}");
+            $this->downloadNotice($selectiveProcessId, $courseId);
         }
     }
 
-    public function loadDefineDatesPage($selectiveProcessId, $courseId){
+    public function goToNextPhase($processId, $courseId){
+        $self = $this;
+        withPermissionAnd(
+            PermissionConstants::SELECTION_PROCESS_PERMISSION,
+            function() use ($self, $courseId){
+                return checkIfUserIsSecretary($courseId);
+            },
+            function() use ($self, $processId, $courseId){
+                $statusByDate = $self->input->post("suggested_phase");
 
-        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
-        $processDivulgation = $this->process_model->getProcessDivulgations($selectiveProcessId, TRUE);
+                $self->load->service(
+                    'program/SelectionProcessPhaseChange',
+                    'phase_change_service'
+                );
 
-        $data = array(
-            'selectiveprocess' => $selectiveProcess,
-            'courseId' => $courseId,
-            'processDivulgation' => $processDivulgation
-        );
+                try{
+                    $changed = $self
+                        ->phase_change_service
+                        ->changeProcessPhase($processId, $statusByDate);
 
-        $this->load->helper('selectionprocess');
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/define_dates", $data);
-    }
+                    $type = $changed ? "success" : "danger";
+                    $message = $changed
+                        ? "O processo foi avançado com sucesso."
+                        : "Não foi possível passar para a próxima fase. Tente novamente.";
 
-    public function divulgations($selectiveProcessId){
-        
-        $selectiveProcess = $this->process_model->getById($selectiveProcessId);
-        $processDivulgations = $this->process_model->getProcessDivulgations($selectiveProcessId);
-
-        $data = array(
-            'selectiveprocess' => $selectiveProcess,
-            'processDivulgations' => $processDivulgations
-        );
-
-        $this->load->helper('selectionprocess');
-
-
-        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/divulgations", $data);
-    }
-
-
-    public function addDivulgation(){
-        $processId = $this->input->post("process_id");
-        $description = $this->input->post("description");
-        $message = $this->input->post("message");
-        $related_phase = $this->input->post("phase");
-        $initial_divulgation = $this->input->post("initial_divulgation");
-
-        $ids = array(
-            "p" => $processId
-        );
-
-        $fieldId = "divulgation_file";
-        $folderName = "divulgations";
-        $allowedTypes = "jpg|png|pdf|jpeg";
-
-        if (isset($_FILES['divulgation_file']) && is_uploaded_file($_FILES['divulgation_file']['tmp_name'])) {
-           $filePath = uploadFile(FALSE, $ids, $fieldId, $folderName, $allowedTypes);
-        }
-        else{
-           $filePath = NULL;
-        }
-        
-        $today = new Datetime();
-        $today = $today->format("Y/m/d");
-        if($filePath || is_null($filePath)){
-            $data = array(
-                'id_process' => $processId, 
-                'description' => $description,
-                'message' => $message,
-                'initial_divulgation' => $initial_divulgation,
-                'date' => $today,
-                'file_path' => $filePath 
-            );
-            if($related_phase !== "0"){
-                $data['related_id_phase'] = $related_phase;
+                    getSession()->showFlashMessage($type, $message);
+                    redirect("program/selectiveprocess/courseSelectiveProcesses/{$courseId}");
+                } catch (SelectionProcessException $e) {
+                    getSession()->showFlashMessage('danger', $e->getMessage());
+                    redirect("program/selectiveprocess/courseSelectiveProcesses/{$courseId}");
+                }
             }
-            $saved = $this->process_model->saveProcessDivulgation($data);
+        );
 
-            if($saved){
-                $status = "success";
-                $message = "Nova divulgação realizada com sucesso.";
+    }
+
+    public function showResults($processId){
+        $selectiveProcess = $this->process_model->getById($processId);
+
+        $this->load->model("program/selectiveprocessevaluation_model", "process_evaluation_model");
+        $allProcessCandidates = $this->process_evaluation_model->getProcessCandidates($processId);
+
+        $this->load->module("program/selectiveprocessevaluation");
+        $allProcessCandidates = $this->selectiveprocessevaluation->getCandidates($allProcessCandidates);
+
+        $candidatesResults = [];
+        $resultCandidatesByPhase = [];
+        $status =  $selectiveProcess->getStatus();
+        $phasesResultPerCandidate = [];
+        $allProcessCandidates = $this->selectiveprocessevaluation->orderByPhasesInProcess($allProcessCandidates, $processId, TRUE);
+        if($allProcessCandidates){
+            foreach ($allProcessCandidates as $candidateId => $evaluations) {
+                if($evaluations){
+                    $eraseCandidate = FALSE;
+                    foreach ($evaluations as $phaseprocessId => $evaluation) {
+                        if(!$eraseCandidate){
+                            $candidatesResults[$phaseprocessId][$candidateId] = $evaluation['phase_result'];
+
+                            if(!$evaluation['phase_result']['approved']){
+                                $eraseCandidate = TRUE;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if($candidatesResults){
+                foreach ($candidatesResults as $key => $results) {
+                    $hasResult = TRUE;
+                    $phase = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($key);
+                    $resultOfCandidatesInPhase = array();
+                    foreach ($results as $candidateId => $result) {
+                        if($phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE){
+                            $hasResult = TRUE;
+                        }
+                        else{
+                            $hasResult = $result['hasResult'] && $hasResult;
+                        }
+
+                        if($hasResult){
+                            $phaseWasFinished = $this->checkIfPhaseWasFinished($phase->phase_name, $selectiveProcess);
+                            if($phaseWasFinished){
+                                $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
+                                $result['label'] = $label;
+                                $resultOfCandidatesInPhase[$candidateId] = $result;
+
+                                if($status === SelectionProcessConstants::FINISHED){
+                                    $phaseInfo =  array('phase_weight' => $phase->weight);
+                                    $phasesResultPerCandidate[$candidateId][$phase->phase_name] = $result + $phaseInfo;
+                                }
+                            }
+                        }
+                    }
+                    if(!empty($resultOfCandidatesInPhase)){
+                        $resultCandidatesByPhase[$phase->phase_name] = $resultOfCandidatesInPhase;
+                    }
+                }
+            }
+        }
+
+        if($phasesResultPerCandidate){
+            $quantityOfPhases = sizeof($resultCandidatesByPhase);
+            $selectedCandidates = $this->getFinalResult($quantityOfPhases, $phasesResultPerCandidate,
+                                                        $selectiveProcess->getPassingScore(), $selectiveProcess->getVacancies());
+            $resultCandidatesByPhase = $selectedCandidates + $resultCandidatesByPhase;
+        }
+
+        $data = array(
+            'resultCandidatesByPhase' => $resultCandidatesByPhase,
+            'process' => $selectiveProcess
+        );
+
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/results", $data);
+    }
+
+    private function checkIfPhaseWasFinished($currentPhaseName, $selectiveProcess){
+
+        $currentStatus = $selectiveProcess->getStatus();
+        $phases = $selectiveProcess->getSettings()->getPhases();
+
+        $phasesWithStatus = array(
+            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE
+        );
+
+        if($phases){
+            foreach ($phases as $phase) {
+                $phaseName = $phase->getPhaseName();
+                switch ($phaseName) {
+                    case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE:
+                        $phasesWithStatus[SelectionProcessConstants::IN_PRE_PROJECT_PHASE] = $phaseName;
+                        break;
+
+                    case SelectionProcessConstants::WRITTEN_TEST_PHASE:
+                        $phasesWithStatus[SelectionProcessConstants::IN_WRITTEN_TEST_PHASE] = $phaseName;
+                        break;
+
+                    case SelectionProcessConstants::ORAL_TEST_PHASE:
+                        $phasesWithStatus[SelectionProcessConstants::IN_ORAL_TEST_PHASE] = $phaseName;
+                        break;
+
+                    default:
+                        $phasesWithStatus[SelectionProcessConstants::IN_HOMOLOGATION_PHASE] = $phaseName;
+                        break;
+                }
+            }
+        }
+
+        $finishedPhases = array();
+        foreach ($phasesWithStatus as $status => $phaseName) {
+
+            if($status == $currentStatus){
+                break;
             }
             else{
-                $status = "danger";
-                $message = "Não foi possível fazer a nova divulgação. Tente novamente.";
+                $finishedPhases[] = $phaseName;
+            }
+
+        }
+
+        return in_array($currentPhaseName, $finishedPhases);
+    }
+
+    private function getFinalResult($quantityOfPhases, $phasesResultPerCandidate, $passingScore, $vacancies){
+
+        $selectedCandidates = array();
+        $candidatesScore = array();
+        $quantityOfPhases = $quantityOfPhases - 1;
+        $approvedCandidates = 0;
+        if($phasesResultPerCandidate){
+            foreach ($phasesResultPerCandidate as $candidateId => $phasesResults) {
+                unset($phasesResults[SelectionProcessConstants::HOMOLOGATION_PHASE]);
+                $candidatePoints = 0;
+                $totalWeight = 0;
+                $approvedTimes = 0;
+                if(!empty($phasesResults)){
+                    foreach ($phasesResults as $phaseName => $phaseResult) {
+                        $phaseWeight = $phaseResult['phase_weight'];
+                        $candidatePoints += ($phaseWeight * $phaseResult['average']);
+                        $totalWeight += $phaseWeight;
+
+                        $candidatesScore[$candidateId][$phaseWeight] = array(
+                            'phaseName' => $phaseName,
+                            'average' => $phaseResult['average'],
+                            'phaseWeight' => $phaseWeight,
+                        );
+                        $approvedTimes = $phaseResult['approved'] ? $approvedTimes + 1 : $approvedTimes;
+                    }
+
+
+                    $candidatePointsAverage = $candidatePoints/$totalWeight;
+                    $selected = ($approvedTimes == $quantityOfPhases) &&  $candidatePointsAverage >= $passingScore ? TRUE : FALSE;
+                    if(!$selected){
+                        unset($candidatesScore[$candidateId]);
+                    }
+                    else{
+                        $candidatesScore[$candidateId]['final_average'] = $candidatePointsAverage;
+                        $approvedCandidates++;
+                    }
+                }
             }
         }
-        else{
-            $status = "danger";
-            $errors = $this->upload->display_errors();
-            $message = $errors."<br>".self::NOTICE_FILE_ERROR_ON_UPLOAD.".";
-        }
-        
-        $this->session->set_flashdata($status, $message);
-        redirect("selection_process/divulgations/{$processId}");             
+
+        $candidatesScore = $this->sortCandidates($candidatesScore);
+        $selectedCandidates['Final'] = $approvedCandidates > $vacancies ? array_slice($candidatesScore, 0, $vacancies, TRUE) : $candidatesScore;
+
+        return $selectedCandidates;
     }
 
-    public function downloadDivulgationFile($divulgationId){
+    private function sortCandidates($candidatesScore){
 
-        $divulgation = $this->process_model->getProcessDivulgationById($divulgationId);
-        $filePath = $divulgation['file_path'];
-        
-        $this->load->helper('download');
-        if(file_exists($filePath)){
-            force_download($filePath, NULL);
+        uasort($candidatesScore, 'sortArrayApprovedCandidades');
+        $lastScore = NULL;
+        $candidates = $candidatesScore;
+        $keys = array_keys($candidates);
+        $index = 0;
+        foreach ($candidatesScore as $candidateId => $candidateScore) {
+
+            if($lastScore != NULL){
+                if($candidateScore['final_average'] == $lastScore['final_average']){
+                    $lastWeight = 0;
+                    krsort($candidateScore);
+                    $phase = key($candidateScore);
+                    $candidateAverage = $candidateScore[$phase]['average'];
+                    krsort($lastScore);
+                    $lastPhase = key($lastScore);
+                    $lastAverage = $lastScore[$lastPhase]['average'];
+
+                    if($candidateAverage > $lastAverage){
+                        $key = $keys[$index - 1];
+                        $candidates = array_swap($key, $candidateId, $candidates);
+                    }
+                }
+
+            }
+            $lastScore = $candidateScore;
+            $index++;
         }
-        else{
-            $status = "danger";
-            $message = "Nenhum arquivo encontrado.";
-            $this->session->set_flashdata($status, $message);
-            $processId = $divulgation['id_process'];
-            redirect("selection_process/divulgations/{$processId}");             
-        }
+
+        return $candidates;
     }
 
-    public function showTimeline($processId){
-        $selectiveProcess = $this->process_model->getById($processId);
-        $processDivulgations = $this->process_model->getProcessDivulgations($processId);
+
+
+
+
+    public function generatePDF(){
+
+        $candidates = $this->input->post('candidates');
+        $processId = $this->input->post('processId');
+
+        $process = $this->process_model->getById($processId);
 
         $data = array(
-            'selectiveprocess' => $selectiveProcess,
-            'processDivulgations' => $processDivulgations
+            'candidates' => json_decode($candidates),
+            'phaseName' => $this->input->post('phaseName'),
+            'processName' => $process->getName(),
+            'processId' => $process->getId()
         );
 
-        $this->load->helper('selectionprocess');
+        loadTemplateSafelyByPermission(PermissionConstants::SELECTION_PROCESS_PERMISSION, "program/selection_process/phase_result", $data);
 
-        loadTemplateSafelyByGroup(GroupConstants::GUEST_GROUP, "/home/divulgations", $data);
     }
-    
-    private function getCoursesName($selectiveProcess){
-        
-    }
-
 }

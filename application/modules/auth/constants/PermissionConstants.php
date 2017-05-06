@@ -34,6 +34,8 @@ class PermissionConstants{
 	const MASTERMIND_PERMISSION = "mastermind";
 
 	const SELECTION_PROCESS_PERMISSION = "selection_process";
+	const PUBLIC_SELECTION_PROCESS_PERMISSION = "selection_process/public";
+	const SELECTION_PROCESS_EVALUATION = "selection_process_evaluation";
 
 	const NOTIFY_USERS_PERMISSION = "notify_users";
 

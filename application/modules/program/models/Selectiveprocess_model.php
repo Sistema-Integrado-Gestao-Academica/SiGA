@@ -12,6 +12,7 @@ require_once(MODULESPATH."/program/domain/selection_process/phases/Homologation.
 require_once(MODULESPATH."/program/domain/selection_process/phases/PreProjectEvaluation.php");
 require_once(MODULESPATH."/program/domain/selection_process/phases/WrittenTest.php");
 require_once(MODULESPATH."/program/domain/selection_process/phases/OralTest.php");
+
 class SelectiveProcess_model extends CI_Model {
 
 	public $TABLE = "selection_process";
@@ -29,8 +30,10 @@ class SelectiveProcess_model extends CI_Model {
 	const PROCESS_PHASE_TABLE = "process_phase";
 	const ID_PHASE_ATTR = "id_phase";
 	const PROCESS_PHASE_WEIGHT_ATTR = "weight";
+	const PROCESS_PHASE_GRADE_ATTR= "grade";
 	const PROCESS_PHASE_START_DATE_ATTR = "start_date";
 	const PROCESS_PHASE_END_DATE_ATTR = "end_date";
+    const KNOCKOUT_PHASE_ATTR = "knockout_phase";
 
 	// Methods
 	const INSERT_ON_DB = 1;
@@ -45,25 +48,33 @@ class SelectiveProcess_model extends CI_Model {
 		$noticeName = $process->getName();
 		$previousProcess = $this->getByName($noticeName);
 
-
 		// Does not exists this selection process yet
 		if($previousProcess === FALSE){
 
-			// Saves the selection process basic data
-			$this->db->insert($this->TABLE, $processToSave);
+            $this->db->trans_start();
 
-			$savedProcess = $this->getByName($noticeName);
+            // Saves the selection process basic data
+            $this->db->insert($this->TABLE, $processToSave);
 
-			if($savedProcess !== FALSE){
-				$processId = $savedProcess[self::ID_ATTR];
+            $savedProcess = $this->getByName($noticeName);
+            $processId = $savedProcess[self::ID_ATTR];
 
-				$this->saveProcessPhases($process, $processId, self::INSERT_ON_DB);
+            $this->load->model(
+                'program/selectiveprocessconfig_model',
+                'process_config_model'
+            );
 
-				return $processId;
-			}else{
+            $this->saveProcessPhases($process, $processId, self::INSERT_ON_DB);
+            // By default, the process goes with all docs
+            $this->process_config_model->addAllDocumentsToProcess($processId);
+            $this->db->trans_complete();
+
+			if($this->db->trans_status() === FALSE){
 				// For some reason did not saved the selection process
 				throw new SelectionProcessException(self::COULDNT_SAVE_SELECTION_PROCESS);
 			}
+
+            return $processId;
 		}else{
 			throw new SelectionProcessException(self::REPEATED_NOTICE_NAME.$noticeName);
 		}
@@ -88,30 +99,32 @@ class SelectiveProcess_model extends CI_Model {
 		$courseId = $process->getCourse();
 		$processType = $process->getType();
 		$noticeName = $process->getName();
+		$vacancies = $process->getVacancies();
 		$settings = $process->getSettings();
+		$status = $process->getStatus();
+        $passingScore = $process->getPassingScore();
 		$startDate = NULL;
 		$endDate = NULL;
 		$phasesOrder = NULL;
 
 		if($settings){
-			$startDate = $settings->getYMDStartDate();
-			$endDate = $settings->getYMDEndDate();
 			$phasesOrder = serialize($settings->getPhasesOrder());
-
 		}
-
 
 		$processToSave = array(
 			self::COURSE_ATTR => $courseId,
 			self::PROCESS_TYPE_ATTR => $processType,
 			self::NOTICE_NAME_ATTR => $noticeName,
-			self::START_DATE_ATTR => $startDate,
-			self::END_DATE_ATTR => $endDate,
-			self::PHASE_ORDER_ATTR => $phasesOrder
+			self::PHASE_ORDER_ATTR => $phasesOrder,
+			'total_vacancies' => $vacancies,
+            'passing_score' => $passingScore
 		);
 
-		return $processToSave;
+		if($status != FALSE){
+			$processToSave['status'] = $status;
+		}
 
+		return $processToSave;
 	}
 
 	private function saveProcessPhases($process, $processId, $method){
@@ -128,14 +141,23 @@ class SelectiveProcess_model extends CI_Model {
 				if($phase->getPhaseName() === SelectionProcessConstants::HOMOLOGATION_PHASE){
 
 					$phaseWeight = SelectionProcessConstants::HOMOLOGATION_PHASE_WEIGHT;
-				}else{
-					$phaseWeight = $phase->getWeight();
+
+					$phaseGrade = SelectionProcessConstants::HOMOLOGATION_PHASE_GRADE;
+
+                    $knockoutPhase = FALSE;
 				}
+                else{
+					$phaseWeight = $phase->getWeight();
+					$phaseGrade = $phase->getGrade();
+                    $knockoutPhase = $phase->isKnockoutPhase();
+                }
 
 				$arrayToSave = array(
 					self::ID_ATTR => $processId,
 					self::ID_PHASE_ATTR => $phaseId,
-					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight
+					self::PROCESS_PHASE_WEIGHT_ATTR => $phaseWeight,
+					self::PROCESS_PHASE_GRADE_ATTR => $phaseGrade,
+                    self::KNOCKOUT_PHASE_ATTR => $knockoutPhase
 				);
 
 				$this->db->where(self::ID_ATTR, $processId);
@@ -170,20 +192,11 @@ class SelectiveProcess_model extends CI_Model {
 		}
 
 		foreach ($oldPhases as $oldPhaseId => $oldPhase) {
-			$this->db->where(self::ID_PHASE_ATTR, $oldPhaseId);
+            $this->db->where(self::ID_PHASE_ATTR, $oldPhaseId);
+			$this->db->where(self::ID_ATTR, $processId);
 			$this->db->delete(self::PROCESS_PHASE_TABLE);
 		}
 
-	}
-
-	public function updateNoticeFile($processId, $noticePath){
-
-		$this->db->where(self::ID_ATTR, $processId);
-		$updated = $this->db->update($this->TABLE, array(
-			self::NOTICE_PATH_ATTR => $noticePath
-		));
-
-		return $updated;
 	}
 
 	public function getCourseSelectiveProcesses($courseId){
@@ -197,71 +210,6 @@ class SelectiveProcess_model extends CI_Model {
 
 		$foundProcess = $this->get(self::ID_ATTR, $processId);
 		$selectiveProcess = $this->convertArrayToObject($foundProcess);
-		
-		return $selectiveProcess;
-	}
-
-	private function convertArrayToObject($foundProcess){
-		if($foundProcess !== FALSE){
-
-			$phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);
-	        $startDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::START_DATE_ATTR]);
-	        $endDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::END_DATE_ATTR]);
-	        $phases = $this->getPhases($foundProcess['id_process']);
-	        $phases = $this->sortPhasesBasedInOrder($phases, $phasesOrder);
-	        try{
-	        	$settings = new ProcessSettings(
-		            $startDate,
-		            $endDate,
-		            $phases,
-		            $phasesOrder
-	        	);
-	        }
-	        catch(SelectionProcessException $e){
-				$selectiveProcess = FALSE;
-				throw new SelectionProcessException($e);
-			}
-			if($foundProcess[self::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
-
-				try{
-
-					$selectiveProcess = new RegularStudentProcess(
-						$foundProcess[self::COURSE_ATTR],
-						$foundProcess[self::NOTICE_NAME_ATTR],
-						$foundProcess[self::ID_ATTR]
-					);
-					$selectiveProcess->addSettings($settings);
-					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
-					if(!is_null($noticePath)){
-                    	$selectiveProcess->setNoticePath($noticePath);
-					}
-
-
-				}catch(SelectionProcessException $e){
-					$selectiveProcess = FALSE;
-				}
-			}else{
-				try{
-
-					$selectiveProcess = new SpecialStudentProcess(
-						$foundProcess[self::COURSE_ATTR],
-						$foundProcess[self::NOTICE_NAME_ATTR],
-						$foundProcess[self::ID_ATTR]
-					);
-					$selectiveProcess->addSettings($settings);
-					$noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
-					if(!is_null($noticePath)){
-                    	$selectiveProcess->setNoticePath($noticePath);
-					}
-
-				}catch(SelectionProcessException $e){
-					$selectiveProcess = FALSE;
-				}
-			}
-
-		}else{
-			$selectiveProcess = FALSE;
-		}
 
 		return $selectiveProcess;
 	}
@@ -273,8 +221,8 @@ class SelectiveProcess_model extends CI_Model {
 		return $process;
 	}
 
-	private function getProcessPhases($processId){
-		$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR.",".self::PROCESS_PHASE_START_DATE_ATTR.",".self::PROCESS_PHASE_END_DATE_ATTR);
+	public function getProcessPhases($processId){
+		$this->db->select("*");
 		$this->db->from(self::PROCESS_PHASE_TABLE);
 		$this->db->where(self::ID_ATTR, $processId);
 		$processPhases = $this->db->get()->result_array();
@@ -293,20 +241,23 @@ class SelectiveProcess_model extends CI_Model {
 	        foreach ($processPhases as $processPhase) {
 	            $processPhaseId = $processPhase['id_phase'];
 	            $weight = $processPhase['weight'];
+	            $grade = $processPhase['grade'];
+	            $grade = $grade == NULL ? FALSE : $grade;
 	            $startDate = convertDateTimeToDateBR($processPhase['start_date']);
 	            $endDate = convertDateTimeToDateBR($processPhase['end_date']);
+                $knockoutPhase = $processPhase['knockout_phase'];
 	            switch ($processPhaseId) {
 	                case SelectionProcessConstants::HOMOLOGATION_PHASE_ID:
 	                    $phase = new Homologation($processPhaseId, $startDate, $endDate);
 	                    break;
 	                case SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID:
-	                    $phase = new PreProjectEvaluation($weight, FALSE, $processPhaseId, $startDate, $endDate);
+	                    $phase = new PreProjectEvaluation($weight, $grade, $processPhaseId, $startDate, $endDate, $knockoutPhase);
 	                    break;
 	                case SelectionProcessConstants::WRITTEN_TEST_PHASE_ID:
-	                    $phase = new WrittenTest($weight, FALSE, $processPhaseId, $startDate, $endDate);
+	                    $phase = new WrittenTest($weight, $grade, $processPhaseId, $startDate, $endDate, $knockoutPhase);
 	                    break;
 	                case SelectionProcessConstants::ORAL_TEST_PHASE_ID:
-	                    $phase = new OralTest($weight, FALSE, $processPhaseId, $startDate, $endDate);
+	                    $phase = new OralTest($weight, $grade, $processPhaseId, $startDate, $endDate, $knockoutPhase);
 	                    break;
 	                default:
 	                    $phase = NULL;
@@ -316,64 +267,10 @@ class SelectiveProcess_model extends CI_Model {
 	        }
         }
 
+
         return $phases;
     }
 
-
-    public function saveProcessDivulgation($data, $noticeDivulgation = FALSE){
-    	if($noticeDivulgation){
-    		$processId = $data['id_process'];
-    		$this->db->where(self::ID_ATTR, $processId);
-			$this->db->where('initial_divulgation', True);
-		   	$result = $this->db->get('selection_process_divulgation');
-			$divulgationExistent = $result->num_rows() > 0;
-			if($divulgationExistent){
-				$this->db->where(self::ID_ATTR, $processId);
-				$saved = $this->db->update("selection_process_divulgation", $data);
-			}
-			else{
-	    		$saved = $this->db->insert("selection_process_divulgation", $data);
-			}
-		}
-		else{
-    		$saved = $this->db->insert("selection_process_divulgation", $data);
-		}
-
-    	return $saved;
-    }
-
-    public function getProcessDivulgations($processId, $noticeDivulgation = FALSE){
-
-    	$this->db->select("*");
-		$this->db->from('selection_process_divulgation');
-		$this->db->where(self::ID_ATTR, $processId);
-    	if($noticeDivulgation){
-			$this->db->where('initial_divulgation', True);
-    	}
-    	else{
-			$this->db->where('date <= CURDATE()', NULL, FALSE);
-    		$this->db->order_by('date', 'DESC');
-    	}
-		$noticeDivulgations = $this->db->get()->result_array();
-
-		$noticeDivulgations = checkArray($noticeDivulgations);
-
-		if($noticeDivulgation){
-			$noticeDivulgations = $noticeDivulgations[0];
-		}
-
-		return $noticeDivulgations;
-    }
-
-    public function getProcessDivulgationById($divulgationId){
-
-    	$this->db->select("*");
-    	$searchResult = $this->db->get_where('selection_process_divulgation', array('id' => $divulgationId));
-  		$divulgation = $searchResult->row_array();
-		$divulgation = checkArray($divulgation);
-		
-		return $divulgation;
-    }
 
     public function sortPhasesBasedInOrder($phases, $phasesOrder){
 
@@ -415,6 +312,17 @@ class SelectiveProcess_model extends CI_Model {
     	return $saved;
     }
 
+    public function saveSubscriptionDate($processId, $startDate, $endDate){
+
+    	$this->db->where(self::ID_ATTR, $processId);
+    	$dataToSave = array(
+    		self::START_DATE_ATTR => $startDate,
+    		self::END_DATE_ATTR => $endDate
+    	);
+    	$saved = $this->db->update($this->TABLE, $dataToSave);
+    	return $saved;
+    }
+
     public function getPhaseById($processId, $phaseId){
     	$this->db->select(self::ID_PHASE_ATTR.",".self::PROCESS_PHASE_WEIGHT_ATTR.",".self::PROCESS_PHASE_START_DATE_ATTR.",".self::PROCESS_PHASE_END_DATE_ATTR);
 		$this->db->from(self::PROCESS_PHASE_TABLE);
@@ -450,24 +358,122 @@ class SelectiveProcess_model extends CI_Model {
 
         return $teachers;
     }
-    
+
+    public function updateProcessFlags($processId, $flagArray){
+    	$this->db->where(self::ID_ATTR, $processId);
+    	$this->db->update($this->TABLE, $flagArray);
+    }
+
     public function getOpenSelectiveProcesses(){
-		
-		$query = "SELECT DISTINCT selection_process.* FROM selection_process 
-                JOIN  selection_process_divulgation 
-                    ON ((selection_process_divulgation.date <= CURDATE()) 
+
+		$query = "SELECT DISTINCT selection_process.* FROM selection_process
+                JOIN  selection_process_divulgation
+                    ON ((selection_process_divulgation.date <= CURDATE())
                     AND (selection_process_divulgation.id_process = selection_process.id_process) AND (selection_process_divulgation.initial_divulgation = TRUE))
-                WHERE (selection_process.end_date >= CURDATE()) ORDER BY 'selection_process.id_course'";
+                ORDER BY 'selection_process.id_course'";
         $foundProcesses = $this->db->query($query)->result_array();
         $foundProcesses = checkArray($foundProcesses);
-		$selectiveProcesses = array();
-        if($foundProcesses !== FALSE){
 
-        	foreach ($foundProcesses as $foundProcess) {
-        		$selectiveProcess = $this->convertArrayToObject($foundProcess);
-        		$selectiveProcesses[] = $selectiveProcess;
-        	}
+        return $this->convertProcessesInObjects($foundProcesses);
+    }
+
+    public function getUserParticipatingProcesses($userId){
+        $this->db->select('sp.*');
+        $this->db->from('selection_process sp');
+        $this->db->join("selection_process_user_subscription as us", "sp.id_process = us.id_process");
+        $this->db->where('us.id_user', $userId);
+        $processes = $this->db->get()->result_array();
+        $processes = checkArray($processes);
+
+        return $this->convertProcessesInObjects($processes);
+    }
+
+    public function changeProcessStatus($processId, $newStatus){
+    	$this->db->where('id_process', $processId);
+    	return $this->db->update($this->TABLE, ['status' => $newStatus]);
+    }
+
+    private function convertProcessesInObjects($processes){
+        $selectiveProcesses = array();
+        if($processes !== FALSE){
+            foreach ($processes as $process) {
+                $selectiveProcesses[] = $this->convertArrayToObject($process);
+            }
         }
-		return $selectiveProcesses;
+        return $selectiveProcesses;
+    }
+
+    public function convertArrayToObject($foundProcess){
+        if($foundProcess !== FALSE){
+
+            $phasesOrder = unserialize($foundProcess[SelectiveProcess_model::PHASE_ORDER_ATTR]);
+            $startDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::START_DATE_ATTR]);
+            $endDate = convertDateTimeToDateBR($foundProcess[SelectiveProcess_model::END_DATE_ATTR]);
+            $phases = $this->getPhases($foundProcess['id_process']);
+            $phases = $this->sortPhasesBasedInOrder($phases, $phasesOrder);
+            try{
+                $settings = new ProcessSettings(
+                    $startDate,
+                    $endDate,
+                    $phases,
+                    $phasesOrder,
+                    $foundProcess['dates_defined'],
+                    $foundProcess['needed_docs_selected'],
+                    $foundProcess['teachers_selected']
+                );
+            }
+            catch(SelectionProcessException $e){
+                $selectiveProcess = FALSE;
+                throw new SelectionProcessException($e);
+            }
+            if($foundProcess[self::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
+
+                try{
+
+                    $selectiveProcess = new RegularStudentProcess(
+                        $foundProcess[self::COURSE_ATTR],
+                        $foundProcess[self::NOTICE_NAME_ATTR],
+                        $foundProcess[self::ID_ATTR],
+                        $foundProcess['total_vacancies'],
+                        $foundProcess['status'],
+                        $foundProcess['passing_score']
+                    );
+                    $selectiveProcess->addSettings($settings);
+                    $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
+                    if(!is_null($noticePath)){
+                        $selectiveProcess->setNoticePath($noticePath);
+                    }
+
+
+                }catch(SelectionProcessException $e){
+                    $selectiveProcess = FALSE;
+                }
+            }else{
+                try{
+
+                    $selectiveProcess = new SpecialStudentProcess(
+                        $foundProcess[self::COURSE_ATTR],
+                        $foundProcess[self::NOTICE_NAME_ATTR],
+                        $foundProcess[self::ID_ATTR],
+                        $foundProcess['total_vacancies'],
+                        $foundProcess['status'],
+                        $foundProcess['passing_score']
+                    );
+                    $selectiveProcess->addSettings($settings);
+                    $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
+                    if(!is_null($noticePath)){
+                        $selectiveProcess->setNoticePath($noticePath);
+                    }
+
+                }catch(SelectionProcessException $e){
+                    $selectiveProcess = FALSE;
+                }
+            }
+
+        }else{
+            $selectiveProcess = FALSE;
+        }
+
+        return $selectiveProcess;
     }
 }

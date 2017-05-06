@@ -13,14 +13,24 @@ class SelectionProcessConstants {
 	const ORAL_TEST_PHASE_ID = 4;
 
 	const HOMOLOGATION_PHASE_WEIGHT = 0;
-
+	const HOMOLOGATION_PHASE_GRADE = 0;
+	
 	const REGULAR_STUDENT = "regular_student";
 	const SPECIAL_STUDENT = "special_student";
 	const REGULAR_STUDENT_PORTUGUESE = "Aluno regular";
 	const SPECIAL_STUDENT_PORTUGUESE = "Aluno especial";
 
-	const NOT_DISCLOSED = "Não divulgado";
-	const DISCLOSED = "Divulgado";
-	const OPEN_FOR_SUBSCRIPTIONS = "Inscrições abertas";
-	const INSCRIPTIONS_CLOSED = "Inscrições encerradas";
+	// Status
+	const DRAFT = "draft";
+	const DISCLOSED = "disclosed";
+	const OPEN_FOR_SUBSCRIPTIONS = "subscriptions";
+	const FINISHED = "finished";
+	const INCOMPLETE_CONFIG = "incomplete_config";
+	const WAITING_NEXT_PHASE = "waiting";
+	const IN_HOMOLOGATION_PHASE = "homologation_phase";
+	const IN_PRE_PROJECT_PHASE = "pre_project_phase";
+	const IN_WRITTEN_TEST_PHASE = "written_test_phase";
+	const IN_ORAL_TEST_PHASE = "oral_test_phase";
 }
+
+

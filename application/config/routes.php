@@ -1,3 +1,5 @@
+
+
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -199,16 +201,44 @@ $route['documents_request'] = "student/documentrequestStudent/index";
  * Selection Process functionalities routes
  */
 $route['selection_process'] = 'program/selectiveprocess/index';
-$route['edit_selection_process/(:num)/(:num)'] = 'program/selectiveprocess/edit/$1/$2';
+$route['edit_selection_process/(:num)'] = 'program/selectiveprocess/edit/$1';
 $route['update_selection_process'] = 'program/selectiveprocess/updateSelectionProcess';
 $route['download_notice/(:num)/(:num)'] = 'program/selectiveprocess/downloadNotice/$1/$2';
-$route['define_dates_page/(:num)/(:num)'] = 'program/selectiveprocess/loadDefineDatesPage/$1/$2';
-$route['define_dates/(:num)/(:num)'] = 'program/selectiveprocess/defineDates/$1/$2';
-$route['selection_process/define_teacher'] = 'program/selectiveprocess/addTeacherToProcess';
-$route['selection_process/remove_teacher'] = 'program/selectiveprocess/removeTeacherFromProcess';
-$route['selection_process/divulgations/(:num)'] = 'program/selectiveprocess/divulgations/$1';
-$route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocess/downloadDivulgationFile/$1';
-$route['selection_process/guest/(:num)'] = 'program/selectiveprocess/showTimeline/$1';
+$route['selection_process/next_phase/(:num)/(:num)'] = 'program/selectiveprocess/goToNextPhase/$1/$2';
+$route['selection_process/results/(:num)'] = 'program/selectiveprocess/showResults/$1';
+$route['selection_process/results/generatePDF'] = 'program/selectiveprocess/generatePDF';
+
+// Selection process public routes
+$route['selection_process/public'] = 'program/selectiveProcessPublic/index';
+$route['selection_process/my_processes'] = 'program/selectiveProcessPublic/myProcesses';
+$route['selection_process/subscribe/(:num)'] = 'program/selectiveProcessPublic/subscribe/$1';
+$route['selection_process/subscription/(:num)'] = 'program/selectiveProcessPublic/subscription/$1';
+$route['selection_process/subscribe_to/(:num)'] = 'program/selectiveProcessPublic/subscribeTo/$1';
+$route['selection_process/divulgations/(:num)'] = 'program/selectiveProcessPublic/divulgations/$1';
+$route['selection_process/subscription/finalize/(:num)'] = 'program/selectiveProcessPublic/finalizeSubscription/$1';
+$route['selection_process/download/doc/(:num)/(:num)'] = 'program/selectiveProcessPublic/dowloadSubscriptionDoc/$1/$2';
+
+// Selection process homolog routes
+$route['selection_process/homolog/subscriptions/(:num)'] = 'program/selectiveProcessHomolog/subscriptions/$1';
+$route['selection_process/homolog/subscription/(:num)'] = 'program/selectiveProcessHomolog/homologate/$1';
+$route['selection_process/reject/subscription/(:num)'] = 'program/selectiveProcessHomolog/reject/$1';
+$route['selection_process/homolog/register/(:num)'] = 'program/selectiveProcessHomolog/registerSubscriptionHomologation/$1';
+
+// Selection process config routes
+$route['selection_process/config/(:num)'] = 'program/selectiveprocessconfig/index/$1';
+$route['selection_process/subscription_config/(:num)'] = 'program/selectiveprocessconfig/subscriptionConfig/$1';
+$route['selection_process/config/save_subscription_config/(:num)'] = 'program/selectiveprocessconfig/saveSubscriptionConfig/$1';
+$route['selection_process/define_teachers_evaluation/(:num)/(:num)'] = 'program/selectiveprocessconfig/defineTeachers/$1/$2';
+$route['selection_process/define_teacher'] = 'program/selectiveprocessconfig/addTeacherToProcess';
+$route['selection_process/remove_teacher'] = 'program/selectiveprocessconfig/removeTeacherFromProcess';
+
+// Selection process divulgation routes
+$route['selection_process/secretary_divulgations/(:num)'] = 'program/selectiveprocessdivulgation/index/$1';
+$route['selection_process/download_divulgation_file/(:num)'] = 'program/selectiveprocessdivulgation/downloadDivulgationFile/$1';
+
+// Selection process evaluation routes
+$route['selection_process_evaluation'] = 'program/selectiveprocessevaluation/index';
+$route['teacher_candidates/(:num)/(:num)'] = 'program/selectiveprocessevaluation/showTeacherCandidates/$1/$2';
 
 
 /*

@@ -1,29 +1,10 @@
-<h2 class="principal">Alterar dados do processo seletivo</h2>
+<br>
+<br>
+<div id="selection_process_error_status"></div>
 
 <?php
 
-$selectiveprocessId = $selectiveprocess->getId();
-$settings = $selectiveprocess->getSettings();
-
-$startDate = array(
-    "name" => "selective_process_start_date",
-    "id" => "selective_process_start_date",
-    "type" => "text",
-	"placeholder" => "Informe a data inicial",
-    "class" => "form-campo",
-    "class" => "form-control",
-    "value" => htmlspecialchars($settings->getFormattedStartDate())
-);
-
-$endDate = array(
-    "name" => "selective_process_end_date",
-    "id" => "selective_process_end_date",
-    "type" => "text",
-	"placeholder" => "Informe a data final",
-    "class" => "form-campo",
-    "class" => "form-control",
-    "value" => htmlspecialchars($settings->getFormattedEndDate())
-);
+$processId = $process->getId();
 
 $name = array(
 	"name" => "selective_process_name",
@@ -32,7 +13,17 @@ $name = array(
 	"class" => "form-campo form-control",
 	"placeholder" => "Informe o nome do edital",
 	"maxlength" => "60",
-	"value" => $selectiveprocess->getName()
+	"value" => $process->getName(),
+);
+
+$vacancies = array(
+	"id" => "total_vacancies",
+	"name" => "total_vacancies",
+	"type" => "number",
+	"min" => 0,
+	"steps" => 1,
+	"class" => "form-control",
+	"value" => $process->getVacancies()
 );
 
 $phaseWeight = array(
@@ -42,6 +33,15 @@ $phaseWeight = array(
 	"steps" => 1,
 	"class" => "form-control",
 	"placeholder" => "Informe o peso dessa fase"
+);
+
+$phaseGrade = array(
+	"type" => "number",
+	"min" => 0,
+	"max" => 100,
+	"steps" => 1,
+	"class" => "form-control",
+	"placeholder" => "Informe a nota de corte",
 );
 
 $saveProcessBtn = array(
@@ -54,25 +54,48 @@ $hidden = array(
 	"id" => "course",
 	"name" => "course",
 	"type" => "hidden",
-	"value" => $courseId
+	"value" => $process->getCourse()
 );
 
-$selectiveprocessIdHidden = array(
+$processHidden = array(
 	"id" => "processId",
 	"name" => "processId",
 	"type" => "hidden",
-	"value" => $selectiveprocessId
+	"value" => $processId
 );
 
-$selectedStudentType = $selectiveprocess->getType();
+$passingScore = array(
+	"id" => "passing_score",
+	"name" => "passing_score",
+	"type" => "number",
+	"min" => 0,
+	"max" => 100,
+	"steps" => 1,
+	"class" => "form-control",
+	"value" => $process->getPassingScore()
+);
+
+
+if($canNotEdit){
+	$name["readonly"] = TRUE;
+	$vacancies["readonly"] = TRUE;
+	$passingScore["readonly"] = TRUE;
+	$phaseGrade["readonly"] = TRUE;
+	$phaseWeight["readonly"] = TRUE;
+}
+
+$selectedStudentType = $process->getType();
 
 include '_form.php';
 
+$knockoutPhaseType = array(
+	TRUE => 'Eliminatória',
+	FALSE => 'Classificatória'
+);
+
 ?>
-<?= form_input($selectiveprocessIdHidden); ?>
+<?= form_input($processHidden); ?>
 <!-- Selection Process Settings -->
-<br>
-<br>
 <h3><i class="fa fa-cogs"></i> Configurações do edital</h3>
 
 <br>
@@ -84,33 +107,40 @@ include '_form.php';
 
 		<h4><small><b>
 		Marque as fases desejadas como "Sim".<br>
-		Ao lado do nome da fase, informe o peso da mesma.<br>
 		Os pesos definidos são os pesos padrão.<br>
-		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.
+		Fique a vontade para alterar, lembrando que o peso máximo permitido é 5.<br>
+		E a nota de corte máxima permitida é 100.
 		</b></small></h4>
 
 	<?php
-		if(!empty($phasesNames)){
+		if(!empty($phases)){
 
-			foreach($phasesNames as $id => $phase){
+			foreach($phases as $id => $phase){
 
 				// Homologation phase is obrigatory and do not have weight
-				if($phase !== SelectionProcessConstants::HOMOLOGATION_PHASE){
-
-						$selectName = "phase_".$id;
+				if($id !== SelectionProcessConstants::HOMOLOGATION_PHASE_ID){
+						$selectName = "phase_select_".$id;
 						$selectId = $selectName;
-						$weight = $phasesWeights[$id];
+						$weight = $phase['weight'];
+						$grade = $phase['grade'];
 
 						$phaseWeight["id"] = "phase_weight_".$id;
 						$phaseWeight["name"] = "phase_weight_".$id;
 
+						$gradeName = "phase_grade_".$id;
+						$phaseGrade["id"] = $gradeName;
+						$phaseGrade["name"] = $gradeName;
+						$gradeDiv = $gradeName."_div";
+
 						if($weight != -1){
 							$selectedItem = TRUE;
 							$phaseWeight["value"] = $weight;
+							$phaseGrade["value"] = $grade;
 						}
 						else{
 							$selectedItem = FALSE;
 							$phaseWeight["value"] = "0";
+							$phaseGrade["value"] = "0";
 						}
 
 						$processPhases = array(
@@ -118,21 +148,48 @@ include '_form.php';
 							FALSE => "Não",
 						);
 
+						$selectPhaseName = "phase_type_".$id;
+						$selectPhaseId = $selectPhaseName;
+						$selectedType = $phase['knockoutPhase'];
+
+						$class = $canNotEdit ? "disabled" : "";
+
+
+						$fields = "phase_".$id."_fields";
 			?>
 						<div class="row">
-
 							<div class="col-md-10">
 								<div class="input-group">
-								<span class="input-group-addon">
-
-									<?= form_label($phase, $selectName); ?>
-									<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}'"); ?>
-								</span>
-
-								<?= form_input($phaseWeight); ?>
+									<span class="input-group-addon">
+										<?= form_label($phase['name'], $selectName."_label"); ?>
+									</span>
+									<div class="input-group-btn">
+										<?= form_dropdown($selectName, $processPhases, $selectedItem, "id='{$selectId}' class=form-control {$class}"); ?>
+									</div>
+								</div>
+								<div id=<?=$fields?> style="display:none;">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<?= form_label("Tipo da fase", "phase_type"); ?>
+										</span>
+										<div class="input-group-btn">
+											<?= form_dropdown($selectPhaseName, $knockoutPhaseType, $selectedType, "id='{$selectPhaseId}' class=form-control {$class}"); ?>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+												<?= form_label("Peso", $phaseWeight['name']); ?>
+											<?= form_input($phaseWeight); ?>
+										</div>
+										<div class="col-md-6" id=<?=$gradeDiv?> style="display: none;">
+												<?= form_label("Nota de Corte da Fase", $phaseGrade['name']); ?>
+											<?= form_input($phaseGrade); ?>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
+						<hr>
 
 		<?php   }else{ ?>
 
@@ -141,13 +198,15 @@ include '_form.php';
 						<div class="input-group">
 						<span class="input-group-addon">
 
-							<?= form_label($phase); ?>
+							<?= form_label($phase['name']); ?>
 						<span class="label label-default">Fase obrigatória e sem peso.</span>
 						</span>
 
 						</div>
 					</div>
 				</div>
+
+				<hr>
 
 <?php  			}
 		    }
@@ -172,71 +231,8 @@ include '_form.php';
 
 	<div id="phases_list_to_order_in_edition"></div>
 	<br>
-	<?php $noticePath = $selectiveprocess->getNoticePath();?>
-	<h4><i class="fa fa-cloud-upload" aria-hidden="true"></i> Edital enviado: <b><?= $noticeFileName ?></b></h4>
-	<br>
-	<div class="row">
-		<div class="col-lg-3">
-			<?php $url = site_url('download_notice/'.$selectiveprocessId.'/'.$courseId);?>
-			<h4><a href=<?=$url?> class='btn btn-info'><i class='fa fa-cloud-download'></i>Baixar</a></h4>
-		</div>
 
-		<div class="col-lg-6">
-		<?php
-			if($divulgation !== FALSE){
-
-				$divulgationDate = $divulgation['date'];
-				$divulgationDate = convertDateTimeToDateBR($divulgationDate);
-			    $today = new Datetime();
-			    $today = $today->format("d/m/Y");
-
-			    if($divulgationDate >= $today){
-					echo "<h4><a href='#edit_notice_path' data-toggle='collapse' class='btn btn-info'><i class='fa fa-edit'>Enviar outro edital</i></a></h4>";
-				}
-				else{
-					alert(function(){
-		                echo "<h5>Não é possível editar o edital enviado, pois ele já foi divulgado. Para enviar outro arquivo faça uma divulgação.</h5>";
-		            }, "info", FALSE, "info", $dismissible=TRUE);
-				}
-			}
-			?>
-		</div>
+	<div class="col-sm-2 pull-right">
+    	<button class='btn btn-primary' id="edit_selective_process_btn">Salvar e Continuar</button>
 	</div>
-
-	<div id="edit_notice_path" class="collapse">
-
-	<?php
-
-	echo form_open_multipart("program/selectiveprocess/editNoticeFile", array( 'id' => 'edit_notice_path_form' ));
-
-    echo form_input($hidden);
-    echo form_input($selectiveprocessIdHidden);
-
-    $noticeFile = array(
-        "name" => "notice_file",
-        "id" => "notice_file",
-        "type" => "file"
-    );
-
-	$submitFileBtn = array(
-        "id" => "edit_notice_path_btn",
-        "class" => "btn btn-success btn-flat",
-        "content" => "Salvar arquivo",
-        "type" => "submit",
-        "style" => "margin-top: 5%;"
-    );
-
-    include(MODULESPATH."/program/views/selection_process/_upload_notice_file.php");
-
-	echo form_close();
-	?>
-	<div id="status_notice_file"></div>
-
-	</div>
-	<br>
-	<br>
-	<?= form_button($saveProcessBtn); ?>
-
-
-	<div id="selection_process_saving_status"></div>
 

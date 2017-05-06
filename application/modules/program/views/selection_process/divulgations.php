@@ -1,8 +1,8 @@
-<h2 class="principal">Divulgações do processo seletivo: <b><i><?=$selectiveprocess->getName()?></i></b> </h2>
-<?php 
+<h2 class="principal">Divulgações do processo seletivo: <b><i><?=$process->getName()?></i></b> </h2>
+<?php
 echo "<hr>";
 
-$settings = $selectiveprocess->getSettings();
+$settings = $process->getSettings();
 $phases = $settings->getPhases();
 
 $phasesName = array();
@@ -13,9 +13,9 @@ if($phases !== FALSE){
         $phasesName[$id] = $name;
     }
 }
-showDivulgations($selectiveprocess, $processDivulgations, $phasesName);
+showDivulgations($process, $processDivulgations, $phasesName);
 
 echo "<br>";
 
-$courseId = $selectiveprocess->getCourse();
+$courseId = $process->getCourse();
 echo anchor("program/selectiveprocess/courseSelectiveProcesses/{$courseId}", "Voltar", "class='btn btn-danger'");
