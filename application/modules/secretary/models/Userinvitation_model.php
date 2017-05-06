@@ -20,6 +20,17 @@ class UserInvitation_model extends CI_Model {
 		));
 	}
 
+	public function generateInvitationNumber(){
+		$alreadyExists = TRUE;
+		while($alreadyExists){
+			// Generates a cryptographically secure random string as invitation
+			$invitation = bin2hex(openssl_random_pseudo_bytes(20));
+			$alreadyExists = $this->invitationExists($invitation);
+		}
+
+		return $invitation;
+	}
+
 	public function invitationExists($invitation){
 
 		$foundInvitation = $this->get(self::ID_COLUMN, $invitation);

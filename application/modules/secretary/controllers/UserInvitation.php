@@ -38,7 +38,7 @@ class UserInvitation extends MX_Controller {
 
 			$confirmed = $this->input->post("send_invitation_email_confirm");
 			if($confirmed){
-				$confirmed = TRUE;	
+				$confirmed = TRUE;
 			}
 			$emails = $this->input->post("emails_to_invite");
         	$emails = explode(";", $emails);
@@ -54,7 +54,7 @@ class UserInvitation extends MX_Controller {
 
 				$secretaryId = $user->getId();
 				$invitationStatus = $this->inviteEachUser($emails, $invitationGroup, $secretaryId, $confirmed);
-				
+
 				$this->showStatusMessage($invitationStatus, $secretaryName);
 
 			}
@@ -71,7 +71,7 @@ class UserInvitation extends MX_Controller {
 		$invitationStatus = array();
 
 		foreach ($emails as $id => $email) {
-			$invitationNumber = $this->generateInvitationNumber();
+			$invitationNumber = $this->invitation_model->generateInvitationNumber();
 			$invitationData = array(
 				UserInvitation_model::ID_COLUMN => $invitationNumber,
 				UserInvitation_model::INVITED_GROUP_COLUMN => $invitationGroup,
@@ -86,7 +86,7 @@ class UserInvitation extends MX_Controller {
 			if($sent){
 				// Save the sent invitation
 				$this->invitation_model->save($invitationData);
-			}	
+			}
 
 			$invitationStatus[$email] = $sent;
 		}
@@ -95,10 +95,10 @@ class UserInvitation extends MX_Controller {
 	}
 
 	private function showStatusMessage($invitationStatus, $secretaryName){
-		
+
 		$status = "";
 		$message = "";
-				
+
 		if(!empty($invitationStatus)){
 			$someEmailNotSent = in_array(FALSE, $invitationStatus);
 			$someEmailAreSent = in_array(TRUE, $invitationStatus);
@@ -237,23 +237,12 @@ class UserInvitation extends MX_Controller {
 				}
 			}else{
 				$session->showFlashMessage("danger", "Convite de cadastro já utilizado. Contate a secretaria do curso para solicitar novo convite.");
-				redirect("/");	
+				redirect("/");
 			}
 		}else{
 			$session->showFlashMessage("danger", "Convite de cadastro não confirmado.");
 			redirect("/");
 		}
-	}
-
-	private function generateInvitationNumber(){
-		$alreadyExists = TRUE;
-		while($alreadyExists){
-			// Generates a cryptographically secure random string as invitation
-			$invitation = bin2hex(openssl_random_pseudo_bytes(20));
-			$alreadyExists = $this->invitation_model->invitationExists($invitation);
-		}
-
-		return $invitation;
 	}
 
 	private function validateInvitationEmail(){
@@ -265,7 +254,7 @@ class UserInvitation extends MX_Controller {
 
 		return $status;
 	}
-	
+
 	private function invitationEmailsExists($emails){
 
 		$this->load->library("form_validation");
@@ -275,8 +264,8 @@ class UserInvitation extends MX_Controller {
         foreach ($emails as $id => $email) {
             $emailNotExists = $this->form_validation->verify_if_email_no_exists($email);
             if(!$emailNotExists){
-            	array_push($emailsExistents, $email); 
-            	unset($emails[$id]); 
+            	array_push($emailsExistents, $email);
+            	unset($emails[$id]);
             }
         }
         if(!empty($emailsExistents)){
@@ -291,8 +280,6 @@ class UserInvitation extends MX_Controller {
 
         return $result;
 	}
-
-	
 
 	public function register($userInvitation=""){
 
@@ -328,11 +315,11 @@ class UserInvitation extends MX_Controller {
 					$this->load->template("secretary/userinvitation/invitation_register", $data);
 				}else{
 					$session->showFlashMessage("danger", "Convite de cadastro defeituoso. Contate o(a) secretário(a) do curso para lhe enviar outro convite.");
-					redirect("/");	
+					redirect("/");
 				}
 			}else{
 				$session->showFlashMessage("danger", "Convite de cadastro já utilizado. Contate a secretaria do curso para solicitar novo convite.");
-				redirect("/");	
+				redirect("/");
 			}
 		}else{
 			$session->showFlashMessage("danger", "Convite de cadastro não confirmado.");
