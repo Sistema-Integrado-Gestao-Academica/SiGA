@@ -2,7 +2,11 @@
 
 class EmailSenderData{
 
-	const HOST = "";
-	const USER = "";
-	const PASSWORD = "";
+    const SENDER_NAME = "Sender";
+    const SENDER_EMAIL = "sender@mail.com";
+    const HOST = "";
+    const PORT = 25;
+    const USER = "";
+    const PASSWORD = "";
+
 }
