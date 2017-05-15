@@ -389,8 +389,13 @@ class SelectiveProcess_model extends CI_Model {
     }
 
     public function changeProcessStatus($processId, $newStatus){
-    	$this->db->where('id_process', $processId);
-    	return $this->db->update($this->TABLE, ['status' => $newStatus]);
+        $this->db->where('id_process', $processId);
+        return $this->db->update($this->TABLE, ['status' => $newStatus]);
+    }
+
+    public function setProcessAppealPeriod($processId, $appealPeriod){
+        $this->db->where('id_process', $processId);
+    	return $this->db->update($this->TABLE, ['appeal_period' => $appealPeriod]);
     }
 
     private function convertProcessesInObjects($processes){
@@ -424,27 +429,26 @@ class SelectiveProcess_model extends CI_Model {
             }
             catch(SelectionProcessException $e){
                 $selectiveProcess = FALSE;
-                throw new SelectionProcessException($e);
+                throw $e;
             }
+
             if($foundProcess[self::PROCESS_TYPE_ATTR] === SelectionProcessConstants::REGULAR_STUDENT){
 
                 try{
-
                     $selectiveProcess = new RegularStudentProcess(
                         $foundProcess[self::COURSE_ATTR],
                         $foundProcess[self::NOTICE_NAME_ATTR],
                         $foundProcess[self::ID_ATTR],
                         $foundProcess['total_vacancies'],
                         $foundProcess['status'],
-                        $foundProcess['passing_score']
+                        $foundProcess['passing_score'],
+                        $foundProcess['appeal_period']
                     );
                     $selectiveProcess->addSettings($settings);
                     $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];
                     if(!is_null($noticePath)){
                         $selectiveProcess->setNoticePath($noticePath);
                     }
-
-
                 }catch(SelectionProcessException $e){
                     $selectiveProcess = FALSE;
                 }
@@ -457,7 +461,8 @@ class SelectiveProcess_model extends CI_Model {
                         $foundProcess[self::ID_ATTR],
                         $foundProcess['total_vacancies'],
                         $foundProcess['status'],
-                        $foundProcess['passing_score']
+                        $foundProcess['passing_score'],
+                        $foundProcess['appeal_period']
                     );
                     $selectiveProcess->addSettings($settings);
                     $noticePath = $foundProcess[SelectiveProcess_model::NOTICE_PATH_ATTR];

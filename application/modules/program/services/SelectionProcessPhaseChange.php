@@ -75,8 +75,12 @@ class SelectionProcessPhaseChange extends CI_Model {
                 $this->checkIfCanFinishHomologation($process);
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
-                $this->changeToStatus($process, $newStatus);
-                $this->notifyHomologationIsOver($process, $newStatus);
+                $self = $this;
+                $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
+                    function() use($self, $process, $newStatus){
+                        $self->notifyHomologationIsOver($process, $newStatus);
+                    }
+                );
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
@@ -88,8 +92,12 @@ class SelectionProcessPhaseChange extends CI_Model {
                 );
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
-                $this->changeToStatus($process, $newStatus);
-                $this->notifyPreProjectIsOver($process, $newStatus);
+                $self = $this;
+                $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
+                    function() use($self, $process, $newStatus){
+                        $self->notifyPreProjectIsOver($process, $newStatus);
+                    }
+                );
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
@@ -101,8 +109,12 @@ class SelectionProcessPhaseChange extends CI_Model {
                 );
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
-                $this->changeToStatus($process, $newStatus);
-                $this->notifyWrittenTestIsOver($process, $newStatus);
+                $self = $this;
+                $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
+                    function() use($self, $process, $newStatus){
+                        $self->notifyWrittenTestIsOver($process, $newStatus);
+                    }
+                );
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
@@ -114,8 +126,12 @@ class SelectionProcessPhaseChange extends CI_Model {
                 );
                 $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
-                $this->changeToStatus($process, $newStatus);
-                $this->notifyOralTestIsOver($process, $newStatus);
+                $self = $this;
+                $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
+                    function() use($self, $process, $newStatus){
+                        $self->notifyOralTestIsOver($process, $newStatus);
+                    }
+                );
                 $this->db->trans_complete();
                 return $this->db->trans_status();
                 break;
@@ -153,6 +169,16 @@ class SelectionProcessPhaseChange extends CI_Model {
             $process->getId(),
             $newStatus
         );
+    }
+
+    private function checkAppealPeriodAndChangeStatus($process, $newStatus, callable $onChange){
+        if(!$process->inAppealPeriod()){
+            $this->process_model->setProcessAppealPeriod($process->getId(), TRUE);
+            $onChange();
+        }else{
+            $this->changeToStatus($process, $newStatus);
+            $this->process_model->setProcessAppealPeriod($process->getId(), FALSE);
+        }
     }
 
     private function checkIfCanFinishHomologation($process){

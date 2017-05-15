@@ -4,9 +4,9 @@ require_once "SelectionProcess.php";
 require_once(APPPATH."/constants/SelectionProcessConstants.php");
 
 class RegularStudentProcess extends SelectionProcess{
-	
-	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE, $passingScore){
-		parent::__construct($course, $name, $id, $vacancies, $status, $passingScore);
+
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE, $passingScore, $appealPeriod=NULL){
+		parent::__construct($course, $name, $id, $vacancies, $status, $passingScore, $appealPeriod);
 	}
 
 	public function getType(){

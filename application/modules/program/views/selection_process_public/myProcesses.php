@@ -36,6 +36,7 @@
               <p><b>Data de fim</b>: <?= $process->getSettings()->getFormattedEndDate() ?></p>
 
               <h4 class="text-center"><?= lang($process->getStatus()) ?></h4>
+              <h4 class="text-center"><?= warnInAppealPeriod($process) ?></h4>
           </div>
           <div class="box-footer">
             <div class="row">

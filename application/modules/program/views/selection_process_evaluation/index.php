@@ -11,7 +11,7 @@
 </div>
 <br>
 
-<?php if ($openSelectiveProcesses){ 
+<?php if ($openSelectiveProcesses){
 
   buildTableDeclaration();
 
@@ -21,8 +21,8 @@
     'Ações'
   ));
 
-  foreach($openSelectiveProcesses as $process){ 
-      $id = $process->getId(); 
+  foreach($openSelectiveProcesses as $process){
+      $id = $process->getId();
       $phaseId = $processesPhase[$id]['phaseId']?>
       <tr>
         <td>
@@ -30,6 +30,8 @@
         </td>
         <td>
           <?= lang($process->getStatus())?>
+          <br>
+          <?php warnInAppealPeriod($process); ?>
         </td>
         <td>
           <?php if($processesPhase[$id]['canEvaluate']){
@@ -41,7 +43,6 @@
         </td>
       </tr>
   <?php }
-} 
+}
 buildTableEndDeclaration();?>
 
- 

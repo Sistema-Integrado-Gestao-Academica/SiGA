@@ -48,6 +48,10 @@ if($validSelectiveProcesses){
 			$processId = $process->getId();
 			echo "<td>";
 				echo lang($process->getStatus());
+
+				echo "<br>";
+				warnInAppealPeriod($process);
+
 				$noticeWithAllConfig = $settings->isDatesDefined() && $settings->isNeededDocsSelected() && $settings->isTeachersSelected();
 				if(!$noticeWithAllConfig){
 					$message = "<h6 class='text-warning'><i class='fa fa-warning'></i>Edite o processo seletivo para terminar de configurá-lo.</h6>";
@@ -215,7 +219,7 @@ function showBasicDataTab($process, $phases, $settings){
 			            echo "<br>";
 						$type =  $phase->isKnockoutPhase() ? "Eliminatória" : "Classificatória";
 						echo "Tipo: ".$type;
-		            	echo "<br>";	
+		            	echo "<br>";
 		            }
 		            if($phaseId != 1 && $phase->isKnockoutPhase()){
 						$grade = $phaseId != 1 ? $phase->getGrade() : "Sem nota de corte";
@@ -299,11 +303,11 @@ function showSubsConfigTab($processDocs, $researchLines){
 function createNextPhaseModal($process){
 
 	$phasesWithStatus = array(
-            SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
-            SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
-            SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE,
-            SelectionProcessConstants::IN_ORAL_TEST_PHASE => SelectionProcessConstants::ORAL_TEST_PHASE
-        );
+        SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
+        SelectionProcessConstants::IN_PRE_PROJECT_PHASE => SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE,
+        SelectionProcessConstants::IN_WRITTEN_TEST_PHASE => SelectionProcessConstants::WRITTEN_TEST_PHASE,
+        SelectionProcessConstants::IN_ORAL_TEST_PHASE => SelectionProcessConstants::ORAL_TEST_PHASE
+    );
 
 	$processId = $process->getId();
 	$suggestedPhase = $process->getSuggestedPhase();
@@ -311,12 +315,16 @@ function createNextPhaseModal($process){
 
 	if(isset($phasesWithStatus[$suggestedPhase])){
 		$phaseName = $phasesWithStatus[$suggestedPhase];
-		$question = "Deseja passar para a fase de <b>".$phaseName."</b>?";
+		$question = !$process->inAppealPeriod() && isset($phasesWithStatus[$process->getStatus()])
+			? "Deseja colocar a fase atual em período de recurso?"
+			: "Deseja passar para a fase de <b>".$phaseName."</b>?";
 	}
 	else{
 		$question = $suggestedPhase == SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS
 			? "Deseja <b>iniciar as inscrições</b> do processo?"
-			: "Deseja <b>finalizar</b> o processo?";
+			: (!$process->inAppealPeriod()
+				? "Deseja colocar a fase atual em período de recurso?"
+				: "Deseja <b>finalizar</b> o processo?");
 	}
 
 	$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
@@ -353,7 +361,7 @@ function createNextPhaseModal($process){
 }
 
 function getWaitingPhaseLabel($suggestedStatus){
-	
+
 	$phasesWithStatus = array(
 		SelectionProcessConstants::OPEN_FOR_SUBSCRIPTIONS => "com as inscrições abertas",
 		SelectionProcessConstants::IN_HOMOLOGATION_PHASE => "na fase de ".SelectionProcessConstants::HOMOLOGATION_PHASE,
@@ -368,5 +376,4 @@ function getWaitingPhaseLabel($suggestedStatus){
 	echo "<br><h6 class='text-warning'>De acordo com as datas definidas, o processo deveria estar {$newPhase}. <br>Clique no ícone <i class='fa fa-arrow-circle-o-right'></i> para avançar o processo.</h6>";
 
 }
-
 ?>

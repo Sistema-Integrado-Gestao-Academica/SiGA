@@ -140,7 +140,6 @@ function defineDateForm($processId, $submitBtnId, $startDateFieldId, $endDateFie
 
 }
 
-
 function defineDateTimeline($processId, $subscriptionStartDate, $subscriptionEndDate, $phases){
 
     // Subscription
@@ -357,19 +356,28 @@ function sortArrayApprovedCandidades($previous, $next){
 
 
 function array_swap($key1, $key2, $array) {
-    
+
     $newArray = array();
     foreach ($array as $key => $value) {
         if ($key == $key1) {
         	$newArray[$key2] = $array[$key2];
-        } 
+        }
         elseif ($key == $key2) {
             $newArray[$key1] = $array[$key1];
-        } 
+        }
         else {
             $newArray[$key] = $value;
         }
     }
 
     return $newArray;
+}
+
+
+function warnInAppealPeriod($process){
+    if($process->inAppealPeriod()){
+        echo "<span class='label label-primary'>";
+        echo "Em período de recurso";
+        echo "</span>";
+    }
 }

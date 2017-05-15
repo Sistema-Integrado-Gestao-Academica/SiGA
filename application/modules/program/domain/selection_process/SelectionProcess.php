@@ -4,7 +4,7 @@ require_once APPPATH."/exception/SelectionProcessException.php";
 require_once "ProcessSettings.php";
 
 abstract class SelectionProcess{
-	
+
 	const INVALID_NAME = "O nome do edital não pode estar em branco.";
 	const INVALID_COURSE = "Um processo seletivo deve estar vinculado à algum curso de um programa.";
 	const INVALID_ID = "O ID do processo seletivo deve ser um número maior que zero.";
@@ -30,6 +30,7 @@ abstract class SelectionProcess{
 	private $status;
 	private $passingScore;
 	private $suggestedPhase = FALSE;
+	private $inAppealPeriod;
 
 	// Foreign Key from Course. Course id
 	private $course;
@@ -37,13 +38,14 @@ abstract class SelectionProcess{
 	private $noticePath;
 	protected $settings;
 
-	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE, $passingScore){
+	public function __construct($course = FALSE, $name = "", $id = FALSE, $vacancies, $status = FALSE, $passingScore, $appealPeriod=NULL){
 		$this->setCourse($course);
 		$this->setName($name);
 		$this->setId($id);
 		$this->setVacancies($vacancies);
 		$this->setStatus($status);
 		$this->setPassingScore($passingScore);
+		$this->setAppealPeriod($appealPeriod);
 	}
 
 	public function addSettings($settings){
@@ -55,7 +57,7 @@ abstract class SelectionProcess{
 	}
 
 	public function setNoticePath($path){
-		
+
 		if(is_string($path)){
 			if(file_exists($path)){
 				$this->noticePath = $path;
@@ -68,7 +70,7 @@ abstract class SelectionProcess{
 	}
 
 	private function setName($name){
-		
+
 		if(!empty($name)){
 
 			$this->name = $name;
@@ -122,7 +124,7 @@ abstract class SelectionProcess{
 	public function setPassingScore($passingScore){
 		if($passingScore != ''){
             if($passingScore >= self::MIN_PASSING_SCORE && $passingScore <= self::MAX_PASSING_SCORE){
-                
+
                 $this->passingScore = $passingScore;
             }
             else{
@@ -140,6 +142,13 @@ abstract class SelectionProcess{
 
 	public function setSuggestedPhase($suggestedPhase){
 		$this->suggestedPhase = $suggestedPhase;
+	}
+
+	public function setAppealPeriod($appealPeriod){
+		$appealPeriod = $appealPeriod == '0' ? FALSE : $appealPeriod;
+		$appealPeriod = $appealPeriod == '1' ? TRUE : $appealPeriod;
+		$appealPeriod = $appealPeriod === FALSE || $appealPeriod === TRUE ? $appealPeriod : FALSE;
+		$this->inAppealPeriod = $appealPeriod;
 	}
 
 	public function getName(){
@@ -176,6 +185,10 @@ abstract class SelectionProcess{
 
 	public function getPassingScore(){
 		return $this->passingScore;
+	}
+
+	public function inAppealPeriod(){
+		return $this->inAppealPeriod;
 	}
 
 	public abstract function getType();
