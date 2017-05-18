@@ -21,7 +21,7 @@ class UserNotification extends MX_Controller{
         );
     }
 
-    private function getAllowedUsersToNotify($getStudents=TRUE, $getTeachers=TRUE, $courses=array()){
+    private function getAllowedUsersToNotify($getStudents=TRUE, $getTeachers=TRUE, $courses=array(), $getGuests=TRUE){
 
         $addKeyToUsersArray = function($users){
             $keyUsers = array();
@@ -74,6 +74,14 @@ class UserNotification extends MX_Controller{
         }else{
             $users = array();
         }
+
+        if($getGuests){
+            $this->load->model("auth/usuarios_model");
+            $guests = $this->usuarios_model->getUsersOfGroup(GroupConstants::GUEST_USER_GROUP_ID);
+            $guests = $addKeyToUsersArray($guests);
+            $users = !empty($guests) ? $users + $guests : $users;
+        }
+
 
         return $users;
     }
@@ -226,7 +234,7 @@ class UserNotification extends MX_Controller{
         $notifyStudents = $this->input->post("notify_students") !== NULL;
         $onlyBar = $this->input->post("email_too") === NULL;
 
-        $allowedUsers = $this->getAllowedUsersToNotify($notifyStudents, $notifyTeachers, array($course));
+        $allowedUsers = $this->getAllowedUsersToNotify($notifyStudents, $notifyTeachers, array($course), $notifyGuests=FALSE);
 
         $this->load->module("notification/notification");
 

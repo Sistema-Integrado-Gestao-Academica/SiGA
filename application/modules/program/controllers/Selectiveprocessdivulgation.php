@@ -16,6 +16,7 @@ class SelectiveProcessDivulgation extends MX_Controller {
 
         $this->load->model("program/selectiveprocess_model", "process_model");
         $this->load->model("program/selectiveprocessdivulgation_model", "divulgation_model");
+        $this->load->model("program/selectiveProcessSubscription_model", "subscription_model");
     }
 
     public function index($selectiveProcessId){
@@ -89,6 +90,7 @@ class SelectiveProcessDivulgation extends MX_Controller {
                     $data['related_id_phase'] = $related_phase;
                 }
                 $saved = $this->divulgation_model->saveProcessDivulgation($data);
+                $this->notififyNewDivulgation($data);
                 if($saved){
                     $status = "success";
                     $message = "Nova divulgação realizada com sucesso.";
@@ -112,6 +114,46 @@ class SelectiveProcessDivulgation extends MX_Controller {
 
         $this->session->set_flashdata($status, $message);
         $this->index($processId);
+    }
+
+    private function notififyNewDivulgation($divulgation){
+        $processId = $divulgation['id_process'];
+        $candidates = $this->subscription_model->getProcessAllCandidates($processId);
+        if(!empty($candidates)){
+            $process = $this->process_model->getById($processId);
+            $this->load->module('notification/notification');
+            foreach ($candidates as $candidate) {
+                $user = [
+                    'id' => $candidate['id_user'],
+                    'name' => $candidate['full_name'],
+                    'email' => $candidate['email']
+                ];
+
+                $params = [
+                    'subject' => "Nova divulgação no processo {$process->getName()}",
+                    'link' => "selection_process/divulgations/{$processId}"
+                ];
+
+
+                $message = function ($params) use ($process){
+                    $msg = "Informamos que há uma nova divulgação no processo <b>{$process->getName()}</b>.";
+                    return $msg;
+                };
+
+                $emailMessage = function () use ($process, $divulgation, $params){
+                    $divulgationsUrl = site_url($params['link']);
+
+                    $msg = "Informamos que há uma nova divulgação no processo <b>{$process->getName()}</b>.";
+                    $msg .= "<br>Veja a mensagem da <a href='{$divulgationsUrl}'>divulgação</a>:<br><br>";
+                    $msg .= "<b>".$divulgation['description']."</b><br>";
+                    $msg .= $divulgation['message'];
+                    $msg .= "<br>";
+                    return $msg;
+                };
+
+                $this->notification->notifyUser($user, $params, $message, $sender=FALSE, $onlyBar=FALSE, $emailMessage);
+            }
+        }
     }
 
     public function downloadDivulgationFile($divulgationId){

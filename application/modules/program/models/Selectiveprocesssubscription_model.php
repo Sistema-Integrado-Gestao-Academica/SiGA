@@ -129,6 +129,10 @@ class SelectiveProcessSubscription_model extends CI_Model {
         return $this->getProcessSubscriptions($processId, TRUE, FALSE);
     }
 
+    public function getProcessAllCandidates($processId){
+        return $this->get('id_process', $processId, FALSE); 
+    }
+
     private function getProcessSubscriptions($processId, $finalized, $homologated){
         return $this->get(
             [

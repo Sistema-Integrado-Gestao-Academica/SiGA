@@ -36,10 +36,6 @@
       'checked' => in_array($doc, $processDocs),
     ];
     
-    if($canNotEdit){
-      $checkbox['disabled'] = TRUE;
-    } 
-
     echo form_checkbox($checkbox);
     echo form_label($doc['doc_name'], $checkboxId);
     echo '<p>'.$doc['doc_desc'].'</p>';
