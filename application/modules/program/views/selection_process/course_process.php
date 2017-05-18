@@ -62,11 +62,13 @@ if($validSelectiveProcesses){
 					$message = $process->getStatus() == SelectionProcessConstants::DRAFT ? "<h6 class='text-success'><i class='fa fa-warning'></i>Você já pode divulgar o edital.</h6>" : "";
 					echo "<br>".$message;
 				}
-				if($process->getSuggestedPhase() && $process->getSuggestedPhase() == SelectionProcessConstants::APPEAL_PHASE && !$process->inAppealPeriod()){
-					echo "<br><h6 class='text-warning'>De acordo com as datas definidas, essa fase acabou e é possível ir para o período de recurso da fase. <br>Clique no ícone <i class='fa fa-arrow-circle-o-right'></i> para avançar o processo.</h6>";
-				}
-				elseif ($process->getSuggestedPhase() && $process->getSuggestedPhase() != SelectionProcessConstants::APPEAL_PHASE) {
-					getWaitingPhaseLabel($process->getSuggestedPhase());
+				if($process->getStatus() != SelectionProcessConstants::FINISHED){
+					if($process->getSuggestedPhase() && $process->getSuggestedPhase() == SelectionProcessConstants::APPEAL_PHASE && !$process->inAppealPeriod()){
+						echo "<br><h6 class='text-warning'>De acordo com as datas definidas, essa fase acabou e é possível ir para o período de recurso da fase. <br>Clique no ícone <i class='fa fa-arrow-circle-o-right'></i> para avançar o processo.</h6>";
+					}
+					elseif ($process->getSuggestedPhase() && $process->getSuggestedPhase() != SelectionProcessConstants::APPEAL_PHASE) {
+						getWaitingPhaseLabel($process->getSuggestedPhase());
+					}
 				}
 			echo "</td>";
 
@@ -84,7 +86,7 @@ if($validSelectiveProcesses){
 				echo "&nbsp";
 				$appealPhaseSuggested = $process->getSuggestedPhase() == SelectionProcessConstants::APPEAL_PHASE && !$process->inAppealPeriod();
 				$nextPhase = $process->getSuggestedPhase() != SelectionProcessConstants::APPEAL_PHASE;
-				if($process->getSuggestedPhase() && ($appealPhaseSuggested || $nextPhase)){
+				if($process->getSuggestedPhase() && ($appealPhaseSuggested || $nextPhase) && $process->getStatus() != SelectionProcessConstants::FINISHED){
 					createNextPhaseModal($process);
 					echo "<a href='#nextphasemodal{$processId}' data-toggle='modal' class='btn btn-info'><i class='fa fa-arrow-circle-o-right'></i></a>";
 				}

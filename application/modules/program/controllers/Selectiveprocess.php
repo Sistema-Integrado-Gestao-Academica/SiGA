@@ -403,16 +403,13 @@ class SelectiveProcess extends MX_Controller {
                         }
 
                         if($hasResult){
-                            $phaseWasFinished = $this->checkIfPhaseWasFinished($phase->phase_name, $selectiveProcess);
-                            if($phaseWasFinished){
-                                $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
-                                $result['label'] = $label;
-                                $resultOfCandidatesInPhase[$candidateId] = $result;
+                            $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
+                            $result['label'] = $label;
+                            $resultOfCandidatesInPhase[$candidateId] = $result;
 
-                                if($status === SelectionProcessConstants::FINISHED){
-                                    $phaseInfo =  array('phase_weight' => $phase->weight);
-                                    $phasesResultPerCandidate[$candidateId][$phase->phase_name] = $result + $phaseInfo;
-                                }
+                            if($status === SelectionProcessConstants::FINISHED){
+                                $phaseInfo =  array('phase_weight' => $phase->weight);
+                                $phasesResultPerCandidate[$candidateId][$phase->phase_name] = $result + $phaseInfo;
                             }
                         }
                     }
