@@ -19,7 +19,7 @@
 
     <br>
     <?php alert(function(){
-        echo "Você pode notificar apenas os professores e alunos dos cursos os quais é secretário(a).";
+        echo "Você pode notificar apenas os professores e alunos dos cursos os quais é secretário(a) e convidados do sistema.";
       }); ?>
   </div>
   <div class="col-md-8 col-sm-6">
