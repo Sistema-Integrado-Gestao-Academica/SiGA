@@ -35,9 +35,7 @@ class SelectiveProcessHomolog extends MX_Controller {
         withPermissionAnd(
             PermissionConstants::SELECTION_PROCESS_PERMISSION,
             function() use ($self, $process){
-                // This page can only be accessed when is in homologation period
-                return inHomologationPeriod($process)
-                       && checkIfUserIsSecretary($process->getCourse());
+                return checkIfUserIsSecretary($process->getCourse());
             },
             function() use ($self, $process){
                 $self->subscriptionsPage($process);
