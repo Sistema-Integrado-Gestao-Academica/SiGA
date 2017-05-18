@@ -139,13 +139,14 @@ abstract class EmailNotification extends BaseNotification{
     	$mail = new PHPMailer();
         $mail->IsSMTP();
         $mail->SMTPAuth = true;
-        $mail->SMTPSecure = "ssl";
+        $mail->SMTPSecure = EmailSenderData::SMTP_SECURE;
         $mail->Port = EmailSenderData::PORT;
         $mail->Host = EmailSenderData::HOST;
         $mail->Username = EmailSenderData::USER;
         $mail->Password = EmailSenderData::PASSWORD;
         $mail->CharSet = 'UTF-8';
         $mail->Timeout = self::EMAIL_TIMEOUT;
+	$mail->SMTPAutoTLS = false;
 
     	return $mail;
     }
@@ -162,7 +163,7 @@ abstract class EmailNotification extends BaseNotification{
 	        $ci->load->library("Mailing");
 
 	        $mail = $this->setDefaultConfiguration();
-
+		
 	        $mail->IsHTML(true);
 	        $mail->Subject = $this->getSubject();
 	        $mail->Body = $message;
@@ -170,6 +171,7 @@ abstract class EmailNotification extends BaseNotification{
 	        $mail->AddAddress($this->getReceiverEmail(), $this->getReceiverName());
 
 	        $emailSent = $mail->Send();
+
 		}
 		else{
 			$emailSent = FALSE;

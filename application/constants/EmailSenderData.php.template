@@ -8,5 +8,6 @@ class EmailSenderData{
     const PORT = 25;
     const USER = "";
     const PASSWORD = "";
+    const SMTP_SECURE = "ssl";
 
 }
