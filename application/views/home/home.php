@@ -34,7 +34,7 @@ if ($session->isLogged()) {
 		alert(function(){
 			echo "<p class='text-center'>";
 			echo anchor('register', "<span class='label label-primary'>Cadastre-se</span>")
-				." no sistema para <b>se inscrever</b> nos processos seletivos do programa.";
+				." no sistema para <b>ver os processos seletivos</b> do programa.";
 			echo "</p>";
 		}, 'info', "Bem-vindo ao SiGA!");
 	?>

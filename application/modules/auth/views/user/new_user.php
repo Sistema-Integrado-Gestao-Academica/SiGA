@@ -1,5 +1,5 @@
-<div class="form-box" id="login-box"> 
-	<div class="header">Cadastrar um novo usuário</div>
+<div class="form-box" id="login-box">
+	<div class="header">Cadastre-se no SiGA!</div>
 	<?= form_open("register_user", '', $hidden) ?>
 		<div class="body bg-gray">
 			<div class="form-group">
