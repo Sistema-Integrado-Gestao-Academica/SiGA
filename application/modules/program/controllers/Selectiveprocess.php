@@ -150,7 +150,11 @@ class SelectiveProcess extends MX_Controller {
 
                 if($selectionProcess !== FALSE){
                     $statusByDate = getProcessStatusByDate($selectionProcess);
-                    if ($statusByDate != $process['status']){
+                    if($statusByDate == SelectionProcessConstants::APPEAL_PHASE){
+                        $selectionProcess->setSuggestedPhase($statusByDate);
+                        $statusByDate = $process['status'];
+                    }
+                    if($statusByDate != $process['status']){
                         $statusByPhasesOrder = $this->getStatusByPhaseOnProcess($selectionProcess);
                         $selectionProcess->setSuggestedPhase($statusByPhasesOrder);
                     }

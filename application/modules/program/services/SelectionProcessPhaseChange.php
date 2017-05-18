@@ -438,11 +438,6 @@ class SelectionProcessPhaseChange extends CI_Model {
 
     private function checkNextPhase($process, $newStatus){
 
-        assert(
-            $process->getStatus() != $newStatus,
-            "Trying to change the phase to the current phase of a process."
-        );
-
         // It should be going to next phase in process order
         $phasesOrder = $process->getSettings()->getPhasesOrder();
 

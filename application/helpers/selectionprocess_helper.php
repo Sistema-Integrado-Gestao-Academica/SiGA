@@ -255,7 +255,10 @@ function getProcessStatusByDate($process){
 				$lastPhase = array_pop($phases);
 				$notFinished = validateDatesDiff($today, $lastPhase->getEndDate());
 				if($notFinished){
-					$status = $process->getStatus();
+					$status = SelectionProcessConstants::APPEAL_PHASE;
+				}
+				elseif (!$process->inAppealPeriod() && $process->getStatus() != SelectionProcessConstants::FINISHED) {
+					$status = SelectionProcessConstants::APPEAL_PHASE;
 				}
 				else{
 					$status = SelectionProcessConstants::FINISHED;

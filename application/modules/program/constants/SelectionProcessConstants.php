@@ -31,6 +31,7 @@ class SelectionProcessConstants {
 	const IN_PRE_PROJECT_PHASE = "pre_project_phase";
 	const IN_WRITTEN_TEST_PHASE = "written_test_phase";
 	const IN_ORAL_TEST_PHASE = "oral_test_phase";
+	const APPEAL_PHASE = "appeal_phase";
 }
 
 
