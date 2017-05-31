@@ -146,7 +146,7 @@ class SelectiveProcessSubscription_model extends CI_Model {
     }
 
     public function getSubscriptionDocs($subscriptionId, $isTeacher = FALSE){
-        $this->db->select('id_doc, doc_name, doc_path, id_subscription');
+        $this->db->select('selection_process_subscription_docs.id_doc, doc_name, doc_path, id_subscription');
         $this->db->from('selection_process_subscription_docs');
         $this->db->join(
             'selection_process_available_docs',
@@ -158,7 +158,12 @@ class SelectiveProcessSubscription_model extends CI_Model {
         );
 
         if($isTeacher){
-            $this->db->where('selection_process_available_docs.protected', FALSE);
+            $this->db->join(
+                'selection_process_needed_docs',
+                'selection_process_needed_docs.id_doc = selection_process_subscription_docs.id_doc'
+            );
+            $this->db->where('selection_process_needed_docs.protected', FALSE);
+                
         }
         $docs = checkArray($this->db->get()->result_array());
 

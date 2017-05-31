@@ -87,14 +87,13 @@ if($validSelectiveProcesses){
 				$appealPhaseSuggested = $process->getSuggestedPhase() == SelectionProcessConstants::APPEAL_PHASE && !$process->inAppealPeriod();
 				$nextPhase = $process->getSuggestedPhase() != SelectionProcessConstants::APPEAL_PHASE;
 				if($process->getSuggestedPhase() && ($appealPhaseSuggested || $nextPhase) && $process->getStatus() != SelectionProcessConstants::FINISHED){
-					createNextPhaseModal($process);
+					createNextPhaseModal($process, $processesDocs[$processId]);
 					echo "<a href='#nextphasemodal{$processId}' data-toggle='modal' class='btn btn-info'><i class='fa fa-arrow-circle-o-right'></i></a>";
 				}
 				if($noticeWithAllConfig){
 					echo "&nbsp";
 					echo anchor("selection_process/results/{$processId}", "<i class='fa fa-list-ol'></i>", "class='btn bg-olive'");
 				}
-
 			echo "</td>";
 
 		echo "</tr>";
@@ -307,7 +306,7 @@ function showSubsConfigTab($processDocs, $researchLines){
 	}
 }
 
-function createNextPhaseModal($process){
+function createNextPhaseModal($process, $processDocs){
 
 	$phasesWithStatus = array(
         SelectionProcessConstants::IN_HOMOLOGATION_PHASE => SelectionProcessConstants::HOMOLOGATION_PHASE,
@@ -337,9 +336,8 @@ function createNextPhaseModal($process){
 	$formPath = "selection_process/next_phase/{$processId}/{$courseId}";
 	$suggestedPhase = $suggestedPhase == SelectionProcessConstants::APPEAL_PHASE ? $process->getStatus() : $suggestedPhase;
 
-	$body = function() use ($suggestedPhase, $question){
 
-
+	$body = function() use ($suggestedPhase, $question, $processDocs){
 		$hidden = array(
 			'id' => 'suggested_phase',
 			'name' => 'suggested_phase',
@@ -350,6 +348,22 @@ function createNextPhaseModal($process){
 		echo form_input($hidden);
 
 		echo "<h4>{$question}</h4>";
+		
+		$phaseOfEvaluation =
+			$suggestedPhase == SelectionProcessConstants::IN_PRE_PROJECT_PHASE ||
+			$suggestedPhase == SelectionProcessConstants::IN_WRITTEN_TEST_PHASE ||
+			$suggestedPhase == SelectionProcessConstants::IN_ORAL_TEST_PHASE ? TRUE : FALSE;
+
+		if($phaseOfEvaluation && !strpos($question, "recurso")){
+			echo "<br><h4>Marque os documentos que devem ser <b>visíveis para o professor</b> nessa fase</h4>";
+		    echo "<div class='row' align='left'>";
+			foreach ($processDocs as $doc){
+		        echo "<div class='col-lg-6' style='white-space: normal;'>";
+		          docCheckbox($doc);
+		        echo "</div>";
+			}
+		    echo "</div>";
+		}
 	};
 
 	$footer = function(){
@@ -385,5 +399,19 @@ function getWaitingPhaseLabel($suggestedStatus){
 
 	echo "<br><h6 class='text-warning'>De acordo com as datas definidas, o processo deveria estar {$newPhase}. <br>Clique no ícone <i class='fa fa-arrow-circle-o-right'></i> para avançar o processo.</h6>";
 
+}
+
+function docCheckbox($doc){
+    $checkboxId = 'doc_'.$doc['id'];
+    $checkbox = [
+      'id' => $checkboxId,
+      'name' => $checkboxId,
+      'value' => $doc['id'],
+      'class' => 'form-control',
+      'checked' => !$doc['protected'],
+    ];
+    
+    echo form_checkbox($checkbox);
+    echo form_label($doc['doc_name'], $checkboxId);
 }
 ?>

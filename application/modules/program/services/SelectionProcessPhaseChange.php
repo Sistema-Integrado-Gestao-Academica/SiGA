@@ -73,7 +73,6 @@ class SelectionProcessPhaseChange extends CI_Model {
 
             case SelectionProcessConstants::IN_HOMOLOGATION_PHASE:
                 $this->checkIfCanFinishHomologation($process);
-                $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $self = $this;
                 $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
@@ -90,7 +89,6 @@ class SelectionProcessPhaseChange extends CI_Model {
                     $process,
                     SelectionProcessConstants::PRE_PROJECT_EVALUATION_PHASE_ID
                 );
-                $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $self = $this;
                 $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
@@ -107,7 +105,6 @@ class SelectionProcessPhaseChange extends CI_Model {
                     $process,
                     SelectionProcessConstants::WRITTEN_TEST_PHASE_ID
                 );
-                $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $self = $this;
                 $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
@@ -124,7 +121,6 @@ class SelectionProcessPhaseChange extends CI_Model {
                     $process,
                     SelectionProcessConstants::ORAL_TEST_PHASE_ID
                 );
-                $this->checkNextPhase($process, $newStatus);
                 $this->db->trans_start();
                 $self = $this;
                 $this->checkAppealPeriodAndChangeStatus($process, $newStatus,
@@ -178,6 +174,22 @@ class SelectionProcessPhaseChange extends CI_Model {
         }else{
             $this->changeToStatus($process, $newStatus);
             $this->process_model->setProcessAppealPeriod($process->getId(), FALSE);
+            $this->load->model("program/selectiveprocessconfig_model", "process_config_model");
+            $processDocs = $this->process_config_model->getProcessDocs($process->getId());
+            $selectedDocs = [];
+            foreach($processDocs as $doc){
+                $docId = $doc['id'];
+                $selectedDoc = $this->input->post("doc_{$docId}");
+                if(!is_null($selectedDoc)){
+                    $protected = FALSE;
+                }
+                else{
+                    $protected = TRUE;
+                }
+                $selectedDocs[$docId] = ['id_doc' => $docId, 'protected' => $protected];
+            }
+
+            $this->process_config_model->makeDocumentsNotProtected($process->getId(), $selectedDocs);
         }
     }
 
@@ -436,30 +448,4 @@ class SelectionProcessPhaseChange extends CI_Model {
         return ($candidateAverageGrade >= $phasePassingScore) || $notKnockoutPhase;
     }
 
-    private function checkNextPhase($process, $newStatus){
-
-        // It should be going to next phase in process order
-        $phasesOrder = $process->getSettings()->getPhasesOrder();
-
-        // If the next phase is to finalize the process, this checks does not apply
-        if($newStatus !== SelectionProcessConstants::FINISHED){
-            // The new phase should be in phases order array
-            $phaseName = str_replace('_phase', '', $newStatus);
-            assert(
-                in_array($phaseName, $phasesOrder),
-                "The new phase '{$phaseName}' should be in phases order array"
-            );
-
-            $currentPhaseName = str_replace('_phase', '', $process->getStatus());
-
-            // $newStatus should be after the current phase in phases order
-            $currentPhaseIndex = array_search($currentPhaseName, $phasesOrder);
-            // If index wasn't found is because is the homologation phase (the first one)
-            $currentPhaseIndex = $currentPhaseIndex === FALSE ? -1 : $currentPhaseIndex;
-            assert(
-                $phaseName == $phasesOrder[intval($currentPhaseIndex) + 1],
-                "The next phase should be after the homologation in phases order array."
-            );
-        }
-    }
 }

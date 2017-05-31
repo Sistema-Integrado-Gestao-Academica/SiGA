@@ -33,7 +33,7 @@
       'name' => $checkboxId,
       'value' => $doc['id'],
       'class' => 'form-control',
-      'checked' => in_array($doc, $processDocs),
+      'checked' => in_array($doc['id'], array_column($processDocs, 'id')),
     ];
     
     echo form_checkbox($checkbox);

@@ -39,6 +39,7 @@ class Selectiveprocessconfig_model extends CI_Model {
         $docs = $this->db->get()->result_array();
         $docs = checkArray($docs);
 
+
         return $docs;
     }
 
@@ -50,5 +51,16 @@ class Selectiveprocessconfig_model extends CI_Model {
         $this->db->delete(self::NEEDED_DOCS_TABLE, [
             'id_process' => $processId
         ]);
+    }
+
+    public function makeDocumentsNotProtected($processId, $docs){
+
+        if(!empty($docs)){
+            foreach ($docs as $doc) {
+                $this->db->where('id_doc', $doc['id_doc']);
+                $this->db->where('id_process', $processId);
+                $this->db->update('selection_process_needed_docs', $doc);
+            }
+        }
     }
 }
