@@ -294,7 +294,7 @@ class SelectiveProcessEvaluation extends MX_Controller {
     public function getCandidatePhaseResultLabel($phaseResult){
 
         if($phaseResult['hasResult']){
-            $labelCandidate = $phaseResult['approved'] ? "<b class='text text-success'>Aprovado</b>" : "<b class='text text-danger'>Eliminado</b>"; 
+            $labelCandidate = $phaseResult['approved'] ? "<b class='text text-success'>Habilitado</b>" : "<b class='text text-danger'>Não Habilitado</b>"; 
         }
         else{
 

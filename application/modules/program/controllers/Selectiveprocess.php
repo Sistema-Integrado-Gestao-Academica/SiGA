@@ -390,18 +390,15 @@ class SelectiveProcess extends MX_Controller {
             }
 
             if($candidatesResults){
+
                 foreach ($candidatesResults as $key => $results) {
-                    $hasResult = TRUE;
                     $phase = $this->process_evaluation_model->getPhaseNameByPhaseProcessId($key);
                     $resultOfCandidatesInPhase = array();
                     foreach ($results as $candidateId => $result) {
-                        if($phase->phase_name == SelectionProcessConstants::HOMOLOGATION_PHASE){
-                            $hasResult = TRUE;
-                        }
-                        else{
+                        $hasResult = TRUE;
+                        if($phase->phase_name != SelectionProcessConstants::HOMOLOGATION_PHASE){
                             $hasResult = $result['hasResult'] && $hasResult;
                         }
-
                         if($hasResult){
                             $label = $this->selectiveprocessevaluation->getCandidatePhaseResultLabel($result);
                             $result['label'] = $label;
@@ -426,6 +423,7 @@ class SelectiveProcess extends MX_Controller {
                                                         $selectiveProcess->getPassingScore(), $selectiveProcess->getVacancies());
             $resultCandidatesByPhase = $selectedCandidates + $resultCandidatesByPhase;
         }
+
 
         $data = array(
             'resultCandidatesByPhase' => $resultCandidatesByPhase,
